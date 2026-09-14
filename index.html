@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Моё сообщество</title>
+  <title>Инвестор</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       background: #0b0c10;
@@ -15,98 +19,188 @@
       font-family: Arial, sans-serif;
     }
 
-    .content {
-      padding: 30px 20px 100px;
+    .page {
+      display: none;
+      padding: 28px 20px 120px;
+    }
+
+    .page.active {
+      display: block;
     }
 
     h1 {
       font-size: 34px;
+      margin: 0 0 24px;
     }
 
     .card {
       background: #17191f;
-      border: 1px solid #292c34;
-      border-radius: 20px;
+      border: 1px solid #2a2d35;
+      border-radius: 22px;
       padding: 20px;
-      margin-top: 16px;
+      margin-bottom: 16px;
     }
 
     .card h2 {
       margin: 0 0 8px;
+      font-size: 22px;
     }
 
     .card p {
-      color: #aaa;
       margin: 0;
+      color: #a9abb2;
+      line-height: 1.5;
     }
 
     .menu {
       position: fixed;
-      bottom: 0;
       left: 0;
       right: 0;
+      bottom: 0;
+      height: 92px;
       background: #15171d;
+      border-top: 1px solid #292c34;
       display: flex;
       justify-content: space-around;
-      padding: 18px 5px 28px;
-      border-top: 1px solid #292c34;
+      align-items: center;
+      padding-bottom: 10px;
     }
 
-    .menu div {
+    .menu-item {
+      width: 25%;
       text-align: center;
-      font-size: 14px;
+      color: #8f9299;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .menu-item.active {
+      color: white;
     }
 
     .icon {
       font-size: 25px;
       margin-bottom: 5px;
     }
+
+    .menu-item.active .icon {
+      transform: scale(1.08);
+    }
   </style>
 </head>
 
 <body>
 
-<div class="content">
-  <h1>ГЛАВНАЯ</h1>
+  <section id="home" class="page active">
+    <h1>ГЛАВНАЯ</h1>
 
-  <div class="card">
-    <h2>Добро пожаловать 👋</h2>
-    <p>Это наше Telegram-приложение.</p>
-  </div>
+    <div class="card">
+      <h2>Добро пожаловать 👋</h2>
+      <p>Это главное пространство нашего приложения.</p>
+    </div>
 
-  <div class="card">
-    <h2>Новое</h2>
-    <p>Здесь позже появятся видео, статьи и материалы.</p>
-  </div>
-</div>
+    <div class="card">
+      <h2>Новое</h2>
+      <p>Здесь будут новости, видео, статьи и полезные материалы.</p>
+    </div>
+  </section>
 
-<div class="menu">
-  <div>
-    <div class="icon">▶️</div>
-    Главная
-  </div>
 
-  <div>
-    <div class="icon">⭕</div>
-    Сообщество
-  </div>
+  <section id="community" class="page">
+    <h1>СООБЩЕСТВО</h1>
 
-  <div>
-    <div class="icon">💬</div>
-    Чаты
-  </div>
+    <div class="card">
+      <h2>Участники</h2>
+      <p>Здесь позже будут участники сообщества и их профили.</p>
+    </div>
 
-  <div>
-    <div class="icon">♡</div>
-    Помощь
-  </div>
-</div>
+    <div class="card">
+      <h2>Группы</h2>
+      <p>Можно будет создавать тематические группы и направления.</p>
+    </div>
+  </section>
 
-<script>
-  const tg = window.Telegram.WebApp;
-  tg.ready();
-  tg.expand();
-</script>
+
+  <section id="chats" class="page">
+    <h1>ЧАТЫ</h1>
+
+    <div class="card">
+      <h2>Общий чат</h2>
+      <p>Главное место общения участников.</p>
+    </div>
+
+    <div class="card">
+      <h2>Инвестиции</h2>
+      <p>Отдельный чат по инвестициям, рынкам и идеям.</p>
+    </div>
+  </section>
+
+
+  <section id="help" class="page">
+    <h1>ПОМОЩЬ</h1>
+
+    <div class="card">
+      <h2>Служба поддержки</h2>
+      <p>Здесь можно будет связаться с администратором.</p>
+    </div>
+
+    <div class="card">
+      <h2>Частые вопросы</h2>
+      <p>Ответы на основные вопросы пользователей.</p>
+    </div>
+
+    <div class="card">
+      <h2>Правила</h2>
+      <p>Правила сообщества и использования приложения.</p>
+    </div>
+  </section>
+
+
+  <nav class="menu">
+
+    <div class="menu-item active" onclick="openPage('home', this)">
+      <div class="icon">▶️</div>
+      Главная
+    </div>
+
+    <div class="menu-item" onclick="openPage('community', this)">
+      <div class="icon">⭕</div>
+      Сообщество
+    </div>
+
+    <div class="menu-item" onclick="openPage('chats', this)">
+      <div class="icon">💬</div>
+      Чаты
+    </div>
+
+    <div class="menu-item" onclick="openPage('help', this)">
+      <div class="icon">♡</div>
+      Помощь
+    </div>
+
+  </nav>
+
+
+  <script>
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    function openPage(pageId, menuItem) {
+
+      document.querySelectorAll('.page')
+        .forEach(page => page.classList.remove('active'));
+
+      document.getElementById(pageId)
+        .classList.add('active');
+
+      document.querySelectorAll('.menu-item')
+        .forEach(item => item.classList.remove('active'));
+
+      menuItem.classList.add('active');
+    }
+  </script>
 
 </body>
 </html>
