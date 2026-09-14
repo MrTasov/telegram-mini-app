@@ -249,6 +249,9 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
+if (tg.requestFullscreen) {
+  tg.requestFullscreen();
+}
 
 /* CANVAS */
 
