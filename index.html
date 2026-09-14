@@ -12,16 +12,29 @@
   viewport-fit=cover"
 />
 
-<title>Survival Base 0.2</title>
+<title>Survival Base 0.3</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 
+:root {
+  --control-border: rgba(255,255,255,.26);
+  --control-bg: rgba(90,95,100,.22);
+  --control-bg-active: rgba(125,130,135,.38);
+  --control-icon: rgba(255,255,255,.78);
+}
+
+/* ==================================================
+   GLOBAL
+================================================== */
+
 * {
   box-sizing: border-box;
+
   user-select: none;
   -webkit-user-select: none;
+
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -40,12 +53,22 @@ body {
   touch-action: none;
   overscroll-behavior: none;
 
-  font-family: Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
 }
 
 body {
   position: fixed;
   inset: 0;
+}
+
+button,
+input {
+  font-family: inherit;
 }
 
 #game {
@@ -55,10 +78,9 @@ body {
   overflow: hidden;
 
   touch-action: none;
-  overscroll-behavior: none;
 }
 
-canvas {
+#canvas {
   position: absolute;
   inset: 0;
 
@@ -70,305 +92,669 @@ canvas {
   touch-action: none;
 }
 
-/* =========================
+/* ==================================================
    HUD
-========================= */
+================================================== */
 
 #hud {
   position: absolute;
 
-  top: calc(10px + env(safe-area-inset-top));
+  top: calc(9px + env(safe-area-inset-top));
+  left: 10px;
+  right: 10px;
 
-  left: 12px;
-  right: 12px;
+  z-index: 15;
 
   display: flex;
   justify-content: space-between;
-
-  z-index: 10;
+  align-items: flex-start;
 
   pointer-events: none;
 }
 
 .hudBox {
-  padding: 8px 12px;
+  padding: 7px 10px;
 
-  border-radius: 12px;
+  border-radius: 11px;
 
-  background: rgba(7,10,13,.78);
+  color: rgba(255,255,255,.9);
 
-  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(8,11,13,.54);
 
-  color: white;
+  border: 1px solid rgba(255,255,255,.09);
 
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .hudBox strong {
-  font-size: 15px;
+  font-size: 14px;
 }
 
-/* =========================
-   JOYSTICKS
-========================= */
+/* ==================================================
+   SETTINGS BUTTON
+================================================== */
 
-.joystickZone {
+#settingsButton {
   position: absolute;
 
-  width: 120px;
-  height: 120px;
+  top: calc(62px + env(safe-area-inset-top));
+  right: calc(11px + env(safe-area-inset-right));
 
-  bottom: calc(20px + env(safe-area-inset-bottom));
+  width: 38px;
+  height: 38px;
 
-  z-index: 20;
-
-  touch-action: none;
-}
-
-#moveZone {
-  left: 18px;
-}
-
-#aimZone {
-  right: 18px;
-}
-
-.joystickBase {
-  position: absolute;
-
-  width: 98px;
-  height: 98px;
-
-  left: 11px;
-  top: 11px;
+  z-index: 50;
 
   border-radius: 50%;
 
-  background: rgba(15,20,25,.68);
+  border: 1px solid rgba(255,255,255,.16);
 
-  border: 2px solid rgba(255,255,255,.16);
+  background: rgba(70,75,80,.22);
 
-  backdrop-filter: blur(7px);
-}
+  color: rgba(255,255,255,.72);
 
-.joystickStick {
-  position: absolute;
-
-  width: 48px;
-  height: 48px;
-
-  left: 36px;
-  top: 36px;
-
-  border-radius: 50%;
-
-  background: rgba(235,235,235,.88);
-
-  border: 2px solid white;
+  font-size: 18px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 22px;
-
-  pointer-events: none;
-
-  transform: translate(0,0);
-}
-
-/* =========================
-   ACTION BUTTON
-========================= */
-
-#actionButton {
-  position: absolute;
-
-  right: 22px;
-
-  bottom:
-    calc(
-      145px +
-      env(safe-area-inset-bottom)
-    );
-
-  width: 74px;
-  height: 74px;
-
-  border-radius: 50%;
-
-  border: 2px solid rgba(255,255,255,.15);
-
-  background: rgba(38,106,210,.92);
-
-  color: white;
-
-  font-size: 13px;
-  font-weight: bold;
-
-  z-index: 20;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 
   touch-action: manipulation;
-
-  box-shadow: 0 0 20px rgba(45,120,255,.25);
 }
 
-#actionButton:active {
+#settingsButton:active {
+  background: rgba(120,125,130,.38);
   transform: scale(.94);
 }
 
-/* =========================
+/* ==================================================
+   CUSTOM CONTROLS
+================================================== */
+
+.gameControl {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 30;
+
+  touch-action: none;
+}
+
+/* joystick container */
+
+.joystickZone {
+  width: 96px;
+  height: 96px;
+
+  border-radius: 50%;
+
+  touch-action: none;
+
+  transition: opacity .12s;
+}
+
+.joystickBase {
+  position: absolute;
+
+  left: 8px;
+  top: 8px;
+
+  width: 80px;
+  height: 80px;
+
+  border-radius: 50%;
+
+  border: 1.5px solid var(--control-border);
+
+  background: rgba(80,85,90,.13);
+
+  box-shadow:
+    inset 0 0 18px rgba(0,0,0,.12);
+
+  transition:
+    background .12s,
+    border-color .12s;
+}
+
+.joystickStick {
+  position: absolute;
+
+  left: 29px;
+  top: 29px;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  border: 1.5px solid rgba(255,255,255,.35);
+
+  background: rgba(130,135,140,.34);
+
+  color: rgba(255,255,255,.75);
+
+  font-size: 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+
+  box-shadow: 0 2px 9px rgba(0,0,0,.18);
+}
+
+.joystickZone.active .joystickBase {
+  background: rgba(120,125,130,.24);
+
+  border-color: rgba(255,255,255,.38);
+}
+
+.joystickZone.active .joystickStick {
+  background: rgba(165,170,175,.46);
+}
+
+/* fire/action buttons */
+
+.controlButton {
+  width: 54px;
+  height: 54px;
+
+  border-radius: 50%;
+
+  border: 1.5px solid var(--control-border);
+
+  background: var(--control-bg);
+
+  color: var(--control-icon);
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  touch-action: none;
+
+  box-shadow: 0 2px 12px rgba(0,0,0,.16);
+}
+
+.controlButton:active,
+.controlButton.pressed {
+  background: var(--control-bg-active);
+
+  border-color: rgba(255,255,255,.42);
+
+  transform:
+    translate(-50%, -50%)
+    scale(.92);
+}
+
+#fireButton {
+  font-size: 24px;
+}
+
+#actionButton {
+  font-size: 21px;
+}
+
+#actionButton.inactive {
+  opacity: .43;
+}
+
+#actionButton.available {
+  opacity: .92;
+
+  border-color: rgba(255,255,255,.43);
+
+  background: rgba(110,115,120,.31);
+}
+
+/* ==================================================
    MESSAGE
-========================= */
+================================================== */
 
 #message {
   position: absolute;
 
   left: 50%;
-  bottom: calc(165px + env(safe-area-inset-bottom));
+
+  bottom:
+    calc(
+      142px +
+      env(safe-area-inset-bottom)
+    );
 
   transform: translateX(-50%);
 
-  z-index: 50;
+  z-index: 70;
 
-  padding: 10px 15px;
+  max-width: 80%;
 
-  border-radius: 12px;
+  padding: 8px 13px;
 
-  color: white;
+  border-radius: 10px;
 
-  background: rgba(0,0,0,.84);
+  color: rgba(255,255,255,.92);
 
-  border: 1px solid rgba(255,255,255,.13);
+  background: rgba(0,0,0,.67);
 
-  white-space: nowrap;
+  border: 1px solid rgba(255,255,255,.10);
+
+  font-size: 13px;
+
+  text-align: center;
 
   opacity: 0;
 
-  transition: opacity .2s;
+  transition: opacity .18s;
 
   pointer-events: none;
+
+  backdrop-filter: blur(5px);
 }
 
 #message.show {
   opacity: 1;
 }
 
-/* =========================
-   FADE / LOADING
-========================= */
+/* ==================================================
+   TRANSITION
+================================================== */
 
 #fade {
   position: absolute;
-
   inset: 0;
 
-  background: black;
-
-  z-index: 100;
-
-  opacity: 0;
-
-  pointer-events: none;
-
-  transition: opacity .35s;
+  z-index: 200;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  color: white;
+  color: rgba(255,255,255,.95);
 
-  font-size: 19px;
+  background: #000;
+
+  font-size: 18px;
   letter-spacing: 2px;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: opacity .32s;
 }
 
 #fade.show {
   opacity: 1;
 }
 
-/* =========================
-   WORKSHOP PANEL
-========================= */
+/* ==================================================
+   MODALS
+================================================== */
 
-#workshopPanel {
+.overlay {
   position: absolute;
-
   inset: 0;
 
-  z-index: 120;
+  z-index: 300;
 
   display: none;
 
   align-items: center;
   justify-content: center;
 
-  background: rgba(0,0,0,.75);
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    calc(18px + env(safe-area-inset-right))
+    calc(18px + env(safe-area-inset-bottom))
+    calc(18px + env(safe-area-inset-left));
 
-  padding: 24px;
+  background: rgba(0,0,0,.72);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-#workshopBox {
-  width: min(430px, 92vw);
+.overlay.open {
+  display: flex;
+}
 
-  background: #14191d;
+.panel {
+  width: min(430px, 96vw);
 
-  border: 1px solid rgba(255,255,255,.16);
+  max-height: 90vh;
+
+  overflow-y: auto;
 
   border-radius: 20px;
 
-  padding: 22px;
+  background: #15191d;
+
+  border: 1px solid rgba(255,255,255,.12);
+
+  box-shadow: 0 22px 70px rgba(0,0,0,.6);
+
+  padding: 19px;
 
   color: white;
 
-  box-shadow: 0 25px 80px rgba(0,0,0,.6);
+  touch-action: pan-y;
 }
 
-#workshopBox h2 {
-  margin: 0 0 8px;
+.panel h2 {
+  margin: 0 0 6px;
+
+  font-size: 21px;
 }
 
-#workshopBox p {
-  color: #aaa;
+.panelSubtitle {
+  margin: 0 0 18px;
 
-  line-height: 1.5;
+  color: rgba(255,255,255,.55);
 
-  margin-bottom: 18px;
+  font-size: 13px;
 }
 
-.workshopItem {
-  padding: 14px;
+.menuButton {
+  width: 100%;
 
   margin-top: 9px;
 
+  padding: 13px 14px;
+
   border-radius: 12px;
 
-  background: #20272c;
+  border: 1px solid rgba(255,255,255,.10);
 
-  border: 1px solid rgba(255,255,255,.07);
+  background: #22282d;
 
-  color: #bbb;
+  color: rgba(255,255,255,.9);
+
+  text-align: left;
+
+  font-size: 15px;
+
+  touch-action: manipulation;
 }
 
-#closeWorkshop {
-  margin-top: 18px;
+.menuButton:active {
+  background: #30373c;
+}
 
-  width: 100%;
+.menuButton.primary {
+  background: #2b5fa8;
+
+  text-align: center;
+}
+
+.menuButton.danger {
+  color: #ffcbcb;
+}
+
+.menuButton.center {
+  text-align: center;
+}
+
+.settingRow {
+  margin-top: 15px;
 
   padding: 13px;
 
-  border: none;
+  border-radius: 13px;
 
-  border-radius: 12px;
+  background: #20262a;
 
-  background: #2d70d8;
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+.settingLabel {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 10px;
+
+  font-size: 14px;
+}
+
+#soundVolume {
+  width: 100%;
+}
+
+/* ==================================================
+   CONTROL EDITOR
+================================================== */
+
+.orientationTabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 8px;
+
+  margin: 14px 0;
+}
+
+.orientationTab {
+  padding: 10px;
+
+  border-radius: 10px;
+
+  border: 1px solid rgba(255,255,255,.10);
+
+  background: #20262a;
+
+  color: rgba(255,255,255,.65);
+
+  font-size: 13px;
+
+  touch-action: manipulation;
+}
+
+.orientationTab.active {
+  background: #315f99;
 
   color: white;
 
-  font-size: 15px;
-  font-weight: bold;
+  border-color: rgba(255,255,255,.20);
+}
+
+.editorStageWrap {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 10px 0 15px;
+
+  min-height: 275px;
+}
+
+#editorStage {
+  position: relative;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.025)
+    ),
+    #292f31;
+
+  border: 2px solid rgba(255,255,255,.14);
+
+  border-radius: 15px;
+
+  touch-action: none;
+
+  transition:
+    width .2s,
+    height .2s;
+}
+
+#editorStage.portrait {
+  width: 180px;
+  height: 320px;
+}
+
+#editorStage.landscape {
+  width: 320px;
+  height: 180px;
+}
+
+.editorFakeHud {
+  position: absolute;
+
+  top: 7px;
+  left: 7px;
+
+  color: rgba(255,255,255,.32);
+
+  font-size: 8px;
+
+  pointer-events: none;
+}
+
+.previewControl {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: rgba(255,255,255,.82);
+
+  background: rgba(120,125,130,.28);
+
+  border: 1px solid rgba(255,255,255,.36);
+
+  touch-action: none;
+
+  cursor: grab;
+}
+
+.previewControl.joystickPreview {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+}
+
+.previewControl.buttonPreview {
+  width: 30px;
+  height: 30px;
+
+  border-radius: 50%;
+
+  font-size: 12px;
+}
+
+.previewControl.dragging {
+  background: rgba(160,165,170,.48);
+
+  border-color: white;
+}
+
+.editorHint {
+  color: rgba(255,255,255,.48);
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  margin-bottom: 10px;
+}
+
+/* ==================================================
+   WORKSHOP
+================================================== */
+
+.workshopItem {
+  padding: 13px;
+
+  margin-top: 8px;
+
+  border-radius: 11px;
+
+  background: #20262a;
+
+  border: 1px solid rgba(255,255,255,.07);
+
+  color: rgba(255,255,255,.65);
+}
+
+/* ==================================================
+   LANDSCAPE SMALL UI
+================================================== */
+
+@media (orientation: landscape) {
+
+  #hud {
+    left:
+      calc(
+        10px +
+        env(safe-area-inset-left)
+      );
+
+    right:
+      calc(
+        10px +
+        env(safe-area-inset-right)
+      );
+  }
+
+  #settingsButton {
+    right:
+      calc(
+        11px +
+        env(safe-area-inset-right)
+      );
+  }
+
+}
+
+/* very small screens */
+
+@media (max-height: 650px) {
+
+  .joystickZone {
+    width: 88px;
+    height: 88px;
+  }
+
+  .joystickBase {
+    width: 72px;
+    height: 72px;
+  }
+
+  .joystickStick {
+    left: 27px;
+    top: 27px;
+
+    width: 34px;
+    height: 34px;
+  }
+
 }
 
 </style>
@@ -380,27 +766,46 @@ canvas {
 
   <canvas id="canvas"></canvas>
 
+  <!-- HUD -->
+
   <div id="hud">
 
     <div class="hudBox">
-      <strong id="locationName">БАЗА</strong>
+
+      <strong id="locationName">
+        БАЗА
+      </strong>
+
       <br>
+
       ДЕНЬ 1 · 14:32
+
     </div>
 
     <div class="hudBox">
+
       ❤️ 100
       &nbsp;
       🍖 100
+
     </div>
 
   </div>
 
-  <!-- LEFT JOYSTICK -->
+  <!-- SETTINGS -->
+
+  <button
+    id="settingsButton"
+    aria-label="Настройки"
+  >
+    ⚙
+  </button>
+
+  <!-- MOVE -->
 
   <div
-    id="moveZone"
-    class="joystickZone"
+    id="moveControl"
+    class="gameControl joystickZone"
   >
 
     <div class="joystickBase"></div>
@@ -408,15 +813,16 @@ canvas {
     <div
       id="moveStick"
       class="joystickStick"
-    ></div>
+    >
+    </div>
 
   </div>
 
-  <!-- RIGHT JOYSTICK -->
+  <!-- AIM -->
 
   <div
-    id="aimZone"
-    class="joystickZone"
+    id="aimControl"
+    class="gameControl joystickZone"
   >
 
     <div class="joystickBase"></div>
@@ -425,32 +831,237 @@ canvas {
       id="aimStick"
       class="joystickStick"
     >
-      🎯
+      ⊙
     </div>
 
   </div>
 
-  <!-- ACTION -->
+  <!-- FIRE -->
 
-  <button id="actionButton">
-    ДЕЙСТВИЕ
+  <button
+    id="fireButton"
+    class="gameControl controlButton"
+    aria-label="Огонь"
+  >
+    ◉
   </button>
 
+  <!-- ACTION -->
+
+  <button
+    id="actionButton"
+    class="gameControl controlButton inactive"
+    aria-label="Действие"
+  >
+    ✋
+  </button>
+
+  <!-- MESSAGE -->
+
   <div id="message"></div>
+
+  <!-- FADE -->
 
   <div id="fade">
     ПОДЗЕМНАЯ БАЗА
   </div>
 
-  <div id="workshopPanel">
+  <!-- SETTINGS PANEL -->
 
-    <div id="workshopBox">
+  <div
+    id="settingsOverlay"
+    class="overlay"
+  >
 
-      <h2>🔧 МАСТЕРСКАЯ</h2>
+    <div class="panel">
 
-      <p>
-        Пока это тест мастерской.
-        Позже здесь появится настоящий крафт.
+      <h2>
+        ⚙️ Настройки
+      </h2>
+
+      <p class="panelSubtitle">
+        Survival Base 0.3
+      </p>
+
+      <button
+        id="openControlsEditor"
+        class="menuButton"
+      >
+        🎮 Настройка управления
+      </button>
+
+      <button
+        id="fullscreenButton"
+        class="menuButton"
+      >
+        ⛶ Полноэкранный режим
+      </button>
+
+      <div class="settingRow">
+
+        <div class="settingLabel">
+
+          <span>
+            🔊 Звук
+          </span>
+
+          <span id="soundValue">
+            70%
+          </span>
+
+        </div>
+
+        <input
+          id="soundVolume"
+          type="range"
+          min="0"
+          max="100"
+          value="70"
+        >
+
+      </div>
+
+      <button
+        id="closeSettings"
+        class="menuButton center"
+      >
+        Закрыть
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- CONTROLS EDITOR -->
+
+  <div
+    id="controlsOverlay"
+    class="overlay"
+  >
+
+    <div class="panel">
+
+      <h2>
+        🎮 Управление
+      </h2>
+
+      <p class="panelSubtitle">
+        Перетащи элементы туда,
+        где тебе удобно.
+      </p>
+
+      <div class="orientationTabs">
+
+        <button
+          id="portraitTab"
+          class="orientationTab active"
+        >
+          📱 Вертикально
+        </button>
+
+        <button
+          id="landscapeTab"
+          class="orientationTab"
+        >
+          ↔️ Горизонтально
+        </button>
+
+      </div>
+
+      <div class="editorStageWrap">
+
+        <div
+          id="editorStage"
+          class="portrait"
+        >
+
+          <div class="editorFakeHud">
+            GAME SCREEN
+          </div>
+
+          <div
+            id="previewMove"
+            class="previewControl joystickPreview"
+          >
+            ◌
+          </div>
+
+          <div
+            id="previewAim"
+            class="previewControl joystickPreview"
+          >
+            ⊙
+          </div>
+
+          <div
+            id="previewFire"
+            class="previewControl buttonPreview"
+          >
+            ◉
+          </div>
+
+          <div
+            id="previewAction"
+            class="previewControl buttonPreview"
+          >
+            ✋
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="editorHint">
+
+        Настройки вертикального и
+        горизонтального экрана
+        сохраняются отдельно.
+
+      </div>
+
+      <button
+        id="saveControls"
+        class="menuButton primary"
+      >
+        Сохранить
+      </button>
+
+      <button
+        id="resetControls"
+        class="menuButton"
+      >
+        ↺ Сбросить эту раскладку
+      </button>
+
+      <button
+        id="backFromControls"
+        class="menuButton center"
+      >
+        Назад
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- WORKSHOP -->
+
+  <div
+    id="workshopOverlay"
+    class="overlay"
+  >
+
+    <div class="panel">
+
+      <h2>
+        🔧 Мастерская
+      </h2>
+
+      <p class="panelSubtitle">
+
+        Пока это тест помещения.
+        Настоящий крафт появится позже.
+
       </p>
 
       <div class="workshopItem">
@@ -469,7 +1080,10 @@ canvas {
         🔩 Детали
       </div>
 
-      <button id="closeWorkshop">
+      <button
+        id="closeWorkshop"
+        class="menuButton center"
+      >
         Закрыть
       </button>
 
@@ -481,42 +1095,130 @@ canvas {
 
 <script>
 
-/* =====================================================
+/* ==================================================
    TELEGRAM
-===================================================== */
+================================================== */
 
-const tg = window.Telegram?.WebApp;
+const tg =
+  window.Telegram?.WebApp;
 
-if (tg) {
+function requestTelegramFullscreen() {
 
-  tg.ready();
+  if (!tg) return;
 
-  tg.expand();
+  try {
 
-  if (
-    typeof tg.disableVerticalSwipes
-    === "function"
-  ) {
+    tg.expand();
 
-    tg.disableVerticalSwipes();
+  } catch (e) {}
 
-  }
+  try {
+
+    if (
+      typeof tg.requestFullscreen
+      === "function"
+    ) {
+
+      tg.requestFullscreen();
+
+    }
+
+  } catch (e) {}
 
 }
 
-/* =====================================================
-   PREVENT PAGE MOVEMENT
-===================================================== */
+if (tg) {
+
+  try {
+    tg.ready();
+  } catch (e) {}
+
+  try {
+    tg.expand();
+  } catch (e) {}
+
+  try {
+
+    if (
+      typeof tg.disableVerticalSwipes
+      === "function"
+    ) {
+
+      tg.disableVerticalSwipes();
+
+    }
+
+  } catch (e) {}
+
+  /*
+    Автоматическая попытка fullscreen.
+    На некоторых версиях Telegram/iOS
+    понадобится пользовательское касание.
+  */
+
+  setTimeout(
+    requestTelegramFullscreen,
+    250
+  );
+
+}
+
+/*
+  Первая интеракция пользователя —
+  ещё одна попытка fullscreen.
+*/
+
+let fullscreenGestureTried = false;
+
+document.addEventListener(
+  "pointerdown",
+  () => {
+
+    if (fullscreenGestureTried) {
+      return;
+    }
+
+    fullscreenGestureTried = true;
+
+    requestTelegramFullscreen();
+
+  },
+  {
+    once: true,
+    capture: true
+  }
+);
+
+/* ==================================================
+   PREVENT TELEGRAM / PAGE SWIPES
+================================================== */
 
 document.addEventListener(
   "touchmove",
-  e => e.preventDefault(),
-  { passive:false }
+  e => {
+
+    if (
+      !e.target.closest(".panel")
+    ) {
+
+      e.preventDefault();
+
+    }
+
+  },
+  {
+    passive: false
+  }
 );
 
-/* =====================================================
+document.addEventListener(
+  "gesturestart",
+  e => e.preventDefault()
+);
+
+/* ==================================================
    CANVAS
-===================================================== */
+================================================== */
 
 const canvas =
   document.getElementById("canvas");
@@ -526,10 +1228,11 @@ const ctx =
 
 let screenW = 0;
 let screenH = 0;
+let pixelRatio = 1;
 
 function resize() {
 
-  const ratio =
+  pixelRatio =
     window.devicePixelRatio || 1;
 
   screenW =
@@ -539,10 +1242,16 @@ function resize() {
     window.innerHeight;
 
   canvas.width =
-    screenW * ratio;
+    Math.round(
+      screenW *
+      pixelRatio
+    );
 
   canvas.height =
-    screenH * ratio;
+    Math.round(
+      screenH *
+      pixelRatio
+    );
 
   canvas.style.width =
     screenW + "px";
@@ -551,36 +1260,55 @@ function resize() {
     screenH + "px";
 
   ctx.setTransform(
-    ratio,
+    pixelRatio,
     0,
     0,
-    ratio,
+    pixelRatio,
     0,
     0
   );
 
-}
+  applyCurrentControlLayout();
 
-resize();
+}
 
 window.addEventListener(
   "resize",
-  resize
+  () => {
+
+    resize();
+
+  }
 );
 
-/* =====================================================
-   GAME STATE
-===================================================== */
+window.addEventListener(
+  "orientationchange",
+  () => {
 
-let scene =
-  "surface";
+    setTimeout(
+      resize,
+      120
+    );
+
+  }
+);
+
+resize();
+
+/* ==================================================
+   GAME STATE
+================================================== */
+
+let scene = "surface";
+
+let menusOpen = false;
 
 const player = {
 
   x: 800,
   y: 860,
 
-  radius: 17,
+  radius: 16,
 
   speed: 4,
 
@@ -590,13 +1318,15 @@ const player = {
 };
 
 const camera = {
-  x:0,
-  y:0
+
+  x: 0,
+  y: 0
+
 };
 
-/* =====================================================
-   INPUT
-===================================================== */
+/* ==================================================
+   INPUT STATE
+================================================== */
 
 let moveX = 0;
 let moveY = 0;
@@ -604,71 +1334,286 @@ let moveY = 0;
 let aimX = 0;
 let aimY = 0;
 
-let firing = false;
+let fireHeld = false;
 
-/* =====================================================
-   JOYSTICK CREATOR
-===================================================== */
+/* ==================================================
+   CONTROL LAYOUTS
+================================================== */
 
-function setupJoystick(
-  zone,
-  stick,
-  callback,
-  releaseCallback
-) {
+const DEFAULT_LAYOUTS = {
 
-  let activePointer = null;
+  portrait: {
 
-  const max = 34;
+    move: {
+      x: 0.19,
+      y: 0.82
+    },
 
-  function update(e) {
+    aim: {
+      x: 0.80,
+      y: 0.82
+    },
 
-    const rect =
-      zone.getBoundingClientRect();
+    fire: {
+      x: 0.73,
+      y: 0.66
+    },
 
-    const cx =
-      rect.left +
-      rect.width / 2;
+    action: {
+      x: 0.89,
+      y: 0.63
+    }
 
-    const cy =
-      rect.top +
-      rect.height / 2;
+  },
 
-    let dx =
-      e.clientX - cx;
+  landscape: {
 
-    let dy =
-      e.clientY - cy;
+    move: {
+      x: 0.12,
+      y: 0.76
+    },
 
-    const dist =
-      Math.hypot(dx,dy);
+    aim: {
+      x: 0.88,
+      y: 0.76
+    },
 
-    if (dist > max) {
+    fire: {
+      x: 0.79,
+      y: 0.54
+    },
 
-      dx =
-        dx / dist * max;
+    action: {
+      x: 0.92,
+      y: 0.49
+    }
 
-      dy =
-        dy / dist * max;
+  }
+
+};
+
+function cloneObject(obj) {
+
+  return JSON.parse(
+    JSON.stringify(obj)
+  );
+
+}
+
+function loadLayouts() {
+
+  try {
+
+    const raw =
+      localStorage.getItem(
+        "survivalBaseLayoutsV03"
+      );
+
+    if (!raw) {
+
+      return cloneObject(
+        DEFAULT_LAYOUTS
+      );
 
     }
 
-    stick.style.transform =
-      `translate(${dx}px,${dy}px)`;
+    const saved =
+      JSON.parse(raw);
 
-    callback(
-      dx / max,
-      dy / max
+    return {
+
+      portrait: {
+        ...cloneObject(
+          DEFAULT_LAYOUTS.portrait
+        ),
+        ...(saved.portrait || {})
+      },
+
+      landscape: {
+        ...cloneObject(
+          DEFAULT_LAYOUTS.landscape
+        ),
+        ...(saved.landscape || {})
+      }
+
+    };
+
+  } catch (e) {
+
+    return cloneObject(
+      DEFAULT_LAYOUTS
     );
 
   }
 
-  function stop(e) {
+}
+
+let controlLayouts =
+  loadLayouts();
+
+function saveLayouts() {
+
+  try {
+
+    localStorage.setItem(
+      "survivalBaseLayoutsV03",
+      JSON.stringify(
+        controlLayouts
+      )
+    );
+
+  } catch (e) {}
+
+}
+
+function currentOrientation() {
+
+  return (
+    window.innerWidth >
+    window.innerHeight
+  )
+    ? "landscape"
+    : "portrait";
+
+}
+
+function setControlPosition(
+  element,
+  data
+) {
+
+  if (!element || !data) {
+    return;
+  }
+
+  element.style.left =
+    (data.x * 100) + "%";
+
+  element.style.top =
+    (data.y * 100) + "%";
+
+}
+
+function applyCurrentControlLayout() {
+
+  if (
+    !document.getElementById(
+      "moveControl"
+    )
+  ) return;
+
+  const mode =
+    currentOrientation();
+
+  const layout =
+    controlLayouts[mode];
+
+  setControlPosition(
+    document.getElementById(
+      "moveControl"
+    ),
+    layout.move
+  );
+
+  setControlPosition(
+    document.getElementById(
+      "aimControl"
+    ),
+    layout.aim
+  );
+
+  setControlPosition(
+    document.getElementById(
+      "fireButton"
+    ),
+    layout.fire
+  );
+
+  setControlPosition(
+    document.getElementById(
+      "actionButton"
+    ),
+    layout.action
+  );
+
+}
+
+/* ==================================================
+   JOYSTICKS
+================================================== */
+
+function setupJoystick(
+  zone,
+  stick,
+  onMove,
+  onEnd
+) {
+
+  let activePointer = null;
+
+  const maxDistance = 29;
+
+  function updateJoystick(e) {
+
+    const rect =
+      zone.getBoundingClientRect();
+
+    const centerX =
+      rect.left +
+      rect.width / 2;
+
+    const centerY =
+      rect.top +
+      rect.height / 2;
+
+    let dx =
+      e.clientX -
+      centerX;
+
+    let dy =
+      e.clientY -
+      centerY;
+
+    const distance =
+      Math.hypot(
+        dx,
+        dy
+      );
+
+    if (
+      distance >
+      maxDistance
+    ) {
+
+      dx =
+        dx /
+        distance *
+        maxDistance;
+
+      dy =
+        dy /
+        distance *
+        maxDistance;
+
+    }
+
+    stick.style.transform =
+      `translate(${dx}px, ${dy}px)`;
+
+    onMove(
+      dx / maxDistance,
+      dy / maxDistance
+    );
+
+  }
+
+  function stopJoystick(e) {
 
     if (
       activePointer !== null &&
       e.pointerId !== undefined &&
-      e.pointerId !== activePointer
+      e.pointerId !==
+      activePointer
     ) {
 
       return;
@@ -677,13 +1622,17 @@ function setupJoystick(
 
     activePointer = null;
 
+    zone.classList.remove(
+      "active"
+    );
+
     stick.style.transform =
-      "translate(0px,0px)";
+      "translate(0px, 0px)";
 
-    callback(0,0);
+    onMove(0, 0);
 
-    if (releaseCallback) {
-      releaseCallback();
+    if (onEnd) {
+      onEnd();
     }
 
   }
@@ -692,18 +1641,28 @@ function setupJoystick(
     "pointerdown",
     e => {
 
+      if (menusOpen) {
+        return;
+      }
+
       e.preventDefault();
 
       activePointer =
         e.pointerId;
 
+      zone.classList.add(
+        "active"
+      );
+
       try {
+
         zone.setPointerCapture(
           e.pointerId
         );
-      } catch(err) {}
 
-      update(e);
+      } catch (err) {}
+
+      updateJoystick(e);
 
     }
   );
@@ -715,82 +1674,89 @@ function setupJoystick(
       if (
         e.pointerId !==
         activePointer
-      ) return;
+      ) {
+
+        return;
+
+      }
 
       e.preventDefault();
 
-      update(e);
+      updateJoystick(e);
 
     }
   );
 
   zone.addEventListener(
     "pointerup",
-    stop
+    stopJoystick
   );
 
   zone.addEventListener(
     "pointercancel",
-    stop
+    stopJoystick
   );
 
 }
 
-/* =====================================================
-   LEFT JOYSTICK
-===================================================== */
+/* move joystick */
 
 setupJoystick(
 
   document.getElementById(
-    "moveZone"
+    "moveControl"
   ),
 
   document.getElementById(
     "moveStick"
   ),
 
-  (x,y) => {
+  (x, y) => {
 
     moveX = x;
     moveY = y;
+
+  },
+
+  () => {
+
+    moveX = 0;
+    moveY = 0;
 
   }
 
 );
 
-/* =====================================================
-   RIGHT JOYSTICK
-===================================================== */
+/* aim joystick */
 
 setupJoystick(
 
   document.getElementById(
-    "aimZone"
+    "aimControl"
   ),
 
   document.getElementById(
     "aimStick"
   ),
 
-  (x,y) => {
+  (x, y) => {
 
     aimX = x;
     aimY = y;
 
-    const power =
-      Math.hypot(x,y);
+    const strength =
+      Math.hypot(
+        x,
+        y
+      );
 
-    if (power > .18) {
+    if (
+      strength >
+      0.13
+    ) {
 
       player.aimX = x;
       player.aimY = y;
-
-      firing = true;
-
-    } else {
-
-      firing = false;
 
     }
 
@@ -798,42 +1764,150 @@ setupJoystick(
 
   () => {
 
-    firing = false;
+    aimX = 0;
+    aimY = 0;
 
   }
 
 );
 
-/* =====================================================
+/* ==================================================
+   FIRE BUTTON
+================================================== */
+
+const fireButton =
+  document.getElementById(
+    "fireButton"
+  );
+
+function startFire(e) {
+
+  if (menusOpen) {
+    return;
+  }
+
+  e.preventDefault();
+
+  fireHeld = true;
+
+  fireButton.classList.add(
+    "pressed"
+  );
+
+  /*
+    Сразу один выстрел.
+    Если держать —
+    дальше стреляет автоматически.
+  */
+
+  shoot(true);
+
+  try {
+
+    fireButton.setPointerCapture(
+      e.pointerId
+    );
+
+  } catch (err) {}
+
+}
+
+function stopFire(e) {
+
+  fireHeld = false;
+
+  fireButton.classList.remove(
+    "pressed"
+  );
+
+}
+
+fireButton.addEventListener(
+  "pointerdown",
+  startFire
+);
+
+fireButton.addEventListener(
+  "pointerup",
+  stopFire
+);
+
+fireButton.addEventListener(
+  "pointercancel",
+  stopFire
+);
+
+fireButton.addEventListener(
+  "pointerleave",
+  e => {
+
+    if (
+      e.buttons === 0
+    ) {
+
+      stopFire(e);
+
+    }
+
+  }
+);
+
+/* ==================================================
    BULLETS
-===================================================== */
+================================================== */
 
 const bullets = [];
 
 let lastShot = 0;
 
-function shoot() {
+const fireInterval = 155;
+
+function shoot(force = false) {
+
+  if (menusOpen) {
+    return;
+  }
 
   const now =
     performance.now();
 
   if (
-    now - lastShot < 220
-  ) return;
+    !force &&
+    now -
+    lastShot <
+    fireInterval
+  ) {
+
+    return;
+
+  }
+
+  if (
+    force &&
+    now -
+    lastShot <
+    80
+  ) {
+
+    return;
+
+  }
 
   lastShot = now;
 
-  const mag =
+  const magnitude =
     Math.hypot(
       player.aimX,
       player.aimY
     ) || 1;
 
   const dx =
-    player.aimX / mag;
+    player.aimX /
+    magnitude;
 
   const dy =
-    player.aimY / mag;
+    player.aimY /
+    magnitude;
 
   bullets.push({
 
@@ -846,12 +1920,12 @@ function shoot() {
       dy * 25,
 
     dx:
-      dx * 10,
+      dx * 11,
 
     dy:
-      dy * 10,
+      dy * 11,
 
-    life:70
+    life: 85
 
   });
 
@@ -859,7 +1933,7 @@ function shoot() {
 
 function updateBullets() {
 
-  if (firing) {
+  if (fireHeld) {
 
     shoot();
 
@@ -874,19 +1948,25 @@ function updateBullets() {
     i--
   ) {
 
-    const b =
+    const bullet =
       bullets[i];
 
-    b.x += b.dx;
-    b.y += b.dy;
+    bullet.x +=
+      bullet.dx;
 
-    b.life--;
+    bullet.y +=
+      bullet.dy;
+
+    bullet.life--;
 
     if (
-      b.life <= 0
+      bullet.life <= 0
     ) {
 
-      bullets.splice(i,1);
+      bullets.splice(
+        i,
+        1
+      );
 
     }
 
@@ -894,173 +1974,163 @@ function updateBullets() {
 
 }
 
-/* =====================================================
+/* ==================================================
    SURFACE MAP
-===================================================== */
+================================================== */
 
 const surface = {
 
-  width:1600,
-  height:1200,
+  width: 1600,
+  height: 1200,
 
   outer: {
 
-    left:170,
-    top:130,
-    right:1430,
-    bottom:1070,
+    left: 170,
+    top: 130,
+    right: 1430,
+    bottom: 1070,
 
-    thickness:45
-
-  },
-
-  mainGate: {
-
-    x:730,
-    width:140,
-    open:false
+    thickness: 45
 
   },
 
   inner: {
 
-    left:610,
-    top:420,
-    right:990,
-    bottom:760,
+    left: 610,
+    top: 420,
+    right: 990,
+    bottom: 760,
 
-    thickness:28,
+    thickness: 28,
 
-    gateX:750,
-    gateWidth:100
+    gateX: 750,
+    gateWidth: 100
 
   },
 
   hatch: {
 
-    x:800,
-    y:590
+    x: 800,
+    y: 590
 
   }
 
 };
 
-/* =====================================================
-   UNDERGROUND MAP
-===================================================== */
+/* ==================================================
+   UNDERGROUND
+================================================== */
 
 const underground = {
 
-  width:1450,
-  height:1450,
+  width: 1450,
+  height: 1450,
 
-  corridorLeft:610,
-  corridorRight:840,
+  corridor: {
 
-  corridorTop:200,
-  corridorBottom:1260,
+    left: 610,
+    right: 840,
+
+    top: 200,
+    bottom: 1260
+
+  },
 
   entrance: {
 
-    x:725,
-    y:1180
+    x: 725,
+    y: 1180
 
   },
 
   workshop: {
 
-    x:250,
-    y:850,
+    left: 260,
+    right: 610,
 
-    w:360,
-    h:270,
+    top: 850,
+    bottom: 1120,
 
-    doorY:950
+    doorwayTop: 905,
+    doorwayBottom: 1015
 
   }
 
 };
 
-/* =====================================================
-   ROOM DATA
-===================================================== */
-
-const roomDoors = [
+const undergroundRooms = [
 
   {
-    side:"left",
-    y:950,
-    name:"МАСТЕРСКАЯ",
-    open:true
+    side: "left",
+    y: 960,
+    name: "МАСТЕРСКАЯ",
+    active: true
   },
 
   {
-    side:"left",
-    y:700,
-    name:"МЕДИЦИНА",
-    open:false
+    side: "left",
+    y: 700,
+    name: "МЕДИЦИНА",
+    active: false
   },
 
   {
-    side:"left",
-    y:450,
-    name:"СКЛАД",
-    open:false
+    side: "left",
+    y: 450,
+    name: "СКЛАД",
+    active: false
   },
 
   {
-    side:"right",
-    y:950,
-    name:"ОТДЫХ",
-    open:false
+    side: "right",
+    y: 960,
+    name: "ОТДЫХ",
+    active: false
   },
 
   {
-    side:"right",
-    y:700,
-    name:"ЭНЕРГЕТИКА",
-    open:false
+    side: "right",
+    y: 700,
+    name: "ЭНЕРГЕТИКА",
+    active: false
   },
 
   {
-    side:"right",
-    y:450,
-    name:"ОБОРОНА",
-    open:false
+    side: "right",
+    y: 450,
+    name: "ОБОРОНА",
+    active: false
   }
 
 ];
 
-/* =====================================================
-   FARM ROOM
-===================================================== */
-
 const farmRoom = {
 
-  x:430,
-  y:40,
+  left: 430,
+  top: 40,
 
-  w:590,
-  h:300
+  width: 590,
+  height: 300
 
 };
 
-/* =====================================================
+/* ==================================================
    MESSAGE
-===================================================== */
+================================================== */
 
-let messageTimer;
+let messageTimer = null;
 
 function showMessage(text) {
 
-  const el =
+  const element =
     document.getElementById(
       "message"
     );
 
-  el.textContent = text;
+  element.textContent =
+    text;
 
-  el.classList.add(
+  element.classList.add(
     "show"
   );
 
@@ -1070,18 +2140,21 @@ function showMessage(text) {
 
   messageTimer =
     setTimeout(
-      () =>
-        el.classList.remove(
+      () => {
+
+        element.classList.remove(
           "show"
-        ),
+        );
+
+      },
       1400
     );
 
 }
 
-/* =====================================================
-   TRANSITION
-===================================================== */
+/* ==================================================
+   TRANSITIONS
+================================================== */
 
 function transition(
   label,
@@ -1100,6 +2173,11 @@ function transition(
     "show"
   );
 
+  moveX = 0;
+  moveY = 0;
+
+  fireHeld = false;
+
   setTimeout(
     () => {
 
@@ -1113,18 +2191,14 @@ function transition(
           );
 
         },
-        250
+        280
       );
 
     },
-    420
+    390
   );
 
 }
-
-/* =====================================================
-   ENTER BUNKER
-===================================================== */
 
 function enterUnderground() {
 
@@ -1136,16 +2210,21 @@ function enterUnderground() {
         "underground";
 
       player.x =
-        underground.entrance.x;
+        underground
+        .entrance.x;
 
       player.y =
-        underground.entrance.y;
+        underground
+        .entrance.y -
+        70;
 
       bullets.length = 0;
 
-      document.getElementById(
-        "locationName"
-      ).textContent =
+      document
+        .getElementById(
+          "locationName"
+        )
+        .textContent =
         "БУНКЕР";
 
     }
@@ -1153,11 +2232,7 @@ function enterUnderground() {
 
 }
 
-/* =====================================================
-   RETURN SURFACE
-===================================================== */
-
-function returnSurface() {
+function returnToSurface() {
 
   transition(
     "ПОВЕРХНОСТЬ",
@@ -1166,17 +2241,16 @@ function returnSurface() {
       scene =
         "surface";
 
-      player.x =
-        800;
-
-      player.y =
-        665;
+      player.x = 800;
+      player.y = 690;
 
       bullets.length = 0;
 
-      document.getElementById(
-        "locationName"
-      ).textContent =
+      document
+        .getElementById(
+          "locationName"
+        )
+        .textContent =
         "БАЗА";
 
     }
@@ -1184,122 +2258,176 @@ function returnSurface() {
 
 }
 
-/* =====================================================
-   ACTION BUTTON
-===================================================== */
+/* ==================================================
+   CONTEXT ACTION
+================================================== */
 
-document.getElementById(
-  "actionButton"
-).addEventListener(
-  "pointerdown",
-  e => {
+const actionButton =
+  document.getElementById(
+    "actionButton"
+  );
 
-    e.preventDefault();
+let currentAction = null;
 
-    action();
+function distance(
+  ax,
+  ay,
+  bx,
+  by
+) {
 
-  }
-);
+  return Math.hypot(
+    ax - bx,
+    ay - by
+  );
 
-/* =====================================================
-   ACTION LOGIC
-===================================================== */
+}
 
-function action() {
+function updateActionContext() {
+
+  currentAction = null;
+
+  let icon = "✋";
 
   if (
     scene === "surface"
   ) {
 
-    const h =
+    const hatch =
       surface.hatch;
 
     if (
-      Math.hypot(
-        player.x - h.x,
-        player.y - h.y
-      ) < 80
+      distance(
+        player.x,
+        player.y,
+        hatch.x,
+        hatch.y
+      ) < 82
     ) {
 
-      enterUnderground();
+      currentAction =
+        "enterBunker";
 
-      return;
+      icon = "↧";
 
     }
-
-    showMessage(
-      "Здесь пока нечего делать"
-    );
 
   }
 
-  else {
-
-    /* ladder */
+  if (
+    scene ===
+    "underground"
+  ) {
 
     if (
-      Math.hypot(
-        player.x -
-        underground.entrance.x,
-
-        player.y -
-        underground.entrance.y
-      ) < 80
+      distance(
+        player.x,
+        player.y,
+        underground
+          .entrance.x,
+        underground
+          .entrance.y
+      ) < 88
     ) {
 
-      returnSurface();
+      currentAction =
+        "exitBunker";
 
-      return;
+      icon = "↥";
 
     }
 
-    /* workshop bench */
+    /*
+      Workshop bench
+    */
 
     if (
-      player.x > 320 &&
+      player.x > 315 &&
       player.x < 500 &&
-      player.y > 870 &&
-      player.y < 1030
+      player.y > 855 &&
+      player.y < 1005
     ) {
 
-      document.getElementById(
-        "workshopPanel"
-      ).style.display =
-        "flex";
+      currentAction =
+        "workshop";
 
-      return;
+      icon = "🔧";
 
     }
 
-    showMessage(
-      "Нет доступного действия"
-    );
-
   }
+
+  actionButton.textContent =
+    icon;
+
+  actionButton.classList.toggle(
+    "available",
+    currentAction !== null
+  );
+
+  actionButton.classList.toggle(
+    "inactive",
+    currentAction === null
+  );
 
 }
 
-/* =====================================================
-   CLOSE WORKSHOP
-===================================================== */
+function performAction() {
 
-document.getElementById(
-  "closeWorkshop"
-).addEventListener(
-  "click",
-  () => {
+  if (menusOpen) {
+    return;
+  }
 
-    document.getElementById(
-      "workshopPanel"
-    ).style.display =
-      "none";
+  if (
+    currentAction ===
+    "enterBunker"
+  ) {
+
+    enterUnderground();
+    return;
+
+  }
+
+  if (
+    currentAction ===
+    "exitBunker"
+  ) {
+
+    returnToSurface();
+    return;
+
+  }
+
+  if (
+    currentAction ===
+    "workshop"
+  ) {
+
+    openWorkshop();
+    return;
+
+  }
+
+  showMessage(
+    "Здесь пока нет действия"
+  );
+
+}
+
+actionButton.addEventListener(
+  "pointerdown",
+  e => {
+
+    e.preventDefault();
+
+    performAction();
 
   }
 );
 
-/* =====================================================
-   COLLISION SURFACE
-===================================================== */
+/* ==================================================
+   SURFACE COLLISION
+================================================== */
 
 function surfaceCollision(
   x,
@@ -1309,16 +2437,41 @@ function surfaceCollision(
   const r =
     player.radius;
 
-  const o =
+  const outer =
     surface.outer;
 
-  const gate =
-    surface.mainGate;
+  /*
+    Пока тестовая версия базы:
+    не выпускаем за основную стену.
+  */
 
   if (
-    x < o.left + r ||
-    x > o.right - r ||
-    y < o.top + r
+    x <
+    outer.left +
+    outer.thickness +
+    r
+  ) {
+
+    return true;
+
+  }
+
+  if (
+    x >
+    outer.right -
+    outer.thickness -
+    r
+  ) {
+
+    return true;
+
+  }
+
+  if (
+    y <
+    outer.top +
+    outer.thickness +
+    r
   ) {
 
     return true;
@@ -1327,109 +2480,110 @@ function surfaceCollision(
 
   if (
     y >
-    o.bottom - r
+    outer.bottom -
+    outer.thickness -
+    r
   ) {
 
-    const inGate =
-      x >
-      gate.x &&
-      x <
-      gate.x +
-      gate.width;
-
-    if (
-      !(
-        inGate &&
-        gate.open
-      )
-    ) {
-
-      return true;
-
-    }
+    return true;
 
   }
-
-  /* inner wall */
 
   const inner =
     surface.inner;
 
-  const nearTop =
-    Math.abs(
-      y -
-      inner.top
-    ) <
-    inner.thickness +
-    r;
+  const wall =
+    inner.thickness;
 
-  const nearBottom =
-    Math.abs(
-      y -
-      inner.bottom
-    ) <
-    inner.thickness +
-    r;
-
-  const withinX =
-    x >
-    inner.left &&
-    x <
-    inner.right;
+  /*
+    Top wall
+  */
 
   if (
-    withinX &&
-    nearTop
+    x >
+    inner.left - r &&
+    x <
+    inner.right + r &&
+    y >
+    inner.top - r &&
+    y <
+    inner.top +
+    wall + r
   ) {
 
     return true;
 
   }
 
+  /*
+    Left wall
+  */
+
   if (
-    withinX &&
-    nearBottom
+    y >
+    inner.top - r &&
+    y <
+    inner.bottom + r &&
+    x >
+    inner.left - r &&
+    x <
+    inner.left +
+    wall + r
   ) {
 
-    const insideDoor =
+    return true;
+
+  }
+
+  /*
+    Right wall
+  */
+
+  if (
+    y >
+    inner.top - r &&
+    y <
+    inner.bottom + r &&
+    x >
+    inner.right -
+    wall - r &&
+    x <
+    inner.right + r
+  ) {
+
+    return true;
+
+  }
+
+  /*
+    Bottom wall with door
+  */
+
+  if (
+    y >
+    inner.bottom -
+    wall - r &&
+    y <
+    inner.bottom + r &&
+    x >
+    inner.left - r &&
+    x <
+    inner.right + r
+  ) {
+
+    const insideGate =
       x >
-      inner.gateX &&
+      inner.gateX + r * .2 &&
       x <
       inner.gateX +
-      inner.gateWidth;
+      inner.gateWidth -
+      r * .2;
 
-    if (
-      !insideDoor
-    ) {
+    if (!insideGate) {
 
       return true;
 
     }
-
-  }
-
-  const withinY =
-    y >
-    inner.top &&
-    y <
-    inner.bottom;
-
-  if (
-    withinY &&
-    (
-      Math.abs(
-        x-inner.left
-      ) <
-      inner.thickness+r
-      ||
-      Math.abs(
-        x-inner.right
-      ) <
-      inner.thickness+r
-    )
-  ) {
-
-    return true;
 
   }
 
@@ -1437,9 +2591,32 @@ function surfaceCollision(
 
 }
 
-/* =====================================================
-   COLLISION UNDERGROUND
-===================================================== */
+/* ==================================================
+   UNDERGROUND COLLISION
+================================================== */
+
+function pointInsideRect(
+  x,
+  y,
+  left,
+  top,
+  right,
+  bottom,
+  margin = 0
+) {
+
+  return (
+    x >=
+      left + margin &&
+    x <=
+      right - margin &&
+    y >=
+      top + margin &&
+    y <=
+      bottom - margin
+  );
+
+}
 
 function undergroundCollision(
   x,
@@ -1449,200 +2626,152 @@ function undergroundCollision(
   const r =
     player.radius;
 
-  /* outside whole bunker */
-
-  if (
-    x < 220 ||
-    x > 1230 ||
-    y < 40 ||
-    y > 1280
-  ) {
-
-    return true;
-
-  }
-
-  const left =
-    underground.corridorLeft;
-
-  const right =
-    underground.corridorRight;
-
-  /*
-    corridor walls except doors
-  */
-
-  if (
-    x <
-    left + r
-  ) {
-
-    let allowed = false;
-
-    /* workshop opening */
-
-    if (
-      y > 890 &&
-      y < 1010
-    ) {
-
-      allowed = true;
-
-    }
-
-    if (!allowed) {
-
-      if (
-        x >
-        left - 35
-      ) {
-
-        return true;
-
-      }
-
-    }
-
-  }
-
-  if (
-    x >
-    right - r
-  ) {
-
-    if (
-      x <
-      right + 35
-    ) {
-
-      return true;
-
-    }
-
-  }
-
-  /* workshop outer bounds */
+  const c =
+    underground.corridor;
 
   const w =
     underground.workshop;
 
+  /*
+    Main corridor
+  */
+
+  const insideCorridor =
+    pointInsideRect(
+      x,
+      y,
+      c.left,
+      c.top,
+      c.right,
+      c.bottom,
+      r
+    );
+
+  /*
+    Workshop room
+  */
+
+  const insideWorkshop =
+    pointInsideRect(
+      x,
+      y,
+      w.left,
+      w.top,
+      w.right,
+      w.bottom,
+      r
+    );
+
+  /*
+    Door opening connecting room
+    and corridor.
+  */
+
+  const insideWorkshopDoor =
+    (
+      x >=
+        w.right - 28 &&
+      x <=
+        c.left + 28 &&
+      y >=
+        w.doorwayTop + r * .25 &&
+      y <=
+        w.doorwayBottom - r * .25
+    );
+
   if (
-    x > w.x &&
-    x < w.x + w.w &&
-    y > w.y &&
-    y < w.y + w.h
+    insideCorridor ||
+    insideWorkshop ||
+    insideWorkshopDoor
   ) {
 
     return false;
 
   }
 
-  /*
-    prevent roaming into
-    locked room spaces
-  */
-
-  if (
-    x < left &&
-    !(
-      x > w.x &&
-      x < w.x + w.w &&
-      y > w.y &&
-      y < w.y + w.h
-    )
-  ) {
-
-    return true;
-
-  }
-
-  if (
-    x > right
-  ) {
-
-    return true;
-
-  }
-
-  return false;
+  return true;
 
 }
 
-/* =====================================================
+/* ==================================================
    PLAYER MOVEMENT
-===================================================== */
+================================================== */
 
 function updatePlayer() {
 
-  let mx =
-    moveX;
+  if (menusOpen) {
+    return;
+  }
 
-  let my =
-    moveY;
+  let mx = moveX;
+  let my = moveY;
 
-  const mag =
-    Math.hypot(mx,my);
+  const magnitude =
+    Math.hypot(
+      mx,
+      my
+    );
 
   if (
-    mag > 1
+    magnitude > 1
   ) {
 
-    mx /= mag;
-    my /= mag;
+    mx /= magnitude;
+    my /= magnitude;
 
   }
 
-  const nx =
+  const collision =
+    scene === "surface"
+      ? surfaceCollision
+      : undergroundCollision;
+
+  const nextX =
     player.x +
     mx *
     player.speed;
 
-  const ny =
+  const nextY =
     player.y +
     my *
     player.speed;
 
-  const collision =
-    scene === "surface"
-    ? surfaceCollision
-    : undergroundCollision;
-
   if (
     !collision(
-      nx,
+      nextX,
       player.y
     )
   ) {
 
     player.x =
-      nx;
+      nextX;
 
   }
 
   if (
     !collision(
       player.x,
-      ny
+      nextY
     )
   ) {
 
     player.y =
-      ny;
+      nextY;
 
   }
 
 }
 
-/* =====================================================
+/* ==================================================
    CAMERA
-===================================================== */
+================================================== */
 
 function updateCamera() {
 
   const world =
     scene === "surface"
-    ? surface
-    : underground;
+      ? surface
+      : underground;
 
   camera.x =
     player.x -
@@ -1657,8 +2786,11 @@ function updateCamera() {
       0,
       Math.min(
         camera.x,
-        world.width -
-        screenW
+        Math.max(
+          0,
+          world.width -
+          screenW
+        )
       )
     );
 
@@ -1667,16 +2799,19 @@ function updateCamera() {
       0,
       Math.min(
         camera.y,
-        world.height -
-        screenH
+        Math.max(
+          0,
+          world.height -
+          screenH
+        )
       )
     );
 
 }
 
-/* =====================================================
+/* ==================================================
    DRAW SURFACE
-===================================================== */
+================================================== */
 
 function drawSurface() {
 
@@ -1690,31 +2825,35 @@ function drawSurface() {
     surface.height
   );
 
-  /* ground variation */
+  /*
+    Ground texture
+  */
 
   for (
-    let x = 50;
-    x < 1600;
-    x += 100
+    let x = 55;
+    x <
+    surface.width;
+    x += 105
   ) {
 
     for (
-      let y = 50;
-      y < 1200;
-      y += 100
+      let y = 55;
+      y <
+      surface.height;
+      y += 105
     ) {
 
       ctx.fillStyle =
-        "rgba(0,0,0,.06)";
+        "rgba(0,0,0,.035)";
 
       ctx.beginPath();
 
       ctx.arc(
         x,
         y,
-        22,
+        23,
         0,
-        Math.PI*2
+        Math.PI * 2
       );
 
       ctx.fill();
@@ -1727,56 +2866,67 @@ function drawSurface() {
     surface.outer;
 
   ctx.fillStyle =
-    "#5b5f5d";
-
-  /* top */
+    "#5c6260";
 
   ctx.fillRect(
     o.left,
     o.top,
-    o.right-o.left,
+    o.right - o.left,
     o.thickness
   );
-
-  /* left */
 
   ctx.fillRect(
     o.left,
     o.top,
     o.thickness,
-    o.bottom-o.top
+    o.bottom - o.top
   );
-
-  /* right */
 
   ctx.fillRect(
-    o.right-o.thickness,
+    o.right - o.thickness,
     o.top,
     o.thickness,
-    o.bottom-o.top
+    o.bottom - o.top
   );
-
-  /* bottom */
 
   ctx.fillRect(
     o.left,
-    o.bottom-o.thickness,
-    o.right-o.left,
+    o.bottom - o.thickness,
+    o.right - o.left,
     o.thickness
   );
 
-  /* inner compound */
+  /*
+    Main gate visual
+  */
+
+  ctx.fillStyle =
+    "#292d2d";
+
+  ctx.fillRect(
+    730,
+    o.bottom -
+    o.thickness -
+    4,
+    140,
+    o.thickness + 8
+  );
+
+  /*
+    Inner compound
+  */
 
   const inner =
     surface.inner;
 
   ctx.fillStyle =
-    "#6b6b62";
+    "#6d6d64";
 
   ctx.fillRect(
     inner.left,
     inner.top,
-    inner.right-inner.left,
+    inner.right -
+    inner.left,
     inner.thickness
   );
 
@@ -1784,109 +2934,197 @@ function drawSurface() {
     inner.left,
     inner.top,
     inner.thickness,
-    inner.bottom-inner.top
+    inner.bottom -
+    inner.top
   );
 
   ctx.fillRect(
-    inner.right-inner.thickness,
+    inner.right -
+    inner.thickness,
     inner.top,
     inner.thickness,
-    inner.bottom-inner.top
+    inner.bottom -
+    inner.top
   );
 
-  /* bottom left */
+  /*
+    Bottom left wall
+  */
 
   ctx.fillRect(
     inner.left,
-    inner.bottom-inner.thickness,
-    inner.gateX-inner.left,
+    inner.bottom -
+    inner.thickness,
+    inner.gateX -
+    inner.left,
     inner.thickness
   );
 
-  /* bottom right */
+  /*
+    Bottom right wall
+  */
 
   ctx.fillRect(
-    inner.gateX+
+    inner.gateX +
     inner.gateWidth,
-
-    inner.bottom-
+    inner.bottom -
     inner.thickness,
-
-    inner.right-
+    inner.right -
     (
-      inner.gateX+
+      inner.gateX +
       inner.gateWidth
     ),
-
     inner.thickness
   );
 
-  /* inner floor */
+  /*
+    Inner ground
+  */
 
   ctx.fillStyle =
-    "#59594f";
+    "#57584f";
 
   ctx.fillRect(
-    inner.left+
+    inner.left +
     inner.thickness,
-
-    inner.top+
+    inner.top +
     inner.thickness,
-
-    inner.right-
-    inner.left-
-    inner.thickness*2,
-
-    inner.bottom-
-    inner.top-
-    inner.thickness*2
+    inner.right -
+    inner.left -
+    inner.thickness * 2,
+    inner.bottom -
+    inner.top -
+    inner.thickness * 2
   );
 
-  /* hatch */
+  /*
+    Gate marker
+  */
 
-  const h =
+  ctx.fillStyle =
+    "rgba(30,30,30,.28)";
+
+  ctx.fillRect(
+    inner.gateX,
+    inner.bottom -
+    4,
+    inner.gateWidth,
+    8
+  );
+
+  /*
+    Hatch
+  */
+
+  const hatch =
     surface.hatch;
 
   ctx.fillStyle =
     "#17191a";
 
   ctx.fillRect(
-    h.x-35,
-    h.y-35,
+    hatch.x - 35,
+    hatch.y - 35,
     70,
     70
   );
 
   ctx.strokeStyle =
-    "#a0a0a0";
+    "#9a9d9d";
 
   ctx.lineWidth = 4;
 
   ctx.strokeRect(
-    h.x-35,
-    h.y-35,
+    hatch.x - 35,
+    hatch.y - 35,
     70,
     70
   );
 
   ctx.fillStyle =
-    "#ccc";
+    "#d1d1d1";
 
   ctx.textAlign =
     "center";
 
   ctx.font =
-    "14px Arial";
+    "13px Arial";
 
   ctx.fillText(
     "ЛЮК",
-    h.x,
-    h.y+5
+    hatch.x,
+    hatch.y + 5
   );
 
-  /* towers */
+  /*
+    Surface objects
+  */
 
-  const towerPoints = [
+  ctx.fillStyle =
+    "#576f42";
+
+  ctx.fillRect(
+    310,
+    300,
+    180,
+    120
+  );
+
+  ctx.fillStyle =
+    "rgba(255,255,255,.65)";
+
+  ctx.font =
+    "12px Arial";
+
+  ctx.fillText(
+    "ФЕРМА",
+    400,
+    365
+  );
+
+  ctx.fillStyle =
+    "#43494c";
+
+  ctx.fillRect(
+    1080,
+    310,
+    120,
+    90
+  );
+
+  ctx.fillStyle =
+    "#ddd";
+
+  ctx.fillText(
+    "ГЕНЕРАТОР",
+    1140,
+    362
+  );
+
+  ctx.fillStyle =
+    "#39444b";
+
+  ctx.fillRect(
+    1110,
+    790,
+    150,
+    70
+  );
+
+  ctx.fillStyle =
+    "#ddd";
+
+  ctx.fillText(
+    "МАШИНА",
+    1185,
+    831
+  );
+
+  /*
+    Towers
+  */
+
+  const towers = [
 
     [200,160],
     [800,150],
@@ -1899,25 +3137,28 @@ function drawSurface() {
   ];
 
   for (
-    const t of towerPoints
+    const [
+      tx,
+      ty
+    ] of towers
   ) {
 
     ctx.fillStyle =
-      "#282c2d";
+      "#262a2b";
 
     ctx.fillRect(
-      t[0]-25,
-      t[1]-25,
-      50,
-      50
+      tx - 26,
+      ty - 26,
+      52,
+      52
     );
 
     ctx.fillStyle =
-      "#73797a";
+      "#777c7c";
 
     ctx.fillRect(
-      t[0]-17,
-      t[1]-17,
+      tx - 17,
+      ty - 17,
       34,
       34
     );
@@ -1926,14 +3167,14 @@ function drawSurface() {
 
 }
 
-/* =====================================================
+/* ==================================================
    DRAW UNDERGROUND
-===================================================== */
+================================================== */
 
 function drawUnderground() {
 
   ctx.fillStyle =
-    "#111519";
+    "#101417";
 
   ctx.fillRect(
     0,
@@ -1942,61 +3183,86 @@ function drawUnderground() {
     underground.height
   );
 
-  /* corridor */
+  const c =
+    underground.corridor;
+
+  /*
+    Corridor floor
+  */
 
   ctx.fillStyle =
-    "#3d4143";
+    "#3b4042";
 
   ctx.fillRect(
-    underground.corridorLeft,
-    underground.corridorTop,
-    underground.corridorRight-
-    underground.corridorLeft,
-    underground.corridorBottom-
-    underground.corridorTop
+    c.left,
+    c.top,
+    c.right -
+    c.left,
+    c.bottom -
+    c.top
   );
 
-  /* corridor center line */
+  /*
+    Floor panels
+  */
 
   ctx.strokeStyle =
-    "rgba(255,255,255,.08)";
+    "rgba(255,255,255,.045)";
 
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1;
 
-  ctx.beginPath();
+  for (
+    let y =
+      c.top + 50;
 
-  ctx.moveTo(
-    725,
-    220
-  );
+    y <
+      c.bottom;
 
-  ctx.lineTo(
-    725,
-    1240
-  );
+    y += 70
+  ) {
 
-  ctx.stroke();
+    ctx.beginPath();
 
-  /* walls */
+    ctx.moveTo(
+      c.left,
+      y
+    );
+
+    ctx.lineTo(
+      c.right,
+      y
+    );
+
+    ctx.stroke();
+
+  }
+
+  /*
+    Corridor walls
+  */
 
   ctx.fillStyle =
-    "#777a79";
+    "#747878";
 
   ctx.fillRect(
-    590,
-    200,
+    c.left - 20,
+    c.top,
     20,
-    1060
+    c.bottom -
+    c.top
   );
 
   ctx.fillRect(
-    840,
-    200,
+    c.right,
+    c.top,
     20,
-    1060
+    c.bottom -
+    c.top
   );
 
-  /* workshop */
+  /*
+    Workshop
+  */
 
   const w =
     underground.workshop;
@@ -2005,63 +3271,72 @@ function drawUnderground() {
     "#343a3c";
 
   ctx.fillRect(
-    w.x,
-    w.y,
-    w.w,
-    w.h
+    w.left,
+    w.top,
+    w.right -
+    w.left,
+    w.bottom -
+    w.top
   );
 
   ctx.strokeStyle =
-    "#777";
+    "#737777";
 
-  ctx.lineWidth = 18;
+  ctx.lineWidth = 16;
 
   ctx.strokeRect(
-    w.x,
-    w.y,
-    w.w,
-    w.h
+    w.left,
+    w.top,
+    w.right -
+    w.left,
+    w.bottom -
+    w.top
   );
 
-  /* workshop door gap */
+  /*
+    Clear workshop doorway
+  */
 
   ctx.fillStyle =
     "#343a3c";
 
   ctx.fillRect(
-    590,
-    900,
-    30,
-    110
+    w.right - 18,
+    w.doorwayTop,
+    40,
+    w.doorwayBottom -
+    w.doorwayTop
   );
 
-  /* workshop bench */
+  /*
+    Workbench
+  */
 
   ctx.fillStyle =
-    "#704f2f";
+    "#694b30";
 
   ctx.fillRect(
     330,
-    890,
+    900,
     145,
     55
   );
 
   ctx.fillStyle =
-    "#999";
+    "#8c9292";
 
   ctx.fillRect(
     345,
-    850,
+    861,
     115,
-    45
+    40
   );
 
   ctx.fillStyle =
-    "#ddd";
+    "#dedede";
 
   ctx.font =
-    "15px Arial";
+    "13px Arial";
 
   ctx.textAlign =
     "center";
@@ -2069,82 +3344,133 @@ function drawUnderground() {
   ctx.fillText(
     "ВЕРСТАК",
     402,
-    880
+    887
   );
 
-  /* locked rooms */
+  /*
+    Storage boxes
+  */
+
+  ctx.fillStyle =
+    "#4c4335";
+
+  ctx.fillRect(
+    295,
+    1020,
+    55,
+    50
+  );
+
+  ctx.fillRect(
+    360,
+    1028,
+    60,
+    42
+  );
+
+  /*
+    Doors / labels
+  */
 
   for (
-    const room of roomDoors
+    const room of
+    undergroundRooms
   ) {
 
-    const doorX =
-      room.side === "left"
-      ? 590
-      : 840;
+    if (
+      room.name ===
+      "МАСТЕРСКАЯ"
+    ) {
+
+      ctx.fillStyle =
+        "#cfd2d2";
+
+      ctx.font =
+        "12px Arial";
+
+      ctx.textAlign =
+        "right";
+
+      ctx.fillText(
+        room.name,
+        575,
+        room.y + 5
+      );
+
+      continue;
+
+    }
+
+    const leftSide =
+      room.side === "left";
+
+    const x =
+      leftSide
+        ? c.left - 25
+        : c.right + 5;
 
     ctx.fillStyle =
-      room.open
-      ? "#5a5f5f"
-      : "#232729";
+      "#25292b";
 
     ctx.fillRect(
-      doorX-8,
-      room.y-50,
-      36,
-      100
+      x,
+      room.y - 47,
+      40,
+      94
     );
 
     ctx.fillStyle =
-      "#d0d0d0";
+      "rgba(220,220,220,.72)";
 
     ctx.font =
-      "13px Arial";
+      "12px Arial";
 
     ctx.textAlign =
-      room.side === "left"
-      ? "right"
-      : "left";
+      leftSide
+        ? "right"
+        : "left";
 
     ctx.fillText(
       room.name,
-      room.side === "left"
-      ? 570
-      : 880,
-      room.y+5
+      leftSide
+        ? c.left - 42
+        : c.right + 45,
+      room.y + 4
     );
 
   }
 
-  /* large farm room */
+  /*
+    Future farm room
+  */
 
   ctx.fillStyle =
-    "#28352c";
+    "#263429";
 
   ctx.fillRect(
-    farmRoom.x,
-    farmRoom.y,
-    farmRoom.w,
-    farmRoom.h
+    farmRoom.left,
+    farmRoom.top,
+    farmRoom.width,
+    farmRoom.height
   );
 
   ctx.strokeStyle =
-    "#777";
+    "#727676";
 
-  ctx.lineWidth = 20;
+  ctx.lineWidth = 18;
 
   ctx.strokeRect(
-    farmRoom.x,
-    farmRoom.y,
-    farmRoom.w,
-    farmRoom.h
+    farmRoom.left,
+    farmRoom.top,
+    farmRoom.width,
+    farmRoom.height
   );
 
   ctx.fillStyle =
-    "#9cc390";
+    "#98bb8c";
 
   ctx.font =
-    "20px Arial";
+    "18px Arial";
 
   ctx.textAlign =
     "center";
@@ -2152,29 +3478,31 @@ function drawUnderground() {
   ctx.fillText(
     "🌱 БУДУЩАЯ ФЕРМА",
     725,
-    100
+    105
   );
 
-  /* entrance ladder */
+  /*
+    Entrance
+  */
 
   ctx.fillStyle =
     "#17191a";
 
   ctx.fillRect(
     690,
-    1150,
+    1145,
     70,
     70
   );
 
   ctx.strokeStyle =
-    "#aaa";
+    "#a1a4a4";
 
   ctx.lineWidth = 4;
 
   ctx.strokeRect(
     690,
-    1150,
+    1145,
     70,
     70
   );
@@ -2183,37 +3511,56 @@ function drawUnderground() {
     "#ddd";
 
   ctx.font =
-    "13px Arial";
+    "12px Arial";
 
   ctx.fillText(
     "ВЫХОД",
     725,
-    1192
+    1187
   );
 
 }
 
-/* =====================================================
+/* ==================================================
    DRAW BULLETS
-===================================================== */
+================================================== */
 
 function drawBullets() {
 
-  ctx.fillStyle =
-    "#ffd66b";
-
   for (
-    const b of bullets
+    const bullet of bullets
   ) {
+
+    /*
+      tiny glow
+    */
+
+    ctx.fillStyle =
+      "rgba(255,215,120,.20)";
 
     ctx.beginPath();
 
     ctx.arc(
-      b.x,
-      b.y,
-      4,
+      bullet.x,
+      bullet.y,
+      8,
       0,
-      Math.PI*2
+      Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle =
+      "#ffd778";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      bullet.x,
+      bullet.y,
+      3.5,
+      0,
+      Math.PI * 2
     );
 
     ctx.fill();
@@ -2222,97 +3569,133 @@ function drawBullets() {
 
 }
 
-/* =====================================================
+/* ==================================================
    DRAW PLAYER
-===================================================== */
+================================================== */
 
 function drawPlayer() {
 
-  /* shadow */
-
-  ctx.fillStyle =
-    "rgba(0,0,0,.3)";
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    player.x,
-    player.y+15,
-    17,
-    8,
-    0,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  /* aiming line */
-
-  const mag =
+  const magnitude =
     Math.hypot(
       player.aimX,
       player.aimY
     ) || 1;
 
   const ax =
-    player.aimX / mag;
+    player.aimX /
+    magnitude;
 
   const ay =
-    player.aimY / mag;
+    player.aimY /
+    magnitude;
+
+  /*
+    Shadow
+  */
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.30)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    player.x,
+    player.y + 15,
+    17,
+    8,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  /*
+    Aim guide
+  */
 
   ctx.strokeStyle =
-    "rgba(255,225,130,.55)";
+    "rgba(255,230,155,.28)";
 
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1.5;
 
   ctx.beginPath();
 
   ctx.moveTo(
-    player.x,
-    player.y
+    player.x +
+    ax * 24,
+    player.y +
+    ay * 24
   );
 
   ctx.lineTo(
-    player.x+
-    ax*70,
-
-    player.y+
-    ay*70
+    player.x +
+    ax * 65,
+    player.y +
+    ay * 65
   );
 
   ctx.stroke();
 
-  /* body */
+  /*
+    Aim point
+  */
+
+  ctx.strokeStyle =
+    "rgba(255,235,170,.55)";
+
+  ctx.lineWidth = 1;
+
+  ctx.beginPath();
+
+  ctx.arc(
+    player.x +
+    ax * 73,
+    player.y +
+    ay * 73,
+    4,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.stroke();
+
+  /*
+    Body
+  */
 
   ctx.fillStyle =
-    "#3f5867";
+    "#405966";
 
   ctx.fillRect(
-    player.x-10,
-    player.y-5,
+    player.x - 10,
+    player.y - 5,
     20,
     28
   );
 
-  /* head */
+  /*
+    Head
+  */
 
   ctx.fillStyle =
-    "#d0aa83";
+    "#cda780";
 
   ctx.beginPath();
 
   ctx.arc(
     player.x,
-    player.y-12,
+    player.y - 12,
     8,
     0,
-    Math.PI*2
+    Math.PI * 2
   );
 
   ctx.fill();
 
-  /* weapon */
+  /*
+    Weapon
+  */
 
   ctx.strokeStyle =
     "#151719";
@@ -2327,20 +3710,689 @@ function drawPlayer() {
   );
 
   ctx.lineTo(
-    player.x+
-    ax*26,
-
-    player.y+
-    ay*26
+    player.x +
+    ax * 27,
+    player.y +
+    ay * 27
   );
 
   ctx.stroke();
 
 }
 
-/* =====================================================
-   GAME UPDATE
-===================================================== */
+/* ==================================================
+   SETTINGS
+================================================== */
+
+const settingsOverlay =
+  document.getElementById(
+    "settingsOverlay"
+  );
+
+const controlsOverlay =
+  document.getElementById(
+    "controlsOverlay"
+  );
+
+const workshopOverlay =
+  document.getElementById(
+    "workshopOverlay"
+  );
+
+function stopAllControls() {
+
+  moveX = 0;
+  moveY = 0;
+
+  fireHeld = false;
+
+  fireButton.classList.remove(
+    "pressed"
+  );
+
+}
+
+function openOverlay(
+  overlay
+) {
+
+  stopAllControls();
+
+  menusOpen = true;
+
+  overlay.classList.add(
+    "open"
+  );
+
+}
+
+function closeOverlay(
+  overlay
+) {
+
+  overlay.classList.remove(
+    "open"
+  );
+
+  const anyOpen =
+    document.querySelector(
+      ".overlay.open"
+    );
+
+  menusOpen =
+    !!anyOpen;
+
+}
+
+document
+  .getElementById(
+    "settingsButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      openOverlay(
+        settingsOverlay
+      );
+
+    }
+  );
+
+document
+  .getElementById(
+    "closeSettings"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      closeOverlay(
+        settingsOverlay
+      );
+
+    }
+  );
+
+document
+  .getElementById(
+    "fullscreenButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      requestTelegramFullscreen();
+
+      showMessage(
+        "Полноэкранный режим"
+      );
+
+    }
+  );
+
+/* ==================================================
+   SOUND SETTINGS
+================================================== */
+
+const soundVolume =
+  document.getElementById(
+    "soundVolume"
+  );
+
+const soundValue =
+  document.getElementById(
+    "soundValue"
+  );
+
+function loadSound() {
+
+  const saved =
+    localStorage.getItem(
+      "survivalBaseSound"
+    );
+
+  const value =
+    saved !== null
+      ? Number(saved)
+      : 70;
+
+  soundVolume.value =
+    value;
+
+  soundValue.textContent =
+    value + "%";
+
+}
+
+loadSound();
+
+soundVolume.addEventListener(
+  "input",
+  () => {
+
+    const value =
+      Number(
+        soundVolume.value
+      );
+
+    soundValue.textContent =
+      value + "%";
+
+    localStorage.setItem(
+      "survivalBaseSound",
+      String(value)
+    );
+
+  }
+);
+
+/* ==================================================
+   WORKSHOP
+================================================== */
+
+function openWorkshop() {
+
+  openOverlay(
+    workshopOverlay
+  );
+
+}
+
+document
+  .getElementById(
+    "closeWorkshop"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      closeOverlay(
+        workshopOverlay
+      );
+
+    }
+  );
+
+/* ==================================================
+   HUD EDITOR
+================================================== */
+
+const editorStage =
+  document.getElementById(
+    "editorStage"
+  );
+
+const portraitTab =
+  document.getElementById(
+    "portraitTab"
+  );
+
+const landscapeTab =
+  document.getElementById(
+    "landscapeTab"
+  );
+
+let editorOrientation =
+  "portrait";
+
+let editorLayout =
+  cloneObject(
+    controlLayouts.portrait
+  );
+
+const previewMap = {
+
+  move:
+    document.getElementById(
+      "previewMove"
+    ),
+
+  aim:
+    document.getElementById(
+      "previewAim"
+    ),
+
+  fire:
+    document.getElementById(
+      "previewFire"
+    ),
+
+  action:
+    document.getElementById(
+      "previewAction"
+    )
+
+};
+
+function setPreviewPosition(
+  element,
+  position
+) {
+
+  element.style.left =
+    (position.x * 100) +
+    "%";
+
+  element.style.top =
+    (position.y * 100) +
+    "%";
+
+}
+
+function renderEditorLayout() {
+
+  for (
+    const key of
+    Object.keys(
+      previewMap
+    )
+  ) {
+
+    setPreviewPosition(
+      previewMap[key],
+      editorLayout[key]
+    );
+
+  }
+
+}
+
+function switchEditorOrientation(
+  mode
+) {
+
+  /*
+    Store current temporary edit
+    before switching tabs.
+  */
+
+  controlLayouts[
+    editorOrientation
+  ] =
+    cloneObject(
+      editorLayout
+    );
+
+  editorOrientation =
+    mode;
+
+  editorLayout =
+    cloneObject(
+      controlLayouts[mode]
+    );
+
+  editorStage.classList.toggle(
+    "portrait",
+    mode === "portrait"
+  );
+
+  editorStage.classList.toggle(
+    "landscape",
+    mode === "landscape"
+  );
+
+  portraitTab.classList.toggle(
+    "active",
+    mode === "portrait"
+  );
+
+  landscapeTab.classList.toggle(
+    "active",
+    mode === "landscape"
+  );
+
+  renderEditorLayout();
+
+}
+
+portraitTab.addEventListener(
+  "click",
+  () => {
+
+    switchEditorOrientation(
+      "portrait"
+    );
+
+  }
+);
+
+landscapeTab.addEventListener(
+  "click",
+  () => {
+
+    switchEditorOrientation(
+      "landscape"
+    );
+
+  }
+);
+
+/* draggable previews */
+
+function makePreviewDraggable(
+  element,
+  key
+) {
+
+  let pointerId = null;
+
+  function update(e) {
+
+    const rect =
+      editorStage
+      .getBoundingClientRect();
+
+    let x =
+      (
+        e.clientX -
+        rect.left
+      ) /
+      rect.width;
+
+    let y =
+      (
+        e.clientY -
+        rect.top
+      ) /
+      rect.height;
+
+    /*
+      Keep controls reasonably
+      inside preview screen.
+    */
+
+    const marginX =
+      key === "move" ||
+      key === "aim"
+        ? 0.08
+        : 0.05;
+
+    const marginY =
+      key === "move" ||
+      key === "aim"
+        ? 0.08
+        : 0.05;
+
+    x =
+      Math.max(
+        marginX,
+        Math.min(
+          1 - marginX,
+          x
+        )
+      );
+
+    y =
+      Math.max(
+        marginY,
+        Math.min(
+          1 - marginY,
+          y
+        )
+      );
+
+    editorLayout[key] = {
+      x,
+      y
+    };
+
+    setPreviewPosition(
+      element,
+      editorLayout[key]
+    );
+
+  }
+
+  element.addEventListener(
+    "pointerdown",
+    e => {
+
+      e.preventDefault();
+
+      pointerId =
+        e.pointerId;
+
+      element.classList.add(
+        "dragging"
+      );
+
+      try {
+
+        element.setPointerCapture(
+          e.pointerId
+        );
+
+      } catch (err) {}
+
+      update(e);
+
+    }
+  );
+
+  element.addEventListener(
+    "pointermove",
+    e => {
+
+      if (
+        e.pointerId !==
+        pointerId
+      ) {
+
+        return;
+
+      }
+
+      e.preventDefault();
+
+      update(e);
+
+    }
+  );
+
+  function finish(e) {
+
+    if (
+      pointerId !== null &&
+      e.pointerId !== undefined &&
+      e.pointerId !==
+      pointerId
+    ) {
+
+      return;
+
+    }
+
+    pointerId = null;
+
+    element.classList.remove(
+      "dragging"
+    );
+
+  }
+
+  element.addEventListener(
+    "pointerup",
+    finish
+  );
+
+  element.addEventListener(
+    "pointercancel",
+    finish
+  );
+
+}
+
+for (
+  const [
+    key,
+    element
+  ] of Object.entries(
+    previewMap
+  )
+) {
+
+  makePreviewDraggable(
+    element,
+    key
+  );
+
+}
+
+document
+  .getElementById(
+    "openControlsEditor"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      closeOverlay(
+        settingsOverlay
+      );
+
+      /*
+        Start editor with
+        current screen orientation.
+      */
+
+      editorOrientation =
+        currentOrientation();
+
+      editorLayout =
+        cloneObject(
+          controlLayouts[
+            editorOrientation
+          ]
+        );
+
+      editorStage.classList.toggle(
+        "portrait",
+        editorOrientation ===
+        "portrait"
+      );
+
+      editorStage.classList.toggle(
+        "landscape",
+        editorOrientation ===
+        "landscape"
+      );
+
+      portraitTab.classList.toggle(
+        "active",
+        editorOrientation ===
+        "portrait"
+      );
+
+      landscapeTab.classList.toggle(
+        "active",
+        editorOrientation ===
+        "landscape"
+      );
+
+      renderEditorLayout();
+
+      openOverlay(
+        controlsOverlay
+      );
+
+    }
+  );
+
+document
+  .getElementById(
+    "saveControls"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      controlLayouts[
+        editorOrientation
+      ] =
+        cloneObject(
+          editorLayout
+        );
+
+      saveLayouts();
+
+      applyCurrentControlLayout();
+
+      showMessage(
+        "Управление сохранено"
+      );
+
+    }
+  );
+
+document
+  .getElementById(
+    "resetControls"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      editorLayout =
+        cloneObject(
+          DEFAULT_LAYOUTS[
+            editorOrientation
+          ]
+        );
+
+      controlLayouts[
+        editorOrientation
+      ] =
+        cloneObject(
+          editorLayout
+        );
+
+      renderEditorLayout();
+
+      saveLayouts();
+
+      applyCurrentControlLayout();
+
+      showMessage(
+        "Раскладка сброшена"
+      );
+
+    }
+  );
+
+document
+  .getElementById(
+    "backFromControls"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      /*
+        Keep changes only if Save
+        was pressed.
+        Re-read saved values.
+      */
+
+      controlLayouts =
+        loadLayouts();
+
+      closeOverlay(
+        controlsOverlay
+      );
+
+      openOverlay(
+        settingsOverlay
+      );
+
+      applyCurrentControlLayout();
+
+    }
+  );
+
+/* ==================================================
+   UPDATE
+================================================== */
 
 function update() {
 
@@ -2348,13 +4400,15 @@ function update() {
 
   updateBullets();
 
+  updateActionContext();
+
   updateCamera();
 
 }
 
-/* =====================================================
-   GAME DRAW
-===================================================== */
+/* ==================================================
+   DRAW
+================================================== */
 
 function draw() {
 
@@ -2378,9 +4432,7 @@ function draw() {
 
     drawSurface();
 
-  }
-
-  else {
+  } else {
 
     drawUnderground();
 
@@ -2394,23 +4446,25 @@ function draw() {
 
 }
 
-/* =====================================================
+/* ==================================================
    LOOP
-===================================================== */
+================================================== */
 
-function loop() {
+function gameLoop() {
 
   update();
 
   draw();
 
   requestAnimationFrame(
-    loop
+    gameLoop
   );
 
 }
 
-loop();
+applyCurrentControlLayout();
+
+gameLoop();
 
 </script>
 
