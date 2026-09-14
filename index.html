@@ -10,31 +10,18 @@
   maximum-scale=1,
   user-scalable=no,
   viewport-fit=cover"
-/>
+>
 
-<title>Survival Base 0.3</title>
+<title>Survival Base 0.3.1</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 
-:root {
-  --control-border: rgba(255,255,255,.26);
-  --control-bg: rgba(90,95,100,.22);
-  --control-bg-active: rgba(125,130,135,.38);
-  --control-icon: rgba(255,255,255,.78);
-}
-
-/* ==================================================
-   GLOBAL
-================================================== */
-
 * {
   box-sizing: border-box;
-
   user-select: none;
   -webkit-user-select: none;
-
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -42,23 +29,13 @@ html,
 body {
   margin: 0;
   padding: 0;
-
   width: 100%;
   height: 100%;
-
   overflow: hidden;
-
   background: #080a0c;
-
   touch-action: none;
   overscroll-behavior: none;
-
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Arial,
-    sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 body {
@@ -66,142 +43,105 @@ body {
   inset: 0;
 }
 
-button,
-input {
-  font-family: inherit;
-}
-
 #game {
-  position: absolute;
+  position: fixed;
   inset: 0;
-
   overflow: hidden;
-
-  touch-action: none;
+  background: #20251f;
 }
 
 #canvas {
   position: absolute;
   inset: 0;
-
   width: 100%;
   height: 100%;
-
   display: block;
-
-  touch-action: none;
 }
 
-/* ==================================================
+/* =========================
    HUD
-================================================== */
+========================= */
 
 #hud {
   position: absolute;
-
-  top: calc(9px + env(safe-area-inset-top));
-  left: 10px;
-  right: 10px;
-
-  z-index: 15;
+  top: calc(10px + env(safe-area-inset-top));
+  left: calc(10px + env(safe-area-inset-left));
+  right: calc(10px + env(safe-area-inset-right));
 
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
 
+  z-index: 20;
   pointer-events: none;
 }
 
 .hudBox {
-  padding: 7px 10px;
-
+  background: rgba(10, 12, 14, 0.58);
+  border: 1px solid rgba(255,255,255,0.10);
   border-radius: 11px;
 
-  color: rgba(255,255,255,.9);
+  padding: 7px 10px;
 
-  background: rgba(8,11,13,.54);
-
-  border: 1px solid rgba(255,255,255,.09);
-
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-
+  color: white;
   font-size: 11px;
-  line-height: 1.35;
+
+  backdrop-filter: blur(6px);
 }
 
 .hudBox strong {
   font-size: 14px;
 }
 
-/* ==================================================
-   SETTINGS BUTTON
-================================================== */
+/* =========================
+   SETTINGS
+========================= */
 
 #settingsButton {
   position: absolute;
 
   top: calc(62px + env(safe-area-inset-top));
-  right: calc(11px + env(safe-area-inset-right));
+  right: calc(12px + env(safe-area-inset-right));
 
   width: 38px;
   height: 38px;
 
-  z-index: 50;
-
   border-radius: 50%;
 
-  border: 1px solid rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,0.18);
 
-  background: rgba(70,75,80,.22);
+  background: rgba(100,105,110,0.20);
 
-  color: rgba(255,255,255,.72);
+  color: rgba(255,255,255,0.75);
 
   font-size: 18px;
+
+  z-index: 50;
 
   display: flex;
   align-items: center;
   justify-content: center;
-
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-
-  touch-action: manipulation;
 }
 
-#settingsButton:active {
-  background: rgba(120,125,130,.38);
-  transform: scale(.94);
-}
-
-/* ==================================================
-   CUSTOM CONTROLS
-================================================== */
+/* =========================
+   GAME CONTROLS
+========================= */
 
 .gameControl {
   position: absolute;
-
-  left: 50%;
-  top: 50%;
+  z-index: 40;
 
   transform: translate(-50%, -50%);
-
-  z-index: 30;
 
   touch-action: none;
 }
 
-/* joystick container */
+/* JOYSTICKS */
 
-.joystickZone {
-  width: 96px;
-  height: 96px;
+.joystick {
+  width: 92px;
+  height: 92px;
 
   border-radius: 50%;
-
-  touch-action: none;
-
-  transition: opacity .12s;
 }
 
 .joystickBase {
@@ -210,77 +150,61 @@ input {
   left: 8px;
   top: 8px;
 
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
 
   border-radius: 50%;
 
-  border: 1.5px solid var(--control-border);
+  border: 1.5px solid rgba(255,255,255,0.25);
 
-  background: rgba(80,85,90,.13);
-
-  box-shadow:
-    inset 0 0 18px rgba(0,0,0,.12);
-
-  transition:
-    background .12s,
-    border-color .12s;
+  background: rgba(120,125,130,0.10);
 }
 
 .joystickStick {
   position: absolute;
 
-  left: 29px;
-  top: 29px;
+  left: 28px;
+  top: 28px;
 
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
 
   border-radius: 50%;
 
-  border: 1.5px solid rgba(255,255,255,.35);
+  border: 1.5px solid rgba(255,255,255,0.35);
 
-  background: rgba(130,135,140,.34);
+  background: rgba(145,150,155,0.32);
 
-  color: rgba(255,255,255,.75);
-
-  font-size: 15px;
+  color: rgba(255,255,255,0.78);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   pointer-events: none;
-
-  box-shadow: 0 2px 9px rgba(0,0,0,.18);
 }
 
-.joystickZone.active .joystickBase {
-  background: rgba(120,125,130,.24);
-
-  border-color: rgba(255,255,255,.38);
+.joystick.active .joystickBase {
+  background: rgba(150,155,160,0.20);
 }
 
-.joystickZone.active .joystickStick {
-  background: rgba(165,170,175,.46);
+.joystick.active .joystickStick {
+  background: rgba(180,185,190,0.45);
 }
 
-/* fire/action buttons */
+/* BUTTONS */
 
 .controlButton {
-  width: 54px;
-  height: 54px;
+  width: 52px;
+  height: 52px;
 
   border-radius: 50%;
 
-  border: 1.5px solid var(--control-border);
+  border: 1.5px solid rgba(255,255,255,0.26);
 
-  background: var(--control-bg);
+  background: rgba(120,125,130,0.18);
 
-  color: var(--control-icon);
-
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  color: rgba(255,255,255,0.82);
 
   display: flex;
   align-items: center;
@@ -288,93 +212,62 @@ input {
 
   padding: 0;
 
-  touch-action: none;
+  font-size: 22px;
 
-  box-shadow: 0 2px 12px rgba(0,0,0,.16);
+  backdrop-filter: blur(5px);
 }
 
-.controlButton:active,
 .controlButton.pressed {
-  background: var(--control-bg-active);
-
-  border-color: rgba(255,255,255,.42);
-
-  transform:
-    translate(-50%, -50%)
-    scale(.92);
-}
-
-#fireButton {
-  font-size: 24px;
-}
-
-#actionButton {
-  font-size: 21px;
+  background: rgba(170,175,180,0.40);
 }
 
 #actionButton.inactive {
-  opacity: .43;
+  opacity: 0.42;
 }
 
 #actionButton.available {
-  opacity: .92;
-
-  border-color: rgba(255,255,255,.43);
-
-  background: rgba(110,115,120,.31);
+  opacity: 0.95;
+  background: rgba(135,140,145,0.30);
 }
 
-/* ==================================================
+/* =========================
    MESSAGE
-================================================== */
+========================= */
 
 #message {
   position: absolute;
 
   left: 50%;
-
-  bottom:
-    calc(
-      142px +
-      env(safe-area-inset-bottom)
-    );
+  bottom: calc(145px + env(safe-area-inset-bottom));
 
   transform: translateX(-50%);
 
-  z-index: 70;
-
-  max-width: 80%;
+  z-index: 80;
 
   padding: 8px 13px;
 
   border-radius: 10px;
 
-  color: rgba(255,255,255,.92);
+  background: rgba(0,0,0,0.72);
 
-  background: rgba(0,0,0,.67);
-
-  border: 1px solid rgba(255,255,255,.10);
+  color: white;
 
   font-size: 13px;
 
-  text-align: center;
-
   opacity: 0;
 
-  transition: opacity .18s;
+  transition: opacity 0.2s;
 
   pointer-events: none;
-
-  backdrop-filter: blur(5px);
 }
 
 #message.show {
   opacity: 1;
 }
 
-/* ==================================================
-   TRANSITION
-================================================== */
+/* =========================
+   FADE
+========================= */
 
 #fade {
   position: absolute;
@@ -386,9 +279,9 @@ input {
   align-items: center;
   justify-content: center;
 
-  color: rgba(255,255,255,.95);
+  background: black;
 
-  background: #000;
+  color: white;
 
   font-size: 18px;
   letter-spacing: 2px;
@@ -397,16 +290,16 @@ input {
 
   pointer-events: none;
 
-  transition: opacity .32s;
+  transition: opacity 0.35s;
 }
 
 #fade.show {
   opacity: 1;
 }
 
-/* ==================================================
-   MODALS
-================================================== */
+/* =========================
+   OVERLAYS
+========================= */
 
 .overlay {
   position: absolute;
@@ -425,10 +318,7 @@ input {
     calc(18px + env(safe-area-inset-bottom))
     calc(18px + env(safe-area-inset-left));
 
-  background: rgba(0,0,0,.72);
-
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.74);
 }
 
 .overlay.open {
@@ -436,19 +326,17 @@ input {
 }
 
 .panel {
-  width: min(430px, 96vw);
+  width: min(430px, 95vw);
 
-  max-height: 90vh;
+  max-height: 88vh;
 
   overflow-y: auto;
 
-  border-radius: 20px;
+  background: #161b1f;
 
-  background: #15191d;
+  border: 1px solid rgba(255,255,255,0.12);
 
-  border: 1px solid rgba(255,255,255,.12);
-
-  box-shadow: 0 22px 70px rgba(0,0,0,.6);
+  border-radius: 18px;
 
   padding: 19px;
 
@@ -459,16 +347,14 @@ input {
 
 .panel h2 {
   margin: 0 0 6px;
-
-  font-size: 21px;
 }
 
-.panelSubtitle {
-  margin: 0 0 18px;
-
-  color: rgba(255,255,255,.55);
+.subtitle {
+  color: rgba(255,255,255,0.55);
 
   font-size: 13px;
+
+  margin-bottom: 17px;
 }
 
 .menuButton {
@@ -476,113 +362,82 @@ input {
 
   margin-top: 9px;
 
-  padding: 13px 14px;
+  padding: 13px;
 
-  border-radius: 12px;
+  border-radius: 11px;
 
-  border: 1px solid rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,0.10);
 
-  background: #22282d;
+  background: #242a2e;
 
-  color: rgba(255,255,255,.9);
-
-  text-align: left;
+  color: white;
 
   font-size: 15px;
-
-  touch-action: manipulation;
 }
 
-.menuButton:active {
-  background: #30373c;
+.primary {
+  background: #315f9e;
 }
 
-.menuButton.primary {
-  background: #2b5fa8;
-
-  text-align: center;
-}
-
-.menuButton.danger {
-  color: #ffcbcb;
-}
-
-.menuButton.center {
-  text-align: center;
-}
-
-.settingRow {
-  margin-top: 15px;
+.settingBox {
+  margin-top: 12px;
 
   padding: 13px;
 
-  border-radius: 13px;
+  border-radius: 11px;
 
-  background: #20262a;
-
-  border: 1px solid rgba(255,255,255,.07);
+  background: #22282c;
 }
 
-.settingLabel {
+.settingTitle {
   display: flex;
   justify-content: space-between;
 
   margin-bottom: 10px;
-
-  font-size: 14px;
 }
 
 #soundVolume {
   width: 100%;
 }
 
-/* ==================================================
+/* =========================
    CONTROL EDITOR
-================================================== */
+========================= */
 
 .orientationTabs {
   display: grid;
+
   grid-template-columns: 1fr 1fr;
 
   gap: 8px;
 
-  margin: 14px 0;
+  margin-bottom: 14px;
 }
 
 .orientationTab {
   padding: 10px;
 
+  border: 1px solid rgba(255,255,255,0.10);
+
   border-radius: 10px;
 
-  border: 1px solid rgba(255,255,255,.10);
+  background: #22282c;
 
-  background: #20262a;
-
-  color: rgba(255,255,255,.65);
-
-  font-size: 13px;
-
-  touch-action: manipulation;
+  color: rgba(255,255,255,0.65);
 }
 
 .orientationTab.active {
-  background: #315f99;
+  background: #315f9e;
 
   color: white;
-
-  border-color: rgba(255,255,255,.20);
 }
 
-.editorStageWrap {
-  width: 100%;
+.editorWrap {
+  min-height: 280px;
 
   display: flex;
   justify-content: center;
   align-items: center;
-
-  margin: 10px 0 15px;
-
-  min-height: 275px;
 }
 
 #editorStage {
@@ -590,22 +445,13 @@ input {
 
   overflow: hidden;
 
-  background:
-    linear-gradient(
-      rgba(255,255,255,.025),
-      rgba(255,255,255,.025)
-    ),
-    #292f31;
+  background: #303638;
 
-  border: 2px solid rgba(255,255,255,.14);
+  border: 2px solid rgba(255,255,255,0.15);
 
-  border-radius: 15px;
+  border-radius: 13px;
 
   touch-action: none;
-
-  transition:
-    width .2s,
-    height .2s;
 }
 
 #editorStage.portrait {
@@ -618,24 +464,8 @@ input {
   height: 180px;
 }
 
-.editorFakeHud {
+.preview {
   position: absolute;
-
-  top: 7px;
-  left: 7px;
-
-  color: rgba(255,255,255,.32);
-
-  font-size: 8px;
-
-  pointer-events: none;
-}
-
-.previewControl {
-  position: absolute;
-
-  left: 50%;
-  top: 50%;
 
   transform: translate(-50%, -50%);
 
@@ -643,25 +473,23 @@ input {
   align-items: center;
   justify-content: center;
 
-  color: rgba(255,255,255,.82);
+  color: white;
 
-  background: rgba(120,125,130,.28);
+  border: 1px solid rgba(255,255,255,0.40);
 
-  border: 1px solid rgba(255,255,255,.36);
+  background: rgba(140,145,150,0.30);
 
   touch-action: none;
-
-  cursor: grab;
 }
 
-.previewControl.joystickPreview {
+.preview.joy {
   width: 48px;
   height: 48px;
 
   border-radius: 50%;
 }
 
-.previewControl.buttonPreview {
+.preview.btn {
   width: 30px;
   height: 30px;
 
@@ -670,91 +498,24 @@ input {
   font-size: 12px;
 }
 
-.previewControl.dragging {
-  background: rgba(160,165,170,.48);
-
-  border-color: white;
+.preview.dragging {
+  background: rgba(190,195,200,0.50);
 }
 
-.editorHint {
-  color: rgba(255,255,255,.48);
-
-  font-size: 12px;
-  line-height: 1.4;
-
-  margin-bottom: 10px;
-}
-
-/* ==================================================
+/* =========================
    WORKSHOP
-================================================== */
+========================= */
 
 .workshopItem {
-  padding: 13px;
-
   margin-top: 8px;
+
+  padding: 13px;
 
   border-radius: 11px;
 
-  background: #20262a;
+  background: #22282c;
 
-  border: 1px solid rgba(255,255,255,.07);
-
-  color: rgba(255,255,255,.65);
-}
-
-/* ==================================================
-   LANDSCAPE SMALL UI
-================================================== */
-
-@media (orientation: landscape) {
-
-  #hud {
-    left:
-      calc(
-        10px +
-        env(safe-area-inset-left)
-      );
-
-    right:
-      calc(
-        10px +
-        env(safe-area-inset-right)
-      );
-  }
-
-  #settingsButton {
-    right:
-      calc(
-        11px +
-        env(safe-area-inset-right)
-      );
-  }
-
-}
-
-/* very small screens */
-
-@media (max-height: 650px) {
-
-  .joystickZone {
-    width: 88px;
-    height: 88px;
-  }
-
-  .joystickBase {
-    width: 72px;
-    height: 72px;
-  }
-
-  .joystickStick {
-    left: 27px;
-    top: 27px;
-
-    width: 34px;
-    height: 34px;
-  }
-
+  color: rgba(255,255,255,0.70);
 }
 
 </style>
@@ -764,368 +525,351 @@ input {
 
 <div id="game">
 
-  <canvas id="canvas"></canvas>
+<canvas id="canvas"></canvas>
 
-  <!-- HUD -->
+<!-- HUD -->
 
-  <div id="hud">
+<div id="hud">
 
-    <div class="hudBox">
+  <div class="hudBox">
 
-      <strong id="locationName">
-        БАЗА
-      </strong>
+    <strong id="locationName">
+      БАЗА
+    </strong>
 
-      <br>
+    <br>
 
-      ДЕНЬ 1 · 14:32
-
-    </div>
-
-    <div class="hudBox">
-
-      ❤️ 100
-      &nbsp;
-      🍖 100
-
-    </div>
+    ДЕНЬ 1 · 14:32
 
   </div>
 
-  <!-- SETTINGS -->
-
-  <button
-    id="settingsButton"
-    aria-label="Настройки"
-  >
-    ⚙
-  </button>
-
-  <!-- MOVE -->
-
-  <div
-    id="moveControl"
-    class="gameControl joystickZone"
-  >
-
-    <div class="joystickBase"></div>
-
-    <div
-      id="moveStick"
-      class="joystickStick"
-    >
-    </div>
-
-  </div>
-
-  <!-- AIM -->
-
-  <div
-    id="aimControl"
-    class="gameControl joystickZone"
-  >
-
-    <div class="joystickBase"></div>
-
-    <div
-      id="aimStick"
-      class="joystickStick"
-    >
-      ⊙
-    </div>
-
-  </div>
-
-  <!-- FIRE -->
-
-  <button
-    id="fireButton"
-    class="gameControl controlButton"
-    aria-label="Огонь"
-  >
-    ◉
-  </button>
-
-  <!-- ACTION -->
-
-  <button
-    id="actionButton"
-    class="gameControl controlButton inactive"
-    aria-label="Действие"
-  >
-    ✋
-  </button>
-
-  <!-- MESSAGE -->
-
-  <div id="message"></div>
-
-  <!-- FADE -->
-
-  <div id="fade">
-    ПОДЗЕМНАЯ БАЗА
-  </div>
-
-  <!-- SETTINGS PANEL -->
-
-  <div
-    id="settingsOverlay"
-    class="overlay"
-  >
-
-    <div class="panel">
-
-      <h2>
-        ⚙️ Настройки
-      </h2>
-
-      <p class="panelSubtitle">
-        Survival Base 0.3
-      </p>
-
-      <button
-        id="openControlsEditor"
-        class="menuButton"
-      >
-        🎮 Настройка управления
-      </button>
-
-      <button
-        id="fullscreenButton"
-        class="menuButton"
-      >
-        ⛶ Полноэкранный режим
-      </button>
-
-      <div class="settingRow">
-
-        <div class="settingLabel">
-
-          <span>
-            🔊 Звук
-          </span>
-
-          <span id="soundValue">
-            70%
-          </span>
-
-        </div>
-
-        <input
-          id="soundVolume"
-          type="range"
-          min="0"
-          max="100"
-          value="70"
-        >
-
-      </div>
-
-      <button
-        id="closeSettings"
-        class="menuButton center"
-      >
-        Закрыть
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- CONTROLS EDITOR -->
-
-  <div
-    id="controlsOverlay"
-    class="overlay"
-  >
-
-    <div class="panel">
-
-      <h2>
-        🎮 Управление
-      </h2>
-
-      <p class="panelSubtitle">
-        Перетащи элементы туда,
-        где тебе удобно.
-      </p>
-
-      <div class="orientationTabs">
-
-        <button
-          id="portraitTab"
-          class="orientationTab active"
-        >
-          📱 Вертикально
-        </button>
-
-        <button
-          id="landscapeTab"
-          class="orientationTab"
-        >
-          ↔️ Горизонтально
-        </button>
-
-      </div>
-
-      <div class="editorStageWrap">
-
-        <div
-          id="editorStage"
-          class="portrait"
-        >
-
-          <div class="editorFakeHud">
-            GAME SCREEN
-          </div>
-
-          <div
-            id="previewMove"
-            class="previewControl joystickPreview"
-          >
-            ◌
-          </div>
-
-          <div
-            id="previewAim"
-            class="previewControl joystickPreview"
-          >
-            ⊙
-          </div>
-
-          <div
-            id="previewFire"
-            class="previewControl buttonPreview"
-          >
-            ◉
-          </div>
-
-          <div
-            id="previewAction"
-            class="previewControl buttonPreview"
-          >
-            ✋
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="editorHint">
-
-        Настройки вертикального и
-        горизонтального экрана
-        сохраняются отдельно.
-
-      </div>
-
-      <button
-        id="saveControls"
-        class="menuButton primary"
-      >
-        Сохранить
-      </button>
-
-      <button
-        id="resetControls"
-        class="menuButton"
-      >
-        ↺ Сбросить эту раскладку
-      </button>
-
-      <button
-        id="backFromControls"
-        class="menuButton center"
-      >
-        Назад
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- WORKSHOP -->
-
-  <div
-    id="workshopOverlay"
-    class="overlay"
-  >
-
-    <div class="panel">
-
-      <h2>
-        🔧 Мастерская
-      </h2>
-
-      <p class="panelSubtitle">
-
-        Пока это тест помещения.
-        Настоящий крафт появится позже.
-
-      </p>
-
-      <div class="workshopItem">
-        🔫 Оружие
-      </div>
-
-      <div class="workshopItem">
-        📦 Патроны
-      </div>
-
-      <div class="workshopItem">
-        🛡 Оборона
-      </div>
-
-      <div class="workshopItem">
-        🔩 Детали
-      </div>
-
-      <button
-        id="closeWorkshop"
-        class="menuButton center"
-      >
-        Закрыть
-      </button>
-
-    </div>
+  <div class="hudBox">
+
+    ❤️ 100
+    &nbsp;
+    🍖 100
 
   </div>
 
 </div>
 
+<!-- SETTINGS -->
+
+<button id="settingsButton">
+  ⚙
+</button>
+
+<!-- LEFT JOYSTICK -->
+
+<div
+  id="moveControl"
+  class="gameControl joystick"
+>
+
+  <div class="joystickBase"></div>
+
+  <div
+    id="moveStick"
+    class="joystickStick"
+  ></div>
+
+</div>
+
+<!-- RIGHT JOYSTICK -->
+
+<div
+  id="aimControl"
+  class="gameControl joystick"
+>
+
+  <div class="joystickBase"></div>
+
+  <div
+    id="aimStick"
+    class="joystickStick"
+  >
+    ⊙
+  </div>
+
+</div>
+
+<!-- FIRE -->
+
+<button
+  id="fireButton"
+  class="gameControl controlButton"
+>
+  ◉
+</button>
+
+<!-- ACTION -->
+
+<button
+  id="actionButton"
+  class="gameControl controlButton inactive"
+>
+  ✋
+</button>
+
+<div id="message"></div>
+
+<div id="fade">
+  ПОДЗЕМНАЯ БАЗА
+</div>
+
+<!-- SETTINGS WINDOW -->
+
+<div
+  id="settingsOverlay"
+  class="overlay"
+>
+
+  <div class="panel">
+
+    <h2>
+      ⚙️ Настройки
+    </h2>
+
+    <div class="subtitle">
+      Survival Base 0.3.1
+    </div>
+
+    <button
+      id="openControlSettings"
+      class="menuButton"
+    >
+      🎮 Настройка управления
+    </button>
+
+    <button
+      id="fullscreenButton"
+      class="menuButton"
+    >
+      ⛶ Полноэкранный режим
+    </button>
+
+    <div class="settingBox">
+
+      <div class="settingTitle">
+
+        <span>
+          🔊 Звук
+        </span>
+
+        <span id="soundValue">
+          70%
+        </span>
+
+      </div>
+
+      <input
+        id="soundVolume"
+        type="range"
+        min="0"
+        max="100"
+        value="70"
+      >
+
+    </div>
+
+    <button
+      id="closeSettings"
+      class="menuButton"
+    >
+      Закрыть
+    </button>
+
+  </div>
+
+</div>
+
+<!-- CONTROL EDITOR -->
+
+<div
+  id="controlOverlay"
+  class="overlay"
+>
+
+  <div class="panel">
+
+    <h2>
+      🎮 Управление
+    </h2>
+
+    <div class="subtitle">
+      Перетащи элементы туда,
+      где тебе удобно.
+    </div>
+
+    <div class="orientationTabs">
+
+      <button
+        id="portraitTab"
+        class="orientationTab active"
+      >
+        📱 Вертикально
+      </button>
+
+      <button
+        id="landscapeTab"
+        class="orientationTab"
+      >
+        ↔ Горизонтально
+      </button>
+
+    </div>
+
+    <div class="editorWrap">
+
+      <div
+        id="editorStage"
+        class="portrait"
+      >
+
+        <div
+          id="previewMove"
+          class="preview joy"
+        >
+          ◌
+        </div>
+
+        <div
+          id="previewAim"
+          class="preview joy"
+        >
+          ⊙
+        </div>
+
+        <div
+          id="previewFire"
+          class="preview btn"
+        >
+          ◉
+        </div>
+
+        <div
+          id="previewAction"
+          class="preview btn"
+        >
+          ✋
+        </div>
+
+      </div>
+
+    </div>
+
+    <button
+      id="saveControls"
+      class="menuButton primary"
+    >
+      Сохранить
+    </button>
+
+    <button
+      id="resetControls"
+      class="menuButton"
+    >
+      ↺ Сбросить раскладку
+    </button>
+
+    <button
+      id="backControls"
+      class="menuButton"
+    >
+      Назад
+    </button>
+
+  </div>
+
+</div>
+
+<!-- WORKSHOP -->
+
+<div
+  id="workshopOverlay"
+  class="overlay"
+>
+
+  <div class="panel">
+
+    <h2>
+      🔧 Мастерская
+    </h2>
+
+    <div class="subtitle">
+      Тест мастерской.
+    </div>
+
+    <div class="workshopItem">
+      🔫 Оружие
+    </div>
+
+    <div class="workshopItem">
+      📦 Патроны
+    </div>
+
+    <div class="workshopItem">
+      🛡 Оборона
+    </div>
+
+    <div class="workshopItem">
+      🔩 Детали
+    </div>
+
+    <button
+      id="closeWorkshop"
+      class="menuButton"
+    >
+      Закрыть
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+
 <script>
 
-/* ==================================================
-   TELEGRAM
-================================================== */
+/* =========================================
+   HELPERS
+========================================= */
 
-const tg =
-  window.Telegram?.WebApp;
+function el(id) {
+  return document.getElementById(id);
+}
 
-function requestTelegramFullscreen() {
+function clone(obj) {
+  return JSON.parse(
+    JSON.stringify(obj)
+  );
+}
 
-  if (!tg) return;
+function clamp(
+  value,
+  min,
+  max
+) {
 
-  try {
-
-    tg.expand();
-
-  } catch (e) {}
-
-  try {
-
-    if (
-      typeof tg.requestFullscreen
-      === "function"
-    ) {
-
-      tg.requestFullscreen();
-
-    }
-
-  } catch (e) {}
+  return Math.max(
+    min,
+    Math.min(
+      max,
+      value
+    )
+  );
 
 }
+
+/* =========================================
+   TELEGRAM
+========================================= */
+
+const tg =
+  window.Telegram &&
+  window.Telegram.WebApp
+    ? window.Telegram.WebApp
+    : null;
 
 if (tg) {
 
@@ -1140,7 +884,8 @@ if (tg) {
   try {
 
     if (
-      typeof tg.disableVerticalSwipes
+      typeof
+      tg.disableVerticalSwipes
       === "function"
     ) {
 
@@ -1150,158 +895,301 @@ if (tg) {
 
   } catch (e) {}
 
-  /*
-    Автоматическая попытка fullscreen.
-    На некоторых версиях Telegram/iOS
-    понадобится пользовательское касание.
-  */
+}
 
-  setTimeout(
-    requestTelegramFullscreen,
-    250
+function fullscreen() {
+
+  if (!tg) {
+    return;
+  }
+
+  try {
+    tg.expand();
+  } catch (e) {}
+
+  try {
+
+    if (
+      typeof
+      tg.requestFullscreen
+      === "function"
+    ) {
+
+      tg.requestFullscreen();
+
+    }
+
+  } catch (e) {}
+
+}
+
+/* =========================================
+   DEFAULT CONTROL POSITIONS
+========================================= */
+
+const defaults = {
+
+  portrait: {
+
+    move: {
+      x: 0.18,
+      y: 0.82
+    },
+
+    aim: {
+      x: 0.80,
+      y: 0.82
+    },
+
+    fire: {
+      x: 0.71,
+      y: 0.65
+    },
+
+    action: {
+      x: 0.88,
+      y: 0.62
+    }
+
+  },
+
+  landscape: {
+
+    move: {
+      x: 0.12,
+      y: 0.78
+    },
+
+    aim: {
+      x: 0.88,
+      y: 0.78
+    },
+
+    fire: {
+      x: 0.79,
+      y: 0.55
+    },
+
+    action: {
+      x: 0.92,
+      y: 0.49
+    }
+
+  }
+
+};
+
+/* =========================================
+   LOAD CONTROL SETTINGS
+========================================= */
+
+function loadLayouts() {
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        "base_controls_031"
+      );
+
+    if (!saved) {
+      return clone(defaults);
+    }
+
+    const parsed =
+      JSON.parse(saved);
+
+    if (
+      !parsed.portrait ||
+      !parsed.landscape
+    ) {
+
+      return clone(defaults);
+
+    }
+
+    return parsed;
+
+  }
+
+  catch (error) {
+
+    return clone(defaults);
+
+  }
+
+}
+
+let layouts =
+  loadLayouts();
+
+/* =========================================
+   CONTROL POSITION
+========================================= */
+
+function orientation() {
+
+  if (
+    window.innerWidth >
+    window.innerHeight
+  ) {
+
+    return "landscape";
+
+  }
+
+  return "portrait";
+
+}
+
+function positionControl(
+  element,
+  data
+) {
+
+  if (
+    !element ||
+    !data
+  ) {
+
+    return;
+
+  }
+
+  element.style.left =
+    (
+      clamp(
+        data.x,
+        0.05,
+        0.95
+      ) *
+      100
+    ) +
+    "%";
+
+  element.style.top =
+    (
+      clamp(
+        data.y,
+        0.08,
+        0.94
+      ) *
+      100
+    ) +
+    "%";
+
+}
+
+function applyControls() {
+
+  let mode =
+    orientation();
+
+  let layout =
+    layouts[mode];
+
+  if (!layout) {
+
+    layout =
+      defaults[mode];
+
+  }
+
+  positionControl(
+    el("moveControl"),
+    layout.move
+  );
+
+  positionControl(
+    el("aimControl"),
+    layout.aim
+  );
+
+  positionControl(
+    el("fireButton"),
+    layout.fire
+  );
+
+  positionControl(
+    el("actionButton"),
+    layout.action
   );
 
 }
 
-/*
-  Первая интеракция пользователя —
-  ещё одна попытка fullscreen.
-*/
-
-let fullscreenGestureTried = false;
-
-document.addEventListener(
-  "pointerdown",
-  () => {
-
-    if (fullscreenGestureTried) {
-      return;
-    }
-
-    fullscreenGestureTried = true;
-
-    requestTelegramFullscreen();
-
-  },
-  {
-    once: true,
-    capture: true
-  }
-);
-
-/* ==================================================
-   PREVENT TELEGRAM / PAGE SWIPES
-================================================== */
-
-document.addEventListener(
-  "touchmove",
-  e => {
-
-    if (
-      !e.target.closest(".panel")
-    ) {
-
-      e.preventDefault();
-
-    }
-
-  },
-  {
-    passive: false
-  }
-);
-
-document.addEventListener(
-  "gesturestart",
-  e => e.preventDefault()
-);
-
-/* ==================================================
+/* =========================================
    CANVAS
-================================================== */
+========================================= */
 
 const canvas =
-  document.getElementById("canvas");
+  el("canvas");
 
 const ctx =
   canvas.getContext("2d");
 
-let screenW = 0;
-let screenH = 0;
-let pixelRatio = 1;
+let screenWidth = 1;
+let screenHeight = 1;
 
-function resize() {
+function resizeCanvas() {
 
-  pixelRatio =
-    window.devicePixelRatio || 1;
+  screenWidth =
+    Math.max(
+      1,
+      window.innerWidth
+    );
 
-  screenW =
-    window.innerWidth;
+  screenHeight =
+    Math.max(
+      1,
+      window.innerHeight
+    );
 
-  screenH =
-    window.innerHeight;
+  const ratio =
+    Math.min(
+      window.devicePixelRatio || 1,
+      2
+    );
 
   canvas.width =
-    Math.round(
-      screenW *
-      pixelRatio
+    Math.floor(
+      screenWidth *
+      ratio
     );
 
   canvas.height =
-    Math.round(
-      screenH *
-      pixelRatio
+    Math.floor(
+      screenHeight *
+      ratio
     );
 
   canvas.style.width =
-    screenW + "px";
+    screenWidth +
+    "px";
 
   canvas.style.height =
-    screenH + "px";
+    screenHeight +
+    "px";
 
   ctx.setTransform(
-    pixelRatio,
+    ratio,
     0,
     0,
-    pixelRatio,
+    ratio,
     0,
     0
   );
 
-  applyCurrentControlLayout();
-
 }
 
-window.addEventListener(
-  "resize",
-  () => {
+/* =========================================
+   GAME DATA
+========================================= */
 
-    resize();
+let scene =
+  "surface";
 
-  }
-);
-
-window.addEventListener(
-  "orientationchange",
-  () => {
-
-    setTimeout(
-      resize,
-      120
-    );
-
-  }
-);
-
-resize();
-
-/* ==================================================
-   GAME STATE
-================================================== */
-
-let scene = "surface";
-
-let menusOpen = false;
+let menuOpen =
+  false;
 
 const player = {
 
@@ -1323,660 +1211,6 @@ const camera = {
   y: 0
 
 };
-
-/* ==================================================
-   INPUT STATE
-================================================== */
-
-let moveX = 0;
-let moveY = 0;
-
-let aimX = 0;
-let aimY = 0;
-
-let fireHeld = false;
-
-/* ==================================================
-   CONTROL LAYOUTS
-================================================== */
-
-const DEFAULT_LAYOUTS = {
-
-  portrait: {
-
-    move: {
-      x: 0.19,
-      y: 0.82
-    },
-
-    aim: {
-      x: 0.80,
-      y: 0.82
-    },
-
-    fire: {
-      x: 0.73,
-      y: 0.66
-    },
-
-    action: {
-      x: 0.89,
-      y: 0.63
-    }
-
-  },
-
-  landscape: {
-
-    move: {
-      x: 0.12,
-      y: 0.76
-    },
-
-    aim: {
-      x: 0.88,
-      y: 0.76
-    },
-
-    fire: {
-      x: 0.79,
-      y: 0.54
-    },
-
-    action: {
-      x: 0.92,
-      y: 0.49
-    }
-
-  }
-
-};
-
-function cloneObject(obj) {
-
-  return JSON.parse(
-    JSON.stringify(obj)
-  );
-
-}
-
-function loadLayouts() {
-
-  try {
-
-    const raw =
-      localStorage.getItem(
-        "survivalBaseLayoutsV03"
-      );
-
-    if (!raw) {
-
-      return cloneObject(
-        DEFAULT_LAYOUTS
-      );
-
-    }
-
-    const saved =
-      JSON.parse(raw);
-
-    return {
-
-      portrait: {
-        ...cloneObject(
-          DEFAULT_LAYOUTS.portrait
-        ),
-        ...(saved.portrait || {})
-      },
-
-      landscape: {
-        ...cloneObject(
-          DEFAULT_LAYOUTS.landscape
-        ),
-        ...(saved.landscape || {})
-      }
-
-    };
-
-  } catch (e) {
-
-    return cloneObject(
-      DEFAULT_LAYOUTS
-    );
-
-  }
-
-}
-
-let controlLayouts =
-  loadLayouts();
-
-function saveLayouts() {
-
-  try {
-
-    localStorage.setItem(
-      "survivalBaseLayoutsV03",
-      JSON.stringify(
-        controlLayouts
-      )
-    );
-
-  } catch (e) {}
-
-}
-
-function currentOrientation() {
-
-  return (
-    window.innerWidth >
-    window.innerHeight
-  )
-    ? "landscape"
-    : "portrait";
-
-}
-
-function setControlPosition(
-  element,
-  data
-) {
-
-  if (!element || !data) {
-    return;
-  }
-
-  element.style.left =
-    (data.x * 100) + "%";
-
-  element.style.top =
-    (data.y * 100) + "%";
-
-}
-
-function applyCurrentControlLayout() {
-
-  if (
-    !document.getElementById(
-      "moveControl"
-    )
-  ) return;
-
-  const mode =
-    currentOrientation();
-
-  const layout =
-    controlLayouts[mode];
-
-  setControlPosition(
-    document.getElementById(
-      "moveControl"
-    ),
-    layout.move
-  );
-
-  setControlPosition(
-    document.getElementById(
-      "aimControl"
-    ),
-    layout.aim
-  );
-
-  setControlPosition(
-    document.getElementById(
-      "fireButton"
-    ),
-    layout.fire
-  );
-
-  setControlPosition(
-    document.getElementById(
-      "actionButton"
-    ),
-    layout.action
-  );
-
-}
-
-/* ==================================================
-   JOYSTICKS
-================================================== */
-
-function setupJoystick(
-  zone,
-  stick,
-  onMove,
-  onEnd
-) {
-
-  let activePointer = null;
-
-  const maxDistance = 29;
-
-  function updateJoystick(e) {
-
-    const rect =
-      zone.getBoundingClientRect();
-
-    const centerX =
-      rect.left +
-      rect.width / 2;
-
-    const centerY =
-      rect.top +
-      rect.height / 2;
-
-    let dx =
-      e.clientX -
-      centerX;
-
-    let dy =
-      e.clientY -
-      centerY;
-
-    const distance =
-      Math.hypot(
-        dx,
-        dy
-      );
-
-    if (
-      distance >
-      maxDistance
-    ) {
-
-      dx =
-        dx /
-        distance *
-        maxDistance;
-
-      dy =
-        dy /
-        distance *
-        maxDistance;
-
-    }
-
-    stick.style.transform =
-      `translate(${dx}px, ${dy}px)`;
-
-    onMove(
-      dx / maxDistance,
-      dy / maxDistance
-    );
-
-  }
-
-  function stopJoystick(e) {
-
-    if (
-      activePointer !== null &&
-      e.pointerId !== undefined &&
-      e.pointerId !==
-      activePointer
-    ) {
-
-      return;
-
-    }
-
-    activePointer = null;
-
-    zone.classList.remove(
-      "active"
-    );
-
-    stick.style.transform =
-      "translate(0px, 0px)";
-
-    onMove(0, 0);
-
-    if (onEnd) {
-      onEnd();
-    }
-
-  }
-
-  zone.addEventListener(
-    "pointerdown",
-    e => {
-
-      if (menusOpen) {
-        return;
-      }
-
-      e.preventDefault();
-
-      activePointer =
-        e.pointerId;
-
-      zone.classList.add(
-        "active"
-      );
-
-      try {
-
-        zone.setPointerCapture(
-          e.pointerId
-        );
-
-      } catch (err) {}
-
-      updateJoystick(e);
-
-    }
-  );
-
-  zone.addEventListener(
-    "pointermove",
-    e => {
-
-      if (
-        e.pointerId !==
-        activePointer
-      ) {
-
-        return;
-
-      }
-
-      e.preventDefault();
-
-      updateJoystick(e);
-
-    }
-  );
-
-  zone.addEventListener(
-    "pointerup",
-    stopJoystick
-  );
-
-  zone.addEventListener(
-    "pointercancel",
-    stopJoystick
-  );
-
-}
-
-/* move joystick */
-
-setupJoystick(
-
-  document.getElementById(
-    "moveControl"
-  ),
-
-  document.getElementById(
-    "moveStick"
-  ),
-
-  (x, y) => {
-
-    moveX = x;
-    moveY = y;
-
-  },
-
-  () => {
-
-    moveX = 0;
-    moveY = 0;
-
-  }
-
-);
-
-/* aim joystick */
-
-setupJoystick(
-
-  document.getElementById(
-    "aimControl"
-  ),
-
-  document.getElementById(
-    "aimStick"
-  ),
-
-  (x, y) => {
-
-    aimX = x;
-    aimY = y;
-
-    const strength =
-      Math.hypot(
-        x,
-        y
-      );
-
-    if (
-      strength >
-      0.13
-    ) {
-
-      player.aimX = x;
-      player.aimY = y;
-
-    }
-
-  },
-
-  () => {
-
-    aimX = 0;
-    aimY = 0;
-
-  }
-
-);
-
-/* ==================================================
-   FIRE BUTTON
-================================================== */
-
-const fireButton =
-  document.getElementById(
-    "fireButton"
-  );
-
-function startFire(e) {
-
-  if (menusOpen) {
-    return;
-  }
-
-  e.preventDefault();
-
-  fireHeld = true;
-
-  fireButton.classList.add(
-    "pressed"
-  );
-
-  /*
-    Сразу один выстрел.
-    Если держать —
-    дальше стреляет автоматически.
-  */
-
-  shoot(true);
-
-  try {
-
-    fireButton.setPointerCapture(
-      e.pointerId
-    );
-
-  } catch (err) {}
-
-}
-
-function stopFire(e) {
-
-  fireHeld = false;
-
-  fireButton.classList.remove(
-    "pressed"
-  );
-
-}
-
-fireButton.addEventListener(
-  "pointerdown",
-  startFire
-);
-
-fireButton.addEventListener(
-  "pointerup",
-  stopFire
-);
-
-fireButton.addEventListener(
-  "pointercancel",
-  stopFire
-);
-
-fireButton.addEventListener(
-  "pointerleave",
-  e => {
-
-    if (
-      e.buttons === 0
-    ) {
-
-      stopFire(e);
-
-    }
-
-  }
-);
-
-/* ==================================================
-   BULLETS
-================================================== */
-
-const bullets = [];
-
-let lastShot = 0;
-
-const fireInterval = 155;
-
-function shoot(force = false) {
-
-  if (menusOpen) {
-    return;
-  }
-
-  const now =
-    performance.now();
-
-  if (
-    !force &&
-    now -
-    lastShot <
-    fireInterval
-  ) {
-
-    return;
-
-  }
-
-  if (
-    force &&
-    now -
-    lastShot <
-    80
-  ) {
-
-    return;
-
-  }
-
-  lastShot = now;
-
-  const magnitude =
-    Math.hypot(
-      player.aimX,
-      player.aimY
-    ) || 1;
-
-  const dx =
-    player.aimX /
-    magnitude;
-
-  const dy =
-    player.aimY /
-    magnitude;
-
-  bullets.push({
-
-    x:
-      player.x +
-      dx * 25,
-
-    y:
-      player.y +
-      dy * 25,
-
-    dx:
-      dx * 11,
-
-    dy:
-      dy * 11,
-
-    life: 85
-
-  });
-
-}
-
-function updateBullets() {
-
-  if (fireHeld) {
-
-    shoot();
-
-  }
-
-  for (
-    let i =
-      bullets.length - 1;
-
-    i >= 0;
-
-    i--
-  ) {
-
-    const bullet =
-      bullets[i];
-
-    bullet.x +=
-      bullet.dx;
-
-    bullet.y +=
-      bullet.dy;
-
-    bullet.life--;
-
-    if (
-      bullet.life <= 0
-    ) {
-
-      bullets.splice(
-        i,
-        1
-      );
-
-    }
-
-  }
-
-}
-
-/* ==================================================
-   SURFACE MAP
-================================================== */
 
 const surface = {
 
@@ -2017,11 +1251,7 @@ const surface = {
 
 };
 
-/* ==================================================
-   UNDERGROUND
-================================================== */
-
-const underground = {
+const bunker = {
 
   width: 1450,
   height: 1450,
@@ -2051,383 +1281,390 @@ const underground = {
     top: 850,
     bottom: 1120,
 
-    doorwayTop: 905,
-    doorwayBottom: 1015
+    doorTop: 905,
+    doorBottom: 1015
 
   }
 
 };
 
-const undergroundRooms = [
+/* =========================================
+   INPUT
+========================================= */
 
-  {
-    side: "left",
-    y: 960,
-    name: "МАСТЕРСКАЯ",
-    active: true
-  },
+let moveX = 0;
+let moveY = 0;
 
-  {
-    side: "left",
-    y: 700,
-    name: "МЕДИЦИНА",
-    active: false
-  },
-
-  {
-    side: "left",
-    y: 450,
-    name: "СКЛАД",
-    active: false
-  },
-
-  {
-    side: "right",
-    y: 960,
-    name: "ОТДЫХ",
-    active: false
-  },
-
-  {
-    side: "right",
-    y: 700,
-    name: "ЭНЕРГЕТИКА",
-    active: false
-  },
-
-  {
-    side: "right",
-    y: 450,
-    name: "ОБОРОНА",
-    active: false
-  }
-
-];
-
-const farmRoom = {
-
-  left: 430,
-  top: 40,
-
-  width: 590,
-  height: 300
-
-};
-
-/* ==================================================
-   MESSAGE
-================================================== */
-
-let messageTimer = null;
-
-function showMessage(text) {
-
-  const element =
-    document.getElementById(
-      "message"
-    );
-
-  element.textContent =
-    text;
-
-  element.classList.add(
-    "show"
-  );
-
-  clearTimeout(
-    messageTimer
-  );
-
-  messageTimer =
-    setTimeout(
-      () => {
-
-        element.classList.remove(
-          "show"
-        );
-
-      },
-      1400
-    );
-
-}
-
-/* ==================================================
-   TRANSITIONS
-================================================== */
-
-function transition(
-  label,
+function setupJoystick(
+  zone,
+  stick,
   callback
 ) {
 
-  const fade =
-    document.getElementById(
-      "fade"
-    );
+  let pointer =
+    null;
 
-  fade.textContent =
-    label;
+  const maxDistance =
+    28;
 
-  fade.classList.add(
-    "show"
-  );
+  function move(e) {
 
-  moveX = 0;
-  moveY = 0;
+    const rect =
+      zone.getBoundingClientRect();
 
-  fireHeld = false;
+    const centerX =
+      rect.left +
+      rect.width / 2;
 
-  setTimeout(
-    () => {
+    const centerY =
+      rect.top +
+      rect.height / 2;
 
-      callback();
+    let dx =
+      e.clientX -
+      centerX;
 
-      setTimeout(
-        () => {
+    let dy =
+      e.clientY -
+      centerY;
 
-          fade.classList.remove(
-            "show"
-          );
-
-        },
-        280
+    let length =
+      Math.hypot(
+        dx,
+        dy
       );
 
-    },
-    390
-  );
-
-}
-
-function enterUnderground() {
-
-  transition(
-    "ПОДЗЕМНАЯ БАЗА",
-    () => {
-
-      scene =
-        "underground";
-
-      player.x =
-        underground
-        .entrance.x;
-
-      player.y =
-        underground
-        .entrance.y -
-        70;
-
-      bullets.length = 0;
-
-      document
-        .getElementById(
-          "locationName"
-        )
-        .textContent =
-        "БУНКЕР";
-
-    }
-  );
-
-}
-
-function returnToSurface() {
-
-  transition(
-    "ПОВЕРХНОСТЬ",
-    () => {
-
-      scene =
-        "surface";
-
-      player.x = 800;
-      player.y = 690;
-
-      bullets.length = 0;
-
-      document
-        .getElementById(
-          "locationName"
-        )
-        .textContent =
-        "БАЗА";
-
-    }
-  );
-
-}
-
-/* ==================================================
-   CONTEXT ACTION
-================================================== */
-
-const actionButton =
-  document.getElementById(
-    "actionButton"
-  );
-
-let currentAction = null;
-
-function distance(
-  ax,
-  ay,
-  bx,
-  by
-) {
-
-  return Math.hypot(
-    ax - bx,
-    ay - by
-  );
-
-}
-
-function updateActionContext() {
-
-  currentAction = null;
-
-  let icon = "✋";
-
-  if (
-    scene === "surface"
-  ) {
-
-    const hatch =
-      surface.hatch;
-
     if (
-      distance(
-        player.x,
-        player.y,
-        hatch.x,
-        hatch.y
-      ) < 82
+      length >
+      maxDistance
     ) {
 
-      currentAction =
-        "enterBunker";
+      dx =
+        dx /
+        length *
+        maxDistance;
 
-      icon = "↧";
+      dy =
+        dy /
+        length *
+        maxDistance;
 
     }
+
+    stick.style.transform =
+      "translate(" +
+      dx +
+      "px," +
+      dy +
+      "px)";
+
+    callback(
+      dx /
+      maxDistance,
+
+      dy /
+      maxDistance
+    );
 
   }
 
-  if (
-    scene ===
-    "underground"
-  ) {
+  function stop(e) {
 
     if (
-      distance(
-        player.x,
-        player.y,
-        underground
-          .entrance.x,
-        underground
-          .entrance.y
-      ) < 88
+      pointer !== null &&
+      e.pointerId !==
+      pointer
     ) {
 
-      currentAction =
-        "exitBunker";
-
-      icon = "↥";
+      return;
 
     }
 
-    /*
-      Workshop bench
-    */
+    pointer = null;
 
-    if (
-      player.x > 315 &&
-      player.x < 500 &&
-      player.y > 855 &&
-      player.y < 1005
-    ) {
+    zone.classList.remove(
+      "active"
+    );
 
-      currentAction =
-        "workshop";
+    stick.style.transform =
+      "translate(0px,0px)";
 
-      icon = "🔧";
-
-    }
+    callback(
+      0,
+      0
+    );
 
   }
 
-  actionButton.textContent =
-    icon;
+  zone.addEventListener(
+    "pointerdown",
+    function(e) {
 
-  actionButton.classList.toggle(
-    "available",
-    currentAction !== null
+      if (menuOpen) {
+        return;
+      }
+
+      e.preventDefault();
+
+      pointer =
+        e.pointerId;
+
+      zone.classList.add(
+        "active"
+      );
+
+      try {
+
+        zone.setPointerCapture(
+          e.pointerId
+        );
+
+      } catch (error) {}
+
+      move(e);
+
+    }
   );
 
-  actionButton.classList.toggle(
-    "inactive",
-    currentAction === null
+  zone.addEventListener(
+    "pointermove",
+    function(e) {
+
+      if (
+        e.pointerId !==
+        pointer
+      ) {
+
+        return;
+
+      }
+
+      e.preventDefault();
+
+      move(e);
+
+    }
+  );
+
+  zone.addEventListener(
+    "pointerup",
+    stop
+  );
+
+  zone.addEventListener(
+    "pointercancel",
+    stop
   );
 
 }
 
-function performAction() {
+setupJoystick(
 
-  if (menusOpen) {
-    return;
+  el("moveControl"),
+
+  el("moveStick"),
+
+  function(x,y) {
+
+    moveX = x;
+    moveY = y;
+
   }
+
+);
+
+setupJoystick(
+
+  el("aimControl"),
+
+  el("aimStick"),
+
+  function(x,y) {
+
+    let power =
+      Math.hypot(
+        x,
+        y
+      );
+
+    if (
+      power >
+      0.13
+    ) {
+
+      player.aimX = x;
+      player.aimY = y;
+
+    }
+
+  }
+
+);
+
+/* =========================================
+   SHOOTING
+========================================= */
+
+const bullets = [];
+
+let firing =
+  false;
+
+let lastShot =
+  0;
+
+function shoot() {
+
+  let now =
+    performance.now();
 
   if (
-    currentAction ===
-    "enterBunker"
+    now -
+    lastShot <
+    150
   ) {
 
-    enterUnderground();
     return;
 
   }
+
+  lastShot =
+    now;
+
+  let length =
+    Math.hypot(
+      player.aimX,
+      player.aimY
+    );
 
   if (
-    currentAction ===
-    "exitBunker"
+    length === 0
   ) {
 
-    returnToSurface();
-    return;
+    length = 1;
 
   }
 
-  if (
-    currentAction ===
-    "workshop"
-  ) {
+  let dx =
+    player.aimX /
+    length;
 
-    openWorkshop();
-    return;
+  let dy =
+    player.aimY /
+    length;
 
-  }
+  bullets.push({
 
-  showMessage(
-    "Здесь пока нет действия"
-  );
+    x:
+      player.x +
+      dx * 25,
+
+    y:
+      player.y +
+      dy * 25,
+
+    dx:
+      dx * 11,
+
+    dy:
+      dy * 11,
+
+    life: 80
+
+  });
 
 }
 
-actionButton.addEventListener(
+const fireButton =
+  el("fireButton");
+
+fireButton.addEventListener(
   "pointerdown",
-  e => {
+  function(e) {
+
+    if (menuOpen) {
+      return;
+    }
 
     e.preventDefault();
 
-    performAction();
+    firing = true;
+
+    fireButton.classList.add(
+      "pressed"
+    );
+
+    shoot();
 
   }
 );
 
-/* ==================================================
-   SURFACE COLLISION
-================================================== */
+function stopFire() {
+
+  firing = false;
+
+  fireButton.classList.remove(
+    "pressed"
+  );
+
+}
+
+fireButton.addEventListener(
+  "pointerup",
+  stopFire
+);
+
+fireButton.addEventListener(
+  "pointercancel",
+  stopFire
+);
+
+function updateBullets() {
+
+  if (firing) {
+
+    shoot();
+
+  }
+
+  for (
+    let i =
+      bullets.length - 1;
+
+    i >= 0;
+
+    i--
+  ) {
+
+    let bullet =
+      bullets[i];
+
+    bullet.x +=
+      bullet.dx;
+
+    bullet.y +=
+      bullet.dy;
+
+    bullet.life--;
+
+    if (
+      bullet.life <= 0
+    ) {
+
+      bullets.splice(
+        i,
+        1
+      );
+
+    }
+
+  }
+
+}
+
+/* =========================================
+   COLLISION
+========================================= */
 
 function surfaceCollision(
   x,
@@ -2440,64 +1677,39 @@ function surfaceCollision(
   const outer =
     surface.outer;
 
-  /*
-    Пока тестовая версия базы:
-    не выпускаем за основную стену.
-  */
-
   if (
     x <
     outer.left +
     outer.thickness +
     r
-  ) {
-
-    return true;
-
-  }
+  ) return true;
 
   if (
     x >
     outer.right -
     outer.thickness -
     r
-  ) {
-
-    return true;
-
-  }
+  ) return true;
 
   if (
     y <
     outer.top +
     outer.thickness +
     r
-  ) {
-
-    return true;
-
-  }
+  ) return true;
 
   if (
     y >
     outer.bottom -
     outer.thickness -
     r
-  ) {
-
-    return true;
-
-  }
+  ) return true;
 
   const inner =
     surface.inner;
 
   const wall =
     inner.thickness;
-
-  /*
-    Top wall
-  */
 
   if (
     x >
@@ -2515,10 +1727,6 @@ function surfaceCollision(
 
   }
 
-  /*
-    Left wall
-  */
-
   if (
     y >
     inner.top - r &&
@@ -2535,10 +1743,6 @@ function surfaceCollision(
 
   }
 
-  /*
-    Right wall
-  */
-
   if (
     y >
     inner.top - r &&
@@ -2555,10 +1759,6 @@ function surfaceCollision(
 
   }
 
-  /*
-    Bottom wall with door
-  */
-
   if (
     y >
     inner.bottom -
@@ -2571,15 +1771,14 @@ function surfaceCollision(
     inner.right + r
   ) {
 
-    const insideGate =
+    const gate =
       x >
-      inner.gateX + r * .2 &&
+      inner.gateX &&
       x <
       inner.gateX +
-      inner.gateWidth -
-      r * .2;
+      inner.gateWidth;
 
-    if (!insideGate) {
+    if (!gate) {
 
       return true;
 
@@ -2591,34 +1790,7 @@ function surfaceCollision(
 
 }
 
-/* ==================================================
-   UNDERGROUND COLLISION
-================================================== */
-
-function pointInsideRect(
-  x,
-  y,
-  left,
-  top,
-  right,
-  bottom,
-  margin = 0
-) {
-
-  return (
-    x >=
-      left + margin &&
-    x <=
-      right - margin &&
-    y >=
-      top + margin &&
-    y <=
-      bottom - margin
-  );
-
-}
-
-function undergroundCollision(
+function bunkerCollision(
   x,
   y
 ) {
@@ -2626,192 +1798,507 @@ function undergroundCollision(
   const r =
     player.radius;
 
-  const c =
-    underground.corridor;
+  const corridor =
+    bunker.corridor;
 
-  const w =
-    underground.workshop;
+  const workshop =
+    bunker.workshop;
 
-  /*
-    Main corridor
-  */
+  const inCorridor =
 
-  const insideCorridor =
-    pointInsideRect(
-      x,
-      y,
-      c.left,
-      c.top,
-      c.right,
-      c.bottom,
-      r
-    );
+    x >=
+    corridor.left + r &&
 
-  /*
-    Workshop room
-  */
+    x <=
+    corridor.right - r &&
 
-  const insideWorkshop =
-    pointInsideRect(
-      x,
-      y,
-      w.left,
-      w.top,
-      w.right,
-      w.bottom,
-      r
-    );
+    y >=
+    corridor.top + r &&
 
-  /*
-    Door opening connecting room
-    and corridor.
-  */
+    y <=
+    corridor.bottom - r;
 
-  const insideWorkshopDoor =
-    (
-      x >=
-        w.right - 28 &&
-      x <=
-        c.left + 28 &&
-      y >=
-        w.doorwayTop + r * .25 &&
-      y <=
-        w.doorwayBottom - r * .25
-    );
+  const inWorkshop =
 
-  if (
-    insideCorridor ||
-    insideWorkshop ||
-    insideWorkshopDoor
-  ) {
+    x >=
+    workshop.left + r &&
 
-    return false;
+    x <=
+    workshop.right - r &&
 
-  }
+    y >=
+    workshop.top + r &&
 
-  return true;
+    y <=
+    workshop.bottom - r;
+
+  const inDoor =
+
+    x >=
+    workshop.right - 30 &&
+
+    x <=
+    corridor.left + 30 &&
+
+    y >=
+    workshop.doorTop &&
+
+    y <=
+    workshop.doorBottom;
+
+  return !(
+    inCorridor ||
+    inWorkshop ||
+    inDoor
+  );
 
 }
 
-/* ==================================================
-   PLAYER MOVEMENT
-================================================== */
+/* =========================================
+   MOVEMENT
+========================================= */
 
 function updatePlayer() {
 
-  if (menusOpen) {
+  if (menuOpen) {
     return;
   }
 
-  let mx = moveX;
-  let my = moveY;
+  let x =
+    moveX;
 
-  const magnitude =
+  let y =
+    moveY;
+
+  let length =
     Math.hypot(
-      mx,
-      my
+      x,
+      y
     );
 
   if (
-    magnitude > 1
+    length >
+    1
   ) {
 
-    mx /= magnitude;
-    my /= magnitude;
+    x /= length;
+    y /= length;
 
   }
 
-  const collision =
-    scene === "surface"
-      ? surfaceCollision
-      : undergroundCollision;
+  let collision =
 
-  const nextX =
+    scene ===
+    "surface"
+
+      ? surfaceCollision
+      : bunkerCollision;
+
+  let newX =
     player.x +
-    mx *
+    x *
     player.speed;
 
-  const nextY =
+  let newY =
     player.y +
-    my *
+    y *
     player.speed;
 
   if (
     !collision(
-      nextX,
+      newX,
       player.y
     )
   ) {
 
     player.x =
-      nextX;
+      newX;
 
   }
 
   if (
     !collision(
       player.x,
-      nextY
+      newY
     )
   ) {
 
     player.y =
-      nextY;
+      newY;
 
   }
 
 }
 
-/* ==================================================
+/* =========================================
    CAMERA
-================================================== */
+========================================= */
 
 function updateCamera() {
 
-  const world =
-    scene === "surface"
+  let world =
+
+    scene ===
+    "surface"
+
       ? surface
-      : underground;
+      : bunker;
 
   camera.x =
     player.x -
-    screenW / 2;
+    screenWidth / 2;
 
   camera.y =
     player.y -
-    screenH / 2;
+    screenHeight / 2;
 
   camera.x =
-    Math.max(
+    clamp(
+      camera.x,
       0,
-      Math.min(
-        camera.x,
-        Math.max(
-          0,
-          world.width -
-          screenW
-        )
+      Math.max(
+        0,
+        world.width -
+        screenWidth
       )
     );
 
   camera.y =
-    Math.max(
+    clamp(
+      camera.y,
       0,
-      Math.min(
-        camera.y,
-        Math.max(
-          0,
-          world.height -
-          screenH
-        )
+      Math.max(
+        0,
+        world.height -
+        screenHeight
       )
     );
 
 }
 
-/* ==================================================
+/* =========================================
+   ACTION
+========================================= */
+
+let currentAction =
+  null;
+
+const actionButton =
+  el("actionButton");
+
+function distance(
+  x1,
+  y1,
+  x2,
+  y2
+) {
+
+  return Math.hypot(
+    x1 - x2,
+    y1 - y2
+  );
+
+}
+
+function updateAction() {
+
+  currentAction =
+    null;
+
+  let icon =
+    "✋";
+
+  if (
+    scene ===
+    "surface"
+  ) {
+
+    if (
+      distance(
+        player.x,
+        player.y,
+        surface.hatch.x,
+        surface.hatch.y
+      ) <
+      82
+    ) {
+
+      currentAction =
+        "bunker";
+
+      icon =
+        "↧";
+
+    }
+
+  }
+
+  else {
+
+    if (
+      distance(
+        player.x,
+        player.y,
+        bunker.entrance.x,
+        bunker.entrance.y
+      ) <
+      90
+    ) {
+
+      currentAction =
+        "surface";
+
+      icon =
+        "↥";
+
+    }
+
+    if (
+      player.x >
+      315 &&
+      player.x <
+      500 &&
+      player.y >
+      855 &&
+      player.y <
+      1005
+    ) {
+
+      currentAction =
+        "workshop";
+
+      icon =
+        "🔧";
+
+    }
+
+  }
+
+  actionButton.textContent =
+    icon;
+
+  if (
+    currentAction
+  ) {
+
+    actionButton.classList.add(
+      "available"
+    );
+
+    actionButton.classList.remove(
+      "inactive"
+    );
+
+  }
+
+  else {
+
+    actionButton.classList.remove(
+      "available"
+    );
+
+    actionButton.classList.add(
+      "inactive"
+    );
+
+  }
+
+}
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+let messageTimer;
+
+function message(text) {
+
+  const box =
+    el("message");
+
+  box.textContent =
+    text;
+
+  box.classList.add(
+    "show"
+  );
+
+  clearTimeout(
+    messageTimer
+  );
+
+  messageTimer =
+    setTimeout(
+      function() {
+
+        box.classList.remove(
+          "show"
+        );
+
+      },
+      1300
+    );
+
+}
+
+/* =========================================
+   TRANSITION
+========================================= */
+
+function transition(
+  title,
+  callback
+) {
+
+  const fade =
+    el("fade");
+
+  fade.textContent =
+    title;
+
+  fade.classList.add(
+    "show"
+  );
+
+  moveX = 0;
+  moveY = 0;
+
+  setTimeout(
+    function() {
+
+      callback();
+
+      setTimeout(
+        function() {
+
+          fade.classList.remove(
+            "show"
+          );
+
+        },
+        260
+      );
+
+    },
+    400
+  );
+
+}
+
+function enterBunker() {
+
+  transition(
+    "ПОДЗЕМНАЯ БАЗА",
+
+    function() {
+
+      scene =
+        "bunker";
+
+      player.x =
+        bunker.entrance.x;
+
+      player.y =
+        bunker.entrance.y -
+        70;
+
+      bullets.length =
+        0;
+
+      el(
+        "locationName"
+      ).textContent =
+        "БУНКЕР";
+
+    }
+
+  );
+
+}
+
+function leaveBunker() {
+
+  transition(
+    "ПОВЕРХНОСТЬ",
+
+    function() {
+
+      scene =
+        "surface";
+
+      player.x =
+        800;
+
+      player.y =
+        690;
+
+      bullets.length =
+        0;
+
+      el(
+        "locationName"
+      ).textContent =
+        "БАЗА";
+
+    }
+
+  );
+
+}
+
+actionButton.addEventListener(
+  "pointerdown",
+  function(e) {
+
+    e.preventDefault();
+
+    if (
+      currentAction ===
+      "bunker"
+    ) {
+
+      enterBunker();
+
+      return;
+
+    }
+
+    if (
+      currentAction ===
+      "surface"
+    ) {
+
+      leaveBunker();
+
+      return;
+
+    }
+
+    if (
+      currentAction ===
+      "workshop"
+    ) {
+
+      openOverlay(
+        el(
+          "workshopOverlay"
+        )
+      );
+
+      return;
+
+    }
+
+    message(
+      "Здесь пока нет действия"
+    );
+
+  }
+);
+
+/* =========================================
    DRAW SURFACE
-================================================== */
+========================================= */
 
 function drawSurface() {
 
@@ -2825,33 +2312,31 @@ function drawSurface() {
     surface.height
   );
 
-  /*
-    Ground texture
-  */
+  /* ground */
 
   for (
-    let x = 55;
+    let x = 50;
     x <
     surface.width;
-    x += 105
+    x += 100
   ) {
 
     for (
-      let y = 55;
+      let y = 50;
       y <
       surface.height;
-      y += 105
+      y += 100
     ) {
 
       ctx.fillStyle =
-        "rgba(0,0,0,.035)";
+        "rgba(0,0,0,0.035)";
 
       ctx.beginPath();
 
       ctx.arc(
         x,
         y,
-        23,
+        20,
         0,
         Math.PI * 2
       );
@@ -2862,6 +2347,8 @@ function drawSurface() {
 
   }
 
+  /* outer wall */
+
   const o =
     surface.outer;
 
@@ -2871,7 +2358,8 @@ function drawSurface() {
   ctx.fillRect(
     o.left,
     o.top,
-    o.right - o.left,
+    o.right -
+    o.left,
     o.thickness
   );
 
@@ -2879,26 +2367,29 @@ function drawSurface() {
     o.left,
     o.top,
     o.thickness,
-    o.bottom - o.top
+    o.bottom -
+    o.top
   );
 
   ctx.fillRect(
-    o.right - o.thickness,
+    o.right -
+    o.thickness,
     o.top,
     o.thickness,
-    o.bottom - o.top
+    o.bottom -
+    o.top
   );
 
   ctx.fillRect(
     o.left,
-    o.bottom - o.thickness,
-    o.right - o.left,
+    o.bottom -
+    o.thickness,
+    o.right -
+    o.left,
     o.thickness
   );
 
-  /*
-    Main gate visual
-  */
+  /* gate */
 
   ctx.fillStyle =
     "#292d2d";
@@ -2906,223 +2397,188 @@ function drawSurface() {
   ctx.fillRect(
     730,
     o.bottom -
-    o.thickness -
-    4,
+    o.thickness,
     140,
-    o.thickness + 8
+    o.thickness
   );
 
-  /*
-    Inner compound
-  */
+  /* inner wall */
 
-  const inner =
+  const i =
     surface.inner;
 
   ctx.fillStyle =
     "#6d6d64";
 
   ctx.fillRect(
-    inner.left,
-    inner.top,
-    inner.right -
-    inner.left,
-    inner.thickness
+    i.left,
+    i.top,
+    i.right -
+    i.left,
+    i.thickness
   );
 
   ctx.fillRect(
-    inner.left,
-    inner.top,
-    inner.thickness,
-    inner.bottom -
-    inner.top
+    i.left,
+    i.top,
+    i.thickness,
+    i.bottom -
+    i.top
   );
 
   ctx.fillRect(
-    inner.right -
-    inner.thickness,
-    inner.top,
-    inner.thickness,
-    inner.bottom -
-    inner.top
+    i.right -
+    i.thickness,
+    i.top,
+    i.thickness,
+    i.bottom -
+    i.top
   );
 
-  /*
-    Bottom left wall
-  */
-
   ctx.fillRect(
-    inner.left,
-    inner.bottom -
-    inner.thickness,
-    inner.gateX -
-    inner.left,
-    inner.thickness
+    i.left,
+    i.bottom -
+    i.thickness,
+    i.gateX -
+    i.left,
+    i.thickness
   );
 
-  /*
-    Bottom right wall
-  */
-
   ctx.fillRect(
-    inner.gateX +
-    inner.gateWidth,
-    inner.bottom -
-    inner.thickness,
-    inner.right -
+    i.gateX +
+    i.gateWidth,
+    i.bottom -
+    i.thickness,
+    i.right -
     (
-      inner.gateX +
-      inner.gateWidth
+      i.gateX +
+      i.gateWidth
     ),
-    inner.thickness
+    i.thickness
   );
 
-  /*
-    Inner ground
-  */
+  /* inside */
 
   ctx.fillStyle =
     "#57584f";
 
   ctx.fillRect(
-    inner.left +
-    inner.thickness,
-    inner.top +
-    inner.thickness,
-    inner.right -
-    inner.left -
-    inner.thickness * 2,
-    inner.bottom -
-    inner.top -
-    inner.thickness * 2
+    i.left +
+    i.thickness,
+    i.top +
+    i.thickness,
+    i.right -
+    i.left -
+    i.thickness * 2,
+    i.bottom -
+    i.top -
+    i.thickness * 2
   );
 
-  /*
-    Gate marker
-  */
-
-  ctx.fillStyle =
-    "rgba(30,30,30,.28)";
-
-  ctx.fillRect(
-    inner.gateX,
-    inner.bottom -
-    4,
-    inner.gateWidth,
-    8
-  );
-
-  /*
-    Hatch
-  */
-
-  const hatch =
-    surface.hatch;
+  /* hatch */
 
   ctx.fillStyle =
     "#17191a";
 
   ctx.fillRect(
-    hatch.x - 35,
-    hatch.y - 35,
+    765,
+    555,
     70,
     70
   );
 
   ctx.strokeStyle =
-    "#9a9d9d";
+    "#aaaaaa";
 
-  ctx.lineWidth = 4;
+  ctx.lineWidth =
+    4;
 
   ctx.strokeRect(
-    hatch.x - 35,
-    hatch.y - 35,
+    765,
+    555,
     70,
     70
   );
 
   ctx.fillStyle =
-    "#d1d1d1";
-
-  ctx.textAlign =
-    "center";
+    "white";
 
   ctx.font =
     "13px Arial";
 
+  ctx.textAlign =
+    "center";
+
   ctx.fillText(
     "ЛЮК",
-    hatch.x,
-    hatch.y + 5
+    800,
+    595
   );
 
-  /*
-    Surface objects
-  */
+  /* farm */
 
   ctx.fillStyle =
-    "#576f42";
+    "#566e42";
 
   ctx.fillRect(
-    310,
     300,
-    180,
+    300,
+    190,
     120
   );
 
   ctx.fillStyle =
-    "rgba(255,255,255,.65)";
-
-  ctx.font =
-    "12px Arial";
+    "white";
 
   ctx.fillText(
     "ФЕРМА",
-    400,
+    395,
     365
   );
 
+  /* generator */
+
   ctx.fillStyle =
-    "#43494c";
+    "#454a4d";
 
   ctx.fillRect(
     1080,
     310,
-    120,
+    125,
     90
   );
 
   ctx.fillStyle =
-    "#ddd";
+    "white";
 
   ctx.fillText(
     "ГЕНЕРАТОР",
-    1140,
+    1142,
     362
   );
 
+  /* car */
+
   ctx.fillStyle =
-    "#39444b";
+    "#38444b";
 
   ctx.fillRect(
-    1110,
+    1100,
     790,
-    150,
-    70
+    160,
+    75
   );
 
   ctx.fillStyle =
-    "#ddd";
+    "white";
 
   ctx.fillText(
     "МАШИНА",
-    1185,
-    831
+    1180,
+    833
   );
 
-  /*
-    Towers
-  */
+  /* towers */
 
   const towers = [
 
@@ -3131,47 +2587,44 @@ function drawSurface() {
     [1400,160],
 
     [200,1040],
-    [800,1045],
+    [800,1040],
     [1400,1040]
 
   ];
 
   for (
-    const [
-      tx,
-      ty
-    ] of towers
+    let tower of towers
   ) {
 
     ctx.fillStyle =
-      "#262a2b";
+      "#282c2d";
 
     ctx.fillRect(
-      tx - 26,
-      ty - 26,
-      52,
-      52
+      tower[0] - 25,
+      tower[1] - 25,
+      50,
+      50
     );
 
     ctx.fillStyle =
       "#777c7c";
 
     ctx.fillRect(
-      tx - 17,
-      ty - 17,
-      34,
-      34
+      tower[0] - 16,
+      tower[1] - 16,
+      32,
+      32
     );
 
   }
 
 }
 
-/* ==================================================
-   DRAW UNDERGROUND
-================================================== */
+/* =========================================
+   DRAW BUNKER
+========================================= */
 
-function drawUnderground() {
+function drawBunker() {
 
   ctx.fillStyle =
     "#101417";
@@ -3179,16 +2632,14 @@ function drawUnderground() {
   ctx.fillRect(
     0,
     0,
-    underground.width,
-    underground.height
+    bunker.width,
+    bunker.height
   );
 
   const c =
-    underground.corridor;
+    bunker.corridor;
 
-  /*
-    Corridor floor
-  */
+  /* corridor */
 
   ctx.fillStyle =
     "#3b4042";
@@ -3202,18 +2653,38 @@ function drawUnderground() {
     c.top
   );
 
-  /*
-    Floor panels
-  */
+  /* walls */
+
+  ctx.fillStyle =
+    "#747878";
+
+  ctx.fillRect(
+    c.left - 20,
+    c.top,
+    20,
+    c.bottom -
+    c.top
+  );
+
+  ctx.fillRect(
+    c.right,
+    c.top,
+    20,
+    c.bottom -
+    c.top
+  );
+
+  /* floor lines */
 
   ctx.strokeStyle =
-    "rgba(255,255,255,.045)";
+    "rgba(255,255,255,0.05)";
 
-  ctx.lineWidth = 1;
+  ctx.lineWidth =
+    1;
 
   for (
     let y =
-      c.top + 50;
+      c.top + 60;
 
     y <
       c.bottom;
@@ -3237,35 +2708,10 @@ function drawUnderground() {
 
   }
 
-  /*
-    Corridor walls
-  */
-
-  ctx.fillStyle =
-    "#747878";
-
-  ctx.fillRect(
-    c.left - 20,
-    c.top,
-    20,
-    c.bottom -
-    c.top
-  );
-
-  ctx.fillRect(
-    c.right,
-    c.top,
-    20,
-    c.bottom -
-    c.top
-  );
-
-  /*
-    Workshop
-  */
+  /* workshop */
 
   const w =
-    underground.workshop;
+    bunker.workshop;
 
   ctx.fillStyle =
     "#343a3c";
@@ -3280,9 +2726,10 @@ function drawUnderground() {
   );
 
   ctx.strokeStyle =
-    "#737777";
+    "#747878";
 
-  ctx.lineWidth = 16;
+  ctx.lineWidth =
+    16;
 
   ctx.strokeRect(
     w.left,
@@ -3293,27 +2740,23 @@ function drawUnderground() {
     w.top
   );
 
-  /*
-    Clear workshop doorway
-  */
+  /* workshop doorway */
 
   ctx.fillStyle =
     "#343a3c";
 
   ctx.fillRect(
     w.right - 18,
-    w.doorwayTop,
+    w.doorTop,
     40,
-    w.doorwayBottom -
-    w.doorwayTop
+    w.doorBottom -
+    w.doorTop
   );
 
-  /*
-    Workbench
-  */
+  /* workbench */
 
   ctx.fillStyle =
-    "#694b30";
+    "#6c4c30";
 
   ctx.fillRect(
     330,
@@ -3323,17 +2766,17 @@ function drawUnderground() {
   );
 
   ctx.fillStyle =
-    "#8c9292";
+    "#929797";
 
   ctx.fillRect(
     345,
-    861,
+    860,
     115,
     40
   );
 
   ctx.fillStyle =
-    "#dedede";
+    "white";
 
   ctx.font =
     "13px Arial";
@@ -3344,130 +2787,153 @@ function drawUnderground() {
   ctx.fillText(
     "ВЕРСТАК",
     402,
-    887
+    886
   );
 
-  /*
-    Storage boxes
-  */
+  /* labels */
 
-  ctx.fillStyle =
-    "#4c4335";
+  const rooms = [
 
-  ctx.fillRect(
-    295,
-    1020,
-    55,
-    50
-  );
+    [
+      "МЕДИЦИНА",
+      700,
+      "left"
+    ],
 
-  ctx.fillRect(
-    360,
-    1028,
-    60,
-    42
-  );
+    [
+      "СКЛАД",
+      450,
+      "left"
+    ],
 
-  /*
-    Doors / labels
-  */
+    [
+      "ОТДЫХ",
+      960,
+      "right"
+    ],
+
+    [
+      "ЭНЕРГЕТИКА",
+      700,
+      "right"
+    ],
+
+    [
+      "ОБОРОНА",
+      450,
+      "right"
+    ]
+
+  ];
 
   for (
-    const room of
-    undergroundRooms
+    let room of rooms
   ) {
 
+    const name =
+      room[0];
+
+    const y =
+      room[1];
+
+    const side =
+      room[2];
+
+    ctx.fillStyle =
+      "#25292b";
+
     if (
-      room.name ===
-      "МАСТЕРСКАЯ"
+      side ===
+      "left"
     ) {
 
-      ctx.fillStyle =
-        "#cfd2d2";
+      ctx.fillRect(
+        585,
+        y - 45,
+        25,
+        90
+      );
 
-      ctx.font =
-        "12px Arial";
+      ctx.fillStyle =
+        "#dddddd";
 
       ctx.textAlign =
         "right";
 
       ctx.fillText(
-        room.name,
-        575,
-        room.y + 5
+        name,
+        570,
+        y + 5
       );
-
-      continue;
 
     }
 
-    const leftSide =
-      room.side === "left";
+    else {
 
-    const x =
-      leftSide
-        ? c.left - 25
-        : c.right + 5;
+      ctx.fillRect(
+        840,
+        y - 45,
+        25,
+        90
+      );
 
-    ctx.fillStyle =
-      "#25292b";
+      ctx.fillStyle =
+        "#dddddd";
 
-    ctx.fillRect(
-      x,
-      room.y - 47,
-      40,
-      94
-    );
+      ctx.textAlign =
+        "left";
 
-    ctx.fillStyle =
-      "rgba(220,220,220,.72)";
+      ctx.fillText(
+        name,
+        880,
+        y + 5
+      );
 
-    ctx.font =
-      "12px Arial";
-
-    ctx.textAlign =
-      leftSide
-        ? "right"
-        : "left";
-
-    ctx.fillText(
-      room.name,
-      leftSide
-        ? c.left - 42
-        : c.right + 45,
-      room.y + 4
-    );
+    }
 
   }
 
-  /*
-    Future farm room
-  */
+  /* workshop label */
 
   ctx.fillStyle =
-    "#263429";
+    "#dddddd";
+
+  ctx.textAlign =
+    "right";
+
+  ctx.fillText(
+    "МАСТЕРСКАЯ",
+    570,
+    965
+  );
+
+  /* future farm */
+
+  ctx.fillStyle =
+    "#27362b";
 
   ctx.fillRect(
-    farmRoom.left,
-    farmRoom.top,
-    farmRoom.width,
-    farmRoom.height
+    430,
+    40,
+    590,
+    300
   );
 
   ctx.strokeStyle =
-    "#727676";
+    "#747878";
 
-  ctx.lineWidth = 18;
+  ctx.lineWidth =
+    18;
 
   ctx.strokeRect(
-    farmRoom.left,
-    farmRoom.top,
-    farmRoom.width,
-    farmRoom.height
+    430,
+    40,
+    590,
+    300
   );
 
   ctx.fillStyle =
-    "#98bb8c";
+    "#9aba8d";
 
   ctx.font =
     "18px Arial";
@@ -3481,9 +2947,7 @@ function drawUnderground() {
     105
   );
 
-  /*
-    Entrance
-  */
+  /* exit */
 
   ctx.fillStyle =
     "#17191a";
@@ -3496,9 +2960,10 @@ function drawUnderground() {
   );
 
   ctx.strokeStyle =
-    "#a1a4a4";
+    "#aaaaaa";
 
-  ctx.lineWidth = 4;
+  ctx.lineWidth =
+    4;
 
   ctx.strokeRect(
     690,
@@ -3508,7 +2973,7 @@ function drawUnderground() {
   );
 
   ctx.fillStyle =
-    "#ddd";
+    "white";
 
   ctx.font =
     "12px Arial";
@@ -3521,22 +2986,168 @@ function drawUnderground() {
 
 }
 
-/* ==================================================
+/* =========================================
+   DRAW PLAYER
+========================================= */
+
+function drawPlayer() {
+
+  let length =
+    Math.hypot(
+      player.aimX,
+      player.aimY
+    );
+
+  if (
+    length === 0
+  ) {
+
+    length = 1;
+
+  }
+
+  let aimX =
+    player.aimX /
+    length;
+
+  let aimY =
+    player.aimY /
+    length;
+
+  /* shadow */
+
+  ctx.fillStyle =
+    "rgba(0,0,0,0.30)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    player.x,
+    player.y + 15,
+    17,
+    8,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  /* aim line */
+
+  ctx.strokeStyle =
+    "rgba(255,230,160,0.30)";
+
+  ctx.lineWidth =
+    1.5;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    player.x +
+    aimX * 24,
+    player.y +
+    aimY * 24
+  );
+
+  ctx.lineTo(
+    player.x +
+    aimX * 65,
+    player.y +
+    aimY * 65
+  );
+
+  ctx.stroke();
+
+  /* aim dot */
+
+  ctx.strokeStyle =
+    "rgba(255,235,175,0.65)";
+
+  ctx.lineWidth =
+    1;
+
+  ctx.beginPath();
+
+  ctx.arc(
+    player.x +
+    aimX * 73,
+    player.y +
+    aimY * 73,
+    4,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.stroke();
+
+  /* body */
+
+  ctx.fillStyle =
+    "#405966";
+
+  ctx.fillRect(
+    player.x - 10,
+    player.y - 5,
+    20,
+    28
+  );
+
+  /* head */
+
+  ctx.fillStyle =
+    "#cda780";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    player.x,
+    player.y - 12,
+    8,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  /* weapon */
+
+  ctx.strokeStyle =
+    "#151719";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    player.x,
+    player.y
+  );
+
+  ctx.lineTo(
+    player.x +
+    aimX * 27,
+    player.y +
+    aimY * 27
+  );
+
+  ctx.stroke();
+
+}
+
+/* =========================================
    DRAW BULLETS
-================================================== */
+========================================= */
 
 function drawBullets() {
 
   for (
-    const bullet of bullets
+    let bullet of bullets
   ) {
 
-    /*
-      tiny glow
-    */
-
     ctx.fillStyle =
-      "rgba(255,215,120,.20)";
+      "rgba(255,215,120,0.25)";
 
     ctx.beginPath();
 
@@ -3569,196 +3180,19 @@ function drawBullets() {
 
 }
 
-/* ==================================================
-   DRAW PLAYER
-================================================== */
-
-function drawPlayer() {
-
-  const magnitude =
-    Math.hypot(
-      player.aimX,
-      player.aimY
-    ) || 1;
-
-  const ax =
-    player.aimX /
-    magnitude;
-
-  const ay =
-    player.aimY /
-    magnitude;
-
-  /*
-    Shadow
-  */
-
-  ctx.fillStyle =
-    "rgba(0,0,0,.30)";
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    player.x,
-    player.y + 15,
-    17,
-    8,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-  /*
-    Aim guide
-  */
-
-  ctx.strokeStyle =
-    "rgba(255,230,155,.28)";
-
-  ctx.lineWidth = 1.5;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    player.x +
-    ax * 24,
-    player.y +
-    ay * 24
-  );
-
-  ctx.lineTo(
-    player.x +
-    ax * 65,
-    player.y +
-    ay * 65
-  );
-
-  ctx.stroke();
-
-  /*
-    Aim point
-  */
-
-  ctx.strokeStyle =
-    "rgba(255,235,170,.55)";
-
-  ctx.lineWidth = 1;
-
-  ctx.beginPath();
-
-  ctx.arc(
-    player.x +
-    ax * 73,
-    player.y +
-    ay * 73,
-    4,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.stroke();
-
-  /*
-    Body
-  */
-
-  ctx.fillStyle =
-    "#405966";
-
-  ctx.fillRect(
-    player.x - 10,
-    player.y - 5,
-    20,
-    28
-  );
-
-  /*
-    Head
-  */
-
-  ctx.fillStyle =
-    "#cda780";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    player.x,
-    player.y - 12,
-    8,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fill();
-
-  /*
-    Weapon
-  */
-
-  ctx.strokeStyle =
-    "#151719";
-
-  ctx.lineWidth = 5;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    player.x,
-    player.y
-  );
-
-  ctx.lineTo(
-    player.x +
-    ax * 27,
-    player.y +
-    ay * 27
-  );
-
-  ctx.stroke();
-
-}
-
-/* ==================================================
+/* =========================================
    SETTINGS
-================================================== */
-
-const settingsOverlay =
-  document.getElementById(
-    "settingsOverlay"
-  );
-
-const controlsOverlay =
-  document.getElementById(
-    "controlsOverlay"
-  );
-
-const workshopOverlay =
-  document.getElementById(
-    "workshopOverlay"
-  );
-
-function stopAllControls() {
-
-  moveX = 0;
-  moveY = 0;
-
-  fireHeld = false;
-
-  fireButton.classList.remove(
-    "pressed"
-  );
-
-}
+========================================= */
 
 function openOverlay(
   overlay
 ) {
 
-  stopAllControls();
+  moveX = 0;
+  moveY = 0;
+  firing = false;
 
-  menusOpen = true;
+  menuOpen = true;
 
   overlay.classList.add(
     "open"
@@ -3774,314 +3208,270 @@ function closeOverlay(
     "open"
   );
 
-  const anyOpen =
+  menuOpen =
     document.querySelector(
       ".overlay.open"
-    );
-
-  menusOpen =
-    !!anyOpen;
+    ) !== null;
 
 }
 
-document
-  .getElementById(
-    "settingsButton"
-  )
-  .addEventListener(
-    "click",
-    () => {
+el(
+  "settingsButton"
+).addEventListener(
+  "click",
+  function() {
 
-      openOverlay(
-        settingsOverlay
-      );
-
-    }
-  );
-
-document
-  .getElementById(
-    "closeSettings"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      closeOverlay(
-        settingsOverlay
-      );
-
-    }
-  );
-
-document
-  .getElementById(
-    "fullscreenButton"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      requestTelegramFullscreen();
-
-      showMessage(
-        "Полноэкранный режим"
-      );
-
-    }
-  );
-
-/* ==================================================
-   SOUND SETTINGS
-================================================== */
-
-const soundVolume =
-  document.getElementById(
-    "soundVolume"
-  );
-
-const soundValue =
-  document.getElementById(
-    "soundValue"
-  );
-
-function loadSound() {
-
-  const saved =
-    localStorage.getItem(
-      "survivalBaseSound"
-    );
-
-  const value =
-    saved !== null
-      ? Number(saved)
-      : 70;
-
-  soundVolume.value =
-    value;
-
-  soundValue.textContent =
-    value + "%";
-
-}
-
-loadSound();
-
-soundVolume.addEventListener(
-  "input",
-  () => {
-
-    const value =
-      Number(
-        soundVolume.value
-      );
-
-    soundValue.textContent =
-      value + "%";
-
-    localStorage.setItem(
-      "survivalBaseSound",
-      String(value)
+    openOverlay(
+      el(
+        "settingsOverlay"
+      )
     );
 
   }
 );
 
-/* ==================================================
-   WORKSHOP
-================================================== */
+el(
+  "closeSettings"
+).addEventListener(
+  "click",
+  function() {
 
-function openWorkshop() {
+    closeOverlay(
+      el(
+        "settingsOverlay"
+      )
+    );
 
-  openOverlay(
-    workshopOverlay
-  );
+  }
+);
 
-}
+el(
+  "fullscreenButton"
+).addEventListener(
+  "click",
+  function() {
 
-document
-  .getElementById(
-    "closeWorkshop"
-  )
-  .addEventListener(
-    "click",
-    () => {
+    fullscreen();
 
-      closeOverlay(
-        workshopOverlay
-      );
+  }
+);
 
-    }
-  );
+el(
+  "closeWorkshop"
+).addEventListener(
+  "click",
+  function() {
 
-/* ==================================================
-   HUD EDITOR
-================================================== */
+    closeOverlay(
+      el(
+        "workshopOverlay"
+      )
+    );
 
-const editorStage =
-  document.getElementById(
-    "editorStage"
-  );
+  }
+);
 
-const portraitTab =
-  document.getElementById(
-    "portraitTab"
-  );
+/* =========================================
+   SOUND
+========================================= */
 
-const landscapeTab =
-  document.getElementById(
-    "landscapeTab"
-  );
+const sound =
+  el("soundVolume");
 
-let editorOrientation =
-  "portrait";
+const soundValue =
+  el("soundValue");
 
-let editorLayout =
-  cloneObject(
-    controlLayouts.portrait
-  );
+try {
 
-const previewMap = {
+  const savedSound =
+    localStorage.getItem(
+      "base_sound"
+    );
 
-  move:
-    document.getElementById(
-      "previewMove"
-    ),
-
-  aim:
-    document.getElementById(
-      "previewAim"
-    ),
-
-  fire:
-    document.getElementById(
-      "previewFire"
-    ),
-
-  action:
-    document.getElementById(
-      "previewAction"
-    )
-
-};
-
-function setPreviewPosition(
-  element,
-  position
-) {
-
-  element.style.left =
-    (position.x * 100) +
-    "%";
-
-  element.style.top =
-    (position.y * 100) +
-    "%";
-
-}
-
-function renderEditorLayout() {
-
-  for (
-    const key of
-    Object.keys(
-      previewMap
-    )
+  if (
+    savedSound !== null
   ) {
 
-    setPreviewPosition(
-      previewMap[key],
-      editorLayout[key]
-    );
+    sound.value =
+      savedSound;
 
   }
 
 }
 
-function switchEditorOrientation(
-  mode
+catch (error) {}
+
+soundValue.textContent =
+  sound.value +
+  "%";
+
+sound.addEventListener(
+  "input",
+  function() {
+
+    soundValue.textContent =
+      sound.value +
+      "%";
+
+    try {
+
+      localStorage.setItem(
+        "base_sound",
+        sound.value
+      );
+
+    }
+
+    catch (error) {}
+
+  }
+);
+
+/* =========================================
+   CONTROL EDITOR
+========================================= */
+
+let editingMode =
+  "portrait";
+
+let editingLayout =
+  clone(
+    layouts.portrait
+  );
+
+const stage =
+  el("editorStage");
+
+const previews = {
+
+  move:
+    el("previewMove"),
+
+  aim:
+    el("previewAim"),
+
+  fire:
+    el("previewFire"),
+
+  action:
+    el("previewAction")
+
+};
+
+function previewPosition(
+  element,
+  position
 ) {
 
-  /*
-    Store current temporary edit
-    before switching tabs.
-  */
+  element.style.left =
+    position.x *
+    100 +
+    "%";
 
-  controlLayouts[
-    editorOrientation
-  ] =
-    cloneObject(
-      editorLayout
-    );
-
-  editorOrientation =
-    mode;
-
-  editorLayout =
-    cloneObject(
-      controlLayouts[mode]
-    );
-
-  editorStage.classList.toggle(
-    "portrait",
-    mode === "portrait"
-  );
-
-  editorStage.classList.toggle(
-    "landscape",
-    mode === "landscape"
-  );
-
-  portraitTab.classList.toggle(
-    "active",
-    mode === "portrait"
-  );
-
-  landscapeTab.classList.toggle(
-    "active",
-    mode === "landscape"
-  );
-
-  renderEditorLayout();
+  element.style.top =
+    position.y *
+    100 +
+    "%";
 
 }
 
-portraitTab.addEventListener(
-  "click",
-  () => {
+function renderEditor() {
 
-    switchEditorOrientation(
+  previewPosition(
+    previews.move,
+    editingLayout.move
+  );
+
+  previewPosition(
+    previews.aim,
+    editingLayout.aim
+  );
+
+  previewPosition(
+    previews.fire,
+    editingLayout.fire
+  );
+
+  previewPosition(
+    previews.action,
+    editingLayout.action
+  );
+
+}
+
+function switchEditor(
+  mode
+) {
+
+  editingMode =
+    mode;
+
+  editingLayout =
+    clone(
+      layouts[mode]
+    );
+
+  stage.className =
+    mode;
+
+  el(
+    "portraitTab"
+  ).classList.toggle(
+    "active",
+    mode ===
+    "portrait"
+  );
+
+  el(
+    "landscapeTab"
+  ).classList.toggle(
+    "active",
+    mode ===
+    "landscape"
+  );
+
+  renderEditor();
+
+}
+
+el(
+  "portraitTab"
+).addEventListener(
+  "click",
+  function() {
+
+    switchEditor(
       "portrait"
     );
 
   }
 );
 
-landscapeTab.addEventListener(
+el(
+  "landscapeTab"
+).addEventListener(
   "click",
-  () => {
+  function() {
 
-    switchEditorOrientation(
+    switchEditor(
       "landscape"
     );
 
   }
 );
 
-/* draggable previews */
-
-function makePreviewDraggable(
+function draggable(
   element,
   key
 ) {
 
-  let pointerId = null;
+  let pointer =
+    null;
 
   function update(e) {
 
     const rect =
-      editorStage
-      .getBoundingClientRect();
+      stage.getBoundingClientRect();
 
     let x =
       (
@@ -4097,60 +3487,50 @@ function makePreviewDraggable(
       ) /
       rect.height;
 
-    /*
-      Keep controls reasonably
-      inside preview screen.
-    */
+    let margin =
 
-    const marginX =
-      key === "move" ||
-      key === "aim"
-        ? 0.08
-        : 0.05;
+      key ===
+      "move" ||
 
-    const marginY =
-      key === "move" ||
-      key === "aim"
-        ? 0.08
-        : 0.05;
+      key ===
+      "aim"
+
+        ? 0.09
+        : 0.06;
 
     x =
-      Math.max(
-        marginX,
-        Math.min(
-          1 - marginX,
-          x
-        )
+      clamp(
+        x,
+        margin,
+        1 - margin
       );
 
     y =
-      Math.max(
-        marginY,
-        Math.min(
-          1 - marginY,
-          y
-        )
+      clamp(
+        y,
+        margin,
+        1 - margin
       );
 
-    editorLayout[key] = {
-      x,
-      y
+    editingLayout[key] = {
+      x: x,
+      y: y
     };
 
-    setPreviewPosition(
+    previewPosition(
       element,
-      editorLayout[key]
+      editingLayout[key]
     );
 
   }
 
   element.addEventListener(
     "pointerdown",
-    e => {
+    function(e) {
 
       e.preventDefault();
 
-      pointerId =
+      pointer =
         e.pointerId;
 
       element.classList.add(
@@ -4163,7 +3543,9 @@ function makePreviewDraggable(
           e.pointerId
         );
 
-      } catch (err) {}
+      }
+
+      catch (error) {}
 
       update(e);
 
@@ -4172,38 +3554,26 @@ function makePreviewDraggable(
 
   element.addEventListener(
     "pointermove",
-    e => {
+    function(e) {
 
       if (
         e.pointerId !==
-        pointerId
+        pointer
       ) {
 
         return;
 
       }
 
-      e.preventDefault();
-
       update(e);
 
     }
   );
 
-  function finish(e) {
+  function stop() {
 
-    if (
-      pointerId !== null &&
-      e.pointerId !== undefined &&
-      e.pointerId !==
-      pointerId
-    ) {
-
-      return;
-
-    }
-
-    pointerId = null;
+    pointer =
+      null;
 
     element.classList.remove(
       "dragging"
@@ -4213,186 +3583,250 @@ function makePreviewDraggable(
 
   element.addEventListener(
     "pointerup",
-    finish
+    stop
   );
 
   element.addEventListener(
     "pointercancel",
-    finish
+    stop
   );
 
 }
 
-for (
-  const [
-    key,
-    element
-  ] of Object.entries(
-    previewMap
-  )
-) {
+draggable(
+  previews.move,
+  "move"
+);
 
-  makePreviewDraggable(
-    element,
-    key
-  );
+draggable(
+  previews.aim,
+  "aim"
+);
 
-}
+draggable(
+  previews.fire,
+  "fire"
+);
 
-document
-  .getElementById(
-    "openControlsEditor"
-  )
-  .addEventListener(
-    "click",
-    () => {
+draggable(
+  previews.action,
+  "action"
+);
 
-      closeOverlay(
-        settingsOverlay
+el(
+  "openControlSettings"
+).addEventListener(
+  "click",
+  function() {
+
+    closeOverlay(
+      el(
+        "settingsOverlay"
+      )
+    );
+
+    editingMode =
+      orientation();
+
+    editingLayout =
+      clone(
+        layouts[
+          editingMode
+        ]
       );
 
-      /*
-        Start editor with
-        current screen orientation.
-      */
+    stage.className =
+      editingMode;
 
-      editorOrientation =
-        currentOrientation();
+    el(
+      "portraitTab"
+    ).classList.toggle(
+      "active",
+      editingMode ===
+      "portrait"
+    );
 
-      editorLayout =
-        cloneObject(
-          controlLayouts[
-            editorOrientation
-          ]
-        );
+    el(
+      "landscapeTab"
+    ).classList.toggle(
+      "active",
+      editingMode ===
+      "landscape"
+    );
 
-      editorStage.classList.toggle(
-        "portrait",
-        editorOrientation ===
-        "portrait"
+    renderEditor();
+
+    openOverlay(
+      el(
+        "controlOverlay"
+      )
+    );
+
+  }
+);
+
+el(
+  "saveControls"
+).addEventListener(
+  "click",
+  function() {
+
+    layouts[
+      editingMode
+    ] =
+      clone(
+        editingLayout
       );
 
-      editorStage.classList.toggle(
-        "landscape",
-        editorOrientation ===
-        "landscape"
-      );
+    try {
 
-      portraitTab.classList.toggle(
-        "active",
-        editorOrientation ===
-        "portrait"
-      );
-
-      landscapeTab.classList.toggle(
-        "active",
-        editorOrientation ===
-        "landscape"
-      );
-
-      renderEditorLayout();
-
-      openOverlay(
-        controlsOverlay
-      );
-
-    }
-  );
-
-document
-  .getElementById(
-    "saveControls"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      controlLayouts[
-        editorOrientation
-      ] =
-        cloneObject(
-          editorLayout
-        );
-
-      saveLayouts();
-
-      applyCurrentControlLayout();
-
-      showMessage(
-        "Управление сохранено"
+      localStorage.setItem(
+        "base_controls_031",
+        JSON.stringify(
+          layouts
+        )
       );
 
     }
-  );
 
-document
-  .getElementById(
-    "resetControls"
-  )
-  .addEventListener(
-    "click",
-    () => {
+    catch (error) {}
 
-      editorLayout =
-        cloneObject(
-          DEFAULT_LAYOUTS[
-            editorOrientation
-          ]
-        );
+    applyControls();
 
-      controlLayouts[
-        editorOrientation
-      ] =
-        cloneObject(
-          editorLayout
-        );
+    message(
+      "Управление сохранено"
+    );
 
-      renderEditorLayout();
+  }
+);
 
-      saveLayouts();
+el(
+  "resetControls"
+).addEventListener(
+  "click",
+  function() {
 
-      applyCurrentControlLayout();
+    layouts[
+      editingMode
+    ] =
+      clone(
+        defaults[
+          editingMode
+        ]
+      );
 
-      showMessage(
-        "Раскладка сброшена"
+    editingLayout =
+      clone(
+        defaults[
+          editingMode
+        ]
+      );
+
+    try {
+
+      localStorage.setItem(
+        "base_controls_031",
+        JSON.stringify(
+          layouts
+        )
       );
 
     }
-  );
 
-document
-  .getElementById(
-    "backFromControls"
-  )
-  .addEventListener(
-    "click",
-    () => {
+    catch (error) {}
 
-      /*
-        Keep changes only if Save
-        was pressed.
-        Re-read saved values.
-      */
+    renderEditor();
 
-      controlLayouts =
-        loadLayouts();
+    applyControls();
 
-      closeOverlay(
-        controlsOverlay
-      );
+    message(
+      "Раскладка сброшена"
+    );
 
-      openOverlay(
-        settingsOverlay
-      );
+  }
+);
 
-      applyCurrentControlLayout();
+el(
+  "backControls"
+).addEventListener(
+  "click",
+  function() {
+
+    closeOverlay(
+      el(
+        "controlOverlay"
+      )
+    );
+
+    openOverlay(
+      el(
+        "settingsOverlay"
+      )
+    );
+
+  }
+);
+
+/* =========================================
+   SCREEN CHANGES
+========================================= */
+
+window.addEventListener(
+  "resize",
+  function() {
+
+    resizeCanvas();
+
+    applyControls();
+
+  }
+);
+
+window.addEventListener(
+  "orientationchange",
+  function() {
+
+    setTimeout(
+      function() {
+
+        resizeCanvas();
+
+        applyControls();
+
+      },
+      150
+    );
+
+  }
+);
+
+/* =========================================
+   PREVENT SWIPE
+========================================= */
+
+document.addEventListener(
+  "touchmove",
+  function(e) {
+
+    if (
+      !e.target.closest(
+        ".panel"
+      )
+    ) {
+
+      e.preventDefault();
 
     }
-  );
 
-/* ==================================================
-   UPDATE
-================================================== */
+  },
+  {
+    passive: false
+  }
+);
+
+/* =========================================
+   GAME LOOP
+========================================= */
 
 function update() {
 
@@ -4400,23 +3834,19 @@ function update() {
 
   updateBullets();
 
-  updateActionContext();
+  updateAction();
 
   updateCamera();
 
 }
-
-/* ==================================================
-   DRAW
-================================================== */
 
 function draw() {
 
   ctx.clearRect(
     0,
     0,
-    screenW,
-    screenH
+    screenWidth,
+    screenHeight
   );
 
   ctx.save();
@@ -4427,14 +3857,17 @@ function draw() {
   );
 
   if (
-    scene === "surface"
+    scene ===
+    "surface"
   ) {
 
     drawSurface();
 
-  } else {
+  }
 
-    drawUnderground();
+  else {
+
+    drawBunker();
 
   }
 
@@ -4445,10 +3878,6 @@ function draw() {
   ctx.restore();
 
 }
-
-/* ==================================================
-   LOOP
-================================================== */
 
 function gameLoop() {
 
@@ -4462,9 +3891,34 @@ function gameLoop() {
 
 }
 
-applyCurrentControlLayout();
+/* =========================================
+   START
+========================================= */
+
+/*
+  ВАЖНО:
+  layouts уже создан выше.
+  Только теперь запускаем canvas.
+*/
+
+resizeCanvas();
+
+applyControls();
+
+updateCamera();
 
 gameLoop();
+
+/*
+  Fullscreen запускаем ПОСЛЕ игры,
+  поэтому даже ошибка Telegram fullscreen
+  не может остановить Canvas.
+*/
+
+setTimeout(
+  fullscreen,
+  400
+);
 
 </script>
 
