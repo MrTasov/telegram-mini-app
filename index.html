@@ -2,8 +2,10 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Инвестор</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Survival Base</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -11,531 +13,1366 @@
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
-body {
+html, body {
   margin: 0;
-  background: #08111f;
+  padding: 0;
+  background: #080b0d;
   color: white;
-  font-family: Arial, sans-serif;
   overflow: hidden;
-}
-
-.page {
-  display: none;
-  height: calc(100vh - 86px);
-  overflow-y: auto;
-  padding: 20px 16px 110px;
-}
-
-.page.active {
-  display: block;
-}
-
-h1 {
-  margin: 0 0 20px;
-}
-
-.card {
-  background: #111c2e;
-  border: 1px solid #223452;
-  border-radius: 20px;
-  padding: 18px;
-  margin-bottom: 14px;
-}
-
-.game-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.stat {
-  flex: 1;
-  background: #101b2b;
-  border: 1px solid #233959;
-  border-radius: 16px;
-  padding: 12px;
-  text-align: center;
-}
-
-.stat small {
-  display: block;
-  color: #9fb0c9;
-  margin-bottom: 4px;
-}
-
-.stat strong {
-  font-size: 24px;
-}
-
-.game-title {
-  font-size: 30px;
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-
-.game-subtitle {
-  color: #9fb0c9;
-  margin-bottom: 14px;
-}
-
-.game-wrap {
-  background: #07101c;
-  border: 2px solid #263d5d;
-  border-radius: 20px;
-  padding: 8px;
-  box-shadow: 0 0 30px rgba(31,115,255,.08);
-}
-
-canvas {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  display: block;
-  border-radius: 14px;
-  background:
-    linear-gradient(#0c1725 1px, transparent 1px),
-    linear-gradient(90deg, #0c1725 1px, transparent 1px),
-    #050d17;
-  background-size: 24px 24px;
+  font-family: Arial, sans-serif;
   touch-action: none;
 }
 
-.controls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 14px;
-  flex-wrap: wrap;
+#game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #111;
 }
 
-.controls button,
-.main-button {
-  border: none;
-  color: white;
-  background: #1c6cff;
-  border-radius: 14px;
-  font-size: 20px;
-  font-weight: 700;
-  min-width: 58px;
-  height: 52px;
-}
-
-.main-button {
+canvas {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  margin-top: 14px;
-  background: linear-gradient(135deg, #1f6cff, #315fff);
+  height: 100%;
+  display: block;
 }
 
-.help-text {
-  color: #8fa0b9;
-  text-align: center;
+/* HUD */
+
+.hud {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.hudBox {
+  background: rgba(5,10,14,.75);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.hud strong {
+  font-size: 16px;
+}
+
+/* JOYSTICK */
+
+#joystickZone {
+  position: absolute;
+  left: 22px;
+  bottom: 28px;
+  width: 150px;
+  height: 150px;
+  touch-action: none;
+}
+
+#joystickBase {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  left: 10px;
+  top: 10px;
+
+  border-radius: 50%;
+  background: rgba(15,25,32,.65);
+  border: 2px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(8px);
+}
+
+#joystickStick {
+  position: absolute;
+  width: 62px;
+  height: 62px;
+
+  left: 44px;
+  top: 44px;
+
+  border-radius: 50%;
+  background: rgba(235,235,235,.8);
+  border: 2px solid white;
+
+  transform: translate(0px,0px);
+}
+
+/* ACTION BUTTON */
+
+#actionButton {
+  position: absolute;
+  right: 24px;
+  bottom: 48px;
+
+  width: 105px;
+  height: 105px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(36,110,220,.9);
+  color: white;
+
+  font-weight: bold;
+  font-size: 15px;
+
+  box-shadow: 0 0 25px rgba(50,120,255,.25);
+}
+
+#actionButton:active {
+  transform: scale(.95);
+}
+
+/* POPUP */
+
+#message {
+  position: absolute;
+  left: 50%;
+  bottom: 190px;
+  transform: translateX(-50%);
+
+  padding: 12px 18px;
+  border-radius: 14px;
+
+  background: rgba(0,0,0,.8);
+  border: 1px solid rgba(255,255,255,.15);
+
   font-size: 14px;
-  margin-top: 10px;
+  opacity: 0;
+
+  transition: opacity .2s;
+  pointer-events: none;
 }
 
-.menu {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 86px;
-  background: #0e1725;
-  border-top: 1px solid #21324c;
-  display: flex;
-  z-index: 99;
+#message.show {
+  opacity: 1;
 }
 
-.menu-item {
-  width: 20%;
-  display: flex;
-  flex-direction: column;
+/* HATCH SCREEN */
+
+#underground {
+  position: absolute;
+  inset: 0;
+
+  background: #090d12;
+
+  display: none;
   align-items: center;
   justify-content: center;
-  color: #8fa0b9;
-  font-size: 12px;
+
+  flex-direction: column;
+
+  z-index: 20;
 }
 
-.menu-item.active {
-  color: #4d8cff;
+#underground h1 {
+  margin-bottom: 10px;
 }
 
-.menu-item .icon {
-  font-size: 24px;
-  margin-bottom: 4px;
+#underground p {
+  color: #aaa;
 }
 
-.trump-face {
-  font-size: 20px;
+#underground button {
+  margin-top: 20px;
+
+  border: none;
+  border-radius: 14px;
+
+  padding: 15px 25px;
+
+  background: #246dde;
+  color: white;
+
+  font-size: 16px;
+  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<section id="home" class="page active">
-  <h1>ГЛАВНАЯ</h1>
+<div id="game">
 
-  <div class="card">
-    <h2>Добро пожаловать 👋</h2>
-    <p>Это наше Telegram Mini App.</p>
-  </div>
-</section>
+<canvas id="canvas"></canvas>
 
-<section id="community" class="page">
-  <h1>СООБЩЕСТВО</h1>
-
-  <div class="card">
-    <h2>Участники</h2>
-    <p>Позже сюда добавим участников и профили.</p>
-  </div>
-</section>
-
-<section id="chats" class="page">
-  <h1>ЧАТЫ</h1>
-
-  <div class="card">
-    <h2>Общий чат</h2>
-    <p>Здесь можно будет добавить ссылку на Telegram-чат.</p>
-  </div>
-</section>
-
-<section id="game" class="page">
-  <div class="game-title">🇺🇸 TRUMP SNAKE</div>
-  <div class="game-subtitle">Собирай доллары и расти 😄</div>
-
-  <div class="game-header">
-    <div class="stat">
-      <small>Счёт</small>
-      <strong id="score">0</strong>
-    </div>
-
-    <div class="stat">
-      <small>Рекорд</small>
-      <strong id="record">0</strong>
-    </div>
+<div class="hud">
+  <div class="hudBox">
+    <strong>ДЕНЬ 1</strong><br>
+    14:32
   </div>
 
-  <div class="game-wrap">
-    <canvas id="gameCanvas" width="360" height="360"></canvas>
+  <div class="hudBox">
+    ❤️ 100
+    &nbsp;&nbsp;
+    🍖 100
   </div>
+</div>
 
-  <button class="main-button" onclick="startGame()">▶ Новая игра</button>
+<div id="joystickZone">
+  <div id="joystickBase"></div>
+  <div id="joystickStick"></div>
+</div>
 
-  <div class="controls">
-    <button onclick="setDirection(0,-1)">↑</button>
-  </div>
+<button id="actionButton">
+  ДЕЙСТВИЕ
+</button>
 
-  <div class="controls">
-    <button onclick="setDirection(-1,0)">←</button>
-    <button onclick="setDirection(0,1)">↓</button>
-    <button onclick="setDirection(1,0)">→</button>
-  </div>
+<div id="message"></div>
 
-  <div class="help-text">Можно управлять кнопками или свайпами по полю</div>
-</section>
+<div id="underground">
+  <h1>⬇ ПОДЗЕМНАЯ БАЗА</h1>
+  <p>Позже здесь будут комнаты, склад, мастерская и медицина.</p>
 
-<section id="help" class="page">
-  <h1>ПОМОЩЬ</h1>
+  <button onclick="closeUnderground()">
+    Вернуться наверх
+  </button>
+</div>
 
-  <div class="card">
-    <h2>Поддержка</h2>
-    <p>Позже добавим FAQ и связь с администратором.</p>
-  </div>
-</section>
+</div>
 
-<nav class="menu">
-  <div class="menu-item active" onclick="openPage('home', this)">
-    <div class="icon">⌂</div>
-    Главная
-  </div>
-
-  <div class="menu-item" onclick="openPage('community', this)">
-    <div class="icon">👥</div>
-    Люди
-  </div>
-
-  <div class="menu-item" onclick="openPage('chats', this)">
-    <div class="icon">💬</div>
-    Чаты
-  </div>
-
-  <div class="menu-item" onclick="openPage('game', this)">
-    <div class="icon">🎮</div>
-    Игра
-  </div>
-
-  <div class="menu-item" onclick="openPage('help', this)">
-    <div class="icon">♡</div>
-    Помощь
-  </div>
-</nav>
 
 <script>
+
+/* TELEGRAM */
+
 const tg = window.Telegram.WebApp;
+
 tg.ready();
 tg.expand();
 
-function openPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
 
-  document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
+/* CANVAS */
 
-  if (id === 'game') {
-    resizeCanvas();
-    draw();
-  }
-}
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-// --------------------------
-// SNAKE GAME
-// --------------------------
+let screenW = 0;
+let screenH = 0;
 
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+function resize() {
 
-const gridCount = 15;
-let cellSize = 24;
-
-let snake = [];
-let direction = { x: 1, y: 0 };
-let nextDirection = { x: 1, y: 0 };
-let food = { x: 8, y: 8 };
-
-let score = 0;
-let running = false;
-let timer = null;
-
-let record = Number(localStorage.getItem('snakeRecord') || 0);
-document.getElementById('record').textContent = record;
-
-function resizeCanvas() {
-  const size = Math.floor(canvas.clientWidth);
   const ratio = window.devicePixelRatio || 1;
 
-  canvas.width = size * ratio;
-  canvas.height = size * ratio;
+  screenW = window.innerWidth;
+  screenH = window.innerHeight;
+
+  canvas.width = screenW * ratio;
+  canvas.height = screenH * ratio;
+
+  canvas.style.width = screenW + "px";
+  canvas.style.height = screenH + "px";
 
   ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-
-  cellSize = size / gridCount;
 }
 
-function startGame() {
-  score = 0;
-  document.getElementById('score').textContent = score;
+window.addEventListener("resize", resize);
 
-  snake = [
-    { x: 7, y: 7 },
-    { x: 6, y: 7 },
-    { x: 5, y: 7 },
-    { x: 4, y: 7 }
-  ];
+resize();
 
-  direction = { x: 1, y: 0 };
-  nextDirection = { x: 1, y: 0 };
 
-  spawnFood();
+/* WORLD */
 
-  running = true;
+const world = {
+  width: 1600,
+  height: 1200
+};
 
-  clearInterval(timer);
-  timer = setInterval(gameLoop, 150);
 
-  draw();
+/* PLAYER */
+
+const player = {
+
+  x: 800,
+  y: 850,
+
+  radius: 18,
+
+  speed: 3.8
+};
+
+
+/* CAMERA */
+
+const camera = {
+  x: 0,
+  y: 0
+};
+
+
+/* OUTER BASE */
+
+const outer = {
+
+  left: 170,
+  top: 130,
+
+  right: 1430,
+  bottom: 1070,
+
+  thickness: 45
+};
+
+
+/* MAIN GATE */
+
+const gate = {
+
+  x: 730,
+  y: outer.bottom - outer.thickness,
+
+  width: 140,
+
+  open: false
+};
+
+
+/* INNER COMPOUND */
+
+const inner = {
+
+  left: 610,
+  top: 420,
+
+  right: 990,
+  bottom: 760,
+
+  thickness: 28,
+
+  gateWidth: 90
+};
+
+
+/* HATCH */
+
+const hatch = {
+
+  x: 800,
+  y: 590,
+
+  radius: 35
+};
+
+
+/* WORLD OBJECTS */
+
+const objects = [
+
+  {
+    type: "farm",
+    x: 290,
+    y: 650,
+    w: 200,
+    h: 180
+  },
+
+  {
+    type: "generator",
+    x: 1120,
+    y: 300,
+    w: 110,
+    h: 80
+  },
+
+  {
+    type: "car",
+    x: 1150,
+    y: 780,
+    w: 120,
+    h: 65
+  },
+
+  {
+    type: "water",
+    x: 350,
+    y: 320,
+    w: 70,
+    h: 70
+  }
+];
+
+
+/* TOWERS */
+
+const towers = [
+
+  [200,160],
+  [480,145],
+  [800,145],
+  [1120,145],
+  [1400,160],
+
+  [200,1040],
+  [480,1055],
+  [800,1055],
+  [1120,1055],
+  [1400,1040],
+
+  [190,420],
+  [190,760],
+
+  [1410,420],
+  [1410,760]
+];
+
+
+/* MOVEMENT */
+
+let moveX = 0;
+let moveY = 0;
+
+
+/* JOYSTICK */
+
+const zone =
+  document.getElementById("joystickZone");
+
+const stick =
+  document.getElementById("joystickStick");
+
+
+let activePointer = null;
+
+
+zone.addEventListener("pointerdown", e => {
+
+  activePointer = e.pointerId;
+
+  zone.setPointerCapture(e.pointerId);
+
+  updateJoystick(e);
+});
+
+
+zone.addEventListener("pointermove", e => {
+
+  if (e.pointerId !== activePointer)
+    return;
+
+  updateJoystick(e);
+});
+
+
+zone.addEventListener("pointerup", e => {
+
+  if (e.pointerId !== activePointer)
+    return;
+
+  activePointer = null;
+
+  moveX = 0;
+  moveY = 0;
+
+  stick.style.transform =
+    "translate(0px,0px)";
+});
+
+
+function updateJoystick(e) {
+
+  const rect =
+    zone.getBoundingClientRect();
+
+  const centerX =
+    rect.left + rect.width / 2;
+
+  const centerY =
+    rect.top + rect.height / 2;
+
+  let dx =
+    e.clientX - centerX;
+
+  let dy =
+    e.clientY - centerY;
+
+  const max = 42;
+
+  const dist =
+    Math.sqrt(dx*dx + dy*dy);
+
+  if (dist > max) {
+
+    dx =
+      dx / dist * max;
+
+    dy =
+      dy / dist * max;
+  }
+
+  stick.style.transform =
+    `translate(${dx}px,${dy}px)`;
+
+  moveX = dx / max;
+  moveY = dy / max;
 }
 
-function gameLoop() {
-  if (!running) return;
 
-  direction = nextDirection;
+/* COLLISIONS */
 
-  const head = {
-    x: snake[0].x + direction.x,
-    y: snake[0].y + direction.y
-  };
+function pointInRect(x,y,rect) {
+
+  return (
+    x > rect.x &&
+    x < rect.x + rect.w &&
+    y > rect.y &&
+    y < rect.y + rect.h
+  );
+}
+
+
+function collision(x,y) {
+
+  const r = player.radius;
+
+
+  /* WORLD BORDER */
 
   if (
-    head.x < 0 ||
-    head.y < 0 ||
-    head.x >= gridCount ||
-    head.y >= gridCount
+    x < outer.left + r ||
+    x > outer.right - r ||
+    y < outer.top + r ||
+    y > outer.bottom - r
   ) {
-    gameOver();
+
+    /* GATE OPENING */
+
+    const atGate =
+      x > gate.x &&
+      x < gate.x + gate.width &&
+      y > outer.bottom - 80;
+
+    if (
+      atGate &&
+      gate.open
+    ) {
+
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /* INNER WALL */
+
+  const withinInnerX =
+    x > inner.left &&
+    x < inner.right;
+
+  const withinInnerY =
+    y > inner.top &&
+    y < inner.bottom;
+
+
+  if (
+    withinInnerX &&
+    (
+      Math.abs(
+        y - inner.top
+      ) <
+      inner.thickness + r ||
+
+      Math.abs(
+        y - inner.bottom
+      ) <
+      inner.thickness + r
+    )
+  ) {
+
+    return true;
+  }
+
+
+  if (
+    withinInnerY &&
+    (
+      Math.abs(
+        x - inner.left
+      ) <
+      inner.thickness + r ||
+
+      Math.abs(
+        x - inner.right
+      ) <
+      inner.thickness + r
+    )
+  ) {
+
+    return true;
+  }
+
+
+  /* OBJECTS */
+
+  for (const obj of objects) {
+
+    const rect = {
+
+      x: obj.x - r,
+      y: obj.y - r,
+
+      w: obj.w + r*2,
+      h: obj.h + r*2
+    };
+
+    if (
+      pointInRect(
+        x,
+        y,
+        rect
+      )
+    ) {
+
+      return true;
+    }
+  }
+
+
+  return false;
+}
+
+
+/* ACTION */
+
+const actionButton =
+  document.getElementById("actionButton");
+
+
+actionButton.addEventListener(
+  "click",
+  interact
+);
+
+
+function distance(a,b,c,d) {
+
+  return Math.hypot(
+    a-c,
+    b-d
+  );
+}
+
+
+function interact() {
+
+  /* HATCH */
+
+  if (
+    distance(
+      player.x,
+      player.y,
+      hatch.x,
+      hatch.y
+    )
+    < 80
+  ) {
+
+    document
+      .getElementById("underground")
+      .style.display = "flex";
+
     return;
   }
 
-  for (const part of snake) {
-    if (part.x === head.x && part.y === head.y) {
-      gameOver();
-      return;
-    }
+
+  /* GATE */
+
+  const gateCenterX =
+    gate.x + gate.width/2;
+
+  const gateCenterY =
+    outer.bottom - 30;
+
+
+  if (
+    distance(
+      player.x,
+      player.y,
+      gateCenterX,
+      gateCenterY
+    )
+    < 120
+  ) {
+
+    gate.open =
+      !gate.open;
+
+    showMessage(
+      gate.open
+      ? "Ворота открыты"
+      : "Ворота закрыты"
+    );
+
+    return;
   }
 
-  snake.unshift(head);
 
-  if (head.x === food.x && head.y === food.y) {
-    score++;
-    document.getElementById('score').textContent = score;
-
-    if (score > record) {
-      record = score;
-      localStorage.setItem('snakeRecord', record);
-      document.getElementById('record').textContent = record;
-    }
-
-    if (navigator.vibrate) {
-      navigator.vibrate(40);
-    }
-
-    spawnFood();
-  } else {
-    snake.pop();
-  }
-
-  draw();
-}
-
-function spawnFood() {
-  do {
-    food = {
-      x: Math.floor(Math.random() * gridCount),
-      y: Math.floor(Math.random() * gridCount)
-    };
-  } while (
-    snake.some(part => part.x === food.x && part.y === food.y)
+  showMessage(
+    "Здесь пока нечего делать"
   );
 }
 
-function setDirection(x, y) {
-  if (x === -direction.x && y === -direction.y) return;
 
-  nextDirection = { x, y };
+function closeUnderground() {
+
+  document
+    .getElementById("underground")
+    .style.display = "none";
 }
 
-function gameOver() {
-  running = false;
-  clearInterval(timer);
 
-  draw();
+/* MESSAGE */
 
-  setTimeout(() => {
-    alert("Игра окончена 😄 Счёт: " + score);
-  }, 100);
+let messageTimer = null;
+
+function showMessage(text) {
+
+  const box =
+    document.getElementById("message");
+
+  box.textContent =
+    text;
+
+  box.classList.add("show");
+
+  clearTimeout(messageTimer);
+
+  messageTimer =
+    setTimeout(() => {
+
+      box.classList.remove("show");
+
+    }, 1500);
 }
 
-function draw() {
-  const size = canvas.clientWidth;
 
-  ctx.clearRect(0, 0, size, size);
+/* DRAW */
 
-  // Food
-  const fx = food.x * cellSize;
-  const fy = food.y * cellSize;
+function drawGround() {
 
-  ctx.fillStyle = '#38d96c';
+  ctx.fillStyle =
+    "#41463a";
+
+  ctx.fillRect(
+    0,
+    0,
+    world.width,
+    world.height
+  );
+
+
+  /* dirty patches */
+
+  for (
+    let x = 0;
+    x < world.width;
+    x += 90
+  ) {
+
+    for (
+      let y = 0;
+      y < world.height;
+      y += 90
+    ) {
+
+      const n =
+        Math.sin(x*.04 + y*.03);
+
+      if (n > .35) {
+
+        ctx.fillStyle =
+          "rgba(75,65,45,.18)";
+
+        ctx.beginPath();
+
+        ctx.arc(
+          x + 40,
+          y + 40,
+          30,
+          0,
+          Math.PI*2
+        );
+
+        ctx.fill();
+      }
+    }
+  }
+}
+
+
+function drawWall() {
+
+  ctx.fillStyle =
+    "#55585a";
+
+
+  /* TOP */
+
+  ctx.fillRect(
+    outer.left,
+    outer.top,
+    outer.right -
+    outer.left,
+    outer.thickness
+  );
+
+
+  /* LEFT */
+
+  ctx.fillRect(
+    outer.left,
+    outer.top,
+    outer.thickness,
+    outer.bottom -
+    outer.top
+  );
+
+
+  /* RIGHT */
+
+  ctx.fillRect(
+    outer.right -
+    outer.thickness,
+    outer.top,
+    outer.thickness,
+    outer.bottom -
+    outer.top
+  );
+
+
+  /* BOTTOM LEFT */
+
+  ctx.fillRect(
+    outer.left,
+    outer.bottom -
+    outer.thickness,
+    gate.x -
+    outer.left,
+    outer.thickness
+  );
+
+
+  /* BOTTOM RIGHT */
+
+  ctx.fillRect(
+    gate.x +
+    gate.width,
+    outer.bottom -
+    outer.thickness,
+
+    outer.right -
+    (
+      gate.x +
+      gate.width
+    ),
+
+    outer.thickness
+  );
+
+
+  /* DETAIL */
+
+  ctx.strokeStyle =
+    "#252829";
+
+  ctx.lineWidth = 4;
+
+  ctx.strokeRect(
+    outer.left,
+    outer.top,
+    outer.right -
+    outer.left,
+    outer.bottom -
+    outer.top
+  );
+
+
+  /* GATE */
+
+  if (!gate.open) {
+
+    ctx.fillStyle =
+      "#2e302f";
+
+    ctx.fillRect(
+      gate.x,
+      outer.bottom -
+      outer.thickness,
+
+      gate.width,
+      outer.thickness
+    );
+
+
+    ctx.strokeStyle =
+      "#111";
+
+    ctx.lineWidth = 5;
+
+    for (
+      let x = gate.x;
+      x <
+      gate.x +
+      gate.width;
+      x += 18
+    ) {
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        x,
+        outer.bottom -
+        outer.thickness
+      );
+
+      ctx.lineTo(
+        x,
+        outer.bottom
+      );
+
+      ctx.stroke();
+    }
+  }
+}
+
+
+function drawTowers() {
+
+  towers.forEach(
+    ([x,y]) => {
+
+      ctx.fillStyle =
+        "#292d2d";
+
+      ctx.fillRect(
+        x-25,
+        y-25,
+        50,
+        50
+      );
+
+      ctx.fillStyle =
+        "#727878";
+
+      ctx.fillRect(
+        x-18,
+        y-18,
+        36,
+        36
+      );
+
+      ctx.fillStyle =
+        "#ffd87a";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        x,
+        y,
+        5,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+    }
+  );
+}
+
+
+function drawInnerBase() {
+
+  ctx.strokeStyle =
+    "#777";
+
+  ctx.lineWidth =
+    inner.thickness;
+
+  ctx.strokeRect(
+    inner.left,
+    inner.top,
+    inner.right -
+    inner.left,
+    inner.bottom -
+    inner.top
+  );
+
+
+  /* central floor */
+
+  ctx.fillStyle =
+    "#69665b";
+
+  ctx.fillRect(
+    inner.left +
+    inner.thickness,
+    inner.top +
+    inner.thickness,
+
+    inner.right -
+    inner.left -
+    inner.thickness*2,
+
+    inner.bottom -
+    inner.top -
+    inner.thickness*2
+  );
+}
+
+
+function drawHatch() {
+
+  ctx.fillStyle =
+    "#111";
+
+  ctx.fillRect(
+    hatch.x-32,
+    hatch.y-32,
+    64,
+    64
+  );
+
+
+  ctx.strokeStyle =
+    "#999";
+
+  ctx.lineWidth = 4;
+
+  ctx.strokeRect(
+    hatch.x-32,
+    hatch.y-32,
+    64,
+    64
+  );
+
+
+  ctx.fillStyle =
+    "#aaa";
+
+  ctx.font =
+    "16px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    "ЛЮК",
+    hatch.x,
+    hatch.y+5
+  );
+}
+
+
+function drawObjects() {
+
+  for (
+    const obj of objects
+  ) {
+
+    if (
+      obj.type === "farm"
+    ) {
+
+      ctx.fillStyle =
+        "#423722";
+
+      ctx.fillRect(
+        obj.x,
+        obj.y,
+        obj.w,
+        obj.h
+      );
+
+
+      for (
+        let x =
+          obj.x+20;
+        x <
+          obj.x+
+          obj.w;
+        x += 38
+      ) {
+
+        for (
+          let y =
+            obj.y+20;
+          y <
+            obj.y+
+            obj.h;
+          y += 38
+        ) {
+
+          ctx.fillStyle =
+            "#568c43";
+
+          ctx.beginPath();
+
+          ctx.arc(
+            x,
+            y,
+            10,
+            0,
+            Math.PI*2
+          );
+
+          ctx.fill();
+        }
+      }
+    }
+
+
+    if (
+      obj.type ===
+      "generator"
+    ) {
+
+      ctx.fillStyle =
+        "#c99124";
+
+      ctx.fillRect(
+        obj.x,
+        obj.y,
+        obj.w,
+        obj.h
+      );
+
+      ctx.fillStyle =
+        "#222";
+
+      ctx.fillRect(
+        obj.x+15,
+        obj.y+20,
+        35,
+        30
+      );
+    }
+
+
+    if (
+      obj.type === "car"
+    ) {
+
+      ctx.fillStyle =
+        "#29333a";
+
+      ctx.fillRect(
+        obj.x,
+        obj.y,
+        obj.w,
+        obj.h
+      );
+
+      ctx.fillStyle =
+        "#111";
+
+      ctx.fillRect(
+        obj.x+20,
+        obj.y+8,
+        65,
+        28
+      );
+    }
+
+
+    if (
+      obj.type === "water"
+    ) {
+
+      ctx.fillStyle =
+        "#315d74";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        obj.x+35,
+        obj.y+35,
+        35,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+    }
+  }
+}
+
+
+function drawPlayer() {
+
+  ctx.fillStyle =
+    "#1d1f20";
+
   ctx.beginPath();
-  ctx.roundRect(
-    fx + 3,
-    fy + 3,
-    cellSize - 6,
-    cellSize - 6,
-    6
+
+  ctx.arc(
+    player.x,
+    player.y,
+    player.radius,
+    0,
+    Math.PI*2
   );
+
   ctx.fill();
 
-  ctx.fillStyle = '#042611';
-  ctx.font = `${cellSize * 0.65}px Arial`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(
-    '$',
-    fx + cellSize / 2,
-    fy + cellSize / 2
+
+  ctx.fillStyle =
+    "#d0ad88";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    player.x,
+    player.y-12,
+    8,
+    0,
+    Math.PI*2
   );
 
-  // Snake
-  snake.forEach((part, index) => {
-    const px = part.x * cellSize;
-    const py = part.y * cellSize;
+  ctx.fill();
 
-    if (index === 0) {
-      ctx.fillStyle = '#f5b942';
-      ctx.beginPath();
-      ctx.arc(
-        px + cellSize / 2,
-        py + cellSize / 2,
-        cellSize * 0.43,
-        0,
-        Math.PI * 2
-      );
-      ctx.fill();
 
-      ctx.fillStyle = '#111';
-      ctx.font = `${cellSize * 0.55}px Arial`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+  ctx.fillStyle =
+    "#3f5362";
 
-      // Временная "голова Трампа"
-      ctx.fillText(
-        '🧑‍🦳',
-        px + cellSize / 2,
-        py + cellSize / 2 + 1
-      );
-
-    } else {
-      ctx.fillStyle = '#e3a82f';
-
-      ctx.beginPath();
-      ctx.roundRect(
-        px + 2,
-        py + 2,
-        cellSize - 4,
-        cellSize - 4,
-        7
-      );
-      ctx.fill();
-    }
-  });
+  ctx.fillRect(
+    player.x-10,
+    player.y-3,
+    20,
+    23
+  );
 }
 
-// --------------------------
-// SWIPES
-// --------------------------
 
-let touchStartX = 0;
-let touchStartY = 0;
+/* LOOP */
 
-canvas.addEventListener('touchstart', e => {
-  const touch = e.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
-}, { passive: true });
+function update() {
 
-canvas.addEventListener('touchend', e => {
-  const touch = e.changedTouches[0];
+  let nx =
+    player.x +
+    moveX *
+    player.speed;
 
-  const dx = touch.clientX - touchStartX;
-  const dy = touch.clientY - touchStartY;
+  let ny =
+    player.y +
+    moveY *
+    player.speed;
 
-  if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
 
-  if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > 0) setDirection(1, 0);
-    else setDirection(-1, 0);
-  } else {
-    if (dy > 0) setDirection(0, 1);
-    else setDirection(0, -1);
+  if (
+    !collision(
+      nx,
+      player.y
+    )
+  ) {
+
+    player.x =
+      nx;
   }
-});
 
-window.addEventListener('resize', resizeCanvas);
 
-resizeCanvas();
-startGame();
+  if (
+    !collision(
+      player.x,
+      ny
+    )
+  ) {
+
+    player.y =
+      ny;
+  }
+
+
+  camera.x =
+    player.x -
+    screenW/2;
+
+  camera.y =
+    player.y -
+    screenH/2;
+
+
+  camera.x =
+    Math.max(
+      0,
+      Math.min(
+        camera.x,
+        world.width -
+        screenW
+      )
+    );
+
+
+  camera.y =
+    Math.max(
+      0,
+      Math.min(
+        camera.y,
+        world.height -
+        screenH
+      )
+    );
+}
+
+
+function draw() {
+
+  ctx.clearRect(
+    0,
+    0,
+    screenW,
+    screenH
+  );
+
+
+  ctx.save();
+
+  ctx.translate(
+    -camera.x,
+    -camera.y
+  );
+
+
+  drawGround();
+
+  drawWall();
+
+  drawTowers();
+
+  drawInnerBase();
+
+  drawObjects();
+
+  drawHatch();
+
+  drawPlayer();
+
+
+  ctx.restore();
+}
+
+
+function loop() {
+
+  update();
+
+  draw();
+
+  requestAnimationFrame(
+    loop
+  );
+}
+
+
+loop();
+
 </script>
 
 </body>
