@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.14</title>
+<title>Survival Base 0.4.15</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -468,10 +468,28 @@ html,body{
   background:#050807 !important;
 }
 
+
+#versionBadge{
+  position:fixed;
+  left:max(10px, env(safe-area-inset-left));
+  top:max(10px, env(safe-area-inset-top));
+  z-index:9998;
+  pointer-events:none;
+  padding:4px 7px;
+  border-radius:7px;
+  background:rgba(0,0,0,.52);
+  border:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.88);
+  font:700 10px/1.1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  letter-spacing:.5px;
+  text-shadow:0 1px 2px #000;
+}
+
 </style>
 </head>
 
 <body>
+<div id="versionBadge">VERSION 0.4.15</div>
 
 <div id="game">
 
@@ -513,7 +531,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.14 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.15 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -794,7 +812,7 @@ window.addEventListener("touchstart",unlockGameAudio,{once:true,passive:true});
 
 function playBuffer(name,volume=1){
   // 0.4.11: only short decoded WebAudio effects are allowed.
-  if(name!=="gunshot" && name!=="hit" && name!=="footsteps") return;
+  if(name!=="gunshot" && name!=="hit" && name!=="footsteps" && name!=="zombie" && name!=="playerHit") return;
   if(masterVolume<=0) return;
 
   const ctx=ensureAudioContext();
@@ -904,8 +922,28 @@ function zombieDistanceVolume(zombie){
   return clamp((1-d/520)*.38,0,.38);
 }
 
+let lastZombieAudioAt=0;
+
 function playZombieBuffer(zombie){
-  return;
+  if(!zombie || zombie.dead || masterVolume<=0) return;
+
+  const now=performance.now();
+  // Never allow a crowd of zombies to spam audio simultaneously.
+  if(now-lastZombieAudioAt<2200) return;
+
+  const dx=zombie.x-player.x;
+  const dy=zombie.y-player.y;
+  const dist=Math.hypot(dx,dy);
+
+  const hearDistance=520;
+  if(dist>=hearDistance) return;
+
+  // Close zombie = louder; distant zombie = quiet.
+  const proximity=1-(dist/hearDistance);
+  const volume=.10 + proximity*.24;
+
+  lastZombieAudioAt=now;
+  playBuffer("zombie",volume);
 }
 
 
@@ -1003,7 +1041,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_0414"
+        "base_controls_0415"
       );
 
     if(!saved){
@@ -1030,7 +1068,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_0414",
+      "base_controls_0415",
       JSON.stringify(layouts)
     );
 
@@ -4529,7 +4567,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.4.14: single footsteps loop, instant stop, louder steps, quieter gunshot");
+console.log("0.4.15: zombie distance audio + player hit + visible version badge");
 
 gameLoop();
 
