@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.6.39</title>
+<title>Survival Base 0.6.42</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -541,7 +541,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.6.39</div>
+<div id="versionBadge">VERSION 0.6.42</div>
 
 <div id="game">
 
@@ -597,7 +597,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.6.39 · New Controls</div>
+    <div class="subtitle">Survival Base 0.6.42 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -741,12 +741,44 @@ html,body{
 </div></div>
 
 <!-- COW MANAGEMENT -->
+<div id="feedCraftOverlay" class="overlay"><div class="panel">
+  <h2>🌾 КОРМОДРОБИЛКА</h2>
+  <div class="subtitle">КРАФТ</div>
+
+  <div id="feedCraftList">
+    <div style="margin:14px 0 8px;opacity:.72">Выберите, что изготовить:</div>
+    <button id="feedRecipeGrain" class="menuButton">🌾 Корм из зерна</button>
+  </div>
+
+  <div id="feedCraftRecipe" style="display:none">
+    <div style="margin:14px 0;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px">
+      <b>🌾 Корм из зерна</b><br><br>
+      Нужно: <b>10 зерна</b><br>
+      Получите: <b>20 корма</b><br>
+      <span id="feedGrainOwned" style="opacity:.7"></span>
+    </div>
+    <button id="feedCraftBtn" class="menuButton primary">⚙️ Скрафтить</button>
+    <button id="feedCraftBack" class="menuButton">← Назад</button>
+  </div>
+
+  <div id="feedCraftProgress" style="display:none;margin:18px 0">
+    <div style="margin-bottom:9px">⚙️ Изготовление корма...</div>
+    <div style="height:10px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden">
+      <div id="feedCraftBar" style="height:100%;width:0%;background:rgba(255,255,255,.75)"></div>
+    </div>
+  </div>
+
+  <button id="feedCraftClose" class="menuButton">Закрыть</button>
+</div></div>
+
 <div id="cowOverlay" class="overlay"><div class="panel">
   <h2>🐄🐔 ЖИВОТНЫЕ</h2>
   <div class="subtitle">ЕДИНЫЙ ЦЕНТР УПРАВЛЕНИЯ</div>
   <div id="cowStatus" style="margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px"></div>
   <button id="cowMilkBtn" class="menuButton">🥛 Забрать молоко</button>
   <button id="animalEggBtn" class="menuButton">🥚 Забрать яйца</button>
+  <button id="animalFeedBtn" class="menuButton">🌾 Положить корм</button>
+  <button id="animalWaterBtn" class="menuButton">💧 Налить воду</button>
   <button id="cowSlaughterBtn" class="menuButton">🥩 Зарезать корову</button>
   <div class="subtitle" style="margin-top:10px">Минимум 2 коровы сохраняются для размножения.</div>
   <button id="cowClose" class="menuButton">Закрыть</button>
@@ -2948,6 +2980,13 @@ function updateAction(){
       currentActionObject=null;
       icon="🐄";
     }
+
+    // Temporary feed grinder beside the lower harvest chest.
+    if(nearFeedCraftStation()){
+      currentAction="feed_craft";
+      currentActionObject=null;
+      icon="🌾";
+    }
   }
 
   actionButton.textContent =
@@ -3223,8 +3262,8 @@ function renderCowMenu(){
     `🐔 Куры: ${chickens}<br>`+
     `🥛 Накоплено молока: ${milk}<br>`+
     `🥚 Накоплено яиц: ${eggs}<br>`+
-    `🌾 Корм: ${storageCount(12,"animal_feed")} / 100<br>`+
-    `💧 Вода: ${storageCount(13,"water")} / 100`;
+    `🌾 Корм: ${storageCount(12,"animal_feed")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("animal_feed")})</span><br>`+
+    `💧 Вода: ${storageCount(13,"water")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("water")})</span>`;
   el("cowSlaughterBtn").disabled=n<=2;
   el("cowSlaughterBtn").style.opacity=n<=2?".45":"1";
 }
@@ -3257,6 +3296,49 @@ function updateLivestockAnimals(){
       if(sp>max){a.vx=a.vx/sp*max;a.vy=a.vy/sp*max}
     }
   }
+}
+
+function feedCraftStationPos(){
+  const f=bunker.farm;
+  return {x:255,y:f.bottom-30};
+}
+function nearFeedCraftStation(){
+  if(scene!=="bunker") return false;
+  const p=feedCraftStationPos();
+  return distance(player.x,player.y,p.x,p.y)<=78;
+}
+let feedCraftBusy=false;
+let feedCraftTimer=null;
+
+function showFeedCraftList(){
+  if(feedCraftBusy)return;
+  el("feedCraftList").style.display="";
+  el("feedCraftRecipe").style.display="none";
+  el("feedCraftProgress").style.display="none";
+}
+
+function showFeedGrainRecipe(){
+  if(feedCraftBusy)return;
+  el("feedCraftList").style.display="none";
+  el("feedCraftRecipe").style.display="";
+  el("feedCraftProgress").style.display="none";
+  renderFeedCraftMenu();
+}
+
+function renderFeedCraftMenu(){
+  const grain=bagCount("grain");
+  el("feedGrainOwned").textContent=`В рюкзаке: ${grain} зерна`;
+  const hasRoom=bag.length<BAG_SLOTS || bag.some(s=>s.type==="animal_feed"&&s.qty<STACK_MAX);
+  const can=grain>=10 && hasRoom && !feedCraftBusy;
+  el("feedCraftBtn").disabled=!can;
+  el("feedCraftBtn").style.opacity=can?"1":".45";
+}
+
+function openFeedCraftMenu(){
+  feedCraftBusy=false;
+  if(feedCraftTimer){clearInterval(feedCraftTimer);feedCraftTimer=null;}
+  showFeedCraftList();
+  openOverlay(el("feedCraftOverlay"));
 }
 
 function nearestStorageChest(){
@@ -3517,6 +3599,11 @@ actionButton.addEventListener(
 
     if(currentAction === "livestock_manager"){
       openCowMenu();
+      return;
+    }
+
+    if(currentAction === "feed_craft"){
+      openFeedCraftMenu();
       return;
     }
 
@@ -4273,6 +4360,17 @@ function drawBunker(){
   ctx.fillStyle="#d8d0b7"; ctx.font="10px Arial"; ctx.textAlign="center";
   ctx.fillText("КОРОВЫ",(livestock.left+livestock.right)/2,livestock.top+22);
   ctx.fillText("КУРЫ",(livestock.left+livestock.right)/2,midY+24);
+
+  // Temporary feed grinder beside the "Урожай" storage chest.
+  const feedStation=feedCraftStationPos();
+  ctx.fillStyle="#4c5350";
+  ctx.fillRect(feedStation.x-27,feedStation.y-22,54,44);
+  ctx.strokeStyle="#8f9992"; ctx.lineWidth=2;
+  ctx.strokeRect(feedStation.x-27,feedStation.y-22,54,44);
+  ctx.fillStyle="#d9c985"; ctx.font="18px Arial"; ctx.textAlign="center";
+  ctx.fillText("🌾",feedStation.x,feedStation.y+5);
+  ctx.fillStyle="#d8d0b7"; ctx.font="7px Arial";
+  ctx.fillText("КОРМ",feedStation.x,feedStation.y+33);
 
   // Cow-management terminal beside the cow entrance.
   const cowTerminalX=livestock.right, cowTerminalY=midY;
@@ -5062,6 +5160,64 @@ el("closeWorkshop").addEventListener(
   }
 );
 
+// Temporary farm feed-crafting station
+el("feedCraftClose").addEventListener("click",function(){
+  if(feedCraftBusy)return;
+  closeOverlay(el("feedCraftOverlay"));
+});
+
+el("feedRecipeGrain").addEventListener("click",showFeedGrainRecipe);
+el("feedCraftBack").addEventListener("click",showFeedCraftList);
+
+el("feedCraftBtn").addEventListener("click",function(){
+  if(feedCraftBusy)return;
+  if(bagCount("grain")<10){
+    message("🌾 Нужно 10 зерна.");
+    renderFeedCraftMenu();
+    return;
+  }
+
+  const hasRoom=bag.length<BAG_SLOTS || bag.some(s=>s.type==="animal_feed"&&s.qty<STACK_MAX);
+  if(!hasRoom){
+    message("🎒 В рюкзаке нет места для корма.");
+    return;
+  }
+
+  // Ingredients are committed when crafting starts.
+  const removed=removeItem("grain",10);
+  if(removed<10){
+    if(removed>0)addItem("grain",removed);
+    message("🌾 Недостаточно зерна.");
+    return;
+  }
+
+  feedCraftBusy=true;
+  el("feedCraftRecipe").style.display="none";
+  el("feedCraftProgress").style.display="";
+  el("feedCraftClose").style.opacity=".45";
+  const bar=el("feedCraftBar");
+  bar.style.width="0%";
+
+  const craftMs=2500;
+  const started=performance.now();
+  feedCraftTimer=setInterval(function(){
+    const p=Math.min(1,(performance.now()-started)/craftMs);
+    bar.style.width=(p*100).toFixed(0)+"%";
+    if(p>=1){
+      clearInterval(feedCraftTimer);feedCraftTimer=null;
+      const left=addItem("animal_feed",20);
+      if(left>0){
+        // Safety fallback: preserve overflow in the physical animal-feed storage.
+        addToSlots(storageChests[12].items,"animal_feed",left,12);
+      }
+      feedCraftBusy=false;
+      el("feedCraftClose").style.opacity="1";
+      message("🌾 Готово: +20 корма");
+      showFeedCraftList();
+    }
+  },50);
+});
+
 // Cow management controls
 el("cowClose").addEventListener("click",function(){
   closeOverlay(el("cowOverlay"));
@@ -5085,6 +5241,35 @@ el("animalEggBtn").addEventListener("click",function(){
   if(taken>0) removeFromSlots(storageChests[10].items,"eggs",taken);
   message(taken>0 ? `🥚 Забрано яиц: ${taken}` : "🎒 В рюкзаке нет места.");
   renderCowMenu();
+});
+
+function refillLivestockNeed(storageIndex,type,label,icon){
+  const current=storageCount(storageIndex,type);
+  const capacity=100;
+  const need=Math.max(0,capacity-current);
+  if(need<=0){
+    message(`${icon} ${label} уже заполнен.`);
+    return;
+  }
+  const available=bagCount(type);
+  if(available<=0){
+    message(`${icon} В рюкзаке нет ресурса: ${label.toLowerCase()}.`);
+    return;
+  }
+  const wanted=Math.min(need,available);
+  const left=addToSlots(storageChests[storageIndex].items,type,wanted,12);
+  const added=wanted-left;
+  if(added>0) removeItem(type,added);
+  message(`${icon} Добавлено: ${added}. Теперь ${storageCount(storageIndex,type)} / ${capacity}.`);
+  renderCowMenu();
+}
+
+el("animalFeedBtn").addEventListener("click",function(){
+  refillLivestockNeed(12,"animal_feed","Корм","🌾");
+});
+
+el("animalWaterBtn").addEventListener("click",function(){
+  refillLivestockNeed(13,"water","Вода","💧");
 });
 
 el("cowSlaughterBtn").addEventListener("click",function(){
@@ -5747,7 +5932,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.6.39: positional livestock audio — continuous quiet chickens and random cow moo every 3–15 sec");
+console.log("0.6.42: two-step feed crafting UI with 2.5 second craft progress");
 
 gameLoop();
 
