@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.6</title>
+<title>Survival Base 0.4.7</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -508,7 +508,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.6 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.7 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -937,7 +937,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_046"
+        "base_controls_047"
       );
 
     if(!saved){
@@ -964,7 +964,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_046",
+      "base_controls_047",
       JSON.stringify(layouts)
     );
 
@@ -999,8 +999,6 @@ function applyControls(){
 
   const mode = orientation();
   const layout = layouts[mode] || defaults[mode];
-
-  positionControl(el("actionButton"),layout.action);
 
   if(typeof homeJoysticks==="function"){
     homeJoysticks();
@@ -1320,36 +1318,94 @@ function joystickGeometry(side){
   const h=window.innerHeight;
   const landscape=w>h;
 
-  // Geometry follows the pink areas from the user's screenshots.
-  // The rectangles are intentionally low and wide enough for thumb travel.
-  const top = h * (landscape ? .50 : .64);
-  const bottom = h - Math.max(58, h*.035);
+  /*
+    0.4.7:
+    - free-floating area follows the lower-left / lower-right thumb zones;
+    - inside the rectangle the base follows the finger exactly 1:1;
+    - only coordinates outside it are clamped to the nearest edge;
+    - HOME positions are symmetric and deliberately clear of the action button.
+  */
+  if(landscape){
+    const minY=h*.54;
+    const maxY=h-JOY_RADIUS-18;
+
+    if(side==="left"){
+      return {
+        minX:JOY_RADIUS+24,
+        maxX:w*.43,
+        minY,
+        maxY,
+        homeX:w*.14,
+        homeY:h*.80
+      };
+    }
+
+    return {
+      minX:w*.57,
+      maxX:w-JOY_RADIUS-24,
+      minY,
+      maxY,
+      homeX:w*.86,
+      homeY:h*.80
+    };
+  }
+
+  const minY=h*.66;
+  const maxY=h-JOY_RADIUS-28;
 
   if(side==="left"){
     return {
-      minX:Math.max(JOY_RADIUS+8,w*.025),
-      maxX:w*(landscape?.42:.47),
-      minY:top,
-      maxY:bottom,
-      homeX:w*(landscape?.15:.18),
-      homeY:h*(landscape?.78:.84)
+      minX:JOY_RADIUS+18,
+      maxX:w*.46,
+      minY,
+      maxY,
+      homeX:w*.20,
+      homeY:h*.86
     };
   }
 
   return {
-    minX:w*(landscape?.58:.53),
-    maxX:w-Math.max(JOY_RADIUS+8,w*.025),
-    minY:top,
-    maxY:bottom,
-    homeX:w*(landscape?.85:.82),
-    homeY:h*(landscape?.78:.84)
+    minX:w*.54,
+    maxX:w-JOY_RADIUS-18,
+    minY,
+    maxY,
+    homeX:w*.80,
+    homeY:h*.86
   };
+}
+
+function centerJoystickKnob(stick){
+  // Force the analog knob to the exact center of its base.
+  stick.style.left="50%";
+  stick.style.top="50%";
+  stick.style.marginLeft="0";
+  stick.style.marginTop="0";
+  stick.style.transform="translate(-50%,-50%)";
 }
 
 function setJoystickCenter(control,x,y,visible=true){
   control.style.left=(x-JOY_RADIUS)+"px";
   control.style.top=(y-JOY_RADIUS)+"px";
   control.classList.toggle("hiddenJoystick",!visible);
+}
+
+function positionActionButton047(){
+  const w=window.innerWidth;
+  const h=window.innerHeight;
+  const landscape=w>h;
+
+  const button=el("actionButton");
+  if(!button) return;
+
+  // Clear of the right HOME joystick in both orientations.
+  const x=w*(landscape?.76:.72);
+  const y=h*(landscape?.56:.68);
+
+  button.style.left=x+"px";
+  button.style.top=y+"px";
+  button.style.right="auto";
+  button.style.bottom="auto";
+  button.style.transform="translate(-50%,-50%)";
 }
 
 function homeJoysticks(){
@@ -1359,8 +1415,9 @@ function homeJoysticks(){
   setJoystickCenter(moveControl,left.homeX,left.homeY,true);
   setJoystickCenter(aimControl,right.homeX,right.homeY,true);
 
-  moveStick.style.transform="translate(0px,0px)";
-  aimStick.style.transform="translate(0px,0px)";
+  centerJoystickKnob(moveStick);
+  centerJoystickKnob(aimStick);
+  positionActionButton047();
 }
 
 function clampedJoystickOrigin(side,x,y){
@@ -1383,7 +1440,7 @@ function floatingVector(stick,ox,oy,x,y){
     drawY*=k;
   }
 
-  stick.style.transform=`translate(${drawX}px,${drawY}px)`;
+  stick.style.transform=`translate(calc(-50% + ${drawX}px),calc(-50% + ${drawY}px))`;
 
   const len=Math.hypot(dx,dy)||1;
 
@@ -1527,7 +1584,7 @@ function releaseFloating(e){
     moveY=0;
     stopFootsteps();
 
-    moveStick.style.transform="translate(0px,0px)";
+    centerJoystickKnob(moveStick);
     const g=joystickGeometry("left");
     setJoystickCenter(moveControl,g.homeX,g.homeY,true);
   }
@@ -1538,7 +1595,7 @@ function releaseFloating(e){
     aimPower=0;
     firing=false;
 
-    aimStick.style.transform="translate(0px,0px)";
+    centerJoystickKnob(aimStick);
     const g=joystickGeometry("right");
     setJoystickCenter(aimControl,g.homeX,g.homeY,true);
 
@@ -1567,7 +1624,9 @@ if(window.visualViewport){
     }
   });
 }
-
+ 
+centerJoystickKnob(moveStick);
+centerJoystickKnob(aimStick);
 setTimeout(homeJoysticks,0);
 setTimeout(homeJoysticks,250);
 
@@ -4483,7 +4542,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.4.6: audio disabled diagnostic build");
+console.log("0.4.7: controls calibrated; audio disabled");
 
 gameLoop();
 
