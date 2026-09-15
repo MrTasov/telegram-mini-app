@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.9</title>
+<title>Survival Base 0.9.1</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.9</div>
+<div id="versionBadge">VERSION 0.9.1</div>
 
 <div id="game">
 
@@ -628,7 +628,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.9 · Энергия, производство и новый мир</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
+    <div class="subtitle">Survival Base 0.9.1 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
@@ -2490,7 +2490,7 @@ function updatePlayer(){
   // just outside deadzone = 20% of max;
   // full joystick = 100%;
   // new maximum = half of the old maximum run speed.
-  const newMaxSpeed=player.runSpeed*.50;
+  const newMaxSpeed=player.runSpeed*.60;
   const normalizedPower=clamp((movePower-JOY_DEAD)/(1-JOY_DEAD),0,1);
   let speed=newMaxSpeed*(.20+.80*normalizedPower)*frameScale;
   if(navigation){const p=navigation.points[navigation.index];if(p)speed=Math.min(speed,distance(player.x,player.y,p.x,p.y));}
@@ -6450,7 +6450,7 @@ function powerTick(dt){
   if(V09Power.running){V09Power.fuel=Math.max(0,V09Power.fuel-dt/60);if(V09Power.fuel<=0){V09Power.running=false;message('Генератор остановился: закончилось топливо');queueGameSave();}}
   V09Power.allocation();
   for(const d of v09Doors){
-    const near=scene==='bunker'&&distance(player.x,player.y,d.x+d.w/2,d.y+d.h/2)<155;
+    const near=scene==='bunker'&&distance(player.x,player.y,d.x+d.w/2,d.y+d.h/2)<116.25;
     const occupied=d.open>.2&&scene==='bunker'&&rectHit(player.x,player.y,player.radius+8,d);
     const powered=devicePowered('door_'+d.room);
     if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
@@ -6657,9 +6657,10 @@ const v09PowerOldDrawSurface=drawSurface;
 drawSurface=function(){v09PowerOldDrawSurface();v09DrawSpotlights();};
 
 
-/* 0.9 workshop, safe manufacturing queues and two functional rifles. */
+/* 0.9.1 — incremental manufacturing, stable production UI, powered machine animation. */
 const V09Craft = (() => {
   const RECIPES = {
+    feed: {station:'feed_craft',category:'Корм',name:'Корм для животных',input:{grain:10},output:'animal_feed',qty:20,ms:2500},
     iron: {station:'furnace',category:'Металлы',name:'Железо',input:{iron_ore:1},output:'iron',qty:1,ms:4000},
     copper: {station:'furnace',category:'Металлы',name:'Медь',input:{copper_ore:1},output:'copper',qty:1,ms:4000},
     ammo: {station:'craft_bench',category:'Патроны',name:'Патроны 5,45 × 39',input:{iron:2,copper:1},output:'ammo',qty:30,ms:10000},
@@ -6671,82 +6672,129 @@ const V09Craft = (() => {
     rifle_ak74:{name:'АК-74',ammo:'ammo',caliber:'5,45 × 39',damage:35,delay:155,spread:.045,recoil:.019,range:660,mag:30},
     rifle_m4:{name:'M4',ammo:'ammo556',caliber:'5,56 × 45',damage:28,delay:115,spread:.021,recoil:.011,range:720,mag:30}
   };
+  const STATIONS=['furnace','craft_bench','feed_craft'],MAX_BATCHES=6000;
   let jobs={furnace:null,craft_bench:null};
   let magazines={rifle_ak74:magazine,rifle_m4:0};
-  let selected={furnace:'iron',craft_bench:'ammo'},quantity={furnace:1,craft_bench:1};
-  let activeStation=null,uiClock=0,burst=0,lastWeapon=null;
+  let selected={furnace:'iron',craft_bench:'ammo',feed_craft:'feed'};
+  let quantity={furnace:0,craft_bench:0,feed_craft:0};
+  let activeStation=null,uiClock=0,burst=0,lastWeapon=null,benchPhase=0;
   const fixtures=[{id:'furnace',x:145,y:800,w:175,h:125},{id:'craft_bench',x:160,y:1135,w:265,h:80}];
-  const labels={furnace:'Плавильная печь',craft_bench:'Универсальный станок'};
+  const labels={furnace:'Плавильная печь',craft_bench:'Универсальный станок',feed_craft:'Кормодробилка'};
   const deep=o=>JSON.parse(JSON.stringify(o));
   const powered=id=>devicePowered(id);
-  const remainingFeed=()=>pendingFeedCraft?Math.max(0,Number.isFinite(pendingFeedCraft.remainingMs)?pendingFeedCraft.remainingMs:pendingFeedCraft.readyAt-Date.now()):0;
-  const active=id=>!!jobs[id]&&jobs[id].remainingMs>0;
+  const getJob=id=>id==='feed_craft'?pendingFeedCraft:jobs[id];
+  function setJob(id,j){if(id==='feed_craft'){pendingFeedCraft=j;feedCraftBusy=!!j;}else jobs[id]=j;}
+  const active=id=>!!getJob(id)&&getJob(id).remainingMs>0;
   registerPowerDevice('furnace','workshop',6,()=>active('furnace'),'Плавильная печь');
   registerPowerDevice('craft_bench','workshop',2,()=>active('craft_bench'),'Универсальный станок');
-  registerPowerDevice('feed_craft','farm',1,()=>!!pendingFeedCraft&&remainingFeed()>0,'Кормодробилка');
+  registerPowerDevice('feed_craft','farm',1,()=>active('feed_craft'),'Кормодробилка');
   if(!HAND_TYPES.includes('rifle_m4'))HAND_TYPES.push('rifle_m4');
   handSvg.rifle_m4='<path fill="#465152" d="M3 25h21v13H4z"/><path fill="#1c292c" d="M22 21h48v18H22z"/><path fill="#657477" d="M48 23h27v11H48z"/><path stroke="#172528" stroke-width="4" d="M72 26h24m-23 6h23"/><path fill="#2c393d" d="M38 36h10l5 21-11 3zM25 37h9l-2 15h-8z"/><path stroke="#a0ada9" stroke-width="2" d="M25 20h46"/><path fill="#263333" d="M40 15h17v7H40zM84 17h5v10h-5z"/>';
 
-  v09Style(`.v09RecipeTabs{display:flex;gap:8px;margin:12px 0}.v09RecipeTabs button{flex:1}.v09RecipeGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.v09RecipeCard{border:1px solid #455a5d;background:#202f34;color:#e7eeee;border-radius:10px;padding:12px 6px;font:inherit;cursor:pointer}.v09RecipeCard.selected{border-color:#dcb36b;background:#344144}.v09CraftInfo{padding:13px;background:#18272c;border:1px solid #3a5156;border-radius:11px;line-height:1.7;margin:10px 0}.v09CraftMaterials{display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:13px}.v09CraftShort{color:#efa496}.v09CraftReady{color:#a7d6aa}.v09CraftQuantity{display:flex;align-items:center;justify-content:center;gap:9px;margin:12px 0}.v09CraftQuantity input{width:75px;background:#122126;color:#eef4ee;border:1px solid #596a69;border-radius:8px;padding:10px;text-align:center;font:inherit}.v09CraftQuantity button{margin:0;min-height:42px;padding:8px 14px}.v09CraftProgress{height:10px;background:#0e1b1f;border-radius:9px;overflow:hidden;margin:13px 0}.v09CraftProgress>div{height:100%;background:linear-gradient(90deg,#a48047,#edc879);transition:width .2s}.v09GunStats{font-size:12px;color:#b5c9c7;line-height:1.6}.v09CraftNote{font-size:12px;color:#9fb4b4;line-height:1.5;margin:10px 0}`);
+
+  v09Style(`
+    #v09CraftOverlay .v09Panel{box-sizing:border-box;width:min(570px,calc(100vw - 24px));height:min(720px,90vh);height:min(720px,90dvh);max-height:none;display:flex;flex-direction:column;overflow:hidden;padding:16px}
+    #v09CraftOverlay .v09Header{flex:0 0 auto;margin:0 0 12px;padding-bottom:10px}
+    #v09CraftOverlay .v09Title{font-size:19px;line-height:1.3}
+    #v09CraftOverlay .v09Body{min-height:0;display:flex;flex:1;flex-direction:column;overflow:hidden}
+    .v091CraftScroll{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;padding-right:4px}
+    .v091CraftActions{flex:0 0 auto;padding-top:10px;border-top:1px solid #ffffff18}
+    .v091CraftActions .menuButton{margin:0;width:100%;min-height:44px}
+    .v09RecipeTabs{display:flex;gap:8px;margin:10px 0;height:42px}.v09RecipeTabs button{flex:1;margin:0}
+    .v09RecipeGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;min-height:78px}
+    .v09RecipeCard{border:1px solid #455a5d;background:#202f34;color:#e7eeee;border-radius:10px;padding:8px 6px;font:inherit;cursor:pointer;min-height:78px}
+    .v09RecipeCard.selected{border-color:#dcb36b;background:#344144}
+    .v09CraftInfo{padding:12px;background:#18272c;border:1px solid #3a5156;border-radius:11px;line-height:1.65;margin:10px 0;box-sizing:border-box}
+    .v091RecipeDetails{min-height:204px}.v09CraftMaterials{display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:12px;min-height:48px;margin:7px 0}
+    .v09CraftShort{color:#efa496}.v09CraftReady{color:#a7d6aa}
+    .v09CraftQuantity{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:9px 0}
+    .v09CraftQuantity button{margin:0;min-height:44px;padding:8px 4px}
+    .v091QuantityCount{font-size:17px;font-weight:700;text-align:center;padding-top:5px;color:#f0e0b8}
+    .v09CraftProgress{height:10px;background:#0e1b1f;border-radius:9px;overflow:hidden;margin:13px 0}.v09CraftProgress>div{height:100%;background:linear-gradient(90deg,#a48047,#edc879);transition:width .2s}
+    .v09GunStats{font-size:12px;color:#b5c9c7;line-height:1.6;min-height:58px}
+    .v09CraftNote{font-size:12px;color:#9fb4b4;line-height:1.5;margin:8px 0}
+    .v091CraftTotals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}.v091CraftTotals>div{border:1px solid #53605a;border-radius:10px;padding:12px}.v091CraftTotals strong{display:block;font-size:25px;color:#e8ca84}.v091CraftTotals span{font-size:12px;color:#b6c8c4}
+    @media(max-width:360px){#v09CraftOverlay .v09Panel{padding:12px}.v09CraftMaterials{grid-template-columns:1fr}.v09CraftQuantity{gap:4px}.v091QuantityCount{font-size:15px}}
+    @media(max-height:500px){#v09CraftOverlay .v09Panel{height:96vh;height:96dvh;padding:10px}#v09CraftOverlay .v09Header{margin-bottom:5px;padding-bottom:5px}.v091CraftActions{padding-top:5px}}
+  `);
   const overlay=v09Overlay('v09CraftOverlay','Мастерская');
   const body=overlay.querySelector('.v09Body');
   function gunStats(type){const g=GUNS[type];if(!g)return '';return `<div class="v09GunStats">Урон <b>${g.damage}</b> · ${Math.round(60000/g.delay)} выстр./мин · магазин ${g.mag}<br>Разброс ${(g.spread*180/Math.PI).toFixed(1)}° · дальность ${g.range} · отдача ${type==='rifle_ak74'?'выше':'ниже'}<br>Патроны: ${g.caliber}</div>`;}
-  function maximum(r){return Math.min(100,...Object.entries(r.input).map(([type,n])=>Math.floor(bagCount(type)/n)));}
+  function maximum(r){return Math.max(0,Math.min(MAX_BATCHES,...Object.entries(r.input).map(([type,n])=>Math.floor(bagCount(type)/n))));}
+  const selectedBatches=id=>id==='feed_craft'?Math.floor(quantity[id]/10):quantity[id];
+  const maxSelection=id=>id==='feed_craft'?bagCount('grain'):maximum(RECIPES[selected[id]]);
   function commitIngredients(input,batches){
     if(!Object.entries(input).every(([type,n])=>bagCount(type)>=n*batches))return false;
     const next=deep(bag);
     for(const [type,n] of Object.entries(input))if(removeFromSlots(next,type,n*batches)!==n*batches)return false;
     bag=next;return true;
   }
-  function start(id,recipe=selected[id],batches=quantity[id]){
+  function makeJob(recipe,batches){const r=RECIPES[recipe];return {recipe,batches,totalMs:r.ms*batches,remainingMs:r.ms*batches,completedBatches:0,outputQty:0,collectedQty:0};}
+  function syncFeed(j){if(j){j.total=RECIPES.feed.qty*j.batches;j.qty=j.total-j.collectedQty;j.readyAt=Date.now()+j.remainingMs;}feedCraftBusy=!!j;}
+  function completedAt(j){if(j.remainingMs<=0)return j.batches;return Math.min(j.batches-1,Math.floor(((j.totalMs-j.remainingMs)*j.batches/j.totalMs)+1e-8));}
+  function start(id,recipe=selected[id],batches=selectedBatches(id)){
     const r=RECIPES[recipe];
-    if(!r||r.station!==id||jobs[id]||!Number.isInteger(batches)||batches<1||batches>100)return false;
+    if(!STATIONS.includes(id)||!r||r.station!==id||getJob(id)||!Number.isInteger(batches)||batches<1||batches>MAX_BATCHES)return false;
     if(!commitIngredients(r.input,batches)){message('Не хватает материалов в рюкзаке');render();return false;}
-    jobs[id]={recipe,batches,remainingMs:r.ms*batches,totalMs:r.ms*batches,outputQty:r.qty*batches};
-    render();queueGameSave();return true;
+    const j=makeJob(recipe,batches);setJob(id,j);if(id==='feed_craft'){syncFeed(j);feedCraftLoaded=0;}
+    quantity[id]=0;render();renderQuickSlots();queueGameSave();return true;
   }
   function collect(id){
-    const job=jobs[id];if(!job||job.remainingMs>0)return;
+    const job=getJob(id);if(!job||job.outputQty<1)return 0;
     const recipe=RECIPES[job.recipe],before=job.outputQty;
-    job.outputQty=addItem(recipe.output,before);
-    const collected=before-job.outputQty;
-    if(job.outputQty===0)jobs[id]=null;
-    message(collected?`${ITEM[recipe.output].name}: +${collected}${job.outputQty?' · остальное ждёт в устройстве':''}`:'Освободите место в рюкзаке');
-    render();renderQuickSlots();updateAmmoHud();queueGameSave();
+    let left=addItem(recipe.output,before);
+    if(id==='feed_craft'&&left>0)left=addToSlots(storageChests[12].items,recipe.output,left,12);
+    const collected=before-left;job.outputQty=left;job.collectedQty+=collected;
+    if(id==='feed_craft')syncFeed(job);
+    if(job.remainingMs===0&&job.outputQty===0)setJob(id,null);
+    message(collected?`${ITEM[recipe.output].name}: +${collected}${left?' · остальное ждёт в устройстве':''}`:id==='feed_craft'?'Нет места в рюкзаке и хранилище корма':'Освободите место в рюкзаке');
+    if(!getJob(id))render();else refreshProgress();
+    renderQuickSlots();updateAmmoHud();queueGameSave();return collected;
+  }
+  function duration(ms){const sec=Math.ceil(ms/1000);return sec<60?`${sec} сек.`:sec<3600?`${Math.floor(sec/60)} мин. ${sec%60} сек.`:`${Math.floor(sec/3600)} ч. ${Math.floor(sec%3600/60)} мин.`;}
+  function refreshProgress(){
+    if(!activeStation)return;const id=activeStation,j=getJob(id);if(!j)return;
+    const r=RECIPES[j.recipe],done=j.remainingMs<=0,percent=clamp(100*(1-j.remainingMs/j.totalMs),0,100);
+    const status=el('v091CraftStatus'),bar=el('v091CraftBar'),made=el('v091CraftMade'),ready=el('v091CraftReady'),time=el('v091CraftTime'),taken=el('v091CraftTaken'),button=el('v091CraftCollect');
+    if(status){status.textContent=done?'Производство завершено':powered(id)?'Производство работает':'Пауза: нет питания';status.className=done?'v09CraftReady':'';}
+    if(bar)bar.style.width=percent+'%';if(made)made.textContent=`${j.completedBatches*r.qty} / ${j.batches*r.qty}`;if(ready)ready.textContent=String(j.outputQty);
+    if(time)time.textContent=`${Math.floor(percent)}% · ${done?'очередь завершена':'осталось '+duration(j.remainingMs)}`;
+    if(taken)taken.textContent=`Уже забрано: ${j.collectedQty}${r.qty>1?' · партия: '+r.qty+' шт.':''}`;
+    if(button){button.disabled=j.outputQty===0;button.textContent=j.outputQty>0?`Забрать готовое · ${j.outputQty} шт.`:'Пока нет готовой продукции';}
   }
   function render(){
-    if(!activeStation)return;
-    const id=activeStation,job=jobs[id];
-    body.innerHTML='';
-    const title=overlay.querySelector('h2,h3,.v09Title');if(title)title.textContent=labels[id];
-    body.append(renderDeviceSwitch(id));
+    if(!activeStation)return;const id=activeStation,job=getJob(id);
+    const prior=body.querySelector('.v091CraftScroll');const scrollTop=prior?.scrollTop||0;
+    body.innerHTML='';const panel=overlay.querySelector('.panel');panel.setAttribute('aria-label',labels[id]);overlay.querySelector('.v09Title').textContent=labels[id];
+    const scroll=document.createElement('div');scroll.className='v091CraftScroll';body.append(scroll);
+    const actions=document.createElement('div');actions.className='v091CraftActions';body.append(actions);
+    scroll.append(renderDeviceSwitch(id));
     const info=document.createElement('div');info.className='v09CraftInfo';
     if(job){
-      const r=RECIPES[job.recipe],done=job.remainingMs<=0,percent=clamp(100*(1-job.remainingMs/job.totalMs),0,100);
-      info.innerHTML=`<b>${r.name} × ${r.qty*job.batches}</b><div class="${done?'v09CraftReady':''}">${done?'Готово к выдаче':powered(id)?'Производство работает':'Пауза: нет питания'}</div><div class="v09CraftProgress"><div style="width:${percent}%"></div></div><div>${done?`В устройстве: ${job.outputQty}`:`${Math.floor(percent)}% · осталось ${Math.ceil(job.remainingMs/1000)} сек.`}</div>${gunStats(r.output)}`;
-      body.append(info);
-      if(done)body.append(v09Button('Забрать в рюкзак',()=>collect(id),'primary'));
-      const note=document.createElement('p');note.className='v09CraftNote';note.textContent=done?'Готовая продукция хранится здесь до получения.':'Материалы загружены. При отключении электричества прогресс сохраняется. Можно закрыть окно и заняться базой.';body.append(note);return;
+      const r=RECIPES[job.recipe];info.innerHTML=`<b>${r.name} · очередь ${r.qty*job.batches} шт.</b><div id="v091CraftStatus"></div><div class="v09CraftProgress"><div id="v091CraftBar"></div></div><div id="v091CraftTime"></div><div class="v091CraftTotals"><div><strong id="v091CraftMade"></strong><span>Изготовлено / всего</span></div><div><strong id="v091CraftReady"></strong><span>Можно забрать сейчас</span></div></div><div id="v091CraftTaken" class="v09CraftNote"></div>${gunStats(r.output)}`;scroll.append(info);
+      const button=v09Button('',()=>collect(id),'primary');button.id='v091CraftCollect';actions.append(button);
+      const note=document.createElement('p');note.className='v09CraftNote';note.textContent='Готовое можно забирать во время работы. Остальная очередь продолжается; при отключении питания прогресс и материалы сохраняются.';scroll.append(note);refreshProgress();scroll.scrollTop=scrollTop;return;
     }
     if(id==='craft_bench'){
       const tabs=document.createElement('div');tabs.className='v09RecipeTabs';
-      for(const cat of ['Патроны','Оружие'])tabs.append(v09Button(cat,()=>{selected[id]=cat==='Оружие'?'rifle_ak74':'ammo';quantity[id]=1;render();},RECIPES[selected[id]].category===cat?'primary':''));
-      body.append(tabs);
+      for(const cat of ['Патроны','Оружие'])tabs.append(v09Button(cat,()=>{selected[id]=cat==='Оружие'?'rifle_ak74':'ammo';quantity[id]=0;render();},RECIPES[selected[id]].category===cat?'primary':''));
+      scroll.append(tabs);
     }
     const grid=document.createElement('div');grid.className='v09RecipeGrid';
     for(const [key,r] of Object.entries(RECIPES)){
       if(r.station!==id||r.category!==RECIPES[selected[id]].category)continue;
-      const b=document.createElement('button');b.className='v09RecipeCard'+(key===selected[id]?' selected':'');b.innerHTML=`${itemIconHTML(r.output)}<br>${r.name}`;b.onclick=()=>{selected[id]=key;quantity[id]=1;render();};grid.append(b);
-    }body.append(grid);
-    const r=RECIPES[selected[id]],count=quantity[id];
-    info.innerHTML=`<b>Результат: ${r.name} × ${r.qty*count}</b><div class="v09CraftMaterials">${Object.entries(r.input).map(([type,n])=>`<span class="${bagCount(type)<n*count?'v09CraftShort':''}">${ITEM[type].icon} ${ITEM[type].name}: ${n*count} / ${bagCount(type)}</span>`).join('')}</div><div class="v09CraftNote">Нужно / в рюкзаке · время ${Math.ceil(r.ms*count/1000)} сек. · ${id==='furnace'?6:2} кВт во время работы</div>${gunStats(r.output)}`;body.append(info);
+      const b=document.createElement('button');b.className='v09RecipeCard'+(key===selected[id]?' selected':'');b.innerHTML=`${itemIconHTML(r.output)}<br>${r.name}`;b.onclick=()=>{selected[id]=key;quantity[id]=0;render();};grid.append(b);
+    }scroll.append(grid);
+    quantity[id]=clamp(quantity[id],0,maxSelection(id));const r=RECIPES[selected[id]],count=selectedBatches(id),watts=id==='furnace'?6:id==='craft_bench'?2:1;
+    info.classList.add('v091RecipeDetails');
+    info.innerHTML=`<b>Результат: ${r.name} × ${r.qty*count}</b><div class="v09CraftMaterials">${Object.entries(r.input).map(([type,n])=>`<span class="${bagCount(type)<n*count?'v09CraftShort':''}">${ITEM[type].icon} ${ITEM[type].name}: ${n*count} / ${bagCount(type)}</span>`).join('')}</div><div class="v09CraftNote">Нужно / в рюкзаке · время ${duration(r.ms*count)} · ${watts} кВт во время работы<br>${id==='furnace'?'1 руда → 1 металл':id==='feed_craft'?'10 зерна → 20 корма · неполная партия остаётся в рюкзаке':r.qty>1?'1 партия = '+r.qty+' патронов':'1 изготовление = 1 оружие'}</div>${gunStats(r.output)||'<div class="v09GunStats">Каждую готовую '+(r.qty>1?'партию':'единицу')+' можно забрать сразу.</div>'}`;scroll.append(info);
+    const amount=document.createElement('div');amount.className='v091QuantityCount';amount.textContent=`${id==='furnace'?'Выбрано руды':id==='feed_craft'?'Выбрано зерна':r.qty>1?'Выбрано партий':'Выбрано оружия'}: ${quantity[id]} / ${maxSelection(id)}`;scroll.append(amount);
     const q=document.createElement('div');q.className='v09CraftQuantity';
-    const input=document.createElement('input');input.type='number';input.min='1';input.max='100';input.value=count;input.setAttribute('aria-label','Количество партий');input.onchange=()=>{quantity[id]=clamp(Math.floor(Number(input.value)||1),1,100);render();};
-    q.append(v09Button('−',()=>{quantity[id]=Math.max(1,count-1);render();}),input,v09Button('+',()=>{quantity[id]=Math.min(100,count+1);render();}),v09Button('MAX',()=>{quantity[id]=Math.max(1,maximum(r));render();}));body.append(q);
-    const startButton=v09Button('Загрузить материалы и изготовить',()=>start(id), 'primary');startButton.disabled=maximum(r)<count;body.append(startButton);
-    const note=document.createElement('p');note.className='v09CraftNote';note.textContent='Рецепты условные, игровые. Готовые предметы останутся в устройстве до получения.';body.append(note);
+    for(const [label,value] of [['+1',quantity[id]+1],['+10',quantity[id]+10],['MAX',maxSelection(id)],['Сброс → 0',0]])q.append(v09Button(label,()=>{quantity[id]=clamp(value,0,maxSelection(id));render();}));scroll.append(q);
+    const startButton=v09Button(id==='furnace'?'Начать плавку':id==='feed_craft'?'Начать изготовление корма':'Начать изготовление',()=>start(id),'primary');startButton.disabled=count===0||maximum(r)<count;actions.append(startButton);
+    const note=document.createElement('p');note.className='v09CraftNote';note.textContent='Материалы списываются только после запуска. Готовое останется в устройстве, если рюкзак заполнен.';scroll.append(note);scroll.scrollTop=scrollTop;
   }
-  function open(id){activeStation=id;render();openOverlay(overlay);}
+  function open(id){if(!STATIONS.includes(id))return;activeStation=id;render();openOverlay(overlay);}
   const oldInteractions=interactionObjects;
   interactionObjects=function(which=scene){return [...oldInteractions(which).filter(o=>o.kind!=='workshop'),...(which==='bunker'?fixtures.map(o=>({...o,kind:'v09craft',name:labels[o.id],range:48})):[])];};
   const oldExecute=executeInteraction;
@@ -6755,55 +6803,25 @@ const V09Craft = (() => {
     if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
     navigation=null;movePower=0;moveX=0;moveY=0;open(target.id);
   };
-  const feedPower=document.createElement('div');feedPower.id='v09FeedPower';
-  el('feedCraftList').before(feedPower);
-  const feedCollect=v09Button('Забрать корм',()=>collectFeed(),'primary');el('feedCraftProgress').append(feedCollect);
-  const oldFeedOpen=openFeedCraftMenu;
-  openFeedCraftMenu=function(){feedPower.replaceChildren(renderDeviceSwitch('feed_craft'));oldFeedOpen();};
-  renderPendingFeedCraft=function(){
-    if(!pendingFeedCraft)return;
-    const ms=remainingFeed();
-    el('feedCraftList').style.display='none';el('feedCraftRecipe').style.display='none';el('feedCraftProgress').style.display='';
-    el('feedCraftBar').style.width=(clamp(1-ms/2500,0,1)*100).toFixed(0)+'%';
-    el('feedCraftProgressText').textContent=ms<=0?`Готово: ${pendingFeedCraft.qty} корма. Можно забрать.`:powered('feed_craft')?'Изготовление корма…':'Пауза: нет питания фермы или кормодробилки';
-    feedCollect.style.display=ms<=0?'':'none';
-  };
-  function startFeed(){
-    if(pendingFeedCraft||feedCraftBusy)return;
-    const batches=Math.floor(feedCraftLoaded/10);
-    if(batches<1||!commitIngredients({grain:10},batches)){message('Для партии нужно 10 зерна');renderFeedCraftMenu();return;}
-    pendingFeedCraft={qty:batches*20,total:batches*20,remainingMs:2500,readyAt:Date.now()+2500};
-    feedCraftBusy=true;feedCraftLoaded=0;renderPendingFeedCraft();queueGameSave();
-  }
-  function collectFeed(){
-    if(!pendingFeedCraft||remainingFeed()>0)return;
-    const before=pendingFeedCraft.qty;let left=addItem('animal_feed',before);
-    if(left>0)left=addToSlots(storageChests[12].items,'animal_feed',left,12);
-    pendingFeedCraft.qty=left;
-    if(left===0){pendingFeedCraft=null;feedCraftBusy=false;showFeedGrainRecipe();}
-    else renderPendingFeedCraft();
-    message(before>left?`Корм: +${before-left}${left?' · остальное ждёт в дробилке':''}`:'Нет места в рюкзаке и хранилище корма');queueGameSave();
-  }
+  // All manufacturing uses the same panel dimensions and incremental queue model.
+  openFeedCraftMenu=function(){feedCraftLoaded=0;open('feed_craft');};
+  renderPendingFeedCraft=function(){if(activeStation==='feed_craft')refreshProgress();};
+  function startFeed(){return start('feed_craft','feed',Math.floor(feedCraftLoaded/10));}
+  function collectFeed(){return collect('feed_craft');}
   function tick(ms){
-    if(document.hidden||playerDead)return;
-    ms=clamp(ms,0,100);
-    for(const id of Object.keys(jobs)){
-      const job=jobs[id];if(!job||job.remainingMs<=0||!powered(id))continue;
-      job.remainingMs=Math.max(0,job.remainingMs-ms);
-      if(job.remainingMs===0){message(`${labels[id]}: ${RECIPES[job.recipe].name} готовы`);queueGameSave();}
+    if(document.hidden||playerDead)return;ms=clamp(ms,0,100);
+    for(const id of STATIONS){
+      const job=getJob(id);if(!job||job.remainingMs<=0||!powered(id))continue;
+      job.remainingMs=Math.max(0,job.remainingMs-ms);const completed=completedAt(job);
+      const newlyMade=completed-job.completedBatches;
+      if(newlyMade>0){job.outputQty+=newlyMade*RECIPES[job.recipe].qty;job.completedBatches=completed;queueGameSave();}
+      if(id==='feed_craft')syncFeed(job);if(id==='craft_bench')benchPhase+=ms/700;
+      if(job.remainingMs===0){message(`${labels[id]}: производство завершено`);queueGameSave();}
     }
-    if(pendingFeedCraft){
-      if(!Number.isFinite(pendingFeedCraft.remainingMs))pendingFeedCraft.remainingMs=clamp(remainingFeed(),0,2500);
-      const before=pendingFeedCraft.remainingMs;
-      if(before>0&&powered('feed_craft'))pendingFeedCraft.remainingMs=Math.max(0,before-ms);
-      pendingFeedCraft.readyAt=Date.now()+pendingFeedCraft.remainingMs;
-      if(before>0&&pendingFeedCraft.remainingMs===0){message('Корм готов в кормодробилке');queueGameSave();}
-    }
-    uiClock+=ms;
-    if(uiClock>=250){uiClock=0;if(overlay.classList.contains('open')&&jobs[activeStation])render();if(el('feedCraftOverlay').classList.contains('open')&&pendingFeedCraft)renderPendingFeedCraft();}
+    uiClock+=ms;if(uiClock>=200){uiClock=0;if(overlay.classList.contains('open')&&getJob(activeStation))refreshProgress();}
   }
   updateFeedCraft=function(){tick(16.667*frameScale);};
-  function state(id){const j=jobs[id];return j&&j.remainingMs===0?'ГОТОВО':!powered(id)?'НЕТ ПИТАНИЯ':j?'РАБОТАЕТ':'ОЖИДАНИЕ';}
+  function state(id){const j=getJob(id);return j&&j.remainingMs===0?'ГОТОВО':!powered(id)?'НЕТ ПИТАНИЯ':j?'РАБОТАЕТ':'ОЖИДАНИЕ';}
   function drawWorkshop(){
     ctx.save();
     ctx.fillStyle='#e4e8dc';ctx.font='15px Arial';ctx.textAlign='center';ctx.fillText('МАСТЕРСКАЯ',450,795);
@@ -6818,15 +6836,24 @@ const V09Craft = (() => {
     ctx.fillStyle=working?'#ecb967':state('furnace')==='ГОТОВО'?'#9fccad':'#7d8b84';ctx.fillRect(276,822,24,7);
     ctx.strokeStyle='#253332';ctx.lineWidth=3;for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(270,845+i*7);ctx.lineTo(304,845+i*7);ctx.stroke();}
     ctx.fillStyle='#e3e7dc';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText('ПЛАВИЛЬНАЯ ПЕЧЬ',231,905);ctx.font='9px Arial';ctx.fillStyle='#c5cbb8';ctx.fillText(state('furnace'),231,920);
-    // Main bench: restrained tool rail, cutting mat, vise and receiving tray.
-    ctx.fillStyle='#263232';ctx.fillRect(170,1124,245,10);ctx.fillStyle='#7b8c84';for(let i=0;i<7;i++)ctx.fillRect(184+i*32,1123,7,13);
-    ctx.fillStyle='#786345';ctx.fillRect(160,1135,265,80);ctx.strokeStyle='#b09568';ctx.lineWidth=3;ctx.strokeRect(160,1135,265,80);
-    ctx.fillStyle='#31484a';ctx.fillRect(177,1144,144,37);ctx.strokeStyle='#567075';ctx.lineWidth=1;for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(184+i*25,1144);ctx.lineTo(184+i*25,1181);ctx.stroke();}
-    ctx.fillStyle='#899898';ctx.fillRect(192,1154,39,9);ctx.fillRect(213,1149,8,28);ctx.fillStyle='#293438';ctx.fillRect(251,1153,46,14);
-    ctx.fillStyle='#3b4541';ctx.fillRect(337,1148,64,31);ctx.strokeStyle='#a3ab98';ctx.strokeRect(337,1148,64,31);
-    if(jobs.craft_bench?.remainingMs===0){ctx.fillStyle='#d4bc79';ctx.fillRect(347,1158,15,10);ctx.fillRect(372,1158,15,10);}
-    ctx.fillStyle=active('craft_bench')&&powered('craft_bench')?'#f3c476':state('craft_bench')==='ГОТОВО'?'#93cca2':'#758b80';ctx.beginPath();ctx.arc(407,1194,4,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#f1ecdc';ctx.font='11px Arial';ctx.fillText('УНИВЕРСАЛЬНЫЙ СТАНОК',290,1198);ctx.font='9px Arial';ctx.fillStyle='#c4cbb9';ctx.fillText(state('craft_bench'),290,1231);
+    // Electric fabrication cell: screen, gantry, belt drive and receiving tray.
+    const benchWorking=active('craft_bench')&&powered('craft_bench'),benchOn=powered('craft_bench');
+    ctx.fillStyle='#202e34';ctx.fillRect(152,1126,282,99);ctx.strokeStyle='#657f89';ctx.lineWidth=3;ctx.strokeRect(160,1135,265,80);
+    const casing=ctx.createLinearGradient(160,1135,160,1215);casing.addColorStop(0,'#607780');casing.addColorStop(.3,'#344e59');casing.addColorStop(1,'#20333d');ctx.fillStyle=casing;ctx.fillRect(162,1137,261,76);
+    ctx.fillStyle='#132229';ctx.fillRect(177,1149,143,40);ctx.strokeStyle='#537887';ctx.lineWidth=1;ctx.strokeRect(177,1149,143,40);
+    ctx.strokeStyle='#30525b';for(let i=0;i<7;i++){ctx.beginPath();ctx.moveTo(181+i*20,1150);ctx.lineTo(181+i*20,1187);ctx.stroke();}
+    // The animation phase advances only in tick while production actually receives power.
+    const armX=216+Math.sin(benchPhase)*33;ctx.strokeStyle='#a9bec1';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(184,1150);ctx.lineTo(313,1150);ctx.moveTo(184,1185);ctx.lineTo(313,1185);ctx.stroke();
+    ctx.fillStyle='#748f96';ctx.fillRect(armX,1147,14,42);ctx.fillStyle='#c3d5cc';ctx.fillRect(armX-3,1161,20,11);ctx.fillStyle=benchWorking?'#75ead2':'#35655e';ctx.fillRect(armX+4,1166,6,5);
+    for(const x of [182,314]){ctx.save();ctx.translate(x,1196);ctx.rotate(benchPhase*3);ctx.strokeStyle='#9aaeb3';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,6,0,Math.PI*2);ctx.moveTo(-6,0);ctx.lineTo(6,0);ctx.moveTo(0,-6);ctx.lineTo(0,6);ctx.stroke();ctx.restore();}
+    ctx.fillStyle='#12272e';ctx.fillRect(334,1144,60,29);ctx.strokeStyle='#6e9da7';ctx.lineWidth=2;ctx.strokeRect(334,1144,60,29);
+    ctx.fillStyle=benchOn?'#91dfd3':'#33595f';ctx.font='7px monospace';ctx.fillText(benchWorking?'FAB / ACTIVE':state('craft_bench')==='ГОТОВО'?'READY':'FAB / IDLE',364,1154);
+    ctx.fillStyle='#283c42';ctx.fillRect(340,1160,47,5);ctx.fillStyle=benchOn?'#7acebe':'#385652';ctx.fillRect(340,1160,getJob('craft_bench')?47*(1-getJob('craft_bench').remainingMs/getJob('craft_bench').totalMs):4,5);
+    ctx.fillStyle='#172a2c';ctx.fillRect(333,1179,66,24);ctx.strokeStyle='#718984';ctx.strokeRect(333,1179,66,24);
+    if(getJob('craft_bench')?.outputQty>0){ctx.fillStyle='#d4bc79';ctx.fillRect(342,1186,17,9);ctx.fillRect(370,1186,17,9);}
+    ctx.fillStyle=benchWorking?'#7ee8ce':state('craft_bench')==='ГОТОВО'?'#93cca2':'#47616a';ctx.beginPath();ctx.arc(411,1150,4,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#202f38';ctx.lineWidth=2;for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(405,1171+i*5);ctx.lineTo(418,1171+i*5);ctx.stroke();}
+    ctx.fillStyle='#dce9e3';ctx.font='9px Arial';ctx.fillText('ЭЛЕКТРОСТАНОК · '+state('craft_bench'),290,1236);
     ctx.restore();
   }
 
@@ -6869,35 +6896,827 @@ const V09Craft = (() => {
     ctx.save();ctx.strokeStyle='rgba(235,220,162,.28)';ctx.lineWidth=1;ctx.beginPath();
     for(const a of [angle-cone,angle+cone]){ctx.moveTo(player.x+Math.cos(a)*47,player.y+Math.sin(a)*47);ctx.lineTo(player.x+Math.cos(a)*125,player.y+Math.sin(a)*125);}ctx.stroke();ctx.restore();
   };
-  function capture(){return {jobs:deep(jobs),magazines:deep(magazines),feed:pendingFeedCraft?{qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,remainingMs:clamp(remainingFeed(),0,2500)}:null};}
-  function validate(data){
+  function capture(){
+    const f=pendingFeedCraft?deep(pendingFeedCraft):null;if(f)delete f.readyAt;
+    return {schema:2,jobs:deep(jobs),magazines:deep(magazines),feed:f};
+  }
+  function normalizeSave(data){
     const fail=()=>{throw new Error('Некорректное сохранение производства');};
     const num=(v,min,max)=>Number.isFinite(v)&&v>=min&&v<=max,int=(v,min,max)=>Number.isInteger(v)&&num(v,min,max);
-    if(!data||!data.jobs||!data.magazines)fail();
-    for(const id of ['furnace','craft_bench']){
-      const j=data.jobs[id];if(j===null)continue;
-      const r=j&&RECIPES[j.recipe];if(!r||r.station!==id||!int(j.batches,1,100)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs)||!int(j.outputQty,1,r.qty*j.batches)||(j.remainingMs>0&&j.outputQty!==r.qty*j.batches))fail();
+    if(!data||!data.jobs||!data.magazines||(data.schema!==undefined&&data.schema!==2))fail();
+    const out={schema:2,jobs:{furnace:null,craft_bench:null},magazines:deep(data.magazines),feed:null};
+    function normalJob(src,id,legacy){
+      if(src===null)return null;const j=deep(src),r=j&&RECIPES[j.recipe];
+      if(!r||r.station!==id||!int(j.batches,1,legacy?100:MAX_BATCHES)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs))fail();
+      if(legacy){
+        if(!int(j.outputQty,1,r.qty*j.batches)||(j.remainingMs>0&&j.outputQty!==r.qty*j.batches))fail();
+        j.completedBatches=completedAt(j);j.collectedQty=j.remainingMs===0?r.qty*j.batches-j.outputQty:0;j.outputQty=j.completedBatches*r.qty-j.collectedQty;
+      }
+      checkQueue(j,r);return j;
     }
-    if(!int(data.magazines.rifle_ak74,0,30)||!int(data.magazines.rifle_m4,0,30))fail();
-    const f=data.feed;if(f!==null&&(!f||!int(f.qty,1,100000)||!int(f.total,f.qty,100000)||!num(f.remainingMs,0,2500)))fail();
-    return true;
+    function checkQueue(j,r){
+      if(!int(j.completedBatches,0,j.batches)||j.completedBatches!==completedAt(j)||!int(j.collectedQty,0,j.completedBatches*r.qty)||!int(j.outputQty,0,j.batches*r.qty)||j.outputQty+j.collectedQty!==j.completedBatches*r.qty||(j.remainingMs===0&&j.outputQty===0))fail();
+    }
+    for(const id of ['furnace','craft_bench'])out.jobs[id]=normalJob(data.jobs[id],id,data.schema!==2);
+    if(!int(out.magazines.rifle_ak74,0,30)||!int(out.magazines.rifle_m4,0,30))fail();
+    if(data.feed!==null){
+      const f=deep(data.feed);if(!f)fail();
+      if(f.recipe===undefined){
+        // Before 0.9.1 the entire feed order took 2.5 seconds. Preserve that duration and elapsed work.
+        if(!int(f.qty,1,100000)||!int(f.total,f.qty,100000)||f.total%20!==0||!num(f.remainingMs,0,2500)||(f.remainingMs>0&&f.qty!==f.total))fail();
+        f.recipe='feed';f.batches=f.total/20;f.totalMs=2500;f.completedBatches=completedAt(f);f.collectedQty=f.total-f.qty;f.outputQty=f.completedBatches*20-f.collectedQty;
+      }
+      if(f.recipe!=='feed'||!int(f.batches,1,MAX_BATCHES)||f.total!==f.batches*20||!num(f.remainingMs,0,f.totalMs)||(f.totalMs!==2500&&f.totalMs!==f.batches*2500))fail();
+      checkQueue(f,RECIPES.feed);if(f.qty!==f.total-f.collectedQty)fail();delete f.readyAt;out.feed=f;
+    }
+    return out;
   }
+  function validate(data){normalizeSave(data);return true;}
   function restore(data){
-    if(data){validate(data);jobs=deep(data.jobs);magazines=deep(data.magazines);pendingFeedCraft=data.feed?{...deep(data.feed),readyAt:Date.now()+data.feed.remainingMs}:null;}
-    else{jobs={furnace:null,craft_bench:null};magazines={rifle_ak74:clamp(magazine,0,30),rifle_m4:0};if(pendingFeedCraft)pendingFeedCraft.remainingMs=clamp(remainingFeed(),0,2500);}
-    feedCraftBusy=!!pendingFeedCraft;feedCraftLoaded=0;burst=0;lastWeapon=null;selected={furnace:'iron',craft_bench:'ammo'};quantity={furnace:1,craft_bench:1};syncMagazine();updateAmmoHud();
+    if(data){const d=normalizeSave(data);jobs=deep(d.jobs);magazines=deep(d.magazines);pendingFeedCraft=d.feed?deep(d.feed):null;}
+    else{jobs={furnace:null,craft_bench:null};magazines={rifle_ak74:clamp(magazine,0,30),rifle_m4:0};if(pendingFeedCraft){const f={qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,remainingMs:clamp(Number.isFinite(pendingFeedCraft.remainingMs)?pendingFeedCraft.remainingMs:pendingFeedCraft.readyAt-Date.now(),0,2500)};pendingFeedCraft=normalizeSave({jobs,magazines,feed:f}).feed;}}
+    syncFeed(pendingFeedCraft);feedCraftLoaded=0;burst=0;lastWeapon=null;benchPhase=0;selected={furnace:'iron',craft_bench:'ammo',feed_craft:'feed'};quantity={furnace:0,craft_bench:0,feed_craft:0};syncMagazine();updateAmmoHud();
   }
-  return {capture,restore,validate,open,start,collect,tick,startFeed,collectFeed,drawWorkshop,drawM4Held,recipes:RECIPES,weapons:GUNS,fixtures,gunStats};
+  return {capture,restore,validate,normalizeSave,open,start,collect,tick,startFeed,collectFeed,drawWorkshop,drawM4Held,recipes:RECIPES,weapons:GUNS,fixtures,gunStats,maximum};
 })();
 
 
-/* 0.9 — independent save slots, portable backups and chickens. */
+/* 0.9.1: four watchtowers, a continuous protected wall walk and two metal gates. */
+(() => {
+  'use strict';
+  const outer=surface.outer;
+  outer.thickness=72;
+  const innerGate={id:'v091innerGate',x:730,y:925,w:140,h:20};
+  const vestibule=[
+    {id:'v091vestibuleW',x:714,y:925,w:16,h:100},
+    {id:'v091vestibuleE',x:870,y:925,w:16,h:100}
+  ];
+  const corners=[
+    {id:'nw',name:'Северо-западная',x:206,y:166,foot:{x:287,y:247}},
+    {id:'ne',name:'Северо-восточная',x:1394,y:166,foot:{x:1313,y:247}},
+    {id:'se',name:'Юго-восточная',x:1394,y:1034,foot:{x:1313,y:977}},
+    {id:'sw',name:'Юго-западная',x:206,y:1034,foot:{x:287,y:977}}
+  ];
+  const towerSolids=corners.map(t=>({id:'v091tower_'+t.id,x:t.x-55,y:t.y-55,w:110,h:110}));
+  const decks=[
+    {x:170,y:130,w:1260,h:72},{x:170,y:130,w:72,h:940},
+    {x:1358,y:130,w:72,h:940},{x:170,y:998,w:1260,h:72},...towerSolids
+  ];
+  let innerGateOpen=false,transition=null;
+  player.wallLevel=false;
+
+  const oldWalls=surfaceWalls;
+  surfaceWalls=function(){
+    const i=surface.inner;
+    return [
+      {id:'v091wallN',x:170,y:130,w:1260,h:72},
+      {id:'v091wallW',x:170,y:130,w:72,h:940},
+      {id:'v091wallE',x:1358,y:130,w:72,h:940},
+      {id:'v091wallSW',x:170,y:998,w:560,h:72},
+      {id:'v091wallSE',x:870,y:998,w:560,h:72},
+      ...(!gateOpen?[gateRect]:[]),...vestibule,...(!innerGateOpen?[innerGate]:[]),
+      {x:i.left,y:i.top,w:i.right-i.left,h:i.thickness},
+      {x:i.left,y:i.top,w:i.thickness,h:i.bottom-i.top},
+      {x:i.right-i.thickness,y:i.top,w:i.thickness,h:i.bottom-i.top},
+      {x:i.left,y:i.bottom-i.thickness,w:i.gateX-i.left,h:i.thickness},
+      {x:i.gateX+i.gateWidth,y:i.bottom-i.thickness,w:i.right-i.gateX-i.gateWidth,h:i.thickness}
+    ];
+  };
+  const oldSolids=solidObjects;
+  solidObjects=function(which){
+    const out=oldSolids(which);
+    return which==='surface'?[...out.filter(o=>!/^tower\d+$/.test(o.id||'')),...towerSolids]:out;
+  };
+  function isElevated(){return scene==='surface'&&player.wallLevel===true;}
+  function pointOnDeck(x,y){return decks.some(o=>x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h);}
+  function elevatedCollision(x,y,r=player.radius){
+    if(!Number.isFinite(x)||!Number.isFinite(y)||!pointOnDeck(x,y))return true;
+    // The circular actor must fit on the union of floors; both edges are guarded.
+    for(let i=0;i<24;i++){
+      const a=i*Math.PI/12;
+      if(!pointOnDeck(x+Math.cos(a)*(r+3),y+Math.sin(a)*(r+3)))return true;
+    }
+    return false;
+  }
+  function elevatedClear(ax,ay,bx,by,r=player.radius){
+    const steps=Math.max(1,Math.ceil(distance(ax,ay,bx,by)/5));
+    for(let n=0;n<=steps;n++)if(elevatedCollision(ax+(bx-ax)*n/steps,ay+(by-ay)*n/steps,r))return false;
+    return true;
+  }
+  // Only the player's feet use the upper layer. Ground enemies still hit the walls.
+  const oldSurfaceCollision=surfaceCollision;
+  surfaceCollision=function(x,y){return isElevated()?elevatedCollision(x,y):oldSurfaceCollision(x,y);};
+  function findPath(ax,ay,target,r=player.radius){
+    const bx=target.x,by=target.y;
+    if(elevatedCollision(ax,ay,r)||elevatedCollision(bx,by,r))return null;
+    if(elevatedClear(ax,ay,bx,by,r))return [{x:bx,y:by}];
+    const points=[{x:ax,y:ay},{x:bx,y:by},...corners.map(t=>({x:t.x,y:t.y}))];
+    const costs=points.map(()=>Infinity),parents=points.map(()=>-1),visited=new Set();costs[0]=0;
+    for(let step=0;step<points.length;step++){
+      let u=-1;for(let i=0;i<points.length;i++)if(!visited.has(i)&&(u<0||costs[i]<costs[u]))u=i;
+      if(u<0||costs[u]===Infinity)break;if(u===1)break;visited.add(u);
+      for(let v=0;v<points.length;v++)if(v!==u&&!visited.has(v)&&elevatedClear(points[u].x,points[u].y,points[v].x,points[v].y,r)){
+        const value=costs[u]+distance(points[u].x,points[u].y,points[v].x,points[v].y);
+        if(value<costs[v]){costs[v]=value;parents[v]=u;}
+      }
+    }
+    if(!Number.isFinite(costs[1]))return null;
+    const path=[];for(let n=1;n>0;n=parents[n])path.push({...points[n]});
+    return path.reverse();
+  }
+  function routeLength(path){let x=player.x,y=player.y,length=0;for(const p of path){length+=distance(x,y,p.x,p.y);x=p.x;y=p.y;}return length;}
+  function cancelRoute(){if(navigation?._v091Fortress){navigation=null;moveX=moveY=movePower=0;}}
+  function routeTo(x,y,after=null){
+    const points=findPath(player.x,player.y,{x,y});
+    if(!points){message('На стене нет безопасного прохода');return false;}
+    cancelNavigation();cancelChop();cancelSearch();
+    navigation={_v091Fortress:true,destination:{id:'ground',kind:'ground',x,y,r:0,range:.5},points,index:0,blockedMs:0,scene,after};
+    return true;
+  }
+  function landingFor(t){
+    const candidates=[t.foot];
+    for(let radius=12;radius<=48;radius+=12)for(let a=0;a<8;a++)candidates.push({x:t.foot.x+Math.cos(a*Math.PI/4)*radius,y:t.foot.y+Math.sin(a*Math.PI/4)*radius});
+    return candidates.find(p=>p.x>242+player.radius&&p.x<1358-player.radius&&p.y>202+player.radius&&p.y<998-player.radius&&!worldCollision(p.x,p.y,player.radius,'surface'))||null;
+  }
+  function beginTransition(point,toUpper,kind='stairs',after=null){
+    if(transition||scene!=='surface'||menuOpen||playerDead)return false;
+    if(toUpper?elevatedCollision(point.x,point.y):worldCollision(point.x,point.y,player.radius,'surface'))return false;
+    const source={x:player.x,y:player.y,wallLevel:isElevated()};
+    stopControls();cancelSearch();cancelChop();
+    transition={source,target:{...point},toUpper,elapsed:0,duration:kind==='jump'?450:700,kind,after};
+    return true;
+  }
+  function descend(t,after=null){const point=landingFor(t);if(!point){message('Лестница занята — выберите другую башню');return false;}return beginTransition(point,false,'stairs',after);}
+  function nearestStair(destination){
+    return corners.map(t=>({t,path:findPath(player.x,player.y,t),landing:landingFor(t)}))
+      .filter(a=>a.path&&a.landing).sort((a,b)=>routeLength(a.path)+distance(a.landing.x,a.landing.y,destination.x,destination.y)-routeLength(b.path)-distance(b.landing.x,b.landing.y,destination.x,destination.y))[0]?.t;
+  }
+  function handlePoint(x,y,following=false){
+    if(transition)return true;if(!isElevated())return false;
+    if(!elevatedCollision(x,y)){routeTo(x,y);return true;}
+    if(following){
+      // A dragged pointer outside the wall follows its nearest safe deck point;
+      // it never silently turns a continuous movement gesture into a descent.
+      const positions=[];
+      for(const d of decks){const p={x:clamp(x,d.x+player.radius+4,d.x+d.w-player.radius-4),y:clamp(y,d.y+player.radius+4,d.y+d.h-player.radius-4)};if(!elevatedCollision(p.x,p.y))positions.push(p);}
+      positions.sort((a,b)=>distance(x,y,a.x,a.y)-distance(x,y,b.x,b.y));if(positions[0])routeTo(positions[0].x,positions[0].y);return true;
+    }
+    const stair=nearestStair({x,y});if(!stair){message('Нет свободной лестницы для спуска');return true;}
+    routeTo(stair.x,stair.y,()=>descend(stair,()=>approachPoint(x,y)));return true;
+  }
+  function towerFor(target){return corners.find(t=>t.id===target?.tower);}
+  function handleObject(target){
+    if(transition)return true;if(scene!=='surface'||!target)return false;
+    if(target.kind==='v091tower'){
+      const t=towerFor(target);if(!t)return true;
+      if(isElevated()){routeTo(t.x,t.y,()=>descend(t));return true;}
+      const foot={id:'v091stairs_'+t.id,kind:'v091stairs',name:'Подняться на башню',tower:t.id,...t.foot,r:12,range:21};
+      if(canInteract(foot,player.x,player.y)){executeInteraction(foot);return true;}
+      // Dispatch to the normal ground navigator with the actual stair foot.
+      approachObject(foot);return true;
+    }
+    if(isElevated()){
+      if(target.kind==='v091stairs'){const t=towerFor(target);if(t)routeTo(t.x,t.y,()=>descend(t));return true;}
+      const destination={x:target.x+(target.w||0)/2,y:target.y+(target.h||0)/2},stair=nearestStair(destination);
+      if(stair)routeTo(stair.x,stair.y,()=>descend(stair,()=>approachObject(interactionObjects().find(o=>o.id===target.id)||target)));
+      return true;
+    }
+    return false;
+  }
+  function handleAutoWalk(){
+    if(transition){movePower=moveX=moveY=0;return true;}
+    if(!navigation?._v091Fortress)return false;
+    if(!isElevated()||navigation.scene!==scene){cancelNavigation();return true;}
+    let p=navigation.points[navigation.index];
+    while(p&&distance(player.x,player.y,p.x,p.y)<.15){navigation.index++;p=navigation.points[navigation.index];}
+    if(!p){const after=navigation.after;cancelNavigation();if(after)after();return true;}
+    const d=distance(player.x,player.y,p.x,p.y)||1;moveX=(p.x-player.x)/d;moveY=(p.y-player.y)/d;movePower=.84;
+    if(!rightAimActive){player.aimX=moveX;player.aimY=moveY;}return true;
+  }
+  const oldApproachPoint=approachPoint,oldApproachObject=approachObject,oldAutoWalk=updateAutoWalk;
+  approachPoint=function(x,y,following=false){if(!handlePoint(x,y,following))return oldApproachPoint(x,y,following);};
+  approachObject=function(target){if(!handleObject(target))return oldApproachObject(target);};
+  updateAutoWalk=function(){if(!handleAutoWalk())return oldAutoWalk();};
+
+  const oldInteractions=interactionObjects;
+  interactionObjects=function(which=scene){
+    const base=oldInteractions(which);if(which!=='surface')return base;
+    return [...base,{...innerGate,kind:'v091innerGate',name:innerGateOpen?'Закрыть внутреннюю дверь':'Открыть внутреннюю дверь',range:48},
+      ...corners.flatMap(t=>[
+        {...towerSolids.find(o=>o.id==='v091tower_'+t.id),kind:'v091tower',tower:t.id,name:t.name+' башня',range:26},
+        {id:'v091stairs_'+t.id,kind:'v091stairs',tower:t.id,name:isElevated()?'Спуститься во двор':'Подняться на башню',...(isElevated()?{x:t.x,y:t.y}:t.foot),r:12,range:21}
+      ])];
+  };
+  const oldCanInteract=canInteract;
+  canInteract=function(target,x,y){
+    if(scene==='surface'){
+      if(target?.kind==='v091tower')return false; // Tower body clicks route to stairs.
+      if(target?.kind==='v091stairs'){
+        const t=towerFor(target);if(!t)return false;const point=isElevated()?t:t.foot;
+        return distance(x,y,point.x,point.y)<=28&&(isElevated()?elevatedClear(x,y,point.x,point.y):lineClear(x,y,point.x,point.y,0,'surface'));
+      }
+      if(isElevated()&&target?.kind!=='ground')return false;
+      if(isElevated()&&target?.kind==='ground')return distance(x,y,target.x,target.y)<.2;
+    }
+    return oldCanInteract(target,x,y);
+  };
+  function toggleInnerGate(){
+    if(innerGateOpen){
+      const occupants=[...(scene==='surface'&&!isElevated()?[player]:[]),...zombies.filter(z=>z.alive)];
+      if(occupants.some(p=>rectHit(p.x,p.y,(p.radius||17)+3,innerGate))){message('Отойдите от внутреннего проёма');return;}
+    }
+    innerGateOpen=!innerGateOpen;invalidateGeometry();queueGameSave();
+    message(innerGateOpen?'Внутренняя металлическая дверь открыта':'Внутренняя металлическая дверь закрыта');
+  }
+  const oldExecute=executeInteraction;
+  executeInteraction=function(target){
+    if(target?.kind==='v091stairs'||target?.kind==='v091innerGate'){
+      if(menuOpen||playerDead||transition||!canInteract(target,player.x,player.y))return;
+      cancelNavigation();
+      if(target.kind==='v091innerGate')toggleInnerGate();
+      else{const t=towerFor(target);if(isElevated())descend(t);else beginTransition({x:t.x,y:t.y},true);}
+      return;
+    }
+    if(target?.kind==='v091tower')return handleObject(target);
+    if(isElevated())return;
+    return oldExecute(target);
+  };
+  function inwardLanding(){
+    if(!isElevated())return null;
+    const x=player.x,y=player.y,possibilities=[];
+    if(y<=202)possibilities.push({x:clamp(x,280,1320),y:250});
+    if(y>=998)possibilities.push({x:clamp(x,280,1320),y:960});
+    if(x<=242)possibilities.push({x:290,y:clamp(y,250,960)});
+    if(x>=1358)possibilities.push({x:1310,y:clamp(y,250,960)});
+    possibilities.sort((a,b)=>distance(x,y,a.x,a.y)-distance(x,y,b.x,b.y));
+    return possibilities.find(p=>distance(x,y,p.x,p.y)<=170&&!worldCollision(p.x,p.y,player.radius+4,'surface'))||null;
+  }
+  function jumpInward(){const point=inwardLanding();if(!point){message('Во дворе нет свободного места для приземления');return false;}return beginTransition(point,false,'jump');}
+  const jumpButton=document.createElement('button');jumpButton.id='v091JumpInward';jumpButton.type='button';jumpButton.className='v091WallButton';jumpButton.textContent='↘ Спрыгнуть во двор';jumpButton.setAttribute('aria-label','Спрыгнуть со стены внутрь двора');
+  jumpButton.addEventListener('pointerdown',e=>e.stopPropagation());jumpButton.addEventListener('click',e=>{e.stopPropagation();jumpInward();});document.body.appendChild(jumpButton);
+  const oldPlayerUpdate=updatePlayer;
+  updatePlayer=function(){
+    if(transition){
+      if(menuOpen||playerDead||document.hidden)return;
+      const t=transition;t.elapsed=Math.min(t.duration,t.elapsed+16.667*frameScale);
+      const p=t.elapsed/t.duration,s=p*p*(3-2*p);
+      player.x=t.source.x+(t.target.x-t.source.x)*s;player.y=t.source.y+(t.target.y-t.source.y)*s;player.moving=true;player.walkAnimation+=.21*frameScale;
+      if(p>=1){player.wallLevel=t.toUpper;transition=null;player.moving=false;movePower=moveX=moveY=0;queueGameSave();if(t.after)t.after();}
+      return;
+    }
+    return oldPlayerUpdate();
+  };
+  const oldAction=updateAction;
+  updateAction=function(){
+    oldAction();
+    if(currentAction==='v091stairs')actionButton.textContent=isElevated()?'↧':'↥';
+    if(currentAction==='v091innerGate')actionButton.textContent=innerGateOpen?'🔒':'🔓';
+    const show=isElevated()&&!menuOpen&&!playerDead&&!transition;
+    jumpButton.style.display=show?'block':'none';if(show)jumpButton.disabled=!inwardLanding();
+  };
+
+  // Floor slabs must not intercept a muzzle or light already on their upper side.
+  function upperObstacles(rails=false){
+    const obstacles=[...surfaceWalls().filter(o=>!o.id?.startsWith('v091wall')&&o.id!=='gate'),...solidObjects('surface').filter(o=>!o.id?.startsWith('v091tower'))];
+    if(rails)obstacles.push({x:170,y:130,w:1260,h:6},{x:170,y:130,w:6,h:940},{x:1424,y:130,w:6,h:940},{x:170,y:1064,w:1260,h:6});
+    return obstacles;
+  }
+  function upperObstacleCollision(x,y,r=1,which=scene,rails=false){
+    if(which!=='surface')return worldCollision(x,y,r,which);
+    if(x<(surface.minX??0)+r||x>(surface.maxX??surface.width)-r||y<r||y>surface.height-r)return true;
+    for(const o of upperObstacles(rails)){
+      if(o.r!==undefined?distance(x,y,o.x,o.y)<=o.r+r:rectHit(x,y,r,o))return true;
+    }
+    return false;
+  }
+  function lightCollision(x,y,r=1,which=scene){return isElevated()?upperObstacleCollision(x,y,r,which,true):worldCollision(x,y,r,which);}
+  function lightObstacles(which=scene){return which==='surface'&&isElevated()?upperObstacles(true):null;}
+  const oldShoot=shoot;
+  shoot=function(){
+    if(transition)return;if(!isElevated())return oldShoot();
+    const previousLine=lineClear,first=bullets.length;
+    lineClear=function(ax,ay,bx,by,r=0,which=scene,ignoreId=null){
+      if(which!=='surface')return previousLine(ax,ay,bx,by,r,which,ignoreId);
+      const n=Math.max(1,Math.ceil(distance(ax,ay,bx,by)/3));for(let i=0;i<=n;i++)if(upperObstacleCollision(ax+(bx-ax)*i/n,ay+(by-ay)*i/n,r,which))return false;return true;
+    };
+    try{oldShoot();for(let i=first;i<bullets.length;i++)bullets[i].wallLevel=true;}finally{lineClear=previousLine;}
+  };
+  updateBullets=function(){
+    if(firing)shoot();
+    for(let i=bullets.length-1;i>=0;i--){
+      const b=bullets[i],vx=b.dx*frameScale,vy=b.dy*frameScale,steps=Math.max(1,Math.ceil(Math.hypot(vx,vy)/3));let removed=false;
+      for(let n=0;n<steps;n++){
+        const x=b.x+vx/steps,y=b.y+vy/steps;
+        if((b.wallLevel?upperObstacleCollision:worldCollision)(x,y,b.radius,scene)){removed=true;break;}
+        b.x=x;b.y=y;
+        if(scene==='surface'){const hit=zombies.find(z=>z.alive&&distance(x,y,z.x,z.y)<z.radius+b.radius);if(hit){hitZombie(hit,b.damage??25);removed=true;break;}}
+      }
+      b.life-=frameScale;if(removed||b.life<=0)bullets.splice(i,1);
+    }
+  };
+  const oldZombieUpdate=updateZombies;
+  updateZombies=function(){
+    if(!isElevated()&&!transition)return oldZombieUpdate();
+    const damage=damagePlayer,path=findWalkPath;
+    damagePlayer=function(){};findWalkPath=function(ax,ay,target,...rest){return target?.id==='player'?null:path(ax,ay,target,...rest);};
+    try{return oldZombieUpdate();}finally{damagePlayer=damage;findWalkPath=path;}
+  };
+
+  function rect(x,y,w,h,fill,stroke=null,width=1){ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.strokeRect(x,y,w,h);}}
+  function line(ax,ay,bx,by,color,width=1){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();}
+  function label(text,x,y,size=10,color='#c9d1c6'){ctx.fillStyle=color;ctx.textAlign='center';ctx.font=`600 ${size}px Arial`;ctx.fillText(text,x,y);}
+  function wallDeck(o,vertical=false){
+    // Offset foundations and multiple ledges make the top-down wall read as tall.
+    rect(o.x+11,o.y+18,o.w,o.h,'rgba(8,15,17,.38)');rect(o.x,o.y,o.w,o.h,'#303b3c','#1c282b',3);
+    rect(o.x+5,o.y+5,o.w-10,o.h-10,'#566360');
+    const g=vertical?ctx.createLinearGradient(o.x,0,o.x+o.w,0):ctx.createLinearGradient(0,o.y,0,o.y+o.h);
+    g.addColorStop(0,'#718079');g.addColorStop(.17,'#839086');g.addColorStop(.2,'#57665e');g.addColorStop(.76,'#546158');g.addColorStop(1,'#354641');
+    rect(o.x+8,o.y+8,o.w-16,o.h-16,g);
+    if(vertical){for(let y=o.y+24;y<o.y+o.h-8;y+=48){line(o.x+9,y,o.x+o.w-9,y,'#3e4c47',2);rect(o.x+10,y+2,5,3,'#9ba995');rect(o.x+o.w-15,y+2,5,3,'#9ba995');}}
+    else for(let x=o.x+24;x<o.x+o.w-8;x+=48){line(x,o.y+9,x,o.y+o.h-9,'#3e4c47',2);rect(x+2,o.y+10,3,5,'#9ba995');rect(x+2,o.y+o.h-15,3,5,'#9ba995');}
+  }
+  function rail(x,y,w,h){
+    rect(x,y,w,h,'#2a3938','#a8b5a3',1);
+    if(w>h)for(let px=x+12;px<x+w;px+=40)rect(px,y-2,7,h+4,'#849382','#253c34',1);
+    else for(let py=y+12;py<y+h;py+=40)rect(x-2,py,w+4,7,'#849382','#253c34',1);
+  }
+  function metalDoor(o,open,title){
+    rect(o.x-5,o.y-4,o.w+10,o.h+8,'#263236','#7f918e',2);
+    rect(o.x,o.y,o.w,o.h,'#181f23');
+    const leaf=open?13:o.w/2-2;
+    for(const side of [0,1]){
+      const x=side?o.x+o.w-leaf:o.x;
+      const g=ctx.createLinearGradient(x,o.y,x+leaf,o.y+o.h);g.addColorStop(0,'#718487');g.addColorStop(.38,'#445b62');g.addColorStop(1,'#263942');
+      rect(x,o.y,leaf,o.h,g,'#b1beb4',2);
+      if(!open){rect(x+6,o.y+6,leaf-12,o.h-12,'#334b54','#61777a',1);line(x+10,o.y+8,x+leaf-10,o.y+o.h-8,'#899a93',4);}
+      for(const dy of [5,o.h-5])for(const dx of [4,leaf-4])rect(x+dx-1,o.y+dy-1,2,2,'#d3d8c3');
+    }
+    if(!open)rect(o.x+o.w/2-9,o.y+o.h/2-5,18,10,'#d2b970','#564d33',1);
+    label(title+' · '+(open?'ОТКРЫТО':'ЗАКРЫТО'),o.x+o.w/2,o.y-13,9,open?'#a5dab6':'#e4c287');
+  }
+  drawGate=function(){metalDoor(gateRect,gateOpen,'СТАЛЬНЫЕ ВОРОТА');};
+  function drawStairs(t){
+    const dx=t.foot.x-t.x,dy=t.foot.y-t.y,len=Math.hypot(dx,dy),angle=Math.atan2(dy,dx);
+    ctx.save();ctx.translate(t.x,t.y);ctx.rotate(angle);
+    rect(37,-22,len-24,44,'rgba(0,0,0,.22)');rect(32,-17,len-24,34,'#3a484b','#82938a',2);
+    for(let x=38;x<len+10;x+=8){rect(x,-15,5,30,'#8b9585');line(x,-15,x,15,'#c1c3aa',1);}
+    line(33,-22,len+10,-22,'#9ea990',3);line(33,22,len+10,22,'#9ea990',3);
+    ctx.restore();
+    ctx.beginPath();ctx.arc(t.foot.x,t.foot.y,17,0,Math.PI*2);ctx.fillStyle='rgba(49,74,67,.83)';ctx.fill();ctx.strokeStyle='#a9b99b';ctx.lineWidth=1;ctx.stroke();label('↥',t.foot.x,t.foot.y+5,17,'#d0dfbb');
+  }
+  function drawTower(t,index){
+    const x=t.x-55,y=t.y-55;
+    rect(x+12,y+21,115,110,'rgba(8,14,15,.37)');rect(x,y,110,110,'#28373b','#1c282b',3);
+    rect(x+5,y+5,100,100,'#809087','#b2b9a6',2);rect(x+13,y+13,84,84,'#55675f','#2c433b',2);
+    for(let i=20;i<95;i+=16)line(x+14,y+i,x+96,y+i,'rgba(184,197,165,.12)',1);
+    for(const [px,py] of [[x+3,y+3],[x+92,y+3],[x+3,y+92],[x+92,y+92]]){rect(px,py,15,15,'#465b5c','#a3b49d',2);rect(px+5,py+5,5,5,'#d0c699');}
+    // Low rail sections leave the two wall connections and inward stairs open.
+    if(index<2)rail(x+20,y+3,70,5);else rail(x+20,y+102,70,5);
+    if(index===0||index===3)rail(x+3,y+20,5,70);else rail(x+102,y+20,5,70);
+    label('0'+(index+1),t.x,t.y-11,15,'#ccd5b8');label('БАШНЯ',t.x,t.y+4,8,'#a2b6a5');
+    rect(t.x-12,t.y+15,24,18,'#273c43','#8da492',1);label('↧',t.x,t.y+29,15,'#cee0b8');
+  }
+  const oldSurfaceDraw=drawSurface;
+  drawSurface=function(){
+    oldSurfaceDraw();ctx.save();
+    // Covered entrance: the top deck remains continuous above the ground doors.
+    rect(730,925,140,100,'#666d62');for(let y=948;y<1018;y+=17)line(734,y,866,y,'#858e7c',1);
+    for(const o of vestibule)wallDeck(o,true);
+    metalDoor(innerGate,innerGateOpen,'ВНУТРЕННЯЯ ДВЕРЬ');
+    for(const o of decks.slice(0,4)){
+      if(o.y===998&&!isElevated()){
+        wallDeck({x:170,y:998,w:560,h:72});wallDeck({x:870,y:998,w:560,h:72});
+        // Dashed edges show the overhead bridge while preserving visible gates below.
+        ctx.setLineDash([8,6]);line(730,1000,870,1000,'#a2b89a',2);line(730,1068,870,1068,'#a2b89a',2);ctx.setLineDash([]);
+      }else wallDeck(o,o.h>o.w);
+    }
+    rail(267,133,1066,6);rail(173,227,6,746);rail(1421,227,6,746);
+    if(isElevated())rail(267,1061,1066,6);else{rail(267,1061,449,6);rail(884,1061,449,6);}
+    rail(267,193,1066,5);rail(233,227,5,746);rail(1362,227,5,746);
+    if(isElevated())rail(267,1002,1066,5);else{rail(267,1002,449,5);rail(884,1002,449,5);}
+    for(const t of corners)drawStairs(t);
+    corners.forEach(drawTower);
+    if(!isElevated())drawGate();else{rect(735,1009,130,45,'#64796d','#93a58b',1);label('ПЕРЕХОД НАД ВОРОТАМИ',800,1038,8,'#d4dbc0');}
+    ctx.restore();
+  };
+  const oldDrawPlayer=drawPlayer;
+  drawPlayer=function(){
+    if(transition?.kind==='jump'){
+      const lift=Math.sin(Math.PI*transition.elapsed/transition.duration)*22;ctx.save();ctx.translate(0,-lift);oldDrawPlayer();ctx.restore();
+    }else oldDrawPlayer();
+    if(isElevated()&&!transition){label('НА СТЕНЕ',player.x,player.y-34,8,'#d5dfb8');}
+  };
+  function canonicalPosition(){return transition?{x:transition.source.x,y:transition.source.y,wallLevel:transition.source.wallLevel}:{x:player.x,y:player.y,wallLevel:isElevated()};}
+  function capture(){return {...canonicalPosition(),innerGateOpen};}
+  function validate(data){
+    if(!data||typeof data.wallLevel!=='boolean'||typeof data.innerGateOpen!=='boolean'||!Number.isFinite(data.x)||!Number.isFinite(data.y)||Math.abs(data.x)>10000||Math.abs(data.y)>10000)throw new Error('Invalid fortress state');
+    if(data.wallLevel&&elevatedCollision(data.x,data.y,player.radius))throw new Error('Unsafe wall position');return true;
+  }
+  function restore(data){
+    if(data)validate(data);transition=null;cancelRoute();innerGateOpen=data?.innerGateOpen??false;player.wallLevel=!!data?.wallLevel&&scene==='surface';invalidateGeometry();
+    if(data&&scene==='surface'){
+      if(player.wallLevel||!worldCollision(data.x,data.y,player.radius,'surface')){player.x=data.x;player.y=data.y;}
+    }
+    updateAction();
+  }
+  window.V091Fortress={corners,decks,innerGate,vestibule,isElevated,elevatedCollision,elevatedClear,findPath,handlePoint,handleObject,handleAutoWalk,cancelRoute,lightCollision,lightObstacles,upperObstacleCollision,canonicalPosition,capture,validate,restore,jumpInward,inwardLanding,toggleInnerGate,landingFor,get transitioning(){return !!transition;},get innerGateOpen(){return innerGateOpen;}};
+  v09Style('.v091WallButton{position:fixed;z-index:32;left:50%;top:calc(env(safe-area-inset-top,0px) + 67px);transform:translateX(-50%);display:none;padding:10px 16px;min-height:42px;border:1px solid #a2b994;border-radius:9px;background:rgba(31,53,49,.95);color:#e3ebd4;font:600 12px Arial;box-shadow:0 3px 14px #0007;touch-action:manipulation}.v091WallButton:disabled{opacity:.5}');
+  invalidateGeometry();
+})();
+
+
+// 0.9.1: swept room geometry and continuous, obstacle-aware point following.
+const V091Navigation=(()=>{
+  const oldGeometry=bunkerGeometryBlocked;
+  const walls=[];
+  function segment(x1,y1,x2,y2,width=16){walls.push({x:Math.min(x1,x2)-width/2,y:Math.min(y1,y2)-width/2,w:Math.abs(x2-x1)+width,h:Math.abs(y2-y1)+width});}
+  for(const key of ['workshop','storage','room4','room5','room6','room7']){
+    const o=bunker[key],left=o.right===bunker.corridor.left;
+    segment(o.left,o.top,o.right,o.top);segment(o.left,o.bottom,o.right,o.bottom);
+    const outside=left?o.left:o.right,inside=left?o.right:o.left;
+    segment(outside,o.top,outside,o.bottom);
+    // Stop horizontal wall caps at the door edge; actor radius supplies clearance.
+    walls.push({x:inside-8,y:o.top,w:16,h:o.doorTop-o.top});
+    walls.push({x:inside-8,y:o.doorBottom,w:16,h:o.bottom-o.doorBottom});
+  }
+  const f=bunker.farm,c=bunker.corridor;
+  segment(f.left,f.top,f.right,f.top);segment(f.left,f.top,f.left,f.bottom);segment(f.right,f.top,f.right,f.bottom);
+  walls.push({x:f.left,y:f.bottom-8,w:f.doorLeft-f.left,h:16},{x:f.doorRight,y:f.bottom-8,w:f.right-f.doorRight,h:16});
+  segment(c.left,c.bottom,c.right,c.bottom);
+  function penBlocked(x,y,r){
+    const left=f.left+18,right=(f.cropLeft??90)-12,top=f.top+42,bottom=f.bottom-42,mid=(top+bottom)/2;
+    const segments=[{x:left-2,y:top,w:4,h:bottom-top},{x:left,y:top-2,w:right-left,h:4},{x:left,y:bottom-2,w:right-left,h:4},{x:left,y:mid-2,w:right-left,h:4},
+      {x:right-2,y:top,w:4,h:112},{x:right-2,y:top+182,w:4,h:mid+105-(top+182)},{x:right-2,y:mid+175,w:4,h:bottom-(mid+175)}];
+    return segments.some(o=>rectHit(x,y,r,o));
+  }
+  bunkerGeometryBlocked=function(x,y,r){
+    return oldGeometry(x,y,0)||walls.some(o=>rectHit(x,y,r,o))||penBlocked(x,y,r);
+  };
+  const fortress=()=>typeof V091Fortress==='object'?V091Fortress:null;
+  function withOpenDoors(fn){const old=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=old;}}
+  function plan(target){
+    return withOpenDoors(()=>{
+      if(target.kind==='ground'&&lineClear(player.x,player.y,target.x,target.y,player.radius+1,scene))return [{x:target.x,y:target.y}];
+      return findWalkPath(player.x,player.y,target,scene,player.radius+1)||findWalkPath(player.x,player.y,target,scene,player.radius);
+    });
+  }
+  function clippedPoint(x,y){
+    const dx=x-player.x,dy=y-player.y,length=Math.hypot(dx,dy);
+    if(length<.2)return null;
+    const count=Math.ceil(length/3);let last={x:player.x,y:player.y};
+    // Ignore automatic leaves while choosing a route, but still respect walls/objects.
+    return withOpenDoors(()=>{
+      for(let i=1;i<=count;i++){
+        const p={x:player.x+dx*i/count,y:player.y+dy*i/count};
+        if(worldCollision(p.x,p.y,player.radius+1,scene))break;last=p;
+      }
+      return distance(last.x,last.y,player.x,player.y)>.5?last:null;
+    });
+  }
+  approachObject=function(target){
+    if(fortress()?.handleObject?.(target))return;
+    stopControls();cancelSearch();cancelChop();
+    if(!target)return;
+    if(canInteract(target,player.x,player.y)){executeInteraction(target);return;}
+    const points=plan(target);
+    if(!points){message('К объекту нет свободного прохода');return;}
+    navigation={targetId:target.id,points,index:0,blockedMs:0,replans:0,scene};
+  };
+  approachPoint=function(x,y,following=false){
+    if(!Number.isFinite(x)||!Number.isFinite(y))return;
+    if(fortress()?.handlePoint?.(x,y,following))return;
+    if(!following)stopControls();
+    let goal={x,y};
+    if(withOpenDoors(()=>worldCollision(x,y,player.radius,scene))){
+      if(!following){message('Здесь препятствие — выберите свободное место');return;}
+      goal=clippedPoint(x,y);
+      if(!goal){cancelNavigation();return;}
+    }
+    if(distance(player.x,player.y,goal.x,goal.y)<.5){cancelNavigation();return;}
+    const destination={id:'ground',kind:'ground',x:goal.x,y:goal.y,r:0,range:.55};
+    let points=plan(destination);
+    if(!points&&following){
+      const fallback=clippedPoint(x,y);
+      if(fallback){Object.assign(destination,fallback);points=plan(destination);}
+    }
+    if(!points){if(!following)message('К этой точке нет свободного прохода');return;}
+    navigation={destination,points,index:0,blockedMs:0,replans:0,scene,following};
+  };
+  updatePointerFollow=function(){
+    const p=objectPointer;if(!p||menuOpen||playerDead)return;
+    if(!p.following&&!p.target&&performance.now()-p.startedAt>=180)startPointerFollow();
+    if(!p.following)return;
+    const x=p.screenX+camera.x,y=p.screenY+camera.y,now=performance.now();
+    if(now<p.nextPathAt)return;
+    if(p.lastX!==undefined&&distance(x,y,p.lastX,p.lastY)<2&&navigation)return;
+    p.nextPathAt=now+100;p.lastX=x;p.lastY=y;
+    approachPoint(x,y,true);
+  };
+  updateAutoWalk=function(){
+    if(fortress()?.handleAutoWalk?.())return;
+    if(!navigation)return;
+    const nav=navigation,target=nav.destination||interactionObjects().find(o=>o.id===nav.targetId);
+    if(!target||nav.scene!==scene){cancelNavigation();return;}
+    if(canInteract(target,player.x,player.y)){
+      cancelNavigation();if(target.kind!=='ground')executeInteraction(target);return;
+    }
+    if(nav.blockedMs>180){
+      const points=plan(target);
+      if(points&&(nav.replans||0)<4){nav.points=points;nav.index=0;nav.blockedMs=0;nav.replans=(nav.replans||0)+1;}
+      else {cancelNavigation();message('Проход закрыт. Откройте дверь или выберите другой путь');return;}
+    }
+    let p=nav.points[nav.index];
+    while(p&&distance(player.x,player.y,p.x,p.y)<(nav.index===nav.points.length-1?.35:3)){
+      // Only skip a near intermediate waypoint when the next edge is currently clear.
+      const next=nav.points[nav.index+1];
+      if(next&&!lineClear(player.x,player.y,next.x,next.y,player.radius,scene))break;
+      nav.index++;p=nav.points[nav.index];
+    }
+    if(!p){cancelNavigation();return;}
+    const d=distance(player.x,player.y,p.x,p.y)||1;
+    moveX=(p.x-player.x)/d;moveY=(p.y-player.y)/d;movePower=.84;
+    if(!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
+  };
+  invalidateGeometry();
+  return {walls,clippedPoint,plan};
+})();
+
+
+// 0.9.1: per-container daily replenishment, persistent and safe for uncollected items.
+const V091Loot=(()=>{
+  const DAY=24*60*60*1000;
+  for(const o of scavenges)o.searchedAt=null;
+  function refresh(now=Date.now()){
+    let changed=false;
+    for(const o of scavenges){
+      if(!o.searched){o.searchedAt=null;continue;}
+      if(o.searchedAt===null){o.searchedAt=now;changed=true;}
+      if(now-o.searchedAt<DAY||(o.loot&&o.loot.length)||activeLootObject===o&&el('lootOverlay').classList.contains('open')||searchState?.obj===o)continue;
+      o.searched=false;o.loot=[];o.searchedAt=null;changed=true;
+    }
+    if(changed)queueGameSave();
+  }
+  randomLoot=function(kind){
+    const out=[];
+    function put(type,min,max,chance=1){if(Math.random()<chance)out.push({type,qty:min+Math.floor(Math.random()*(max-min+1))});}
+    if(kind==='car'){put('fuel',3,14,.5);put('ammo',5,24,.72);put('iron',4,18,.82);put('parts',1,8,.58);put('ammo556',8,20,.5);}
+    else{put('food',2,12,.92);put('meds',1,5,.68);put('ammo',3,16,.35);put('wood',3,12,.45);put('copper',2,6,.6);put('ammo556',8,20,.5);}
+    return out.length?out:[{type:kind==='car'?'iron':'food',qty:2}];
+  };
+  const oldOpen=openLoot;
+  openLoot=function(o){refresh();const fresh=!o.searched;oldOpen(o);if(fresh)o.searchedAt=Date.now();};
+  const oldSearch=startSearch;
+  startSearch=function(o){refresh();return oldSearch(o);};
+  let elapsed=0;const oldUpdate=update;
+  update=function(){oldUpdate();elapsed+=frameScale/60;if(elapsed>=1){elapsed=0;refresh();}};
+  function validate(d){
+    if(!d||!Array.isArray(d.objects)||d.objects.length!==scavenges.length)throw new Error('Неверные данные обновления добычи');
+    d.objects.forEach((o,i)=>{if(!o||o.id!==scavenges[i].id||!(o.searchedAt===null||Number.isFinite(o.searchedAt)&&o.searchedAt>=0&&o.searchedAt<=Number.MAX_SAFE_INTEGER))throw new Error('Неверный таймер добычи');});return true;
+  }
+  return {dayMs:DAY,refresh,validate,capture:()=>({objects:scavenges.map(o=>({id:o.id,searchedAt:o.searchedAt}))}),
+    restore(d){validate(d);d.objects.forEach((o,i)=>{scavenges[i].searchedAt=scavenges[i].searched?(o.searchedAt??Date.now()):null;});refresh();}};
+})();
+window.V091Loot=V091Loot;
+
+
+/* 0.9.1 — an occluded flashlight reveals the world through a darkness mask.
+   World artwork is drawn only once. Never copy/darken the game canvas itself. */
+const V091Light = (()=>{
+  const range=380,halfAngle=.48,rayCount=96;
+  let mask=null,maskContext=null,lastKey='',cachedCone=null;
+
+  function blocked(x,y,r=.35,which=scene){
+    if(typeof V091Fortress!=='undefined'&&typeof V091Fortress.lightCollision==='function')
+      return V091Fortress.lightCollision(x,y,r,which);
+    return worldCollision(x,y,r,which);
+  }
+  function bunkerWalls(){
+    if(typeof V091Navigation!=='undefined')return V091Navigation.walls;
+    // Also permits isolated lighting tests against the previous game version.
+    const out=[];
+    for(const key of ['workshop','storage','room4','room5','room6','room7']){
+      const r=bunker[key],inside=r.right===610?r.right:r.left,outside=inside===r.right?r.left:r.right;
+      out.push({x:r.left-8,y:r.top-8,w:r.right-r.left+16,h:16},{x:r.left-8,y:r.bottom-8,w:r.right-r.left+16,h:16},
+        {x:outside-8,y:r.top,w:16,h:r.bottom-r.top},{x:inside-8,y:r.top,w:16,h:r.doorTop-r.top},{x:inside-8,y:r.doorBottom,w:16,h:r.bottom-r.doorBottom});
+    }
+    const f=bunker.farm,c=bunker.corridor;
+    out.push({x:f.left-8,y:f.top-8,w:f.right-f.left+16,h:16},{x:f.left-8,y:f.top,w:16,h:f.bottom-f.top},
+      {x:f.right-8,y:f.top,w:16,h:f.bottom-f.top},{x:f.left,y:f.bottom-8,w:f.doorLeft-f.left,h:16},
+      {x:f.doorRight,y:f.bottom-8,w:f.right-f.doorRight,h:16},{x:c.left,y:c.bottom-8,w:c.right-c.left,h:16});
+    return out;
+  }
+  function obstacles(ox,oy,distanceLimit){
+    let all;
+    if(scene==='surface'&&typeof V091Fortress!=='undefined'&&typeof V091Fortress.lightObstacles==='function')all=V091Fortress.lightObstacles(scene);
+    if(!all){
+      const g=geometryFor(scene);
+      all=scene==='bunker'?[...g.objects,...bunkerWalls(),...v09Doors.flatMap(v09DoorPanels)]:[...g.walls,...g.objects];
+    }
+    return all.filter(o=>o.r!==undefined?Math.hypot(o.x-ox,o.y-oy)<distanceLimit+o.r:
+      o.x<ox+distanceLimit&&o.x+o.w>ox-distanceLimit&&o.y<oy+distanceLimit&&o.y+o.h>oy-distanceLimit);
+  }
+  function cast(ox,oy,angle,maxDistance=range,solids=obstacles(ox,oy,maxDistance)){
+    const dx=Math.cos(angle),dy=Math.sin(angle),pad=.35;let reach=maxDistance,hit=false;
+    for(const o of solids){
+      let near,far;
+      if(o.r!==undefined){
+        const cx=ox-o.x,cy=oy-o.y,b=cx*dx+cy*dy,radius=o.r+pad,c=cx*cx+cy*cy-radius*radius;
+        if(c<=0)near=0;
+        else {const discriminant=b*b-c;if(discriminant<0)continue;near=-b-Math.sqrt(discriminant);if(near<0)continue;}
+      }else{
+        const left=o.x-pad,right=o.x+o.w+pad,top=o.y-pad,bottom=o.y+o.h+pad;
+        if(Math.abs(dx)<1e-9){if(ox<left||ox>right)continue;near=-Infinity;far=Infinity;}
+        else {const a=(left-ox)/dx,b=(right-ox)/dx;near=Math.min(a,b);far=Math.max(a,b);}
+        if(Math.abs(dy)<1e-9){if(oy<top||oy>bottom)continue;}
+        else {const a=(top-oy)/dy,b=(bottom-oy)/dy;near=Math.max(near,Math.min(a,b));far=Math.min(far,Math.max(a,b));}
+        if(far<Math.max(0,near))continue;near=Math.max(0,near);
+      }
+      if(near<reach){reach=near;hit=true;}
+    }
+    // Include only the front subpixel of a solid, never the space behind it.
+    if(hit)reach=Math.min(maxDistance,reach+.25);
+    return {x:ox+dx*reach,y:oy+dy*reach,distance:reach,hit};
+  }
+  function cone(){
+    if(heldItem()!=='flashlight'||!flashlightOn||playerDead)return null;
+    const angle=Math.atan2(player.aimY,player.aimX);
+    // Doors move independently of the navigation geometry revision.
+    const key=[scene,player.x,player.y,angle,geometryRevision,player.wallLevel||0,
+      typeof V091Fortress!=='undefined'?V091Fortress.innerGateOpen:0,
+      gateOpen,...v09Doors.map(d=>d.open)].join('|');
+    if(key===lastKey&&cachedCone)return cachedCone;
+    const solids=obstacles(player.x,player.y,range+29);
+    const emitter=cast(player.x,player.y,angle,29,solids);
+    const reach=Math.max(0,emitter.distance-(emitter.hit?2:0));
+    const ox=player.x+Math.cos(angle)*reach,oy=player.y+Math.sin(angle)*reach;
+    const points=[];
+    for(let i=0;i<=rayCount;i++)points.push(cast(ox,oy,angle-halfAngle+2*halfAngle*i/rayCount,range,solids));
+    lastKey=key;return cachedCone={ox,oy,angle,range,halfAngle,points};
+  }
+  function buffer(){
+    if(!mask){
+      mask=typeof OffscreenCanvas==='function'?new OffscreenCanvas(1,1):document.createElement('canvas');
+      maskContext=mask.getContext('2d');
+    }
+    // One logical pixel is enough for soft lighting and caps mobile memory use.
+    const w=Math.max(1,Math.ceil(screenWidth)),h=Math.max(1,Math.ceil(screenHeight));
+    if(mask.width!==w||mask.height!==h){mask.width=w;mask.height=h;}
+    return maskContext;
+  }
+  function path(c,beam,inset=0,offsetX=0,offsetY=0){
+    c.beginPath();c.moveTo(beam.ox-offsetX,beam.oy-offsetY);
+    for(let i=inset;i<beam.points.length-inset;i++)c.lineTo(beam.points[i].x-offsetX,beam.points[i].y-offsetY);
+    c.closePath();
+  }
+  function radial(c,beam,strength){
+    const g=c.createRadialGradient(beam.ox-camera.x,beam.oy-camera.y,0,beam.ox-camera.x,beam.oy-camera.y,range);
+    g.addColorStop(0,'rgba(255,255,255,'+strength+')');
+    g.addColorStop(.18,'rgba(255,255,255,'+strength+')');
+    g.addColorStop(.54,'rgba(255,255,255,'+(strength*.92)+')');
+    g.addColorStop(.79,'rgba(255,255,255,'+(strength*.5)+')');
+    g.addColorStop(1,'rgba(255,255,255,0)');
+    return g;
+  }
+  function removeDarkness(c,beam){
+    c.save();c.globalCompositeOperation='destination-out';
+    // Nested, occluded fans feather the edge without blurring through walls.
+    c.fillStyle=radial(c,beam,.34);
+    for(let inset=0;inset<12;inset++){path(c,beam,inset,camera.x,camera.y);c.fill();}
+    c.restore();
+  }
+  function illuminate(){
+    const beam=cone();
+    if(scene==='bunker'){
+      const c=buffer();c.setTransform(1,0,0,1,0,0);
+      c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,mask.width,mask.height);
+      c.fillStyle='rgba(2,5,10,.61)';c.fillRect(0,0,mask.width,mask.height);
+      const supplied=V09Power.allocation().served;
+      for(const room of Object.keys(V09Power.rooms)){
+        if(room==='yard')continue;
+        const r=bunker[room];if(!r)continue;
+        const x=r.left+9-camera.x,y=r.top+9-camera.y,w=r.right-r.left-18,h=r.bottom-r.top-18;
+        c.clearRect(x,y,w,h);c.fillStyle=supplied.has('light_'+room)?'rgba(2,5,10,.035)':'rgba(2,5,10,.76)';c.fillRect(x,y,w,h);
+      }
+      if(beam)removeDarkness(c,beam);
+      c.setTransform(1,0,0,1,0,0);
+      ctx.save();ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
+      // drawFlashlight is called with the existing camera translation in place.
+      ctx.drawImage(mask,camera.x,camera.y,screenWidth,screenHeight);ctx.restore();
+    }
+    if(!beam)return;
+    // A restrained warm reflection also makes the lamp visible in daylight.
+    // Most of its perceived brightness comes from removing darkness above.
+    ctx.save();
+    const glow=ctx.createRadialGradient(beam.ox,beam.oy,0,beam.ox,beam.oy,range);
+    glow.addColorStop(0,scene==='bunker'?'rgba(255,243,206,.010)':'rgba(255,249,212,.012)');
+    glow.addColorStop(.45,'rgba(255,243,206,.005)');
+    glow.addColorStop(1,'rgba(255,243,206,0)');ctx.fillStyle=glow;
+    for(let inset=0;inset<12;inset++){path(ctx,beam,inset);ctx.fill();}ctx.restore();
+  }
+  return {range,halfAngle,cone,cast,blocked,illuminate,invalidate(){lastKey='';cachedCone=null;}};
+})();
+
+// Ambient darkness must be composited after all world props have been drawn.
+// Retain the original room lamps and the subtle glow of powered rooms.
+v09DrawRoomLight=function(room){
+  const r=bunker[room];if(!r)return;const lit=devicePowered('light_'+room);
+  if(lit){
+    ctx.save();ctx.beginPath();ctx.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);ctx.clip();
+    for(const p of v09LightPoints(room)){
+      const radius=room==='farm'?530:room==='corridor'?280:510;
+      const gradient=ctx.createRadialGradient(p.x,p.y,5,p.x,p.y,radius);
+      gradient.addColorStop(0,'rgba(250,241,191,.20)');gradient.addColorStop(.4,'rgba(220,225,184,.08)');gradient.addColorStop(1,'rgba(220,230,195,0)');
+      ctx.fillStyle=gradient;ctx.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);
+    }
+    ctx.restore();
+  }
+  for(const p of v09LightPoints(room)){
+    ctx.save();ctx.fillStyle='#1c2b30';ctx.fillRect(p.x-35,p.y-5,70,10);ctx.fillStyle=lit?'#e8edce':'#626c66';
+    ctx.shadowColor=lit?'#efe8af':'transparent';ctx.shadowBlur=lit?12:0;ctx.fillRect(p.x-28,p.y-2,56,4);ctx.restore();
+  }
+};
+drawFlashlight=function(){V091Light.illuminate();};
+
+
+/* 0.9.1 — distinct equipment state and four meaningful backpack sizes. */
+for(const [type,capacity] of Object.entries({backpack1:24,backpack2:36,backpack3:48,backpack4:60}))ITEM[type].capacity=capacity;
+BAG_SLOTS=ITEM[equipment.backpack.type].capacity;
+
+const V091_EQUIP_SHAPES={
+  head:'<path d="M8 24c0-12 5-18 16-18s16 6 16 18v8H8z"/><path d="M7 27h34M15 32v7h18v-7M24 7v18"/>',
+  body:'<path d="m14 6 10 5 10-5 9 11-6 8-3-3v20H14V22l-3 3-6-8z"/><path d="M24 13v27M15 24h7v9h-7m11-9h7v9h-7M16 16h16"/>',
+  legs:'<path d="M12 5h24l-1 37H25l-1-23-1 23H13z"/><path d="M13 12h22M18 5v7m12-7v7M14 26h7m6 0h7"/>',
+  feet:'<path d="M7 8h13v20l3 8v6H4v-9l3-6zM28 8h13v19l4 6v9H26v-6l2-8z"/><path d="M5 36h17m5 0h17M10 17h7m-7 6h7m14-6h7m-7 6h7"/>',
+  backpack:'<path d="M14 12V9a10 10 0 0 1 20 0v3M13 11h22a6 6 0 0 1 6 6v21a5 5 0 0 1-5 5H12a5 5 0 0 1-5-5V17a6 6 0 0 1 6-6z"/><path d="M8 23h32M16 29h16v9H16zM12 12v9m24-9v9"/>'
+};
+function v091GearIcon(slot,filled){
+  return '<svg viewBox="0 0 48 48" aria-hidden="true" class="v091GearIcon '+(filled?'isWorn':'isBlueprint')+'" stroke-linejoin="round" stroke-linecap="round">'+V091_EQUIP_SHAPES[slot]+'</svg>';
+}
+function v091Paperdoll(){
+  const part=(key,shape)=>'<g class="v091DollPart '+(equipment[key]?'isWorn':'isBlueprint')+'" data-body-part="'+key+'">'+shape+'</g>';
+  return '<svg viewBox="0 0 140 220" role="img" aria-label="Надетая экипировка" class="v091Paperdoll">'+
+    '<g fill="none" stroke="#8aa6ab" stroke-opacity=".25" stroke-width="1.3" stroke-dasharray="3 4"><path d="M70 5v207M15 55h110M15 130h110"/><circle cx="70" cy="28" r="17"/><path d="M56 45 41 53 28 107 37 111 50 78v48l6 77h11l3-57 3 57h11l6-77V78l13 33 9-4-13-54-15-8M57 203l-7 9h18m5 0h19l-8-9"/></g>'+
+    part('backpack','<path d="M89 56h18a8 8 0 0 1 8 8v50a7 7 0 0 1-7 7H91z"/><path d="M98 55v-6h9v7M98 88h14v23H98z"/>')+
+    part('head','<path d="M52 28c0-14 6-21 18-21s18 7 18 21v6H52z"/><path d="M51 28h38M70 9v16"/>')+
+    part('body','<path d="m52 48 18 9 18-9 12 15-9 13-4-4v55H53V72l-4 4-9-13z"/><path d="M70 60v61M55 80h11v18H55zM74 80h11v18H74zM55 109h30"/>')+
+    part('legs','<path d="M53 129h34l-3 59H74l-4-41-4 41H56z"/><path d="M55 138h30M56 163h10m9 0h10"/>')+
+    part('feet','<path d="M56 190h11v21H48v-8l8-6zM74 190h10v7l9 6v8H74z"/><path d="M49 207h17m9 0h17M57 196h6m15 0h5"/>')+'</svg>';
+}
+renderEquipment=function(){
+  const box=el('equipmentSlots');if(!box)return;
+  box.replaceChildren();
+  for(const key of ['head','body','legs','feet','backpack']){
+    const eq=equipment[key],def=eq&&ITEM[eq.type];
+    const row=document.createElement('button');row.type='button';row.className='equipSlot'+(def?' filled':' empty');row.dataset.equipSlot=key;
+    const icon=document.createElement('div');icon.className='equipIcon';icon.innerHTML=v091GearIcon(key,!!def);
+    const text=document.createElement('div');text.className='equipText';
+    const label=document.createElement('div');label.className='equipLabel';label.textContent=EQUIP_LABELS[key];
+    const name=document.createElement('b');name.textContent=def?def.name:'Не надето';
+    const hint=document.createElement('small');hint.textContent=def?(key==='backpack'?def.capacity+' мест · смена из рюкзака':'Нажмите, чтобы снять'):'Свободный слот';
+    text.append(label,name,hint);row.append(icon,text);row.addEventListener('click',()=>v091Unequip(key));box.append(row);
+  }
+  const figure=document.querySelector('.characterFigure');if(figure)figure.innerHTML=v091Paperdoll();
+  el('characterStats').innerHTML='❤️ HP: <b>'+Math.round(player.health)+'/'+Math.round(player.maxHealth||100)+'</b><br>🛡️ Защита тела: <b>'+equippedArmor()+'%</b><br>🎒 Вместимость: <b>'+BAG_SLOTS+'</b>';
+  el('bagCapacityText').textContent='🎒 Рюкзак · '+bag.length+'/'+BAG_SLOTS;
+};
+function v091Unequip(slot){
+  const eq=equipment[slot];if(!eq)return false;
+  if(slot==='backpack'){message('🎒 Чтобы сменить рюкзак, выберите другой в инвентаре.');return false;}
+  const next=clone(bag);
+  if(addToSlots(next,eq.type,1,BAG_SLOTS)>0){message('🎒 Освободите место для снятой экипировки.');return false;}
+  bag=next;equipment[slot]=null;renderBag();queueGameSave();message('Снято: '+ITEM[eq.type].name);return true;
+}
+v09Style(`
+  .characterInventory{grid-template-columns:minmax(140px,46%) minmax(0,1fr)}
+  .equipSlot{width:100%;min-height:62px;text-align:left;color:#d5e5e3;cursor:pointer;font-family:inherit;transition:background .15s,border-color .15s}
+  .equipSlot.empty{background:transparent;border:1px dashed #8bacb332;color:#91a9ae}
+  .equipSlot.filled{background:linear-gradient(115deg,#263b32ee,#172627cc);border-color:#a2c89465}
+  .equipSlot .equipIcon{width:37px;min-width:37px;line-height:1}.v091GearIcon{width:36px;height:36px;stroke-width:1.6}
+  .isBlueprint{fill:none;stroke:#92b8c0;opacity:.38;stroke-width:1.3}
+  .isWorn{fill:#667d50;stroke:#d3dea8;stroke-width:1.6}
+  .equipSlot .equipLabel{opacity:.72;letter-spacing:.07em}.equipSlot b{font-size:11px;line-height:1.3;display:block}.equipSlot small{display:block;font-size:9px;opacity:.63;margin-top:3px}
+  .characterFigure{font-size:initial;line-height:1;display:flex;justify-content:center;width:100%}.v091Paperdoll{width:140px;max-width:100%;height:210px}
+  .v091DollPart[data-body-part="head"].isWorn{fill:#6b7350}.v091DollPart[data-body-part="legs"].isWorn{fill:#4d6256}.v091DollPart[data-body-part="feet"].isWorn{fill:#4a3f32;stroke:#a89371}.v091DollPart[data-body-part="backpack"].isWorn{fill:#9d7242;stroke:#e3bb82}
+  @media(max-height:500px){.v091Paperdoll{height:175px}.equipSlot{min-height:55px}}
+`);
+window.V091Equipment={unequip:v091Unequip,render:renderEquipment};
+
+
+/* 0.9.1 — named independent saves, portable backups and chickens. */
 const V09_SAVE_PREFIX='survival_base_v09_slot_';
 const V09_ACTIVE_KEY='survival_base_v09_active_slot';
 const V09_SLOT_COUNT=5;
 const V09_CHICKEN_MAX=50;
 const V09_CHICKEN_BREED_MS=300000;
 let v09ActiveSlot=null;
+let v091SaveName='';
+const V091_SAVE_NAME_MAX=48;
+function v091CleanSaveName(value){
+  if(value===undefined)return '';
+  if(typeof value!=='string')throw new Error('Invalid save name');
+  return value.replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,V091_SAVE_NAME_MAX);
+}
+function v091DefaultName(id){return 'Сохранение '+(id||1);}
 let v09SaveTransaction=false;
 let v09ChickenBreedMs=0;
 let v09ChickenClock=performance.now();
@@ -6966,9 +7785,16 @@ el('cowSlaughterBtn').after(v09ChickenSlaughter);
 
 captureGameProgress=function(){
   const d=v09OriginalCapture();
-  d.gameVersion='0.9';
+  d.gameVersion='0.9.1';
+  d.saveName=v091SaveName;
   d.v09={schema:1,power:V09Power.snapshot(),world:V09World.capture(),
     crafting:V09Craft.capture(),chickenBreedMs:v09ChickenBreedMs};
+  d.v091={schema:1,
+    fortress:window.V091Fortress?V091Fortress.capture():{wallLevel:false,innerGateOpen:false},
+    loot:window.V091Loot?V091Loot.capture():{objects:scavenges.map(o=>({id:o.id,searchedAt:null}))}};
+  if(window.V091Fortress&&typeof V091Fortress.canonicalPosition==='function'){
+    const p=V091Fortress.canonicalPosition();if(p){d.player.x=p.x;d.player.y=p.y;}
+  }
   return d;
 };
 // Capture before the first load, so New Game can never clone an old base.
@@ -6998,6 +7824,7 @@ decodeGameProgress=function(raw){
   if(typeof raw!=='string'||raw.length>2*1024*1024)throw new Error('Save file is too large');
   let d=JSON.parse(raw);
   if(!d||typeof d!=='object'||Array.isArray(d))throw new Error('Invalid save');
+  d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
   if(!legacy&&(d.schema!==2||!/^0\.9(?:\.\d+)?$/.test(d.gameVersion||'')))
@@ -7026,14 +7853,29 @@ decodeGameProgress=function(raw){
       if(!owned&&!d.starterPending.includes(type))d.starterPending.push(type);
     }
     if(!d.handSlots[3]&&d.bag.some(s=>s.type==='remote'))d.handSlots[3]='remote';
-    d.gameVersion='0.9';
+    d.gameVersion='0.9.1';
   }
   const s=d.v09;
   if(!s||s.schema!==1||!Number.isFinite(s.chickenBreedMs)||s.chickenBreedMs<0||
     s.chickenBreedMs>V09_CHICKEN_BREED_MS)throw new Error('Invalid 0.9 state');
   if(!s.power||!s.world||!s.crafting)throw new Error('Incomplete 0.9 state');
+  if(typeof V09Craft.normalizeSave==='function')s.crafting=V09Craft.normalizeSave(s.crafting)||s.crafting;
   if(V09Power.validate(s.power)===false||V09World.validate(s.world)===false||
     V09Craft.validate(s.crafting)===false)throw new Error('Invalid subsystem state');
+  if(d.v091===undefined){
+    d.v091=clone(v09NewGameTemplate.v091);
+    // Ground-level saves keep their own position when gaining the new fortress state.
+    d.v091.fortress.x=d.player.x;d.v091.fortress.y=d.player.y;
+    // Old searched objects start their renewal clock on migration. Never erase their contents.
+    d.v091.loot.objects=d.loot.map(o=>({id:o.id,searchedAt:o.searched?Date.now():null}));
+  }
+  if(!d.v091||d.v091.schema!==1||!d.v091.fortress||!d.v091.loot)
+    throw new Error('Invalid 0.9.1 state');
+  if(d.v091.fortress.wallLevel&&d.player.scene!=='surface')throw new Error('Invalid elevation');
+  if(window.V091Fortress&&V091Fortress.validate(d.v091.fortress)===false)
+    throw new Error('Invalid fortress');
+  if(window.V091Loot&&V091Loot.validate(d.v091.loot)===false)throw new Error('Invalid loot clocks');
+  d.gameVersion='0.9.1';
   return d;
 };
 function v09CancelPendingSave(){
@@ -7046,6 +7888,10 @@ restoreGameProgress=function(d){
     document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
     v09OriginalRestore(d);
     V09Power.restore(d.v09.power);V09World.restore(d.v09.world);V09Craft.restore(d.v09.crafting);
+    // Fortress restore supplies its saved upper-level coordinates after the legacy ground collision check.
+    if(window.V091Fortress)V091Fortress.restore(d.v091.fortress);
+    if(window.V091Loot)V091Loot.restore(d.v091.loot);
+    v091SaveName=v091CleanSaveName(d.saveName);
     v09ChickenBreedMs=d.v09.chickenBreedMs;v09ChickenClock=performance.now();
     activeStorage=null;assigningHandType=null;
     grantStarterItems();renderQuickSlots();updateAmmoHud();
@@ -7062,13 +7908,14 @@ function v09ReadSlot(id){
   let found=false;
   for(const [key,recovered] of [[v09SlotKey(id),false],[v09BackupKey(id),true]]){
     const raw=localStorage.getItem(key);if(raw===null)continue;found=true;
-    try{return {id,raw,data:decodeGameProgress(raw),recovered};}catch(error){/* Try the independent backup. */}
+    try{const data=decodeGameProgress(raw);data.saveName=data.saveName||v091DefaultName(id);return {id,raw,data,recovered};}catch(error){/* Try the independent backup. */}
   }
   return found?{id,invalid:true}:null;
 }
 function v09WriteNewSlot(id,data){
   if(localStorage.getItem(v09SlotKey(id))!==null||localStorage.getItem(v09BackupKey(id))!==null)
     throw new Error('Slot is already occupied');
+  data.saveName=v091CleanSaveName(data.saveName)||v091DefaultName(id);
   data=decodeGameProgress(JSON.stringify(data));
   const raw=JSON.stringify(data);
   localStorage.setItem(v09SlotKey(id),raw);
@@ -7110,6 +7957,7 @@ loadGameProgress=function(){
       return false;
     }
     const id=v09FreeSlot();const raw=v09WriteNewSlot(id,captureGameProgress());
+    v091SaveName=JSON.parse(raw).saveName;
     v09ActiveSlot=id;lastVerifiedGameSave=raw;gameSaveBlocked=false;
     updateSaveStatus(`💾 Слот ${id} · автосохранение каждые 5 секунд.`);
     return false;
@@ -7128,8 +7976,8 @@ saveGameProgress=function(manual=false){
     }
     localStorage.setItem(v09SlotKey(v09ActiveSlot),raw);
     lastVerifiedGameSave=raw;
-    updateSaveStatus(`💾 Слот ${v09ActiveSlot} · сохранено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
-    if(manual)message(`💾 Игра сохранена в слот ${v09ActiveSlot}.`);
+    updateSaveStatus(`💾 ${v091SaveName||v091DefaultName(v09ActiveSlot)} · сохранено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
+    if(manual)message(`💾 Сохранено: ${v091SaveName||v091DefaultName(v09ActiveSlot)}.`);
     return true;
   }catch(error){v09ReportStorageFailure(manual);return false;}
 };
@@ -7188,12 +8036,41 @@ function v09DownloadSave(){
     const raw=JSON.stringify(captureGameProgress(),null,2);decodeGameProgress(raw);
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
-    a.download=`survival-base-0.9-slot-${v09ActiveSlot||'backup'}-${new Date().toISOString().slice(0,10)}.json`;
+    const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
+    a.download=`survival-base-0.9.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
 }
+function v091RenameSave(id,value){
+  if(!Number.isInteger(id)||id<1||id>V09_SLOT_COUNT)return false;
+  let next;try{next=v091CleanSaveName(value)||v091DefaultName(id);}catch(error){return false;}
+  if(id===v09ActiveSlot){
+    const previous=v091SaveName;v091SaveName=next;
+    if(!saveGameProgress()){v091SaveName=previous;return false;}
+  }else{
+    try{
+      const entry=v09ReadSlot(id);if(!entry||entry.invalid)return false;
+      const previous=JSON.stringify(entry.data);entry.data.saveName=next;
+      const updated=JSON.stringify(entry.data);decodeGameProgress(updated);
+      localStorage.setItem(v09BackupKey(id),previous);
+      localStorage.setItem(v09SlotKey(id),updated);
+    }catch(error){v09ReportStorageFailure(true);return false;}
+  }
+  message('💾 Название сохранения: '+next);return true;
+}
 const v09SaveOverlay=v09Overlay('v09SaveOverlay','💾 Сохранения');
+function v091EditSaveName(id,row,currentName){
+  row.replaceChildren();
+  const label=document.createElement('label');label.className='v091SaveNameLabel';label.textContent='Название игры · слот '+id;
+  const input=document.createElement('input');input.type='text';input.maxLength=V091_SAVE_NAME_MAX;input.value=currentName;
+  input.className='v091SaveNameInput';input.setAttribute('aria-label','Название сохранения');input.autocomplete='off';
+  const controls=document.createElement('div');controls.className='v091SaveActions';
+  const apply=()=>{if(v091RenameSave(id,input.value))v09RenderSaveSlots();};
+  controls.append(v09Button('Сохранить имя',apply),v09Button('Отмена',v09RenderSaveSlots));
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();apply();}if(e.key==='Escape'){e.preventDefault();v09RenderSaveSlots();}});
+  label.append(input);row.append(label,controls);input.focus();
+}
 function v09RenderSaveSlots(){
   const body=v09SaveOverlay.querySelector('.v09Body');body.replaceChildren();
   const intro=document.createElement('p');intro.className='subtitle';
@@ -7202,12 +8079,16 @@ function v09RenderSaveSlots(){
     for(let id=1;id<=V09_SLOT_COUNT;id++){
       const entry=v09ReadSlot(id);const row=document.createElement('div');row.className='v09SaveRow';
       const label=document.createElement('div');const name=document.createElement('b');
-      name.textContent=`Слот ${id}${id===v09ActiveSlot?' · текущий':''}`;label.append(name);
+      name.textContent=entry&&!entry.invalid?entry.data.saveName:`Слот ${id}`;label.append(name);
       const meta=document.createElement('div');meta.className='subtitle';meta.style.margin='4px 0 0';
       meta.textContent=!entry?'Свободен':entry.invalid?'Не удалось прочитать. Данные сохранены.':
-        `${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`;
+        `Слот ${id}${id===v09ActiveSlot?' · текущий':''} · ${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`;
       label.append(meta);row.append(label);
-      if(entry&&!entry.invalid)row.append(v09Button(id===v09ActiveSlot?'Продолжить':'Загрузить',()=>v09ChooseSlot(id)));
+      if(entry&&!entry.invalid){
+        const actions=document.createElement('div');actions.className='v091SaveActions';
+        actions.append(v09Button(id===v09ActiveSlot?'Продолжить':'Загрузить',()=>v09ChooseSlot(id)),
+          v09Button('Переименовать',()=>v091EditSaveName(id,row,entry.data.saveName)));row.append(actions);
+      }
       body.append(row);
     }
   }catch(error){const warning=document.createElement('p');warning.textContent='Хранилище браузера недоступно. Скачайте текущий прогресс файлом.';body.append(warning);}
@@ -7223,9 +8104,10 @@ v09ImportInput.addEventListener('change',async()=>{
   catch(error){message('Не удалось прочитать выбранный файл.');}
 });document.body.append(v09ImportInput);
 el('saveGameButton').after(v09Button('📂 Продолжить / загрузить / новая игра',()=>{v09RenderSaveSlots();openOverlay(v09SaveOverlay);}));
-v09Style('.v09SaveRow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #ffffff20}.v09SaveRow>div{min-width:0}.v09SaveRow .menuButton{width:auto;flex-shrink:0;margin:0;padding:10px 12px}.v09SaveRow .subtitle{line-height:1.45}');
+v09Style('.v09SaveRow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #ffffff20;flex-wrap:wrap}.v09SaveRow>div{min-width:0}.v09SaveRow b{overflow-wrap:anywhere}.v09SaveRow .menuButton{width:auto;flex-shrink:0;margin:0;padding:10px 12px;font-size:12px}.v09SaveRow .subtitle{line-height:1.45}.v091SaveActions{display:flex;gap:6px;flex-wrap:wrap}.v091SaveNameLabel{display:block;flex:1;min-width:180px;color:#a9bebf;font-size:12px}.v091SaveNameInput{display:block;box-sizing:border-box;width:100%;margin-top:6px;padding:10px;border:1px solid #8ca88e;border-radius:7px;background:#101b1f;color:#fff;font:inherit;font-size:16px}.v091SaveNameInput:focus{outline:2px solid #b9d699;outline-offset:2px}');
 window.V09Saves={open(){v09RenderSaveSlots();openOverlay(v09SaveOverlay);},newGame:v09NewGame,
-  load:v09ChooseSlot,importRaw:v09ImportSave,download:v09DownloadSave,
+  load:v09ChooseSlot,importRaw:v09ImportSave,download:v09DownloadSave,rename:v091RenameSave,
+  get name(){return v091SaveName;},
   get activeSlot(){return v09ActiveSlot;},get chickenBreedMs(){return v09ChickenBreedMs;}};
 
 
