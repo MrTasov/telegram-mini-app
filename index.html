@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.5.1</title>
+<title>Survival Base 0.6.24</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -162,6 +162,13 @@ body{
 .controlButton.pressed{
   background:rgba(180,185,190,.43);
   transform:translate(-50%,-50%) scale(.94);
+}
+
+#actionButton{
+  z-index:120 !important;
+  pointer-events:auto !important;
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:transparent;
 }
 
 #actionButton.inactive{
@@ -509,11 +516,21 @@ html,body{
  padding:4px 7px;border-radius:7px;background:rgba(0,0,0,.52);color:#fff;font:700 11px Arial}
 .sectionTitle{margin-top:12px;font-weight:800;color:#ddd}
 
+
+/* 0.5.3 — nested chest settings must always be the top modal */
+#chestSettingsOverlay{
+  z-index:10050 !important;
+}
+#chestSettingsOverlay .panel{
+  position:relative;
+  z-index:10051;
+}
+
 </style>
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.5.1</div>
+<div id="versionBadge">VERSION 0.6.24</div>
 
 <div id="game">
 
@@ -549,13 +566,27 @@ html,body{
 <div id="message"></div>
 <div id="fade">ПОДЗЕМНАЯ БАЗА</div>
 
+
+<div id="farmOverlay" class="overlay">
+  <div class="panel" style="max-width:420px">
+    <h2 id="farmTitle">🌱 Посадка</h2>
+    <div class="subtitle">Выбери, что посадить</div>
+    <button class="menuButton farmCropBtn" data-crop="0">🥔 Картофель</button>
+    <button class="menuButton farmCropBtn" data-crop="1">🥕 Овощи</button>
+    <button class="menuButton farmCropBtn" data-crop="2">🌾 Зерно</button>
+    <button class="menuButton farmCropBtn" data-crop="3">🌿 Лекарственные растения</button>
+    <button class="menuButton farmCropBtn" data-crop="4">🌻 Техническая культура</button>
+    <button id="farmClose" class="menuButton">Закрыть</button>
+  </div>
+</div>
+
 <!-- SETTINGS -->
 
 <div id="settingsOverlay" class="overlay">
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.5.1 · New Controls</div>
+    <div class="subtitle">Survival Base 0.6.24 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -1109,7 +1140,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_051"
+        "base_controls_068"
       );
 
     if(!saved){
@@ -1136,7 +1167,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_051",
+      "base_controls_068",
       JSON.stringify(layouts)
     );
 
@@ -1339,10 +1370,11 @@ const bunker = {
   width:1450,
   height:1450,
 
+  // №1 — central corridor: 230 × 1500
   corridor:{
     left:610,
     right:840,
-    top:200,
+    top:-240,
     bottom:1260
   },
 
@@ -1351,13 +1383,27 @@ const bunker = {
     y:1180
   },
 
+  // All six side rooms are exactly 520 × 500.
+  // №2 — existing workshop
   workshop:{
-    left:90,right:610,top:790,bottom:1180,doorTop:900,doorBottom:1040
+    left:90,right:610,top:760,bottom:1260,doorTop:930,doorBottom:1090
   },
 
-  // Storage is now opposite the workshop, in the former rest-room position.
+  // №3 — existing storage room with the same six functional chests
   storage:{
-    left:840,right:1360,top:790,bottom:1180,doorTop:900,doorBottom:1040
+    left:840,right:1360,top:760,bottom:1260,doorTop:930,doorBottom:1090
+  },
+
+  // №4–7 — empty rooms for future systems
+  room4:{left:90,right:610,top:260,bottom:760,doorTop:430,doorBottom:590},
+  room5:{left:840,right:1360,top:260,bottom:760,doorTop:430,doorBottom:590},
+  room6:{left:90,right:610,top:-240,bottom:260,doorTop:-70,doorBottom:90},
+  room7:{left:840,right:1360,top:-240,bottom:260,doorTop:-70,doorBottom:90},
+
+  // №8 — large farm, directly at the end of the corridor
+  farm:{
+    left:90,right:1360,top:-940,bottom:-240,
+    doorLeft:650,doorRight:800
   }
 
 };
@@ -1370,7 +1416,7 @@ const ITEM={
   wood:{name:"Дерево",icon:"🪵"},
   metal:{name:"Металл",icon:"🔩"},
   parts:{name:"Детали",icon:"⚙️"},
-  food:{name:"Еда",icon:"🥫"},
+  food:{name:"Еда",icon:"🥫"},potato:{name:"Картофель",icon:"🥔"},vegetables:{name:"Овощи",icon:"🥕"},grain:{name:"Зерно",icon:"🌾"},medicinal_herbs:{name:"Лекарственные растения",icon:"🌿"},technical_crop:{name:"Техническая культура",icon:"🌻"},
   meds:{name:"Медикаменты",icon:"💊"},
   fuel:{name:"Топливо",icon:"⛽"},
   ammo:{name:"Патроны",icon:"🔫"}
@@ -1380,12 +1426,14 @@ let bag=[
   {type:"ammo",qty:60}
 ];
 let storageChests=[
-  {name:"Ящик 1",icon:"📦",items:[]},
-  {name:"Ящик 2",icon:"📦",items:[]},
-  {name:"Ящик 3",icon:"📦",items:[]},
-  {name:"Ящик 4",icon:"📦",items:[]},
-  {name:"Ящик 5",icon:"📦",items:[]},
-  {name:"Ящик 6",icon:"📦",items:[]}
+  {name:"Топливо",icon:"⛽",items:[]},
+  {name:"Оружие",icon:"🔫",items:[]},
+  {name:"Металл",icon:"🔩",items:[]},
+  {name:"Материалы",icon:"⚙️",items:[]},
+  {name:"Еда",icon:"🥫",items:[]},
+  {name:"Напитки",icon:"🥤",items:[]},
+  {name:"Медицина",icon:"💊",items:[]},
+  {name:"Разное",icon:"🧰",items:[]}
 ];
 let magazine=30, magazineMax=30;
 let activeStorage=null, activeLoot=null;
@@ -2080,13 +2128,50 @@ function surfaceCollision(x,y){
 }
 
 function bunkerCollision(x,y){
-  const r=player.radius,c=bunker.corridor,w=bunker.workshop,s=bunker.storage;
-  const inCorridor=x>=c.left+r&&x<=c.right-r&&y>=c.top+r&&y<=c.bottom-r;
-  const inWorkshop=x>=w.left+r&&x<=w.right-r&&y>=w.top+r&&y<=w.bottom-r;
-  const inWorkshopDoor=x>=w.right-30&&x<=c.left+30&&y>=w.doorTop&&y<=w.doorBottom;
-  const inStorage=x>=s.left+r&&x<=s.right-r&&y>=s.top+r&&y<=s.bottom-r;
-  const inStorageDoor=x>=c.right-30&&x<=s.left+30&&y>=s.doorTop&&y<=s.doorBottom;
-  return !(inCorridor||inWorkshop||inWorkshopDoor||inStorage||inStorageDoor);
+  const r=player.radius,c=bunker.corridor;
+
+  const inside=(o)=>
+    x>=o.left+r && x<=o.right-r &&
+    y>=o.top+r && y<=o.bottom-r;
+
+  const sideDoor=(o,side)=>{
+    if(side==="left"){
+      return x>=o.right-30 && x<=c.left+30 &&
+             y>=o.doorTop && y<=o.doorBottom;
+    }
+    return x>=c.right-30 && x<=o.left+30 &&
+           y>=o.doorTop && y<=o.doorBottom;
+  };
+
+  const inCorridor=
+    x>=c.left+r && x<=c.right-r &&
+    y>=c.top+r && y<=c.bottom-r;
+
+  const inWorkshop=inside(bunker.workshop);
+  const inStorage=inside(bunker.storage);
+  const in4=inside(bunker.room4);
+  const in5=inside(bunker.room5);
+  const in6=inside(bunker.room6);
+  const in7=inside(bunker.room7);
+
+  const d2=sideDoor(bunker.workshop,"left");
+  const d3=sideDoor(bunker.storage,"right");
+  const d4=sideDoor(bunker.room4,"left");
+  const d5=sideDoor(bunker.room5,"right");
+  const d6=sideDoor(bunker.room6,"left");
+  const d7=sideDoor(bunker.room7,"right");
+
+  const f=bunker.farm;
+  const inFarm=
+    x>=f.left+r && x<=f.right-r &&
+    y>=f.top+r && y<=f.bottom-r;
+
+  const farmDoor=
+    y>=f.bottom-30 && y<=f.bottom+30 &&
+    x>=f.doorLeft && x<=f.doorRight;
+
+  return !(inCorridor||inWorkshop||inStorage||in4||in5||in6||in7||
+           d2||d3||d4||d5||d6||d7||inFarm||farmDoor);
 }
 
 /* =====================================================
@@ -2564,42 +2649,104 @@ function updateZombies(){
 ===================================================== */
 
 function updateCamera(){
+  const targetX=player.x-screenWidth/2;
+  const targetY=player.y-screenHeight/2;
 
-  const world =
-    scene === "surface"
-    ? surface
-    : bunker;
+  if(scene==="bunker"){
+    // The bunker is larger than one viewport and uses negative world coordinates.
+    // Never clamp to the old bunker bounds: camera follows the player everywhere.
+    camera.x += (targetX-camera.x)*0.16;
+    camera.y += (targetY-camera.y)*0.16;
+    return;
+  }
 
-  camera.x =
-    player.x -
-    screenWidth/2;
+  camera.x += (targetX-camera.x)*0.12;
+  camera.y += (targetY-camera.y)*0.12;
 
-  camera.y =
-    player.y -
-    screenHeight/2;
+  const maxX=Math.max(0,surface.width-screenWidth);
+  const maxY=Math.max(0,surface.height-screenHeight);
+  camera.x=clamp(camera.x,0,maxX);
+  camera.y=clamp(camera.y,0,maxY);
+}
 
-  camera.x =
-    clamp(
-      camera.x,
-      0,
-      Math.max(
-        0,
-        world.width -
-        screenWidth
-      )
-    );
 
-  camera.y =
-    clamp(
-      camera.y,
-      0,
-      Math.max(
-        0,
-        world.height -
-        screenHeight
-      )
-    );
+// =====================================================
+// FARM ACTION HELPERS — 0.6.18
+// Uses the same contextual hand button as hatch/storage/workshop.
+// =====================================================
+window.farmCrops = window.farmCrops || [
+  {name:"Картофель",icon:"🥔"},
+  {name:"Овощи",icon:"🥕"},
+  {name:"Зерно",icon:"🌾"},
+  {name:"Лекарственные",icon:"🌿"},
+  {name:"Технические",icon:"🌻"}
+];
+window.farmState = window.farmState || Array.from({length:5},()=>({crop:null,plantedAt:0}));
+const FARM_GROW_TIME = 45000;
 
+function getFarmBeds(){
+  const f=bunker.farm;
+  return [
+    {x:f.left+75,  y:f.top+55, w:205, h:535},
+    {x:f.left+305, y:f.top+55, w:205, h:535},
+    {x:f.left+535, y:f.top+55, w:205, h:535},
+    {x:f.left+765, y:f.top+55, w:205, h:535},
+    {x:f.left+995, y:f.top+55, w:205, h:535}
+  ];
+}
+
+function nearestFarmBed(){
+  if(scene!=="bunker") return null;
+  const beds=getFarmBeds();
+  let best=null, bestD=72;
+  for(let i=0;i<beds.length;i++){
+    const b=beds[i];
+    const nx=clamp(player.x,b.x,b.x+b.w);
+    const ny=clamp(player.y,b.y,b.y+b.h);
+    const d=distance(player.x,player.y,nx,ny);
+    if(d<bestD){ bestD=d; best=i; }
+  }
+  return best;
+}
+
+function useFarmBed(i){
+  const st=window.farmState[i];
+  if(!st) return;
+
+  if(st.crop!==null){
+    const elapsed=Date.now()-st.plantedAt;
+    if(elapsed>=FARM_GROW_TIME){
+      const crop=window.farmCrops[st.crop];
+
+      // Every crop is now its own real backpack object/resource.
+      const harvestAmount=20;
+      const cropItemTypes=[
+        "potato",
+        "vegetables",
+        "grain",
+        "medicinal_herbs",
+        "technical_crop"
+      ];
+      const itemType=cropItemTypes[st.crop];
+
+      const added=addItemToBag(itemType,harvestAmount);
+      if(added<=0){
+        message("🎒 В рюкзаке нет места");
+        return;
+      }
+
+      message(crop.icon+" Собрано: "+added+" → рюкзак");
+      window.farmState[i]={crop:null,plantedAt:0};
+    }else{
+      const left=Math.max(1,Math.ceil((FARM_GROW_TIME-elapsed)/1000));
+      message("🌱 Растёт — ещё "+left+" сек.");
+    }
+    return;
+  }
+
+  window.activeFarmBed=i;
+  el("farmTitle").textContent="🌱 Грядка "+(i+1);
+  openOverlay(el("farmOverlay"));
 }
 
 /* =====================================================
@@ -2684,10 +2831,17 @@ function updateAction(){
 
     }
     const chest=nearestStorageChest();
-    if(chest){
+    if(chest !== null){
       currentAction="storage";
       currentActionObject=chest;
       icon="📦";
+    }
+
+    const farmBed=nearestFarmBed();
+    if(farmBed !== null){
+      currentAction="farm";
+      currentActionObject=farmBed;
+      icon="🌱";
     }
   }
 
@@ -2709,9 +2863,19 @@ function updateAction(){
 
 
 function getChestPositions(){
+  const s=bunker.storage;
   return [
-    {x:930,y:885},{x:1100,y:885},{x:1270,y:885},
-    {x:930,y:1070},{x:1100,y:1070},{x:1270,y:1070}
+    // ВЕРХНЯЯ стена комнаты — 4 технических сундука
+    {x:s.left+85, y:s.top+58},
+    {x:s.left+200,y:s.top+58},
+    {x:s.left+320,y:s.top+58},
+    {x:s.left+435,y:s.top+58},
+
+    // НИЖНЯЯ противоположная стена — 4 бытовых/медицинских сундука
+    {x:s.left+85, y:s.bottom-58},
+    {x:s.left+200,y:s.bottom-58},
+    {x:s.left+320,y:s.bottom-58},
+    {x:s.left+435,y:s.bottom-58}
   ];
 }
 function nearestStorageChest(){
@@ -2769,13 +2933,15 @@ function renderStorage(){
 function openChestSettings(){
   const ch=storageChests[activeStorage];if(!ch)return;
   el("chestNameInput").value=ch.name;
-  const icons=["📦","🔫","🪵","🔩","⚙️","⛽","🥫","💊","🧰","⭐","🔧","🎒"];
+  const icons=["📦","🔫","🪵","🔩","⚙️","⛽","🥫","🥤","💊","🧰","⭐","🔧","🎒"];
   const box=el("chestIconChoices");box.innerHTML="";
   for(const ico of icons){
     const bt=document.createElement("button");bt.className="smallBtn";bt.textContent=ico;
     bt.style.fontSize="24px";bt.dataset.icon=ico;box.appendChild(bt);
   }
-  openOverlay(el("chestSettingsOverlay"));
+  const settingsOverlay=el("chestSettingsOverlay");
+  openOverlay(settingsOverlay);
+  settingsOverlay.style.zIndex="10050";
 }
 
 /* =====================================================
@@ -2919,17 +3085,13 @@ actionButton.addEventListener(
     e.preventDefault();
 
     if(currentAction === "bunker"){
-
       enterBunker();
       return;
-
     }
 
     if(currentAction === "surface"){
-
       leaveBunker();
       return;
-
     }
 
     if(currentAction === "search"){
@@ -2943,19 +3105,16 @@ actionButton.addEventListener(
     }
 
     if(currentAction === "workshop"){
-
-      openOverlay(
-        el("workshopOverlay")
-      );
-
+      openOverlay(el("workshopOverlay"));
       return;
-
     }
 
-    message(
-      "Здесь пока нет действия"
-    );
+    if(currentAction === "farm"){
+      useFarmBed(currentActionObject);
+      return;
+    }
 
+    message("Здесь пока нет действия");
   }
 );
 
@@ -3297,324 +3456,487 @@ function drawSurface(){
 
 function drawBunker(){
 
-  ctx.fillStyle =
-    "#101417";
+  ctx.fillStyle="#101417";
+  ctx.fillRect(-300,-1100,2050,2600);
 
-  ctx.fillRect(
-    0,
-    0,
-    bunker.width,
-    bunker.height
-  );
+  const c=bunker.corridor;
 
-  const c =
-    bunker.corridor;
+  // №1 CORRIDOR
+  ctx.fillStyle="#3b4042";
+  ctx.fillRect(c.left,c.top,c.right-c.left,c.bottom-c.top);
 
-  ctx.fillStyle =
-    "#3b4042";
-
-  ctx.fillRect(
-    c.left,
-    c.top,
-    c.right-c.left,
-    c.bottom-c.top
-  );
-
-  ctx.fillStyle =
-    "#747878";
-
-  ctx.fillRect(
-    c.left-20,
-    c.top,
-    20,
-    c.bottom-c.top
-  );
-
-  ctx.fillRect(
-    c.right,
-    c.top,
-    20,
-    c.bottom-c.top
-  );
-
-  ctx.strokeStyle =
-    "rgba(255,255,255,.05)";
-
-  ctx.lineWidth =
-    1;
-
-  for(
-    let y=c.top+60;
-    y<c.bottom;
-    y+=70
-  ){
-
+  // subtle corridor floor seams
+  ctx.strokeStyle="rgba(255,255,255,.05)";
+  ctx.lineWidth=1;
+  for(let y=c.top+60;y<c.bottom;y+=70){
     ctx.beginPath();
-
-    ctx.moveTo(
-      c.left,
-      y
-    );
-
-    ctx.lineTo(
-      c.right,
-      y
-    );
-
+    ctx.moveTo(c.left,y);
+    ctx.lineTo(c.right,y);
     ctx.stroke();
-
   }
 
-  /* WORKSHOP */
+  function drawSideRoom(o,side,label,fill="#303638"){
+    ctx.fillStyle=fill;
+    ctx.fillRect(o.left,o.top,o.right-o.left,o.bottom-o.top);
 
-  const w =
-    bunker.workshop;
+    ctx.strokeStyle="#747878";
+    ctx.lineWidth=16;
+    ctx.strokeRect(o.left,o.top,o.right-o.left,o.bottom-o.top);
 
-  ctx.fillStyle =
-    "#343a3c";
+    // Open doorway toward corridor
+    ctx.fillStyle=fill;
+    if(side==="left"){
+      ctx.fillRect(o.right-18,o.doorTop,40,o.doorBottom-o.doorTop);
+    }else{
+      ctx.fillRect(o.left-22,o.doorTop,40,o.doorBottom-o.doorTop);
+    }
 
-  ctx.fillRect(
-    w.left,
-    w.top,
-    w.right-w.left,
-    w.bottom-w.top
-  );
+    ctx.fillStyle="rgba(255,255,255,.72)";
+    ctx.font="15px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(label,(o.left+o.right)/2,o.top+34);
+  }
 
-  ctx.strokeStyle =
-    "#747878";
+  // №2 — WORKSHOP (visual redesign; existing interaction preserved)
+  drawSideRoom(bunker.workshop,"left","МАСТЕРСКАЯ","#343a3c");
 
-  ctx.lineWidth =
-    16;
+  // №2 — WORKSHOP: layout matched to the approved reference image
 
-  ctx.strokeRect(
-    w.left,
-    w.top,
-    w.right-w.left,
-    w.bottom-w.top
-  );
+  // TOP WALL — technical station
+  ctx.fillStyle="#414b4e";
+  ctx.fillRect(125,790,185,86);
+  ctx.strokeStyle="#7e9094"; ctx.lineWidth=3; ctx.strokeRect(125,790,185,86);
+  ctx.fillStyle="#687679"; ctx.fillRect(145,805,55,36);
+  ctx.fillStyle="#dce4e5"; ctx.font="10px Arial"; ctx.textAlign="center";
+  ctx.fillText("ТЕХНИЧЕСКИЙ СТАНОК",217,861);
 
-  ctx.fillStyle =
-    "#343a3c";
+  // TOP WALL — ammunition station beside it
+  ctx.fillStyle="#555146";
+  ctx.fillRect(335,790,190,86);
+  ctx.strokeStyle="#938a70"; ctx.lineWidth=3; ctx.strokeRect(335,790,190,86);
+  ctx.fillStyle="#b3a36f"; ctx.fillRect(395,805,38,40);
+  ctx.fillStyle="#ece6d5"; ctx.font="10px Arial";
+  ctx.fillText("СТАНОК ПАТРОНОВ",430,861);
 
-  ctx.fillRect(
-    w.right-18,
-    w.doorTop,
-    40,
-    w.doorBottom-w.doorTop
-  );
+  // LEFT WALL — vertical weapon / tool panel
+  ctx.fillStyle="#282e30";
+  ctx.fillRect(108,900,58,215);
+  ctx.strokeStyle="#657174"; ctx.lineWidth=3; ctx.strokeRect(108,900,58,215);
+  ctx.save();
+  ctx.translate(124,1007);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillStyle="#d9dfe0"; ctx.font="9px Arial"; ctx.textAlign="center";
+  ctx.fillText("ОРУЖИЕ / ИНСТРУМЕНТЫ",0,0);
+  ctx.restore();
+  ctx.fillStyle="#e2e6e7"; ctx.font="17px Arial"; ctx.textAlign="center";
+  ctx.fillText("⚒",145,947);
+  ctx.fillText("⚙️",145,986);
+  ctx.fillText("🔧",145,1025);
+  ctx.fillText("🔫",145,1064);
 
-  /* WORKBENCH */
+  // BOTTOM WALL — large main workbench
+  ctx.fillStyle="#60472f";
+  ctx.fillRect(110,1130,215,76);
+  ctx.strokeStyle="#9a7956"; ctx.lineWidth=4; ctx.strokeRect(110,1130,215,76);
+  ctx.fillStyle="#343a3c"; ctx.fillRect(130,1140,175,18);
+  ctx.fillStyle="#eee9df"; ctx.font="11px Arial";
+  ctx.fillText("ГЛАВНЫЙ ВЕРСТАК",217,1186);
 
-  ctx.fillStyle =
-    "#6c4c30";
+  // BOTTOM WALL — parts and metal crates beside the main workbench
+  ctx.fillStyle="#66513a";
+  ctx.fillRect(380,1150,60,52);
+  ctx.fillRect(455,1150,60,52);
+  ctx.strokeStyle="#8a704f"; ctx.lineWidth=3;
+  ctx.strokeRect(380,1150,60,52);
+  ctx.strokeRect(455,1150,60,52);
+  ctx.fillStyle="#fff"; ctx.font="9px Arial";
+  ctx.fillText("ДЕТАЛИ",410,1181);
+  ctx.fillText("МЕТАЛЛ",485,1181);
 
-  ctx.fillRect(
-    330,
-    900,
-    145,
-    55
-  );
+  // RIGHT WALL / DOOR SIDE AND ROOM CENTER intentionally remain empty.
+  // This keeps the entrance and movement path completely unobstructed.
 
-  ctx.fillStyle =
-    "#929797";
+  // №3 — STORAGE: 8 independent functional chests, 4 on top wall + 4 on bottom wall
+  drawSideRoom(bunker.storage,"right","СКЛАД","#303638");
 
-  ctx.fillRect(
-    345,
-    860,
-    115,
-    40
-  );
-
-  ctx.fillStyle =
-    "white";
-
-  ctx.font =
-    "13px Arial";
-
-  ctx.textAlign =
-    "center";
-
-  ctx.fillText(
-    "ВЕРСТАК",
-    402,
-    886
-  );
-
-
-  /* STORAGE ROOM — six independent chests */
-  const s=bunker.storage;
-  ctx.fillStyle="#303638";ctx.fillRect(s.left,s.top,s.right-s.left,s.bottom-s.top);
-  ctx.strokeStyle="#747878";ctx.lineWidth=16;ctx.strokeRect(s.left,s.top,s.right-s.left,s.bottom-s.top);
-  ctx.fillStyle="#303638";ctx.fillRect(s.left-18,s.doorTop,40,s.doorBottom-s.doorTop);
-
-  ctx.fillStyle="#fff";ctx.font="15px Arial";ctx.textAlign="center";ctx.fillText("СКЛАД",1100,825);
   const chestPos=getChestPositions();
   for(let i=0;i<chestPos.length;i++){
     const p=chestPos[i],ch=storageChests[i];
-    ctx.fillStyle="#66513a";ctx.fillRect(p.x-42,p.y-30,84,60);
-    ctx.strokeStyle="#8a704f";ctx.lineWidth=3;ctx.strokeRect(p.x-42,p.y-30,84,60);
-    ctx.fillStyle="#fff";ctx.font="22px Arial";ctx.fillText(ch.icon,p.x,p.y+3);
-    ctx.font="10px Arial";ctx.fillText(ch.name,p.x,p.y+48);
+    ctx.fillStyle="#66513a";
+    ctx.fillRect(p.x-34,p.y-25,68,50);
+    ctx.strokeStyle="#8a704f";
+    ctx.lineWidth=3;
+    ctx.strokeRect(p.x-34,p.y-25,68,50);
+    ctx.fillStyle="#fff";
+    ctx.font="22px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(ch.icon,p.x,p.y+3);
+    ctx.font="10px Arial";
+    ctx.fillText(ch.name,p.x,p.y+40);
   }
 
-  /* ROOMS */
+  // №4–7 — equal-size empty rooms
+  // №4 — MEDICAL ROOM
+  drawSideRoom(bunker.room4,"left","МЕДБЛОК","#343b3c");
 
-  const rooms = [
-    ["МЕДИЦИНА",700,"left"],
-    ["ОТДЫХ",960,"right"],
-    ["ЭНЕРГЕТИКА",700,"right"],
-    ["ОБОРОНА",450,"right"]
+  // Main medical crafting station — placed on the far/top wall, away from doorway
+  ctx.fillStyle="#46575a";
+  ctx.fillRect(145,300,245,78);
+  ctx.strokeStyle="#83999d"; ctx.lineWidth=3; ctx.strokeRect(145,300,245,78);
+  ctx.fillStyle="#dce8e9"; ctx.font="12px Arial"; ctx.textAlign="center";
+  ctx.fillText("МЕДИЦИНСКИЙ СТОЛ",267,330);
+  ctx.font="19px Arial";
+  ctx.fillText("💊  🧪  🩹",267,359);
+
+  // Decorative examination bed along the lower wall
+  ctx.fillStyle="#596568";
+  ctx.fillRect(145,650,225,58);
+  ctx.strokeStyle="#879699"; ctx.lineWidth=3; ctx.strokeRect(145,650,225,58);
+  ctx.fillStyle="#cbd5d7";
+  ctx.fillRect(160,658,55,42);
+  ctx.fillStyle="#e8eeee"; ctx.font="10px Arial";
+  ctx.fillText("МЕДИЦИНСКАЯ КУШЕТКА",257,728);
+
+  // Medicine cabinet on the left wall
+  ctx.fillStyle="#e1e7e8";
+  ctx.fillRect(110,430,58,130);
+  ctx.strokeStyle="#8da0a3"; ctx.lineWidth=3; ctx.strokeRect(110,430,58,130);
+  ctx.strokeStyle="#aebabc"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(139,430); ctx.lineTo(139,560); ctx.stroke();
+  ctx.fillStyle="#d64f4f"; ctx.fillRect(128,472,22,8); ctx.fillRect(135,465,8,22);
+
+  // Small sink / sanitation corner, decorative
+  ctx.fillStyle="#4c595c";
+  ctx.fillRect(455,315,100,58);
+  ctx.strokeStyle="#819194"; ctx.strokeRect(455,315,100,58);
+  ctx.fillStyle="#b7c5c7";
+  ctx.beginPath(); ctx.ellipse(505,342,26,12,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#dce4e5"; ctx.font="9px Arial";
+  ctx.fillText("МОЙКА",505,366);
+
+  // Two compact supply crates beside the examination bed
+  ctx.fillStyle="#59694f";
+  ctx.fillRect(430,650,55,52);
+  ctx.fillRect(500,650,55,52);
+  ctx.strokeStyle="#829174";
+  ctx.strokeRect(430,650,55,52); ctx.strokeRect(500,650,55,52);
+  ctx.fillStyle="#fff"; ctx.font="9px Arial";
+  ctx.fillText("БИНТЫ",457,681);
+  ctx.fillText("МЕД.",527,681);
+
+  // Door side and the central approach remain clear for movement.
+  // №5 — POWER ROOM: FUEL -> GENERATOR -> BATTERY
+  drawSideRoom(bunker.room5,"right","ЭНЕРГОБЛОК","#303739");
+
+  // Three large objects along the far wall. Door side and center stay clear.
+  // 1) FUEL TANK
+  ctx.fillStyle="#514a3b";
+  ctx.fillRect(885,315,125,185);
+  ctx.strokeStyle="#81765d"; ctx.lineWidth=4; ctx.strokeRect(885,315,125,185);
+  ctx.fillStyle="#252a28"; ctx.fillRect(905,338,85,34);
+  ctx.fillStyle="#d9d7cc"; ctx.font="11px Arial"; ctx.textAlign="center";
+  ctx.fillText("ТОПЛИВО",947,361);
+  ctx.fillStyle="#b9a56a"; ctx.fillRect(905,392,85,72);
+  ctx.fillStyle="#202524"; ctx.font="12px Arial";
+  ctx.fillText("320 / 500 Л",947,435);
+
+  // pipe from tank to generator
+  ctx.strokeStyle="#7a7467"; ctx.lineWidth=8;
+  ctx.beginPath(); ctx.moveTo(1010,430); ctx.lineTo(1045,430); ctx.stroke();
+
+  // 2) GENERATOR
+  ctx.fillStyle="#46504b";
+  ctx.fillRect(1045,330,165,155);
+  ctx.strokeStyle="#7f8b84"; ctx.lineWidth=4; ctx.strokeRect(1045,330,165,155);
+  ctx.fillStyle="#232927"; ctx.fillRect(1065,350,125,50);
+  ctx.fillStyle="#9eb58d"; ctx.fillRect(1080,365,16,16);
+  ctx.fillStyle="#dfe5df"; ctx.font="11px Arial";
+  ctx.fillText("ГЕНЕРАТОР",1127,420);
+  ctx.font="13px Arial"; ctx.fillText("7.4 / 10 кВт",1127,450);
+  ctx.font="9px Arial"; ctx.fillText("1.2 л/ч",1127,470);
+
+  // cable from generator to battery
+  ctx.strokeStyle="#66777b"; ctx.lineWidth=7;
+  ctx.beginPath(); ctx.moveTo(1210,430); ctx.lineTo(1235,430); ctx.stroke();
+
+  // 3) LARGE BACKUP BATTERY
+  ctx.fillStyle="#39474c";
+  ctx.fillRect(1235,300,105,215);
+  ctx.strokeStyle="#71858b"; ctx.lineWidth=4; ctx.strokeRect(1235,300,105,215);
+  ctx.fillStyle="#91aa83"; ctx.fillRect(1253,340,69,105);
+  ctx.fillStyle="#172018"; ctx.font="22px Arial"; ctx.fillText("⚡",1287,392);
+  ctx.fillStyle="#e2e8e9"; ctx.font="10px Arial"; ctx.fillText("БАТАРЕЯ",1287,472);
+  ctx.font="11px Arial"; ctx.fillText("42 / 50 кВт·ч",1287,492);
+
+  // Simple flow marks make the energy chain readable without adding another object.
+  ctx.fillStyle="#aeb9b6"; ctx.font="13px Arial";
+  ctx.fillText("→",1027,416);
+  ctx.fillText("→",1222,416);
+
+  // The room center and the corridor/door side intentionally remain empty.
+  // №6 — KITCHEN / FOOD BLOCK
+  drawSideRoom(bunker.room6,"left","КУХНЯ","#3a3732");
+
+  // TOP WALL — long main kitchen counter, the future functional cooking point
+  ctx.fillStyle="#66513d";
+  ctx.fillRect(145,-205,330,92);
+  ctx.strokeStyle="#9a7b59"; ctx.lineWidth=4; ctx.strokeRect(145,-205,330,92);
+
+  // Worktop
+  ctx.fillStyle="#3d4443";
+  ctx.fillRect(158,-192,304,24);
+
+  // Stove
+  ctx.fillStyle="#252a29";
+  ctx.fillRect(180,-160,100,35);
+  ctx.strokeStyle="#747c79"; ctx.lineWidth=2; ctx.strokeRect(180,-160,100,35);
+  ctx.fillStyle="#b36f54";
+  ctx.beginPath(); ctx.arc(205,-143,9,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(253,-143,9,0,Math.PI*2); ctx.fill();
+
+  // Sink
+  ctx.fillStyle="#9aa6a4";
+  ctx.fillRect(335,-160,92,34);
+  ctx.fillStyle="#505a58";
+  ctx.fillRect(348,-153,66,20);
+
+  ctx.fillStyle="#eee8dc"; ctx.font="11px Arial"; ctx.textAlign="center";
+  ctx.fillText("КУХНЯ • ГОТОВКА",310,-180);
+
+  // LEFT WALL — refrigerator
+  ctx.fillStyle="#596466";
+  ctx.fillRect(110,-75,72,165);
+  ctx.strokeStyle="#879496"; ctx.lineWidth=3; ctx.strokeRect(110,-75,72,165);
+  ctx.strokeStyle="#778285"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(110,0); ctx.lineTo(182,0); ctx.stroke();
+  ctx.fillStyle="#dfe6e6"; ctx.font="10px Arial";
+  ctx.fillText("ХОЛОДИЛЬНИК",146,112);
+
+  // BOTTOM WALL — dining table
+  ctx.fillStyle="#624c37";
+  ctx.fillRect(225,135,190,70);
+  ctx.strokeStyle="#8e704e"; ctx.lineWidth=3; ctx.strokeRect(225,135,190,70);
+  // chairs
+  ctx.fillStyle="#4c4033";
+  ctx.fillRect(245,110,42,22);
+  ctx.fillRect(352,110,42,22);
+  ctx.fillRect(245,208,42,22);
+  ctx.fillRect(352,208,42,22);
+
+  // Decorative shelves / food supplies in the lower-left corner
+  ctx.fillStyle="#4d4438";
+  ctx.fillRect(110,145,72,78);
+  ctx.strokeStyle="#786b57"; ctx.strokeRect(110,145,72,78);
+  ctx.fillStyle="#d7c8a7"; ctx.font="14px Arial";
+  ctx.fillText("🥫",128,175);
+  ctx.fillText("🍞",161,175);
+  ctx.fillText("🥣",145,207);
+
+  // Door side and central approach remain unobstructed.
+  // №7 — LIVING ROOM, matched to the latest approved screenshot
+  drawSideRoom(bunker.room7,"right","ЖИЛАЯ КОМНАТА","#393837");
+
+  // TOP WALL — wide cabinet
+  ctx.fillStyle="#4b5553";
+  ctx.fillRect(885,-205,155,72);
+  ctx.strokeStyle="#778582"; ctx.lineWidth=3; ctx.strokeRect(885,-205,155,72);
+  ctx.strokeStyle="#66736f"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(962,-205); ctx.lineTo(962,-133); ctx.stroke();
+
+  // Small square bedside cabinet
+  ctx.fillStyle="#554735";
+  ctx.fillRect(1080,-190,82,62);
+  ctx.strokeStyle="#806b4e"; ctx.lineWidth=3; ctx.strokeRect(1080,-190,82,62);
+
+  // RIGHT WALL — vertical bed
+  ctx.fillStyle="#674f3c";
+  ctx.fillRect(1240,-205,95,225);
+  ctx.strokeStyle="#98765a"; ctx.lineWidth=4; ctx.strokeRect(1240,-205,95,225);
+  ctx.fillStyle="#cbc8bc"; ctx.fillRect(1256,-188,63,190);
+  ctx.fillStyle="#e1ded4"; ctx.fillRect(1265,-174,45,48);
+  ctx.fillStyle="#e8e3d8"; ctx.font="10px Arial"; ctx.textAlign="center";
+  ctx.save(); ctx.translate(1224,-92); ctx.rotate(-Math.PI/2);
+  ctx.fillText("КРОВАТЬ",0,0); ctx.restore();
+
+  // LOWER-RIGHT — dresser, positioned like in the newest reference screenshot
+  ctx.fillStyle="#594a39";
+  ctx.fillRect(1190,125,145,92);
+  ctx.strokeStyle="#806b51"; ctx.lineWidth=3; ctx.strokeRect(1190,125,145,92);
+  ctx.strokeStyle="#74604a"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(1190,171); ctx.lineTo(1335,171); ctx.stroke();
+
+  // LOWER-RIGHT — bathroom exactly in the lower corner, as in the screenshot.
+  // L-shaped partition: open access from the left.
+  ctx.strokeStyle="#747d7d"; ctx.lineWidth=8;
+  ctx.beginPath(); ctx.moveTo(920,65); ctx.lineTo(1120,65); ctx.lineTo(1120,245); ctx.stroke();
+
+  // Toilet on the left side of the bathroom
+  ctx.fillStyle="#2f3434";
+  ctx.fillRect(930,130,62,105);
+  ctx.strokeStyle="#596160"; ctx.lineWidth=3; ctx.strokeRect(930,130,62,105);
+  ctx.fillStyle="#d8dfde";
+  ctx.fillRect(944,145,34,35);
+  ctx.beginPath(); ctx.ellipse(961,184,18,14,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#e7ebea"; ctx.font="7px Arial"; ctx.textAlign="center";
+  ctx.fillText("ТУАЛЕТ",961,224);
+
+  // Shower on the right side of the bathroom
+  ctx.fillStyle="#35464b";
+  ctx.fillRect(1020,88,90,145);
+  ctx.strokeStyle="#799096"; ctx.lineWidth=3; ctx.strokeRect(1020,88,90,145);
+  ctx.fillStyle="rgba(178,202,207,.20)"; ctx.fillRect(1031,100,68,118);
+  ctx.fillStyle="#dce5e6"; ctx.font="17px Arial"; ctx.fillText("🚿",1065,154);
+  ctx.font="8px Arial"; ctx.fillText("ДУШ",1065,207);
+
+  // Center, corridor entrance and the area around the bed remain clear.
+
+  // Corridor side walls, drawn in separate segments so every doorway stays open.
+  const wall="#747878";
+  ctx.strokeStyle=wall;
+  ctx.lineWidth=18;
+
+  const leftDoors=[
+    [bunker.room6.doorTop,bunker.room6.doorBottom],
+    [bunker.room4.doorTop,bunker.room4.doorBottom],
+    [bunker.workshop.doorTop,bunker.workshop.doorBottom]
+  ];
+  const rightDoors=[
+    [bunker.room7.doorTop,bunker.room7.doorBottom],
+    [bunker.room5.doorTop,bunker.room5.doorBottom],
+    [bunker.storage.doorTop,bunker.storage.doorBottom]
   ];
 
-  for(const room of rooms){
-
-    const name =
-      room[0];
-
-    const y =
-      room[1];
-
-    const side =
-      room[2];
-
-    ctx.fillStyle =
-      "#25292b";
-
-    if(side === "left"){
-
-      ctx.fillRect(
-        585,
-        y-45,
-        25,
-        90
-      );
-
-      ctx.fillStyle =
-        "#dddddd";
-
-      ctx.textAlign =
-        "right";
-
-      ctx.fillText(
-        name,
-        570,
-        y+5
-      );
-
-    }else{
-
-      ctx.fillRect(
-        840,
-        y-45,
-        25,
-        90
-      );
-
-      ctx.fillStyle =
-        "#dddddd";
-
-      ctx.textAlign =
-        "left";
-
-      ctx.fillText(
-        name,
-        880,
-        y+5
-      );
-
+  function drawWallWithDoors(x,doors){
+    let y=c.top;
+    for(const d of doors){
+      if(d[0]>y){
+        ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,d[0]);ctx.stroke();
+      }
+      y=d[1];
     }
+    if(y<c.bottom){
+      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,c.bottom);ctx.stroke();
+    }
+  }
+  drawWallWithDoors(c.left,leftDoors);
+  drawWallWithDoors(c.right,rightDoors);
 
+  // №8 — LARGE UNDERGROUND FARM, directly connected to corridor end
+  const f=bunker.farm;
+  ctx.fillStyle="#29352c";
+  ctx.fillRect(f.left,f.top,f.right-f.left,f.bottom-f.top);
+  ctx.strokeStyle="#68766b";
+  ctx.lineWidth=18;
+  ctx.strokeRect(f.left,f.top,f.right-f.left,f.bottom-f.top);
+
+  // Wide doorway from corridor into farm
+  ctx.fillStyle="#29352c";
+  ctx.fillRect(f.doorLeft,f.bottom-22,f.doorRight-f.doorLeft,44);
+
+  // Five large long farm beds — one future crop per bed
+  const farmBeds=[
+    {x:f.left+75,  y:f.top+55, w:205, h:535},
+    {x:f.left+305, y:f.top+55, w:205, h:535},
+    {x:f.left+535, y:f.top+55, w:205, h:535},
+    {x:f.left+765, y:f.top+55, w:205, h:535},
+    {x:f.left+995, y:f.top+55, w:205, h:535}
+  ];
+
+  // 0.6.17 farm prototype: each bed can hold any crop.
+  window.farmCrops = window.farmCrops || [
+    {name:"Картофель",icon:"🥔"},
+    {name:"Овощи",icon:"🥕"},
+    {name:"Зерно",icon:"🌾"},
+    {name:"Лекарственные",icon:"🌿"},
+    {name:"Технические",icon:"🌻"}
+  ];
+  window.farmState = window.farmState || Array.from({length:5},()=>({crop:null,plantedAt:0}));
+  const FARM_GROW_MS = 45000;
+
+  function farmStage(st){
+    if(st.crop===null) return 0;
+    const p=Math.min(1,(Date.now()-st.plantedAt)/FARM_GROW_MS);
+    if(p < 0.25) return 1;
+    if(p < 0.50) return 2;
+    if(p < 0.75) return 3;
+    return 4; // 75%+, including ~95% and fully mature
   }
 
-  ctx.fillStyle =
-    "#dddddd";
+  for(let i=0;i<farmBeds.length;i++){
+    const b=farmBeds[i];
 
-  ctx.textAlign =
-    "right";
+    // raised border
+    ctx.fillStyle="#594735";
+    ctx.fillRect(b.x-7,b.y-7,b.w+14,b.h+14);
+    ctx.strokeStyle="#71806a";
+    ctx.lineWidth=3;
+    ctx.strokeRect(b.x-7,b.y-7,b.w+14,b.h+14);
 
-  ctx.fillText(
-    "МАСТЕРСКАЯ",
-    570,
-    965
-  );
+    // empty soil — crops will be planted here later
+    ctx.fillStyle="#493a2b";
+    ctx.fillRect(b.x,b.y,b.w,b.h);
 
-  /* FARM */
+    // soil furrows
+    ctx.strokeStyle="#5b4935";
+    ctx.lineWidth=2;
+    for(let yy=b.y+38;yy<b.y+b.h-15;yy+=48){
+      ctx.beginPath();
+      ctx.moveTo(b.x+14,yy);
+      ctx.lineTo(b.x+b.w-14,yy);
+      ctx.stroke();
+    }
 
-  ctx.fillStyle =
-    "#27362b";
+    ctx.fillStyle="#b9b39f";
+    ctx.font="11px Arial";
+    ctx.textAlign="center";
+    ctx.fillText("ГРЯДКА "+(i+1),b.x+b.w/2,b.y+23);
 
-  ctx.fillRect(
-    430,
-    40,
-    590,
-    300
-  );
+    const st=window.farmState[i];
+    const stage=farmStage(st);
+    if(st.crop!==null){
+      const crop=window.farmCrops[st.crop];
+      // Dense crop field: 8 × 20. Four visible growth sizes.
+      const cols=8, rows=20;
+      const growthSizes={1:9,2:11,3:13,4:15};
+      ctx.font=growthSizes[stage]+"px Arial";
+      for(let r=0;r<rows;r++){
+        for(let c=0;c<cols;c++){
+          const xx=b.x+16+c*((b.w-32)/(cols-1));
+          const yy=b.y+48+r*((b.h-82)/(rows-1));
+          ctx.fillText(crop.icon,xx,yy);
+        }
+      }
 
-  ctx.strokeStyle =
-    "#747878";
+      const progress=Math.min(100,Math.floor(((Date.now()-st.plantedAt)/FARM_GROW_MS)*100));
+      const ready=progress>=100;
+      ctx.font="10px Arial";
+      ctx.fillStyle=ready ? "#dfe8b6" : "#aeb99b";
+      ctx.fillText(ready ? "ГОТОВО" : "РАСТЁТ • "+progress+"%",b.x+b.w/2,b.y+b.h-18);
+    }
+  }
 
-  ctx.lineWidth =
-    18;
+  ctx.fillStyle="#fff";
+  ctx.font="20px Arial";
+  ctx.textAlign="center";
+  ctx.fillText("ПОДЗЕМНАЯ ФЕРМА",(f.left+f.right)/2,f.top+52);
 
-  ctx.strokeRect(
-    430,
-    40,
-    590,
-    300
-  );
+  // Rear wall and exit/hatch
+  ctx.strokeStyle="#747878";
+  ctx.lineWidth=18;
+  ctx.beginPath();
+  ctx.moveTo(c.left,c.bottom);
+  ctx.lineTo(c.right,c.bottom);
+  ctx.stroke();
 
-  ctx.fillStyle =
-    "#9aba8d";
-
-  ctx.font =
-    "18px Arial";
-
-  ctx.textAlign =
-    "center";
-
-  ctx.fillText(
-    "🌱 БУДУЩАЯ ФЕРМА",
-    725,
-    105
-  );
-
-  /* EXIT */
-
-  ctx.fillStyle =
-    "#17191a";
-
-  ctx.fillRect(
-    690,
-    1145,
-    70,
-    70
-  );
-
-  ctx.strokeStyle =
-    "#aaaaaa";
-
-  ctx.lineWidth =
-    4;
-
-  ctx.strokeRect(
-    690,
-    1145,
-    70,
-    70
-  );
-
-  ctx.fillStyle =
-    "white";
-
-  ctx.font =
-    "12px Arial";
-
-  ctx.fillText(
-    "ВЫХОД",
-    725,
-    1187
-  );
-
+  ctx.fillStyle="#17191a";
+  ctx.fillRect(690,1145,70,70);
+  ctx.strokeStyle="#aaaaaa";
+  ctx.lineWidth=4;
+  ctx.strokeRect(690,1145,70,70);
+  ctx.fillStyle="white";
+  ctx.font="12px Arial";
+  ctx.textAlign="center";
+  ctx.fillText("ВЫХОД",725,1187);
 }
 
 /* =====================================================
@@ -4869,7 +5191,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.5.1: larger bunker rooms + six independent customizable storage chests + mobile bag fix");
+console.log("0.6.24: four-stage crop growth and distinct harvest inventory objects");
 
 gameLoop();
 
@@ -4882,7 +5204,36 @@ setTimeout(
   400
 );
 
+
+// 0.6.18: direct canvas farm taps removed; contextual action button is used instead.
+
+// 0.6.22 — FARM MENU BUTTONS.
+// Important: these handlers must live INSIDE the script tag.
+window.activeFarmBed = null;
+
+document.querySelectorAll(".farmCropBtn").forEach(function(btn){
+  btn.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const bed = window.activeFarmBed;
+    const crop = Number(this.dataset.crop);
+    if(bed === null || !window.farmState[bed]) return;
+
+    window.farmState[bed] = {crop:crop, plantedAt:Date.now()};
+    closeOverlay(el("farmOverlay"));
+    message(window.farmCrops[crop].icon + " Посажено");
+  });
+});
+
+el("farmClose").addEventListener("click", function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  closeOverlay(el("farmOverlay"));
+});
+
 </script>
 
 </body>
 </html>
+>
