@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.6.42</title>
+<title>Survival Base 0.8.1</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -537,11 +537,37 @@ html,body{
   z-index:10051;
 }
 
+
+/* 0.7.0 — character + equipment */
+#inventoryOverlay .panel{max-width:520px;max-height:90vh;overflow-y:auto}
+.characterInventory{display:grid;grid-template-columns:118px 1fr;gap:12px;margin:10px 0}
+.equipColumn{display:grid;grid-template-columns:1fr;gap:6px}
+.equipSlot{min-height:48px;border:1px solid rgba(255,255,255,.16);border-radius:10px;background:rgba(255,255,255,.055);padding:5px;display:flex;align-items:center;gap:7px;font-size:10px}
+.equipSlot .equipIcon{font-size:21px;width:27px;text-align:center}
+.equipSlot .equipText{min-width:0;line-height:1.15}
+.equipSlot .equipLabel{opacity:.55;font-size:9px;text-transform:uppercase}
+.equipSlot.filled{border-color:rgba(255,255,255,.32)}
+.characterCard{min-height:270px;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:rgba(255,255,255,.035);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.characterFigure{font-size:74px;line-height:1}
+.characterStats{font-size:11px;text-align:center;margin-top:10px;line-height:1.55}
+.quickSlots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:8px 0 12px}
+.quickSlot{height:54px;border:1px solid rgba(255,255,255,.16);border-radius:9px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;text-align:center;font-size:10px}
+
+/* 0.8: touch-sized hand slots, shared with the inventory. */
+#hotbar{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);display:grid;grid-template-columns:repeat(4,52px);gap:6px;z-index:115}
+.handSlot{position:relative;height:62px;min-width:0;border:1px solid #65716a;border-radius:10px;background:rgba(15,24,24,.94);color:#d5dfd8;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px;touch-action:manipulation}
+.handSlot.selected{border:2px solid #e0b36a;background:rgba(71,59,37,.96);box-shadow:0 0 0 2px #211d15}
+.slotNumber{position:absolute;top:3px;left:5px;font-size:9px;color:#b7bcb4}.slotArt{height:34px;display:flex;align-items:center;font-size:23px}.slotName{font-size:8px;white-space:nowrap}
+.itemArt{width:46px;height:32px;display:block}.invSlot .ico{height:32px;line-height:32px;display:flex;align-items:center;justify-content:center}
+#heldItemName{position:fixed;bottom:calc(79px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);font-size:10px;color:#e6e7da;text-shadow:0 1px 3px #000;pointer-events:none;z-index:45}
+#quickSlots .handSlot{height:64px}#handAssignOverlay{z-index:10060}#handAssignArt .itemArt{width:130px;height:88px;margin:0 auto}
+#versionBadge{top:calc(88px + env(safe-area-inset-top));left:10px;font-size:9px;opacity:.7}#ammoHud{top:calc(59px + env(safe-area-inset-top))}
+@media(max-height:500px){#hotbar{bottom:8px;grid-template-columns:repeat(4,48px)}.handSlot{height:51px}.slotArt{height:29px}#heldItemName{bottom:64px}}
 </style>
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.6.42</div>
+<div id="versionBadge">VERSION 0.8.1</div>
 
 <div id="game">
 
@@ -579,14 +605,19 @@ html,body{
 
 
 <div id="farmOverlay" class="overlay">
-  <div class="panel" style="max-width:420px">
+  <div class="panel" style="max-width:420px;max-height:82vh;overflow-y:auto">
     <h2 id="farmTitle">🌱 Посадка</h2>
     <div class="subtitle">Выбери, что посадить</div>
     <button class="menuButton farmCropBtn" data-crop="0">🥔 Картофель</button>
-    <button class="menuButton farmCropBtn" data-crop="1">🥕 Овощи</button>
-    <button class="menuButton farmCropBtn" data-crop="2">🌾 Зерно</button>
-    <button class="menuButton farmCropBtn" data-crop="3">🌿 Лекарственные растения</button>
-    <button class="menuButton farmCropBtn" data-crop="4">🌻 Техническая культура</button>
+    <button class="menuButton farmCropBtn" data-crop="1">🥕 Морковь</button>
+    <button class="menuButton farmCropBtn" data-crop="2">🍅 Помидоры</button>
+    <button class="menuButton farmCropBtn" data-crop="3">🌽 Кукуруза</button>
+    <button class="menuButton farmCropBtn" data-crop="4">🌾 Зерно</button>
+    <button class="menuButton farmCropBtn" data-crop="5">🫘 Фасоль</button>
+    <button class="menuButton farmCropBtn" data-crop="6">🧅 Лук</button>
+    <button class="menuButton farmCropBtn" data-crop="7">🍓 Ягоды</button>
+    <button class="menuButton farmCropBtn" data-crop="8">🌿 Лекарственные растения</button>
+    <button class="menuButton farmCropBtn" data-crop="9">🌻 Техническая культура</button>
     <button id="farmClose" class="menuButton">Закрыть</button>
   </div>
 </div>
@@ -597,7 +628,13 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.6.42 · New Controls</div>
+    <div class="subtitle">Survival Base 0.8.1 · Оружие и безопасная база</div><div class="subtitle" style="margin-top:10px">Нажмите на объект — персонаж подойдёт и выполнит действие. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
+
+    <div class="settingBox">
+      <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
+      <button id="saveGameButton" class="menuButton">💾 Сохранить игру</button>
+      <div class="subtitle" style="margin:0">Прогресс хранится на этом устройстве. После закрытия игры таймеры продолжатся с сохранённого момента.</div>
+    </div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -698,16 +735,29 @@ html,body{
 
 
 <button id="bagButton" aria-label="Рюкзак">🎒</button>
-<div id="ammoHud">🔫 30 / 60</div>
+<div id="ammoHud">🔫 30 / 60</div><div id="heldItemName"></div><div id="hotbar" aria-label="Предметы в руках"></div>
 <div id="searchBarWrap"><div id="searchBarFill"></div></div>
 
 <div id="inventoryOverlay" class="overlay"><div class="panel">
-  <h2>🎒 Рюкзак</h2>
-  <div class="subtitle">12 ячеек · обычные ресурсы складываются до ×100</div>
+  <h2>👤 Персонаж</h2>
+  <div class="subtitle">ЭКИПИРОВКА · ИНВЕНТАРЬ</div>
+
+  <div class="characterInventory">
+    <div id="equipmentSlots" class="equipColumn"></div>
+    <div class="characterCard">
+      <div class="characterFigure">🧍</div>
+      <div id="characterStats" class="characterStats"></div>
+    </div>
+  </div>
+
+  <div class="sectionTitle">🔫 Быстрые слоты</div>
+  <div id="quickSlots" class="quickSlots"></div><div class="subtitle">Повторное нажатие на выбранный фонарик включает или выключает свет.</div>
+
+  <div id="bagCapacityText" class="sectionTitle">🎒 Рюкзак</div>
   <div id="inventoryGrid" class="inventoryGrid"></div>
+  <div class="subtitle">Нажми на одежду, чтобы надеть. Нажми на оружие или инструмент, чтобы назначить быстрый слот.</div>
   <button id="closeInventory" class="menuButton">Закрыть</button>
 </div></div>
-
 
 <div id="chestSettingsOverlay" class="overlay"><div class="panel">
   <h2>⚙️ Настройки ящика</h2>
@@ -746,23 +796,38 @@ html,body{
   <div class="subtitle">КРАФТ</div>
 
   <div id="feedCraftList">
-    <div style="margin:14px 0 8px;opacity:.72">Выберите, что изготовить:</div>
+    <div style="margin:14px 0 8px;opacity:.72">Что изготовить:</div>
     <button id="feedRecipeGrain" class="menuButton">🌾 Корм из зерна</button>
   </div>
 
   <div id="feedCraftRecipe" style="display:none">
-    <div style="margin:14px 0;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px">
-      <b>🌾 Корм из зерна</b><br><br>
-      Нужно: <b>10 зерна</b><br>
-      Получите: <b>20 корма</b><br>
-      <span id="feedGrainOwned" style="opacity:.7"></span>
+    <div style="margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px">
+      <b>🌾 Корм из зерна</b>
+      <div style="margin-top:10px">Рецепт: <b>10 🌾 → 20 корма</b></div>
+      <div id="feedCraftAvailable" style="margin-top:5px;opacity:.68"></div>
     </div>
+
+    <div style="padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px">
+      <div style="font-size:12px;opacity:.7;margin-bottom:7px">ЗАГРУЖЕНО ЗЕРНА</div>
+      <div id="feedCraftLoaded" style="font-size:25px;font-weight:800;margin-bottom:9px">🌾 0</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+        <button id="feedAll" class="menuButton" style="margin:0;padding:10px 3px">MAX</button>
+        <button id="feedPlusTen" class="menuButton" style="margin:0;padding:10px 3px">+10</button>
+        <button id="feedPlusOne" class="menuButton" style="margin:0;padding:10px 3px">+1</button>
+
+        <button id="feedClear" class="menuButton" style="margin:0;padding:10px 3px">0</button>
+        <button id="feedMinusTen" class="menuButton" style="margin:0;padding:10px 3px">−10</button>
+        <button id="feedMinusOne" class="menuButton" style="margin:0;padding:10px 3px">−1</button>
+      </div>
+    </div>
+
+    <div id="feedCraftOutput" style="margin:10px 0;opacity:.8"></div>
     <button id="feedCraftBtn" class="menuButton primary">⚙️ Скрафтить</button>
-    <button id="feedCraftBack" class="menuButton">← Назад</button>
+    <button id="feedCraftBack" class="menuButton">← К списку</button>
   </div>
 
   <div id="feedCraftProgress" style="display:none;margin:18px 0">
-    <div style="margin-bottom:9px">⚙️ Изготовление корма...</div>
+    <div id="feedCraftProgressText" style="margin-bottom:9px">⚙️ Изготовление...</div>
     <div style="height:10px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden">
       <div id="feedCraftBar" style="height:100%;width:0%;background:rgba(255,255,255,.75)"></div>
     </div>
@@ -784,6 +849,10 @@ html,body{
   <button id="cowClose" class="menuButton">Закрыть</button>
 </div></div>
 
+<div id="handAssignOverlay" class="overlay"><div class="panel">
+<h2 id="handAssignTitle"></h2><div id="handAssignArt"></div><div class="subtitle">Назначить предмет в быстрый слот</div>
+<div id="handAssignChoices"></div><button id="handAssignClose" class="menuButton">Закрыть</button>
+</div></div>
 <!-- DEATH -->
 
 <div id="deathOverlay" class="overlay">
@@ -1076,34 +1145,63 @@ function updateFootstepsAudio(){
   }
 }
 
-function zombieDistanceVolume(zombie){
-  const d=Math.hypot(zombie.x-player.x,zombie.y-player.y);
-  if(d>=520) return 0;
-  return clamp((1-d/520)*.38,0,.38);
-}
-
+const ZOMBIE_AUDIO_RADIUS=285;
+const activeZombieAudio=new Map();
 let lastZombieAudioAt=0;
 
+function zombieDistanceVolume(zombie){
+  if(!zombie || !zombie.alive || scene!=="surface") return 0;
+  if(!visibleOnScreen(zombie.x,zombie.y,35)) return 0;
+  const d=Math.hypot(zombie.x-player.x,zombie.y-player.y);
+  if(d>=ZOMBIE_AUDIO_RADIUS) return 0;
+  const n=1-d/ZOMBIE_AUDIO_RADIUS;
+  return .30*n*n; // same fast positional falloff idea as the chickens
+}
+
+function stopZombieAudio(zombie){
+  const node=activeZombieAudio.get(zombie);
+  if(!node)return;
+  try{node.source.stop();}catch(e){}
+  try{node.source.disconnect();node.gain.disconnect();}catch(e){}
+  activeZombieAudio.delete(zombie);
+}
+
+function stopInvalidZombieAudio(){
+  for(const [z,node] of activeZombieAudio){
+    const v=zombieDistanceVolume(z);
+    if(v<=0.001){
+      stopZombieAudio(z);
+    }else if(audioCtx){
+      node.gain.gain.setTargetAtTime(v*masterVolume,audioCtx.currentTime,.04);
+    }
+  }
+}
+
 function playZombieBuffer(zombie){
-  if(!zombie || zombie.dead || masterVolume<=0) return;
+  if(!zombie || !zombie.alive || masterVolume<=0 || !audioCtx || !audioBuffers.zombie) return;
+  const volume=zombieDistanceVolume(zombie);
+  if(volume<=0.001)return;
 
   const now=performance.now();
-  // Never allow a crowd of zombies to spam audio simultaneously.
-  if(now-lastZombieAudioAt<2200) return;
-
-  const dx=zombie.x-player.x;
-  const dy=zombie.y-player.y;
-  const dist=Math.hypot(dx,dy);
-
-  const hearDistance=520;
-  if(dist>=hearDistance) return;
-
-  // Close zombie = louder; distant zombie = quiet.
-  const proximity=1-(dist/hearDistance);
-  const volume=.10 + proximity*.24;
-
+  if(now-lastZombieAudioAt<1800)return;
   lastZombieAudioAt=now;
-  playBuffer("zombie",volume);
+
+  // One track belongs to the zombie that produced it, so killing/leaving it
+  // can stop that exact growl immediately.
+  stopZombieAudio(zombie);
+  const source=audioCtx.createBufferSource();
+  const gain=audioCtx.createGain();
+  source.buffer=audioBuffers.zombie;
+  gain.gain.value=volume*masterVolume;
+  source.connect(gain);
+  gain.connect(audioCtx.destination);
+  activeZombieAudio.set(zombie,{source,gain});
+  source.onended=()=>{
+    const cur=activeZombieAudio.get(zombie);
+    if(cur && cur.source===source)activeZombieAudio.delete(zombie);
+    try{source.disconnect();gain.disconnect();}catch(e){}
+  };
+  source.start(0);
 }
 
 
@@ -1354,7 +1452,7 @@ const player = {
   x:800,
   y:860,
 
-  radius:15,
+  radius:10,
 
   health:100,
   maxHealth:100,
@@ -1474,11 +1572,152 @@ const bunker = {
 /* =====================================================
    0.5.0 INVENTORY / LOOT / AMMO
 ===================================================== */
+// 0.8: one physical world for movement, navigation, light and projectiles.
+let gateOpen=false;
+let frameScale=1;
+let navigation=null;
+let objectPointer=null;
+let chopState=null;
+let interactionTarget=null;
+const gateRect={id:'gate',x:730,y:1025,w:140,h:45};
+const outsideSpawns=[{x:400,y:1650},{x:1280,y:1700},{x:1070,y:2110}];
+const worldTrees=[
+  [470,900],[1290,930],[180,1260],[575,1250],[1430,1280],
+  [180,1700],[565,1740],[1400,1780],[1140,2080],[180,2090],[1370,2110]
+].map((p,i)=>({id:'tree'+i,x:p[0],y:p[1],r:24,felled:false,wood:15,regrowMs:0}));
+
+function rectHit(x,y,r,o){
+  return Math.hypot(x-clamp(x,o.x,o.x+o.w),y-clamp(y,o.y,o.y+o.h))<r ||
+    (x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h);
+}
+function surfaceWalls(){
+  const o=surface.outer,i=surface.inner;
+  return [
+    {x:o.left,y:o.top,w:o.right-o.left,h:o.thickness},
+    {x:o.left,y:o.top,w:o.thickness,h:o.bottom-o.top},
+    {x:o.right-o.thickness,y:o.top,w:o.thickness,h:o.bottom-o.top},
+    {x:o.left,y:o.bottom-o.thickness,w:730-o.left,h:o.thickness},
+    {x:870,y:o.bottom-o.thickness,w:o.right-870,h:o.thickness},
+    ...(!gateOpen?[gateRect]:[]),
+    {x:i.left,y:i.top,w:i.right-i.left,h:i.thickness},
+    {x:i.left,y:i.top,w:i.thickness,h:i.bottom-i.top},
+    {x:i.right-i.thickness,y:i.top,w:i.thickness,h:i.bottom-i.top},
+    {x:i.left,y:i.bottom-i.thickness,w:i.gateX-i.left,h:i.thickness},
+    {x:i.gateX+i.gateWidth,y:i.bottom-i.thickness,w:i.right-i.gateX-i.gateWidth,h:i.thickness}
+  ];
+}
+function solidObjects(which){
+  if(which==='surface')return [
+    ...scavenges,
+    {id:'yard_generator',x:1080,y:310,w:125,h:90},
+    ...[[200,160],[800,150],[1400,160],[200,1040],[1400,1040]].map((p,i)=>({id:'tower'+i,x:p[0]-25,y:p[1]-25,w:50,h:50})),
+    ...worldTrees.filter(t=>!t.felled)
+  ];
+  const chests=getChestPositions();
+  const fixtures=[
+    ['technical',125,790,185,86],['ammunition',335,790,190,86],['tools',108,900,58,215],['workbench',110,1130,215,76],
+    ['parts_crate',380,1150,60,52],['metal_crate',455,1150,60,52],
+    ['medical_table',145,300,245,78],['medical_bed',145,650,225,58],['cabinet',110,430,58,130],['sink',455,315,100,58],
+    ['medical_crate1',430,650,55,52],['medical_crate2',500,650,55,52],
+    ['tank',885,315,125,185],['generator',1045,330,165,155],['battery',1235,300,105,215],
+    ['kitchen',145,-205,330,92],['fridge',110,-75,72,165],['dining',225,135,190,70],['shelf',110,145,72,78],
+    ['chair1',245,110,42,22],['chair2',352,110,42,22],['chair3',245,208,42,22],['chair4',352,208,42,22],
+    ['wardrobe',885,-205,155,72],['nightstand',1080,-190,82,62],['bed',1240,-205,95,225],['dresser',1190,125,145,92],
+    ['bath_wall1',916,61,208,8],['bath_wall2',1116,65,8,184],['toilet',930,130,62,105],['shower',1020,88,90,145]
+  ].map(a=>({id:a[0],x:a[1],y:a[2],w:a[3],h:a[4]}));
+  const feed=feedCraftStationPos();
+  return [
+    ...fixtures,
+    {id:'livestock',x:(bunker.farm.cropLeft??90)-37,y:(bunker.farm.top+bunker.farm.bottom)/2-28,w:50,h:56},
+    ...chests.flatMap((p,i)=>i===10||i===11?[]:[{id:'chest'+i,x:p.x-(i<10?34:30),y:p.y-(i<10?25:22),w:i<10?68:60,h:i<10?50:44}]),
+    ...getFarmBeds().map((b,i)=>({...b,id:'bed'+i})),
+    {id:'feed_craft',x:feed.x-28,y:feed.y-23,w:56,h:46}
+  ];
+}
+// These short-lived caches are invalidated whenever the gate or trees change.
+let geometryRevision=0;
+let geometryCache={};
+function invalidateGeometry(){geometryRevision++;geometryCache={};}
+function geometryFor(which){
+  if(!geometryCache[which]){
+    const walls=which==='surface'?surfaceWalls():[],objects=solidObjects(which),grid=Object.create(null),cell=96;
+    for(const o of [...walls,...objects]){
+      const x=o.r!==undefined?o.x-o.r:o.x,y=o.r!==undefined?o.y-o.r:o.y;
+      const w=o.r!==undefined?o.r*2:o.w,h=o.r!==undefined?o.r*2:o.h;
+      for(let cy=Math.floor(y/cell);cy<=Math.floor((y+h)/cell);cy++)for(let cx=Math.floor(x/cell);cx<=Math.floor((x+w)/cell);cx++)(grid[cx+','+cy]??=[]).push(o);
+    }
+    geometryCache[which]={walls,objects,grid,cell};
+  }
+  return geometryCache[which];
+}
+function worldCollision(x,y,r=15,which=scene,ignoreId=null){
+  if(which==='surface'){
+    if(x<r||x>surface.width-r||y<r||y>surface.height-r)return true;
+  }else if(bunkerGeometryBlocked(x,y,r))return true;
+  const g=geometryFor(which);
+  for(let cy=Math.floor((y-r)/g.cell);cy<=Math.floor((y+r)/g.cell);cy++)for(let cx=Math.floor((x-r)/g.cell);cx<=Math.floor((x+r)/g.cell);cx++){
+    const nearby=g.grid[cx+','+cy];if(!nearby)continue;
+    for(const o of nearby){
+      if(o.id===ignoreId)continue;
+      if(o.r!==undefined){if(distance(x,y,o.x,o.y)<=o.r+r)return true;}
+      else if(rectHit(x,y,r,o))return true;
+    }
+  }
+  return false;
+}
+
+
+function surfaceCollision(x,y){return worldCollision(x,y,player.radius,'surface');}
+function bunkerCollision(x,y){return worldCollision(x,y,player.radius,'bunker');}
+function lineClear(x1,y1,x2,y2,r=0,which=scene,ignoreId=null){
+  const steps=Math.max(1,Math.ceil(distance(x1,y1,x2,y2)/6));
+  for(let n=0;n<=steps;n++){
+    const p=n/steps;
+    if(worldCollision(x1+(x2-x1)*p,y1+(y2-y1)*p,r,which,ignoreId))return false;
+  }
+  return true;
+}
+function inFortress(x,y){const o=surface.outer;return x>o.left&&x<o.right&&y>o.top&&y<o.bottom;}
+function toggleGate(){
+  if(gateOpen){
+    const occupants=[player,...zombies.filter(z=>z.alive)];
+    if(occupants.some(p=>rectHit(p.x,p.y,p.radius+3,gateRect))){message('Отойдите от проёма, чтобы закрыть ворота');return;}
+  }
+  gateOpen=!gateOpen;invalidateGeometry();queueGameSave();
+  message(gateOpen?'🔓 Ворота открыты':'🔒 Ворота закрыты');
+}
+
+
 const ITEM={
+  rifle_ak74:{name:'АК-74',icon:'🔫',hand:true},
+  axe:{name:'Топор',icon:'🪓',hand:true},
+  flashlight:{name:'Фонарик',icon:'🔦',hand:true},
   wood:{name:"Дерево",icon:"🪵"},
   metal:{name:"Металл",icon:"🔩"},
   parts:{name:"Детали",icon:"⚙️"},
-  food:{name:"Еда",icon:"🥫"},potato:{name:"Картофель",icon:"🥔"},vegetables:{name:"Овощи",icon:"🥕"},grain:{name:"Зерно",icon:"🌾"},medicinal_herbs:{name:"Лекарственные растения",icon:"🌿"},technical_crop:{name:"Техническая культура",icon:"🌻"},
+  food:{name:"Еда",icon:"🥫"},
+  potato:{name:"Картофель",icon:"🥔"},
+  carrot:{name:"Морковь",icon:"🥕"},
+  tomato:{name:"Помидоры",icon:"🍅"},
+  corn:{name:"Кукуруза",icon:"🌽"},
+  grain:{name:"Зерно",icon:"🌾"},
+  beans:{name:"Фасоль",icon:"🫘"},
+  onion:{name:"Лук",icon:"🧅"},
+  berries:{name:"Ягоды",icon:"🍓"},
+  medicinal_herbs:{name:"Лекарственные растения",icon:"🌿"},
+  technical_crop:{name:"Техническая культура",icon:"🌻"},
+  backpack1:{name:"Рюкзак I",icon:"🎒",equip:"backpack",capacity:12},
+  backpack2:{name:"Рюкзак II",icon:"🎒",equip:"backpack",capacity:16},
+  backpack3:{name:"Рюкзак III",icon:"🎒",equip:"backpack",capacity:20},
+  backpack4:{name:"Рюкзак IV",icon:"🎒",equip:"backpack",capacity:24},
+  vest1:{name:"Бронежилет I",icon:"🦺",equip:"body",armor:15},
+  vest2:{name:"Бронежилет II",icon:"🦺",equip:"body",armor:25},
+  vest3:{name:"Бронежилет III",icon:"🦺",equip:"body",armor:40},
+  vest4:{name:"Бронежилет IV",icon:"🛡️",equip:"body",armor:55},
+  vest5:{name:"Бронежилет V",icon:"🛡️",equip:"body",armor:70},
+  gloves1:{name:"Перчатки I",icon:"🧤"},
+  pants1:{name:"Штаны I",icon:"👖",equip:"legs",level:1},
+  boots1:{name:"Обувь I",icon:"👢",equip:"feet",level:1},
   meds:{name:"Медикаменты",icon:"💊"},
   fuel:{name:"Топливо",icon:"⛽"},
   ammo:{name:"Патроны",icon:"🔫"},
@@ -1488,19 +1727,33 @@ const ITEM={
   water:{name:"Вода",icon:"💧"},
   beef:{name:"Говядина",icon:"🥩"}
 };
-const STACK_MAX=100, BAG_SLOTS=12;
+const STACK_MAX=100;
+let BAG_SLOTS=12;
+const equipment={
+  head:null,
+  body:null,
+  legs:null,
+  feet:null,
+  backpack:{type:"backpack1",name:"Рюкзак I",icon:"🎒",capacity:12}
+};
+const EQUIP_LABELS={head:"Голова",body:"Тело",legs:"Ноги",feet:"Обувь",backpack:"Рюкзак"};
+const EQUIP_ICONS={head:"🪖",body:"🦺",legs:"👖",feet:"👢",backpack:"🎒"};
 let bag=[
-  {type:"ammo",qty:60}
+  {type:"ammo",qty:60},
+  {type:'grain',qty:100},
+  {type:'rifle_ak74',qty:1},
+  {type:'axe',qty:1},
+  {type:'flashlight',qty:1}
 ];
 let storageChests=[
   {name:"Топливо",icon:"⛽",items:[]},
   {name:"Оружие",icon:"🔫",items:[]},
   {name:"Металл",icon:"🔩",items:[]},
-  {name:"Материалы",icon:"⚙️",items:[]},
+  {name:"Материалы",icon:"⚙️",items:[{type:"pants1",qty:1},{type:"boots1",qty:1}]},
   {name:"Еда",icon:"🥫",items:[]},
   {name:"Напитки",icon:"🥤",items:[]},
   {name:"Медицина",icon:"💊",items:[]},
-  {name:"Разное",icon:"🧰",items:[]},
+  {name:"Разное",icon:"🧰",items:[{type:"backpack2",qty:1},{type:"backpack3",qty:1},{type:"backpack4",qty:1},{type:"vest1",qty:1},{type:"vest2",qty:1},{type:"vest3",qty:1},{type:"vest4",qty:1},{type:"vest5",qty:1}]},
   {name:"Урожай",icon:"🥔",items:[]},
   {name:"Растения",icon:"🌿",items:[]},
   {name:"Куры — яйца",icon:"🥚",items:[]},
@@ -1509,17 +1762,126 @@ let storageChests=[
   {name:"Вода животных",icon:"💧",items:[{type:"water",qty:100}]}
 ];
 let magazine=30, magazineMax=30;
-let activeStorage=null, activeLoot=null;
+let activeStorage=null, activeLoot=null, activeLootObject=null;
 let searchState=null;
 
 const scavenges=[
-  {id:"car1",kind:"car",x:610,y:1450,w:130,h:64,searched:false},
-  {id:"car2",kind:"car",x:1030,y:1710,w:130,h:64,searched:false},
-  {id:"car3",kind:"car",x:390,y:1880,w:130,h:64,searched:false},
-  {id:"house1",kind:"house",x:230,y:1330,w:260,h:210,searched:false},
-  {id:"house2",kind:"house",x:1110,y:1320,w:270,h:220,searched:false},
-  {id:"house3",kind:"house",x:650,y:1800,w:300,h:240,searched:false}
+  {id:'car1',kind:'car',x:550,y:1420,w:64,h:130,searched:false},
+  {id:'car2',kind:'car',x:1060,y:1628,w:130,h:64,searched:false},
+  {id:'car3',kind:'car',x:975,y:1900,w:64,h:130,searched:false},
+  {id:'house1',kind:'house',x:270,y:1300,w:250,h:210,searched:false},
+  {id:'house2',kind:'house',x:1090,y:1290,w:270,h:220,searched:false},
+  {id:'house3',kind:'house',x:260,y:1840,w:280,h:220,searched:false},
+  {id:'yard_car',kind:'car',x:1100,y:790,w:160,h:75,searched:false}
 ];
+
+const HAND_TYPES=['rifle_ak74','axe','flashlight'];
+let handSlots=['rifle_ak74','axe','flashlight',null];
+let activeHandSlot=0;
+let flashlightOn=true;
+let assigningHandType=null;
+let starterPending=[];
+const handSvg={
+  rifle_ak74:'<path fill="#ad7548" d="M4 26h20v10L6 43H2z"/><path fill="#202c2e" d="M22 24h40v13H22z"/><path fill="#ab7142" d="M49 21h21v14H49z"/><path stroke="#87989a" stroke-width="4" d="M67 25h28"/><path stroke="#192325" stroke-width="4" d="M66 31h28"/><path fill="#283335" d="M38 34h10q-1 17 12 24l-11 5q-15-11-11-29"/><path fill="#9c633a" d="M27 36h9l-2 14h-8z"/><path stroke="#89999b" stroke-width="3" d="M25 22h28"/><path fill="#182426" d="M77 18h5v9h-5z"/>',
+  axe:'<path stroke="#bc8855" stroke-width="9" stroke-linecap="round" d="M28 57L66 13"/><path stroke="#6b4931" stroke-width="2" d="M28 59L68 13"/><path fill="#c3ced0" stroke="#63757a" stroke-width="2" d="M51 13L75 6l14 14-5 16-17-7-8-2z"/><path fill="#e5eeee" d="M84 13l5 7-5 16-6-4z"/>',
+  flashlight:'<path fill="#253c45" stroke="#8c9c9f" stroke-width="2" d="M19 32l37-13 9 24-37 13z"/><path fill="#3c535c" stroke="#9eacad" stroke-width="2" d="M52 18L70 8l13 35-21 1z"/><path fill="#e9e4ba" d="M70 10l11 31 5-4-9-28z"/><path stroke="#6c8991" stroke-width="3" d="M28 34l7 18m3-22 7 18"/><path fill="#dec987" d="M78 9l18-3v32l-10-1z" opacity=".38"/>'
+};
+function itemIconHTML(type){
+  return handSvg[type]?`<svg class="itemArt" viewBox="0 0 100 68" aria-hidden="true">${handSvg[type]}</svg>`:ITEM[type].icon;
+}
+function heldItem(){return Number.isInteger(activeHandSlot)?handSlots[activeHandSlot]||null:null;}
+function canFire(){return heldItem()==='rifle_ak74'&&bagCount('rifle_ak74')>0;}
+function reconcileHands(){
+  handSlots=handSlots.map((type,i)=>type&&bagCount(type)>0&&handSlots.indexOf(type)===i?type:null);
+  if(!Number.isInteger(activeHandSlot)||!handSlots[activeHandSlot]){activeHandSlot=null;firing=false;}
+}
+function grantStarterItems(){
+  if(!starterPending.length)return;
+  const before=starterPending.length;
+  starterPending=starterPending.filter(type=>{
+    if(addItem(type,1)>0)return true;
+    const slot=HAND_TYPES.indexOf(type);
+    if(slot>=0&&!handSlots[slot])handSlots[slot]=type;
+    return false;
+  });
+  if(starterPending.length!==before){
+    if(activeHandSlot===null){const i=handSlots.findIndex(Boolean);activeHandSlot=i<0?null:i;}
+    renderQuickSlots();updateAmmoHud();
+    if(el('inventoryOverlay').classList.contains('open'))renderBag();
+    if(el('storageOverlay').classList.contains('open'))renderStorage();
+    queueGameSave();
+  }
+}
+function selectHandSlot(index){
+  reconcileHands();
+  if(!handSlots[index]){message('Назначьте предмет из рюкзака в этот слот');return;}
+  const same=activeHandSlot===index;
+  activeHandSlot=index;firing=false;
+  if(heldItem()==='flashlight')flashlightOn=same?!flashlightOn:true;
+  if(chopState&&heldItem()!=='axe')cancelChop();
+  renderQuickSlots();updateAmmoHud();queueGameSave();
+}
+function assignHandSlot(index){
+  if(!HAND_TYPES.includes(assigningHandType)||bagCount(assigningHandType)<1)return;
+  handSlots=handSlots.map(type=>type===assigningHandType?null:type);
+  handSlots[index]=assigningHandType;
+  activeHandSlot=index;firing=false;
+  if(heldItem()==='flashlight')flashlightOn=true;
+  closeOverlay(el('handAssignOverlay'));renderBag();queueGameSave();
+}
+function openHandAssignment(type){
+  assigningHandType=type;
+  el('handAssignTitle').textContent=ITEM[type].name;
+  el('handAssignArt').innerHTML=itemIconHTML(type);
+  const holder=el('handAssignChoices');holder.innerHTML='';
+  for(let i=0;i<4;i++){
+    const button=document.createElement('button');button.className='menuButton';
+    button.textContent=`Слот ${i+1} · ${handSlots[i]?ITEM[handSlots[i]].name:'Свободный'}`;
+    button.addEventListener('click',()=>assignHandSlot(i));holder.appendChild(button);
+  }
+  openOverlay(el('handAssignOverlay'));
+}
+function renderQuickSlots(){
+  reconcileHands();
+  for(const name of ['hotbar','quickSlots']){
+    const holder=el(name);holder.innerHTML='';
+    handSlots.forEach((type,i)=>{
+      const button=document.createElement('button');button.className='handSlot'+(activeHandSlot===i?' selected':'');
+      button.setAttribute('aria-label',`Слот ${i+1}: ${type?ITEM[type].name:'свободный'}`);
+      button.setAttribute('aria-pressed',String(activeHandSlot===i));
+      button.innerHTML=`<span class="slotNumber">${i+1}</span><span class="slotArt">${type?itemIconHTML(type):'＋'}</span><span class="slotName">${type?ITEM[type].name:'Пусто'}</span>`;
+      button.addEventListener('click',()=>selectHandSlot(i));holder.appendChild(button);
+    });
+  }
+  el('heldItemName').textContent=heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны';
+}
+function cancelChop(){chopState=null;el('searchBarWrap').style.display='none';}
+function useTree(tree){
+  if(tree.wood<=0){message('Древесина уже собрана');return;}
+  if(!tree.felled&&heldItem()!=='axe'){message('🪓 Выберите топор в быстром слоте');return;}
+  if(freeItemSpace(bag,'wood',BAG_SLOTS)<=0){message('🎒 Освободите место для древесины');return;}
+  if(tree.felled){collectTreeWood(tree);return;}
+  if(chopState)return;
+  chopState={id:tree.id,startedAt:performance.now(),duration:1800};
+  player.aimX=tree.x-player.x;player.aimY=tree.y-player.y;
+  const n=Math.hypot(player.aimX,player.aimY)||1;player.aimX/=n;player.aimY/=n;
+}
+function collectTreeWood(tree){
+  const before=tree.wood;tree.wood=addItem('wood',before);
+  message(`🪵 Древесина: +${before-tree.wood}`+(tree.wood?` · осталось ${tree.wood}`:''));
+  if(tree.wood===0)message(`🪵 Древесина: +${before} · дерево вырастет через 10 минут игры`);
+  queueGameSave();
+}
+function updateChop(){
+  if(!chopState)return;
+  const tree=worldTrees.find(t=>t.id===chopState.id);
+  const target=interactionObjects('surface').find(o=>o.id===tree?.id);
+  if(!tree||scene!=='surface'||menuOpen||playerDead||movePower>JOY_DEAD||heldItem()!=='axe'||!canInteract(target,player.x,player.y)){cancelChop();return;}
+  const p=clamp((performance.now()-chopState.startedAt)/chopState.duration,0,1);
+  const bar=el('searchBarWrap');bar.style.display='block';bar.style.left=(player.x-camera.x-46)+'px';bar.style.top=(player.y-camera.y-58)+'px';el('searchBarFill').style.width=(p*100)+'%';
+  if(p>=1){tree.felled=true;tree.regrowMs=600000;invalidateGeometry();cancelChop();collectTreeWood(tree);}
+}
+
 
 function bagUsed(){return bag.length}
 function addItem(type,qty){
@@ -1545,13 +1907,59 @@ function removeItem(type,qty){
   return qty-left;
 }
 function bagCount(type){return bag.filter(s=>s.type===type).reduce((a,s)=>a+s.qty,0)}
-function updateAmmoHud(){el("ammoHud").textContent=`🔫 ${magazine} / ${bagCount("ammo")}`}
+function freeItemSpace(slots,type,maxSlots){
+  return Math.max(0,maxSlots-slots.length)*STACK_MAX+
+    slots.reduce((n,s)=>n+(s.type===type?Math.max(0,STACK_MAX-s.qty):0),0);
+}
+function updateAmmoHud(){el("ammoHud").textContent=`🔫 ${magazine} / ${bagCount("ammo")}`;el("ammoHud").style.display=canFire()?"block":"none";}
 
+function equippedArmor(){
+  const body=equipment.body;
+  return body && ITEM[body.type] ? (ITEM[body.type].armor||0) : 0;
+}
+function renderEquipment(){
+  const box=el("equipmentSlots"); if(!box)return;
+  box.innerHTML="";
+  for(const key of ["head","body","legs","feet","backpack"]){
+    const eq=equipment[key];
+    const d=document.createElement("div");
+    d.className="equipSlot"+(eq?" filled":"");
+    d.dataset.equipSlot=key;
+    const item=eq && eq.type && ITEM[eq.type] ? ITEM[eq.type] : eq;
+    const name=item ? (item.name||"Экипировано") : "Пусто";
+    d.innerHTML=`<div class="equipIcon">${item?.icon||EQUIP_ICONS[key]}</div><div class="equipText"><div class="equipLabel">${EQUIP_LABELS[key]}</div><b>${name}</b></div>`;
+    box.appendChild(d);
+  }
+  el("characterStats").innerHTML=`❤️ HP: <b>${Math.round(player.health||100)}/${Math.round(player.maxHealth||100)}</b><br>🛡️ Защита тела: <b>${equippedArmor()}%</b><br>🎒 Вместимость: <b>${BAG_SLOTS}</b>`;
+  el("bagCapacityText").textContent=`🎒 Рюкзак · ${bag.length}/${BAG_SLOTS}`;
+}
+function equipFromBag(index){
+  const s=bag[index]; if(!s || !ITEM[s.type] || !ITEM[s.type].equip)return;
+  const def=ITEM[s.type], slot=def.equip;
+  const capacity=slot==="backpack"?def.capacity:BAG_SLOTS;
+  const nextBag=clone(bag);
+  nextBag[index].qty--;
+  if(nextBag[index].qty===0)nextBag.splice(index,1);
+  const old=equipment[slot];
+  // Commit the swap only after both the remaining stack and old item fit.
+  if(nextBag.length>capacity ||
+     (old && addToSlots(nextBag,old.type,1,capacity)>0)){
+    message("🎒 Освободите место для смены экипировки");
+    return;
+  }
+  bag=nextBag;
+  equipment[slot]={type:s.type};
+  BAG_SLOTS=capacity;
+  renderBag(); updateAmmoHud(); message(`${def.icon} Надето: ${def.name}`);
+  queueGameSave();
+}
 function renderBag(){
+  renderEquipment();
+  renderQuickSlots();
   const g=el("inventoryGrid"); g.innerHTML="";
   for(let i=0;i<BAG_SLOTS;i++){
-    const s=bag[i], d=document.createElement("div"); d.className="invSlot";
-    d.innerHTML=s?`<div class="ico">${ITEM[s.type].icon}</div><div>${ITEM[s.type].name}</div><div class="qty">×${s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`;
+    const s=bag[i], d=document.createElement("div"); d.className="invSlot"; d.dataset.inventorySlot=i;
+    d.innerHTML=s?`<div class="ico">${itemIconHTML(s.type)}</div><div>${ITEM[s.type].name}</div><div class="qty">${ITEM[s.type].hand?"В СЛОТ":ITEM[s.type].equip?"НАДЕТЬ"+(s.qty>1?" ×"+s.qty:""):"×"+s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`;
     g.appendChild(d);
   }
 }
@@ -1570,12 +1978,21 @@ function renderLoot(){
   }
 }
 function openLoot(obj){
-  activeLoot=randomLoot(obj.kind); obj.searched=true;
+  if(!obj.searched){obj.loot=randomLoot(obj.kind);obj.searched=true;}
+  if(!Array.isArray(obj.loot))obj.loot=[];
+  activeLootObject=obj;
+  activeLoot=obj.loot;
   el("lootTitle").textContent=obj.kind==="car"?"🚗 Машина":"🏚️ Здание";
   renderLoot(); openOverlay(el("lootOverlay"));
+  queueGameSave();
+}
+function hasSearchableLoot(obj){
+  return !obj.searched || (Array.isArray(obj.loot) && obj.loot.length>0);
 }
 function startSearch(obj){
-  if(searchState||obj.searched)return;
+  if(searchState)return;
+  if(!hasSearchableLoot(obj)){message('Уже обыскано — здесь пусто');return;}
+  if(obj.searched){openLoot(obj);return;}
   searchState={obj,start:performance.now(),duration:1000};
 }
 function cancelSearch(){searchState=null;el("searchBarWrap").style.display="none";el("searchBarFill").style.width="0%"}
@@ -1598,7 +2015,7 @@ function reloadWeapon(){
 function nearestScavenge(){
   let best=null,bd=90;
   for(const o of scavenges){
-    if(o.searched)continue;
+    if(!hasSearchableLoot(o))continue;
     const cx=o.x+o.w/2,cy=o.y+o.h/2,d=distance(player.x,player.y,cx,cy);
     if(d<bd){bd=d;best=o}
   }
@@ -1677,28 +2094,7 @@ function makeZombie(x,y){
 
 let zombies = [];
 
-function resetZombies(){
-
-  zombies = [
-
-    makeZombie(
-      420,
-      700
-    ),
-
-    makeZombie(
-      1190,
-      610
-    ),
-
-    makeZombie(
-      1050,
-      900
-    )
-
-  ];
-
-}
+function resetZombies(){zombies=outsideSpawns.map(p=>makeZombie(p.x,p.y));}
 
 resetZombies();
 
@@ -1739,34 +2135,16 @@ function setFixedJoystick(control,x,y){
 }
 
 function fixedGeometry(){
-  const w=window.innerWidth;
-  const h=window.innerHeight;
-  const landscape=w>h;
-
-  if(landscape){
-    return {
-      leftX:w*.13,
-      rightX:w*.87,
-      y:h*.78,
-      actionX:w*.76,
-      actionY:h*.58
-    };
-  }
-
-  return {
-    leftX:w*.18,
-    rightX:w*.82,
-    y:h*.84,
-    actionX:w*.70,
-    actionY:h*.68
-  };
+  const w=window.innerWidth,h=window.innerHeight;
+  const layout=layouts[orientation()]||defaults[orientation()];
+  return {leftX:w*layout.move.x,leftY:h*layout.move.y,rightX:w*layout.aim.x,rightY:h*layout.aim.y,actionX:w*layout.action.x,actionY:h*layout.action.y};
 }
 
 function positionFixedControls(){
   const g=fixedGeometry();
 
-  setFixedJoystick(moveControl,g.leftX,g.y);
-  setFixedJoystick(aimControl,g.rightX,g.y);
+  setFixedJoystick(moveControl,g.leftX,g.leftY);
+  setFixedJoystick(aimControl,g.rightX,g.rightY);
 
   centerJoystickKnob(moveStick);
   centerJoystickKnob(aimStick);
@@ -1818,109 +2196,53 @@ function uiTouch(target){
 function joystickCenters(){
   const g=fixedGeometry();
   return {
-    left:{x:g.leftX,y:g.y},
-    right:{x:g.rightX,y:g.y}
+    left:{x:g.leftX,y:g.leftY},
+    right:{x:g.rightX,y:g.rightY}
   };
 }
 
-window.addEventListener("pointerdown",function(e){
-  if(menuOpen || playerDead || uiTouch(e.target)) return;
-
+function beginJoystick(e){
   const centers=joystickCenters();
-
-  if(e.clientX<window.innerWidth*.5 && leftPointerId===null){
-    leftPointerId=e.pointerId;
-
-    const v=fixedVector(
-      moveStick,
-      centers.left.x,centers.left.y,
-      e.clientX,e.clientY
-    );
-
-    moveX=v.x;
-    moveY=v.y;
-    movePower=v.power;
-
-    if(movePower>JOY_DEAD && !rightAimActive){
-      player.aimX=moveX;
-      player.aimY=moveY;
-    }
-
-    e.preventDefault();
-    return;
+  if(e.clientX<window.innerWidth*.5&&leftPointerId===null){
+    cancelNavigation();cancelChop();leftPointerId=e.pointerId;
+    const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);
+    moveX=v.x;moveY=v.y;movePower=v.power;
+    if(movePower>JOY_DEAD&&!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
+  }else if(e.clientX>=window.innerWidth*.5&&rightPointerId===null){
+    rightPointerId=e.pointerId;rightAimActive=true;
+    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);aimPower=v.power;
+    if(aimPower>JOY_DEAD){player.aimX=v.x;player.aimY=v.y;firing=canFire();if(firing)shoot();}
   }
-
-  if(e.clientX>=window.innerWidth*.5 && rightPointerId===null){
-    rightPointerId=e.pointerId;
-    rightAimActive=true;
-
-    const v=fixedVector(
-      aimStick,
-      centers.right.x,centers.right.y,
-      e.clientX,e.clientY
-    );
-
-    aimPower=v.power;
-
-    if(aimPower>JOY_DEAD){
-      player.aimX=v.x;
-      player.aimY=v.y;
-      firing=true;
-      shoot();
-    }else{
-      firing=false;
-    }
-
-    e.preventDefault();
-  }
+  e.preventDefault();
+}
+window.addEventListener('pointerdown',function(e){
+  if(menuOpen||playerDead||uiTouch(e.target))return;
+  const centers=joystickCenters();
+  const overStick=distance(e.clientX,e.clientY,centers.left.x,centers.left.y)<58||distance(e.clientX,e.clientY,centers.right.x,centers.right.y)<58;
+  const target=overStick?null:hitInteraction(e.clientX+camera.x,e.clientY+camera.y);
+  if(target&&!objectPointer){objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target};e.preventDefault();return;}
+  beginJoystick(e);
 },{passive:false});
-
-window.addEventListener("pointermove",function(e){
+window.addEventListener('pointermove',function(e){
+  if(objectPointer&&objectPointer.id===e.pointerId){
+    if(distance(e.clientX,e.clientY,objectPointer.x,objectPointer.y)<=10)return;
+    objectPointer=null;beginJoystick(e);return;
+  }
   const centers=joystickCenters();
-
   if(e.pointerId===leftPointerId){
-    const v=fixedVector(
-      moveStick,
-      centers.left.x,centers.left.y,
-      e.clientX,e.clientY
-    );
-
-    moveX=v.x;
-    moveY=v.y;
-    movePower=v.power;
-
-    if(movePower>JOY_DEAD && !rightAimActive){
-      player.aimX=moveX;
-      player.aimY=moveY;
-    }
-
-    e.preventDefault();
+    const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);moveX=v.x;moveY=v.y;movePower=v.power;
+    if(movePower>JOY_DEAD&&!rightAimActive){player.aimX=v.x;player.aimY=v.y;}e.preventDefault();
   }
-
   if(e.pointerId===rightPointerId){
-    const v=fixedVector(
-      aimStick,
-      centers.right.x,centers.right.y,
-      e.clientX,e.clientY
-    );
-
-    aimPower=v.power;
-
-    if(aimPower>JOY_DEAD){
-      player.aimX=v.x;
-      player.aimY=v.y;
-
-      if(!firing){
-        firing=true;
-        shoot();
-      }
-    }else{
-      firing=false;
-    }
-
-    e.preventDefault();
+    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);aimPower=v.power;
+    if(aimPower>JOY_DEAD){player.aimX=v.x;player.aimY=v.y;firing=canFire();}else firing=false;e.preventDefault();
   }
 },{passive:false});
+window.addEventListener('pointerup',function(e){
+  if(objectPointer&&objectPointer.id===e.pointerId){const target=objectPointer.target;objectPointer=null;if(!menuOpen&&!playerDead)approachObject(target);}
+},{passive:false});
+window.addEventListener('pointercancel',e=>{if(objectPointer?.id===e.pointerId)objectPointer=null;});
+
 
 function releaseFixedStick(e){
   if(e.pointerId===leftPointerId){
@@ -1970,91 +2292,18 @@ let firing = false;
 let lastShot = 0;
 
 function shoot(){
-
-  if(
-    menuOpen ||
-    playerDead
-  ){
-    return;
+  if(menuOpen||playerDead||!canFire()||document.hidden)return;
+  if(magazine<=0){if(bagCount('ammo')>0)reloadWeapon();else message('Нет патронов');return;}
+  const now=performance.now();if(now-lastShot<155)return;lastShot=now;magazine--;updateAmmoHud();
+  const length=Math.hypot(player.aimX,player.aimY)||1,dx=player.aimX/length,dy=player.aimY/length;
+  const x=player.x+dx*43,y=player.y+dy*43;
+  if(lineClear(player.x,player.y,x,y,2,scene)){
+    bullets.push({x,y,dx:dx*12,dy:dy*12,radius:3,life:80});
+    muzzleFlash.time=now;muzzleFlash.x=x;muzzleFlash.y=y;
   }
-
-  if(magazine<=0){
-    if(bagCount("ammo")>0) reloadWeapon();
-    else message("Нет патронов");
-    return;
-  }
-
-  const now =
-    performance.now();
-
-  if(now-lastShot < 155){
-    return;
-  }
-
-  lastShot = now;
-  magazine--;
-  updateAmmoHud();
-
-  let length =
-    Math.hypot(
-      player.aimX,
-      player.aimY
-    );
-
-  if(length === 0){
-    length = 1;
-  }
-
-  const dx =
-    player.aimX /
-    length;
-
-  const dy =
-    player.aimY /
-    length;
-
-  bullets.push({
-
-    x:
-      player.x +
-      dx*29,
-
-    y:
-      player.y +
-      dy*29,
-
-    dx:
-      dx*12,
-
-    dy:
-      dy*12,
-
-    radius:4,
-
-    life:80
-
-  });
-
-  playGunshot();
-
-  createNoise(
-    player.x,
-    player.y,
-    550
-  );
-
-  muzzleFlash.time =
-    performance.now();
-
-  muzzleFlash.x =
-    player.x +
-    dx*30;
-
-  muzzleFlash.y =
-    player.y +
-    dy*30;
-
+  playGunshot();createNoise(player.x,player.y,550);
 }
+
 
 const muzzleFlash = {
   x:0,
@@ -2063,6 +2312,7 @@ const muzzleFlash = {
 };
 
 function hitZombie(zombie){
+  queueGameSave();
 
   zombie.health -= 25;
 
@@ -2083,6 +2333,9 @@ function hitZombie(zombie){
 
     zombie.alive = false;
 
+    // A dead zombie must never keep growling.
+    stopZombieAudio(zombie);
+
     zombie.deathTime =
       performance.now();
 
@@ -2091,117 +2344,25 @@ function hitZombie(zombie){
 }
 
 function updateBullets(){
-
-  if(firing){
-    shoot();
-  }
-
-  for(
-    let i =
-      bullets.length-1;
-
-    i >= 0;
-
-    i--
-  ){
-
-    const bullet =
-      bullets[i];
-
-    bullet.x +=
-      bullet.dx;
-
-    bullet.y +=
-      bullet.dy;
-
-    bullet.life--;
-
-    let removed = false;
-
-    if(scene === "surface"){
-
-      for(const zombie of zombies){
-
-        if(!zombie.alive){
-          continue;
-        }
-
-        if(
-          distance(
-            bullet.x,
-            bullet.y,
-            zombie.x,
-            zombie.y
-          )
-          <
-          zombie.radius +
-          bullet.radius
-        ){
-
-          hitZombie(zombie);
-
-          bullets.splice(
-            i,
-            1
-          );
-
-          removed = true;
-
-          break;
-
-        }
-
+  if(firing)shoot();
+  for(let i=bullets.length-1;i>=0;i--){
+    const b=bullets[i],vx=b.dx*frameScale,vy=b.dy*frameScale,steps=Math.max(1,Math.ceil(Math.hypot(vx,vy)/3));let removed=false;
+    for(let n=0;n<steps;n++){
+      const x=b.x+vx/steps,y=b.y+vy/steps;
+      if(worldCollision(x,y,b.radius,scene)){removed=true;break;}
+      b.x=x;b.y=y;
+      if(scene==='surface'){
+        const hit=zombies.find(z=>z.alive&&distance(x,y,z.x,z.y)<z.radius+b.radius);
+        if(hit){hitZombie(hit);removed=true;break;}
       }
-
     }
-
-    if(removed){
-      continue;
-    }
-
-    if(bullet.life <= 0){
-
-      bullets.splice(
-        i,
-        1
-      );
-
-    }
-
+    b.life-=frameScale;if(removed||b.life<=0)bullets.splice(i,1);
   }
-
 }
 
-/* =====================================================
-   COLLISION
-===================================================== */
 
-function surfaceCollision(x,y){
-  const r=player.radius,o=surface.outer;
-  if(x<r || x>surface.width-r || y<r || y>surface.height-r)return true;
-
-  const gateLeft=730,gateRight=870;
-  const inBaseX=x>o.left-r&&x<o.right+r;
-  if(inBaseX){
-    if(y>o.top-r&&y<o.top+o.thickness+r)return true;
-    if(x>o.left-r&&x<o.left+o.thickness+r&&y>o.top-r&&y<o.bottom+r)return true;
-    if(x>o.right-o.thickness-r&&x<o.right+r&&y>o.top-r&&y<o.bottom+r)return true;
-    if(y>o.bottom-o.thickness-r&&y<o.bottom+r && !(x>gateLeft+r&&x<gateRight-r))return true;
-  }
-
-  const inner=surface.inner,wall=inner.thickness;
-  if(x>inner.left-r&&x<inner.right+r&&y>inner.top-r&&y<inner.top+wall+r)return true;
-  if(y>inner.top-r&&y<inner.bottom+r&&x>inner.left-r&&x<inner.left+wall+r)return true;
-  if(y>inner.top-r&&y<inner.bottom+r&&x>inner.right-wall-r&&x<inner.right+r)return true;
-  if(y>inner.bottom-wall-r&&y<inner.bottom+r&&x>inner.left-r&&x<inner.right+r){
-    const gate=x>inner.gateX+r&&x<inner.gateX+inner.gateWidth-r;
-    if(!gate)return true;
-  }
-  return false;
-}
-
-function bunkerCollision(x,y){
-  const r=player.radius,c=bunker.corridor;
+function bunkerGeometryBlocked(x,y,r){
+  const c=bunker.corridor;
 
   const inside=(o)=>
     x>=o.left+r && x<=o.right-r &&
@@ -2280,6 +2441,7 @@ function updatePlayer(){
     return;
   }
 
+  updateAutoWalk();
   player.moving = movePower > JOY_DEAD;
   player.running = movePower >= RUN_THRESHOLD;
 
@@ -2297,7 +2459,9 @@ function updatePlayer(){
   // new maximum = half of the old maximum run speed.
   const newMaxSpeed=player.runSpeed*.50;
   const normalizedPower=clamp((movePower-JOY_DEAD)/(1-JOY_DEAD),0,1);
-  const speed=newMaxSpeed*(.20+.80*normalizedPower);
+  let speed=newMaxSpeed*(.20+.80*normalizedPower)*frameScale;
+  if(navigation){const p=navigation.points[navigation.index];if(p)speed=Math.min(speed,distance(player.x,player.y,p.x,p.y));}
+  const oldX=player.x,oldY=player.y;
 
   const collision =
     scene === "surface"
@@ -2330,8 +2494,11 @@ function updatePlayer(){
     player.y = newY;
   }
 
-  player.walkAnimation +=
-    .21;
+  if(navigation){
+    navigation.blockedMs=distance(oldX,oldY,player.x,player.y)<.05?navigation.blockedMs+16.67*frameScale:0;
+    if(navigation.blockedMs>600){cancelNavigation();message('Проход занят. Выберите другой путь');}
+  }
+  player.walkAnimation += .21*frameScale;
 
   const now =
     performance.now();
@@ -2367,12 +2534,17 @@ function updatePlayer(){
 ===================================================== */
 
 function damagePlayer(amount){
+  queueGameSave();
 
   if(playerDead){
     return;
   }
 
-  player.health -= amount;
+  // 0.7.0: body armor reduces incoming damage. Durability is intentionally
+  // not consumed yet; we first test the core equipment/armor loop.
+  const armorPct=equippedArmor();
+  const finalDamage=Math.max(1,Math.round(amount*(1-armorPct/100)));
+  player.health -= finalDamage;
 
   if(player.health < 0){
     player.health = 0;
@@ -2429,6 +2601,8 @@ function killPlayer(){
 }
 
 function respawn(){
+  stopControls();gateOpen=false;invalidateGeometry();
+  queueGameSave();
 
   player.health =
     player.maxHealth;
@@ -2480,269 +2654,41 @@ el("respawnButton").addEventListener(
    ZOMBIE AI
 ===================================================== */
 
-function zombieCanMoveTo(x,y){
-
-  /*
-    Пока заражённые используют ту же геометрию стен,
-    но с небольшим запасом.
-  */
-
-  const outer =
-    surface.outer;
-
-  if(
-    x <
-    outer.left +
-    outer.thickness +
-    15
-  ) return false;
-
-  if(
-    x >
-    outer.right -
-    outer.thickness -
-    15
-  ) return false;
-
-  if(
-    y <
-    outer.top +
-    outer.thickness +
-    15
-  ) return false;
-
-  if(
-    y >
-    outer.bottom -
-    outer.thickness -
-    15
-  ) return false;
-
-  return true;
-}
-
+function zombieCanMoveTo(x,y){return !worldCollision(x,y,17,'surface');}
 function updateZombies(){
-  const aiNow=performance.now();
-  if(updateZombies._last && aiNow-updateZombies._last<32) return;
-  updateZombies._last=aiNow;
-
-
-  if(
-    scene !== "surface" ||
-    menuOpen ||
-    playerDead
-  ){
-    return;
-  }
-
-  const now =
-    performance.now();
-
-  for(const zombie of zombies){
-
-    if(!zombie.alive){
-      continue;
-    }
-
-    const playerDistance =
-      distance(
-        zombie.x,
-        zombie.y,
-        player.x,
-        player.y
-      );
-
-    /* SEE PLAYER */
-
-    if(playerDistance < 270){
-
-      zombie.state =
-        "chase";
-
-    }
-
-    /* HEAR NOISE */
-
-    if(
-      now -
-      noiseEvent.time
-      <
-      650
-    ){
-
-      const noiseDistance =
-        distance(
-          zombie.x,
-          zombie.y,
-          noiseEvent.x,
-          noiseEvent.y
-        );
-
-      if(
-        noiseDistance <
-        noiseEvent.radius
-      ){
-
-        zombie.state =
-          "chase";
-
-      }
-
-    }
-
-    /* GROWL */
-
-    if(
-      playerDistance < 330 &&
-      now > zombie.lastGrowl
-    ){
-
-      playZombieBuffer(zombie);
-
-      zombie.lastGrowl =
-        now +
-        3500 +
-        Math.random()*4500;
-
-    }
-
-    /* CHASE */
-
-    if(zombie.state === "chase"){
-
-      if(playerDistance > 430){
-
-        zombie.state =
-          "wander";
-
-      }
-
-      else if(playerDistance > 31){
-
-        const dx =
-          (
-            player.x -
-            zombie.x
-          ) /
-          playerDistance;
-
-        const dy =
-          (
-            player.y -
-            zombie.y
-          ) /
-          playerDistance;
-
-        const nextX =
-          zombie.x +
-          dx *
-          zombie.chaseSpeed;
-
-        const nextY =
-          zombie.y +
-          dy *
-          zombie.chaseSpeed;
-
-        if(
-          zombieCanMoveTo(
-            nextX,
-            zombie.y
-          )
-        ){
-          zombie.x = nextX;
+  if(scene!=='surface'||menuOpen||playerDead)return;
+  const now=performance.now();
+  for(const z of zombies){
+    if(!z.alive)continue;
+    const d=distance(player.x,player.y,z.x,z.y),visible=lineClear(z.x,z.y,player.x,player.y,0,'surface');
+    const safeWall=!gateOpen&&!inFortress(z.x,z.y)&&inFortress(player.x,player.y);
+    const hears=now-noiseEvent.time<650&&distance(z.x,z.y,noiseEvent.x,noiseEvent.y)<noiseEvent.radius;
+    if(!safeWall&&((d<270&&visible)||hears))z.state='chase';
+    if(safeWall||d>430)z.state='wander';
+    if(d<ZOMBIE_AUDIO_RADIUS&&visibleOnScreen(z.x,z.y,35)&&now>z.lastGrowl){playZombieBuffer(z);z.lastGrowl=now+3500+Math.random()*4500;}
+    let dx=0,dy=0;
+    if(z.state==='chase'){
+      if(d<34&&visible&&now-z.lastAttack>950){z.lastAttack=now;damagePlayer(10);}
+      if(d>31){
+        if(lineClear(z.x,z.y,player.x,player.y,z.radius,'surface')){dx=(player.x-z.x)/d;dy=(player.y-z.y)/d;z.path=null;}
+        else{
+          if(!z.nextPathAt||now>z.nextPathAt){z.nextPathAt=now+1200;z.path=findWalkPath(z.x,z.y,{id:'player',x:player.x,y:player.y,r:0,range:30},'surface',17);z.pathIndex=0;}
+          let p=z.path?.[z.pathIndex];if(p&&distance(z.x,z.y,p.x,p.y)<4)p=z.path[++z.pathIndex];
+          if(p){const n=distance(z.x,z.y,p.x,p.y)||1;dx=(p.x-z.x)/n;dy=(p.y-z.y)/n;}
         }
-
-        if(
-          zombieCanMoveTo(
-            zombie.x,
-            nextY
-          )
-        ){
-          zombie.y = nextY;
-        }
-
       }
-
-      /* ATTACK */
-
-      if(
-        playerDistance < 34 &&
-        now -
-        zombie.lastAttack
-        >
-        950
-      ){
-
-        zombie.lastAttack =
-          now;
-
-        damagePlayer(10);
-
-      }
-
+    }else{
+      if(now>z.nextWanderChange){z.wanderAngle=Math.random()*Math.PI*2;z.nextWanderChange=now+1800+Math.random()*3000;}
+      dx=Math.cos(z.wanderAngle);dy=Math.sin(z.wanderAngle);
     }
-
-    /* WANDER */
-
-    else{
-
-      if(
-        now >
-        zombie.nextWanderChange
-      ){
-
-        zombie.wanderAngle =
-          Math.random() *
-          Math.PI * 2;
-
-        zombie.nextWanderChange =
-          now +
-          1200 +
-          Math.random()*2600;
-
-      }
-
-      const nextX =
-        zombie.x +
-        Math.cos(
-          zombie.wanderAngle
-        ) *
-        zombie.speed;
-
-      const nextY =
-        zombie.y +
-        Math.sin(
-          zombie.wanderAngle
-        ) *
-        zombie.speed;
-
-      if(
-        zombieCanMoveTo(
-          nextX,
-          zombie.y
-        )
-      ){
-        zombie.x = nextX;
-      }
-
-      if(
-        zombieCanMoveTo(
-          zombie.x,
-          nextY
-        )
-      ){
-        zombie.y = nextY;
-      }
-
-    }
-
+    const speed=(z.state==='chase'?z.chaseSpeed:z.speed)*.5*frameScale;
+    let moved=false;
+    if(zombieCanMoveTo(z.x+dx*speed,z.y)){z.x+=dx*speed;moved=true;}
+    if(zombieCanMoveTo(z.x,z.y+dy*speed)){z.y+=dy*speed;moved=true;}
+    if(!moved&&z.state==='wander')z.nextWanderChange=0;
   }
-
 }
 
-/* =====================================================
-   CAMERA
-===================================================== */
 
 function updateCamera(){
   const targetX=player.x-screenWidth/2;
@@ -2770,12 +2716,17 @@ function updateCamera(){
 // FARM ACTION HELPERS — 0.6.18
 // Uses the same contextual hand button as hatch/storage/workshop.
 // =====================================================
-window.farmCrops = window.farmCrops || [
-  {name:"Картофель",icon:"🥔"},
-  {name:"Овощи",icon:"🥕"},
-  {name:"Зерно",icon:"🌾"},
-  {name:"Лекарственные",icon:"🌿"},
-  {name:"Технические",icon:"🌻"}
+window.farmCrops = [
+  {name:"Картофель",icon:"🥔",itemType:"potato"},
+  {name:"Морковь",icon:"🥕",itemType:"carrot"},
+  {name:"Помидоры",icon:"🍅",itemType:"tomato"},
+  {name:"Кукуруза",icon:"🌽",itemType:"corn"},
+  {name:"Зерно",icon:"🌾",itemType:"grain"},
+  {name:"Фасоль",icon:"🫘",itemType:"beans"},
+  {name:"Лук",icon:"🧅",itemType:"onion"},
+  {name:"Ягоды",icon:"🍓",itemType:"berries"},
+  {name:"Лекарственные",icon:"🌿",itemType:"medicinal_herbs"},
+  {name:"Технические",icon:"🌻",itemType:"technical_crop"}
 ];
 window.farmState = window.farmState || Array.from({length:5},()=>({crop:null,plantedAt:0}));
 const FARM_GROW_TIME = 45000;
@@ -2818,6 +2769,7 @@ function nearestFarmBed(){
 }
 
 function useFarmBed(i){
+  queueGameSave();
   const st=window.farmState[i];
   if(!st) return;
 
@@ -2831,14 +2783,7 @@ function useFarmBed(i){
       // One visible mature plant = one inventory unit.
       // If the backpack was previously full, collect only the remaining amount.
       const harvestAmount=st.harvestLeft || 160;
-      const cropItemTypes=[
-        "potato",
-        "vegetables",
-        "grain",
-        "medicinal_herbs",
-        "technical_crop"
-      ];
-      const itemType=cropItemTypes[st.crop];
+      const itemType=crop.itemType;
 
       // addItem() returns the amount that DID NOT fit.
       const left=addItem(itemType,harvestAmount);
@@ -2880,130 +2825,124 @@ let currentActionObject = null;
 const actionButton =
   el("actionButton");
 
-function updateAction(){
-
-  currentAction = null;
-  currentActionObject = null;
-
-  let icon = "✋";
-
-  if(scene === "surface"){
-
-    if(
-      distance(
-        player.x,
-        player.y,
-        surface.hatch.x,
-        surface.hatch.y
-      )
-      <
-      82
-    ){
-
-      currentAction =
-        "bunker";
-
-      icon =
-        "↧";
-
-    }
-
-    const lootObj=nearestScavenge();
-    if(lootObj){
-      currentAction="search";
-      currentActionObject=lootObj;
-      icon="🔎";
-    }
-  }
-
-  else{
-
-    if(
-      distance(
-        player.x,
-        player.y,
-        bunker.entrance.x,
-        bunker.entrance.y
-      )
-      <
-      90
-    ){
-
-      currentAction =
-        "surface";
-
-      icon =
-        "↥";
-
-    }
-
-    if(
-      player.x > 315 &&
-      player.x < 500 &&
-      player.y > 855 &&
-      player.y < 1005
-    ){
-
-      currentAction =
-        "workshop";
-
-      icon =
-        "🔧";
-
-    }
-    const farmBed=nearestFarmBed();
-    if(farmBed !== null){
-      currentAction="farm";
-      currentActionObject=farmBed;
-      icon="🌱";
-    }
-
-    // Cow management terminal at the cow-pen entrance.
-    const f=bunker.farm;
-    const livestockMidY=((f.top+42)+(f.bottom-42))/2;
-    const cowTerminal={x:(f.cropLeft??90)-12,y:livestockMidY};
-    if(distance(player.x,player.y,cowTerminal.x,cowTerminal.y)<72){
-      currentAction="livestock_manager";
-      currentActionObject=null;
-      icon="🐄";
-    }
-
-    // Chest has priority if its interaction zone overlaps a farm bed.
-    const chest=nearestStorageChest();
-    if(chest !== null){
-      currentAction="storage";
-      currentActionObject=chest;
-      icon="📦";
-    }
-    if(distance(player.x,player.y,cowTerminal.x,cowTerminal.y)<72){
-      currentAction="livestock_manager";
-      currentActionObject=null;
-      icon="🐄";
-    }
-
-    // Temporary feed grinder beside the lower harvest chest.
-    if(nearFeedCraftStation()){
-      currentAction="feed_craft";
-      currentActionObject=null;
-      icon="🌾";
-    }
-  }
-
-  actionButton.textContent =
-    icon;
-
-  actionButton.classList.toggle(
-    "available",
-    currentAction !== null
-  );
-
-  actionButton.classList.toggle(
-    "inactive",
-    currentAction === null
-  );
-
+function interactionObjects(which=scene){
+  if(which==='surface')return [
+    {...gateRect,kind:'gate',name:gateOpen?'Закрыть ворота':'Открыть ворота',range:58},
+    {id:'hatch',kind:'bunker',name:'Спуститься',x:surface.hatch.x,y:surface.hatch.y,r:35,range:45},
+    ...scavenges.map(o=>({...o,kind:'search',name:hasSearchableLoot(o)?'Обыскать':'Уже обыскано — пусто',ref:o,range:48})),
+    ...worldTrees.filter(t=>t.wood>0).map(t=>({...t,kind:'tree',name:t.felled?'Забрать древесину':'Рубить дерево',ref:t,range:45}))
+  ];
+  const f=bunker.farm,feed=feedCraftStationPos();
+  return [
+    {id:'exit',kind:'surface',name:'На поверхность',x:bunker.entrance.x,y:bunker.entrance.y,r:28,range:48},
+    ...getChestPositions().flatMap((p,i)=>i===10||i===11?[]:[{id:'chest'+i,kind:'storage',name:storageChests[i].name,ref:i,x:p.x-34,y:p.y-25,w:68,h:50,range:44}]),
+    ...getFarmBeds().map((b,i)=>({...b,id:'bed'+i,kind:'farm',name:'Грядка '+(i+1),ref:i,range:45})),
+    {id:'livestock',kind:'livestock_manager',name:'Животные',x:(f.cropLeft??90)-37,y:(f.top+f.bottom)/2-28,w:50,h:56,range:58},
+    {id:'feed_craft',kind:'feed_craft',name:'Кормодробилка',x:feed.x-28,y:feed.y-23,w:56,h:46,range:44},
+    ...solidObjects('bunker').filter(o=>['technical','ammunition','tools','workbench'].includes(o.id)).map(o=>({...o,kind:'workshop',name:'Мастерская',range:46}))
+  ];
 }
+function contactPoint(o,x,y){
+  if(o.r!==undefined){const d=distance(x,y,o.x,o.y)||1;return {x:o.x+(x-o.x)/d*o.r,y:o.y+(y-o.y)/d*o.r};}
+  return {x:clamp(x,o.x,o.x+o.w),y:clamp(y,o.y,o.y+o.h)};
+}
+function canInteract(o,x,y){
+  if(!o)return false;
+  const p=contactPoint(o,x,y);
+  return distance(x,y,p.x,p.y)<=o.range&&lineClear(x,y,p.x,p.y,0,scene,o.id);
+}
+function hitInteraction(x,y){
+  return interactionObjects().find(o=>o.r!==undefined?distance(x,y,o.x,o.y)<=o.r+10:rectHit(x,y,7,o))||null;
+}
+function executeInteraction(target){
+  if(!target||menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+  navigation=null;movePower=0;moveX=0;moveY=0;
+  if(target.kind==='gate')toggleGate();
+  else if(target.kind==='bunker')enterBunker();
+  else if(target.kind==='surface')leaveBunker();
+  else if(target.kind==='storage')openStorage(target.ref);
+  else if(target.kind==='farm')useFarmBed(target.ref);
+  else if(target.kind==='tree')useTree(target.ref);
+  else if(target.kind==='search')startSearch(target.ref);
+  else if(target.kind==='workshop')openOverlay(el('workshopOverlay'));
+  else if(target.kind==='livestock_manager')openCowMenu();
+  else if(target.kind==='feed_craft')openFeedCraftMenu();
+}
+function cancelNavigation(){navigation=null;movePower=0;moveX=0;moveY=0;}
 
+// A* on a 24 px grid; each edge is swept with the actor's radius.
+function findWalkPath(startX,startY,target,which=scene,radius=player.radius){
+  const bounds=which==='surface'?{x:0,y:0,w:1600,h:2200}:{x:-150,y:-940,w:1510,h:2200};
+  const cell=12,cols=Math.ceil(bounds.w/cell),rows=Math.ceil(bounds.h/cell),size=cols*rows;
+  const cached=new Uint8Array(size),closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
+  const point=id=>({x:bounds.x+(id%cols+.5)*cell,y:bounds.y+(Math.floor(id/cols)+.5)*cell});
+  const walkable=id=>{if(id<0||id>=size)return false;if(!cached[id]){const p=point(id);cached[id]=worldCollision(p.x,p.y,radius,which)?2:1;}return cached[id]===1;};
+  const sx=Math.floor((startX-bounds.x)/cell),sy=Math.floor((startY-bounds.y)/cell);
+  let start=-1,best=Infinity;
+  for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){
+    const x=sx+dx,y=sy+dy;if(x<0||x>=cols||y<0||y>=rows)continue;
+    const id=y*cols+x,p=point(id),d=distance(startX,startY,p.x,p.y);
+    if(d<best&&walkable(id)&&lineClear(startX,startY,p.x,p.y,radius,which)){start=id;best=d;}
+  }
+  if(start<0)return null;
+  const near=(p)=>{
+    const c=contactPoint(target,p.x,p.y);
+    return distance(p.x,p.y,c.x,c.y)<=target.range&&lineClear(p.x,p.y,c.x,c.y,0,which,target.id);
+  };
+  const heuristic=id=>{const p=point(id),c=contactPoint(target,p.x,p.y);return Math.max(0,distance(p.x,p.y,c.x,c.y)-target.range);};
+  const heap=[];
+  const push=(id,f)=>{let i=heap.length;heap.push({id,f});while(i>0){const p=(i-1)>>1;if(heap[p].f<=f)break;[heap[p],heap[i]]=[heap[i],heap[p]];i=p;}};
+  const pop=()=>{const out=heap[0],last=heap.pop();if(heap.length){heap[0]=last;let i=0;while(true){let j=i*2+1;if(j>=heap.length)break;if(j+1<heap.length&&heap[j+1].f<heap[j].f)j++;if(heap[i].f<=heap[j].f)break;[heap[i],heap[j]]=[heap[j],heap[i]];i=j;}}return out.id;};
+  cost[start]=0;push(start,heuristic(start));
+  while(heap.length){
+    const id=pop();if(closed[id])continue;closed[id]=1;const p=point(id);
+    if(near(p)){
+      const result=[];for(let n=id;n!==-1;n=parent[n])result.push(point(n));result.reverse();
+      // Remove unnecessary waypoints while preserving all obstacle checks.
+      const smooth=[];let from={x:startX,y:startY},i=0;
+      while(i<result.length){let far=i;while(far+1<result.length&&lineClear(from.x,from.y,result[far+1].x,result[far+1].y,radius,which))far++;smooth.push(result[far]);from=result[far];i=far+1;}
+      return smooth;
+    }
+    const ix=id%cols,iy=Math.floor(id/cols);
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+      if(!dx&&!dy)continue;const x=ix+dx,y=iy+dy;if(x<0||x>=cols||y<0||y>=rows)continue;
+      const next=y*cols+x;if(closed[next]||!walkable(next))continue;
+      const q=point(next),g=cost[id]+Math.hypot(dx,dy)*cell;if(g>=cost[next]||!lineClear(p.x,p.y,q.x,q.y,radius,which))continue;
+      cost[next]=g;parent[next]=id;push(next,g+heuristic(next));
+    }
+  }
+  return null;
+}
+function approachObject(target){
+  stopControls();cancelSearch();cancelChop();
+  if(canInteract(target,player.x,player.y)){executeInteraction(target);return;}
+  const tx=target.x+(target.w||0)/2,ty=target.y+(target.h||0)/2;
+  if(scene==='surface'&&!gateOpen&&target.id!=='gate'&&inFortress(player.x,player.y)!==inFortress(tx,ty)){
+    message('🔒 Сначала откройте ворота');return;
+  }
+  const points=findWalkPath(player.x,player.y,target);
+  if(!points){message('К объекту нет свободного прохода');return;}
+  navigation={targetId:target.id,points,index:0,blockedMs:0,scene};
+}
+function updateAutoWalk(){
+  if(!navigation)return;
+  const target=interactionObjects().find(o=>o.id===navigation.targetId);
+  if(!target||navigation.scene!==scene){cancelNavigation();return;}
+  if(canInteract(target,player.x,player.y)){cancelNavigation();executeInteraction(target);return;}
+  let p=navigation.points[navigation.index];
+  while(p&&distance(player.x,player.y,p.x,p.y)<(navigation.index===navigation.points.length-1?.05:2)){navigation.index++;p=navigation.points[navigation.index];}
+  if(!p){cancelNavigation();return;}
+  const d=distance(player.x,player.y,p.x,p.y)||1;moveX=(p.x-player.x)/d;moveY=(p.y-player.y)/d;movePower=.84;
+  if(!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
+}
+function updateAction(){
+  const icons={gate:gateOpen?'🔒':'🔓',bunker:'↧',surface:'↥',storage:'📦',farm:'🌱',tree:'🪓',search:'🔎',workshop:'🔧',livestock_manager:'🐄',feed_craft:'🌾'};
+  const near=interactionObjects().filter(o=>canInteract(o,player.x,player.y));
+  near.sort((a,b)=>{const p=contactPoint(a,player.x,player.y),q=contactPoint(b,player.x,player.y);return distance(player.x,player.y,p.x,p.y)-distance(player.x,player.y,q.x,q.y);});
+  interactionTarget=near[0]||null;currentAction=interactionTarget?.kind||null;currentActionObject=interactionTarget;
+  actionButton.textContent=icons[currentAction]||'✋';actionButton.classList.toggle('available',!!currentAction);actionButton.classList.toggle('inactive',!currentAction);
+  actionButton.setAttribute('aria-label',interactionTarget?.name||'Действие');
+}
 
 
 function getChestPositions(){
@@ -3308,37 +3247,87 @@ function nearFeedCraftStation(){
   return distance(player.x,player.y,p.x,p.y)<=78;
 }
 let feedCraftBusy=false;
-let feedCraftTimer=null;
+let pendingFeedCraft=null;
+let feedCraftLoaded=0;
 
 function showFeedCraftList(){
   if(feedCraftBusy)return;
+  feedCraftLoaded=0;
   el("feedCraftList").style.display="";
   el("feedCraftRecipe").style.display="none";
   el("feedCraftProgress").style.display="none";
 }
-
 function showFeedGrainRecipe(){
   if(feedCraftBusy)return;
+  feedCraftLoaded=0;
   el("feedCraftList").style.display="none";
   el("feedCraftRecipe").style.display="";
   el("feedCraftProgress").style.display="none";
   renderFeedCraftMenu();
 }
-
+function setFeedLoaded(n){
+  if(feedCraftBusy)return;
+  feedCraftLoaded=clamp(Math.floor(n),0,bagCount("grain"));
+  renderFeedCraftMenu();
+}
 function renderFeedCraftMenu(){
-  const grain=bagCount("grain");
-  el("feedGrainOwned").textContent=`В рюкзаке: ${grain} зерна`;
-  const hasRoom=bag.length<BAG_SLOTS || bag.some(s=>s.type==="animal_feed"&&s.qty<STACK_MAX);
-  const can=grain>=10 && hasRoom && !feedCraftBusy;
+  const available=bagCount("grain");
+  if(feedCraftLoaded>available)feedCraftLoaded=available;
+  const batches=Math.floor(feedCraftLoaded/10);
+  const output=batches*20;
+  el("feedCraftAvailable").textContent=`В рюкзаке: ${available} зерна`;
+  el("feedCraftLoaded").textContent=`🌾 ${feedCraftLoaded}`;
+  el("feedCraftOutput").innerHTML=
+    batches>0
+      ? `Будет изготовлено: <b>🌾 ${output} корма</b> (${batches}×)`
+      : `Для 1 крафта загрузите минимум <b>10 зерна</b>.`;
+  const can=batches>0 && !feedCraftBusy;
   el("feedCraftBtn").disabled=!can;
   el("feedCraftBtn").style.opacity=can?"1":".45";
 }
-
 function openFeedCraftMenu(){
-  feedCraftBusy=false;
-  if(feedCraftTimer){clearInterval(feedCraftTimer);feedCraftTimer=null;}
-  showFeedCraftList();
+  feedCraftBusy=!!pendingFeedCraft;
+  feedCraftLoaded=0;
+  if(pendingFeedCraft)renderPendingFeedCraft();
+  else showFeedCraftList();
   openOverlay(el("feedCraftOverlay"));
+}
+
+function renderPendingFeedCraft(){
+  if(!pendingFeedCraft)return;
+  const remaining=Math.max(0,pendingFeedCraft.readyAt-Date.now());
+  el("feedCraftList").style.display="none";
+  el("feedCraftRecipe").style.display="none";
+  el("feedCraftProgress").style.display="";
+  el("feedCraftBar").style.width=(clamp(1-remaining/2500,0,1)*100).toFixed(0)+"%";
+  el("feedCraftProgressText").textContent=remaining>0
+    ? "⚙️ Изготовление корма…"
+    : `🌾 Готово: ${pendingFeedCraft.qty}. Освободите место в рюкзаке или хранилище корма.`;
+}
+
+function updateFeedCraft(){
+  if(!pendingFeedCraft)return;
+  if(el("feedCraftOverlay").classList.contains("open"))renderPendingFeedCraft();
+  if(Date.now()<pendingFeedCraft.readyAt)return;
+  const before=pendingFeedCraft.qty;
+  let left=addItem("animal_feed",before);
+  if(left>0)left=addToSlots(storageChests[12].items,"animal_feed",left,12);
+  pendingFeedCraft.qty=left;
+  if(left>0){
+    if(left!==before)queueGameSave();
+    return;
+  }
+  const total=pendingFeedCraft.total;
+  pendingFeedCraft=null;
+  feedCraftBusy=false;
+  feedCraftLoaded=0;
+  if(el("feedCraftOverlay").classList.contains("open")){
+    el("feedCraftProgress").style.display="none";
+    el("feedCraftRecipe").style.display="";
+    renderFeedCraftMenu();
+  }
+  message(`🌾 Готово: ${total} корма`);
+  queueGameSave();
 }
 
 function nearestStorageChest(){
@@ -3393,9 +3382,10 @@ function openStorage(index){
   openOverlay(el("storageOverlay"));
 }
 function slotHTML(s){
-  return s?`<div class="ico">${ITEM[s.type].icon}</div><div>${ITEM[s.type].name}</div><div class="qty">×${s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`;
+  return s?`<div class="ico">${itemIconHTML(s.type)}</div><div>${ITEM[s.type].name}</div><div class="qty">×${s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`;
 }
 function renderStorage(){
+  renderQuickSlots();updateAmmoHud();
   const ch=storageChests[activeStorage];
   if(!ch)return;
   el("storageTitle").textContent=`${ch.icon} ${ch.name}`;
@@ -3525,6 +3515,7 @@ function enterBunker(){
 
       el("locationName").textContent =
         "БУНКЕР";
+      queueGameSave();
 
     }
   );
@@ -3551,65 +3542,21 @@ function leaveBunker(){
 
       el("locationName").textContent =
         "БАЗА";
+      queueGameSave();
 
     }
   );
 
 }
 
-actionButton.addEventListener(
-  "pointerdown",
-  function(e){
+actionButton.addEventListener('pointerdown',function(e){
+  e.preventDefault();e.stopPropagation();
+  if(menuOpen||playerDead)return;
+  updateAction();
+  if(interactionTarget)executeInteraction(interactionTarget);
+  else message('Подойдите ближе или нажмите на объект');
+});
 
-    if(menuOpen || playerDead){
-      return;
-    }
-
-    e.preventDefault();
-
-    if(currentAction === "bunker"){
-      enterBunker();
-      return;
-    }
-
-    if(currentAction === "surface"){
-      leaveBunker();
-      return;
-    }
-
-    if(currentAction === "search"){
-      startSearch(currentActionObject);
-      return;
-    }
-
-    if(currentAction === "storage"){
-      openStorage(currentActionObject);
-      return;
-    }
-
-    if(currentAction === "workshop"){
-      openOverlay(el("workshopOverlay"));
-      return;
-    }
-
-    if(currentAction === "farm"){
-      useFarmBed(currentActionObject);
-      return;
-    }
-
-    if(currentAction === "livestock_manager"){
-      openCowMenu();
-      return;
-    }
-
-    if(currentAction === "feed_craft"){
-      openFeedCraftMenu();
-      return;
-    }
-
-    message("Здесь пока нет действия");
-  }
-);
 
 /* =====================================================
    DRAW SURFACE
@@ -3696,17 +3643,7 @@ function drawSurface(){
     o.thickness
   );
 
-  /* MAIN GATE */
-
-  ctx.fillStyle =
-    "#292d2d";
-
-  ctx.fillRect(
-    730,
-    o.bottom-o.thickness,
-    140,
-    o.thickness
-  );
+  drawGate();
 
   /* INNER WALL */
 
@@ -3849,27 +3786,6 @@ function drawSurface(){
     362
   );
 
-  /* CAR */
-
-  ctx.fillStyle =
-    "#38444b";
-
-  ctx.fillRect(
-    1100,
-    790,
-    160,
-    75
-  );
-
-  ctx.fillStyle =
-    "white";
-
-  ctx.fillText(
-    "МАШИНА",
-    1180,
-    833
-  );
-
   /* TOWERS */
 
   const towers = [
@@ -3877,7 +3793,6 @@ function drawSurface(){
     [800,150],
     [1400,160],
     [200,1040],
-    [800,1040],
     [1400,1040]
   ];
 
@@ -3923,25 +3838,14 @@ function drawSurface(){
     ctx.fillStyle="#1e2020";ctx.fillRect(o.x+18,o.y+18,o.w-36,o.h-36);
     ctx.fillStyle="#5b5147";ctx.fillRect(o.x+o.w/2-24,o.y+o.h-48,48,48);
     ctx.fillStyle="rgba(255,255,255,.75)";ctx.font="12px Arial";ctx.textAlign="center";
-    ctx.fillText(o.searched?"ОБЫСКАНО":"ЗАБРОШЕННЫЙ ДОМ",o.x+o.w/2,o.y+24);
+    ctx.fillText(o.searched?(hasSearchableLoot(o)?"ОСТАЛАСЬ ДОБЫЧА":"ОБЫСКАНО"):"ЗАБРОШЕННЫЙ ДОМ",o.x+o.w/2,o.y+24);
   }
 
-  // abandoned cars
-  for(const o of scavenges){
-    if(o.kind!=="car")continue;
-    ctx.fillStyle=o.searched?"#343536":"#5a4b43";ctx.fillRect(o.x,o.y,o.w,o.h);
-    ctx.fillStyle="#22282b";ctx.fillRect(o.x+25,o.y+8,70,o.h-16);
-    ctx.fillStyle="#111";ctx.beginPath();ctx.arc(o.x+25,o.y+o.h,13,0,Math.PI*2);ctx.arc(o.x+105,o.y+o.h,13,0,Math.PI*2);ctx.fill();
-  }
-
-  // trees / overgrowth
-  const trees=[[180,1260],[560,1260],[1430,1280],[170,1700],[560,1730],[1400,1780],[1030,2030],[250,2070],[1180,1880]];
-  for(const q of trees){
-    ctx.fillStyle="#493b2b";ctx.fillRect(q[0]-6,q[1],12,34);
-    ctx.fillStyle="#315137";ctx.beginPath();ctx.arc(q[0],q[1],28,0,Math.PI*2);ctx.fill();
-  }
-
+  drawParkedCars();
+  drawWorldTrees();
 }
+
+
 
 /* =====================================================
    DRAW BUNKER
@@ -4542,273 +4446,116 @@ function drawBunker(){
 ===================================================== */
 
 function drawPlayer(){
-
-  let length =
-    Math.hypot(
-      player.aimX,
-      player.aimY
-    );
-
-  if(length === 0){
-    length = 1;
+  const angle=Math.atan2(player.aimY,player.aimX),item=heldItem();
+  const bob=player.moving?Math.sin(player.walkAnimation)*3:0;
+  const recoil=item==='rifle_ak74'&&performance.now()-muzzleFlash.time<95?-2:0;
+  ctx.save();ctx.translate(player.x,player.y);ctx.rotate(angle);
+  ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.ellipse(-2,3,20,17,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#222c2c';ctx.lineWidth=8;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(-4,-8);ctx.lineTo(-12+bob,-9);ctx.moveTo(-4,8);ctx.lineTo(-12-bob,9);ctx.stroke();
+  ctx.fillStyle=equipment.body?'#586849':'#3d5865';ctx.beginPath();ctx.roundRect(-12,-13,25,26,7);ctx.fill();
+  ctx.fillStyle='#303d31';ctx.fillRect(-17,-9,8,18);
+  ctx.strokeStyle='#8a9277';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-7,-11);ctx.lineTo(-7,11);ctx.stroke();
+  ctx.strokeStyle='#c9a47f';ctx.lineWidth=5;
+  if(item==='rifle_ak74'){
+    ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(25+recoil,-1);ctx.moveTo(3,11);ctx.lineTo(13+recoil,3);ctx.stroke();
+    ctx.save();ctx.translate(recoil,0);
+    ctx.fillStyle='#b47b4b';ctx.beginPath();ctx.moveTo(-3,-4);ctx.lineTo(10,-3);ctx.lineTo(10,4);ctx.lineTo(-4,8);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#202b2c';ctx.fillRect(9,-4,20,8);
+    ctx.fillStyle='#a8693c';ctx.fillRect(24,-4,10,7);ctx.fillRect(13,4,4,7);
+    ctx.strokeStyle='#242f30';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(21,4);ctx.quadraticCurveTo(19,13,28,16);ctx.stroke();
+    ctx.fillStyle='#526064';ctx.fillRect(33,-2,11,3);ctx.fillStyle='#1c2425';ctx.fillRect(40,-5,3,4);
+    ctx.strokeStyle='#8b9896';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(10,-3);ctx.lineTo(29,-3);ctx.stroke();ctx.restore();
+  }else if(item==='axe'){
+    const swing=chopState?Math.sin((performance.now()-chopState.startedAt)/110)*.75:-.22;
+    ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(17,-5);ctx.moveTo(3,11);ctx.lineTo(14,6);ctx.stroke();
+    ctx.save();ctx.translate(15,3);ctx.rotate(swing);
+    ctx.strokeStyle='#b98451';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-5,7);ctx.lineTo(16,-15);ctx.stroke();
+    ctx.fillStyle='#9cafb3';ctx.beginPath();ctx.moveTo(8,-16);ctx.lineTo(21,-21);ctx.lineTo(30,-13);ctx.lineTo(26,-4);ctx.lineTo(17,-8);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='#e0e9e9';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(28,-16);ctx.lineTo(30,-13);ctx.lineTo(26,-4);ctx.stroke();ctx.restore();
+  }else if(item==='flashlight'){
+    ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(17,-2);ctx.moveTo(3,11);ctx.lineTo(8,15);ctx.stroke();
+    ctx.fillStyle='#253a42';ctx.fillRect(13,-4,15,7);ctx.fillStyle='#5d747d';ctx.fillRect(25,-6,7,11);ctx.fillStyle=flashlightOn?'#fff1b4':'#8c9b98';ctx.fillRect(32,-5,2,9);
+  }else{
+    ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(11,-13-bob);ctx.moveTo(3,11);ctx.lineTo(11,13+bob);ctx.stroke();
   }
-
-  const ax =
-    player.aimX /
-    length;
-
-  const ay =
-    player.aimY /
-    length;
-
-  const angle =
-    Math.atan2(
-      ay,
-      ax
-    );
-
-  const bob =
-    player.moving
-    ? Math.sin(
-        player.walkAnimation
-      ) * 2
-    : 0;
-
-  ctx.save();
-
-  ctx.translate(
-    player.x,
-    player.y
-  );
-
-  ctx.rotate(angle);
-
-  /* SHADOW */
-
-  ctx.fillStyle =
-    "rgba(0,0,0,.30)";
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    0,
-    12,
-    18,
-    10,
-    0,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  /* LEGS */
-
-  ctx.strokeStyle =
-    "#252b2d";
-
-  ctx.lineWidth =
-    7;
-
-  ctx.lineCap =
-    "round";
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    -5,
-    8
-  );
-
-  ctx.lineTo(
-    -8,
-    22+bob
-  );
-
-  ctx.stroke();
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    5,
-    8
-  );
-
-  ctx.lineTo(
-    8,
-    22-bob
-  );
-
-  ctx.stroke();
-
-  /* BODY */
-
-  ctx.fillStyle =
-    "#3d5865";
-
-  ctx.beginPath();
-
-  ctx.roundRect(
-    -11,
-    -10,
-    22,
-    29,
-    6
-  );
-
-  ctx.fill();
-
-  /* BACKPACK */
-
-  ctx.fillStyle =
-    "#303a34";
-
-  ctx.fillRect(
-    -14,
-    -5,
-    7,
-    19
-  );
-
-  /* HEAD */
-
-  ctx.fillStyle =
-    "#c9a27d";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    3,
-    -16,
-    8,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-  /* ARMS */
-
-  ctx.strokeStyle =
-    "#c39c78";
-
-  ctx.lineWidth =
-    5;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    5,
-    -4
-  );
-
-  ctx.lineTo(
-    18,
-    -1
-  );
-
-  ctx.stroke();
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    4,
-    7
-  );
-
-  ctx.lineTo(
-    18,
-    3
-  );
-
-  ctx.stroke();
-
-  /* WEAPON */
-
-  ctx.strokeStyle =
-    "#141718";
-
-  ctx.lineWidth =
-    5;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    11,
-    1
-  );
-
-  ctx.lineTo(
-    31,
-    1
-  );
-
-  ctx.stroke();
-
-  ctx.strokeStyle =
-    "#555b5c";
-
-  ctx.lineWidth =
-    2;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    28,
-    1
-  );
-
-  ctx.lineTo(
-    36,
-    1
-  );
-
-  ctx.stroke();
-
+  ctx.fillStyle=equipment.head?'#637258':'#cca784';ctx.beginPath();ctx.arc(1,0,8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=equipment.head?'#414d3d':'#483c30';ctx.beginPath();ctx.arc(-1,0,7,Math.PI*.5,Math.PI*1.5);ctx.fill();
   ctx.restore();
-
-  /* AIM LINE */
-
-  ctx.strokeStyle =
-    "rgba(255,230,160,.25)";
-
-  ctx.lineWidth =
-    1;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    player.x+ax*34,
-    player.y+ay*34
-  );
-
-  ctx.lineTo(
-    player.x+ax*80,
-    player.y+ay*80
-  );
-
-  ctx.stroke();
-
-  ctx.strokeStyle =
-    "rgba(255,235,175,.68)";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    player.x+ax*88,
-    player.y+ay*88,
-    4,
-    0,
-    Math.PI*2
-  );
-
-  ctx.stroke();
-
+  if(item==='rifle_ak74'&&rightAimActive){
+    const dx=Math.cos(angle),dy=Math.sin(angle);let reach=88;
+    for(let t=18;t<88;t+=3)if(worldCollision(player.x+dx*t,player.y+dy*t,1,scene)){reach=t;break;}
+    ctx.strokeStyle='rgba(255,226,150,.5)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(player.x+dx*reach,player.y+dy*reach,4,0,Math.PI*2);ctx.stroke();
+  }
+}
+function drawFlashlight(){
+  if(heldItem()!=='flashlight'||!flashlightOn||playerDead)return;
+  const angle=Math.atan2(player.aimY,player.aimX),range=310;
+  const ox=player.x+Math.cos(angle)*29,oy=player.y+Math.sin(angle)*29;
+  if(!lineClear(player.x,player.y,ox,oy,1,scene))return;
+  ctx.save();ctx.beginPath();ctx.moveTo(ox,oy);
+  for(let i=0;i<=36;i++){
+    const a=angle-.43+.86*i/36,dx=Math.cos(a),dy=Math.sin(a);let d=4;
+    for(;d<range;d+=5)if(worldCollision(ox+dx*d,oy+dy*d,1,scene))break;
+    ctx.lineTo(ox+dx*Math.max(0,d-5),oy+dy*Math.max(0,d-5));
+  }
+  ctx.closePath();ctx.clip();
+  const light=ctx.createRadialGradient(ox,oy,4,ox,oy,range);
+  light.addColorStop(0,'rgba(255,246,185,.42)');light.addColorStop(.55,'rgba(255,242,173,.23)');light.addColorStop(1,'rgba(255,242,173,0)');
+  ctx.fillStyle=light;ctx.fillRect(ox-range,oy-range,range*2,range*2);ctx.restore();
+}
+function drawWorldTrees(){
+  for(const t of worldTrees){
+    if(!visibleOnScreen(t.x,t.y,45))continue;
+    ctx.fillStyle='rgba(0,0,0,.24)';ctx.beginPath();ctx.ellipse(t.x+5,t.y+8,t.felled?15:29,t.felled?9:25,0,0,Math.PI*2);ctx.fill();
+    if(t.felled){
+      ctx.fillStyle='#876547';ctx.beginPath();ctx.arc(t.x,t.y,10,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#bd9467';ctx.lineWidth=2;ctx.beginPath();ctx.arc(t.x,t.y,6,0,Math.PI*2);ctx.stroke();
+      if(t.wood===0&&t.regrowMs<300000){
+        ctx.strokeStyle='#85a16b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(t.x,t.y);ctx.lineTo(t.x,t.y-15);ctx.stroke();
+        ctx.fillStyle='#709456';ctx.beginPath();ctx.ellipse(t.x-5,t.y-12,7,3,.5,0,Math.PI*2);ctx.ellipse(t.x+5,t.y-17,7,3,-.5,0,Math.PI*2);ctx.fill();
+      }
+      if(t.wood>0){ctx.strokeStyle='#9c744c';ctx.lineWidth=7;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(t.x-14,t.y+16);ctx.lineTo(t.x+15,t.y+8);ctx.moveTo(t.x-13,t.y+23);ctx.lineTo(t.x+16,t.y+15);ctx.stroke();}
+    }else{
+      ctx.fillStyle='#664b31';ctx.fillRect(t.x-6,t.y+2,12,27);
+      ctx.fillStyle='#274830';ctx.beginPath();ctx.arc(t.x,t.y,24,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#385b3d';ctx.beginPath();ctx.arc(t.x-7,t.y-7,16,0,Math.PI*2);ctx.arc(t.x+11,t.y-3,13,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='rgba(128,155,87,.17)';ctx.beginPath();ctx.arc(t.x-10,t.y-13,8,0,Math.PI*2);ctx.fill();
+    }
+  }
+}
+function drawGate(){
+  const {x,y,w,h}=gateRect;
+  ctx.fillStyle='#555957';ctx.fillRect(x,y,w,h);
+  const leaves=gateOpen?[[x,y,10,h],[x+w-10,y,10,h]]:[[x,y,w/2-2,h],[x+w/2+2,y,w/2-2,h]];
+  for(const a of leaves){ctx.fillStyle='#38484a';ctx.fillRect(...a);ctx.strokeStyle='#89948b';ctx.lineWidth=2;ctx.strokeRect(...a);}
+  if(!gateOpen){
+    ctx.strokeStyle='#c5a36a';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x+8,y+10);ctx.lineTo(x+w/2-9,y+h-10);ctx.moveTo(x+w/2+9,y+h-10);ctx.lineTo(x+w-8,y+10);ctx.stroke();
+    ctx.fillStyle='#d7b475';ctx.fillRect(x+w/2-6,y+h/2-5,12,10);
+  }
+  ctx.fillStyle=gateOpen?'#c5d4be':'#dec18c';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(gateOpen?'ВОРОТА ОТКРЫТЫ':'ВОРОТА ЗАКРЫТЫ',x+w/2,y-13);
+}
+function drawParkedCars(){
+  for(const o of scavenges){
+    if(o.kind!=='car')continue;
+    ctx.save();ctx.translate(o.x+o.w/2,o.y+o.h/2);if(o.h>o.w)ctx.rotate(Math.PI/2);ctx.scale(Math.max(o.w,o.h)/130,Math.min(o.w,o.h)/64);
+    ctx.fillStyle='#151b1d';for(const x of [-42,32])for(const y of [-35,27])ctx.fillRect(x,y,20,8);
+    ctx.fillStyle=hasSearchableLoot(o)?'#665c50':'#3c4444';ctx.beginPath();ctx.roundRect(-65,-32,130,64,9);ctx.fill();
+    ctx.fillStyle='#273a40';ctx.fillRect(-25,-25,12,50);ctx.fillRect(20,-25,16,50);
+    ctx.strokeStyle='#8e897a';ctx.lineWidth=1;ctx.strokeRect(-10,-26,26,52);ctx.beginPath();ctx.moveTo(-53,-22);ctx.lineTo(-32,-22);ctx.moveTo(-53,22);ctx.lineTo(-32,22);ctx.stroke();
+    ctx.fillStyle='#bdaf79';ctx.fillRect(59,-24,5,12);ctx.fillRect(59,12,5,12);ctx.fillStyle='#793b32';ctx.fillRect(-65,-24,4,10);ctx.fillRect(-65,14,4,10);ctx.restore();
+    ctx.fillStyle='#eee1bc';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО',o.x+o.w/2,o.y-10);
+  }
+}
+function drawNavigationTarget(){
+  if(!navigation)return;
+  const o=interactionObjects().find(t=>t.id===navigation.targetId);if(!o)return;
+  ctx.save();ctx.strokeStyle='#e0b36a';ctx.lineWidth=2;ctx.setLineDash([6,5]);
+  if(o.r!==undefined){ctx.beginPath();ctx.arc(o.x,o.y,o.r+7,0,Math.PI*2);ctx.stroke();}
+  else ctx.strokeRect(o.x-6,o.y-6,o.w+12,o.h+12);
+  ctx.setLineDash([]);ctx.font='12px Arial';ctx.textAlign='center';ctx.fillStyle='#f0d2a2';ctx.fillText(o.name,o.x+(o.w||0)/2,o.y-(o.r||0)-16);ctx.restore();
 }
 
-/* =====================================================
-   DRAW ZOMBIES
-===================================================== */
 
 function drawZombie(zombie){
 
@@ -5080,10 +4827,14 @@ function drawBullets(){
 ===================================================== */
 
 function stopControls(){
-
-  movePower = 0;
-  firing = false;
-
+  navigation=null;objectPointer=null;cancelChop();cancelSearch();
+  moveX=0; moveY=0; movePower=0;
+  firing=false; aimPower=0; rightAimActive=false;
+  leftPointerId=null; rightPointerId=null;
+  player.moving=false; player.running=false;
+  centerJoystickKnob(moveStick);
+  centerJoystickKnob(aimStick);
+  stopFootsteps();
 }
 
 function openOverlay(overlay){
@@ -5160,62 +4911,42 @@ el("closeWorkshop").addEventListener(
   }
 );
 
-// Temporary farm feed-crafting station
+// Temporary farm feed-crafting station — reusable crafting UI prototype
 el("feedCraftClose").addEventListener("click",function(){
-  if(feedCraftBusy)return;
   closeOverlay(el("feedCraftOverlay"));
 });
-
 el("feedRecipeGrain").addEventListener("click",showFeedGrainRecipe);
 el("feedCraftBack").addEventListener("click",showFeedCraftList);
+el("feedMinusOne").addEventListener("click",()=>setFeedLoaded(feedCraftLoaded-1));
+el("feedPlusOne").addEventListener("click",()=>setFeedLoaded(feedCraftLoaded+1));
+el("feedMinusTen").addEventListener("click",()=>setFeedLoaded(feedCraftLoaded-10));
+el("feedPlusTen").addEventListener("click",()=>setFeedLoaded(feedCraftLoaded+10));
+el("feedAll").addEventListener("click",()=>setFeedLoaded(bagCount("grain")));
+el("feedClear").addEventListener("click",()=>setFeedLoaded(0));
 
 el("feedCraftBtn").addEventListener("click",function(){
   if(feedCraftBusy)return;
-  if(bagCount("grain")<10){
-    message("🌾 Нужно 10 зерна.");
-    renderFeedCraftMenu();
-    return;
+  const batches=Math.floor(feedCraftLoaded/10);
+  if(batches<=0){message("🌾 Загрузите минимум 10 зерна.");return;}
+
+  const grainNeeded=batches*10;
+  const feedMade=batches*20;
+  if(bagCount("grain")<grainNeeded){
+    feedCraftLoaded=bagCount("grain");renderFeedCraftMenu();return;
   }
 
-  const hasRoom=bag.length<BAG_SLOTS || bag.some(s=>s.type==="animal_feed"&&s.qty<STACK_MAX);
-  if(!hasRoom){
-    message("🎒 В рюкзаке нет места для корма.");
-    return;
-  }
-
-  // Ingredients are committed when crafting starts.
-  const removed=removeItem("grain",10);
-  if(removed<10){
+  // Remove only the grain actually used. Extra loaded grain stays in the backpack.
+  const removed=removeItem("grain",grainNeeded);
+  if(removed<grainNeeded){
     if(removed>0)addItem("grain",removed);
-    message("🌾 Недостаточно зерна.");
-    return;
+    renderFeedCraftMenu();return;
   }
 
   feedCraftBusy=true;
-  el("feedCraftRecipe").style.display="none";
-  el("feedCraftProgress").style.display="";
-  el("feedCraftClose").style.opacity=".45";
-  const bar=el("feedCraftBar");
-  bar.style.width="0%";
-
-  const craftMs=2500;
-  const started=performance.now();
-  feedCraftTimer=setInterval(function(){
-    const p=Math.min(1,(performance.now()-started)/craftMs);
-    bar.style.width=(p*100).toFixed(0)+"%";
-    if(p>=1){
-      clearInterval(feedCraftTimer);feedCraftTimer=null;
-      const left=addItem("animal_feed",20);
-      if(left>0){
-        // Safety fallback: preserve overflow in the physical animal-feed storage.
-        addToSlots(storageChests[12].items,"animal_feed",left,12);
-      }
-      feedCraftBusy=false;
-      el("feedCraftClose").style.opacity="1";
-      message("🌾 Готово: +20 корма");
-      showFeedCraftList();
-    }
-  },50);
+  feedCraftLoaded-=grainNeeded;
+  pendingFeedCraft={qty:feedMade,total:feedMade,readyAt:Date.now()+2500};
+  renderPendingFeedCraft();
+  queueGameSave();
 });
 
 // Cow management controls
@@ -5280,9 +5011,13 @@ el("cowSlaughterBtn").addEventListener("click",function(){
     return;
   }
   const victim=cows[cows.length-1];
+  const meat=20; // test yield
+  if(freeItemSpace(bag,"beef",BAG_SLOTS)+freeItemSpace(storageChests[4].items,"beef",12)<meat){
+    message("🎒 Освободите место для 20 мяса в рюкзаке или ящике еды.");
+    return;
+  }
   const idx=livestockAnimals.indexOf(victim);
   if(idx>=0) livestockAnimals.splice(idx,1);
-  const meat=20; // test yield
   const left=addItem("beef",meat);
   if(left>0) addToSlots(storageChests[4].items,"beef",left,12);
   message("🥩 Корова переработана. Получено мяса: "+meat);
@@ -5701,13 +5436,22 @@ el("backControls").addEventListener(
 
 /* 0.5.0 UI */
 el("bagButton").addEventListener("click",()=>{renderBag();openOverlay(el("inventoryOverlay"))});
+el('handAssignClose').addEventListener('click',()=>closeOverlay(el('handAssignOverlay')));
 el("closeInventory").addEventListener("click",()=>closeOverlay(el("inventoryOverlay")));
+el("inventoryGrid").addEventListener("click",e=>{
+  const d=e.target.closest("[data-inventory-slot]"); if(!d)return;
+  const i=Number(d.dataset.inventorySlot), s=bag[i];
+  if(s && ITEM[s.type]?.hand)openHandAssignment(s.type);
+  else if(s && ITEM[s.type]?.equip)equipFromBag(i);
+});
 el("closeLoot").addEventListener("click",()=>closeOverlay(el("lootOverlay")));
 el("takeAllLoot").addEventListener("click",()=>{
-  if(!activeLoot)return;
+  if(!activeLoot || !activeLootObject)return;
   const remain=[];
   for(const s of activeLoot){const left=addItem(s.type,s.qty);if(left>0)remain.push({type:s.type,qty:left})}
+  activeLootObject.loot=remain;
   activeLoot=remain;renderLoot();updateAmmoHud();
+  queueGameSave();
   if(!activeLoot.length){closeOverlay(el("lootOverlay"));message("Добыча в рюкзаке")}
   else message("Рюкзак заполнен");
 });
@@ -5811,12 +5555,27 @@ document.addEventListener(
    UPDATE
 ===================================================== */
 
+function updateTrees(){
+  if(menuOpen||playerDead||document.hidden)return;
+  for(const t of worldTrees){
+    if(!t.felled||t.wood>0)continue;
+    t.regrowMs=Math.max(0,t.regrowMs-16.667*frameScale);
+    if(t.regrowMs>0)continue;
+    const occupants=[...(scene==='surface'?[player]:[]),...zombies.filter(z=>z.alive)];
+    if(occupants.some(p=>distance(p.x,p.y,t.x,t.y)<t.r+p.radius+4))continue;
+    t.felled=false;t.wood=15;invalidateGeometry();queueGameSave();
+  }
+}
 function update(){
-
+  updateTrees();
+  grantStarterItems();
   updatePlayer();
+  updateChop();
+  updateFeedCraft();
   updateLivestockProduction();
   updateLivestockAnimals();
   updateLivestockAudio();
+  stopInvalidZombieAudio();
 
   updateBullets();
 
@@ -5868,8 +5627,9 @@ function draw(){
 
   }
 
+  drawFlashlight();
+  drawNavigationTarget();
   drawBullets();
-
   drawPlayer();
 
   ctx.restore();
@@ -5880,7 +5640,10 @@ function draw(){
    GAME LOOP
 ===================================================== */
 
-function gameLoop(){
+let lastFrameAt=0;
+function gameLoop(timestamp=performance.now()){
+  frameScale=lastFrameAt?clamp((timestamp-lastFrameAt)/16.667,.1,3):1;
+  lastFrameAt=timestamp;
   updateFootstepsAudio();
 
 
@@ -5915,6 +5678,285 @@ function gameLoop(){
 
 }
 
+/* =====================================================
+   0.7.1 — LOCAL GAME PROGRESS
+   Elapsed durations are stored instead of offline deadlines.
+   Loading resumes timers without consuming supplies while away.+===================================================== */
+const GAME_SAVE_KEY="survival_base_progress_v1";
+const GAME_SAVE_BACKUP_KEY="survival_base_progress_backup_v1";
+const MAX_SAVE_ELAPSED=7*24*60*60*1000;
+let gameSaveReady=false;
+let gameSaveBlocked=false;
+let gameSaveTimer=null;
+let lastVerifiedGameSave=null;
+
+function saveElapsed(now,then){
+  return clamp(now-then,0,MAX_SAVE_ELAPSED);
+}
+
+function captureGameProgress(){
+  reconcileHands();
+  const now=Date.now();
+  return {
+    schema:2,gameVersion:'0.8.1',savedAt:now,
+    gateOpen,handSlots:clone(handSlots),activeHandSlot,flashlightOn,starterPending:clone(starterPending),
+    trees:worldTrees.map(t=>({id:t.id,felled:t.felled,wood:t.wood,regrowMs:t.regrowMs})),
+    player:{scene,x:player.x,y:player.y,health:player.health,
+      aimX:player.aimX,aimY:player.aimY,dead:playerDead},
+    magazine,bag:clone(bag),equipment:clone(equipment),
+    storage:clone(storageChests),
+    farm:window.farmState.map(st=>({
+      crop:st.crop,
+      elapsedMs:st.crop===null?0:saveElapsed(now,st.plantedAt),
+      harvestLeft:st.harvestLeft??null
+    })),
+    loot:scavenges.map(o=>({id:o.id,searched:o.searched,loot:clone(o.loot||[])})),
+    zombies:zombies.map(z=>({x:z.x,y:z.y,health:z.health,alive:z.alive,state:z.state})),
+    livestock:{
+      animals:clone(livestockAnimals),alive:livestockAlive,
+      warned:livestockWarned,
+      emptyMs:livestockEmptySince===null?null:saveElapsed(now,livestockEmptySince),
+      eggMs:saveElapsed(now,lastEggProduction),milkMs:saveElapsed(now,lastMilkProduction),
+      needMs:saveElapsed(now,lastLivestockNeed),breedMs:saveElapsed(now,lastCowBreed)
+    },
+    feedCraft:pendingFeedCraft?{
+      qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,
+      remainingMs:clamp(pendingFeedCraft.readyAt-now,0,2500)
+    }:null
+  };
+}
+
+function upgradeGameProgress(d){
+  if(d.schema===2)return d;
+  const legacyHands=d.equipment.hands;
+  if(legacyHands!==null&&legacyHands!==undefined&&legacyHands.type!=='gloves1')throw new Error('Invalid legacy equipment');
+  delete d.equipment.hands;
+  d.schema=2;d.gameVersion='0.8';
+  d.gateOpen=false;
+  d.handSlots=['rifle_ak74','axe','flashlight',null];d.activeHandSlot=0;d.flashlightOn=true;
+  d.starterPending=HAND_TYPES.filter(type=>!d.bag.some(s=>s.type===type));
+  if(legacyHands)d.starterPending.push('gloves1');
+  d.trees=worldTrees.map(t=>({id:t.id,felled:false,wood:15}));
+  // Keep health / kills from the old save, but move surviving zombies off the base.
+  d.zombies=d.zombies.map((z,i)=>({...z,...outsideSpawns[i%outsideSpawns.length],state:'wander'}));
+  return d;
+}
+
+
+function decodeGameProgress(raw){
+  const d=JSON.parse(raw);
+  const number=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
+  const integer=(n,min,max)=>Number.isInteger(n)&&number(n,min,max);
+  const duration=n=>number(n,0,MAX_SAVE_ELAPSED);
+  const position=o=>o&&number(o.x,-2000,5000)&&number(o.y,-2000,5000);
+  const slots=(a,max)=>Array.isArray(a)&&a.length<=max&&a.every(s=>
+    s&&Object.hasOwn(ITEM,s.type)&&integer(s.qty,1,STACK_MAX));
+  const fail=()=>{throw new Error("Invalid or unsupported game save");};
+  if(!d||![1,2].includes(d.schema)||!number(d.savedAt,0,Number.MAX_SAFE_INTEGER))fail();
+  const p=d.player;
+  if(!position(p)||!['surface','bunker'].includes(p.scene)||
+     !number(p.health,0,100)||typeof p.dead!=="boolean"||
+     p.dead!==(p.health===0)||!number(p.aimX,-1,1)||!number(p.aimY,-1,1))fail();
+  if(!d.equipment||!Object.keys(equipment).every(slot=>{
+    const item=d.equipment[slot];
+    return Object.hasOwn(d.equipment,slot)&&(item===null||
+      (Object.hasOwn(ITEM,item?.type)&&ITEM[item.type].equip===slot));
+  }))fail();
+  if(!d.equipment.backpack)fail();
+  const capacity=ITEM[d.equipment.backpack.type].capacity;
+  if(!slots(d.bag,capacity)||!integer(d.magazine,0,magazineMax))fail();
+  if(!Array.isArray(d.storage)||d.storage.length!==storageChests.length||
+    !d.storage.every(c=>c&&typeof c.name==="string"&&c.name.length<=64&&
+      typeof c.icon==="string"&&c.icon.length<=64&&slots(c.items,12)))fail();
+  if(!Array.isArray(d.farm)||d.farm.length!==5||!d.farm.every(st=>
+    st&&(st.crop===null||integer(st.crop,0,window.farmCrops.length-1))&&
+    duration(st.elapsedMs)&&(st.harvestLeft===null||integer(st.harvestLeft,1,160))))fail();
+  if(['0.7.1','0.8'].includes(d.gameVersion)&&Array.isArray(d.loot)&&d.loot.length===6&&d.loot.every((o,i)=>o?.id===scavenges[i].id))
+    d.loot.push({id:'yard_car',searched:false,loot:[]});
+  if(!Array.isArray(d.loot)||d.loot.length!==scavenges.length||
+    !d.loot.every((o,i)=>o&&o.id===scavenges[i].id&&typeof o.searched==="boolean"&&
+      slots(o.loot,12)&&(o.searched||o.loot.length===0)))fail();
+  if(!Array.isArray(d.zombies)||d.zombies.length>64||!d.zombies.every(z=>
+    position(z)&&number(z.health,0,100)&&typeof z.alive==="boolean"&&
+    z.alive===(z.health>0)&&['wander','chase'].includes(z.state)))fail();
+  const l=d.livestock;
+  if(!l||typeof l.alive!=="boolean"||typeof l.warned!=="boolean"||
+    !Array.isArray(l.animals)||l.animals.length>64||!l.animals.every(a=>
+      position(a)&&['cow','chicken'].includes(a.kind)&&
+      number(a.vx,-1,1)&&number(a.vy,-1,1)&&number(a.size,1,100))||
+    l.animals.filter(a=>a.kind==="cow").length>COW_MAX||
+    !['eggMs','milkMs','needMs','breedMs'].every(k=>duration(l[k]))||
+    !(l.emptyMs===null||duration(l.emptyMs)))fail();
+  if(d.feedCraft!==null){
+    const c=d.feedCraft;
+    if(!c||!integer(c.qty,1,100000)||!integer(c.total,c.qty,100000)||
+      !number(c.remainingMs,0,2500))fail();
+  }
+  upgradeGameProgress(d);
+  if(Array.isArray(d.trees))for(const t of d.trees){
+    if(t&&t.regrowMs===undefined)t.regrowMs=t.felled?600000:0;
+    if(!t||!number(t.regrowMs,0,600000))fail();
+  }
+  if(typeof d.gateOpen!=='boolean'||typeof d.flashlightOn!=='boolean'||
+     !Array.isArray(d.handSlots)||d.handSlots.length!==4||
+     !d.handSlots.every((t,i)=>t===null||(HAND_TYPES.includes(t)&&d.handSlots.indexOf(t)===i))||
+     !(d.activeHandSlot===null||integer(d.activeHandSlot,0,3))||
+     !Array.isArray(d.starterPending)||d.starterPending.length>4||
+     !d.starterPending.every((t,i)=>[...HAND_TYPES,'gloves1'].includes(t)&&d.starterPending.indexOf(t)===i)||
+     !Array.isArray(d.trees)||d.trees.length!==worldTrees.length||
+     !d.trees.every((t,i)=>t&&t.id===worldTrees[i].id&&typeof t.felled==='boolean'&&integer(t.wood,0,15)&&(t.felled||t.wood===15)))fail();
+  return d;
+}
+
+function restoreGameProgress(d){
+  const now=Date.now();
+  bag=clone(d.bag);
+  for(const slot of Object.keys(equipment)){
+    equipment[slot]=d.equipment[slot]?{type:d.equipment[slot].type}:null;
+  }
+  BAG_SLOTS=ITEM[equipment.backpack.type].capacity;
+  magazine=d.magazine;
+  gateOpen=d.gateOpen;handSlots=clone(d.handSlots);activeHandSlot=d.activeHandSlot;
+  flashlightOn=d.flashlightOn;starterPending=clone(d.starterPending);
+  d.trees.forEach((t,i)=>Object.assign(worldTrees[i],t));
+  storageChests=clone(d.storage);
+  invalidateGeometry();
+  scene=d.player.scene;
+  Object.assign(player,{x:d.player.x,y:d.player.y,health:d.player.health,
+    aimX:d.player.aimX,aimY:d.player.aimY,lastFootstep:0,lastDamage:0});
+  // A stale position cannot leave the player trapped inside a wall.
+  const collision=scene==="surface"?surfaceCollision:bunkerCollision;
+  if(collision(player.x,player.y)){
+    player.x=scene==="surface"?800:bunker.entrance.x;
+    player.y=scene==="surface"?860:bunker.entrance.y-70;
+  }
+  playerDead=d.player.dead;
+  window.farmState=d.farm.map(st=>({crop:st.crop,
+    plantedAt:st.crop===null?0:now-st.elapsedMs,
+    ...(st.harvestLeft===null?{}:{harvestLeft:st.harvestLeft})}));
+  d.loot.forEach((o,i)=>{
+    scavenges[i].searched=o.searched;
+    scavenges[i].loot=clone(o.loot);
+  });
+  zombies=d.zombies.map((z,i)=>{
+    const restored=Object.assign(makeZombie(z.x,z.y),z);
+    if(worldCollision(z.x,z.y,17,'surface'))Object.assign(restored,outsideSpawns[i%outsideSpawns.length],{state:'wander'});
+    return restored;
+  });
+  const l=d.livestock;
+  livestockAnimals.splice(0,livestockAnimals.length,...l.animals.map(a=>
+    ({...a,icon:a.kind==="cow"?"🐄":"🐔"})));
+  livestockAlive=l.alive;
+  livestockWarned=l.warned;
+  livestockEmptySince=l.emptyMs===null?null:now-l.emptyMs;
+  lastEggProduction=now-l.eggMs;
+  lastMilkProduction=now-l.milkMs;
+  lastLivestockNeed=now-l.needMs;
+  lastCowBreed=now-l.breedMs;
+  pendingFeedCraft=d.feedCraft?{qty:d.feedCraft.qty,total:d.feedCraft.total,
+    readyAt:now+d.feedCraft.remainingMs}:null;
+  feedCraftBusy=!!pendingFeedCraft;
+  feedCraftLoaded=0;
+  activeLoot=null;activeLootObject=null;
+  searchState=null;
+  bullets.length=0;
+  stopControls();
+  menuOpen=playerDead;
+  el("deathOverlay").classList.toggle("open",playerDead);
+  el("locationName").textContent=scene==="bunker"?"БУНКЕР":"БАЗА";
+  el("healthText").textContent=`❤️ ${player.health}/${player.maxHealth}`;
+  camera.x=player.x-window.innerWidth/2;
+  camera.y=player.y-window.innerHeight/2;
+}
+
+function updateSaveStatus(text){
+  el("saveStatus").textContent=text;
+}
+
+function loadGameProgress(){
+  let candidates;
+  try{
+    candidates=[localStorage.getItem(GAME_SAVE_KEY),localStorage.getItem(GAME_SAVE_BACKUP_KEY)];
+  }catch(error){
+    updateSaveStatus("Хранилище недоступно — прогресс пока не сохраняется.");
+    return false;
+  }
+  for(let i=0;i<candidates.length;i++){
+    const raw=candidates[i];
+    if(!raw)continue;
+    try{
+      const data=decodeGameProgress(raw);
+      restoreGameProgress(data);
+      lastVerifiedGameSave=raw;
+      updateSaveStatus(i===0?"💾 Прогресс восстановлен. Автосохранение включено.":
+        "💾 Прогресс восстановлен из резервного сохранения.");
+      return true;
+    }catch(error){
+      console.warn("Game save could not be loaded:",error.message);
+    }
+  }
+  if(candidates.some(raw=>raw!==null)){
+    // Never overwrite an unreadable save with a fresh game's empty state.
+    gameSaveBlocked=true;
+    updateSaveStatus("Сохранение не удалось прочитать. Оно сохранено без изменений; автосохранение приостановлено.");
+  }else{
+    updateSaveStatus("💾 Автосохранение каждые 5 секунд и после действий.");
+  }
+  return false;
+}
+
+function saveGameProgress(manual=false){
+  if(!gameSaveReady||gameSaveBlocked){
+    if(manual)message("Сохранение недоступно: прежний прогресс не перезаписан.");
+    return false;
+  }
+  try{
+    const raw=JSON.stringify(captureGameProgress());
+    decodeGameProgress(raw);
+    if(lastVerifiedGameSave){
+      try{localStorage.setItem(GAME_SAVE_BACKUP_KEY,lastVerifiedGameSave);}catch(error){}
+    }
+    localStorage.setItem(GAME_SAVE_KEY,raw);
+    lastVerifiedGameSave=raw;
+    const now=new Date();
+    updateSaveStatus(`💾 Сохранено в ${now.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})}`);
+    if(manual)message("💾 Игра сохранена");
+    return true;
+  }catch(error){
+    updateSaveStatus("Не удалось сохранить прогресс. Проверьте доступность хранилища браузера.");
+    if(manual)message("Не удалось сохранить игру");
+    console.warn("Game save failed:",error.message);
+    return false;
+  }
+}
+
+function queueGameSave(){
+  if(!gameSaveReady||gameSaveBlocked||gameSaveTimer!==null)return;
+  gameSaveTimer=setTimeout(()=>{
+    gameSaveTimer=null;
+    saveGameProgress();
+  },100);
+}
+
+function flushGameSave(){
+  if(gameSaveTimer!==null){clearTimeout(gameSaveTimer);gameSaveTimer=null;}
+  saveGameProgress();
+}
+
+loadGameProgress();
+gameSaveReady=true;
+grantStarterItems();
+renderQuickSlots();
+if(starterPending.length)message('Освободите место в рюкзаке: предметы обновления ждут выдачи');
+el("saveGameButton").addEventListener("click",()=>saveGameProgress(true));
+// Capture complete UI transactions after all item transfers have finished.
+document.addEventListener("click",queueGameSave);
+window.addEventListener("pointerup",queueGameSave);
+window.addEventListener("pagehide",()=>{stopControls();flushGameSave();});
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){stopControls();flushGameSave();}
+});
+setInterval(()=>{if(!document.hidden)saveGameProgress();},5000);
 updateAmmoHud();
 
 /* =====================================================
@@ -5932,7 +5974,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.6.42: two-step feed crafting UI with 2.5 second craft progress");
+console.log("0.8: equipment, interactions, navigation and safe base");
 
 gameLoop();
 
@@ -5962,6 +6004,7 @@ document.querySelectorAll(".farmCropBtn").forEach(function(btn){
     if(bed === null || !window.farmState[bed]) return;
 
     window.farmState[bed] = {crop:crop, plantedAt:Date.now()};
+    queueGameSave();
     closeOverlay(el("farmOverlay"));
     message(window.farmCrops[crop].icon + " Посажено");
   });
