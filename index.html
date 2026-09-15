@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.13</title>
+<title>Survival Base 0.4.14</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -513,7 +513,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.13 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.14 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -823,7 +823,17 @@ function playBuffer(name,volume=1){
 }
 
 function stopFootsteps(){
-  lastFootstepAt=0;
+  if(footstepsSource){
+    const source=footstepsSource;
+    const gain=footstepsGain;
+
+    footstepsSource=null;
+    footstepsGain=null;
+
+    try{ source.stop(0); }catch(e){}
+    try{ source.disconnect(); }catch(e){}
+    try{ if(gain) gain.disconnect(); }catch(e){}
+  }
 }
 
 function startFootsteps(){
@@ -831,21 +841,60 @@ function startFootsteps(){
   return;
 }
 
-let lastFootstepAt=0;
-
 function updateFootstepsAudio(){
   if(playerDead || menuOpen || movePower<=JOY_DEAD){
-    lastFootstepAt=0;
+    stopFootsteps();
     return;
   }
 
-  const now=performance.now();
-  const running=movePower>=RUN_THRESHOLD;
-  const interval=running?285:430;
+  const ctx=ensureAudioContext();
+  const buffer=audioBuffers.footsteps;
+  if(!ctx || !buffer || ctx.state!=="running") return;
 
-  if(lastFootstepAt===0 || now-lastFootstepAt>=interval){
-    lastFootstepAt=now;
-    playBuffer("footsteps",running?.24:.20);
+  const running=movePower>=RUN_THRESHOLD;
+
+  // Never create a second footsteps source while one is already playing.
+  if(!footstepsSource){
+    try{
+      const source=ctx.createBufferSource();
+      const gain=ctx.createGain();
+
+      source.buffer=buffer;
+      source.loop=true;
+      source.playbackRate.value=running?1.08:.94;
+
+      // Footsteps are intentionally much louder than before.
+      gain.gain.value=clamp(masterVolume*(running?.48:.42),0,1);
+
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(0);
+
+      footstepsSource=source;
+      footstepsGain=gain;
+
+      source.onended=function(){
+        if(footstepsSource===source){
+          footstepsSource=null;
+          footstepsGain=null;
+        }
+        try{
+          source.disconnect();
+          gain.disconnect();
+        }catch(e){}
+      };
+    }catch(e){}
+  }else{
+    try{
+      footstepsGain.gain.setValueAtTime(
+        clamp(masterVolume*(running?.48:.42),0,1),
+        ctx.currentTime
+      );
+      footstepsSource.playbackRate.setValueAtTime(
+        running?1.08:.94,
+        ctx.currentTime
+      );
+    }catch(e){}
   }
 }
 
@@ -881,7 +930,7 @@ const gunshotPool = [
 let gunshotPoolIndex = 0;
 
 function playGunshot(){
-  playBuffer("gunshot",.48);
+  playBuffer("gunshot",.30);
 }
 
 
@@ -954,7 +1003,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_0413"
+        "base_controls_0414"
       );
 
     if(!saved){
@@ -981,7 +1030,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_0413",
+      "base_controls_0414",
       JSON.stringify(layouts)
     );
 
@@ -4480,7 +4529,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.4.13: footsteps fixed with decoded one-shot cadence");
+console.log("0.4.14: single footsteps loop, instant stop, louder steps, quieter gunshot");
 
 gameLoop();
 
