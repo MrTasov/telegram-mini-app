@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.6.32</title>
+<title>Survival Base 0.6.39</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -541,7 +541,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.6.32</div>
+<div id="versionBadge">VERSION 0.6.39</div>
 
 <div id="game">
 
@@ -597,7 +597,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.6.32 · New Controls</div>
+    <div class="subtitle">Survival Base 0.6.39 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -740,6 +740,18 @@ html,body{
   <button id="closeStorage" class="menuButton">Закрыть</button>
 </div></div>
 
+<!-- COW MANAGEMENT -->
+<div id="cowOverlay" class="overlay"><div class="panel">
+  <h2>🐄🐔 ЖИВОТНЫЕ</h2>
+  <div class="subtitle">ЕДИНЫЙ ЦЕНТР УПРАВЛЕНИЯ</div>
+  <div id="cowStatus" style="margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px"></div>
+  <button id="cowMilkBtn" class="menuButton">🥛 Забрать молоко</button>
+  <button id="animalEggBtn" class="menuButton">🥚 Забрать яйца</button>
+  <button id="cowSlaughterBtn" class="menuButton">🥩 Зарезать корову</button>
+  <div class="subtitle" style="margin-top:10px">Минимум 2 коровы сохраняются для размножения.</div>
+  <button id="cowClose" class="menuButton">Закрыть</button>
+</div></div>
+
 <!-- DEATH -->
 
 <div id="deathOverlay" class="overlay">
@@ -848,6 +860,8 @@ function fullscreen(){
   hit.mp3
   player_hit.mp3
   footsteps.mp3
+  chicken.mp3
+  cow.mp3
 */
 
 let masterVolume = 0.70;
@@ -863,7 +877,9 @@ const sounds = {
   zombie:createSound("zombie.mp3"),
   hit:createSound("hit.mp3"),
   playerHit:createSound("player_hit.mp3"),
-  footsteps:createSound("footsteps.mp3")
+  footsteps:createSound("footsteps.mp3"),
+  chicken:createSound("chicken.mp3"),
+  cow:createSound("cow.mp3")
 };
 
 /* =====================================================
@@ -881,7 +897,9 @@ const AUDIO_FILES={
   zombie:"zombie.mp3",
   hit:"hit.mp3",
   playerHit:"player_hit.mp3",
-  footsteps:"footsteps.mp3"
+  footsteps:"footsteps.mp3",
+  chicken:"chicken.mp3",
+  cow:"cow.mp3"
 };
 
 function ensureAudioContext(){
@@ -1433,7 +1451,10 @@ const ITEM={
   fuel:{name:"Топливо",icon:"⛽"},
   ammo:{name:"Патроны",icon:"🔫"},
   eggs:{name:"Яйца",icon:"🥚"},
-  milk:{name:"Молоко",icon:"🥛"}
+  milk:{name:"Молоко",icon:"🥛"},
+  animal_feed:{name:"Корм для животных",icon:"🌾"},
+  water:{name:"Вода",icon:"💧"},
+  beef:{name:"Говядина",icon:"🥩"}
 };
 const STACK_MAX=100, BAG_SLOTS=12;
 let bag=[
@@ -1451,7 +1472,9 @@ let storageChests=[
   {name:"Урожай",icon:"🥔",items:[]},
   {name:"Растения",icon:"🌿",items:[]},
   {name:"Куры — яйца",icon:"🥚",items:[]},
-  {name:"Корова — молоко",icon:"🥛",items:[]}
+  {name:"Корова — молоко",icon:"🥛",items:[]},
+  {name:"Корм животных",icon:"🌾",items:[{type:"animal_feed",qty:100}]},
+  {name:"Вода животных",icon:"💧",items:[{type:"water",qty:100}]}
 ];
 let magazine=30, magazineMax=30;
 let activeStorage=null, activeLoot=null;
@@ -2188,6 +2211,29 @@ function bunkerCollision(x,y){
     y>=f.bottom-30 && y<=f.bottom+30 &&
     x>=f.doorLeft && x<=f.doorRight;
 
+  // Livestock pens are fenced and cannot be crossed except through two open gates.
+  const penLeft=f.left+18, penRight=(f.cropLeft??90)-12;
+  const penTop=f.top+42, penBottom=f.bottom-42;
+  const penMid=(penTop+penBottom)/2;
+  const insidePen=x>penLeft+r && x<penRight-r && y>penTop+r && y<penBottom-r;
+  const cowGate=x>=penRight-34 && x<=penRight+34 &&
+                y>=penTop+112 && y<=penTop+182;
+  const chickenGate=x>=penRight-34 && x<=penRight+34 &&
+                    y>=penMid+105 && y<=penMid+175;
+
+  // Player may be inside a pen, but cannot cross its fence except at its gate.
+  const crossingPenFence=
+    (
+      (x>=penLeft-r && x<=penLeft+r && y>=penTop && y<=penBottom) ||
+      (x>=penRight-r && x<=penRight+r && y>=penTop && y<=penBottom &&
+       !cowGate && !chickenGate) ||
+      (y>=penTop-r && y<=penTop+r && x>=penLeft && x<=penRight) ||
+      (y>=penBottom-r && y<=penBottom+r && x>=penLeft && x<=penRight) ||
+      (y>=penMid-r && y<=penMid+r && x>=penLeft && x<=penRight)
+    );
+
+  if(crossingPenFence) return true;
+
   return !(inCorridor||inWorkshop||inStorage||in4||in5||in6||in7||
            d2||d3||d4||d5||d6||d7||inFarm||farmDoor);
 }
@@ -2880,12 +2926,27 @@ function updateAction(){
       icon="🌱";
     }
 
+    // Cow management terminal at the cow-pen entrance.
+    const f=bunker.farm;
+    const livestockMidY=((f.top+42)+(f.bottom-42))/2;
+    const cowTerminal={x:(f.cropLeft??90)-12,y:livestockMidY};
+    if(distance(player.x,player.y,cowTerminal.x,cowTerminal.y)<72){
+      currentAction="livestock_manager";
+      currentActionObject=null;
+      icon="🐄";
+    }
+
     // Chest has priority if its interaction zone overlaps a farm bed.
     const chest=nearestStorageChest();
     if(chest !== null){
       currentAction="storage";
       currentActionObject=chest;
       icon="📦";
+    }
+    if(distance(player.x,player.y,cowTerminal.x,cowTerminal.y)<72){
+      currentAction="livestock_manager";
+      currentActionObject=null;
+      icon="🐄";
     }
   }
 
@@ -2920,35 +2981,281 @@ function getChestPositions(){
     {x:s.left+200,y:s.bottom-58},
     {x:s.left+320,y:s.bottom-58},
     {x:s.left+435,y:s.bottom-58},
-    {x:185, y:bunker.farm.bottom-62},
-    {x:bunker.farm.right-95, y:bunker.farm.bottom-62},
-    {x:-105, y:bunker.farm.top+515},   // chicken egg inventory — lower-left corner
-    {x:-105, y:bunker.farm.top+105}    // cow milk inventory — upper-left corner
+    {x:185, y:bunker.farm.bottom-30},
+    {x:bunker.farm.right-95, y:bunker.farm.bottom-30},
+    {x:-102, y:bunker.farm.bottom-88}, // chicken egg inventory — bottom-left corner
+    {x:-102, y:bunker.farm.top+88},    // cow milk inventory — top-left corner
+    {x:-72, y:bunker.farm.top+350},    // feed inventory — center
+    {x:18,  y:bunker.farm.top+350}     // water inventory — center
   ];
 }
-// Automatic livestock production.
- // Chicken inventory accumulates eggs over time.
- // Cow inventory accumulates milk over time.
- // Both use normal storage slots, so the player can take products into the backpack
- // or transfer them into any other chest.
-const LIVESTOCK_EGG_MS=30000;   // test timing: +1 egg
-const LIVESTOCK_MILK_MS=45000;  // test timing: +1 milk
+
+// =====================================================
+// LIVESTOCK AMBIENT AUDIO
+// =====================================================
+// Chickens: continuous quiet loop with a deliberately small hearing radius.
+// Cows: short moo at random 3–15 second intervals, also only audible nearby.
+let chickenAmbientSource=null;
+let chickenAmbientGain=null;
+let nextCowMooAt=Date.now()+3000+Math.random()*12000;
+
+const CHICKEN_AUDIO_RADIUS=285;
+const COW_AUDIO_RADIUS=310;
+const CHICKEN_MAX_GAIN=0.24;
+const COW_MAX_GAIN=0.34;
+
+function livestockAudioCenter(kind){
+  const f=bunker.farm;
+  const left=f.left+18, right=(f.cropLeft??90)-12;
+  const top=f.top+42, bottom=f.bottom-42;
+  const mid=(top+bottom)/2;
+  return kind==="cow"
+    ? {x:(left+right)/2,y:(top+mid)/2}
+    : {x:(left+right)/2,y:(mid+bottom)/2};
+}
+
+function distanceGain(px,py,target,radius,maxGain){
+  const d=Math.hypot(px-target.x,py-target.y);
+  if(d>=radius)return 0;
+  const n=1-d/radius;
+  return maxGain*n*n; // quick falloff: corridor becomes effectively silent
+}
+
+function stopChickenAmbient(){
+  if(chickenAmbientSource){
+    try{chickenAmbientSource.stop();}catch(e){}
+    try{chickenAmbientSource.disconnect();}catch(e){}
+    chickenAmbientSource=null;
+  }
+  if(chickenAmbientGain){
+    try{chickenAmbientGain.disconnect();}catch(e){}
+    chickenAmbientGain=null;
+  }
+}
+
+function ensureChickenAmbient(){
+  if(!audioCtx || !audioBuffers.chicken || chickenAmbientSource)return;
+  const source=audioCtx.createBufferSource();
+  const gain=audioCtx.createGain();
+  source.buffer=audioBuffers.chicken;
+  source.loop=true;
+  gain.gain.value=0;
+  source.connect(gain);
+  gain.connect(audioCtx.destination);
+  source.start(0);
+  source.onended=()=>{ if(chickenAmbientSource===source) chickenAmbientSource=null; };
+  chickenAmbientSource=source;
+  chickenAmbientGain=gain;
+}
+
+function playCowMoo(gainValue){
+  if(!audioCtx || !audioBuffers.cow || gainValue<=0.002)return;
+  const source=audioCtx.createBufferSource();
+  const gain=audioCtx.createGain();
+  source.buffer=audioBuffers.cow;
+  gain.gain.value=gainValue*masterVolume;
+  source.connect(gain);
+  gain.connect(audioCtx.destination);
+  source.start(0);
+  source.onended=()=>{
+    try{source.disconnect();gain.disconnect();}catch(e){}
+  };
+}
+
+function updateLivestockAudio(){
+  // Animals are underground: never leak their sounds to the surface.
+  if(scene!=="bunker" || !livestockAlive){
+    if(chickenAmbientGain && audioCtx){
+      chickenAmbientGain.gain.setTargetAtTime(0,audioCtx.currentTime,.08);
+    }
+    return;
+  }
+
+  const chickenPos=livestockAudioCenter("chicken");
+  const cowPos=livestockAudioCenter("cow");
+  const chickenGain=distanceGain(player.x,player.y,chickenPos,CHICKEN_AUDIO_RADIUS,CHICKEN_MAX_GAIN);
+  const cowGain=distanceGain(player.x,player.y,cowPos,COW_AUDIO_RADIUS,COW_MAX_GAIN);
+
+  ensureChickenAmbient();
+  if(chickenAmbientGain && audioCtx){
+    chickenAmbientGain.gain.setTargetAtTime(chickenGain*masterVolume,audioCtx.currentTime,.10);
+  }
+
+  const now=Date.now();
+  if(now>=nextCowMooAt){
+    playCowMoo(cowGain);
+    // Every moo schedules a fresh random delay: 3–15 sec.
+    nextCowMooAt=now+3000+Math.random()*12000;
+  }
+}
+
+// =====================================================
+// LIVESTOCK SYSTEM — production, feed/water, starvation and wandering
+// =====================================================
+const LIVESTOCK_EGG_MS=30000;        // test: eggs slowly accumulate
+const LIVESTOCK_MILK_MS=45000;       // test: milk slowly accumulates
+const LIVESTOCK_NEED_MS=300000;      // test: consume once every 5 minutes
+const LIVESTOCK_STARVE_MS=48*60*60*1000; // ~2 real days without either need
 let lastEggProduction=Date.now();
 let lastMilkProduction=Date.now();
+let lastLivestockNeed=Date.now();
+let livestockEmptySince=null;
+let livestockWarned=false;
+let livestockAlive=true;
 
-function updateLivestockProduction(){
+function storageCount(index,type){
+  const ch=storageChests[index];
+  return ch ? ch.items.filter(s=>s.type===type).reduce((a,s)=>a+s.qty,0) : 0;
+}
+
+function updateLivestockNeeds(){
+  if(!livestockAlive) return;
   const now=Date.now();
 
+  if(now-lastLivestockNeed>=LIVESTOCK_NEED_MS){
+    const ticks=Math.floor((now-lastLivestockNeed)/LIVESTOCK_NEED_MS);
+    for(let i=0;i<ticks;i++){
+      removeFromSlots(storageChests[12].items,"animal_feed",1);
+      removeFromSlots(storageChests[13].items,"water",1);
+    }
+    lastLivestockNeed+=ticks*LIVESTOCK_NEED_MS;
+  }
+
+  const feed=storageCount(12,"animal_feed");
+  const water=storageCount(13,"water");
+  const empty=(feed<=0 || water<=0);
+
+  if(empty){
+    if(livestockEmptySince===null) livestockEmptySince=now;
+    if(!livestockWarned){
+      message(feed<=0 && water<=0
+        ? "⚠️ ВНИМАНИЕ: закончились корм и вода для животных!"
+        : feed<=0
+          ? "⚠️ ВНИМАНИЕ: закончился корм для животных!"
+          : "⚠️ ВНИМАНИЕ: закончилась вода для животных!");
+      livestockWarned=true;
+    }
+    if(now-livestockEmptySince>=LIVESTOCK_STARVE_MS){
+      livestockAlive=false;
+      message("☠️ Животные погибли: слишком долго не было корма или воды.");
+    }
+  }else{
+    livestockEmptySince=null;
+    livestockWarned=false;
+  }
+}
+
+function updateLivestockProduction(){
+  updateLivestockNeeds();
+  updateCowBreeding();
+  if(!livestockAlive) return;
+
+  // Production pauses if either food or water is empty.
+  if(storageCount(12,"animal_feed")<=0 || storageCount(13,"water")<=0) return;
+
+  const now=Date.now();
   if(now-lastEggProduction>=LIVESTOCK_EGG_MS){
     const ticks=Math.floor((now-lastEggProduction)/LIVESTOCK_EGG_MS);
     addToSlots(storageChests[10].items,"eggs",ticks*2,12);
     lastEggProduction+=ticks*LIVESTOCK_EGG_MS;
   }
-
   if(now-lastMilkProduction>=LIVESTOCK_MILK_MS){
     const ticks=Math.floor((now-lastMilkProduction)/LIVESTOCK_MILK_MS);
     addToSlots(storageChests[11].items,"milk",ticks,12);
     lastMilkProduction+=ticks*LIVESTOCK_MILK_MS;
+  }
+}
+
+// Slow autonomous animal movement inside their own pens.
+const livestockAnimals=[
+  {kind:"cow",icon:"🐄",x:-82,y:-810,vx:.10,vy:.06,size:31},
+  {kind:"cow",icon:"🐄",x:-8,y:-755,vx:-.07,vy:.08,size:31},
+  {kind:"cow",icon:"🐄",x:-70,y:-690,vx:.08,vy:-.06,size:31},
+  {kind:"chicken",icon:"🐔",x:-92,y:-520,vx:.08,vy:.05,size:24},
+  {kind:"chicken",icon:"🐔",x:-28,y:-490,vx:-.07,vy:.06,size:24},
+  {kind:"chicken",icon:"🐔",x:34,y:-525,vx:.06,vy:-.05,size:24},
+  {kind:"chicken",icon:"🐔",x:-58,y:-450,vx:-.05,vy:-.07,size:24},
+  {kind:"chicken",icon:"🐔",x:20,y:-425,vx:.06,vy:.04,size:24},
+  {kind:"chicken",icon:"🐔",x:-95,y:-390,vx:.05,vy:-.05,size:24},
+  {kind:"chicken",icon:"🐔",x:-32,y:-365,vx:-.06,vy:.05,size:24},
+  {kind:"chicken",icon:"🐔",x:32,y:-385,vx:.05,vy:.06,size:24},
+  {kind:"chicken",icon:"🐔",x:-72,y:-330,vx:.06,vy:-.04,size:24},
+  {kind:"chicken",icon:"🐔",x:8,y:-315,vx:-.05,vy:-.04,size:24}
+];
+
+const COW_BREED_MS=600000; // test: herd can grow by one cow every 10 minutes
+const COW_MAX=6;
+let lastCowBreed=Date.now();
+
+function cowCount(){
+  return livestockAnimals.filter(a=>a.kind==="cow").length;
+}
+function addCow(){
+  if(cowCount()>=COW_MAX) return false;
+  const f=bunker.farm;
+  livestockAnimals.push({
+    kind:"cow",icon:"🐄",
+    x:f.left+55+Math.random()*110,
+    y:f.top+100+Math.random()*170,
+    vx:(Math.random()>.5?.08:-.08),
+    vy:(Math.random()>.5?.06:-.06),
+    size:31
+  });
+  return true;
+}
+function updateCowBreeding(){
+  if(!livestockAlive || cowCount()<2) return;
+  if(storageCount(12,"animal_feed")<=0 || storageCount(13,"water")<=0) return;
+  const now=Date.now();
+  if(now-lastCowBreed>=COW_BREED_MS){
+    if(addCow()) message("🐄 В стаде появилась новая корова.");
+    lastCowBreed=now;
+  }
+}
+
+function renderCowMenu(){
+  const n=cowCount();
+  const chickens=livestockAnimals.filter(a=>a.kind==="chicken").length;
+  const milk=storageCount(11,"milk");
+  const eggs=storageCount(10,"eggs");
+  el("cowStatus").innerHTML=
+    `<b>🐄 Коровы: ${n} / ${COW_MAX}</b><br>`+
+    `🐔 Куры: ${chickens}<br>`+
+    `🥛 Накоплено молока: ${milk}<br>`+
+    `🥚 Накоплено яиц: ${eggs}<br>`+
+    `🌾 Корм: ${storageCount(12,"animal_feed")} / 100<br>`+
+    `💧 Вода: ${storageCount(13,"water")} / 100`;
+  el("cowSlaughterBtn").disabled=n<=2;
+  el("cowSlaughterBtn").style.opacity=n<=2?".45":"1";
+}
+
+function openCowMenu(){
+  renderCowMenu();
+  openOverlay(el("cowOverlay"));
+}
+
+function updateLivestockAnimals(){
+  if(!livestockAlive || scene!=="bunker") return;
+  const f=bunker.farm;
+  const left=f.left+38, right=(f.cropLeft??90)-32;
+  const top=f.top+68, bottom=f.bottom-68;
+  const mid=(top+bottom)/2;
+
+  for(const a of livestockAnimals){
+    const minY=a.kind==="cow"?top:mid+40;
+    const maxY=a.kind==="cow"?mid-40:bottom;
+    a.x+=a.vx; a.y+=a.vy;
+    if(a.x<left){a.x=left;a.vx=Math.abs(a.vx)}
+    if(a.x>right){a.x=right;a.vx=-Math.abs(a.vx)}
+    if(a.y<minY){a.y=minY;a.vy=Math.abs(a.vy)}
+    if(a.y>maxY){a.y=maxY;a.vy=-Math.abs(a.vy)}
+    if(Math.random()<0.002){
+      a.vx+=(Math.random()-.5)*.05;
+      a.vy+=(Math.random()-.5)*.05;
+      const sp=Math.hypot(a.vx,a.vy)||1;
+      const max=.12;
+      if(sp>max){a.vx=a.vx/sp*max;a.vy=a.vy/sp*max}
+    }
   }
 }
 
@@ -2962,6 +3269,7 @@ function nearestStorageChest(){
   let best=null, bestD=Infinity;
 
   for(let i=0;i<ps.length;i++){
+    if(i===10 || i===11) continue; // eggs/milk are now collected only from unified control
     const p=ps[i];
     if(
       player.x >= p.x-halfW-margin &&
@@ -3022,7 +3330,11 @@ function renderStorage(){
 function openChestSettings(){
   const ch=storageChests[activeStorage];if(!ch)return;
   el("chestNameInput").value=ch.name;
-  const icons=["📦","🔫","🪵","🔩","⚙️","⛽","🥫","🥤","💊","🧰","⭐","🔧","🎒"];
+  // Every icon used by an actual game item, plus the generic chest/tool icons.
+  const icons=[...new Set([
+    "📦","🥤","🧰","⭐","🔧","🎒",
+    ...Object.values(ITEM).map(item=>item.icon)
+  ])];
   const box=el("chestIconChoices");box.innerHTML="";
   for(const ico of icons){
     const bt=document.createElement("button");bt.className="smallBtn";bt.textContent=ico;
@@ -3200,6 +3512,11 @@ actionButton.addEventListener(
 
     if(currentAction === "farm"){
       useFarmBed(currentActionObject);
+      return;
+    }
+
+    if(currentAction === "livestock_manager"){
+      openCowMenu();
       return;
     }
 
@@ -3922,7 +4239,7 @@ function drawBunker(){
   ctx.fillStyle="#29352c";
   ctx.fillRect(f.doorLeft,f.bottom-22,f.doorRight-f.doorLeft,44);
 
-  // LIVESTOCK SECTOR — compact two-pen layout.
+  // LIVESTOCK SECTOR — solid fenced pens with open gates.
   const livestock={
     left:f.left+18,
     right:(f.cropLeft ?? 90)-12,
@@ -3931,73 +4248,77 @@ function drawBunker(){
   };
   const midY=(livestock.top+livestock.bottom)/2;
 
-  // Slightly larger unified livestock area.
   ctx.fillStyle="#30352d";
   ctx.fillRect(livestock.left,livestock.top,
                livestock.right-livestock.left,livestock.bottom-livestock.top);
-  ctx.strokeStyle="#8a7655";
-  ctx.lineWidth=7;
+
+  // Solid outer fence.
+  ctx.strokeStyle="#8a7655"; ctx.lineWidth=8;
   ctx.strokeRect(livestock.left,livestock.top,
                  livestock.right-livestock.left,livestock.bottom-livestock.top);
 
-  // Two pens with separate entrances facing the center service line.
-  ctx.strokeStyle="#76664d";
-  ctx.lineWidth=5;
+  // Divider between cows and chickens.
   ctx.beginPath();
   ctx.moveTo(livestock.left,midY);
-  ctx.lineTo(livestock.left+62,midY);
-  ctx.moveTo(livestock.right-62,midY);
   ctx.lineTo(livestock.right,midY);
   ctx.stroke();
 
-  // Central service strip: FOOD and WATER are two separate objects.
-  ctx.fillStyle="#78664a";
-  ctx.fillRect(livestock.left+18,midY-24,76,48);
-  ctx.strokeStyle="#a08a65"; ctx.lineWidth=3;
-  ctx.strokeRect(livestock.left+18,midY-24,76,48);
-  ctx.fillStyle="#e8dfc4"; ctx.font="10px Arial"; ctx.textAlign="center";
-  ctx.fillText("🌾 КОРМ",livestock.left+56,midY+4);
+  // Two open entrances on the RIGHT side: erase fence segments.
+  ctx.fillStyle="#30352d";
+  const cowGateTop=livestock.top+112, cowGateBottom=livestock.top+182;
+  const chickenGateTop=midY+105, chickenGateBottom=midY+175;
+  ctx.fillRect(livestock.right-8,cowGateTop,18,cowGateBottom-cowGateTop);
+  ctx.fillRect(livestock.right-8,chickenGateTop,18,chickenGateBottom-chickenGateTop);
 
-  ctx.fillStyle="#536b72";
-  ctx.fillRect(livestock.right-94,midY-24,76,48);
-  ctx.strokeStyle="#81969c";
-  ctx.strokeRect(livestock.right-94,midY-24,76,48);
-  ctx.fillStyle="#e8f0f1";
-  ctx.fillText("💧 ВОДА",livestock.right-56,midY+4);
-
-  // Cow pen (upper): one dairy cow + meat cattle.
-  ctx.fillStyle="#d8d0b7"; ctx.font="11px Arial";
+  ctx.fillStyle="#d8d0b7"; ctx.font="10px Arial"; ctx.textAlign="center";
   ctx.fillText("КОРОВЫ",(livestock.left+livestock.right)/2,livestock.top+22);
-  ctx.font="31px Arial";
-  ctx.fillText("🐄",livestock.left+52,livestock.top+82);
-  ctx.fillText("🐄",livestock.left+139,livestock.top+142);
-  ctx.fillText("🐄",livestock.left+62,livestock.top+210);
-  ctx.font="8px Arial"; ctx.fillStyle="#e7e0ca";
-  ctx.fillText("🥛 МОЛОЧНАЯ",livestock.left+55,livestock.top+111);
-  ctx.fillText("МЯСО",livestock.left+139,livestock.top+171);
-  ctx.fillText("МЯСО",livestock.left+62,livestock.top+239);
+  ctx.fillText("КУРЫ",(livestock.left+livestock.right)/2,midY+24);
 
-  // Chicken pen (lower).
-  ctx.fillStyle="#d8d0b7"; ctx.font="11px Arial";
-  ctx.fillText("КУРЫ",(livestock.left+livestock.right)/2,midY+49);
-  ctx.font="25px Arial";
-  ctx.fillText("🐔",livestock.left+43,midY+105);
-  ctx.fillText("🐔",livestock.left+104,midY+145);
-  ctx.fillText("🐔",livestock.left+158,midY+98);
-  ctx.fillText("🐔",livestock.left+69,midY+205);
+  // Cow-management terminal beside the cow entrance.
+  const cowTerminalX=livestock.right, cowTerminalY=midY;
+  // Embedded directly into the livestock fence.
+  ctx.fillStyle="#3e484a";
+  ctx.fillRect(cowTerminalX-25,cowTerminalY-28,50,56);
+  ctx.strokeStyle="#8fa0a3"; ctx.lineWidth=3;
+  ctx.strokeRect(cowTerminalX-25,cowTerminalY-28,50,56);
+  ctx.fillStyle="#dfe7e8"; ctx.font="19px Arial"; ctx.textAlign="center";
+  ctx.fillText("⚙️",cowTerminalX,cowTerminalY+6);
+  ctx.font="7px Arial";
+  ctx.fillText("УПРАВЛЕНИЕ",cowTerminalX,cowTerminalY+39);
 
-  // Automatic collection points, both on the same convenient left side.
+  // Animals wander slowly inside the pens.
+  if(livestockAlive){
+    for(const a of livestockAnimals){
+      ctx.font=a.size+"px Arial";
+      ctx.fillText(a.icon,a.x,a.y);
+    }
+  }else{
+    ctx.fillStyle="#a49b8b"; ctx.font="11px Arial";
+    ctx.fillText("НЕТ ЖИВОТНЫХ",(livestock.left+livestock.right)/2,midY);
+  }
+
+  // Only feed and water remain as physical stores.
+  // Eggs and milk accumulate internally and are collected from the unified control terminal.
   const allChestPos=getChestPositions();
-  for(let i=10;i<12;i++){
+  for(let i=12;i<14;i++){
     const p=allChestPos[i], ch=storageChests[i];
-    ctx.fillStyle="#66513a";
-    ctx.fillRect(p.x-34,p.y-25,68,50);
-    ctx.strokeStyle="#8a704f"; ctx.lineWidth=3;
-    ctx.strokeRect(p.x-34,p.y-25,68,50);
-    ctx.fillStyle="#fff"; ctx.font="21px Arial"; ctx.textAlign="center";
+    const small=true;
+    const hw=30, hh=22;
+    ctx.fillStyle=i===12?"#6f5b3f":i===13?"#526c73":"#66513a";
+    ctx.fillRect(p.x-hw,p.y-hh,hw*2,hh*2);
+    ctx.strokeStyle=i===13?"#81969c":"#8a704f"; ctx.lineWidth=3;
+    ctx.strokeRect(p.x-hw,p.y-hh,hw*2,hh*2);
+    ctx.fillStyle="#fff"; ctx.font=(small?17:20)+"px Arial"; ctx.textAlign="center";
     ctx.fillText(ch.icon,p.x,p.y+4);
     ctx.font="8px Arial";
-    ctx.fillText(i===10?"КУРЫ • ЯЙЦА":"КОРОВА • МОЛОКО",p.x,p.y+39);
+    const label=i===10?"ЯЙЦА":i===11?"МОЛОКО":i===12?"КОРМ":"ВОДА";
+    ctx.fillText(label,p.x,p.y+hh+13);
+
+    if(i>=12){
+      const qty=i===12?storageCount(12,"animal_feed"):storageCount(13,"water");
+      ctx.fillStyle="#e9e4d4"; ctx.font="8px Arial";
+      ctx.fillText(qty+"/100",p.x,p.y+hh+24);
+    }
   }
 
   // Two functional storage chests beside the farm entrance
@@ -4692,6 +5013,17 @@ function closeOverlay(overlay){
 
 }
 
+// Tap/click the dark area outside a menu panel to close it.
+// This works for backpack, storage, livestock management, farm, settings, loot, etc.
+document.querySelectorAll(".overlay").forEach(function(overlay){
+  overlay.addEventListener("pointerdown",function(e){
+    if(e.target !== overlay) return;
+    e.preventDefault();
+    e.stopPropagation();
+    closeOverlay(overlay);
+  });
+});
+
 el("settingsButton").addEventListener(
   "click",
   function(){
@@ -4729,6 +5061,48 @@ el("closeWorkshop").addEventListener(
 
   }
 );
+
+// Cow management controls
+el("cowClose").addEventListener("click",function(){
+  closeOverlay(el("cowOverlay"));
+});
+
+el("cowMilkBtn").addEventListener("click",function(){
+  const qty=storageCount(11,"milk");
+  if(qty<=0){ message("🥛 Молока пока нет."); return; }
+  const left=addItem("milk",qty);
+  const taken=qty-left;
+  if(taken>0) removeFromSlots(storageChests[11].items,"milk",taken);
+  message(taken>0 ? `🥛 Забрано молока: ${taken}` : "🎒 В рюкзаке нет места.");
+  renderCowMenu();
+});
+
+el("animalEggBtn").addEventListener("click",function(){
+  const qty=storageCount(10,"eggs");
+  if(qty<=0){ message("🥚 Яиц пока нет."); return; }
+  const left=addItem("eggs",qty);
+  const taken=qty-left;
+  if(taken>0) removeFromSlots(storageChests[10].items,"eggs",taken);
+  message(taken>0 ? `🥚 Забрано яиц: ${taken}` : "🎒 В рюкзаке нет места.");
+  renderCowMenu();
+});
+
+el("cowSlaughterBtn").addEventListener("click",function(){
+  const cows=livestockAnimals.filter(a=>a.kind==="cow");
+  if(cows.length<=2){
+    message("🐄 Нельзя: нужно оставить минимум 2 коровы для размножения.");
+    renderCowMenu();
+    return;
+  }
+  const victim=cows[cows.length-1];
+  const idx=livestockAnimals.indexOf(victim);
+  if(idx>=0) livestockAnimals.splice(idx,1);
+  const meat=20; // test yield
+  const left=addItem("beef",meat);
+  if(left>0) addToSlots(storageChests[4].items,"beef",left,12);
+  message("🥩 Корова переработана. Получено мяса: "+meat);
+  renderCowMenu();
+});
 
 /* =====================================================
    SOUND SETTING
@@ -5256,6 +5630,8 @@ function update(){
 
   updatePlayer();
   updateLivestockProduction();
+  updateLivestockAnimals();
+  updateLivestockAudio();
 
   updateBullets();
 
@@ -5371,7 +5747,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.6.32: corner animal inventories with automatic egg/milk accumulation");
+console.log("0.6.39: positional livestock audio — continuous quiet chickens and random cow moo every 3–15 sec");
 
 gameLoop();
 
