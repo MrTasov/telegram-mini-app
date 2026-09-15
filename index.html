@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.6.24</title>
+<title>Survival Base 0.6.32</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -501,11 +501,22 @@ html,body{
   border:1px solid rgba(255,255,255,.22); background:rgba(10,12,13,.72);
   color:#fff; font-size:21px; touch-action:manipulation;
 }
-.inventoryGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
-.invSlot{min-height:64px;border:1px solid rgba(255,255,255,.16);border-radius:10px;
- background:rgba(255,255,255,.055);padding:7px;font-size:12px;display:flex;
- flex-direction:column;justify-content:center;align-items:center;text-align:center}
-.invSlot .ico{font-size:23px}.invSlot .qty{font-weight:800;margin-top:3px}
+.inventoryGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+.invSlot{
+ height:82px;min-height:82px;max-height:82px;min-width:0;
+ box-sizing:border-box;overflow:hidden;
+ border:1px solid rgba(255,255,255,.16);border-radius:10px;
+ background:rgba(255,255,255,.055);padding:5px 4px;font-size:10px;
+ display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ line-height:1.05;
+}
+.invSlot .ico{font-size:20px;line-height:22px;flex:0 0 auto}
+.invSlot .qty{font-size:10px;font-weight:800;margin-top:2px;line-height:11px;flex:0 0 auto}
+.invSlot > div:nth-child(2):not(.qty){
+ width:100%;max-height:22px;overflow:hidden;
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+ overflow-wrap:anywhere;
+}
 .lootRow,.storageRow{display:flex;align-items:center;justify-content:space-between;gap:8px;
  padding:9px 10px;margin:6px 0;border-radius:10px;background:rgba(255,255,255,.06)}
 .smallBtn{border:0;border-radius:8px;padding:7px 10px;font-weight:800}
@@ -530,7 +541,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.6.24</div>
+<div id="versionBadge">VERSION 0.6.32</div>
 
 <div id="game">
 
@@ -586,7 +597,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.6.24 · New Controls</div>
+    <div class="subtitle">Survival Base 0.6.32 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -1402,8 +1413,9 @@ const bunker = {
 
   // №8 — large farm, directly at the end of the corridor
   farm:{
-    left:90,right:1360,top:-940,bottom:-240,
-    doorLeft:650,doorRight:800
+    left:-150,right:1360,top:-940,bottom:-240,
+    doorLeft:650,doorRight:800,
+    cropLeft:90
   }
 
 };
@@ -1419,7 +1431,9 @@ const ITEM={
   food:{name:"Еда",icon:"🥫"},potato:{name:"Картофель",icon:"🥔"},vegetables:{name:"Овощи",icon:"🥕"},grain:{name:"Зерно",icon:"🌾"},medicinal_herbs:{name:"Лекарственные растения",icon:"🌿"},technical_crop:{name:"Техническая культура",icon:"🌻"},
   meds:{name:"Медикаменты",icon:"💊"},
   fuel:{name:"Топливо",icon:"⛽"},
-  ammo:{name:"Патроны",icon:"🔫"}
+  ammo:{name:"Патроны",icon:"🔫"},
+  eggs:{name:"Яйца",icon:"🥚"},
+  milk:{name:"Молоко",icon:"🥛"}
 };
 const STACK_MAX=100, BAG_SLOTS=12;
 let bag=[
@@ -1433,7 +1447,11 @@ let storageChests=[
   {name:"Еда",icon:"🥫",items:[]},
   {name:"Напитки",icon:"🥤",items:[]},
   {name:"Медицина",icon:"💊",items:[]},
-  {name:"Разное",icon:"🧰",items:[]}
+  {name:"Разное",icon:"🧰",items:[]},
+  {name:"Урожай",icon:"🥔",items:[]},
+  {name:"Растения",icon:"🌿",items:[]},
+  {name:"Куры — яйца",icon:"🥚",items:[]},
+  {name:"Корова — молоко",icon:"🥛",items:[]}
 ];
 let magazine=30, magazineMax=30;
 let activeStorage=null, activeLoot=null;
@@ -2686,25 +2704,37 @@ const FARM_GROW_TIME = 45000;
 
 function getFarmBeds(){
   const f=bunker.farm;
+  const cropLeft=f.cropLeft ?? 90;
   return [
-    {x:f.left+75,  y:f.top+55, w:205, h:535},
-    {x:f.left+305, y:f.top+55, w:205, h:535},
-    {x:f.left+535, y:f.top+55, w:205, h:535},
-    {x:f.left+765, y:f.top+55, w:205, h:535},
-    {x:f.left+995, y:f.top+55, w:205, h:535}
+    {x:cropLeft+75,  y:f.top+55, w:205, h:535},
+    {x:cropLeft+305, y:f.top+55, w:205, h:535},
+    {x:cropLeft+535, y:f.top+55, w:205, h:535},
+    {x:cropLeft+765, y:f.top+55, w:205, h:535},
+    {x:cropLeft+995, y:f.top+55, w:205, h:535}
   ];
 }
 
 function nearestFarmBed(){
   if(scene!=="bunker") return null;
   const beds=getFarmBeds();
-  let best=null, bestD=72;
+  const margin=20; // visible bed + small interaction border
+  let best=null, bestD=Infinity;
+
   for(let i=0;i<beds.length;i++){
     const b=beds[i];
-    const nx=clamp(player.x,b.x,b.x+b.w);
-    const ny=clamp(player.y,b.y,b.y+b.h);
-    const d=distance(player.x,player.y,nx,ny);
-    if(d<bestD){ bestD=d; best=i; }
+
+    // Player is on the bed or immediately beside its visible edge.
+    if(
+      player.x >= b.x-margin &&
+      player.x <= b.x+b.w+margin &&
+      player.y >= b.y-margin &&
+      player.y <= b.y+b.h+margin
+    ){
+      const nx=clamp(player.x,b.x,b.x+b.w);
+      const ny=clamp(player.y,b.y,b.y+b.h);
+      const d=distance(player.x,player.y,nx,ny);
+      if(d<bestD){bestD=d;best=i;}
+    }
   }
   return best;
 }
@@ -2719,7 +2749,10 @@ function useFarmBed(i){
       const crop=window.farmCrops[st.crop];
 
       // Every crop is now its own real backpack object/resource.
-      const harvestAmount=20;
+      // The bed visually contains 8 × 20 = 160 plants.
+      // One visible mature plant = one inventory unit.
+      // If the backpack was previously full, collect only the remaining amount.
+      const harvestAmount=st.harvestLeft || 160;
       const cropItemTypes=[
         "potato",
         "vegetables",
@@ -2729,13 +2762,23 @@ function useFarmBed(i){
       ];
       const itemType=cropItemTypes[st.crop];
 
-      const added=addItemToBag(itemType,harvestAmount);
-      if(added<=0){
+      // addItem() returns the amount that DID NOT fit.
+      const left=addItem(itemType,harvestAmount);
+      const collected=harvestAmount-left;
+
+      if(collected<=0){
         message("🎒 В рюкзаке нет места");
         return;
       }
 
-      message(crop.icon+" Собрано: "+added+" → рюкзак");
+      if(left>0){
+        // Keep the remaining harvest on the bed so nothing disappears.
+        window.farmState[i].harvestLeft=left;
+        message(crop.icon+" Собрано: "+collected+" • осталось: "+left);
+        return;
+      }
+
+      message(crop.icon+" Собрано: "+collected+" → рюкзак");
       window.farmState[i]={crop:null,plantedAt:0};
     }else{
       const left=Math.max(1,Math.ceil((FARM_GROW_TIME-elapsed)/1000));
@@ -2830,18 +2873,19 @@ function updateAction(){
         "🔧";
 
     }
-    const chest=nearestStorageChest();
-    if(chest !== null){
-      currentAction="storage";
-      currentActionObject=chest;
-      icon="📦";
-    }
-
     const farmBed=nearestFarmBed();
     if(farmBed !== null){
       currentAction="farm";
       currentActionObject=farmBed;
       icon="🌱";
+    }
+
+    // Chest has priority if its interaction zone overlaps a farm bed.
+    const chest=nearestStorageChest();
+    if(chest !== null){
+      currentAction="storage";
+      currentActionObject=chest;
+      icon="📦";
     }
   }
 
@@ -2875,16 +2919,61 @@ function getChestPositions(){
     {x:s.left+85, y:s.bottom-58},
     {x:s.left+200,y:s.bottom-58},
     {x:s.left+320,y:s.bottom-58},
-    {x:s.left+435,y:s.bottom-58}
+    {x:s.left+435,y:s.bottom-58},
+    {x:185, y:bunker.farm.bottom-62},
+    {x:bunker.farm.right-95, y:bunker.farm.bottom-62},
+    {x:-105, y:bunker.farm.top+515},   // chicken egg inventory — lower-left corner
+    {x:-105, y:bunker.farm.top+105}    // cow milk inventory — upper-left corner
   ];
 }
+// Automatic livestock production.
+ // Chicken inventory accumulates eggs over time.
+ // Cow inventory accumulates milk over time.
+ // Both use normal storage slots, so the player can take products into the backpack
+ // or transfer them into any other chest.
+const LIVESTOCK_EGG_MS=30000;   // test timing: +1 egg
+const LIVESTOCK_MILK_MS=45000;  // test timing: +1 milk
+let lastEggProduction=Date.now();
+let lastMilkProduction=Date.now();
+
+function updateLivestockProduction(){
+  const now=Date.now();
+
+  if(now-lastEggProduction>=LIVESTOCK_EGG_MS){
+    const ticks=Math.floor((now-lastEggProduction)/LIVESTOCK_EGG_MS);
+    addToSlots(storageChests[10].items,"eggs",ticks*2,12);
+    lastEggProduction+=ticks*LIVESTOCK_EGG_MS;
+  }
+
+  if(now-lastMilkProduction>=LIVESTOCK_MILK_MS){
+    const ticks=Math.floor((now-lastMilkProduction)/LIVESTOCK_MILK_MS);
+    addToSlots(storageChests[11].items,"milk",ticks,12);
+    lastMilkProduction+=ticks*LIVESTOCK_MILK_MS;
+  }
+}
+
 function nearestStorageChest(){
   if(scene!=="bunker")return null;
   const ps=getChestPositions();
-  let best=null,bd=82;
+
+  // Visual chest is 68×50. Interaction follows that rectangle,
+  // with a comfortable invisible border around all four sides.
+  const halfW=34, halfH=25, margin=34;
+  let best=null, bestD=Infinity;
+
   for(let i=0;i<ps.length;i++){
-    const d=distance(player.x,player.y,ps[i].x,ps[i].y);
-    if(d<bd){bd=d;best=i}
+    const p=ps[i];
+    if(
+      player.x >= p.x-halfW-margin &&
+      player.x <= p.x+halfW+margin &&
+      player.y >= p.y-halfH-margin &&
+      player.y <= p.y+halfH+margin
+    ){
+      const nx=clamp(player.x,p.x-halfW,p.x+halfW);
+      const ny=clamp(player.y,p.y-halfH,p.y+halfH);
+      const d=distance(player.x,player.y,nx,ny);
+      if(d<bestD){bestD=d;best=i;}
+    }
   }
   return best;
 }
@@ -3560,7 +3649,7 @@ function drawBunker(){
   drawSideRoom(bunker.storage,"right","СКЛАД","#303638");
 
   const chestPos=getChestPositions();
-  for(let i=0;i<chestPos.length;i++){
+  for(let i=0;i<8;i++){
     const p=chestPos[i],ch=storageChests[i];
     ctx.fillStyle="#66513a";
     ctx.fillRect(p.x-34,p.y-25,68,50);
@@ -3833,13 +3922,103 @@ function drawBunker(){
   ctx.fillStyle="#29352c";
   ctx.fillRect(f.doorLeft,f.bottom-22,f.doorRight-f.doorLeft,44);
 
+  // LIVESTOCK SECTOR — compact two-pen layout.
+  const livestock={
+    left:f.left+18,
+    right:(f.cropLeft ?? 90)-12,
+    top:f.top+42,
+    bottom:f.bottom-42
+  };
+  const midY=(livestock.top+livestock.bottom)/2;
+
+  // Slightly larger unified livestock area.
+  ctx.fillStyle="#30352d";
+  ctx.fillRect(livestock.left,livestock.top,
+               livestock.right-livestock.left,livestock.bottom-livestock.top);
+  ctx.strokeStyle="#8a7655";
+  ctx.lineWidth=7;
+  ctx.strokeRect(livestock.left,livestock.top,
+                 livestock.right-livestock.left,livestock.bottom-livestock.top);
+
+  // Two pens with separate entrances facing the center service line.
+  ctx.strokeStyle="#76664d";
+  ctx.lineWidth=5;
+  ctx.beginPath();
+  ctx.moveTo(livestock.left,midY);
+  ctx.lineTo(livestock.left+62,midY);
+  ctx.moveTo(livestock.right-62,midY);
+  ctx.lineTo(livestock.right,midY);
+  ctx.stroke();
+
+  // Central service strip: FOOD and WATER are two separate objects.
+  ctx.fillStyle="#78664a";
+  ctx.fillRect(livestock.left+18,midY-24,76,48);
+  ctx.strokeStyle="#a08a65"; ctx.lineWidth=3;
+  ctx.strokeRect(livestock.left+18,midY-24,76,48);
+  ctx.fillStyle="#e8dfc4"; ctx.font="10px Arial"; ctx.textAlign="center";
+  ctx.fillText("🌾 КОРМ",livestock.left+56,midY+4);
+
+  ctx.fillStyle="#536b72";
+  ctx.fillRect(livestock.right-94,midY-24,76,48);
+  ctx.strokeStyle="#81969c";
+  ctx.strokeRect(livestock.right-94,midY-24,76,48);
+  ctx.fillStyle="#e8f0f1";
+  ctx.fillText("💧 ВОДА",livestock.right-56,midY+4);
+
+  // Cow pen (upper): one dairy cow + meat cattle.
+  ctx.fillStyle="#d8d0b7"; ctx.font="11px Arial";
+  ctx.fillText("КОРОВЫ",(livestock.left+livestock.right)/2,livestock.top+22);
+  ctx.font="31px Arial";
+  ctx.fillText("🐄",livestock.left+52,livestock.top+82);
+  ctx.fillText("🐄",livestock.left+139,livestock.top+142);
+  ctx.fillText("🐄",livestock.left+62,livestock.top+210);
+  ctx.font="8px Arial"; ctx.fillStyle="#e7e0ca";
+  ctx.fillText("🥛 МОЛОЧНАЯ",livestock.left+55,livestock.top+111);
+  ctx.fillText("МЯСО",livestock.left+139,livestock.top+171);
+  ctx.fillText("МЯСО",livestock.left+62,livestock.top+239);
+
+  // Chicken pen (lower).
+  ctx.fillStyle="#d8d0b7"; ctx.font="11px Arial";
+  ctx.fillText("КУРЫ",(livestock.left+livestock.right)/2,midY+49);
+  ctx.font="25px Arial";
+  ctx.fillText("🐔",livestock.left+43,midY+105);
+  ctx.fillText("🐔",livestock.left+104,midY+145);
+  ctx.fillText("🐔",livestock.left+158,midY+98);
+  ctx.fillText("🐔",livestock.left+69,midY+205);
+
+  // Automatic collection points, both on the same convenient left side.
+  const allChestPos=getChestPositions();
+  for(let i=10;i<12;i++){
+    const p=allChestPos[i], ch=storageChests[i];
+    ctx.fillStyle="#66513a";
+    ctx.fillRect(p.x-34,p.y-25,68,50);
+    ctx.strokeStyle="#8a704f"; ctx.lineWidth=3;
+    ctx.strokeRect(p.x-34,p.y-25,68,50);
+    ctx.fillStyle="#fff"; ctx.font="21px Arial"; ctx.textAlign="center";
+    ctx.fillText(ch.icon,p.x,p.y+4);
+    ctx.font="8px Arial";
+    ctx.fillText(i===10?"КУРЫ • ЯЙЦА":"КОРОВА • МОЛОКО",p.x,p.y+39);
+  }
+
+  // Two functional storage chests beside the farm entrance
+  const farmChestPos=getChestPositions();
+  for(let i=8;i<10;i++){
+    const p=farmChestPos[i],ch=storageChests[i];
+    ctx.fillStyle="#66513a"; ctx.fillRect(p.x-34,p.y-25,68,50);
+    ctx.strokeStyle="#8a704f"; ctx.lineWidth=3; ctx.strokeRect(p.x-34,p.y-25,68,50);
+    ctx.fillStyle="#fff"; ctx.font="22px Arial"; ctx.textAlign="center";
+    ctx.fillText(ch.icon,p.x,p.y+3);
+    ctx.font="10px Arial"; ctx.fillText(ch.name,p.x,p.y+40);
+  }
+
   // Five large long farm beds — one future crop per bed
+  const cropLeft=f.cropLeft ?? 90;
   const farmBeds=[
-    {x:f.left+75,  y:f.top+55, w:205, h:535},
-    {x:f.left+305, y:f.top+55, w:205, h:535},
-    {x:f.left+535, y:f.top+55, w:205, h:535},
-    {x:f.left+765, y:f.top+55, w:205, h:535},
-    {x:f.left+995, y:f.top+55, w:205, h:535}
+    {x:cropLeft+75,  y:f.top+55, w:205, h:535},
+    {x:cropLeft+305, y:f.top+55, w:205, h:535},
+    {x:cropLeft+535, y:f.top+55, w:205, h:535},
+    {x:cropLeft+765, y:f.top+55, w:205, h:535},
+    {x:cropLeft+995, y:f.top+55, w:205, h:535}
   ];
 
   // 0.6.17 farm prototype: each bed can hold any crop.
@@ -5076,6 +5255,7 @@ document.addEventListener(
 function update(){
 
   updatePlayer();
+  updateLivestockProduction();
 
   updateBullets();
 
@@ -5191,7 +5371,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.6.24: four-stage crop growth and distinct harvest inventory objects");
+console.log("0.6.32: corner animal inventories with automatic egg/milk accumulation");
 
 gameLoop();
 
