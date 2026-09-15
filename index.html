@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.4</title>
+<title>Survival Base 0.4.5</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -429,7 +429,7 @@ body{
   pointer-events:none;
   transition:opacity .06s linear;
 }
-.floatingJoystick.hiddenJoystick{opacity:.08}
+.floatingJoystick.hiddenJoystick{opacity:0}
 .floatingJoystick .joystickBase{
   width:92px;
   height:92px;
@@ -443,6 +443,24 @@ body{
   margin-top:-19px;
   border:1px solid rgba(255,255,255,.58);
   background:rgba(255,255,255,.22);
+}
+
+
+/* Mobile landscape seam guard */
+#gameCanvas{
+  position:fixed !important;
+  left:-3px !important;
+  top:-3px !important;
+  width:calc(100% + 6px) !important;
+  height:calc(100dvh + 6px) !important;
+  max-width:none !important;
+  max-height:none !important;
+}
+html,body{
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  background:#050807 !important;
 }
 
 </style>
@@ -490,7 +508,7 @@ body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.4 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.5 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -715,17 +733,152 @@ const sounds = {
   footsteps:createSound("footsteps.mp3")
 };
 
-let lastZombieAudioAt=0;
+/* =====================================================
+   MOBILE AUDIO ENGINE 0.4.5
+===================================================== */
+let audioCtx=null;
+const audioBuffers={};
+let audioLoadStarted=false;
+let footstepsSource=null;
+let footstepsGain=null;
+let lastZombieBufferAt=0;
 
-function playZombieSound(){
-  const now=performance.now();
+const AUDIO_FILES={
+  gunshot:"gunshot.mp3",
+  zombie:"zombie.mp3",
+  hit:"hit.mp3",
+  playerHit:"player_hit.mp3",
+  footsteps:"footsteps.mp3"
+};
 
-  // Prevent several zombies from decoding/playing the same MP3 together.
-  if(masterVolume<=0 || now-lastZombieAudioAt<3000) return;
-
-  lastZombieAudioAt=now;
-  playSound(sounds.zombie,.25);
+function ensureAudioContext(){
+  if(audioCtx) return audioCtx;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC) return null;
+  try{audioCtx=new AC();}catch(e){audioCtx=null;}
+  return audioCtx;
 }
+
+async function preloadGameAudio(){
+  if(audioLoadStarted) return;
+  audioLoadStarted=true;
+  const ctx=ensureAudioContext();
+  if(!ctx) return;
+
+  await Promise.all(
+    Object.entries(AUDIO_FILES).map(async function([name,url]){
+      try{
+        const r=await fetch(url,{cache:"force-cache"});
+        const data=await r.arrayBuffer();
+        audioBuffers[name]=await ctx.decodeAudioData(data);
+      }catch(e){}
+    })
+  );
+}
+
+function unlockGameAudio(){
+  const ctx=ensureAudioContext();
+  if(ctx && ctx.state==="suspended"){
+    ctx.resume().catch(function(){});
+  }
+  preloadGameAudio().catch(function(){});
+}
+
+window.addEventListener("pointerdown",unlockGameAudio,{once:true,passive:true});
+window.addEventListener("touchstart",unlockGameAudio,{once:true,passive:true});
+
+function playBuffer(name,volume=1){
+  if(masterVolume<=0) return;
+  const ctx=ensureAudioContext();
+  const buffer=audioBuffers[name];
+  if(!ctx || !buffer || ctx.state!=="running") return;
+
+  try{
+    const source=ctx.createBufferSource();
+    const gain=ctx.createGain();
+    source.buffer=buffer;
+    gain.gain.value=clamp(volume*masterVolume,0,1);
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start(0);
+    source.onended=function(){
+      try{source.disconnect();gain.disconnect();}catch(e){}
+    };
+  }catch(e){}
+}
+
+function stopFootsteps(){
+  if(footstepsSource){
+    try{footstepsSource.stop(0);}catch(e){}
+    try{footstepsSource.disconnect();}catch(e){}
+    footstepsSource=null;
+  }
+  if(footstepsGain){
+    try{footstepsGain.disconnect();}catch(e){}
+    footstepsGain=null;
+  }
+}
+
+function startFootsteps(){
+  if(footstepsSource || masterVolume<=0) return;
+  const ctx=ensureAudioContext();
+  const buffer=audioBuffers.footsteps;
+  if(!ctx || !buffer || ctx.state!=="running") return;
+
+  try{
+    const source=ctx.createBufferSource();
+    const gain=ctx.createGain();
+    source.buffer=buffer;
+    source.loop=true;
+    gain.gain.value=clamp(masterVolume*.20,0,1);
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start(0);
+    footstepsSource=source;
+    footstepsGain=gain;
+    source.onended=function(){
+      if(footstepsSource===source){
+        footstepsSource=null;
+        footstepsGain=null;
+      }
+    };
+  }catch(e){}
+}
+
+function updateFootstepsAudio(){
+  if(playerDead || menuOpen || movePower<=JOY_DEAD){
+    stopFootsteps();
+    return;
+  }
+
+  startFootsteps();
+
+  if(footstepsGain && audioCtx){
+    const v=masterVolume*(movePower>=RUN_THRESHOLD?.30:.20);
+    try{
+      footstepsGain.gain.setValueAtTime(clamp(v,0,1),audioCtx.currentTime);
+    }catch(e){}
+  }
+}
+
+function zombieDistanceVolume(zombie){
+  const d=Math.hypot(zombie.x-player.x,zombie.y-player.y);
+  if(d>=520) return 0;
+  return clamp((1-d/520)*.38,0,.38);
+}
+
+function playZombieBuffer(zombie){
+  const now=performance.now();
+  if(now-lastZombieBufferAt<2800) return;
+
+  const v=zombieDistanceVolume(zombie);
+  if(v<=.025) return;
+
+  lastZombieBufferAt=now;
+  playBuffer("zombie",v);
+}
+
+
 
 function playSound(sound,volume){
 
@@ -770,38 +923,20 @@ const gunshotPool = [
 let gunshotPoolIndex = 0;
 
 function playGunshot(){
-
-  if(masterVolume <= 0){
+  if(audioBuffers.gunshot){
+    playBuffer("gunshot",.55);
     return;
   }
 
   try{
-
-    const shot =
-      gunshotPool[
-        gunshotPoolIndex
-      ];
-
-    gunshotPoolIndex =
-      (
-        gunshotPoolIndex + 1
-      ) %
-      gunshotPool.length;
-
-    shot.pause();
-    shot.currentTime = 0;
-
-    shot.volume =
-      clamp(
-        masterVolume * 0.75,
-        0,
-        1
-      );
-
-    shot.play().catch(function(){});
-
+    const sound=gunshotPool[gunshotPoolIndex];
+    gunshotPoolIndex=(gunshotPoolIndex+1)%gunshotPool.length;
+    if(sound.paused || sound.ended){
+      sound.currentTime=0;
+      sound.volume=clamp(masterVolume*.55,0,1);
+      sound.play().catch(function(){});
+    }
   }catch(e){}
-
 }
 
 
@@ -1284,18 +1419,27 @@ function uiTouch(target){
 window.addEventListener("pointerdown",function(e){
   if(menuOpen || playerDead || uiTouch(e.target)) return;
 
-  if(e.clientX<innerWidth*.5 && leftPointerId===null){
+  const zoneTop=innerHeight*.62;
+  if(e.clientY<zoneTop) return;
+
+  const split=innerWidth*.5;
+
+  if(e.clientX<split && leftPointerId===null){
     leftPointerId=e.pointerId;
-    leftOriginX=e.clientX; leftOriginY=e.clientY;
+    leftOriginX=e.clientX;
+    leftOriginY=e.clientY;
     floatingCenter(moveControl,leftOriginX,leftOriginY);
     movePower=0;
-  }else if(e.clientX>=innerWidth*.5 && rightPointerId===null){
+    e.preventDefault();
+  }else if(e.clientX>=split && rightPointerId===null){
     rightPointerId=e.pointerId;
-    rightOriginX=e.clientX; rightOriginY=e.clientY;
+    rightOriginX=e.clientX;
+    rightOriginY=e.clientY;
     floatingCenter(aimControl,rightOriginX,rightOriginY);
     rightAimActive=true;
     aimPower=0;
     firing=false;
+    e.preventDefault();
   }
 },{passive:false});
 
@@ -1333,6 +1477,7 @@ function releaseFloating(e){
   if(e.pointerId===leftPointerId){
     leftPointerId=null;
     movePower=0; moveX=0; moveY=0;
+    stopFootsteps();
     floatingReset(moveControl,moveStick);
   }
 
@@ -1761,10 +1906,7 @@ function updatePlayer(){
     player.lastFootstep =
       now;
 
-    playSound(
-      sounds.footsteps,
-      .34
-    );
+    /* footsteps handled by looped WebAudio */
 
     if(scene === "surface"){
 
@@ -1940,6 +2082,10 @@ function zombieCanMoveTo(x,y){
 }
 
 function updateZombies(){
+  const aiNow=performance.now();
+  if(updateZombies._last && aiNow-updateZombies._last<32) return;
+  updateZombies._last=aiNow;
+
 
   if(
     scene !== "surface" ||
@@ -2011,7 +2157,7 @@ function updateZombies(){
       now > zombie.lastGrowl
     ){
 
-      playZombieSound();
+      playZombieBuffer(zombie);
 
       zombie.lastGrowl =
         now +
@@ -4100,12 +4246,15 @@ window.addEventListener("resize",refreshViewport);
 
 window.addEventListener("orientationchange",function(){
   refreshViewport();
-  setTimeout(refreshViewport,120);
+  setTimeout(refreshViewport,80);
+  setTimeout(refreshViewport,180);
 
   setTimeout(function(){
     fullscreen();
     refreshViewport();
   },420);
+
+  setTimeout(refreshViewport,750);
 });
 
 if(window.visualViewport){
@@ -4214,6 +4363,8 @@ function draw(){
 ===================================================== */
 
 function gameLoop(){
+  updateFootstepsAudio();
+
   if(rightAimActive && aimPower>JOY_DEAD && firing && !menuOpen && !playerDead){
     shoot();
   }
