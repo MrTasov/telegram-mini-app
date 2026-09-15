@@ -1,0 +1,4407 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Survival Base 0.4.3</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#080a0c;
+  touch-action:none;
+  overscroll-behavior:none;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  position:fixed;
+  inset:0;
+}
+
+#game{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:#20251f;
+}
+
+#canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* HUD */
+
+#hud{
+  position:absolute;
+  top:calc(10px + env(safe-area-inset-top));
+  left:calc(10px + env(safe-area-inset-left));
+  right:calc(10px + env(safe-area-inset-right));
+  display:flex;
+  justify-content:space-between;
+  z-index:20;
+  pointer-events:none;
+}
+
+.hudBox{
+  padding:7px 10px;
+  border-radius:11px;
+  background:rgba(10,12,14,.60);
+  border:1px solid rgba(255,255,255,.10);
+  color:white;
+  font-size:11px;
+  backdrop-filter:blur(6px);
+}
+
+.hudBox strong{
+  font-size:14px;
+}
+
+#healthText{
+  font-weight:bold;
+}
+
+/* SETTINGS */
+
+#settingsButton{
+  position:absolute;
+  top:calc(62px + env(safe-area-inset-top));
+  right:calc(12px + env(safe-area-inset-right));
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(100,105,110,.20);
+  color:rgba(255,255,255,.78);
+  font-size:18px;
+  z-index:60;
+}
+
+/* CONTROLS */
+
+.gameControl{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  z-index:40;
+  touch-action:none;
+}
+
+.joystick{
+  width:92px;
+  height:92px;
+  border-radius:50%;
+}
+
+.joystickBase{
+  position:absolute;
+  left:8px;
+  top:8px;
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.25);
+  background:rgba(120,125,130,.10);
+}
+
+.joystickStick{
+  position:absolute;
+  left:28px;
+  top:28px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.35);
+  background:rgba(145,150,155,.32);
+  color:rgba(255,255,255,.80);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+}
+
+.joystick.active .joystickBase{
+  background:rgba(150,155,160,.20);
+}
+
+.joystick.active .joystickStick{
+  background:rgba(180,185,190,.45);
+}
+
+.controlButton{
+  width:46px;
+  height:46px;
+  padding:0;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.27);
+  background:rgba(120,125,130,.18);
+  color:rgba(255,255,255,.84);
+  font-size:21px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(5px);
+}
+
+.controlButton.pressed{
+  background:rgba(180,185,190,.43);
+  transform:translate(-50%,-50%) scale(.94);
+}
+
+#actionButton.inactive{
+  opacity:.42;
+}
+
+#actionButton.available{
+  opacity:.96;
+  background:rgba(135,140,145,.30);
+}
+
+
+/* DAMAGE FLASH */
+
+#damageFlash{
+  position:absolute;
+  inset:0;
+  z-index:70;
+  background:rgba(170,0,0,.25);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .12s;
+}
+
+#damageFlash.show{
+  opacity:1;
+}
+
+/* MESSAGE */
+
+#message{
+  position:absolute;
+  left:50%;
+  bottom:calc(150px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  z-index:90;
+  padding:8px 13px;
+  border-radius:10px;
+  background:rgba(0,0,0,.74);
+  color:white;
+  font-size:13px;
+  opacity:0;
+  transition:opacity .2s;
+  pointer-events:none;
+}
+
+#message.show{
+  opacity:1;
+}
+
+/* FADE */
+
+#fade{
+  position:absolute;
+  inset:0;
+  z-index:200;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:black;
+  color:white;
+  font-size:18px;
+  letter-spacing:2px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s;
+}
+
+#fade.show{
+  opacity:1;
+}
+
+/* OVERLAYS */
+
+.overlay{
+  position:absolute;
+  inset:0;
+  z-index:300;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    calc(18px + env(safe-area-inset-right))
+    calc(18px + env(safe-area-inset-bottom))
+    calc(18px + env(safe-area-inset-left));
+  background:rgba(0,0,0,.76);
+}
+
+.overlay.open{
+  display:flex;
+}
+
+.panel{
+  width:min(430px,95vw);
+  max-height:88vh;
+  overflow-y:auto;
+  padding:19px;
+  border-radius:18px;
+  background:#161b1f;
+  border:1px solid rgba(255,255,255,.12);
+  color:white;
+  touch-action:pan-y;
+}
+
+.panel h2{
+  margin:0 0 6px;
+}
+
+.subtitle{
+  margin-bottom:17px;
+  color:rgba(255,255,255,.55);
+  font-size:13px;
+}
+
+.menuButton{
+  width:100%;
+  margin-top:9px;
+  padding:13px;
+  border-radius:11px;
+  border:1px solid rgba(255,255,255,.10);
+  background:#242a2e;
+  color:white;
+  font-size:15px;
+}
+
+.primary{
+  background:#315f9e;
+}
+
+.settingBox{
+  margin-top:12px;
+  padding:13px;
+  border-radius:11px;
+  background:#22282c;
+}
+
+.settingTitle{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+#soundVolume{
+  width:100%;
+}
+
+/* CONTROL EDITOR */
+
+.orientationTabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.orientationTab{
+  padding:10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+  background:#22282c;
+  color:rgba(255,255,255,.65);
+}
+
+.orientationTab.active{
+  background:#315f9e;
+  color:white;
+}
+
+.editorWrap{
+  min-height:280px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#editorStage{
+  position:relative;
+  overflow:hidden;
+  background:#303638;
+  border:2px solid rgba(255,255,255,.15);
+  border-radius:13px;
+  touch-action:none;
+}
+
+#editorStage.portrait{
+  width:180px;
+  height:320px;
+}
+
+#editorStage.landscape{
+  width:320px;
+  height:180px;
+}
+
+.preview{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  border:1px solid rgba(255,255,255,.40);
+  background:rgba(140,145,150,.30);
+  touch-action:none;
+}
+
+.preview.joy{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+}
+
+.preview.btn{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  font-size:12px;
+}
+
+.preview.dragging{
+  background:rgba(190,195,200,.50);
+}
+
+.workshopItem{
+  margin-top:8px;
+  padding:13px;
+  border-radius:11px;
+  background:#22282c;
+  color:rgba(255,255,255,.70);
+}
+
+/* DEATH */
+
+#deathOverlay{
+  background:rgba(0,0,0,.88);
+}
+
+.deathTitle{
+  font-size:30px;
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.deathText{
+  text-align:center;
+  color:rgba(255,255,255,.60);
+  margin-bottom:18px;
+}
+
+@media (pointer:coarse){
+  .hudBox,
+  .controlButton{
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+<canvas id="canvas"></canvas>
+
+<div id="hud">
+  <div class="hudBox">
+    <strong id="locationName">БАЗА</strong><br>
+    ДЕНЬ 1 · 14:32
+  </div>
+
+  <div class="hudBox">
+    <span id="healthText">❤️ 100/100</span>
+    &nbsp; 🍖 100
+  </div>
+</div>
+
+<button id="settingsButton">⚙</button>
+
+<div id="aimControl" class="gameControl joystick">
+  <div class="joystickBase"></div>
+  <div id="aimStick" class="joystickStick">⊙</div>
+</div>
+
+<button id="actionButton" class="gameControl controlButton inactive">✋</button>
+<button id="fireButton" class="gameControl controlButton">◉</button>
+
+<div id="damageFlash"></div>
+<div id="message"></div>
+<div id="fade">ПОДЗЕМНАЯ БАЗА</div>
+
+<!-- SETTINGS -->
+
+<div id="settingsOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>⚙️ Настройки</h2>
+    <div class="subtitle">Survival Base 0.4.3 · New Controls</div>
+
+    <button id="openControlSettings" class="menuButton">
+      🎮 Настройка управления
+    </button>
+
+    <button id="fullscreenButton" class="menuButton">
+      ⛶ Полноэкранный режим
+    </button>
+
+    <div class="settingBox">
+      <div class="settingTitle">
+        <span>🔊 Звук</span>
+        <span id="soundValue">70%</span>
+      </div>
+
+      <input id="soundVolume" type="range" min="0" max="100" value="70">
+    </div>
+
+    <button id="closeSettings" class="menuButton">
+      Закрыть
+    </button>
+
+  </div>
+</div>
+
+<!-- CONTROL EDITOR -->
+
+<div id="controlOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>🎮 Управление</h2>
+
+    <div class="subtitle">
+      Перетащи элементы туда, где тебе удобно.
+    </div>
+
+    <div class="orientationTabs">
+
+      <button id="portraitTab" class="orientationTab active">
+        📱 Вертикально
+      </button>
+
+      <button id="landscapeTab" class="orientationTab">
+        ↔ Горизонтально
+      </button>
+
+    </div>
+
+    <div class="editorWrap">
+
+      <div id="editorStage" class="portrait">
+
+        <div id="previewAim" class="preview joy">⊙</div>
+        <div id="previewAction" class="preview btn">✋</div>
+        <div id="previewFire" class="preview btn">◉</div>
+
+      </div>
+
+    </div>
+
+    <button id="saveControls" class="menuButton primary">
+      Сохранить
+    </button>
+
+    <button id="resetControls" class="menuButton">
+      ↺ Сбросить раскладку
+    </button>
+
+    <button id="backControls" class="menuButton">
+      Назад
+    </button>
+
+  </div>
+</div>
+
+<!-- WORKSHOP -->
+
+<div id="workshopOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>🔧 Мастерская</h2>
+
+    <div class="subtitle">
+      Тест мастерской.
+    </div>
+
+    <div class="workshopItem">🔫 Оружие</div>
+    <div class="workshopItem">📦 Патроны</div>
+    <div class="workshopItem">🛡 Оборона</div>
+    <div class="workshopItem">🔩 Детали</div>
+
+    <button id="closeWorkshop" class="menuButton">
+      Закрыть
+    </button>
+
+  </div>
+</div>
+
+<!-- DEATH -->
+
+<div id="deathOverlay" class="overlay">
+
+  <div class="panel">
+
+    <div class="deathTitle">
+      ВЫ ПОГИБЛИ
+    </div>
+
+    <div class="deathText">
+      Заражённые добрались до вас.
+    </div>
+
+    <button id="respawnButton" class="menuButton primary">
+      ВОЗРОДИТЬСЯ НА БАЗЕ
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function el(id){
+  return document.getElementById(id);
+}
+
+function clone(obj){
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function clamp(value,min,max){
+  return Math.max(min,Math.min(max,value));
+}
+
+function distance(x1,y1,x2,y2){
+  return Math.hypot(x1-x2,y1-y2);
+}
+
+/* =====================================================
+   TELEGRAM
+===================================================== */
+
+const tg =
+  window.Telegram &&
+  window.Telegram.WebApp
+  ? window.Telegram.WebApp
+  : null;
+
+if(tg){
+
+  try{
+    tg.ready();
+  }catch(e){}
+
+  try{
+    tg.expand();
+  }catch(e){}
+
+  try{
+
+    if(typeof tg.disableVerticalSwipes === "function"){
+      tg.disableVerticalSwipes();
+    }
+
+  }catch(e){}
+
+}
+
+function fullscreen(){
+
+  if(!tg){
+    return;
+  }
+
+  try{
+    tg.expand();
+  }catch(e){}
+
+  try{
+
+    if(typeof tg.requestFullscreen === "function"){
+      tg.requestFullscreen();
+    }
+
+  }catch(e){}
+
+}
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+/*
+  Эти пять файлов должны лежать рядом с index.html:
+
+  gunshot.mp3
+  zombie.mp3
+  hit.mp3
+  player_hit.mp3
+  footsteps.mp3
+*/
+
+let masterVolume = 0.70;
+
+function createSound(file){
+  const audio = new Audio(file);
+  audio.preload = "auto";
+  return audio;
+}
+
+const sounds = {
+  gunshot:createSound("gunshot.mp3"),
+  zombie:createSound("zombie.mp3"),
+  hit:createSound("hit.mp3"),
+  playerHit:createSound("player_hit.mp3"),
+  footsteps:createSound("footsteps.mp3")
+};
+
+function playSound(sound,volume){
+
+  if(!sound || masterVolume <= 0){
+    return;
+  }
+
+  try{
+
+    sound.pause();
+    sound.currentTime = 0;
+
+    sound.volume =
+      clamp(
+        masterVolume * volume,
+        0,
+        1
+      );
+
+    const promise = sound.play();
+
+    if(promise){
+      promise.catch(function(){});
+    }
+
+  }catch(e){}
+
+}
+
+/*
+  Для выстрелов создаём отдельный экземпляр,
+  чтобы быстрые выстрелы не обрывали друг друга.
+*/
+
+const gunshotPool = [
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3")
+];
+
+let gunshotPoolIndex = 0;
+
+function playGunshot(){
+
+  if(masterVolume <= 0){
+    return;
+  }
+
+  try{
+
+    const shot =
+      gunshotPool[
+        gunshotPoolIndex
+      ];
+
+    gunshotPoolIndex =
+      (
+        gunshotPoolIndex + 1
+      ) %
+      gunshotPool.length;
+
+    shot.pause();
+    shot.currentTime = 0;
+
+    shot.volume =
+      clamp(
+        masterVolume * 0.75,
+        0,
+        1
+      );
+
+    shot.play().catch(function(){});
+
+  }catch(e){}
+
+}
+
+
+/* =====================================================
+   CONTROL LAYOUTS
+===================================================== */
+
+const defaults = {
+
+  portrait:{
+
+    aim:{
+      x:.18,
+      y:.82
+    },
+
+    action:{
+      x:.70,
+      y:.82
+    },
+
+    fire:{
+      x:.84,
+      y:.68
+    }
+
+  },
+
+  landscape:{
+
+    aim:{
+      x:.13,
+      y:.78
+    },
+
+    action:{
+      x:.77,
+      y:.79
+    },
+
+    fire:{
+      x:.90,
+      y:.58
+    }
+
+  }
+
+};
+
+function validPoint(point,fallback){
+
+  if(
+    !point ||
+    typeof point.x !== "number" ||
+    typeof point.y !== "number"
+  ){
+    return clone(fallback);
+  }
+
+  return {
+    x:clamp(point.x,.05,.95),
+    y:clamp(point.y,.08,.94)
+  };
+
+}
+
+function sanitizeLayouts(saved){
+
+  const result =
+    clone(defaults);
+
+  for(const mode of ["portrait","landscape"]){
+
+    if(!saved || !saved[mode]){
+      continue;
+    }
+
+    for(const key of ["aim","action","fire"]){
+
+      result[mode][key] =
+        validPoint(
+          saved[mode][key],
+          defaults[mode][key]
+        );
+
+    }
+
+  }
+
+  return result;
+}
+
+function loadLayouts(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        "base_controls_043"
+      );
+
+    if(!saved){
+      return clone(defaults);
+    }
+
+    return sanitizeLayouts(
+      JSON.parse(saved)
+    );
+
+  }catch(e){
+
+    return clone(defaults);
+
+  }
+
+}
+
+let layouts =
+  loadLayouts();
+
+function saveLayouts(){
+
+  try{
+
+    localStorage.setItem(
+      "base_controls_043",
+      JSON.stringify(layouts)
+    );
+
+  }catch(e){}
+
+}
+
+function orientation(){
+
+  return window.innerWidth >
+         window.innerHeight
+         ? "landscape"
+         : "portrait";
+
+}
+
+function positionControl(element,data){
+
+  if(!element || !data){
+    return;
+  }
+
+  element.style.left =
+    (data.x * 100) + "%";
+
+  element.style.top =
+    (data.y * 100) + "%";
+
+}
+
+function applyControls(){
+
+  const mode =
+    orientation();
+
+  const layout =
+    layouts[mode] ||
+    defaults[mode];
+
+  positionControl(
+    el("aimControl"),
+    layout.aim
+  );
+
+  positionControl(
+    el("actionButton"),
+    layout.action
+  );
+
+  positionControl(
+    el("fireButton"),
+    layout.fire
+  );
+
+}
+
+/* =====================================================
+   CANVAS
+===================================================== */
+
+const canvas =
+  el("canvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+let screenWidth = 1;
+let screenHeight = 1;
+
+function resizeCanvas(){
+
+  screenWidth =
+    Math.max(
+      1,
+      window.innerWidth
+    );
+
+  screenHeight =
+    Math.max(
+      1,
+      window.innerHeight
+    );
+
+  const mobileDevice =
+    window.matchMedia &&
+    window.matchMedia("(pointer:coarse)").matches;
+
+  const ratio =
+    mobileDevice
+    ? 1
+    : Math.min(
+        window.devicePixelRatio || 1,
+        1.5
+      );
+
+  canvas.width =
+    Math.floor(
+      screenWidth * ratio
+    );
+
+  canvas.height =
+    Math.floor(
+      screenHeight * ratio
+    );
+
+  canvas.style.width =
+    screenWidth + "px";
+
+  canvas.style.height =
+    screenHeight + "px";
+
+  ctx.setTransform(
+    ratio,
+    0,
+    0,
+    ratio,
+    0,
+    0
+  );
+
+}
+
+/* =====================================================
+   WORLD
+===================================================== */
+
+let scene =
+  "surface";
+
+let menuOpen =
+  false;
+
+let playerDead =
+  false;
+
+const player = {
+
+  x:800,
+  y:860,
+
+  radius:15,
+
+  health:100,
+  maxHealth:100,
+
+  walkSpeed:3.8,
+
+  aimX:0,
+  aimY:-1,
+
+  moving:false,
+  running:false,
+
+  lastFootstep:0,
+  lastDamage:0,
+
+  walkAnimation:0
+
+};
+
+const camera = {
+  x:0,
+  y:0
+};
+
+function visibleOnScreen(x,y,padding){
+
+  padding =
+    padding === undefined
+    ? 80
+    : padding;
+
+  return (
+    x >= camera.x-padding &&
+    x <= camera.x+screenWidth+padding &&
+    y >= camera.y-padding &&
+    y <= camera.y+screenHeight+padding
+  );
+
+}
+
+const surface = {
+
+  width:1600,
+  height:1200,
+
+  outer:{
+    left:170,
+    top:130,
+    right:1430,
+    bottom:1070,
+    thickness:45
+  },
+
+  inner:{
+    left:610,
+    top:420,
+    right:990,
+    bottom:760,
+    thickness:28,
+    gateX:750,
+    gateWidth:100
+  },
+
+  hatch:{
+    x:800,
+    y:590
+  }
+
+};
+
+const bunker = {
+
+  width:1450,
+  height:1450,
+
+  corridor:{
+    left:610,
+    right:840,
+    top:200,
+    bottom:1260
+  },
+
+  entrance:{
+    x:725,
+    y:1180
+  },
+
+  workshop:{
+    left:260,
+    right:610,
+    top:850,
+    bottom:1120,
+    doorTop:905,
+    doorBottom:1015
+  }
+
+};
+
+/* =====================================================
+   NOISE SYSTEM
+===================================================== */
+
+let noiseEvent = {
+  x:0,
+  y:0,
+  radius:0,
+  time:0
+};
+
+function createNoise(x,y,radius){
+
+  noiseEvent.x = x;
+  noiseEvent.y = y;
+  noiseEvent.radius = radius;
+  noiseEvent.time = performance.now();
+
+}
+
+/* =====================================================
+   ZOMBIES
+===================================================== */
+
+function makeZombie(x,y){
+
+  return {
+
+    x:x,
+    y:y,
+
+    spawnX:x,
+    spawnY:y,
+
+    radius:17,
+
+    health:100,
+    maxHealth:100,
+
+    alive:true,
+
+    state:"wander",
+
+    speed:.65,
+    chaseSpeed:1.45,
+
+    wanderAngle:
+      Math.random() *
+      Math.PI * 2,
+
+    nextWanderChange:
+      performance.now() +
+      1000 +
+      Math.random()*2000,
+
+    lastAttack:0,
+
+    hitFlash:0,
+
+    deathTime:0,
+
+    lastGrowl:
+      performance.now() +
+      2000 +
+      Math.random()*5000
+
+  };
+
+}
+
+let zombies = [];
+
+function resetZombies(){
+
+  zombies = [
+
+    makeZombie(
+      420,
+      700
+    ),
+
+    makeZombie(
+      1190,
+      610
+    ),
+
+    makeZombie(
+      1050,
+      900
+    )
+
+  ];
+
+}
+
+resetZombies();
+
+/* =====================================================
+   AIM JOYSTICK / MOVE BUTTON
+===================================================== */
+
+function setupJoystick(zone,stick,callback){
+
+  let pointer = null;
+
+  const maxDistance = 28;
+
+  function update(e){
+
+    const rect =
+      zone.getBoundingClientRect();
+
+    const centerX =
+      rect.left +
+      rect.width/2;
+
+    const centerY =
+      rect.top +
+      rect.height/2;
+
+    let dx =
+      e.clientX -
+      centerX;
+
+    let dy =
+      e.clientY -
+      centerY;
+
+    const length =
+      Math.hypot(dx,dy);
+
+    if(length > maxDistance){
+
+      dx =
+        dx /
+        length *
+        maxDistance;
+
+      dy =
+        dy /
+        length *
+        maxDistance;
+
+    }
+
+    stick.style.transform =
+      "translate(" +
+      dx +
+      "px," +
+      dy +
+      "px)";
+
+    callback(
+      dx/maxDistance,
+      dy/maxDistance
+    );
+
+  }
+
+  function stop(e){
+
+    if(
+      pointer !== null &&
+      e.pointerId !== undefined &&
+      e.pointerId !== pointer
+    ){
+      return;
+    }
+
+    pointer = null;
+
+    zone.classList.remove(
+      "active"
+    );
+
+    stick.style.transform =
+      "translate(0px,0px)";
+
+    /*
+      Direction is intentionally NOT reset.
+      The player keeps facing the last direction.
+    */
+    callback(0,0);
+
+  }
+
+  zone.addEventListener(
+    "pointerdown",
+    function(e){
+
+      if(menuOpen || playerDead){
+        return;
+      }
+
+      e.preventDefault();
+
+      pointer =
+        e.pointerId;
+
+      zone.classList.add(
+        "active"
+      );
+
+      try{
+        zone.setPointerCapture(
+          e.pointerId
+        );
+      }catch(error){}
+
+      update(e);
+
+    }
+  );
+
+  zone.addEventListener(
+    "pointermove",
+    function(e){
+
+      if(e.pointerId !== pointer){
+        return;
+      }
+
+      e.preventDefault();
+
+      update(e);
+
+    }
+  );
+
+  zone.addEventListener(
+    "pointerup",
+    stop
+  );
+
+  zone.addEventListener(
+    "pointercancel",
+    stop
+  );
+
+}
+
+setupJoystick(
+  el("aimControl"),
+  el("aimStick"),
+  function(x,y){
+
+    const power =
+      Math.min(
+        1,
+        Math.hypot(x,y)
+      );
+
+    if(power > .13){
+
+      const length =
+        Math.hypot(x,y) || 1;
+
+      player.aimX =
+        x / length;
+
+      player.aimY =
+        y / length;
+
+      // One joystick now controls both direction and walking.
+      // Small deflection = slow careful movement, full deflection = full walk speed.
+      joystickMovePower =
+        clamp(
+          (power - .13) / .87,
+          0,
+          1
+        );
+
+    }else{
+
+      // Releasing the stick stops the player,
+      // but the last facing direction stays.
+      joystickMovePower = 0;
+
+    }
+
+  }
+);
+
+/* =====================================================
+   ONE-JOYSTICK MOVEMENT
+===================================================== */
+
+let joystickMovePower = 0;
+
+/* =====================================================
+   BULLETS / SHOOTING
+===================================================== */
+
+const bullets = [];
+
+let firing = false;
+let lastShot = 0;
+
+const fireButton =
+  el("fireButton");
+
+function shoot(){
+
+  if(
+    menuOpen ||
+    playerDead ||
+    scene !== "surface"
+  ){
+    return;
+  }
+
+  const now =
+    performance.now();
+
+  if(now-lastShot < 155){
+    return;
+  }
+
+  lastShot = now;
+
+  let length =
+    Math.hypot(
+      player.aimX,
+      player.aimY
+    );
+
+  if(length === 0){
+    length = 1;
+  }
+
+  const dx =
+    player.aimX /
+    length;
+
+  const dy =
+    player.aimY /
+    length;
+
+  bullets.push({
+
+    x:
+      player.x +
+      dx*29,
+
+    y:
+      player.y +
+      dy*29,
+
+    dx:
+      dx*12,
+
+    dy:
+      dy*12,
+
+    radius:4,
+
+    life:80
+
+  });
+
+  playGunshot();
+
+  createNoise(
+    player.x,
+    player.y,
+    550
+  );
+
+  muzzleFlash.time =
+    performance.now();
+
+  muzzleFlash.x =
+    player.x +
+    dx*30;
+
+  muzzleFlash.y =
+    player.y +
+    dy*30;
+
+}
+
+fireButton.addEventListener(
+  "pointerdown",
+  function(e){
+
+    if(menuOpen || playerDead){
+      return;
+    }
+
+    e.preventDefault();
+
+    firing = true;
+
+    fireButton.classList.add(
+      "pressed"
+    );
+
+    shoot();
+
+  }
+);
+
+function stopFire(){
+
+  firing = false;
+
+  fireButton.classList.remove(
+    "pressed"
+  );
+
+}
+
+fireButton.addEventListener(
+  "pointerup",
+  stopFire
+);
+
+fireButton.addEventListener(
+  "pointercancel",
+  stopFire
+);
+
+const muzzleFlash = {
+  x:0,
+  y:0,
+  time:0
+};
+
+function hitZombie(zombie){
+
+  zombie.health -= 25;
+
+  zombie.hitFlash =
+    performance.now();
+
+  zombie.state =
+    "chase";
+
+  playSound(
+    sounds.hit,
+    .65
+  );
+
+  if(zombie.health <= 0){
+
+    zombie.health = 0;
+
+    zombie.alive = false;
+
+    zombie.deathTime =
+      performance.now();
+
+  }
+
+}
+
+function updateBullets(){
+
+  if(firing){
+    shoot();
+  }
+
+  for(
+    let i =
+      bullets.length-1;
+
+    i >= 0;
+
+    i--
+  ){
+
+    const bullet =
+      bullets[i];
+
+    bullet.x +=
+      bullet.dx;
+
+    bullet.y +=
+      bullet.dy;
+
+    bullet.life--;
+
+    let removed = false;
+
+    if(scene === "surface"){
+
+      for(const zombie of zombies){
+
+        if(!zombie.alive){
+          continue;
+        }
+
+        if(
+          distance(
+            bullet.x,
+            bullet.y,
+            zombie.x,
+            zombie.y
+          )
+          <
+          zombie.radius +
+          bullet.radius
+        ){
+
+          hitZombie(zombie);
+
+          bullets.splice(
+            i,
+            1
+          );
+
+          removed = true;
+
+          break;
+
+        }
+
+      }
+
+    }
+
+    if(removed){
+      continue;
+    }
+
+    if(bullet.life <= 0){
+
+      bullets.splice(
+        i,
+        1
+      );
+
+    }
+
+  }
+
+}
+
+/* =====================================================
+   COLLISION
+===================================================== */
+
+function surfaceCollision(x,y){
+
+  const r =
+    player.radius;
+
+  const outer =
+    surface.outer;
+
+  if(
+    x <
+    outer.left +
+    outer.thickness +
+    r
+  ) return true;
+
+  if(
+    x >
+    outer.right -
+    outer.thickness -
+    r
+  ) return true;
+
+  if(
+    y <
+    outer.top +
+    outer.thickness +
+    r
+  ) return true;
+
+  if(
+    y >
+    outer.bottom -
+    outer.thickness -
+    r
+  ) return true;
+
+  const inner =
+    surface.inner;
+
+  const wall =
+    inner.thickness;
+
+  if(
+    x > inner.left-r &&
+    x < inner.right+r &&
+    y > inner.top-r &&
+    y < inner.top+wall+r
+  ){
+    return true;
+  }
+
+  if(
+    y > inner.top-r &&
+    y < inner.bottom+r &&
+    x > inner.left-r &&
+    x < inner.left+wall+r
+  ){
+    return true;
+  }
+
+  if(
+    y > inner.top-r &&
+    y < inner.bottom+r &&
+    x > inner.right-wall-r &&
+    x < inner.right+r
+  ){
+    return true;
+  }
+
+  if(
+    y > inner.bottom-wall-r &&
+    y < inner.bottom+r &&
+    x > inner.left-r &&
+    x < inner.right+r
+  ){
+
+    const gate =
+      x > inner.gateX &&
+      x <
+      inner.gateX +
+      inner.gateWidth;
+
+    if(!gate){
+      return true;
+    }
+
+  }
+
+  return false;
+}
+
+function bunkerCollision(x,y){
+
+  const r =
+    player.radius;
+
+  const corridor =
+    bunker.corridor;
+
+  const workshop =
+    bunker.workshop;
+
+  const inCorridor =
+    x >= corridor.left+r &&
+    x <= corridor.right-r &&
+    y >= corridor.top+r &&
+    y <= corridor.bottom-r;
+
+  const inWorkshop =
+    x >= workshop.left+r &&
+    x <= workshop.right-r &&
+    y >= workshop.top+r &&
+    y <= workshop.bottom-r;
+
+  const inDoor =
+    x >= workshop.right-30 &&
+    x <= corridor.left+30 &&
+    y >= workshop.doorTop &&
+    y <= workshop.doorBottom;
+
+  return !(
+    inCorridor ||
+    inWorkshop ||
+    inDoor
+  );
+
+}
+
+/* =====================================================
+   MOVEMENT / FOOTSTEPS
+===================================================== */
+
+function updatePlayer(){
+
+  if(menuOpen || playerDead){
+    return;
+  }
+
+  player.moving =
+    joystickMovePower > 0;
+
+  player.running =
+    false;
+
+  if(joystickMovePower <= 0){
+    return;
+  }
+
+  let length =
+    Math.hypot(
+      player.aimX,
+      player.aimY
+    );
+
+  if(length < .01){
+    return;
+  }
+
+  const x =
+    player.aimX /
+    length;
+
+  const y =
+    player.aimY /
+    length;
+
+  const speed =
+    player.walkSpeed *
+    (
+      .35 +
+      .65 * joystickMovePower
+    );
+
+  const collision =
+    scene === "surface"
+    ? surfaceCollision
+    : bunkerCollision;
+
+  const newX =
+    player.x +
+    x*speed;
+
+  const newY =
+    player.y +
+    y*speed;
+
+  if(
+    !collision(
+      newX,
+      player.y
+    )
+  ){
+    player.x = newX;
+  }
+
+  if(
+    !collision(
+      player.x,
+      newY
+    )
+  ){
+    player.y = newY;
+  }
+
+  player.walkAnimation +=
+    .21;
+
+  const now =
+    performance.now();
+
+  if(
+    now -
+    player.lastFootstep
+    >
+    430
+  ){
+
+    player.lastFootstep =
+      now;
+
+    playSound(
+      sounds.footsteps,
+      .34
+    );
+
+    if(scene === "surface"){
+
+      createNoise(
+        player.x,
+        player.y,
+        120
+      );
+
+    }
+
+  }
+
+}
+
+/* =====================================================
+   PLAYER DAMAGE
+===================================================== */
+
+function damagePlayer(amount){
+
+  if(playerDead){
+    return;
+  }
+
+  player.health -= amount;
+
+  if(player.health < 0){
+    player.health = 0;
+  }
+
+  el("healthText").textContent =
+    "❤️ " +
+    player.health +
+    "/" +
+    player.maxHealth;
+
+  playSound(
+    sounds.playerHit,
+    .8
+  );
+
+  const flash =
+    el("damageFlash");
+
+  flash.classList.add(
+    "show"
+  );
+
+  setTimeout(
+    function(){
+
+      flash.classList.remove(
+        "show"
+      );
+
+    },
+    120
+  );
+
+  if(player.health <= 0){
+    killPlayer();
+  }
+
+}
+
+function killPlayer(){
+
+  playerDead = true;
+
+  joystickMovePower = 0;
+  firing = false;
+
+  fireButton.classList.remove(
+    "pressed"
+  );
+
+  menuOpen = true;
+
+  el("deathOverlay").classList.add(
+    "open"
+  );
+
+}
+
+function respawn(){
+
+  player.health =
+    player.maxHealth;
+
+  el("healthText").textContent =
+    "❤️ 100/100";
+
+  scene =
+    "surface";
+
+  player.x =
+    800;
+
+  player.y =
+    860;
+
+  player.aimX =
+    0;
+
+  player.aimY =
+    -1;
+
+  bullets.length =
+    0;
+
+  resetZombies();
+
+  playerDead =
+    false;
+
+  menuOpen =
+    false;
+
+  el("locationName").textContent =
+    "БАЗА";
+
+  el("deathOverlay").classList.remove(
+    "open"
+  );
+
+}
+
+el("respawnButton").addEventListener(
+  "click",
+  respawn
+);
+
+/* =====================================================
+   ZOMBIE AI
+===================================================== */
+
+function zombieCanMoveTo(x,y){
+
+  /*
+    Пока заражённые используют ту же геометрию стен,
+    но с небольшим запасом.
+  */
+
+  const outer =
+    surface.outer;
+
+  if(
+    x <
+    outer.left +
+    outer.thickness +
+    15
+  ) return false;
+
+  if(
+    x >
+    outer.right -
+    outer.thickness -
+    15
+  ) return false;
+
+  if(
+    y <
+    outer.top +
+    outer.thickness +
+    15
+  ) return false;
+
+  if(
+    y >
+    outer.bottom -
+    outer.thickness -
+    15
+  ) return false;
+
+  return true;
+}
+
+function updateZombies(){
+
+  if(
+    scene !== "surface" ||
+    menuOpen ||
+    playerDead
+  ){
+    return;
+  }
+
+  const now =
+    performance.now();
+
+  for(const zombie of zombies){
+
+    if(!zombie.alive){
+      continue;
+    }
+
+    const playerDistance =
+      distance(
+        zombie.x,
+        zombie.y,
+        player.x,
+        player.y
+      );
+
+    /* SEE PLAYER */
+
+    if(playerDistance < 270){
+
+      zombie.state =
+        "chase";
+
+    }
+
+    /* HEAR NOISE */
+
+    if(
+      now -
+      noiseEvent.time
+      <
+      650
+    ){
+
+      const noiseDistance =
+        distance(
+          zombie.x,
+          zombie.y,
+          noiseEvent.x,
+          noiseEvent.y
+        );
+
+      if(
+        noiseDistance <
+        noiseEvent.radius
+      ){
+
+        zombie.state =
+          "chase";
+
+      }
+
+    }
+
+    /* GROWL */
+
+    if(
+      playerDistance < 330 &&
+      now > zombie.lastGrowl
+    ){
+
+      playSound(
+        sounds.zombie,
+        .35
+      );
+
+      zombie.lastGrowl =
+        now +
+        3500 +
+        Math.random()*4500;
+
+    }
+
+    /* CHASE */
+
+    if(zombie.state === "chase"){
+
+      if(playerDistance > 430){
+
+        zombie.state =
+          "wander";
+
+      }
+
+      else if(playerDistance > 31){
+
+        const dx =
+          (
+            player.x -
+            zombie.x
+          ) /
+          playerDistance;
+
+        const dy =
+          (
+            player.y -
+            zombie.y
+          ) /
+          playerDistance;
+
+        const nextX =
+          zombie.x +
+          dx *
+          zombie.chaseSpeed;
+
+        const nextY =
+          zombie.y +
+          dy *
+          zombie.chaseSpeed;
+
+        if(
+          zombieCanMoveTo(
+            nextX,
+            zombie.y
+          )
+        ){
+          zombie.x = nextX;
+        }
+
+        if(
+          zombieCanMoveTo(
+            zombie.x,
+            nextY
+          )
+        ){
+          zombie.y = nextY;
+        }
+
+      }
+
+      /* ATTACK */
+
+      if(
+        playerDistance < 34 &&
+        now -
+        zombie.lastAttack
+        >
+        950
+      ){
+
+        zombie.lastAttack =
+          now;
+
+        damagePlayer(10);
+
+      }
+
+    }
+
+    /* WANDER */
+
+    else{
+
+      if(
+        now >
+        zombie.nextWanderChange
+      ){
+
+        zombie.wanderAngle =
+          Math.random() *
+          Math.PI * 2;
+
+        zombie.nextWanderChange =
+          now +
+          1200 +
+          Math.random()*2600;
+
+      }
+
+      const nextX =
+        zombie.x +
+        Math.cos(
+          zombie.wanderAngle
+        ) *
+        zombie.speed;
+
+      const nextY =
+        zombie.y +
+        Math.sin(
+          zombie.wanderAngle
+        ) *
+        zombie.speed;
+
+      if(
+        zombieCanMoveTo(
+          nextX,
+          zombie.y
+        )
+      ){
+        zombie.x = nextX;
+      }
+
+      if(
+        zombieCanMoveTo(
+          zombie.x,
+          nextY
+        )
+      ){
+        zombie.y = nextY;
+      }
+
+    }
+
+  }
+
+}
+
+/* =====================================================
+   CAMERA
+===================================================== */
+
+function updateCamera(){
+
+  const world =
+    scene === "surface"
+    ? surface
+    : bunker;
+
+  camera.x =
+    player.x -
+    screenWidth/2;
+
+  camera.y =
+    player.y -
+    screenHeight/2;
+
+  camera.x =
+    clamp(
+      camera.x,
+      0,
+      Math.max(
+        0,
+        world.width -
+        screenWidth
+      )
+    );
+
+  camera.y =
+    clamp(
+      camera.y,
+      0,
+      Math.max(
+        0,
+        world.height -
+        screenHeight
+      )
+    );
+
+}
+
+/* =====================================================
+   ACTION
+===================================================== */
+
+let currentAction = null;
+
+const actionButton =
+  el("actionButton");
+
+function updateAction(){
+
+  currentAction = null;
+
+  let icon = "✋";
+
+  if(scene === "surface"){
+
+    if(
+      distance(
+        player.x,
+        player.y,
+        surface.hatch.x,
+        surface.hatch.y
+      )
+      <
+      82
+    ){
+
+      currentAction =
+        "bunker";
+
+      icon =
+        "↧";
+
+    }
+
+  }
+
+  else{
+
+    if(
+      distance(
+        player.x,
+        player.y,
+        bunker.entrance.x,
+        bunker.entrance.y
+      )
+      <
+      90
+    ){
+
+      currentAction =
+        "surface";
+
+      icon =
+        "↥";
+
+    }
+
+    if(
+      player.x > 315 &&
+      player.x < 500 &&
+      player.y > 855 &&
+      player.y < 1005
+    ){
+
+      currentAction =
+        "workshop";
+
+      icon =
+        "🔧";
+
+    }
+
+  }
+
+  actionButton.textContent =
+    icon;
+
+  actionButton.classList.toggle(
+    "available",
+    currentAction !== null
+  );
+
+  actionButton.classList.toggle(
+    "inactive",
+    currentAction === null
+  );
+
+}
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+let messageTimer = null;
+
+function message(text){
+
+  const box =
+    el("message");
+
+  box.textContent =
+    text;
+
+  box.classList.add(
+    "show"
+  );
+
+  clearTimeout(
+    messageTimer
+  );
+
+  messageTimer =
+    setTimeout(
+      function(){
+
+        box.classList.remove(
+          "show"
+        );
+
+      },
+      1300
+    );
+
+}
+
+/* =====================================================
+   TRANSITIONS
+===================================================== */
+
+function transition(title,callback){
+
+  const fade =
+    el("fade");
+
+  fade.textContent =
+    title;
+
+  fade.classList.add(
+    "show"
+  );
+
+  joystickMovePower = 0;
+  firing = false;
+
+  setTimeout(
+    function(){
+
+      callback();
+
+      setTimeout(
+        function(){
+
+          fade.classList.remove(
+            "show"
+          );
+
+        },
+        260
+      );
+
+    },
+    400
+  );
+
+}
+
+function enterBunker(){
+
+  transition(
+    "ПОДЗЕМНАЯ БАЗА",
+    function(){
+
+      scene =
+        "bunker";
+
+      player.x =
+        bunker.entrance.x;
+
+      player.y =
+        bunker.entrance.y -
+        70;
+
+      bullets.length =
+        0;
+
+      el("locationName").textContent =
+        "БУНКЕР";
+
+    }
+  );
+
+}
+
+function leaveBunker(){
+
+  transition(
+    "ПОВЕРХНОСТЬ",
+    function(){
+
+      scene =
+        "surface";
+
+      player.x =
+        800;
+
+      player.y =
+        690;
+
+      bullets.length =
+        0;
+
+      el("locationName").textContent =
+        "БАЗА";
+
+    }
+  );
+
+}
+
+actionButton.addEventListener(
+  "pointerdown",
+  function(e){
+
+    if(menuOpen || playerDead){
+      return;
+    }
+
+    e.preventDefault();
+
+    if(currentAction === "bunker"){
+
+      enterBunker();
+      return;
+
+    }
+
+    if(currentAction === "surface"){
+
+      leaveBunker();
+      return;
+
+    }
+
+    if(currentAction === "workshop"){
+
+      openOverlay(
+        el("workshopOverlay")
+      );
+
+      return;
+
+    }
+
+    message(
+      "Здесь пока нет действия"
+    );
+
+  }
+);
+
+/* =====================================================
+   DRAW SURFACE
+===================================================== */
+
+function drawSurface(){
+
+  ctx.fillStyle =
+    "#3c4439";
+
+  ctx.fillRect(
+    0,
+    0,
+    surface.width,
+    surface.height
+  );
+
+  /* GROUND */
+
+  for(
+    let x=50;
+    x<surface.width;
+    x+=160
+  ){
+
+    for(
+      let y=50;
+      y<surface.height;
+      y+=160
+    ){
+
+      ctx.fillStyle =
+        "rgba(0,0,0,.035)";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        x,
+        y,
+        20,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+    }
+
+  }
+
+  /* OUTER WALL */
+
+  const o =
+    surface.outer;
+
+  ctx.fillStyle =
+    "#5c6260";
+
+  ctx.fillRect(
+    o.left,
+    o.top,
+    o.right-o.left,
+    o.thickness
+  );
+
+  ctx.fillRect(
+    o.left,
+    o.top,
+    o.thickness,
+    o.bottom-o.top
+  );
+
+  ctx.fillRect(
+    o.right-o.thickness,
+    o.top,
+    o.thickness,
+    o.bottom-o.top
+  );
+
+  ctx.fillRect(
+    o.left,
+    o.bottom-o.thickness,
+    o.right-o.left,
+    o.thickness
+  );
+
+  /* MAIN GATE */
+
+  ctx.fillStyle =
+    "#292d2d";
+
+  ctx.fillRect(
+    730,
+    o.bottom-o.thickness,
+    140,
+    o.thickness
+  );
+
+  /* INNER WALL */
+
+  const i =
+    surface.inner;
+
+  ctx.fillStyle =
+    "#6d6d64";
+
+  ctx.fillRect(
+    i.left,
+    i.top,
+    i.right-i.left,
+    i.thickness
+  );
+
+  ctx.fillRect(
+    i.left,
+    i.top,
+    i.thickness,
+    i.bottom-i.top
+  );
+
+  ctx.fillRect(
+    i.right-i.thickness,
+    i.top,
+    i.thickness,
+    i.bottom-i.top
+  );
+
+  ctx.fillRect(
+    i.left,
+    i.bottom-i.thickness,
+    i.gateX-i.left,
+    i.thickness
+  );
+
+  ctx.fillRect(
+    i.gateX+i.gateWidth,
+    i.bottom-i.thickness,
+    i.right-
+    (
+      i.gateX+
+      i.gateWidth
+    ),
+    i.thickness
+  );
+
+  /* INNER FLOOR */
+
+  ctx.fillStyle =
+    "#57584f";
+
+  ctx.fillRect(
+    i.left+i.thickness,
+    i.top+i.thickness,
+    i.right-i.left-i.thickness*2,
+    i.bottom-i.top-i.thickness*2
+  );
+
+  /* HATCH */
+
+  ctx.fillStyle =
+    "#17191a";
+
+  ctx.fillRect(
+    765,
+    555,
+    70,
+    70
+  );
+
+  ctx.strokeStyle =
+    "#aaaaaa";
+
+  ctx.lineWidth =
+    4;
+
+  ctx.strokeRect(
+    765,
+    555,
+    70,
+    70
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.font =
+    "13px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    "ЛЮК",
+    800,
+    595
+  );
+
+  /* FARM */
+
+  ctx.fillStyle =
+    "#566e42";
+
+  ctx.fillRect(
+    300,
+    300,
+    190,
+    120
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.fillText(
+    "ФЕРМА",
+    395,
+    365
+  );
+
+  /* GENERATOR */
+
+  ctx.fillStyle =
+    "#454a4d";
+
+  ctx.fillRect(
+    1080,
+    310,
+    125,
+    90
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.fillText(
+    "ГЕНЕРАТОР",
+    1142,
+    362
+  );
+
+  /* CAR */
+
+  ctx.fillStyle =
+    "#38444b";
+
+  ctx.fillRect(
+    1100,
+    790,
+    160,
+    75
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.fillText(
+    "МАШИНА",
+    1180,
+    833
+  );
+
+  /* TOWERS */
+
+  const towers = [
+    [200,160],
+    [800,150],
+    [1400,160],
+    [200,1040],
+    [800,1040],
+    [1400,1040]
+  ];
+
+  for(const tower of towers){
+
+    ctx.fillStyle =
+      "#282c2d";
+
+    ctx.fillRect(
+      tower[0]-25,
+      tower[1]-25,
+      50,
+      50
+    );
+
+    ctx.fillStyle =
+      "#777c7c";
+
+    ctx.fillRect(
+      tower[0]-16,
+      tower[1]-16,
+      32,
+      32
+    );
+
+  }
+
+}
+
+/* =====================================================
+   DRAW BUNKER
+===================================================== */
+
+function drawBunker(){
+
+  ctx.fillStyle =
+    "#101417";
+
+  ctx.fillRect(
+    0,
+    0,
+    bunker.width,
+    bunker.height
+  );
+
+  const c =
+    bunker.corridor;
+
+  ctx.fillStyle =
+    "#3b4042";
+
+  ctx.fillRect(
+    c.left,
+    c.top,
+    c.right-c.left,
+    c.bottom-c.top
+  );
+
+  ctx.fillStyle =
+    "#747878";
+
+  ctx.fillRect(
+    c.left-20,
+    c.top,
+    20,
+    c.bottom-c.top
+  );
+
+  ctx.fillRect(
+    c.right,
+    c.top,
+    20,
+    c.bottom-c.top
+  );
+
+  ctx.strokeStyle =
+    "rgba(255,255,255,.05)";
+
+  ctx.lineWidth =
+    1;
+
+  for(
+    let y=c.top+60;
+    y<c.bottom;
+    y+=70
+  ){
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      c.left,
+      y
+    );
+
+    ctx.lineTo(
+      c.right,
+      y
+    );
+
+    ctx.stroke();
+
+  }
+
+  /* WORKSHOP */
+
+  const w =
+    bunker.workshop;
+
+  ctx.fillStyle =
+    "#343a3c";
+
+  ctx.fillRect(
+    w.left,
+    w.top,
+    w.right-w.left,
+    w.bottom-w.top
+  );
+
+  ctx.strokeStyle =
+    "#747878";
+
+  ctx.lineWidth =
+    16;
+
+  ctx.strokeRect(
+    w.left,
+    w.top,
+    w.right-w.left,
+    w.bottom-w.top
+  );
+
+  ctx.fillStyle =
+    "#343a3c";
+
+  ctx.fillRect(
+    w.right-18,
+    w.doorTop,
+    40,
+    w.doorBottom-w.doorTop
+  );
+
+  /* WORKBENCH */
+
+  ctx.fillStyle =
+    "#6c4c30";
+
+  ctx.fillRect(
+    330,
+    900,
+    145,
+    55
+  );
+
+  ctx.fillStyle =
+    "#929797";
+
+  ctx.fillRect(
+    345,
+    860,
+    115,
+    40
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.font =
+    "13px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    "ВЕРСТАК",
+    402,
+    886
+  );
+
+  /* ROOMS */
+
+  const rooms = [
+    ["МЕДИЦИНА",700,"left"],
+    ["СКЛАД",450,"left"],
+    ["ОТДЫХ",960,"right"],
+    ["ЭНЕРГЕТИКА",700,"right"],
+    ["ОБОРОНА",450,"right"]
+  ];
+
+  for(const room of rooms){
+
+    const name =
+      room[0];
+
+    const y =
+      room[1];
+
+    const side =
+      room[2];
+
+    ctx.fillStyle =
+      "#25292b";
+
+    if(side === "left"){
+
+      ctx.fillRect(
+        585,
+        y-45,
+        25,
+        90
+      );
+
+      ctx.fillStyle =
+        "#dddddd";
+
+      ctx.textAlign =
+        "right";
+
+      ctx.fillText(
+        name,
+        570,
+        y+5
+      );
+
+    }else{
+
+      ctx.fillRect(
+        840,
+        y-45,
+        25,
+        90
+      );
+
+      ctx.fillStyle =
+        "#dddddd";
+
+      ctx.textAlign =
+        "left";
+
+      ctx.fillText(
+        name,
+        880,
+        y+5
+      );
+
+    }
+
+  }
+
+  ctx.fillStyle =
+    "#dddddd";
+
+  ctx.textAlign =
+    "right";
+
+  ctx.fillText(
+    "МАСТЕРСКАЯ",
+    570,
+    965
+  );
+
+  /* FARM */
+
+  ctx.fillStyle =
+    "#27362b";
+
+  ctx.fillRect(
+    430,
+    40,
+    590,
+    300
+  );
+
+  ctx.strokeStyle =
+    "#747878";
+
+  ctx.lineWidth =
+    18;
+
+  ctx.strokeRect(
+    430,
+    40,
+    590,
+    300
+  );
+
+  ctx.fillStyle =
+    "#9aba8d";
+
+  ctx.font =
+    "18px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    "🌱 БУДУЩАЯ ФЕРМА",
+    725,
+    105
+  );
+
+  /* EXIT */
+
+  ctx.fillStyle =
+    "#17191a";
+
+  ctx.fillRect(
+    690,
+    1145,
+    70,
+    70
+  );
+
+  ctx.strokeStyle =
+    "#aaaaaa";
+
+  ctx.lineWidth =
+    4;
+
+  ctx.strokeRect(
+    690,
+    1145,
+    70,
+    70
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.font =
+    "12px Arial";
+
+  ctx.fillText(
+    "ВЫХОД",
+    725,
+    1187
+  );
+
+}
+
+/* =====================================================
+   DRAW PLAYER
+===================================================== */
+
+function drawPlayer(){
+
+  let length =
+    Math.hypot(
+      player.aimX,
+      player.aimY
+    );
+
+  if(length === 0){
+    length = 1;
+  }
+
+  const ax =
+    player.aimX /
+    length;
+
+  const ay =
+    player.aimY /
+    length;
+
+  const angle =
+    Math.atan2(
+      ay,
+      ax
+    );
+
+  const bob =
+    player.moving
+    ? Math.sin(
+        player.walkAnimation
+      ) * 2
+    : 0;
+
+  ctx.save();
+
+  ctx.translate(
+    player.x,
+    player.y
+  );
+
+  ctx.rotate(angle);
+
+  /* SHADOW */
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.30)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    0,
+    12,
+    18,
+    10,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* LEGS */
+
+  ctx.strokeStyle =
+    "#252b2d";
+
+  ctx.lineWidth =
+    7;
+
+  ctx.lineCap =
+    "round";
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    -5,
+    8
+  );
+
+  ctx.lineTo(
+    -8,
+    22+bob
+  );
+
+  ctx.stroke();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    5,
+    8
+  );
+
+  ctx.lineTo(
+    8,
+    22-bob
+  );
+
+  ctx.stroke();
+
+  /* BODY */
+
+  ctx.fillStyle =
+    "#3d5865";
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    -11,
+    -10,
+    22,
+    29,
+    6
+  );
+
+  ctx.fill();
+
+  /* BACKPACK */
+
+  ctx.fillStyle =
+    "#303a34";
+
+  ctx.fillRect(
+    -14,
+    -5,
+    7,
+    19
+  );
+
+  /* HEAD */
+
+  ctx.fillStyle =
+    "#c9a27d";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    3,
+    -16,
+    8,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* ARMS */
+
+  ctx.strokeStyle =
+    "#c39c78";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    5,
+    -4
+  );
+
+  ctx.lineTo(
+    18,
+    -1
+  );
+
+  ctx.stroke();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    4,
+    7
+  );
+
+  ctx.lineTo(
+    18,
+    3
+  );
+
+  ctx.stroke();
+
+  /* WEAPON */
+
+  ctx.strokeStyle =
+    "#141718";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    11,
+    1
+  );
+
+  ctx.lineTo(
+    31,
+    1
+  );
+
+  ctx.stroke();
+
+  ctx.strokeStyle =
+    "#555b5c";
+
+  ctx.lineWidth =
+    2;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    28,
+    1
+  );
+
+  ctx.lineTo(
+    36,
+    1
+  );
+
+  ctx.stroke();
+
+  ctx.restore();
+
+  /* AIM LINE */
+
+  ctx.strokeStyle =
+    "rgba(255,230,160,.25)";
+
+  ctx.lineWidth =
+    1;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    player.x+ax*34,
+    player.y+ay*34
+  );
+
+  ctx.lineTo(
+    player.x+ax*80,
+    player.y+ay*80
+  );
+
+  ctx.stroke();
+
+  ctx.strokeStyle =
+    "rgba(255,235,175,.68)";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    player.x+ax*88,
+    player.y+ay*88,
+    4,
+    0,
+    Math.PI*2
+  );
+
+  ctx.stroke();
+
+}
+
+/* =====================================================
+   DRAW ZOMBIES
+===================================================== */
+
+function drawZombie(zombie){
+
+  if(!zombie.alive){
+
+    /*
+      Тело остаётся на земле.
+    */
+
+    ctx.save();
+
+    ctx.translate(
+      zombie.x,
+      zombie.y
+    );
+
+    ctx.rotate(.9);
+
+    ctx.fillStyle =
+      "rgba(70,83,64,.70)";
+
+    ctx.fillRect(
+      -15,
+      -7,
+      30,
+      14
+    );
+
+    ctx.fillStyle =
+      "rgba(118,130,101,.65)";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      17,
+      0,
+      7,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+
+    return;
+  }
+
+  const angle =
+    Math.atan2(
+      player.y-zombie.y,
+      player.x-zombie.x
+    );
+
+  const hit =
+    performance.now() -
+    zombie.hitFlash
+    <
+    100;
+
+  ctx.save();
+
+  ctx.translate(
+    zombie.x,
+    zombie.y
+  );
+
+  ctx.rotate(angle);
+
+  /* SHADOW */
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.28)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    0,
+    12,
+    17,
+    9,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* BODY */
+
+  ctx.fillStyle =
+    hit
+    ? "#b9b5a5"
+    : "#59634f";
+
+  ctx.fillRect(
+    -10,
+    -8,
+    20,
+    29
+  );
+
+  /* HEAD */
+
+  ctx.fillStyle =
+    hit
+    ? "#d3cbb5"
+    : "#87917a";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    3,
+    -15,
+    8,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* ARMS */
+
+  ctx.strokeStyle =
+    "#747e68";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    5,
+    -2
+  );
+
+  ctx.lineTo(
+    22,
+    -5
+  );
+
+  ctx.stroke();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    5,
+    6
+  );
+
+  ctx.lineTo(
+    22,
+    8
+  );
+
+  ctx.stroke();
+
+  ctx.restore();
+
+  /* HEALTH */
+
+  if(
+    zombie.health <
+    zombie.maxHealth
+  ){
+
+    const width = 34;
+
+    ctx.fillStyle =
+      "rgba(0,0,0,.65)";
+
+    ctx.fillRect(
+      zombie.x-width/2,
+      zombie.y-36,
+      width,
+      4
+    );
+
+    ctx.fillStyle =
+      "#b94d4d";
+
+    ctx.fillRect(
+      zombie.x-width/2,
+      zombie.y-36,
+      width *
+      (
+        zombie.health /
+        zombie.maxHealth
+      ),
+      4
+    );
+
+  }
+
+}
+
+/* =====================================================
+   DRAW BULLETS / MUZZLE
+===================================================== */
+
+function drawBullets(){
+
+  for(const bullet of bullets){
+
+    if(!visibleOnScreen(bullet.x,bullet.y,30)){
+      continue;
+    }
+
+    ctx.fillStyle =
+      "rgba(255,215,120,.25)";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      bullet.x,
+      bullet.y,
+      8,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle =
+      "#ffd778";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      bullet.x,
+      bullet.y,
+      3.5,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  }
+
+  if(
+    performance.now() -
+    muzzleFlash.time
+    <
+    65
+  ){
+
+    ctx.fillStyle =
+      "rgba(255,220,100,.85)";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      muzzleFlash.x,
+      muzzleFlash.y,
+      10,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  }
+
+}
+
+/* =====================================================
+   OVERLAYS
+===================================================== */
+
+function stopControls(){
+
+  joystickMovePower = 0;
+  firing = false;
+
+  fireButton.classList.remove(
+    "pressed"
+  );
+
+}
+
+function openOverlay(overlay){
+
+  stopControls();
+
+  menuOpen = true;
+
+  overlay.classList.add(
+    "open"
+  );
+
+}
+
+function closeOverlay(overlay){
+
+  overlay.classList.remove(
+    "open"
+  );
+
+  menuOpen =
+    document.querySelector(
+      ".overlay.open"
+    ) !== null;
+
+}
+
+el("settingsButton").addEventListener(
+  "click",
+  function(){
+
+    openOverlay(
+      el("settingsOverlay")
+    );
+
+  }
+);
+
+el("closeSettings").addEventListener(
+  "click",
+  function(){
+
+    closeOverlay(
+      el("settingsOverlay")
+    );
+
+  }
+);
+
+el("fullscreenButton").addEventListener(
+  "click",
+  fullscreen
+);
+
+el("closeWorkshop").addEventListener(
+  "click",
+  function(){
+
+    closeOverlay(
+      el("workshopOverlay")
+    );
+
+  }
+);
+
+/* =====================================================
+   SOUND SETTING
+===================================================== */
+
+const soundSlider =
+  el("soundVolume");
+
+const soundValue =
+  el("soundValue");
+
+try{
+
+  const savedSound =
+    localStorage.getItem(
+      "base_sound"
+    );
+
+  if(savedSound !== null){
+
+    soundSlider.value =
+      savedSound;
+
+  }
+
+}catch(e){}
+
+masterVolume =
+  Number(
+    soundSlider.value
+  ) / 100;
+
+soundValue.textContent =
+  soundSlider.value +
+  "%";
+
+soundSlider.addEventListener(
+  "input",
+  function(){
+
+    masterVolume =
+      Number(
+        soundSlider.value
+      ) / 100;
+
+    soundValue.textContent =
+      soundSlider.value +
+      "%";
+
+    try{
+
+      localStorage.setItem(
+        "base_sound",
+        soundSlider.value
+      );
+
+    }catch(e){}
+
+  }
+);
+
+/* =====================================================
+   CONTROL EDITOR
+===================================================== */
+
+let editingMode =
+  "portrait";
+
+let editingLayout =
+  clone(
+    layouts.portrait
+  );
+
+const stage =
+  el("editorStage");
+
+const previews = {
+
+  aim:
+    el("previewAim"),
+
+  action:
+    el("previewAction"),
+
+  fire:
+    el("previewFire")
+
+};
+
+function previewPosition(element,position){
+
+  element.style.left =
+    position.x*100 +
+    "%";
+
+  element.style.top =
+    position.y*100 +
+    "%";
+
+}
+
+function renderEditor(){
+
+  for(const key of Object.keys(previews)){
+
+    previewPosition(
+      previews[key],
+      editingLayout[key]
+    );
+
+  }
+
+}
+
+function switchEditor(mode){
+
+  /*
+    Сохраняем временное положение текущей вкладки
+    в памяти, чтобы переключение portrait/landscape
+    не теряло изменения.
+  */
+
+  layouts[editingMode] =
+    clone(
+      editingLayout
+    );
+
+  editingMode =
+    mode;
+
+  editingLayout =
+    clone(
+      layouts[mode]
+    );
+
+  stage.className =
+    mode;
+
+  el("portraitTab").classList.toggle(
+    "active",
+    mode === "portrait"
+  );
+
+  el("landscapeTab").classList.toggle(
+    "active",
+    mode === "landscape"
+  );
+
+  renderEditor();
+
+}
+
+el("portraitTab").addEventListener(
+  "click",
+  function(){
+
+    switchEditor(
+      "portrait"
+    );
+
+  }
+);
+
+el("landscapeTab").addEventListener(
+  "click",
+  function(){
+
+    switchEditor(
+      "landscape"
+    );
+
+  }
+);
+
+function draggable(element,key){
+
+  let pointer = null;
+
+  function update(e){
+
+    const rect =
+      stage.getBoundingClientRect();
+
+    let x =
+      (
+        e.clientX -
+        rect.left
+      ) /
+      rect.width;
+
+    let y =
+      (
+        e.clientY -
+        rect.top
+      ) /
+      rect.height;
+
+    const margin =
+      key === "aim"
+      ? .09
+      : .06;
+
+    x =
+      clamp(
+        x,
+        margin,
+        1-margin
+      );
+
+    y =
+      clamp(
+        y,
+        margin,
+        1-margin
+      );
+
+    editingLayout[key] = {
+      x:x,
+      y:y
+    };
+
+    previewPosition(
+      element,
+      editingLayout[key]
+    );
+
+  }
+
+  element.addEventListener(
+    "pointerdown",
+    function(e){
+
+      e.preventDefault();
+
+      pointer =
+        e.pointerId;
+
+      element.classList.add(
+        "dragging"
+      );
+
+      try{
+
+        element.setPointerCapture(
+          e.pointerId
+        );
+
+      }catch(error){}
+
+      update(e);
+
+    }
+  );
+
+  element.addEventListener(
+    "pointermove",
+    function(e){
+
+      if(e.pointerId !== pointer){
+        return;
+      }
+
+      e.preventDefault();
+
+      update(e);
+
+    }
+  );
+
+  function stop(){
+
+    pointer = null;
+
+    element.classList.remove(
+      "dragging"
+    );
+
+  }
+
+  element.addEventListener(
+    "pointerup",
+    stop
+  );
+
+  element.addEventListener(
+    "pointercancel",
+    stop
+  );
+
+}
+
+for(const key of Object.keys(previews)){
+
+  draggable(
+    previews[key],
+    key
+  );
+
+}
+
+el("openControlSettings").addEventListener(
+  "click",
+  function(){
+
+    closeOverlay(
+      el("settingsOverlay")
+    );
+
+    editingMode =
+      orientation();
+
+    editingLayout =
+      clone(
+        layouts[editingMode]
+      );
+
+    stage.className =
+      editingMode;
+
+    el("portraitTab").classList.toggle(
+      "active",
+      editingMode === "portrait"
+    );
+
+    el("landscapeTab").classList.toggle(
+      "active",
+      editingMode === "landscape"
+    );
+
+    renderEditor();
+
+    openOverlay(
+      el("controlOverlay")
+    );
+
+  }
+);
+
+el("saveControls").addEventListener(
+  "click",
+  function(){
+
+    layouts[editingMode] =
+      clone(
+        editingLayout
+      );
+
+    layouts =
+      sanitizeLayouts(
+        layouts
+      );
+
+    saveLayouts();
+
+    applyControls();
+
+    message(
+      "Управление сохранено"
+    );
+
+  }
+);
+
+el("resetControls").addEventListener(
+  "click",
+  function(){
+
+    editingLayout =
+      clone(
+        defaults[editingMode]
+      );
+
+    layouts[editingMode] =
+      clone(
+        editingLayout
+      );
+
+    saveLayouts();
+
+    renderEditor();
+
+    applyControls();
+
+    message(
+      "Раскладка сброшена"
+    );
+
+  }
+);
+
+el("backControls").addEventListener(
+  "click",
+  function(){
+
+    layouts =
+      loadLayouts();
+
+    closeOverlay(
+      el("controlOverlay")
+    );
+
+    openOverlay(
+      el("settingsOverlay")
+    );
+
+    applyControls();
+
+  }
+);
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+window.addEventListener(
+  "resize",
+  function(){
+
+    resizeCanvas();
+    applyControls();
+
+  }
+);
+
+window.addEventListener(
+  "orientationchange",
+  function(){
+
+    setTimeout(
+      function(){
+
+        resizeCanvas();
+        applyControls();
+
+      },
+      150
+    );
+
+  }
+);
+
+/* =====================================================
+   PREVENT TELEGRAM SWIPE
+===================================================== */
+
+document.addEventListener(
+  "touchmove",
+  function(e){
+
+    if(
+      !e.target.closest(
+        ".panel"
+      )
+    ){
+
+      e.preventDefault();
+
+    }
+
+  },
+  {
+    passive:false
+  }
+);
+
+/* =====================================================
+   UPDATE
+===================================================== */
+
+function update(){
+
+  updatePlayer();
+
+  updateBullets();
+
+  updateZombies();
+
+  updateAction();
+
+  updateCamera();
+
+}
+
+/* =====================================================
+   DRAW
+===================================================== */
+
+function draw(){
+
+  ctx.clearRect(
+    0,
+    0,
+    screenWidth,
+    screenHeight
+  );
+
+  ctx.save();
+
+  ctx.translate(
+    -camera.x,
+    -camera.y
+  );
+
+  if(scene === "surface"){
+
+    drawSurface();
+
+  }else{
+
+    drawBunker();
+
+  }
+
+  if(scene === "surface"){
+
+    for(const zombie of zombies){
+      drawZombie(zombie);
+    }
+
+  }
+
+  drawBullets();
+
+  drawPlayer();
+
+  ctx.restore();
+
+}
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+function gameLoop(){
+
+  if(document.hidden){
+    requestAnimationFrame(gameLoop);
+    return;
+  }
+
+
+  try{
+
+    update();
+    draw();
+
+  }catch(error){
+
+    console.error(
+      "Game loop error:",
+      error
+    );
+
+  }
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+/* =====================================================
+   START
+===================================================== */
+
+/*
+  Всё важное уже создано ВЫШЕ.
+  Только теперь запускается Canvas.
+*/
+
+resizeCanvas();
+
+applyControls();
+
+updateCamera();
+
+gameLoop();
+
+/*
+  Telegram fullscreen запускается ПОСЛЕ игры.
+*/
+
+setTimeout(
+  fullscreen,
+  400
+);
+
+</script>
+
+</body>
+</html>
