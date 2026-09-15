@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.1</title>
+<title>Survival Base 0.4.3</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -173,11 +173,6 @@ body{
   background:rgba(135,140,145,.30);
 }
 
-#moveButton{
-  width:54px;
-  height:54px;
-  font-size:22px;
-}
 
 /* DAMAGE FLASH */
 
@@ -416,6 +411,15 @@ body{
   color:rgba(255,255,255,.60);
   margin-bottom:18px;
 }
+
+@media (pointer:coarse){
+  .hudBox,
+  .controlButton{
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+}
+
 </style>
 </head>
 
@@ -445,7 +449,6 @@ body{
 </div>
 
 <button id="actionButton" class="gameControl controlButton inactive">✋</button>
-<button id="moveButton" class="gameControl controlButton">🏃</button>
 <button id="fireButton" class="gameControl controlButton">◉</button>
 
 <div id="damageFlash"></div>
@@ -458,7 +461,7 @@ body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.1 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.3 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -513,7 +516,6 @@ body{
 
         <div id="previewAim" class="preview joy">⊙</div>
         <div id="previewAction" class="preview btn">✋</div>
-        <div id="previewMove" class="preview btn">🏃</div>
         <div id="previewFire" class="preview btn">◉</div>
 
       </div>
@@ -717,6 +719,15 @@ function playSound(sound,volume){
   чтобы быстрые выстрелы не обрывали друг друга.
 */
 
+const gunshotPool = [
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3")
+];
+
+let gunshotPoolIndex = 0;
+
 function playGunshot(){
 
   if(masterVolume <= 0){
@@ -726,7 +737,18 @@ function playGunshot(){
   try{
 
     const shot =
-      new Audio("gunshot.mp3");
+      gunshotPool[
+        gunshotPoolIndex
+      ];
+
+    gunshotPoolIndex =
+      (
+        gunshotPoolIndex + 1
+      ) %
+      gunshotPool.length;
+
+    shot.pause();
+    shot.currentTime = 0;
 
     shot.volume =
       clamp(
@@ -740,6 +762,7 @@ function playGunshot(){
   }catch(e){}
 
 }
+
 
 /* =====================================================
    CONTROL LAYOUTS
@@ -759,11 +782,6 @@ const defaults = {
       y:.82
     },
 
-    move:{
-      x:.82,
-      y:.82
-    },
-
     fire:{
       x:.84,
       y:.68
@@ -780,11 +798,6 @@ const defaults = {
 
     action:{
       x:.77,
-      y:.79
-    },
-
-    move:{
-      x:.88,
       y:.79
     },
 
@@ -825,7 +838,7 @@ function sanitizeLayouts(saved){
       continue;
     }
 
-    for(const key of ["aim","action","move","fire"]){
+    for(const key of ["aim","action","fire"]){
 
       result[mode][key] =
         validPoint(
@@ -846,7 +859,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_041"
+        "base_controls_043"
       );
 
     if(!saved){
@@ -873,7 +886,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_041",
+      "base_controls_043",
       JSON.stringify(layouts)
     );
 
@@ -924,11 +937,6 @@ function applyControls(){
   );
 
   positionControl(
-    el("moveButton"),
-    layout.move
-  );
-
-  positionControl(
     el("fireButton"),
     layout.fire
   );
@@ -962,11 +970,17 @@ function resizeCanvas(){
       window.innerHeight
     );
 
+  const mobileDevice =
+    window.matchMedia &&
+    window.matchMedia("(pointer:coarse)").matches;
+
   const ratio =
-    Math.min(
-      window.devicePixelRatio || 1,
-      2
-    );
+    mobileDevice
+    ? 1
+    : Math.min(
+        window.devicePixelRatio || 1,
+        1.5
+      );
 
   canvas.width =
     Math.floor(
@@ -1037,6 +1051,22 @@ const camera = {
   x:0,
   y:0
 };
+
+function visibleOnScreen(x,y,padding){
+
+  padding =
+    padding === undefined
+    ? 80
+    : padding;
+
+  return (
+    x >= camera.x-padding &&
+    x <= camera.x+screenWidth+padding &&
+    y >= camera.y-padding &&
+    y <= camera.y+screenHeight+padding
+  );
+
+}
 
 const surface = {
 
@@ -1343,7 +1373,10 @@ setupJoystick(
   function(x,y){
 
     const power =
-      Math.hypot(x,y);
+      Math.min(
+        1,
+        Math.hypot(x,y)
+      );
 
     if(power > .13){
 
@@ -1356,64 +1389,31 @@ setupJoystick(
       player.aimY =
         y / length;
 
+      // One joystick now controls both direction and walking.
+      // Small deflection = slow careful movement, full deflection = full walk speed.
+      joystickMovePower =
+        clamp(
+          (power - .13) / .87,
+          0,
+          1
+        );
+
+    }else{
+
+      // Releasing the stick stops the player,
+      // but the last facing direction stays.
+      joystickMovePower = 0;
+
     }
 
   }
 );
 
 /* =====================================================
-   HOLD TO MOVE
+   ONE-JOYSTICK MOVEMENT
 ===================================================== */
 
-let moveHeld = false;
-
-const moveButton =
-  el("moveButton");
-
-moveButton.addEventListener(
-  "pointerdown",
-  function(e){
-
-    if(menuOpen || playerDead){
-      return;
-    }
-
-    e.preventDefault();
-
-    moveHeld = true;
-
-    moveButton.classList.add(
-      "pressed"
-    );
-
-    try{
-      moveButton.setPointerCapture(
-        e.pointerId
-      );
-    }catch(error){}
-
-  }
-);
-
-function stopMove(){
-
-  moveHeld = false;
-
-  moveButton.classList.remove(
-    "pressed"
-  );
-
-}
-
-moveButton.addEventListener(
-  "pointerup",
-  stopMove
-);
-
-moveButton.addEventListener(
-  "pointercancel",
-  stopMove
-);
+let joystickMovePower = 0;
 
 /* =====================================================
    BULLETS / SHOOTING
@@ -1807,12 +1807,12 @@ function updatePlayer(){
   }
 
   player.moving =
-    moveHeld;
+    joystickMovePower > 0;
 
   player.running =
     false;
 
-  if(!moveHeld){
+  if(joystickMovePower <= 0){
     return;
   }
 
@@ -1835,7 +1835,11 @@ function updatePlayer(){
     length;
 
   const speed =
-    player.walkSpeed;
+    player.walkSpeed *
+    (
+      .35 +
+      .65 * joystickMovePower
+    );
 
   const collision =
     scene === "surface"
@@ -1958,14 +1962,10 @@ function killPlayer(){
 
   playerDead = true;
 
-  moveHeld = false;
+  joystickMovePower = 0;
   firing = false;
 
   fireButton.classList.remove(
-    "pressed"
-  );
-
-  moveButton.classList.remove(
     "pressed"
   );
 
@@ -2474,12 +2474,8 @@ function transition(title,callback){
     "show"
   );
 
-  moveHeld = false;
+  joystickMovePower = 0;
   firing = false;
-
-  moveButton.classList.remove(
-    "pressed"
-  );
 
   setTimeout(
     function(){
@@ -2618,13 +2614,13 @@ function drawSurface(){
   for(
     let x=50;
     x<surface.width;
-    x+=100
+    x+=160
   ){
 
     for(
       let y=50;
       y<surface.height;
-      y+=100
+      y+=160
     ){
 
       ctx.fillStyle =
@@ -3679,6 +3675,10 @@ function drawBullets(){
 
   for(const bullet of bullets){
 
+    if(!visibleOnScreen(bullet.x,bullet.y,30)){
+      continue;
+    }
+
     ctx.fillStyle =
       "rgba(255,215,120,.25)";
 
@@ -3743,14 +3743,10 @@ function drawBullets(){
 
 function stopControls(){
 
-  moveHeld = false;
+  joystickMovePower = 0;
   firing = false;
 
   fireButton.classList.remove(
-    "pressed"
-  );
-
-  moveButton.classList.remove(
     "pressed"
   );
 
@@ -3901,9 +3897,6 @@ const previews = {
 
   action:
     el("previewAction"),
-
-  move:
-    el("previewMove"),
 
   fire:
     el("previewFire")
@@ -4355,6 +4348,12 @@ function draw(){
 ===================================================== */
 
 function gameLoop(){
+
+  if(document.hidden){
+    requestAnimationFrame(gameLoop);
+    return;
+  }
+
 
   try{
 
