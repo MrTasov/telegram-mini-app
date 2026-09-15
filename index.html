@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.8</title>
+<title>Survival Base 0.4.10</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -431,16 +431,21 @@ body{
 }
 .floatingJoystick.hiddenJoystick{opacity:.38}
 .floatingJoystick .joystickBase{
+  left:0;
+  top:0;
   width:92px;
   height:92px;
   border:2px solid rgba(255,255,255,.34);
   background:rgba(20,24,28,.10);
 }
 .floatingJoystick .joystickStick{
+  left:50%;
+  top:50%;
   width:38px;
   height:38px;
-  margin-left:-19px;
-  margin-top:-19px;
+  margin-left:0;
+  margin-top:0;
+  transform:translate(-50%,-50%);
   border:1px solid rgba(255,255,255,.58);
   background:rgba(255,255,255,.22);
 }
@@ -508,7 +513,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.8 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.10 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -937,7 +942,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_048"
+        "base_controls_0410"
       );
 
     if(!saved){
@@ -964,7 +969,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_048",
+      "base_controls_0410",
       JSON.stringify(layouts)
     );
 
@@ -1558,8 +1563,7 @@ function shoot(){
 
   if(
     menuOpen ||
-    playerDead ||
-    scene !== "surface"
+    playerDead
   ){
     return;
   }
@@ -1903,8 +1907,13 @@ function updatePlayer(){
   const x=moveX/length;
   const y=moveY/length;
 
-  // Two speeds: inner movement = walk, outer movement = run.
-  const speed=player.running ? player.runSpeed : player.walkSpeed;
+  // Fully analog movement:
+  // just outside deadzone = 20% of max;
+  // full joystick = 100%;
+  // new maximum = half of the old maximum run speed.
+  const newMaxSpeed=player.runSpeed*.50;
+  const normalizedPower=clamp((movePower-JOY_DEAD)/(1-JOY_DEAD),0,1);
+  const speed=newMaxSpeed*(.20+.80*normalizedPower);
 
   const collision =
     scene === "surface"
@@ -4457,7 +4466,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.4.8: fixed twin-stick; audio disabled");
+console.log("0.4.10: analog movement 20%-100%; max speed halved; audio disabled");
 
 gameLoop();
 
