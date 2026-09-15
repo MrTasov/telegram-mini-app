@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.3</title>
+<title>Survival Base 0.4.4</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -420,6 +420,31 @@ body{
   }
 }
 
+
+.floatingJoystick{
+  position:fixed !important;
+  width:92px;
+  height:92px;
+  opacity:.78;
+  pointer-events:none;
+  transition:opacity .06s linear;
+}
+.floatingJoystick.hiddenJoystick{opacity:.08}
+.floatingJoystick .joystickBase{
+  width:92px;
+  height:92px;
+  border:2px solid rgba(255,255,255,.34);
+  background:rgba(20,24,28,.10);
+}
+.floatingJoystick .joystickStick{
+  width:38px;
+  height:38px;
+  margin-left:-19px;
+  margin-top:-19px;
+  border:1px solid rgba(255,255,255,.58);
+  background:rgba(255,255,255,.22);
+}
+
 </style>
 </head>
 
@@ -443,13 +468,17 @@ body{
 
 <button id="settingsButton">⚙</button>
 
-<div id="aimControl" class="gameControl joystick">
+<div id="moveControl" class="gameControl joystick floatingJoystick hiddenJoystick">
   <div class="joystickBase"></div>
-  <div id="aimStick" class="joystickStick">⊙</div>
+  <div id="moveStick" class="joystickStick">●</div>
+</div>
+
+<div id="aimControl" class="gameControl joystick floatingJoystick hiddenJoystick">
+  <div class="joystickBase"></div>
+  <div id="aimStick" class="joystickStick">●</div>
 </div>
 
 <button id="actionButton" class="gameControl controlButton inactive">✋</button>
-<button id="fireButton" class="gameControl controlButton">◉</button>
 
 <div id="damageFlash"></div>
 <div id="message"></div>
@@ -461,7 +490,7 @@ body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.3 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.4 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -514,9 +543,9 @@ body{
 
       <div id="editorStage" class="portrait">
 
-        <div id="previewAim" class="preview joy">⊙</div>
+        <div id="previewMove" class="preview joy">●</div>
+        <div id="previewAim" class="preview joy">●</div>
         <div id="previewAction" class="preview btn">✋</div>
-        <div id="previewFire" class="preview btn">◉</div>
 
       </div>
 
@@ -686,6 +715,18 @@ const sounds = {
   footsteps:createSound("footsteps.mp3")
 };
 
+let lastZombieAudioAt=0;
+
+function playZombieSound(){
+  const now=performance.now();
+
+  // Prevent several zombies from decoding/playing the same MP3 together.
+  if(masterVolume<=0 || now-lastZombieAudioAt<3000) return;
+
+  lastZombieAudioAt=now;
+  playSound(sounds.zombie,.25);
+}
+
 function playSound(sound,volume){
 
   if(!sound || masterVolume <= 0){
@@ -771,41 +812,15 @@ function playGunshot(){
 const defaults = {
 
   portrait:{
-
-    aim:{
-      x:.18,
-      y:.82
-    },
-
-    action:{
-      x:.70,
-      y:.82
-    },
-
-    fire:{
-      x:.84,
-      y:.68
-    }
-
+    move:{x:.18,y:.82},
+    aim:{x:.82,y:.82},
+    action:{x:.72,y:.68}
   },
 
   landscape:{
-
-    aim:{
-      x:.13,
-      y:.78
-    },
-
-    action:{
-      x:.77,
-      y:.79
-    },
-
-    fire:{
-      x:.90,
-      y:.58
-    }
-
+    move:{x:.14,y:.78},
+    aim:{x:.86,y:.78},
+    action:{x:.76,y:.62}
   }
 
 };
@@ -838,7 +853,7 @@ function sanitizeLayouts(saved){
       continue;
     }
 
-    for(const key of ["aim","action","fire"]){
+    for(const key of ["move","aim","action"]){
 
       result[mode][key] =
         validPoint(
@@ -859,7 +874,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_043"
+        "base_controls_044"
       );
 
     if(!saved){
@@ -886,7 +901,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_043",
+      "base_controls_044",
       JSON.stringify(layouts)
     );
 
@@ -919,27 +934,12 @@ function positionControl(element,data){
 
 function applyControls(){
 
-  const mode =
-    orientation();
+  const mode = orientation();
+  const layout = layouts[mode] || defaults[mode];
 
-  const layout =
-    layouts[mode] ||
-    defaults[mode];
-
-  positionControl(
-    el("aimControl"),
-    layout.aim
-  );
-
-  positionControl(
-    el("actionButton"),
-    layout.action
-  );
-
-  positionControl(
-    el("fireButton"),
-    layout.fire
-  );
+  positionControl(el("moveControl"),layout.move);
+  positionControl(el("aimControl"),layout.aim);
+  positionControl(el("actionButton"),layout.action);
 
 }
 
@@ -1032,7 +1032,8 @@ const player = {
   health:100,
   maxHealth:100,
 
-  walkSpeed:3.8,
+  walkSpeed:3.15,
+  runSpeed:5.25,
 
   aimX:0,
   aimY:-1,
@@ -1224,196 +1225,133 @@ function resetZombies(){
 resetZombies();
 
 /* =====================================================
-   AIM JOYSTICK / MOVE BUTTON
+   FLOATING TWIN-STICK
 ===================================================== */
 
-function setupJoystick(zone,stick,callback){
+let moveX=0, moveY=0, movePower=0;
+let rightAimActive=false, aimPower=0;
+let leftPointerId=null, rightPointerId=null;
+let leftOriginX=0, leftOriginY=0, rightOriginX=0, rightOriginY=0;
 
-  let pointer = null;
+const JOY_RADIUS=46;
+const JOY_DEAD=.14;
+const RUN_THRESHOLD=.72;
 
-  const maxDistance = 28;
+const moveControl=el("moveControl");
+const moveStick=el("moveStick");
+const aimControl=el("aimControl");
+const aimStick=el("aimStick");
 
-  function update(e){
-
-    const rect =
-      zone.getBoundingClientRect();
-
-    const centerX =
-      rect.left +
-      rect.width/2;
-
-    const centerY =
-      rect.top +
-      rect.height/2;
-
-    let dx =
-      e.clientX -
-      centerX;
-
-    let dy =
-      e.clientY -
-      centerY;
-
-    const length =
-      Math.hypot(dx,dy);
-
-    if(length > maxDistance){
-
-      dx =
-        dx /
-        length *
-        maxDistance;
-
-      dy =
-        dy /
-        length *
-        maxDistance;
-
-    }
-
-    stick.style.transform =
-      "translate(" +
-      dx +
-      "px," +
-      dy +
-      "px)";
-
-    callback(
-      dx/maxDistance,
-      dy/maxDistance
-    );
-
-  }
-
-  function stop(e){
-
-    if(
-      pointer !== null &&
-      e.pointerId !== undefined &&
-      e.pointerId !== pointer
-    ){
-      return;
-    }
-
-    pointer = null;
-
-    zone.classList.remove(
-      "active"
-    );
-
-    stick.style.transform =
-      "translate(0px,0px)";
-
-    /*
-      Direction is intentionally NOT reset.
-      The player keeps facing the last direction.
-    */
-    callback(0,0);
-
-  }
-
-  zone.addEventListener(
-    "pointerdown",
-    function(e){
-
-      if(menuOpen || playerDead){
-        return;
-      }
-
-      e.preventDefault();
-
-      pointer =
-        e.pointerId;
-
-      zone.classList.add(
-        "active"
-      );
-
-      try{
-        zone.setPointerCapture(
-          e.pointerId
-        );
-      }catch(error){}
-
-      update(e);
-
-    }
-  );
-
-  zone.addEventListener(
-    "pointermove",
-    function(e){
-
-      if(e.pointerId !== pointer){
-        return;
-      }
-
-      e.preventDefault();
-
-      update(e);
-
-    }
-  );
-
-  zone.addEventListener(
-    "pointerup",
-    stop
-  );
-
-  zone.addEventListener(
-    "pointercancel",
-    stop
-  );
-
+function floatingCenter(control,x,y){
+  control.style.left=(x-JOY_RADIUS)+"px";
+  control.style.top=(y-JOY_RADIUS)+"px";
+  control.classList.remove("hiddenJoystick");
 }
 
-setupJoystick(
-  el("aimControl"),
-  el("aimStick"),
-  function(x,y){
+function floatingReset(control,stick){
+  stick.style.transform="translate(0px,0px)";
+  control.classList.add("hiddenJoystick");
+}
 
-    const power =
-      Math.min(
-        1,
-        Math.hypot(x,y)
-      );
+function floatingVector(stick,ox,oy,x,y){
+  const dx=x-ox, dy=y-oy;
+  const distance=Math.hypot(dx,dy);
+  const maxDistance=30;
+  let drawX=dx, drawY=dy;
 
-    if(power > .13){
-
-      const length =
-        Math.hypot(x,y) || 1;
-
-      player.aimX =
-        x / length;
-
-      player.aimY =
-        y / length;
-
-      // One joystick now controls both direction and walking.
-      // Small deflection = slow careful movement, full deflection = full walk speed.
-      joystickMovePower =
-        clamp(
-          (power - .13) / .87,
-          0,
-          1
-        );
-
-    }else{
-
-      // Releasing the stick stops the player,
-      // but the last facing direction stays.
-      joystickMovePower = 0;
-
-    }
-
+  if(distance>maxDistance){
+    const k=maxDistance/distance;
+    drawX*=k; drawY*=k;
   }
-);
 
-/* =====================================================
-   ONE-JOYSTICK MOVEMENT
-===================================================== */
+  stick.style.transform=`translate(${drawX}px,${drawY}px)`;
+  const len=Math.hypot(dx,dy)||1;
 
-let joystickMovePower = 0;
+  return {
+    x:dx/len,
+    y:dy/len,
+    power:Math.min(1,distance/maxDistance)
+  };
+}
+
+function uiTouch(target){
+  return !!(
+    target && target.closest &&
+    target.closest("button,.overlay,.panel,.menuCard,.workshopPanel")
+  );
+}
+
+window.addEventListener("pointerdown",function(e){
+  if(menuOpen || playerDead || uiTouch(e.target)) return;
+
+  if(e.clientX<innerWidth*.5 && leftPointerId===null){
+    leftPointerId=e.pointerId;
+    leftOriginX=e.clientX; leftOriginY=e.clientY;
+    floatingCenter(moveControl,leftOriginX,leftOriginY);
+    movePower=0;
+  }else if(e.clientX>=innerWidth*.5 && rightPointerId===null){
+    rightPointerId=e.pointerId;
+    rightOriginX=e.clientX; rightOriginY=e.clientY;
+    floatingCenter(aimControl,rightOriginX,rightOriginY);
+    rightAimActive=true;
+    aimPower=0;
+    firing=false;
+  }
+},{passive:false});
+
+window.addEventListener("pointermove",function(e){
+  if(e.pointerId===leftPointerId){
+    const v=floatingVector(moveStick,leftOriginX,leftOriginY,e.clientX,e.clientY);
+    moveX=v.x; moveY=v.y; movePower=v.power;
+
+    // Left = movement + default look direction.
+    if(movePower>JOY_DEAD && !rightAimActive){
+      player.aimX=moveX; player.aimY=moveY;
+    }
+    e.preventDefault();
+  }
+
+  if(e.pointerId===rightPointerId){
+    const v=floatingVector(aimStick,rightOriginX,rightOriginY,e.clientX,e.clientY);
+    aimPower=v.power;
+
+    // Right stick overrides look direction and fires while armed.
+    if(aimPower>JOY_DEAD){
+      player.aimX=v.x; player.aimY=v.y;
+      if(!firing){
+        firing=true;
+        shoot(); // immediate single shot; game fire-rate handles held fire
+      }
+    }else{
+      firing=false;
+    }
+    e.preventDefault();
+  }
+},{passive:false});
+
+function releaseFloating(e){
+  if(e.pointerId===leftPointerId){
+    leftPointerId=null;
+    movePower=0; moveX=0; moveY=0;
+    floatingReset(moveControl,moveStick);
+  }
+
+  if(e.pointerId===rightPointerId){
+    rightPointerId=null;
+    rightAimActive=false;
+    aimPower=0;
+    firing=false;
+    floatingReset(aimControl,aimStick);
+
+    // Return facing priority to movement.
+    if(movePower>JOY_DEAD){
+      player.aimX=moveX; player.aimY=moveY;
+    }
+  }
+}
+
+window.addEventListener("pointerup",releaseFloating,{passive:false});
+window.addEventListener("pointercancel",releaseFloating,{passive:false});
 
 /* =====================================================
    BULLETS / SHOOTING
@@ -1423,9 +1361,6 @@ const bullets = [];
 
 let firing = false;
 let lastShot = 0;
-
-const fireButton =
-  el("fireButton");
 
 function shoot(){
 
@@ -1506,47 +1441,6 @@ function shoot(){
     dy*30;
 
 }
-
-fireButton.addEventListener(
-  "pointerdown",
-  function(e){
-
-    if(menuOpen || playerDead){
-      return;
-    }
-
-    e.preventDefault();
-
-    firing = true;
-
-    fireButton.classList.add(
-      "pressed"
-    );
-
-    shoot();
-
-  }
-);
-
-function stopFire(){
-
-  firing = false;
-
-  fireButton.classList.remove(
-    "pressed"
-  );
-
-}
-
-fireButton.addEventListener(
-  "pointerup",
-  stopFire
-);
-
-fireButton.addEventListener(
-  "pointercancel",
-  stopFire
-);
 
 const muzzleFlash = {
   x:0,
@@ -1806,40 +1700,19 @@ function updatePlayer(){
     return;
   }
 
-  player.moving =
-    joystickMovePower > 0;
+  player.moving = movePower > JOY_DEAD;
+  player.running = movePower >= RUN_THRESHOLD;
 
-  player.running =
-    false;
-
-  if(joystickMovePower <= 0){
+  if(!player.moving){
     return;
   }
 
-  let length =
-    Math.hypot(
-      player.aimX,
-      player.aimY
-    );
+  const length=Math.hypot(moveX,moveY)||1;
+  const x=moveX/length;
+  const y=moveY/length;
 
-  if(length < .01){
-    return;
-  }
-
-  const x =
-    player.aimX /
-    length;
-
-  const y =
-    player.aimY /
-    length;
-
-  const speed =
-    player.walkSpeed *
-    (
-      .35 +
-      .65 * joystickMovePower
-    );
+  // Two speeds: inner movement = walk, outer movement = run.
+  const speed=player.running ? player.runSpeed : player.walkSpeed;
 
   const collision =
     scene === "surface"
@@ -1962,12 +1835,8 @@ function killPlayer(){
 
   playerDead = true;
 
-  joystickMovePower = 0;
+  movePower = 0;
   firing = false;
-
-  fireButton.classList.remove(
-    "pressed"
-  );
 
   menuOpen = true;
 
@@ -2142,10 +2011,7 @@ function updateZombies(){
       now > zombie.lastGrowl
     ){
 
-      playSound(
-        sounds.zombie,
-        .35
-      );
+      playZombieSound();
 
       zombie.lastGrowl =
         now +
@@ -2474,7 +2340,7 @@ function transition(title,callback){
     "show"
   );
 
-  joystickMovePower = 0;
+  movePower = 0;
   firing = false;
 
   setTimeout(
@@ -3743,12 +3609,8 @@ function drawBullets(){
 
 function stopControls(){
 
-  joystickMovePower = 0;
+  movePower = 0;
   firing = false;
-
-  fireButton.classList.remove(
-    "pressed"
-  );
 
 }
 
@@ -3898,8 +3760,8 @@ const previews = {
   action:
     el("previewAction"),
 
-  fire:
-    el("previewFire")
+  move:
+    el("previewMove"),
 
 };
 
@@ -4012,7 +3874,7 @@ function draggable(element,key){
       rect.height;
 
     const margin =
-      key === "aim"
+      (key === "aim" || key === "move")
       ? .09
       : .06;
 
@@ -4228,32 +4090,36 @@ el("backControls").addEventListener(
    RESIZE
 ===================================================== */
 
-window.addEventListener(
-  "resize",
-  function(){
+function refreshViewport(){
+  resizeCanvas();
+  applyControls();
+  updateCamera();
+}
 
-    resizeCanvas();
-    applyControls();
+window.addEventListener("resize",refreshViewport);
 
+window.addEventListener("orientationchange",function(){
+  refreshViewport();
+  setTimeout(refreshViewport,120);
+
+  setTimeout(function(){
+    fullscreen();
+    refreshViewport();
+  },420);
+});
+
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",refreshViewport);
+}
+
+try{
+  if(tg && tg.onEvent){
+    tg.onEvent("viewportChanged",refreshViewport);
+    tg.onEvent("safeAreaChanged",refreshViewport);
+    tg.onEvent("contentSafeAreaChanged",refreshViewport);
   }
-);
+}catch(e){}
 
-window.addEventListener(
-  "orientationchange",
-  function(){
-
-    setTimeout(
-      function(){
-
-        resizeCanvas();
-        applyControls();
-
-      },
-      150
-    );
-
-  }
-);
 
 /* =====================================================
    PREVENT TELEGRAM SWIPE
@@ -4348,6 +4214,10 @@ function draw(){
 ===================================================== */
 
 function gameLoop(){
+  if(rightAimActive && aimPower>JOY_DEAD && firing && !menuOpen && !playerDead){
+    shoot();
+  }
+
 
   if(document.hidden){
     requestAnimationFrame(gameLoop);
