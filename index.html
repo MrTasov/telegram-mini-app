@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.7</title>
+<title>Survival Base 0.4.8</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -508,7 +508,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.7 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.8 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -937,7 +937,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_047"
+        "base_controls_048"
       );
 
     if(!saved){
@@ -964,7 +964,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_047",
+      "base_controls_048",
       JSON.stringify(layouts)
     );
 
@@ -1000,8 +1000,8 @@ function applyControls(){
   const mode = orientation();
   const layout = layouts[mode] || defaults[mode];
 
-  if(typeof homeJoysticks==="function"){
-    homeJoysticks();
+  if(typeof positionFixedControls==="function"){
+    positionFixedControls();
   }
 
 }
@@ -1288,20 +1288,14 @@ function resetZombies(){
 resetZombies();
 
 /* =====================================================
-   0.4.6 CLAMPED FLOATING TWIN-STICK
-
-   Each stick has:
-   1) a HOME X/Y position;
-   2) an invisible allowed rectangle;
-   3) touches outside the rectangle still activate it,
-      but the base is clamped to the nearest rectangle edge;
-   4) releasing returns the base to HOME.
+   0.4.8 FIXED TWIN-STICK
+   No floating bases. Each joystick stays in one fixed,
+   symmetric position. Only the inner knob follows the finger.
 ===================================================== */
 
 let moveX=0, moveY=0, movePower=0;
 let rightAimActive=false, aimPower=0;
 let leftPointerId=null, rightPointerId=null;
-let leftOriginX=0, leftOriginY=0, rightOriginX=0, rightOriginY=0;
 
 const JOY_RADIUS=46;
 const JOY_DEAD=.14;
@@ -1312,70 +1306,7 @@ const moveStick=el("moveStick");
 const aimControl=el("aimControl");
 const aimStick=el("aimStick");
 
-function joystickGeometry(side){
-
-  const w=window.innerWidth;
-  const h=window.innerHeight;
-  const landscape=w>h;
-
-  /*
-    0.4.7:
-    - free-floating area follows the lower-left / lower-right thumb zones;
-    - inside the rectangle the base follows the finger exactly 1:1;
-    - only coordinates outside it are clamped to the nearest edge;
-    - HOME positions are symmetric and deliberately clear of the action button.
-  */
-  if(landscape){
-    const minY=h*.54;
-    const maxY=h-JOY_RADIUS-18;
-
-    if(side==="left"){
-      return {
-        minX:JOY_RADIUS+24,
-        maxX:w*.43,
-        minY,
-        maxY,
-        homeX:w*.14,
-        homeY:h*.80
-      };
-    }
-
-    return {
-      minX:w*.57,
-      maxX:w-JOY_RADIUS-24,
-      minY,
-      maxY,
-      homeX:w*.86,
-      homeY:h*.80
-    };
-  }
-
-  const minY=h*.66;
-  const maxY=h-JOY_RADIUS-28;
-
-  if(side==="left"){
-    return {
-      minX:JOY_RADIUS+18,
-      maxX:w*.46,
-      minY,
-      maxY,
-      homeX:w*.20,
-      homeY:h*.86
-    };
-  }
-
-  return {
-    minX:w*.54,
-    maxX:w-JOY_RADIUS-18,
-    minY,
-    maxY,
-    homeX:w*.80,
-    homeY:h*.86
-  };
-}
-
 function centerJoystickKnob(stick){
-  // Force the analog knob to the exact center of its base.
   stick.style.left="50%";
   stick.style.top="50%";
   stick.style.marginLeft="0";
@@ -1383,56 +1314,66 @@ function centerJoystickKnob(stick){
   stick.style.transform="translate(-50%,-50%)";
 }
 
-function setJoystickCenter(control,x,y,visible=true){
+function setFixedJoystick(control,x,y){
   control.style.left=(x-JOY_RADIUS)+"px";
   control.style.top=(y-JOY_RADIUS)+"px";
-  control.classList.toggle("hiddenJoystick",!visible);
+  control.style.right="auto";
+  control.style.bottom="auto";
+  control.style.transform="none";
+  control.classList.remove("hiddenJoystick");
 }
 
-function positionActionButton047(){
+function fixedGeometry(){
   const w=window.innerWidth;
   const h=window.innerHeight;
   const landscape=w>h;
 
-  const button=el("actionButton");
-  if(!button) return;
+  if(landscape){
+    return {
+      leftX:w*.13,
+      rightX:w*.87,
+      y:h*.78,
+      actionX:w*.76,
+      actionY:h*.58
+    };
+  }
 
-  // Clear of the right HOME joystick in both orientations.
-  const x=w*(landscape?.76:.72);
-  const y=h*(landscape?.56:.68);
-
-  button.style.left=x+"px";
-  button.style.top=y+"px";
-  button.style.right="auto";
-  button.style.bottom="auto";
-  button.style.transform="translate(-50%,-50%)";
-}
-
-function homeJoysticks(){
-  const left=joystickGeometry("left");
-  const right=joystickGeometry("right");
-
-  setJoystickCenter(moveControl,left.homeX,left.homeY,true);
-  setJoystickCenter(aimControl,right.homeX,right.homeY,true);
-
-  centerJoystickKnob(moveStick);
-  centerJoystickKnob(aimStick);
-  positionActionButton047();
-}
-
-function clampedJoystickOrigin(side,x,y){
-  const g=joystickGeometry(side);
   return {
-    x:clamp(x,g.minX,g.maxX),
-    y:clamp(y,g.minY,g.maxY)
+    leftX:w*.18,
+    rightX:w*.82,
+    y:h*.84,
+    actionX:w*.70,
+    actionY:h*.68
   };
 }
 
-function floatingVector(stick,ox,oy,x,y){
-  const dx=x-ox, dy=y-oy;
+function positionFixedControls(){
+  const g=fixedGeometry();
+
+  setFixedJoystick(moveControl,g.leftX,g.y);
+  setFixedJoystick(aimControl,g.rightX,g.y);
+
+  centerJoystickKnob(moveStick);
+  centerJoystickKnob(aimStick);
+
+  const action=el("actionButton");
+  if(action){
+    action.style.left=g.actionX+"px";
+    action.style.top=g.actionY+"px";
+    action.style.right="auto";
+    action.style.bottom="auto";
+    action.style.transform="translate(-50%,-50%)";
+  }
+}
+
+function fixedVector(stick,cx,cy,x,y){
+  const dx=x-cx;
+  const dy=y-cy;
   const distance=Math.hypot(dx,dy);
   const maxDistance=30;
-  let drawX=dx, drawY=dy;
+
+  let drawX=dx;
+  let drawY=dy;
 
   if(distance>maxDistance){
     const k=maxDistance/distance;
@@ -1440,9 +1381,10 @@ function floatingVector(stick,ox,oy,x,y){
     drawY*=k;
   }
 
-  stick.style.transform=`translate(calc(-50% + ${drawX}px),calc(-50% + ${drawY}px))`;
+  stick.style.transform=
+    `translate(calc(-50% + ${drawX}px),calc(-50% + ${drawY}px))`;
 
-  const len=Math.hypot(dx,dy)||1;
+  const len=distance||1;
 
   return {
     x:dx/len,
@@ -1458,29 +1400,25 @@ function uiTouch(target){
   );
 }
 
-function sideForTouch(x){
-  return x<window.innerWidth*.5 ? "left" : "right";
+function joystickCenters(){
+  const g=fixedGeometry();
+  return {
+    left:{x:g.leftX,y:g.y},
+    right:{x:g.rightX,y:g.y}
+  };
 }
 
 window.addEventListener("pointerdown",function(e){
   if(menuOpen || playerDead || uiTouch(e.target)) return;
 
-  const side=sideForTouch(e.clientX);
+  const centers=joystickCenters();
 
-  if(side==="left" && leftPointerId===null){
-    const p=clampedJoystickOrigin("left",e.clientX,e.clientY);
-
+  if(e.clientX<window.innerWidth*.5 && leftPointerId===null){
     leftPointerId=e.pointerId;
-    leftOriginX=p.x;
-    leftOriginY=p.y;
 
-    setJoystickCenter(moveControl,leftOriginX,leftOriginY,true);
-
-    // Important: when the finger is outside the allowed rectangle,
-    // direction/power are calculated from the clamped base to the real finger.
-    const v=floatingVector(
+    const v=fixedVector(
       moveStick,
-      leftOriginX,leftOriginY,
+      centers.left.x,centers.left.y,
       e.clientX,e.clientY
     );
 
@@ -1497,19 +1435,13 @@ window.addEventListener("pointerdown",function(e){
     return;
   }
 
-  if(side==="right" && rightPointerId===null){
-    const p=clampedJoystickOrigin("right",e.clientX,e.clientY);
-
+  if(e.clientX>=window.innerWidth*.5 && rightPointerId===null){
     rightPointerId=e.pointerId;
-    rightOriginX=p.x;
-    rightOriginY=p.y;
     rightAimActive=true;
 
-    setJoystickCenter(aimControl,rightOriginX,rightOriginY,true);
-
-    const v=floatingVector(
+    const v=fixedVector(
       aimStick,
-      rightOriginX,rightOriginY,
+      centers.right.x,centers.right.y,
       e.clientX,e.clientY
     );
 
@@ -1529,11 +1461,12 @@ window.addEventListener("pointerdown",function(e){
 },{passive:false});
 
 window.addEventListener("pointermove",function(e){
+  const centers=joystickCenters();
 
   if(e.pointerId===leftPointerId){
-    const v=floatingVector(
+    const v=fixedVector(
       moveStick,
-      leftOriginX,leftOriginY,
+      centers.left.x,centers.left.y,
       e.clientX,e.clientY
     );
 
@@ -1550,9 +1483,9 @@ window.addEventListener("pointermove",function(e){
   }
 
   if(e.pointerId===rightPointerId){
-    const v=floatingVector(
+    const v=fixedVector(
       aimStick,
-      rightOriginX,rightOriginY,
+      centers.right.x,centers.right.y,
       e.clientX,e.clientY
     );
 
@@ -1572,21 +1505,16 @@ window.addEventListener("pointermove",function(e){
 
     e.preventDefault();
   }
-
 },{passive:false});
 
-function releaseFloating(e){
-
+function releaseFixedStick(e){
   if(e.pointerId===leftPointerId){
     leftPointerId=null;
-    movePower=0;
     moveX=0;
     moveY=0;
+    movePower=0;
     stopFootsteps();
-
     centerJoystickKnob(moveStick);
-    const g=joystickGeometry("left");
-    setJoystickCenter(moveControl,g.homeX,g.homeY,true);
   }
 
   if(e.pointerId===rightPointerId){
@@ -1594,41 +1522,28 @@ function releaseFloating(e){
     rightAimActive=false;
     aimPower=0;
     firing=false;
-
     centerJoystickKnob(aimStick);
-    const g=joystickGeometry("right");
-    setJoystickCenter(aimControl,g.homeX,g.homeY,true);
 
     if(movePower>JOY_DEAD){
       player.aimX=moveX;
       player.aimY=moveY;
     }
   }
-
 }
 
-window.addEventListener("pointerup",releaseFloating,{passive:false});
-window.addEventListener("pointercancel",releaseFloating,{passive:false});
+window.addEventListener("pointerup",releaseFixedStick,{passive:false});
+window.addEventListener("pointercancel",releaseFixedStick,{passive:false});
 
-// Home positions are recalculated after orientation/viewport changes.
-window.addEventListener("resize",function(){
-  if(leftPointerId===null && rightPointerId===null){
-    homeJoysticks();
-  }
-});
+window.addEventListener("resize",positionFixedControls);
 
 if(window.visualViewport){
-  window.visualViewport.addEventListener("resize",function(){
-    if(leftPointerId===null && rightPointerId===null){
-      homeJoysticks();
-    }
-  });
+  window.visualViewport.addEventListener("resize",positionFixedControls);
 }
- 
+
 centerJoystickKnob(moveStick);
 centerJoystickKnob(aimStick);
-setTimeout(homeJoysticks,0);
-setTimeout(homeJoysticks,250);
+setTimeout(positionFixedControls,0);
+setTimeout(positionFixedControls,250);
 
 /* =====================================================
    BULLETS / SHOOTING
@@ -4542,7 +4457,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.4.7: controls calibrated; audio disabled");
+console.log("0.4.8: fixed twin-stick; audio disabled");
 
 gameLoop();
 
