@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.5.0</title>
+<title>Survival Base 0.5.1</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -488,8 +488,9 @@ html,body{
 
 /* 0.5.0 inventory / loot / storage */
 #bagButton{
-  position:fixed; right:max(12px,env(safe-area-inset-right)); top:62px;
-  z-index:110; width:48px; height:42px; border-radius:12px;
+  position:fixed; right:max(14px,env(safe-area-inset-right)); top:auto;
+  bottom:calc(max(150px, 22vh) + env(safe-area-inset-bottom));
+  z-index:105; width:48px; height:42px; border-radius:12px;
   border:1px solid rgba(255,255,255,.22); background:rgba(10,12,13,.72);
   color:#fff; font-size:21px; touch-action:manipulation;
 }
@@ -512,7 +513,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.5.0</div>
+<div id="versionBadge">VERSION 0.5.1</div>
 
 <div id="game">
 
@@ -554,7 +555,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.5.0 · New Controls</div>
+    <div class="subtitle">Survival Base 0.5.1 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -665,6 +666,17 @@ html,body{
   <button id="closeInventory" class="menuButton">Закрыть</button>
 </div></div>
 
+
+<div id="chestSettingsOverlay" class="overlay"><div class="panel">
+  <h2>⚙️ Настройки ящика</h2>
+  <div class="subtitle">Выбери значок, чтобы сразу понимать, что ты здесь хранишь.</div>
+  <div id="chestIconChoices" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0"></div>
+  <input id="chestNameInput" maxlength="18" placeholder="Название ящика"
+    style="width:100%;box-sizing:border-box;padding:11px;border-radius:9px;border:1px solid #666;background:#222;color:#fff;margin-bottom:10px">
+  <button id="saveChestSettings" class="menuButton primary">Сохранить</button>
+  <button id="closeChestSettings" class="menuButton">Отмена</button>
+</div></div>
+
 <div id="lootOverlay" class="overlay"><div class="panel">
   <h2 id="lootTitle">🔎 Найдено</h2>
   <div id="lootList"></div>
@@ -675,9 +687,14 @@ html,body{
 <div id="storageOverlay" class="overlay"><div class="panel">
   <h2 id="storageTitle">📦 Склад</h2>
   <div class="subtitle">РЮКЗАК ↔ ХРАНИЛИЩЕ</div>
-  <div id="storageContents"></div>
+  <div style="display:flex;gap:8px;margin:10px 0">
+    <button id="storageSettings" class="smallBtn">⚙️ Настройки ящика</button>
+  </div>
+  <div class="sectionTitle">Ящик</div>
+  <div id="storageContents" class="inventoryGrid"></div>
   <div class="sectionTitle">Рюкзак</div>
-  <div id="storageBag"></div>
+  <div id="storageBag" class="inventoryGrid"></div>
+  <div class="subtitle">Нажми предмет в рюкзаке → положить в ящик. Нажми предмет в ящике → забрать.</div>
   <button id="closeStorage" class="menuButton">Закрыть</button>
 </div></div>
 
@@ -1092,7 +1109,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_050"
+        "base_controls_051"
       );
 
     if(!saved){
@@ -1119,7 +1136,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_050",
+      "base_controls_051",
       JSON.stringify(layouts)
     );
 
@@ -1335,11 +1352,12 @@ const bunker = {
   },
 
   workshop:{
-    left:260,right:610,top:850,bottom:1120,doorTop:905,doorBottom:1015
+    left:90,right:610,top:790,bottom:1180,doorTop:900,doorBottom:1040
   },
 
+  // Storage is now opposite the workshop, in the former rest-room position.
   storage:{
-    left:260,right:610,top:330,bottom:570,doorTop:405,doorBottom:505
+    left:840,right:1360,top:790,bottom:1180,doorTop:900,doorBottom:1040
   }
 
 };
@@ -1361,10 +1379,14 @@ const STACK_MAX=100, BAG_SLOTS=12;
 let bag=[
   {type:"ammo",qty:60}
 ];
-let storages={
-  food:{food:0}, medicine:{meds:0}, ammo:{ammo:0},
-  materials:{wood:0,metal:0,parts:0}, fuel:{fuel:0}
-};
+let storageChests=[
+  {name:"Ящик 1",icon:"📦",items:[]},
+  {name:"Ящик 2",icon:"📦",items:[]},
+  {name:"Ящик 3",icon:"📦",items:[]},
+  {name:"Ящик 4",icon:"📦",items:[]},
+  {name:"Ящик 5",icon:"📦",items:[]},
+  {name:"Ящик 6",icon:"📦",items:[]}
+];
 let magazine=30, magazineMax=30;
 let activeStorage=null, activeLoot=null;
 let searchState=null;
@@ -2063,7 +2085,7 @@ function bunkerCollision(x,y){
   const inWorkshop=x>=w.left+r&&x<=w.right-r&&y>=w.top+r&&y<=w.bottom-r;
   const inWorkshopDoor=x>=w.right-30&&x<=c.left+30&&y>=w.doorTop&&y<=w.doorBottom;
   const inStorage=x>=s.left+r&&x<=s.right-r&&y>=s.top+r&&y<=s.bottom-r;
-  const inStorageDoor=x>=s.right-30&&x<=c.left+30&&y>=s.doorTop&&y<=s.doorBottom;
+  const inStorageDoor=x>=c.right-30&&x<=s.left+30&&y>=s.doorTop&&y<=s.doorBottom;
   return !(inCorridor||inWorkshop||inWorkshopDoor||inStorage||inStorageDoor);
 }
 
@@ -2661,11 +2683,10 @@ function updateAction(){
         "🔧";
 
     }
-
-
-    const s=bunker.storage;
-    if(player.x>300&&player.x<555&&player.y>345&&player.y<555){
+    const chest=nearestStorageChest();
+    if(chest){
       currentAction="storage";
+      currentActionObject=chest;
       icon="📦";
     }
   }
@@ -2686,25 +2707,75 @@ function updateAction(){
 }
 
 
-function storageLabel(k){
-  return {food:"🥫 Продуктовый стеллаж",medicine:"💊 Медицинский шкаф",ammo:"🔫 Ящик боеприпасов",materials:"🔩 Материалы",fuel:"⛽ Топливо"}[k]||"📦 Склад";
+
+function getChestPositions(){
+  return [
+    {x:930,y:885},{x:1100,y:885},{x:1270,y:885},
+    {x:930,y:1070},{x:1100,y:1070},{x:1270,y:1070}
+  ];
 }
-function openStorage(k){
-  activeStorage=k||"materials"; renderStorage(); openOverlay(el("storageOverlay"));
+function nearestStorageChest(){
+  if(scene!=="bunker")return null;
+  const ps=getChestPositions();
+  let best=null,bd=82;
+  for(let i=0;i<ps.length;i++){
+    const d=distance(player.x,player.y,ps[i].x,ps[i].y);
+    if(d<bd){bd=d;best=i}
+  }
+  return best;
+}
+function addToSlots(slots,type,qty,maxSlots=12){
+  let left=qty;
+  for(const s of slots){
+    if(s.type===type&&s.qty<STACK_MAX){
+      const n=Math.min(left,STACK_MAX-s.qty);s.qty+=n;left-=n;if(left<=0)return 0;
+    }
+  }
+  while(left>0&&slots.length<maxSlots){
+    const n=Math.min(left,STACK_MAX);slots.push({type,qty:n});left-=n;
+  }
+  return left;
+}
+function removeFromSlots(slots,type,qty){
+  let left=qty;
+  for(let i=slots.length-1;i>=0&&left>0;i--){
+    const s=slots[i];if(s.type!==type)continue;
+    const n=Math.min(left,s.qty);s.qty-=n;left-=n;if(s.qty<=0)slots.splice(i,1);
+  }
+  return qty-left;
+}
+function openStorage(index){
+  activeStorage=Number(index);
+  renderStorage();
+  openOverlay(el("storageOverlay"));
+}
+function slotHTML(s){
+  return s?`<div class="ico">${ITEM[s.type].icon}</div><div>${ITEM[s.type].name}</div><div class="qty">×${s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`;
 }
 function renderStorage(){
-  el("storageTitle").textContent=storageLabel(activeStorage);
-  const store=storages[activeStorage], a=el("storageContents"), b=el("storageBag");
-  a.innerHTML="";b.innerHTML="";
-  for(const type of Object.keys(store)){
-    const r=document.createElement("div");r.className="storageRow";
-    r.innerHTML=`<span>${ITEM[type].icon} ${ITEM[type].name} ×${store[type]}</span><button class="smallBtn" data-out="${type}">В рюкзак</button>`;a.appendChild(r);
+  const ch=storageChests[activeStorage];
+  if(!ch)return;
+  el("storageTitle").textContent=`${ch.icon} ${ch.name}`;
+  const a=el("storageContents"),b=el("storageBag");a.innerHTML="";b.innerHTML="";
+  for(let i=0;i<12;i++){
+    const d=document.createElement("div");d.className="invSlot";d.dataset.chestSlot=i;
+    d.innerHTML=slotHTML(ch.items[i]);a.appendChild(d);
   }
-  const totals={};for(const s of bag)totals[s.type]=(totals[s.type]||0)+s.qty;
-  for(const type of Object.keys(totals)){
-    const r=document.createElement("div");r.className="storageRow";
-    r.innerHTML=`<span>${ITEM[type].icon} ${ITEM[type].name} ×${totals[type]}</span><button class="smallBtn" data-in="${type}">На склад</button>`;b.appendChild(r);
+  for(let i=0;i<BAG_SLOTS;i++){
+    const d=document.createElement("div");d.className="invSlot";d.dataset.bagSlot=i;
+    d.innerHTML=slotHTML(bag[i]);b.appendChild(d);
   }
+}
+function openChestSettings(){
+  const ch=storageChests[activeStorage];if(!ch)return;
+  el("chestNameInput").value=ch.name;
+  const icons=["📦","🔫","🪵","🔩","⚙️","⛽","🥫","💊","🧰","⭐","🔧","🎒"];
+  const box=el("chestIconChoices");box.innerHTML="";
+  for(const ico of icons){
+    const bt=document.createElement("button");bt.className="smallBtn";bt.textContent=ico;
+    bt.style.fontSize="24px";bt.dataset.icon=ico;box.appendChild(bt);
+  }
+  openOverlay(el("chestSettingsOverlay"));
 }
 
 /* =====================================================
@@ -2867,7 +2938,7 @@ actionButton.addEventListener(
     }
 
     if(currentAction === "storage"){
-      openStorage("materials");
+      openStorage(currentActionObject);
       return;
     }
 
@@ -3370,21 +3441,21 @@ function drawBunker(){
   );
 
 
-  /* STORAGE ROOM */
+  /* STORAGE ROOM — six independent chests */
   const s=bunker.storage;
   ctx.fillStyle="#303638";ctx.fillRect(s.left,s.top,s.right-s.left,s.bottom-s.top);
   ctx.strokeStyle="#747878";ctx.lineWidth=16;ctx.strokeRect(s.left,s.top,s.right-s.left,s.bottom-s.top);
-  ctx.fillStyle="#303638";ctx.fillRect(s.right-18,s.doorTop,40,s.doorBottom-s.doorTop);
+  ctx.fillStyle="#303638";ctx.fillRect(s.left-18,s.doorTop,40,s.doorBottom-s.doorTop);
 
-  const crates=[
-    [290,360,72,48,"🥫"],[382,360,72,48,"💊"],[474,360,72,48,"🔫"],
-    [290,475,72,48,"🪵"],[382,475,72,48,"🔩"],[474,475,72,48,"⛽"]
-  ];
-  for(const cbox of crates){
-    ctx.fillStyle="#66513a";ctx.fillRect(cbox[0],cbox[1],cbox[2],cbox[3]);
-    ctx.fillStyle="#fff";ctx.font="18px Arial";ctx.textAlign="center";ctx.fillText(cbox[4],cbox[0]+36,cbox[1]+31);
+  ctx.fillStyle="#fff";ctx.font="15px Arial";ctx.textAlign="center";ctx.fillText("СКЛАД",1100,825);
+  const chestPos=getChestPositions();
+  for(let i=0;i<chestPos.length;i++){
+    const p=chestPos[i],ch=storageChests[i];
+    ctx.fillStyle="#66513a";ctx.fillRect(p.x-42,p.y-30,84,60);
+    ctx.strokeStyle="#8a704f";ctx.lineWidth=3;ctx.strokeRect(p.x-42,p.y-30,84,60);
+    ctx.fillStyle="#fff";ctx.font="22px Arial";ctx.fillText(ch.icon,p.x,p.y+3);
+    ctx.font="10px Arial";ctx.fillText(ch.name,p.x,p.y+48);
   }
-  ctx.fillStyle="#fff";ctx.font="13px Arial";ctx.fillText("СКЛАД",435,445);
 
   /* ROOMS */
 
@@ -4582,16 +4653,36 @@ el("takeAllLoot").addEventListener("click",()=>{
 });
 el("closeStorage").addEventListener("click",()=>closeOverlay(el("storageOverlay")));
 el("storageOverlay").addEventListener("click",e=>{
-  const inBtn=e.target.closest("[data-in]"),outBtn=e.target.closest("[data-out]");
-  if(inBtn){
-    const type=inBtn.dataset.in, qty=bagCount(type); if(!qty)return;
-    let target=Object.values(storages).find(s=>Object.prototype.hasOwnProperty.call(s,type));
-    if(target){target[type]+=removeItem(type,qty);renderStorage();updateAmmoHud()}
+  const chestSlot=e.target.closest("[data-chest-slot]");
+  const bagSlot=e.target.closest("[data-bag-slot]");
+  const ch=storageChests[activeStorage];if(!ch)return;
+
+  if(bagSlot){
+    const i=Number(bagSlot.dataset.bagSlot),s=bag[i];if(!s)return;
+    const qty=s.qty,left=addToSlots(ch.items,s.type,qty,12);
+    const moved=qty-left;if(moved>0)removeItem(s.type,moved);
+    renderStorage();updateAmmoHud();return;
   }
-  if(outBtn){
-    const type=outBtn.dataset.out, store=storages[activeStorage],qty=store[type]||0;if(!qty)return;
-    const left=addItem(type,qty);store[type]=left;renderStorage();updateAmmoHud();
+  if(chestSlot){
+    const i=Number(chestSlot.dataset.chestSlot),s=ch.items[i];if(!s)return;
+    const qty=s.qty,left=addItem(s.type,qty),moved=qty-left;
+    if(moved>0)removeFromSlots(ch.items,s.type,moved);
+    renderStorage();updateAmmoHud();return;
   }
+});
+el("storageSettings").addEventListener("click",openChestSettings);
+el("closeChestSettings").addEventListener("click",()=>closeOverlay(el("chestSettingsOverlay")));
+el("chestIconChoices").addEventListener("click",e=>{
+  const b=e.target.closest("[data-icon]");if(!b)return;
+  el("chestIconChoices").querySelectorAll("button").forEach(x=>x.style.outline="");
+  b.style.outline="2px solid white";el("chestSettingsOverlay").dataset.icon=b.dataset.icon;
+});
+el("saveChestSettings").addEventListener("click",()=>{
+  const ch=storageChests[activeStorage];if(!ch)return;
+  const name=el("chestNameInput").value.trim();
+  if(name)ch.name=name;
+  const ico=el("chestSettingsOverlay").dataset.icon;if(ico)ch.icon=ico;
+  closeOverlay(el("chestSettingsOverlay"));renderStorage();message("Ящик настроен");
 });
 
 /* =====================================================
@@ -4778,7 +4869,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.5.0: city + loot + 12-slot stacked inventory + limited ammo + bunker storage");
+console.log("0.5.1: larger bunker rooms + six independent customizable storage chests + mobile bag fix");
 
 gameLoop();
 
