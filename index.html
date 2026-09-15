@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.10</title>
+<title>Survival Base 0.4.11</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -513,7 +513,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.10 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.11 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -789,12 +789,37 @@ function unlockGameAudio(){
   preloadGameAudio().catch(function(){});
 }
 
-// audio disabled in 0.4.6
-// audio disabled in 0.4.6
+window.addEventListener("pointerdown",unlockGameAudio,{once:true,passive:true});
+window.addEventListener("touchstart",unlockGameAudio,{once:true,passive:true});
 
 function playBuffer(name,volume=1){
-  // 0.4.6 diagnostic build: audio intentionally disabled.
-  return;
+  // 0.4.11: only short decoded WebAudio effects are allowed.
+  if(name!=="gunshot" && name!=="hit") return;
+  if(masterVolume<=0) return;
+
+  const ctx=ensureAudioContext();
+  const buffer=audioBuffers[name];
+
+  if(!ctx || !buffer || ctx.state!=="running") return;
+
+  try{
+    const source=ctx.createBufferSource();
+    const gain=ctx.createGain();
+
+    source.buffer=buffer;
+    gain.gain.value=clamp(volume*masterVolume,0,1);
+
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start(0);
+
+    source.onended=function(){
+      try{
+        source.disconnect();
+        gain.disconnect();
+      }catch(e){}
+    };
+  }catch(e){}
 }
 
 function stopFootsteps(){
@@ -836,20 +861,13 @@ function zombieDistanceVolume(zombie){
 }
 
 function playZombieBuffer(zombie){
-  const now=performance.now();
-  if(now-lastZombieBufferAt<2800) return;
-
-  const v=zombieDistanceVolume(zombie);
-  if(v<=.025) return;
-
-  lastZombieBufferAt=now;
-  playBuffer("zombie",v);
+  return;
 }
 
 
 
 function playSound(sound,volume){
-  // 0.4.6 diagnostic build: audio intentionally disabled.
+  // HTMLAudio playback stays disabled during audio diagnostics.
   return;
 }
 
@@ -868,8 +886,7 @@ const gunshotPool = [
 let gunshotPoolIndex = 0;
 
 function playGunshot(){
-  // 0.4.6 diagnostic build: audio intentionally disabled.
-  return;
+  playBuffer("gunshot",.48);
 }
 
 
@@ -942,7 +959,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_0410"
+        "base_controls_0411"
       );
 
     if(!saved){
@@ -969,7 +986,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_0410",
+      "base_controls_0411",
       JSON.stringify(layouts)
     );
 
@@ -4466,7 +4483,7 @@ applyControls();
 
 updateCamera();
 
-console.log("0.4.10: analog movement 20%-100%; max speed halved; audio disabled");
+console.log("0.4.11: audio test 1 — gunshot + hit only");
 
 gameLoop();
 
