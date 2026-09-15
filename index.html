@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.4.5</title>
+<title>Survival Base 0.4.6</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -429,7 +429,7 @@ body{
   pointer-events:none;
   transition:opacity .06s linear;
 }
-.floatingJoystick.hiddenJoystick{opacity:0}
+.floatingJoystick.hiddenJoystick{opacity:.38}
 .floatingJoystick .joystickBase{
   width:92px;
   height:92px;
@@ -508,7 +508,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.4.5 · New Controls</div>
+    <div class="subtitle">Survival Base 0.4.6 · New Controls</div>
 
     <button id="openControlSettings" class="menuButton">
       🎮 Настройка управления
@@ -784,27 +784,12 @@ function unlockGameAudio(){
   preloadGameAudio().catch(function(){});
 }
 
-window.addEventListener("pointerdown",unlockGameAudio,{once:true,passive:true});
-window.addEventListener("touchstart",unlockGameAudio,{once:true,passive:true});
+// audio disabled in 0.4.6
+// audio disabled in 0.4.6
 
 function playBuffer(name,volume=1){
-  if(masterVolume<=0) return;
-  const ctx=ensureAudioContext();
-  const buffer=audioBuffers[name];
-  if(!ctx || !buffer || ctx.state!=="running") return;
-
-  try{
-    const source=ctx.createBufferSource();
-    const gain=ctx.createGain();
-    source.buffer=buffer;
-    gain.gain.value=clamp(volume*masterVolume,0,1);
-    source.connect(gain);
-    gain.connect(ctx.destination);
-    source.start(0);
-    source.onended=function(){
-      try{source.disconnect();gain.disconnect();}catch(e){}
-    };
-  }catch(e){}
+  // 0.4.6 diagnostic build: audio intentionally disabled.
+  return;
 }
 
 function stopFootsteps(){
@@ -820,29 +805,7 @@ function stopFootsteps(){
 }
 
 function startFootsteps(){
-  if(footstepsSource || masterVolume<=0) return;
-  const ctx=ensureAudioContext();
-  const buffer=audioBuffers.footsteps;
-  if(!ctx || !buffer || ctx.state!=="running") return;
-
-  try{
-    const source=ctx.createBufferSource();
-    const gain=ctx.createGain();
-    source.buffer=buffer;
-    source.loop=true;
-    gain.gain.value=clamp(masterVolume*.20,0,1);
-    source.connect(gain);
-    gain.connect(ctx.destination);
-    source.start(0);
-    footstepsSource=source;
-    footstepsGain=gain;
-    source.onended=function(){
-      if(footstepsSource===source){
-        footstepsSource=null;
-        footstepsGain=null;
-      }
-    };
-  }catch(e){}
+  return;
 }
 
 function updateFootstepsAudio(){
@@ -881,31 +844,8 @@ function playZombieBuffer(zombie){
 
 
 function playSound(sound,volume){
-
-  if(!sound || masterVolume <= 0){
-    return;
-  }
-
-  try{
-
-    sound.pause();
-    sound.currentTime = 0;
-
-    sound.volume =
-      clamp(
-        masterVolume * volume,
-        0,
-        1
-      );
-
-    const promise = sound.play();
-
-    if(promise){
-      promise.catch(function(){});
-    }
-
-  }catch(e){}
-
+  // 0.4.6 diagnostic build: audio intentionally disabled.
+  return;
 }
 
 /*
@@ -923,20 +863,8 @@ const gunshotPool = [
 let gunshotPoolIndex = 0;
 
 function playGunshot(){
-  if(audioBuffers.gunshot){
-    playBuffer("gunshot",.55);
-    return;
-  }
-
-  try{
-    const sound=gunshotPool[gunshotPoolIndex];
-    gunshotPoolIndex=(gunshotPoolIndex+1)%gunshotPool.length;
-    if(sound.paused || sound.ended){
-      sound.currentTime=0;
-      sound.volume=clamp(masterVolume*.55,0,1);
-      sound.play().catch(function(){});
-    }
-  }catch(e){}
+  // 0.4.6 diagnostic build: audio intentionally disabled.
+  return;
 }
 
 
@@ -1009,7 +937,7 @@ function loadLayouts(){
 
     const saved =
       localStorage.getItem(
-        "base_controls_044"
+        "base_controls_046"
       );
 
     if(!saved){
@@ -1036,7 +964,7 @@ function saveLayouts(){
   try{
 
     localStorage.setItem(
-      "base_controls_044",
+      "base_controls_046",
       JSON.stringify(layouts)
     );
 
@@ -1072,9 +1000,11 @@ function applyControls(){
   const mode = orientation();
   const layout = layouts[mode] || defaults[mode];
 
-  positionControl(el("moveControl"),layout.move);
-  positionControl(el("aimControl"),layout.aim);
   positionControl(el("actionButton"),layout.action);
+
+  if(typeof homeJoysticks==="function"){
+    homeJoysticks();
+  }
 
 }
 
@@ -1360,7 +1290,14 @@ function resetZombies(){
 resetZombies();
 
 /* =====================================================
-   FLOATING TWIN-STICK
+   0.4.6 CLAMPED FLOATING TWIN-STICK
+
+   Each stick has:
+   1) a HOME X/Y position;
+   2) an invisible allowed rectangle;
+   3) touches outside the rectangle still activate it,
+      but the base is clamped to the nearest rectangle edge;
+   4) releasing returns the base to HOME.
 ===================================================== */
 
 let moveX=0, moveY=0, movePower=0;
@@ -1377,15 +1314,61 @@ const moveStick=el("moveStick");
 const aimControl=el("aimControl");
 const aimStick=el("aimStick");
 
-function floatingCenter(control,x,y){
-  control.style.left=(x-JOY_RADIUS)+"px";
-  control.style.top=(y-JOY_RADIUS)+"px";
-  control.classList.remove("hiddenJoystick");
+function joystickGeometry(side){
+
+  const w=window.innerWidth;
+  const h=window.innerHeight;
+  const landscape=w>h;
+
+  // Geometry follows the pink areas from the user's screenshots.
+  // The rectangles are intentionally low and wide enough for thumb travel.
+  const top = h * (landscape ? .50 : .64);
+  const bottom = h - Math.max(58, h*.035);
+
+  if(side==="left"){
+    return {
+      minX:Math.max(JOY_RADIUS+8,w*.025),
+      maxX:w*(landscape?.42:.47),
+      minY:top,
+      maxY:bottom,
+      homeX:w*(landscape?.15:.18),
+      homeY:h*(landscape?.78:.84)
+    };
+  }
+
+  return {
+    minX:w*(landscape?.58:.53),
+    maxX:w-Math.max(JOY_RADIUS+8,w*.025),
+    minY:top,
+    maxY:bottom,
+    homeX:w*(landscape?.85:.82),
+    homeY:h*(landscape?.78:.84)
+  };
 }
 
-function floatingReset(control,stick){
-  stick.style.transform="translate(0px,0px)";
-  control.classList.add("hiddenJoystick");
+function setJoystickCenter(control,x,y,visible=true){
+  control.style.left=(x-JOY_RADIUS)+"px";
+  control.style.top=(y-JOY_RADIUS)+"px";
+  control.classList.toggle("hiddenJoystick",!visible);
+}
+
+function homeJoysticks(){
+  const left=joystickGeometry("left");
+  const right=joystickGeometry("right");
+
+  setJoystickCenter(moveControl,left.homeX,left.homeY,true);
+  setJoystickCenter(aimControl,right.homeX,right.homeY,true);
+
+  moveStick.style.transform="translate(0px,0px)";
+  aimStick.style.transform="translate(0px,0px)";
+}
+
+function clampedJoystickOrigin(side,x,y){
+  const g=joystickGeometry(side);
+  return {
+    x:clamp(x,g.minX,g.maxX),
+    y:clamp(y,g.minY,g.maxY)
+  };
 }
 
 function floatingVector(stick,ox,oy,x,y){
@@ -1396,10 +1379,12 @@ function floatingVector(stick,ox,oy,x,y){
 
   if(distance>maxDistance){
     const k=maxDistance/distance;
-    drawX*=k; drawY*=k;
+    drawX*=k;
+    drawY*=k;
   }
 
   stick.style.transform=`translate(${drawX}px,${drawY}px)`;
+
   const len=Math.hypot(dx,dy)||1;
 
   return {
@@ -1416,69 +1401,135 @@ function uiTouch(target){
   );
 }
 
+function sideForTouch(x){
+  return x<window.innerWidth*.5 ? "left" : "right";
+}
+
 window.addEventListener("pointerdown",function(e){
   if(menuOpen || playerDead || uiTouch(e.target)) return;
 
-  const zoneTop=innerHeight*.62;
-  if(e.clientY<zoneTop) return;
+  const side=sideForTouch(e.clientX);
 
-  const split=innerWidth*.5;
+  if(side==="left" && leftPointerId===null){
+    const p=clampedJoystickOrigin("left",e.clientX,e.clientY);
 
-  if(e.clientX<split && leftPointerId===null){
     leftPointerId=e.pointerId;
-    leftOriginX=e.clientX;
-    leftOriginY=e.clientY;
-    floatingCenter(moveControl,leftOriginX,leftOriginY);
-    movePower=0;
+    leftOriginX=p.x;
+    leftOriginY=p.y;
+
+    setJoystickCenter(moveControl,leftOriginX,leftOriginY,true);
+
+    // Important: when the finger is outside the allowed rectangle,
+    // direction/power are calculated from the clamped base to the real finger.
+    const v=floatingVector(
+      moveStick,
+      leftOriginX,leftOriginY,
+      e.clientX,e.clientY
+    );
+
+    moveX=v.x;
+    moveY=v.y;
+    movePower=v.power;
+
+    if(movePower>JOY_DEAD && !rightAimActive){
+      player.aimX=moveX;
+      player.aimY=moveY;
+    }
+
     e.preventDefault();
-  }else if(e.clientX>=split && rightPointerId===null){
+    return;
+  }
+
+  if(side==="right" && rightPointerId===null){
+    const p=clampedJoystickOrigin("right",e.clientX,e.clientY);
+
     rightPointerId=e.pointerId;
-    rightOriginX=e.clientX;
-    rightOriginY=e.clientY;
-    floatingCenter(aimControl,rightOriginX,rightOriginY);
+    rightOriginX=p.x;
+    rightOriginY=p.y;
     rightAimActive=true;
-    aimPower=0;
-    firing=false;
+
+    setJoystickCenter(aimControl,rightOriginX,rightOriginY,true);
+
+    const v=floatingVector(
+      aimStick,
+      rightOriginX,rightOriginY,
+      e.clientX,e.clientY
+    );
+
+    aimPower=v.power;
+
+    if(aimPower>JOY_DEAD){
+      player.aimX=v.x;
+      player.aimY=v.y;
+      firing=true;
+      shoot();
+    }else{
+      firing=false;
+    }
+
     e.preventDefault();
   }
 },{passive:false});
 
 window.addEventListener("pointermove",function(e){
-  if(e.pointerId===leftPointerId){
-    const v=floatingVector(moveStick,leftOriginX,leftOriginY,e.clientX,e.clientY);
-    moveX=v.x; moveY=v.y; movePower=v.power;
 
-    // Left = movement + default look direction.
+  if(e.pointerId===leftPointerId){
+    const v=floatingVector(
+      moveStick,
+      leftOriginX,leftOriginY,
+      e.clientX,e.clientY
+    );
+
+    moveX=v.x;
+    moveY=v.y;
+    movePower=v.power;
+
     if(movePower>JOY_DEAD && !rightAimActive){
-      player.aimX=moveX; player.aimY=moveY;
+      player.aimX=moveX;
+      player.aimY=moveY;
     }
+
     e.preventDefault();
   }
 
   if(e.pointerId===rightPointerId){
-    const v=floatingVector(aimStick,rightOriginX,rightOriginY,e.clientX,e.clientY);
+    const v=floatingVector(
+      aimStick,
+      rightOriginX,rightOriginY,
+      e.clientX,e.clientY
+    );
+
     aimPower=v.power;
 
-    // Right stick overrides look direction and fires while armed.
     if(aimPower>JOY_DEAD){
-      player.aimX=v.x; player.aimY=v.y;
+      player.aimX=v.x;
+      player.aimY=v.y;
+
       if(!firing){
         firing=true;
-        shoot(); // immediate single shot; game fire-rate handles held fire
+        shoot();
       }
     }else{
       firing=false;
     }
+
     e.preventDefault();
   }
+
 },{passive:false});
 
 function releaseFloating(e){
+
   if(e.pointerId===leftPointerId){
     leftPointerId=null;
-    movePower=0; moveX=0; moveY=0;
+    movePower=0;
+    moveX=0;
+    moveY=0;
     stopFootsteps();
-    floatingReset(moveControl,moveStick);
+
+    moveStick.style.transform="translate(0px,0px)";
+    const g=joystickGeometry("left");
+    setJoystickCenter(moveControl,g.homeX,g.homeY,true);
   }
 
   if(e.pointerId===rightPointerId){
@@ -1486,17 +1537,39 @@ function releaseFloating(e){
     rightAimActive=false;
     aimPower=0;
     firing=false;
-    floatingReset(aimControl,aimStick);
 
-    // Return facing priority to movement.
+    aimStick.style.transform="translate(0px,0px)";
+    const g=joystickGeometry("right");
+    setJoystickCenter(aimControl,g.homeX,g.homeY,true);
+
     if(movePower>JOY_DEAD){
-      player.aimX=moveX; player.aimY=moveY;
+      player.aimX=moveX;
+      player.aimY=moveY;
     }
   }
+
 }
 
 window.addEventListener("pointerup",releaseFloating,{passive:false});
 window.addEventListener("pointercancel",releaseFloating,{passive:false});
+
+// Home positions are recalculated after orientation/viewport changes.
+window.addEventListener("resize",function(){
+  if(leftPointerId===null && rightPointerId===null){
+    homeJoysticks();
+  }
+});
+
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",function(){
+    if(leftPointerId===null && rightPointerId===null){
+      homeJoysticks();
+    }
+  });
+}
+
+setTimeout(homeJoysticks,0);
+setTimeout(homeJoysticks,250);
 
 /* =====================================================
    BULLETS / SHOOTING
@@ -4363,7 +4436,6 @@ function draw(){
 ===================================================== */
 
 function gameLoop(){
-  updateFootstepsAudio();
 
   if(rightAimActive && aimPower>JOY_DEAD && firing && !menuOpen && !playerDead){
     shoot();
@@ -4410,6 +4482,8 @@ resizeCanvas();
 applyControls();
 
 updateCamera();
+
+console.log("0.4.6: audio disabled diagnostic build");
 
 gameLoop();
 
