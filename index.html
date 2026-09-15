@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.8.1</title>
+<title>Survival Base 0.9</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.8.1</div>
+<div id="versionBadge">VERSION 0.9</div>
 
 <div id="game">
 
@@ -628,7 +628,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.8.1 · Оружие и безопасная база</div><div class="subtitle" style="margin-top:10px">Нажмите на объект — персонаж подойдёт и выполнит действие. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
+    <div class="subtitle">Survival Base 0.9 · Энергия, производство и новый мир</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
@@ -1615,8 +1615,7 @@ function solidObjects(which){
   ];
   const chests=getChestPositions();
   const fixtures=[
-    ['technical',125,790,185,86],['ammunition',335,790,190,86],['tools',108,900,58,215],['workbench',110,1130,215,76],
-    ['parts_crate',380,1150,60,52],['metal_crate',455,1150,60,52],
+    ['furnace',145,800,175,125],['craft_bench',160,1135,265,80],
     ['medical_table',145,300,245,78],['medical_bed',145,650,225,58],['cabinet',110,430,58,130],['sink',455,315,100,58],
     ['medical_crate1',430,650,55,52],['medical_crate2',500,650,55,52],
     ['tank',885,315,125,185],['generator',1045,330,165,155],['battery',1235,300,105,215],
@@ -1652,7 +1651,7 @@ function geometryFor(which){
 }
 function worldCollision(x,y,r=15,which=scene,ignoreId=null){
   if(which==='surface'){
-    if(x<r||x>surface.width-r||y<r||y>surface.height-r)return true;
+    if(x<(surface.minX??0)+r||x>(surface.maxX??surface.width)-r||y<r||y>surface.height-r)return true;
   }else if(bunkerGeometryBlocked(x,y,r))return true;
   const g=geometryFor(which);
   for(let cy=Math.floor((y-r)/g.cell);cy<=Math.floor((y+r)/g.cell);cy++)for(let cx=Math.floor((x-r)/g.cell);cx<=Math.floor((x+r)/g.cell);cx++){
@@ -1706,7 +1705,7 @@ const ITEM={
   berries:{name:"Ягоды",icon:"🍓"},
   medicinal_herbs:{name:"Лекарственные растения",icon:"🌿"},
   technical_crop:{name:"Техническая культура",icon:"🌻"},
-  backpack1:{name:"Рюкзак I",icon:"🎒",equip:"backpack",capacity:12},
+  backpack1:{name:"Рюкзак I",icon:"🎒",equip:"backpack",capacity:24},
   backpack2:{name:"Рюкзак II",icon:"🎒",equip:"backpack",capacity:16},
   backpack3:{name:"Рюкзак III",icon:"🎒",equip:"backpack",capacity:20},
   backpack4:{name:"Рюкзак IV",icon:"🎒",equip:"backpack",capacity:24},
@@ -1728,13 +1727,13 @@ const ITEM={
   beef:{name:"Говядина",icon:"🥩"}
 };
 const STACK_MAX=100;
-let BAG_SLOTS=12;
+let BAG_SLOTS=24;
 const equipment={
   head:null,
   body:null,
   legs:null,
   feet:null,
-  backpack:{type:"backpack1",name:"Рюкзак I",icon:"🎒",capacity:12}
+  backpack:{type:"backpack1",name:"Рюкзак I",icon:"🎒",capacity:24}
 };
 const EQUIP_LABELS={head:"Голова",body:"Тело",legs:"Ноги",feet:"Обувь",backpack:"Рюкзак"};
 const EQUIP_ICONS={head:"🪖",body:"🦺",legs:"👖",feet:"👢",backpack:"🎒"};
@@ -1801,7 +1800,7 @@ function grantStarterItems(){
   starterPending=starterPending.filter(type=>{
     if(addItem(type,1)>0)return true;
     const slot=HAND_TYPES.indexOf(type);
-    if(slot>=0&&!handSlots[slot])handSlots[slot]=type;
+    if(slot>=0&&slot<4&&!handSlots[slot])handSlots[slot]=type;
     return false;
   });
   if(starterPending.length!==before){
@@ -2201,32 +2200,42 @@ function joystickCenters(){
   };
 }
 
+const JOY_TOUCH_RADIUS=JOY_RADIUS+10;
+function joystickAt(x,y){
+  const c=joystickCenters(),left=distance(x,y,c.left.x,c.left.y),right=distance(x,y,c.right.x,c.right.y);
+  if(Math.min(left,right)>JOY_TOUCH_RADIUS)return null;
+  return left<=right?'left':'right';
+}
 function beginJoystick(e){
-  const centers=joystickCenters();
-  if(e.clientX<window.innerWidth*.5&&leftPointerId===null){
-    cancelNavigation();cancelChop();leftPointerId=e.pointerId;
+  const side=joystickAt(e.clientX,e.clientY),centers=joystickCenters();
+  if(side==='left'&&leftPointerId===null){
+    objectPointer=null;
+    cancelNavigation();cancelChop();cancelSearch();leftPointerId=e.pointerId;
     const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);
     moveX=v.x;moveY=v.y;movePower=v.power;
     if(movePower>JOY_DEAD&&!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
-  }else if(e.clientX>=window.innerWidth*.5&&rightPointerId===null){
+  }else if(side==='right'&&rightPointerId===null){
+    objectPointer=null;
     rightPointerId=e.pointerId;rightAimActive=true;
     const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);aimPower=v.power;
     if(aimPower>JOY_DEAD){player.aimX=v.x;player.aimY=v.y;firing=canFire();if(firing)shoot();}
-  }
+  }else return;
   e.preventDefault();
 }
 window.addEventListener('pointerdown',function(e){
-  if(menuOpen||playerDead||uiTouch(e.target))return;
-  const centers=joystickCenters();
-  const overStick=distance(e.clientX,e.clientY,centers.left.x,centers.left.y)<58||distance(e.clientX,e.clientY,centers.right.x,centers.right.y)<58;
-  const target=overStick?null:hitInteraction(e.clientX+camera.x,e.clientY+camera.y);
-  if(target&&!objectPointer){objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target};e.preventDefault();return;}
-  beginJoystick(e);
+  if(menuOpen||playerDead||uiTouch(e.target)||e.button>0)return;
+  if(joystickAt(e.clientX,e.clientY)){beginJoystick(e);return;}
+  if(objectPointer||leftPointerId!==null||rightPointerId!==null)return;
+  const x=e.clientX+camera.x,y=e.clientY+camera.y;
+  objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target:hitInteraction(x,y),point:{x,y},screenX:e.clientX,screenY:e.clientY,startedAt:performance.now(),following:false,nextPathAt:0};
+  e.preventDefault();
 },{passive:false});
 window.addEventListener('pointermove',function(e){
   if(objectPointer&&objectPointer.id===e.pointerId){
-    if(distance(e.clientX,e.clientY,objectPointer.x,objectPointer.y)<=10)return;
-    objectPointer=null;beginJoystick(e);return;
+    objectPointer.screenX=e.clientX;objectPointer.screenY=e.clientY;
+    if(distance(e.clientX,e.clientY,objectPointer.x,objectPointer.y)>10)startPointerFollow();
+    updatePointerFollow();
+    e.preventDefault();return;
   }
   const centers=joystickCenters();
   if(e.pointerId===leftPointerId){
@@ -2239,10 +2248,34 @@ window.addEventListener('pointermove',function(e){
   }
 },{passive:false});
 window.addEventListener('pointerup',function(e){
-  if(objectPointer&&objectPointer.id===e.pointerId){const target=objectPointer.target;objectPointer=null;if(!menuOpen&&!playerDead)approachObject(target);}
+  if(objectPointer&&objectPointer.id===e.pointerId){
+    const tap=objectPointer;objectPointer=null;
+    if(menuOpen||playerDead)return;
+    if(tap.following){approachPoint(e.clientX+camera.x,e.clientY+camera.y,true);return;}
+    if(uiTouch(e.target))return;
+    if(tap.target)approachObject(tap.target);else approachPoint(tap.point.x,tap.point.y);
+  }
 },{passive:false});
-window.addEventListener('pointercancel',e=>{if(objectPointer?.id===e.pointerId)objectPointer=null;});
-
+window.addEventListener('pointercancel',e=>{
+  if(objectPointer?.id===e.pointerId){if(objectPointer.following)cancelNavigation();objectPointer=null;}
+});
+window.addEventListener('blur',()=>stopControls());
+function startPointerFollow(){
+  if(!objectPointer||objectPointer.following)return;
+  objectPointer.following=true;objectPointer.target=null;
+  cancelNavigation();cancelChop();cancelSearch();
+}
+function updatePointerFollow(){
+  const p=objectPointer;if(!p||menuOpen||playerDead)return;
+  if(!p.following&&!p.target&&performance.now()-p.startedAt>=180)startPointerFollow();
+  if(!p.following)return;
+  const x=p.screenX+camera.x,y=p.screenY+camera.y,now=performance.now();
+  const clear=lineClear(player.x,player.y,x,y,player.radius,scene);
+  if(!clear&&now<p.nextPathAt)return;
+  if(p.lastX!==undefined&&distance(x,y,p.lastX,p.lastY)<2&&navigation)return;
+  p.nextPathAt=now+140;p.lastX=x;p.lastY=y;
+  approachPoint(x,y,true);
+}
 
 function releaseFixedStick(e){
   if(e.pointerId===leftPointerId){
@@ -2311,10 +2344,10 @@ const muzzleFlash = {
   time:0
 };
 
-function hitZombie(zombie){
+function hitZombie(zombie,damage=25){
   queueGameSave();
 
-  zombie.health -= 25;
+  zombie.health -= damage;
 
   zombie.hitFlash =
     performance.now();
@@ -2353,7 +2386,7 @@ function updateBullets(){
       b.x=x;b.y=y;
       if(scene==='surface'){
         const hit=zombies.find(z=>z.alive&&distance(x,y,z.x,z.y)<z.radius+b.radius);
-        if(hit){hitZombie(hit);removed=true;break;}
+        if(hit){hitZombie(hit,b.damage??25);removed=true;break;}
       }
     }
     b.life-=frameScale;if(removed||b.life<=0)bullets.splice(i,1);
@@ -2705,9 +2738,10 @@ function updateCamera(){
   camera.x += (targetX-camera.x)*0.12;
   camera.y += (targetY-camera.y)*0.12;
 
-  const maxX=Math.max(0,surface.width-screenWidth);
+  const minX=surface.minX??0;
+  const maxX=Math.max(minX,(surface.maxX??surface.width)-screenWidth);
   const maxY=Math.max(0,surface.height-screenHeight);
-  camera.x=clamp(camera.x,0,maxX);
+  camera.x=clamp(camera.x,minX,maxX);
   camera.y=clamp(camera.y,0,maxY);
 }
 
@@ -2872,7 +2906,7 @@ function cancelNavigation(){navigation=null;movePower=0;moveX=0;moveY=0;}
 
 // A* on a 24 px grid; each edge is swept with the actor's radius.
 function findWalkPath(startX,startY,target,which=scene,radius=player.radius){
-  const bounds=which==='surface'?{x:0,y:0,w:1600,h:2200}:{x:-150,y:-940,w:1510,h:2200};
+  const bounds=which==='surface'?{x:surface.minX??0,y:0,w:surface.width,h:surface.height}:{x:-150,y:-940,w:1510,h:2200};
   const cell=12,cols=Math.ceil(bounds.w/cell),rows=Math.ceil(bounds.h/cell),size=cols*rows;
   const cached=new Uint8Array(size),closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
   const point=id=>({x:bounds.x+(id%cols+.5)*cell,y:bounds.y+(Math.floor(id/cols)+.5)*cell});
@@ -2886,6 +2920,7 @@ function findWalkPath(startX,startY,target,which=scene,radius=player.radius){
   }
   if(start<0)return null;
   const near=(p)=>{
+    if(target.kind==='ground')return distance(p.x,p.y,target.x,target.y)<=24&&lineClear(p.x,p.y,target.x,target.y,radius,which);
     const c=contactPoint(target,p.x,p.y);
     return distance(p.x,p.y,c.x,c.y)<=target.range&&lineClear(p.x,p.y,c.x,c.y,0,which,target.id);
   };
@@ -2901,6 +2936,7 @@ function findWalkPath(startX,startY,target,which=scene,radius=player.radius){
       // Remove unnecessary waypoints while preserving all obstacle checks.
       const smooth=[];let from={x:startX,y:startY},i=0;
       while(i<result.length){let far=i;while(far+1<result.length&&lineClear(from.x,from.y,result[far+1].x,result[far+1].y,radius,which))far++;smooth.push(result[far]);from=result[far];i=far+1;}
+      if(target.kind==='ground')smooth.push({x:target.x,y:target.y});
       return smooth;
     }
     const ix=id%cols,iy=Math.floor(id/cols);
@@ -2924,11 +2960,23 @@ function approachObject(target){
   if(!points){message('К объекту нет свободного прохода');return;}
   navigation={targetId:target.id,points,index:0,blockedMs:0,scene};
 }
+function approachPoint(x,y,following=false){
+  if(following)cancelNavigation();else stopControls();
+  if(worldCollision(x,y,player.radius,scene)){if(!following)message('Здесь препятствие — выберите свободное место');return;}
+  if(scene==='surface'&&!gateOpen&&inFortress(player.x,player.y)!==inFortress(x,y)){
+    if(!following)message('🔒 Сначала откройте ворота');return;
+  }
+  if(distance(player.x,player.y,x,y)<.5)return;
+  const destination={id:'ground',kind:'ground',x,y,r:0,range:.5};
+  const points=lineClear(player.x,player.y,x,y,player.radius,scene)?[{x,y}]:findWalkPath(player.x,player.y,destination);
+  if(!points){if(!following)message('К этой точке нет свободного прохода');return;}
+  navigation={destination,points,index:0,blockedMs:0,scene};
+}
 function updateAutoWalk(){
   if(!navigation)return;
-  const target=interactionObjects().find(o=>o.id===navigation.targetId);
+  const target=navigation.destination||interactionObjects().find(o=>o.id===navigation.targetId);
   if(!target||navigation.scene!==scene){cancelNavigation();return;}
-  if(canInteract(target,player.x,player.y)){cancelNavigation();executeInteraction(target);return;}
+  if(canInteract(target,player.x,player.y)){cancelNavigation();if(target.kind!=='ground')executeInteraction(target);return;}
   let p=navigation.points[navigation.index];
   while(p&&distance(player.x,player.y,p.x,p.y)<(navigation.index===navigation.points.length-1?.05:2)){navigation.index++;p=navigation.points[navigation.index];}
   if(!p){cancelNavigation();return;}
@@ -3895,63 +3943,9 @@ function drawBunker(){
   }
 
   // №2 — WORKSHOP (visual redesign; existing interaction preserved)
-  drawSideRoom(bunker.workshop,"left","МАСТЕРСКАЯ","#343a3c");
+  drawSideRoom(bunker.workshop,"left","","#343a3c");
 
-  // №2 — WORKSHOP: layout matched to the approved reference image
-
-  // TOP WALL — technical station
-  ctx.fillStyle="#414b4e";
-  ctx.fillRect(125,790,185,86);
-  ctx.strokeStyle="#7e9094"; ctx.lineWidth=3; ctx.strokeRect(125,790,185,86);
-  ctx.fillStyle="#687679"; ctx.fillRect(145,805,55,36);
-  ctx.fillStyle="#dce4e5"; ctx.font="10px Arial"; ctx.textAlign="center";
-  ctx.fillText("ТЕХНИЧЕСКИЙ СТАНОК",217,861);
-
-  // TOP WALL — ammunition station beside it
-  ctx.fillStyle="#555146";
-  ctx.fillRect(335,790,190,86);
-  ctx.strokeStyle="#938a70"; ctx.lineWidth=3; ctx.strokeRect(335,790,190,86);
-  ctx.fillStyle="#b3a36f"; ctx.fillRect(395,805,38,40);
-  ctx.fillStyle="#ece6d5"; ctx.font="10px Arial";
-  ctx.fillText("СТАНОК ПАТРОНОВ",430,861);
-
-  // LEFT WALL — vertical weapon / tool panel
-  ctx.fillStyle="#282e30";
-  ctx.fillRect(108,900,58,215);
-  ctx.strokeStyle="#657174"; ctx.lineWidth=3; ctx.strokeRect(108,900,58,215);
-  ctx.save();
-  ctx.translate(124,1007);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillStyle="#d9dfe0"; ctx.font="9px Arial"; ctx.textAlign="center";
-  ctx.fillText("ОРУЖИЕ / ИНСТРУМЕНТЫ",0,0);
-  ctx.restore();
-  ctx.fillStyle="#e2e6e7"; ctx.font="17px Arial"; ctx.textAlign="center";
-  ctx.fillText("⚒",145,947);
-  ctx.fillText("⚙️",145,986);
-  ctx.fillText("🔧",145,1025);
-  ctx.fillText("🔫",145,1064);
-
-  // BOTTOM WALL — large main workbench
-  ctx.fillStyle="#60472f";
-  ctx.fillRect(110,1130,215,76);
-  ctx.strokeStyle="#9a7956"; ctx.lineWidth=4; ctx.strokeRect(110,1130,215,76);
-  ctx.fillStyle="#343a3c"; ctx.fillRect(130,1140,175,18);
-  ctx.fillStyle="#eee9df"; ctx.font="11px Arial";
-  ctx.fillText("ГЛАВНЫЙ ВЕРСТАК",217,1186);
-
-  // BOTTOM WALL — parts and metal crates beside the main workbench
-  ctx.fillStyle="#66513a";
-  ctx.fillRect(380,1150,60,52);
-  ctx.fillRect(455,1150,60,52);
-  ctx.strokeStyle="#8a704f"; ctx.lineWidth=3;
-  ctx.strokeRect(380,1150,60,52);
-  ctx.strokeRect(455,1150,60,52);
-  ctx.fillStyle="#fff"; ctx.font="9px Arial";
-  ctx.fillText("ДЕТАЛИ",410,1181);
-  ctx.fillText("МЕТАЛЛ",485,1181);
-
-  // RIGHT WALL / DOOR SIDE AND ROOM CENTER intentionally remain empty.
-  // This keeps the entrance and movement path completely unobstructed.
+  V09Craft.drawWorkshop();
 
   // №3 — STORAGE: 8 independent functional chests, 4 on top wall + 4 on bottom wall
   drawSideRoom(bunker.storage,"right","СКЛАД","#303638");
@@ -4448,7 +4442,7 @@ function drawBunker(){
 function drawPlayer(){
   const angle=Math.atan2(player.aimY,player.aimX),item=heldItem();
   const bob=player.moving?Math.sin(player.walkAnimation)*3:0;
-  const recoil=item==='rifle_ak74'&&performance.now()-muzzleFlash.time<95?-2:0;
+  const recoil=canFire()&&performance.now()-muzzleFlash.time<95?(item==='rifle_m4'?-1.3:-2.4):0;
   ctx.save();ctx.translate(player.x,player.y);ctx.rotate(angle);
   ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.ellipse(-2,3,20,17,0,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='#222c2c';ctx.lineWidth=8;ctx.lineCap='round';
@@ -4466,6 +4460,8 @@ function drawPlayer(){
     ctx.strokeStyle='#242f30';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(21,4);ctx.quadraticCurveTo(19,13,28,16);ctx.stroke();
     ctx.fillStyle='#526064';ctx.fillRect(33,-2,11,3);ctx.fillStyle='#1c2425';ctx.fillRect(40,-5,3,4);
     ctx.strokeStyle='#8b9896';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(10,-3);ctx.lineTo(29,-3);ctx.stroke();ctx.restore();
+  }else if(item==='rifle_m4'){
+    V09Craft.drawM4Held(recoil);
   }else if(item==='axe'){
     const swing=chopState?Math.sin((performance.now()-chopState.startedAt)/110)*.75:-.22;
     ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(17,-5);ctx.moveTo(3,11);ctx.lineTo(14,6);ctx.stroke();
@@ -4473,6 +4469,14 @@ function drawPlayer(){
     ctx.strokeStyle='#b98451';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-5,7);ctx.lineTo(16,-15);ctx.stroke();
     ctx.fillStyle='#9cafb3';ctx.beginPath();ctx.moveTo(8,-16);ctx.lineTo(21,-21);ctx.lineTo(30,-13);ctx.lineTo(26,-4);ctx.lineTo(17,-8);ctx.closePath();ctx.fill();
     ctx.strokeStyle='#e0e9e9';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(28,-16);ctx.lineTo(30,-13);ctx.lineTo(26,-4);ctx.stroke();ctx.restore();
+  }else if(item==='pickaxe'){
+    ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(18,-5);ctx.moveTo(3,11);ctx.lineTo(15,6);ctx.stroke();
+    ctx.save();ctx.translate(16,3);ctx.rotate(V09World.isMining?.()?Math.sin(performance.now()/105)*.65:-.3);
+    ctx.strokeStyle='#bc8f58';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-6,10);ctx.lineTo(17,-19);ctx.stroke();
+    ctx.fillStyle='#b8c8c8';ctx.beginPath();ctx.moveTo(0,-20);ctx.quadraticCurveTo(18,-33,35,-9);ctx.lineTo(17,-19);ctx.closePath();ctx.fill();ctx.restore();
+  }else if(item==='remote'){
+    ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(17,-5);ctx.moveTo(3,11);ctx.lineTo(17,5);ctx.stroke();
+    ctx.fillStyle='#293e43';ctx.fillRect(13,-9,16,18);ctx.strokeStyle='#819c9e';ctx.lineWidth=1;ctx.strokeRect(13,-9,16,18);ctx.fillStyle='#69ba9a';ctx.fillRect(17,-6,8,10);
   }else if(item==='flashlight'){
     ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(17,-2);ctx.moveTo(3,11);ctx.lineTo(8,15);ctx.stroke();
     ctx.fillStyle='#253a42';ctx.fillRect(13,-4,15,7);ctx.fillStyle='#5d747d';ctx.fillRect(25,-6,7,11);ctx.fillStyle=flashlightOn?'#fff1b4':'#8c9b98';ctx.fillRect(32,-5,2,9);
@@ -4482,7 +4486,7 @@ function drawPlayer(){
   ctx.fillStyle=equipment.head?'#637258':'#cca784';ctx.beginPath();ctx.arc(1,0,8,0,Math.PI*2);ctx.fill();
   ctx.fillStyle=equipment.head?'#414d3d':'#483c30';ctx.beginPath();ctx.arc(-1,0,7,Math.PI*.5,Math.PI*1.5);ctx.fill();
   ctx.restore();
-  if(item==='rifle_ak74'&&rightAimActive){
+  if(canFire()&&rightAimActive){
     const dx=Math.cos(angle),dy=Math.sin(angle);let reach=88;
     for(let t=18;t<88;t+=3)if(worldCollision(player.x+dx*t,player.y+dy*t,1,scene)){reach=t;break;}
     ctx.strokeStyle='rgba(255,226,150,.5)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(player.x+dx*reach,player.y+dy*reach,4,0,Math.PI*2);ctx.stroke();
@@ -4549,6 +4553,11 @@ function drawParkedCars(){
 }
 function drawNavigationTarget(){
   if(!navigation)return;
+  if(navigation.destination){
+    const p=navigation.destination;
+    ctx.save();ctx.strokeStyle='#e0b36a';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);ctx.moveTo(p.x-13,p.y);ctx.lineTo(p.x+13,p.y);ctx.moveTo(p.x,p.y-13);ctx.lineTo(p.x,p.y+13);ctx.stroke();ctx.restore();return;
+  }
   const o=interactionObjects().find(t=>t.id===navigation.targetId);if(!o)return;
   ctx.save();ctx.strokeStyle='#e0b36a';ctx.lineWidth=2;ctx.setLineDash([6,5]);
   if(o.r!==undefined){ctx.beginPath();ctx.arc(o.x,o.y,o.r+7,0,Math.PI*2);ctx.stroke();}
@@ -4924,30 +4933,7 @@ el("feedPlusTen").addEventListener("click",()=>setFeedLoaded(feedCraftLoaded+10)
 el("feedAll").addEventListener("click",()=>setFeedLoaded(bagCount("grain")));
 el("feedClear").addEventListener("click",()=>setFeedLoaded(0));
 
-el("feedCraftBtn").addEventListener("click",function(){
-  if(feedCraftBusy)return;
-  const batches=Math.floor(feedCraftLoaded/10);
-  if(batches<=0){message("🌾 Загрузите минимум 10 зерна.");return;}
-
-  const grainNeeded=batches*10;
-  const feedMade=batches*20;
-  if(bagCount("grain")<grainNeeded){
-    feedCraftLoaded=bagCount("grain");renderFeedCraftMenu();return;
-  }
-
-  // Remove only the grain actually used. Extra loaded grain stays in the backpack.
-  const removed=removeItem("grain",grainNeeded);
-  if(removed<grainNeeded){
-    if(removed>0)addItem("grain",removed);
-    renderFeedCraftMenu();return;
-  }
-
-  feedCraftBusy=true;
-  feedCraftLoaded-=grainNeeded;
-  pendingFeedCraft={qty:feedMade,total:feedMade,readyAt:Date.now()+2500};
-  renderPendingFeedCraft();
-  queueGameSave();
-});
+el("feedCraftBtn").addEventListener("click",()=>V09Craft.startFeed());
 
 // Cow management controls
 el("cowClose").addEventListener("click",function(){
@@ -5567,6 +5553,7 @@ function updateTrees(){
   }
 }
 function update(){
+  updatePointerFollow();
   updateTrees();
   grantStarterItems();
   updatePlayer();
@@ -5698,7 +5685,7 @@ function captureGameProgress(){
   reconcileHands();
   const now=Date.now();
   return {
-    schema:2,gameVersion:'0.8.1',savedAt:now,
+    schema:2,gameVersion:'0.8.4',savedAt:now,
     gateOpen,handSlots:clone(handSlots),activeHandSlot,flashlightOn,starterPending:clone(starterPending),
     trees:worldTrees.map(t=>({id:t.id,felled:t.felled,wood:t.wood,regrowMs:t.regrowMs})),
     player:{scene,x:player.x,y:player.y,health:player.health,
@@ -5734,7 +5721,7 @@ function upgradeGameProgress(d){
   d.schema=2;d.gameVersion='0.8';
   d.gateOpen=false;
   d.handSlots=['rifle_ak74','axe','flashlight',null];d.activeHandSlot=0;d.flashlightOn=true;
-  d.starterPending=HAND_TYPES.filter(type=>!d.bag.some(s=>s.type===type));
+  d.starterPending=['rifle_ak74','axe','flashlight'].filter(type=>!d.bag.some(s=>s.type===type));
   if(legacyHands)d.starterPending.push('gloves1');
   d.trees=worldTrees.map(t=>({id:t.id,felled:false,wood:15}));
   // Keep health / kills from the old save, but move surviving zombies off the base.
@@ -5801,7 +5788,7 @@ function decodeGameProgress(raw){
      !Array.isArray(d.handSlots)||d.handSlots.length!==4||
      !d.handSlots.every((t,i)=>t===null||(HAND_TYPES.includes(t)&&d.handSlots.indexOf(t)===i))||
      !(d.activeHandSlot===null||integer(d.activeHandSlot,0,3))||
-     !Array.isArray(d.starterPending)||d.starterPending.length>4||
+     !Array.isArray(d.starterPending)||d.starterPending.length>8||
      !d.starterPending.every((t,i)=>[...HAND_TYPES,'gloves1'].includes(t)&&d.starterPending.indexOf(t)===i)||
      !Array.isArray(d.trees)||d.trees.length!==worldTrees.length||
      !d.trees.every((t,i)=>t&&t.id===worldTrees[i].id&&typeof t.felled==='boolean'&&integer(t.wood,0,15)&&(t.felled||t.wood===15)))fail();
@@ -5942,6 +5929,1305 @@ function flushGameSave(){
   if(gameSaveTimer!==null){clearTimeout(gameSaveTimer);gameSaveTimer=null;}
   saveGameProgress();
 }
+
+// 0.9 shared UI and item definitions. Loaded before progress restoration.
+Object.assign(ITEM, {
+  iron:{name:'Железо',icon:'🔩'}, copper:{name:'Медь',icon:'🟠'},
+  iron_ore:{name:'Железная руда',icon:'🪨'}, copper_ore:{name:'Медная руда',icon:'🟤'},
+  pickaxe:{name:'Кирка',icon:'⛏️',hand:true}, remote:{name:'Пульт базы',icon:'📟',hand:true},
+  rifle_m4:{name:'M4',icon:'🔫',hand:true}, ammo556:{name:'Патроны 5,56',icon:'▰'},
+  chicken_meat:{name:'Куриное мясо',icon:'🍗'}
+});
+ITEM.metal.name='Железо'; ITEM.ammo.name='Патроны 5,45';
+['remote','pickaxe','rifle_m4'].forEach(type=>{if(!HAND_TYPES.includes(type))HAND_TYPES.push(type);});
+bag.push({type:'remote',qty:1},{type:'pickaxe',qty:1},{type:'fuel',qty:10});
+handSlots[3]='remote';
+if(storageChests[2].name==='Металл')storageChests[2].name='Железо';
+handSvg.remote='<rect x="26" y="5" width="47" height="59" rx="7" fill="#273e43" stroke="#91adb2" stroke-width="3"/><rect x="33" y="13" width="33" height="29" rx="3" fill="#122a2c"/><path d="M38 35V20h10v15m6 0V20h8v15" fill="none" stroke="#7bcdb0" stroke-width="3"/><circle cx="50" cy="52" r="5" fill="#a9d8ba"/>';
+handSvg.pickaxe='<path d="M28 60L64 14" stroke="#6b472b" stroke-width="10" stroke-linecap="round"/><path d="M28 58L63 14" stroke="#bf945b" stroke-width="6" stroke-linecap="round"/><path d="M27 18Q62 -2 86 28L62 18 50 18Z" fill="#b6c7cb" stroke="#526b74" stroke-width="2"/>';
+function v09Style(css){const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);return style;}
+function v09Button(label,fn,className=''){
+  const button=document.createElement('button');button.type='button';button.className='menuButton '+className;button.textContent=label;
+  if(fn)button.addEventListener('click',fn);return button;
+}
+function v09Overlay(id,title){
+  if(el(id)){const existing=el(id);existing.querySelector('.v09Title').textContent=title;existing.querySelector('.panel').setAttribute('aria-label',title);return existing;}
+  const overlay=document.createElement('div');overlay.id=id;overlay.className='overlay v09Overlay';
+  const panel=document.createElement('section');panel.className='panel v09Panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',title);
+  const header=document.createElement('div');header.className='v09Header';
+  const heading=document.createElement('h2');heading.textContent=title;heading.className='v09Title';
+  const close=v09Button('×',()=>closeOverlay(overlay),'v09Close');close.setAttribute('aria-label','Закрыть');
+  header.append(heading,close);const body=document.createElement('div');body.className='v09Body';panel.append(header,body);overlay.append(panel);el('game').append(overlay);
+  overlay.addEventListener('pointerdown',e=>{if(e.target===overlay){e.preventDefault();e.stopPropagation();closeOverlay(overlay);}});
+  return overlay;
+}
+v09Style(`
+ .v09Overlay{z-index:11000;background:rgba(5,10,12,.78);backdrop-filter:blur(4px)}
+ .v09Panel{width:min(570px,96vw);padding:18px;background:linear-gradient(145deg,#202c30,#131e22);border-color:#46565b;border-radius:16px;box-shadow:0 20px 90px #0009;scrollbar-width:thin}
+ .v09Header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;border-bottom:1px solid #ffffff15;padding-bottom:12px}
+ .v09Title{font-size:20px;letter-spacing:.2px}
+ .v09Close{width:38px;min-width:38px;height:38px;padding:0;margin:0;font-size:26px;background:#ffffff09}
+ .v09Body{font-size:13px;line-height:1.5;color:#e4eeeb}
+ .v09Body .menuButton{min-height:42px;font-size:13px;background:#2c3d42;border-color:#68818045}
+ .v09Body .menuButton.primary{background:#376a57;border-color:#81b89a66}
+ .v09Body .menuButton:disabled{opacity:.4;cursor:default}
+ .v09Body button:focus-visible{outline:2px solid #e1c28b;outline-offset:2px}
+ .v09Muted{color:#a4b5b6;font-size:12px}.v09Row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+ .v09Card{padding:12px;border:1px solid #ffffff15;border-radius:10px;background:#0002;margin:10px 0}
+ .v09Body input,.v09Body select{max-width:100%;padding:8px;border-radius:7px;background:#142126;color:#e8f1ee;border:1px solid #607777;font:inherit;user-select:text;touch-action:manipulation}
+ @media(max-height:500px){.v09Overlay{padding:8px}.v09Panel{max-height:96vh;padding:12px}.v09Header{margin-bottom:8px;padding-bottom:6px}}
+`);
+const v09OriginalLoot=randomLoot;
+randomLoot=function(kind){
+  const loot=v09OriginalLoot(kind).map(s=>({...s,type:s.type==='metal'?'iron':s.type}));
+  if(kind==='house'&&Math.random()<.6)loot.push({type:'copper',qty:2+Math.floor(Math.random()*5)});
+  if(Math.random()<.5)loot.push({type:'ammo556',qty:8+Math.floor(Math.random()*13)});
+  return loot;
+};
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    const overlays=[...document.querySelectorAll('.overlay.open')];const last=overlays.at(-1);
+    if(last&&last.id!=='deathOverlay')closeOverlay(last);
+  }
+});
+
+
+/* 0.9: an expanded, navigable world; finite ore deposits and a manual well. */
+(() => {
+  'use strict';
+  Object.assign(surface, {width:2400,height:3000,minX:-400,maxX:2000});
+
+  // Preserve existing loot identities and contents while moving the neighbourhood east.
+  const placements={
+    car1:[1080,1510,130,64],car2:[1580,1680,64,130],car3:[1075,2440,130,64],
+    house1:[1090,1280,250,210],house2:[1450,1280,270,220],house3:[1100,2120,280,220]
+  };
+  for(const o of scavenges)if(placements[o.id]){
+    const [x,y,w,h]=placements[o.id];Object.assign(o,{x,y,w,h});
+  }
+  const extraLoot=[
+    ['house09_4','house',1450,1820,260,220],
+    ['house09_5','house',1430,2460,280,215],
+    ['car09_4','car',1075,1840,130,64],
+    ['car09_5','car',1460,2240,130,64],
+    ['car09_6','car',1770,2520,64,130]
+  ];
+  for(const [id,kind,x,y,w,h] of extraLoot)scavenges.push({id,kind,x,y,w,h,searched:false});
+
+  const movedTrees={tree2:[-200,1270],tree3:[490,1290],tree4:[1510,1140],
+    tree5:[-200,1840],tree6:[480,2120],tree7:[1610,2140],
+    tree8:[1140,2740],tree9:[-190,2700],tree10:[1650,2910]};
+  for(const t of worldTrees)if(movedTrees[t.id]){[t.x,t.y]=movedTrees[t.id];}
+  const treePoints=[[-305,1480],[-140,1490],[65,1245],[305,1300],[520,1510],
+    [-290,2080],[-115,2190],[85,2260],[295,2220],[520,2350],
+    [-300,2660],[-65,2850],[185,2880],[470,2770],[505,2525],
+    [-185,390],[-205,675],[-180,975],[10,1070],[1510,760],[1660,1010],
+    [1780,1120],[1850,1610],[1840,1840],[1790,2340],[1280,2740],
+    [1510,2790],[1790,2900],[-315,2340],[-25,2570],[310,2410],
+    [470,1840],[510,1680],[160,1470]];
+  treePoints.forEach(([x,y],i)=>worldTrees.push({id:'tree09_'+i,x,y,r:24,felled:false,wood:15,regrowMs:0}));
+
+  const ores=[
+    {id:'ore09_iron1',type:'iron_ore',x:10,y:1390,r:39,capacity:45},
+    {id:'ore09_iron2',type:'iron_ore',x:-225,y:2460,r:48,capacity:75},
+    {id:'ore09_iron3',type:'iron_ore',x:315,y:2700,r:43,capacity:75},
+    {id:'ore09_copper1',type:'copper_ore',x:1810,y:1370,r:39,capacity:45},
+    {id:'ore09_copper2',type:'copper_ore',x:1840,y:2110,r:46,capacity:75},
+    {id:'ore09_copper3',type:'copper_ore',x:1810,y:2760,r:46,capacity:75}
+  ].map(o=>({...o,remaining:o.capacity,regrowMs:0}));
+  const well={id:'well09',kind:'well09',name:'Колодец — набрать воду',x:320,y:925,r:40,range:48};
+  // One polygon drives both the shoreline and water collision.
+  const lake=[[-25,1635],[55,1585],[150,1570],[245,1590],[325,1620],[382,1680],
+    [395,1775],[365,1860],[320,1915],[315,1990],[250,2060],[150,2075],
+    [80,2045],[35,1985],[15,1900],[-35,1840],[-65,1750],[-55,1685]];
+  const benches=[{id:'bench09_1',x:435,y:1890,w:72,h:20},
+    {id:'bench09_2',x:90,y:2165,w:72,h:20},
+    {id:'bench09_3',x:-140,y:1580,w:20,h:72}];
+  const fences=[
+    {id:'fence09_1',x:1060,y:1240,w:300,h:7},{id:'fence09_2',x:1060,y:1240,w:7,h:215},
+    {id:'fence09_3',x:1420,y:1240,w:320,h:7},{id:'fence09_4',x:1733,y:1240,w:7,h:250},
+    {id:'fence09_5',x:1420,y:1780,w:320,h:7},{id:'fence09_6',x:1733,y:1780,w:7,h:260},
+    {id:'fence09_7',x:1060,y:2080,w:340,h:7},{id:'fence09_8',x:1060,y:2080,w:7,h:235},
+    {id:'fence09_9',x:1400,y:2420,w:340,h:7}
+  ];
+  const staticSolids=[well,...benches,...fences];
+  const oldSolids=solidObjects;
+  solidObjects=function(which){
+    const out=oldSolids(which);
+    return which==='surface'?[...out,...staticSolids,...ores]:out;
+  };
+  function lakeContains(x,y,r=0){
+    if(x<-65-r||x>395+r||y<1570-r||y>2075+r)return false;
+    let inside=false;
+    for(let i=0,j=lake.length-1;i<lake.length;j=i++){
+      const [ax,ay]=lake[j],[bx,by]=lake[i];
+      if(((ay>y)!==(by>y))&&(x<(bx-ax)*(y-ay)/(by-ay)+ax))inside=!inside;
+      const dx=bx-ax,dy=by-ay;
+      const t=clamp(((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy),0,1);
+      if(Math.hypot(x-ax-t*dx,y-ay-t*dy)<=r)return true;
+    }
+    return inside;
+  }
+  const oldCollision=worldCollision;
+  worldCollision=function(x,y,r=15,which=scene,ignoreId=null){
+    return (which==='surface'&&lakeContains(x,y,r))||oldCollision(x,y,r,which,ignoreId);
+  };
+  invalidateGeometry();
+
+  // Encounters stay beyond the first, quiet exit from the fortress.
+  const newSpawns=[{x:550,y:2240},{x:1230,y:1955},{x:1790,y:2250},
+    {x:-150,y:2340},{x:990,y:2750},{x:475,y:2630}];
+  outsideSpawns.splice(0,outsideSpawns.length,...newSpawns);
+  resetZombies();
+
+  let mining=null;
+  const previousInteractions=interactionObjects;
+  interactionObjects=function(which=scene){
+    const out=previousInteractions(which);
+    if(which==='surface')out.push(well,...ores.map(o=>({...o,kind:'ore09',
+      name:(o.type==='iron_ore'?'Железная руда':'Медная руда')+(o.remaining?` · ${o.remaining}`:' · восстанавливается'),
+      range:47,ref:o})));
+    return out;
+  };
+  function stopMining(){if(mining){mining=null;el('searchBarWrap').style.display='none';}}
+  function beginMining(o){
+    if(!o.remaining){message(`Месторождение восстанавливается: ${Math.ceil(o.regrowMs/60000)} мин.`);return;}
+    if(heldItem()!=='pickaxe'||bagCount('pickaxe')<1){message('⛏ Выберите кирку в быстром слоте');return;}
+    if(freeItemSpace(bag,o.type,BAG_SLOTS)<1){message('🎒 Освободите место для руды');return;}
+    cancelSearch();cancelChop();mining={id:o.id,elapsed:0,duration:1800};
+    const dx=o.x-player.x,dy=o.y-player.y,n=Math.hypot(dx,dy)||1;
+    player.aimX=dx/n;player.aimY=dy/n;
+  }
+  let wellOverlay;
+  function renderWell(){
+    if(!wellOverlay)wellOverlay=v09Overlay('v09Well','Колодец');
+    const body=wellOverlay.querySelector('.v09Body');body.innerHTML='';
+    const p=document.createElement('p');p.className='v09Muted';
+    p.textContent=`Ручной колодец работает без электричества. В рюкзаке: ${bagCount('water')} воды.`;
+    body.appendChild(p);
+    const art=document.createElement('div');art.className='v09WellArt';
+    art.innerHTML='<span>💧</span><b>Вода для фермы</b><small>Наберите воду и пополните запас животных в бункере.</small>';
+    body.appendChild(art);
+    for(const qty of [10,25,50]){
+      const b=v09Button(`Набрать ${qty} воды`,()=>{
+        const target=interactionObjects('surface').find(o=>o.id===well.id);
+        if(scene!=='surface'||!canInteract(target,player.x,player.y)){closeOverlay(wellOverlay);return;}
+        const amount=Math.min(qty,freeItemSpace(bag,'water',BAG_SLOTS));
+        if(!amount){message('🎒 Освободите место для воды');return;}
+        const received=amount-addItem('water',amount);
+        message(`💧 Вода: +${received}`);queueGameSave();renderWell();
+      });
+      b.disabled=freeItemSpace(bag,'water',BAG_SLOTS)<1;body.appendChild(b);
+    }
+    if(freeItemSpace(bag,'water',BAG_SLOTS)<1){const p=document.createElement('p');p.textContent='Рюкзак заполнен — освободите место.';body.appendChild(p);}
+  }
+  const oldExecute=executeInteraction;
+  executeInteraction=function(target){
+    if(!target||!['ore09','well09'].includes(target.kind))return oldExecute(target);
+    if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+    navigation=null;movePower=0;moveX=0;moveY=0;
+    if(target.kind==='ore09')beginMining(target.ref);
+    else {stopMining();renderWell();openOverlay(wellOverlay);}
+  };
+  const oldCancel=cancelChop;
+  cancelChop=function(){stopMining();return oldCancel();};
+  const oldUpdate=update;
+  update=function(){
+    oldUpdate();
+    if(!menuOpen&&!playerDead&&!document.hidden){
+      const dt=16.667*frameScale;
+      for(const o of ores)if(!o.remaining){
+        o.regrowMs=Math.max(0,o.regrowMs-dt);
+        if(!o.regrowMs){o.remaining=o.capacity;queueGameSave();}
+      }
+    }
+    if(!mining)return;
+    const o=ores.find(v=>v.id===mining.id);
+    const target=interactionObjects('surface').find(v=>v.id===mining.id);
+    if(scene!=='surface'||menuOpen||playerDead||document.hidden||movePower>JOY_DEAD||
+      heldItem()!=='pickaxe'||!o||!canInteract(target,player.x,player.y)){stopMining();return;}
+    mining.elapsed+=16.667*frameScale;
+    const ratio=Math.min(1,mining.elapsed/mining.duration),bar=el('searchBarWrap');
+    bar.style.display='block';bar.style.left=(player.x-camera.x-46)+'px';bar.style.top=(player.y-camera.y-62)+'px';
+    el('searchBarFill').style.width=(ratio*100)+'%';
+    if(ratio>=1){
+      const amount=Math.min(5,o.remaining,freeItemSpace(bag,o.type,BAG_SLOTS));
+      const received=amount-addItem(o.type,amount);o.remaining-=received;
+      if(!o.remaining)o.regrowMs=600000;
+      stopMining();
+      message(received?`⛏ ${ITEM[o.type].name}: +${received}`+(o.remaining?` · осталось ${o.remaining}`:' · восстановление через 10 минут игры'):'🎒 Рюкзак заполнен');
+      createNoise(o.x,o.y,230);queueGameSave();
+    }
+  };
+  const oldAction=updateAction;
+  updateAction=function(){oldAction();if(currentAction==='ore09')actionButton.textContent='⛏';if(currentAction==='well09')actionButton.textContent='💧';};
+
+  // Every static landmark is code-native canvas artwork, drawn in world coordinates.
+  function polygon(points,fill,stroke,width=1){
+    ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke();}
+  }
+  function line(points,color,width=1){ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
+  function label(text,x,y,color='#bac8b6',size=11){ctx.fillStyle=color;ctx.font=`600 ${size}px Arial`;ctx.textAlign='center';ctx.fillText(text,x,y);}
+  function ellipse(x,y,rx,ry,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();}
+  function sign(x,y,title,subtitle){
+    ctx.fillStyle='#535749';ctx.fillRect(x-34,y+9,7,30);ctx.fillRect(x+27,y+9,7,30);
+    ctx.fillStyle='#293e35';ctx.fillRect(x-72,y-16,144,40);ctx.strokeStyle='#7b8b6b';ctx.lineWidth=2;ctx.strokeRect(x-72,y-16,144,40);
+    label(title,x,y,'#dbdbc0',11);label(subtitle,x,y+15,'#9fae94',9);
+  }
+  function drawTerrain(){
+    ctx.fillStyle='#343f34';ctx.fillRect(-400,0,2400,3000);
+    // Richer woodland surrounds the park, with quiet texture rather than a flat grid.
+    const left=ctx.createLinearGradient(-400,0,650,0);left.addColorStop(0,'#253b2d');left.addColorStop(.65,'#3c5038');left.addColorStop(1,'#4a5140');
+    ctx.fillStyle=left;ctx.fillRect(-400,1090,1060,1910);
+    const right=ctx.createLinearGradient(970,0,2000,0);right.addColorStop(0,'#434a41');right.addColorStop(1,'#343b34');
+    ctx.fillStyle=right;ctx.fillRect(950,1090,1050,1910);
+    // Deterministic, culled grass tufts have no simulation or save cost.
+    const loX=Math.max(-400,Math.floor((camera.x-70)/70)*70),hiX=Math.min(2000,camera.x+screenWidth+70);
+    const loY=Math.max(0,Math.floor((camera.y-70)/70)*70),hiY=Math.min(3000,camera.y+screenHeight+70);
+    for(let x=loX;x<hiX;x+=70)for(let y=loY;y<hiY;y+=70){
+      const seed=Math.abs(Math.sin(x*12.32+y*5.14)),px=x+seed*49,py=y+Math.abs(Math.sin(x+y))*44;
+      if(inFortress(px,py))continue;
+      ellipse(px,py,12+seed*9,5,'rgba(10,23,16,.08)');
+      line([[px-4,py+2],[px-6,py-4]],'rgba(153,166,114,.17)',1);
+      line([[px,py+2],[px+1,py-6]],'rgba(153,166,114,.17)',1);
+    }
+    // Broad north-south road, sidewalks and two eastward residential streets.
+    ctx.fillStyle='#686d64';ctx.fillRect(630,1070,28,1930);ctx.fillRect(942,1070,28,1930);
+    ctx.fillStyle='#41494a';ctx.fillRect(658,1070,284,1930);
+    ctx.fillStyle='#363e3f';ctx.fillRect(676,1070,8,1930);ctx.fillRect(916,1070,8,1930);
+    for(const y of [1600,2350]){
+      ctx.fillStyle='#72736b';ctx.fillRect(950,y-16,990,148);
+      ctx.fillStyle='#464c4c';ctx.fillRect(950,y,990,116);
+      line([[960,y+58],[1930,y+58]],'rgba(211,199,158,.32)',2);
+    }
+    ctx.setLineDash([24,28]);line([[800,1120],[800,2980]],'rgba(224,208,157,.48)',3);ctx.setLineDash([]);
+    for(let y=1150;y<3000;y+=75){line([[633,y],[654,y]],'#565d56',1);line([[946,y],[967,y]],'#565d56',1);}
+    for(const y of [1550,2300])for(let x=690;x<920;x+=35){ctx.fillStyle='rgba(214,215,194,.33)';ctx.fillRect(x,y,20,36);}
+    for(const [x,y] of [[780,1470],[835,2200],[740,2770]]){line([[x-13,y-28],[x-2,y],[x+10,y+7],[x+5,y+26]],'rgba(18,25,26,.45)',2);}
+    // Gravel footpaths fork toward the near iron seam, circle the lake, then rejoin.
+    const trails=[[[645,1235],[380,1235],[155,1320],[10,1390]],
+      [[635,1530],[440,1530],[390,1450],[150,1450],[-135,1520],[-155,1790],[-120,2070],[30,2195],[265,2220],[445,2105],[490,1840],[470,1610],[440,1530]],
+      [[290,2220],[200,2410],[70,2485],[-225,2460]],[[200,2410],[340,2525],[315,2700]],
+      [[440,2105],[580,2180],[635,2180]],[[1735,1535],[1830,1515],[1810,1370]],
+      [[1730,2170],[1840,2170],[1840,2110]],[[1730,2690],[1810,2760]]];
+    ctx.lineCap='round';ctx.lineJoin='round';
+    for(const p of trails){line(p,'#58604b',40);line(p,'#767763',27);line(p,'rgba(167,158,124,.14)',21);}
+    ctx.lineCap='butt';ctx.lineJoin='miter';
+    // Shore and water use exactly the same perimeter as movement collision.
+    polygon(lake,'#4c6862','#a39470',24);
+    polygon(lake,'#315c60','#608077',7);
+    ctx.save();polygon(lake);ctx.clip();
+    const water=ctx.createLinearGradient(0,1570,300,2075);water.addColorStop(0,'#46716d');water.addColorStop(.5,'#294d57');water.addColorStop(1,'#3f6864');
+    ctx.fillStyle=water;ctx.fillRect(-80,1550,510,560);
+    for(let y=1610;y<2060;y+=32)for(let x=-45;x<385;x+=66){
+      const shift=Math.sin(y*.022+performance.now()*.00045)*6;
+      line([[x+shift,y],[x+17+shift,y-2],[x+33+shift,y]],'rgba(166,205,190,.14)',1.5);
+    }
+    ctx.restore();
+    for(const [x,y] of [[30,1600],[333,1650],[341,1930],[94,2050],[-46,1805]]){
+      line([[x,y+7],[x-3,y-12]],'#819260',3);line([[x+6,y+10],[x+8,y-8]],'#7d9259',2);ellipse(x-3,y-12,2,6,'#8b784e');
+    }
+    sign(380,1170,'ПАРК «БЕРЕГОВОЙ»','ЖЕЛЕЗНАЯ РУДА  ←');
+    sign(1240,1170,'ЖИЛОЙ КВАРТАЛ','МЕДНАЯ РУДА  →');
+    label('БЕРЕГОВОЕ ОЗЕРО',170,1810,'rgba(211,232,222,.54)',12);
+    // Decorative small shrubs stay off roads and interactable objects.
+    for(const [x,y] of [[-260,1390],[370,1360],[540,1950],[-80,2320],[395,2830],
+      [1350,1700],[1760,1950],[1230,2590],[1910,2820],[1510,2340]]){
+      ellipse(x+4,y+6,25,15,'rgba(0,0,0,.18)');ellipse(x-10,y,17,15,'#385440');ellipse(x+10,y-3,17,17,'#476548');ellipse(x,y-10,14,11,'#54714c');
+    }
+  }
+  function drawBench(b){
+    ctx.fillStyle='rgba(0,0,0,.24)';ctx.fillRect(b.x+4,b.y+6,b.w,b.h);
+    ctx.save();ctx.translate(b.x,b.y);if(b.h>b.w){ctx.translate(b.w,0);ctx.rotate(Math.PI/2);}
+    for(const x of [10,56]){ctx.fillStyle='#303b38';ctx.fillRect(x,-5,6,32);}
+    for(let y=0;y<20;y+=7){ctx.fillStyle=y===0?'#a28e68':'#827454';ctx.fillRect(0,y,72,5);}
+    ctx.restore();
+  }
+  function drawHouse(o,index){
+    if(!visibleOnScreen(o.x+o.w/2,o.y+o.h/2,220))return;
+    const x=o.x,y=o.y,w=o.w,h=o.h;
+    ctx.fillStyle='#67695e';ctx.fillRect(x-16,y-15,w+32,h+45);
+    ctx.fillStyle='#8b8672';ctx.fillRect(x+w/2-26,y+h+24,52,42);
+    ctx.fillStyle='rgba(10,17,17,.3)';ctx.fillRect(x+13,y+14,w+8,h+12);
+    ctx.fillStyle='#958e79';ctx.fillRect(x,y,w,h);
+    ctx.fillStyle='#625a4e';ctx.fillRect(x+4,y+h-31,w-8,27);
+    const roofA=index%2?'#6e6860':'#667478',roofB=index%2?'#59544e':'#525f64';
+    polygon([[x-6,y-5],[x+w+6,y-5],[x+w+6,y+h/2-4],[x-6,y+h/2-4]],roofA,'#353e3e',2);
+    polygon([[x-6,y+h/2-4],[x+w+6,y+h/2-4],[x+w+6,y+h-34],[x-6,y+h-34]],roofB,'#333b3c',2);
+    line([[x-5,y+h/2-4],[x+w+5,y+h/2-4]],'#92958a',5);
+    for(let k=14;k<w;k+=25)line([[x+k,y],[x+k,y+h-35]],'rgba(24,31,31,.19)',1);
+    ctx.fillStyle='#443e35';ctx.fillRect(x+w/2-20,y+h-32,40,32);
+    ctx.fillStyle='#9d8e66';ctx.fillRect(x+w/2-2,y+h-15,3,3);
+    for(const wx of [x+24,x+w-66]){
+      ctx.fillStyle='#b2ab91';ctx.fillRect(wx-3,y+h-29,45,23);ctx.fillStyle='#263e43';ctx.fillRect(wx,y+h-27,39,18);
+      line([[wx+19,y+h-27],[wx+19,y+h-9]],'#798882',2);
+    }
+    ctx.fillStyle='#8e7760';ctx.fillRect(x+w-52,y+23,23,34);ctx.fillStyle='#514e43';ctx.fillRect(x+w-48,y+24,15,12);
+    const name=hasSearchableLoot(o)?'ОБЫСКАТЬ ДОМ':'ОБЫСКАНО';
+    ctx.fillStyle='rgba(19,30,30,.78)';ctx.fillRect(x+w/2-68,y+h+5,136,21);
+    label(name,x+w/2,y+h+20,hasSearchableLoot(o)?'#e1d7af':'#a4b1a3',10);
+    // Small street number makes houses individual landmarks.
+    label(String(12+index*2),x+15,y+h-11,'#d4cdb4',9);
+  }
+  function drawOre(o){
+    if(!visibleOnScreen(o.x,o.y,90))return;
+    ctx.save();ctx.translate(o.x,o.y);
+    ellipse(4,12,o.r+7,o.r*.7,'rgba(10,17,16,.25)');
+    const copper=o.type==='copper_ore';
+    polygon([[-o.r+2,7],[-o.r*.8,-o.r*.52],[-14,-o.r],[18,-o.r*.85],[o.r,-12],[o.r-2,22],[7,o.r*.65],[-23,o.r*.6]],
+      o.remaining?'#69706c':'#484f4b','#363e3b',3);
+    polygon([[-o.r*.8,-o.r*.52],[-14,-o.r],[8,-7],[-8,15],[-o.r+2,7]],o.remaining?'#848a80':'#535b53');
+    polygon([[8,-7],[18,-o.r*.85],[o.r,-12],[o.r-2,22]],'#535d59');
+    if(o.remaining){
+      const color=copper?'#c88450':'#b5bdc0';
+      for(const [x,y,k] of [[-21,-10,1],[4,-21,.8],[17,9,1.1],[-9,14,.65]]){
+        polygon([[x-6*k,y],[x,y-8*k],[x+9*k,y-3*k],[x+6*k,y+6*k],[x-5*k,y+5*k]],color,copper?'#e1aa69':'#dce0cf',1);
+      }
+    }
+    label(copper?'МЕДНАЯ РУДА':'ЖЕЛЕЗНАЯ РУДА',0,-o.r-15,copper?'#e3b180':'#c4d2cd',10);
+    if(!o.remaining)label(`${Math.ceil(o.regrowMs/60000)} мин. до восстановления`,0,o.r+20,'#b3bdac',9);
+    else if(distance(player.x,player.y,o.x,o.y)<160)label(`⛏ ${o.remaining} / ${o.capacity}`,0,o.r+19,'#d3d6b9',10);
+    if(mining?.id===o.id){const t=Math.sin(mining.elapsed*.027),x=-13+t*8;line([[x,5],[x+21,-23]],'#d4b17a',5);line([[x+10,-26],[x+35,-17]],'#c4d0c9',5);}
+    ctx.restore();
+  }
+  function drawWell(){
+    const x=well.x,y=well.y;ctx.save();ctx.translate(x,y);
+    ellipse(5,15,54,35,'rgba(7,17,15,.28)');
+    ellipse(0,0,43,34,'#999b87');ellipse(0,0,33,25,'#3b4742');ellipse(0,1,26,19,'#28474b');
+    ctx.strokeStyle='#616e62';ctx.lineWidth=2;
+    for(let i=0;i<10;i++){const a=i*Math.PI/5;line([[Math.cos(a)*33,Math.sin(a)*25],[Math.cos(a)*43,Math.sin(a)*34]],'#687163',2);}
+    ctx.fillStyle='#795b39';ctx.fillRect(-38,-29,9,55);ctx.fillRect(29,-29,9,55);
+    line([[-34,-21],[34,-21]],'#b49b70',7);line([[8,-20],[8,6]],'#baae89',2);
+    ctx.fillStyle='#838d84';ctx.fillRect(2,-1,15,16);ctx.strokeStyle='#c2c4ac';ctx.strokeRect(2,-1,15,16);
+    polygon([[-55,-36],[0,-62],[55,-36],[48,-19],[0,-41],[-48,-19]],'#7e684d','#443f32',2);
+    for(let x=-36;x<=36;x+=12)line([[x,-36-Math.abs(x)*-.22],[x,-23-Math.abs(x)*-.08]],'#a38a62',1);
+    label('КОЛОДЕЦ',0,57,'#d9d3ae',10);ctx.restore();
+  }
+  const oldDrawSurface=drawSurface;
+  drawSurface=function(){
+    ctx.save();drawTerrain();
+    // Keep the established fortress artwork at precisely the same coordinates.
+    ctx.save();ctx.beginPath();ctx.rect(160,110,1280,982);ctx.clip();oldDrawSurface();ctx.restore();
+    let index=0;for(const o of scavenges)if(o.kind==='house')drawHouse(o,index++);
+    for(const f of fences){ctx.fillStyle='#596354';ctx.fillRect(f.x,f.y,f.w,f.h);ctx.fillStyle='#939681';
+      if(f.w>f.h)for(let x=f.x;x<f.x+f.w;x+=28)ctx.fillRect(x,f.y-3,5,13);
+      else for(let y=f.y;y<f.y+f.h;y+=28)ctx.fillRect(f.x-3,y,13,5);}
+    for(const b of benches)drawBench(b);
+    ctx.save();ctx.beginPath();ctx.rect(-400,0,2400,3000);ctx.rect(160,110,1280,982);ctx.clip('evenodd');
+    drawParkedCars();drawWorldTrees();ctx.restore();
+    for(const o of ores)drawOre(o);drawWell();ctx.restore();
+  };
+
+  function validate(data){
+    if(!data||!Array.isArray(data.ores)||data.ores.length!==ores.length)throw new Error('Invalid ore save');
+    for(let i=0;i<ores.length;i++){
+      const a=data.ores[i],o=ores[i];
+      if(!a||a.id!==o.id||!Number.isInteger(a.remaining)||a.remaining<0||a.remaining>o.capacity||
+        !Number.isFinite(a.regrowMs)||a.regrowMs<0||a.regrowMs>600000||
+        (a.remaining>0&&a.regrowMs!==0))throw new Error('Invalid ore state');
+    }
+    return true;
+  }
+  window.V09World={
+    ores,well,lake,
+    capture:()=>({ores:ores.map(o=>({id:o.id,remaining:o.remaining,regrowMs:o.regrowMs}))}),
+    validate,
+    restore(data){
+      stopMining();if(data)validate(data);
+      ores.forEach((o,i)=>Object.assign(o,data?data.ores[i]:{remaining:o.capacity,regrowMs:0}));
+      invalidateGeometry();
+    }
+  };
+  v09Style('.v09WellArt{display:flex;flex-direction:column;align-items:center;gap:9px;padding:22px;margin:12px 0 18px;border:1px solid #4e6864;border-radius:12px;background:linear-gradient(145deg,#263f40,#1a292b);text-align:center}.v09WellArt span{font-size:36px}.v09WellArt small{color:#a4b7b3;line-height:1.5}');
+})();
+
+
+/* 0.9 — room circuits, power controller, lights and automatic sliding doors. */
+const V09Power = {
+  rooms:{workshop:'Мастерская',storage:'Склад',room4:'Медблок',room5:'Энергоблок',room6:'Кухня',room7:'Жилая комната',farm:'Ферма',corridor:'Коридор',yard:'Двор'},
+  roomEnabled:{workshop:true,storage:true,room4:true,room5:true,room6:true,room7:true,farm:true,corridor:true,yard:true},
+  devices:{},running:false,fuel:10,capacity:100,supply:10,pathfinding:false,
+  selectedRoom:'workshop',tab:'bunker',uiClock:0,load:0,demand:0,
+  allocation(){
+    let demand=0,load=0;const served=new Set();
+    for(const d of Object.values(this.devices)){
+      const wanted=d.enabled&&this.roomEnabled[d.room];
+      const active=wanted&&!!d.active();
+      if(active)demand+=d.watts;
+      if(!wanted||!this.running||this.fuel<=0)continue;
+      if(!active){served.add(d.id);continue;}
+      if(load+d.watts<=this.supply+0.000001){load+=d.watts;served.add(d.id);}
+    }
+    this.load=load;this.demand=demand;
+    return {served,load,demand,supply:this.running&&this.fuel>0?this.supply:0};
+  },
+  snapshot(){return {running:this.running,fuel:this.fuel,roomEnabled:{...this.roomEnabled},deviceEnabled:Object.fromEntries(Object.values(this.devices).map(d=>[d.id,d.enabled])),doors:v09Doors.map(d=>({id:d.id,open:d.open,away:d.away,manual:d.manual}))};},
+  validate(data){
+    if(!data||typeof data!=='object'||typeof data.running!=='boolean'||!Number.isFinite(data.fuel)||data.fuel<0||data.fuel>100)throw new Error('Неверное сохранение энергоблока');
+    for(const key of ['roomEnabled','deviceEnabled']){
+      if(!data[key]||typeof data[key]!=='object'||Array.isArray(data[key]))throw new Error('Неверное сохранение выключателей');
+      if(Object.values(data[key]).some(v=>typeof v!=='boolean'))throw new Error('Неверное состояние выключателя');
+      const expected=Object.keys(key==='roomEnabled'?this.rooms:this.devices);
+      if(Object.keys(data[key]).length!==expected.length||expected.some(id=>!Object.hasOwn(data[key],id)))throw new Error('Неполное сохранение электрических контуров');
+    }
+    if(!Array.isArray(data.doors)||data.doors.length!==v09Doors.length||new Set(data.doors.map(d=>d?.id)).size!==v09Doors.length||data.doors.some(d=>!d||!v09Doors.some(door=>door.id===d.id)||!Number.isFinite(d.open)||d.open<0||d.open>1||!Number.isFinite(d.away)||d.away<0||d.away>4||typeof d.manual!=='boolean'))throw new Error('Неверное сохранение дверей');
+    return true;
+  },
+  restore(data){
+    if(!data){this.running=false;this.fuel=10;for(const r of Object.keys(this.rooms))this.roomEnabled[r]=true;for(const d of Object.values(this.devices))d.enabled=true;for(const d of v09Doors){d.open=0;d.away=0;d.manual=false;}return;}
+    this.validate(data);this.running=data.running&&data.fuel>0;this.fuel=data.fuel;
+    for(const r of Object.keys(this.rooms))this.roomEnabled[r]=data.roomEnabled[r]!==false;
+    for(const d of Object.values(this.devices))d.enabled=data.deviceEnabled[d.id]!==false;
+    for(const d of v09Doors){const s=(data.doors||[]).find(v=>v.id===d.id);d.open=s?s.open:0;d.away=s?s.away:0;d.manual=s?s.manual:false;}
+    this.allocation();
+  }
+};
+function registerPowerDevice(id,room,watts,isActiveCallback=()=>true,label){
+  if(!Object.hasOwn(V09Power.rooms,room)||!Number.isFinite(watts)||watts<0)throw new Error('Unknown power circuit '+room);
+  const previous=V09Power.devices[id];
+  const names={furnace:'Плавильная печь',craft_bench:'Станок для крафта',feed_craft:'Кормодробилка'};
+  return V09Power.devices[id]={id,room,watts,active:isActiveCallback,enabled:previous?previous.enabled:true,name:label||names[id]||id};
+}
+function devicePowered(id){return !!V09Power.devices[id]&&V09Power.allocation().served.has(id);}
+V09Power.powered=devicePowered;
+function v09PowerChanged(){V09Power.allocation();queueGameSave();v09RefreshPowerUI();}
+function togglePowerDevice(id){
+  const d=V09Power.devices[id];if(!d)return false;
+  d.enabled=!d.enabled;
+  const state=V09Power.allocation();
+  if(d.enabled&&V09Power.running&&state.demand>V09Power.supply+.000001){d.enabled=false;message('Недостаточно мощности. Отключите другой прибор или комнату.');v09PowerChanged();return false;}
+  v09PowerChanged();return d.enabled;
+}
+function v09ToggleRoom(room){
+  if(!Object.hasOwn(V09Power.roomEnabled,room))return;
+  V09Power.roomEnabled[room]=!V09Power.roomEnabled[room];
+  const state=V09Power.allocation();
+  if(V09Power.roomEnabled[room]&&V09Power.running&&state.demand>V09Power.supply+.000001){V09Power.roomEnabled[room]=false;message('Для этой комнаты не хватает мощности. Отключите лишние приборы.');}
+  else message(V09Power.rooms[room]+(V09Power.roomEnabled[room]?' — питание включено':' — питание отключено'));
+  v09PowerChanged();
+}
+function v09DeviceStatus(d){
+  if(!d.enabled)return 'Выключен';
+  if(!V09Power.roomEnabled[d.room])return 'Комната обесточена';
+  if(!V09Power.running||V09Power.fuel<=0)return 'Нет питания';
+  if(!devicePowered(d.id))return 'Не хватает мощности';
+  return d.active()?'Работает':'Готов к работе';
+}
+function renderDeviceSwitch(id){
+  const d=V09Power.devices[id],row=document.createElement('div');row.className='v09DeviceRow';row.dataset.powerDevice=id;
+  if(!d)return row;
+  const text=document.createElement('div');text.innerHTML='<strong></strong><small></small>';text.querySelector('strong').textContent=d.name;row.appendChild(text);
+  const button=v09Button('',()=>togglePowerDevice(id),'v09DeviceToggle');button.setAttribute('aria-label','Питание: '+d.name);row.appendChild(button);
+  v09UpdateDeviceRow(row);return row;
+}
+function v09UpdateDeviceRow(row){
+  const d=V09Power.devices[row.dataset.powerDevice];if(!d)return;
+  row.querySelector('small').textContent=v09DeviceStatus(d)+' · '+d.watts.toFixed(2).replace(/0$/,'')+' кВт';
+  const b=row.querySelector('button');b.textContent=d.enabled?'Вкл.':'Выкл.';b.classList.toggle('on',d.enabled);b.setAttribute('aria-pressed',String(d.enabled));
+}
+for(const room of Object.keys(V09Power.rooms))if(room!=='yard')registerPowerDevice('light_'+room,room,room==='farm'?.24:room==='corridor'?.18:.12,()=>true,'Освещение');
+const v09Doors=['workshop','storage','room4','room5','room6','room7','farm'].map(room=>{
+  const r=bunker[room],horizontal=room==='farm',x=horizontal?r.doorLeft:(r.right===610?r.right-10:r.left-10),y=horizontal?r.bottom-10:r.doorTop;
+  registerPowerDevice('door_'+room,room,.06,()=>true,'Раздвижная дверь');
+  return {id:'v09door_'+room,room,x,y,w:horizontal?r.doorRight-r.doorLeft:20,h:horizontal?20:r.doorBottom-r.doorTop,horizontal,open:0,away:0,manual:false};
+});
+const v09Spotlights=[{id:'spot_left',x:696,y:1010,angle:1.78},{id:'spot_right',x:904,y:1010,angle:1.36}];
+for(const s of v09Spotlights)registerPowerDevice(s.id,'yard',.45,()=>true,s.id==='spot_left'?'Левый прожектор':'Правый прожектор');
+const v09RoomSwitches=Object.keys(V09Power.rooms).filter(r=>r!=='yard').map(room=>{
+  if(room==='farm')return {room,x:815,y:-202};
+  if(room==='corridor')return {room,x:812,y:1220};
+  const r=bunker[room];return {room,x:r.right===610?638:812,y:r.doorTop-32};
+});
+function v09DoorPanels(d){
+  const closed=1-d.open;
+  if(closed<.005)return [];
+  return d.horizontal?[{x:d.x,y:d.y,w:d.w*.5*closed,h:d.h},{x:d.x+d.w-d.w*.5*closed,y:d.y,w:d.w*.5*closed,h:d.h}]:[{x:d.x,y:d.y,w:d.w,h:d.h*.5*closed},{x:d.x,y:d.y+d.h-d.h*.5*closed,w:d.w,h:d.h*.5*closed}];
+}
+function powerTick(dt){
+  if(document.hidden||playerDead)return;
+  dt=clamp(Number(dt)||0,0,.1);
+  if(V09Power.running){V09Power.fuel=Math.max(0,V09Power.fuel-dt/60);if(V09Power.fuel<=0){V09Power.running=false;message('Генератор остановился: закончилось топливо');queueGameSave();}}
+  V09Power.allocation();
+  for(const d of v09Doors){
+    const near=scene==='bunker'&&distance(player.x,player.y,d.x+d.w/2,d.y+d.h/2)<155;
+    const occupied=d.open>.2&&scene==='bunker'&&rectHit(player.x,player.y,player.radius+8,d);
+    const powered=devicePowered('door_'+d.room);
+    if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
+    if(d.away>=4)d.manual=false;
+    const shouldOpen=occupied||(near&&powered)||d.manual||(d.open>0&&d.away<4);
+    d.open=clamp(d.open+(shouldOpen?1:-1)*dt*3.5,0,1);
+  }
+  V09Power.uiClock+=dt;
+  if(V09Power.uiClock>.25){V09Power.uiClock=0;v09RefreshPowerUI();}
+}
+V09Power.tick=powerTick;
+const v09PowerOldUpdate=update;
+update=function(){powerTick(frameScale/60);v09PowerOldUpdate();};
+const v09PowerOldCollision=worldCollision;
+worldCollision=function(x,y,r=15,which=scene,ignoreId=null){
+  if(v09PowerOldCollision(x,y,r,which,ignoreId))return true;
+  if(which==='bunker'&&!V09Power.pathfinding)for(const d of v09Doors){if(d.id===ignoreId)continue;for(const panel of v09DoorPanels(d))if(rectHit(x,y,r,panel))return true;}
+  return false;
+};
+const v09PowerOldPath=findWalkPath;
+findWalkPath=function(...args){const old=V09Power.pathfinding;V09Power.pathfinding=true;try{return v09PowerOldPath(...args);}finally{V09Power.pathfinding=old;}};
+const v09PowerOldInteractions=interactionObjects;
+interactionObjects=function(which=scene){
+  const base=v09PowerOldInteractions(which);
+  if(which==='surface')return [...base,...v09Spotlights.map(s=>({id:s.id,kind:'v09power_device',device:s.id,name:'Прожектор',x:s.x,y:s.y,r:19,range:58}))];
+  return [...v09RoomSwitches.map(s=>({id:'switch_'+s.room,kind:'v09room_switch',room:s.room,name:'Питание: '+V09Power.rooms[s.room],x:s.x,y:s.y,r:10,range:48})),...base,
+    ...v09Doors.map(d=>({...d,kind:'v09door',name:devicePowered('door_'+d.room)?'Раздвижная дверь':'Открыть дверь вручную',range:68})),
+    {id:'tank',kind:'v09fuel',name:'Топливный бак',x:885,y:315,w:125,h:185,range:50},
+    {id:'generator',kind:'v09generator',name:'Генератор',x:1045,y:330,w:165,h:155,range:50},
+    {id:'battery',kind:'v09battery',name:'Резервная батарея',x:1235,y:300,w:105,h:215,range:50},
+    ...Object.keys(V09Power.rooms).filter(room=>room!=='yard').flatMap(room=>v09LightPoints(room).map((p,i)=>({id:'lamp_'+room+'_'+i,kind:'v09power_device',device:'light_'+room,name:'Освещение: '+V09Power.rooms[room],x:p.x,y:p.y,r:20,range:65})))];
+};
+const v09PowerOldExecute=executeInteraction;
+executeInteraction=function(target){
+  if(!target||!target.kind.startsWith('v09'))return v09PowerOldExecute(target);
+  if(!['v09room_switch','v09door','v09fuel','v09generator','v09battery','v09power_device'].includes(target.kind))return v09PowerOldExecute(target);
+  if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+  cancelNavigation();stopControls();
+  if(target.kind==='v09room_switch')v09ToggleRoom(target.room);
+  if(target.kind==='v09door'){
+    const door=v09Doors.find(d=>d.id===target.id);door.manual=true;door.away=0;message(devicePowered('door_'+door.room)?'Дверь открывается':'Дверь открыта вручную');queueGameSave();
+  }
+  if(target.kind==='v09fuel'||target.kind==='v09generator')v09OpenGenerator(target.kind==='v09fuel');
+  if(target.kind==='v09battery')message('Резервная батарея — подключим в следующем обновлении');
+  if(target.kind==='v09power_device')v09OpenDevice(target.device);
+};
+const v09PowerOldSelect=selectHandSlot;
+selectHandSlot=function(index){v09PowerOldSelect(index);if(heldItem()==='remote')v09OpenPowerRemote();};
+const v09PowerOldAssign=assignHandSlot;
+assignHandSlot=function(index){v09PowerOldAssign(index);if(heldItem()==='remote')v09OpenPowerRemote();};
+
+v09Style(`
+.v09PowerStats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0 0 13px}.v09PowerStat{padding:10px 7px;background:#12232b;border:1px solid #344f58;border-radius:10px;min-width:0}.v09PowerStat small{display:block;color:#9eb6bb;font-size:10px;letter-spacing:.07em;text-transform:uppercase}.v09PowerStat b{display:block;color:#e5f3eb;margin-top:5px;font-size:15px;font-variant-numeric:tabular-nums}.v09PowerMeter{height:5px;background:#142127;border-radius:4px;overflow:hidden;margin-top:7px}.v09PowerMeter i{display:block;height:100%;background:#81c79f;border-radius:4px}.v09PowerTabs{display:flex;gap:7px;margin-bottom:10px}.v09PowerTabs button{flex:1}.v09PowerTabs .selected{background:#335f5d!important;border-color:#81baac!important}.v09BaseMap{height:320px;position:relative;border:1px solid #354952;border-radius:14px;background:linear-gradient(135deg,#111e25,#17282e);overflow:hidden}.v09MapRoom{position:absolute;background:#29383b;border:1px solid #687275;color:#bec9ca;border-radius:5px;padding:4px;font:11px Arial;text-align:center;cursor:pointer}.v09MapRoom.powered{background:#214c42;border-color:#77b095;color:#d7efe1}.v09MapRoom.waiting{background:#4b4129;border-color:#bca65e;color:#f0db9c}.v09MapRoom.selected{outline:2px solid #e0e9db;outline-offset:2px}.v09MapRoom small{display:block;font-size:9px;opacity:.8;margin-top:4px}.v09MapLegend{display:flex;flex-wrap:wrap;gap:12px;color:#a5b9bd;font-size:10px;padding:10px 0}.v09MapLegend span:before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#7aab92;margin-right:5px}.v09MapLegend span:nth-child(2):before{background:#727c7e}.v09MapLegend span:nth-child(3):before{background:#c2a55b}.v09Circuit{border-top:1px solid #35484e;padding-top:10px}.v09CircuitHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.v09CircuitHeader h3{font-size:16px;margin:0;color:#e6efeb}.v09CircuitHeader small{display:block;color:#a2b9bd;font-size:11px;margin-top:4px}.v09DeviceRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #2d4047}.v09DeviceRow strong{font-size:12px;color:#dfebe7;font-weight:500}.v09DeviceRow small{display:block;color:#91a9ad;font-size:11px;margin-top:4px}.v09DeviceToggle{min-width:70px!important;min-height:36px!important;padding:7px 10px!important;font-size:12px!important;background:#29393f!important}.v09DeviceToggle.on{background:#285345!important;color:#cfead8!important;border-color:#709e83!important}.v09PowerNote{font-size:12px;line-height:1.5;color:#a7babd;margin:12px 0}.v09PowerActions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.v09PowerWarning{color:#e6c17e;font-size:12px;margin:8px 0}.v09TankGauge{height:110px;border:2px solid #687d79;border-radius:12px;background:#142225;position:relative;overflow:hidden;margin:12px 0}.v09TankGauge i{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,#747140,#b0a76a);transition:height .2s}.v09TankGauge b{position:relative;height:100%;display:flex;align-items:center;justify-content:center;color:#f4f2d8;font-size:24px;text-shadow:0 1px 4px #000}.v09YardGate{position:absolute;left:43%;bottom:12%;width:14%;border-top:4px solid #b4b698;color:#bbc7bd;text-align:center;font-size:9px;padding-top:8px}.v09MapHatch{position:absolute;left:36%;top:36%;width:28%;height:24%;border:2px solid #779288;border-radius:7px;color:#b4cabe;display:flex;align-items:center;justify-content:center;font-size:11px}.v09MapBeam{position:absolute;width:1px;height:1px;bottom:11%;border-left:22px solid transparent;border-right:22px solid transparent;border-bottom:65px solid #dcd59430;transform:rotate(180deg)}
+@media(max-height:680px){.v09BaseMap{height:255px}.v09PowerStats{margin-bottom:8px}.v09PowerStat{padding:7px}.v09PowerStat b{font-size:13px}}
+`);
+function v09PowerStats(){return '<div class="v09PowerStats"><div class="v09PowerStat"><small>Генератор</small><b data-power="running"></b></div><div class="v09PowerStat"><small>Топливо</small><b data-power="fuel"></b><div class="v09PowerMeter"><i data-power="fuelbar"></i></div></div><div class="v09PowerStat"><small>Нагрузка</small><b data-power="load"></b></div></div><div class="v09PowerWarning" data-power="warning"></div>';}
+function v09OpenPowerRemote(){
+  const overlay=v09Overlay('v09PowerOverlay','Пульт · управление базой'),body=overlay.querySelector('.v09Body');body.innerHTML=v09PowerStats();
+  const tabs=document.createElement('div');tabs.className='v09PowerTabs';
+  for(const [key,title] of [['surface','Двор'],['bunker','Бункер']]){const b=v09Button(title,()=>{V09Power.tab=key;v09OpenPowerRemote();});b.classList.toggle('selected',V09Power.tab===key);tabs.appendChild(b);}body.appendChild(tabs);
+  const map=document.createElement('div');map.className='v09BaseMap';map.setAttribute('aria-label','План базы: '+(V09Power.tab==='bunker'?'бункер':'двор'));body.appendChild(map);
+  if(V09Power.tab==='bunker'){
+    const positions={farm:[5,4,90,24],corridor:[44,30,12,65],room6:[7,32,33,18],room7:[60,32,33,18],room4:[7,54,33,18],room5:[60,54,33,18],workshop:[7,76,33,18],storage:[60,76,33,18]};
+    for(const [room,p] of Object.entries(positions)){const b=document.createElement('button');b.className='v09MapRoom';b.dataset.powerRoom=room;b.style.cssText=`left:${p[0]}%;top:${p[1]}%;width:${p[2]}%;height:${p[3]}%`;b.innerHTML='<span></span><small></small>';b.querySelector('span').textContent=room==='corridor'?'↕':V09Power.rooms[room];b.setAttribute('aria-label',V09Power.rooms[room]);b.onclick=()=>{V09Power.selectedRoom=room;v09RenderCircuit();v09RefreshPowerUI();};map.appendChild(b);}
+    if(V09Power.selectedRoom==='yard')V09Power.selectedRoom='workshop';
+  }else{
+    V09Power.selectedRoom='yard';map.innerHTML='<div style="position:absolute;inset:10% 13% 15%;border:6px solid #697b77;border-radius:8px"></div><div class="v09MapHatch">Бункер ↓</div><div class="v09YardGate">ВОРОТА</div>';
+    for(let i=0;i<2;i++){const b=document.createElement('button');b.className='v09MapRoom';b.dataset.powerSpot=v09Spotlights[i].id;b.style.cssText=`left:${i?64:15}%;top:61%;width:21%;height:18%`;b.textContent=i?'Правый\nпрожектор':'Левый\nпрожектор';b.onclick=()=>v09OpenDevice(v09Spotlights[i].id);map.appendChild(b);}
+  }
+  const legend=document.createElement('div');legend.className='v09MapLegend';legend.innerHTML='<span>Есть питание</span><span>Выключено</span><span>Нет энергии</span>';body.appendChild(legend);
+  const circuit=document.createElement('div');circuit.className='v09Circuit';circuit.id='v09PowerCircuit';body.appendChild(circuit);v09RenderCircuit();
+  const actions=document.createElement('div');actions.className='v09PowerActions';const generator=v09Button('',v09ToggleGenerator);generator.dataset.power='generatorToggle';actions.appendChild(generator);body.appendChild(actions);
+  v09RefreshPowerUI();openOverlay(overlay);
+}
+function v09RenderCircuit(){
+  const parent=el('v09PowerCircuit');if(!parent)return;parent.innerHTML='';const room=V09Power.selectedRoom;
+  const header=document.createElement('div');header.className='v09CircuitHeader';
+  const title=document.createElement('div');title.innerHTML='<h3></h3><small></small>';title.querySelector('h3').textContent=V09Power.rooms[room];title.querySelector('small').dataset.roomPowerStatus=room;header.appendChild(title);
+  const toggle=v09Button('',()=>v09ToggleRoom(room),'v09DeviceToggle');toggle.dataset.roomPowerToggle=room;header.appendChild(toggle);parent.appendChild(header);
+  for(const d of Object.values(V09Power.devices).filter(d=>d.room===room))parent.appendChild(renderDeviceSwitch(d.id));
+  if(room==='room5'){const note=document.createElement('p');note.className='v09PowerNote';note.textContent='Выключатель комнаты управляет её светом и дверью. Генератор запускается и останавливается отдельно.';parent.appendChild(note);}
+}
+function v09ToggleGenerator(){
+  if(V09Power.running)V09Power.running=false;
+  else if(V09Power.fuel<=0){message('Сначала заправьте топливный бак в энергоблоке');return;}
+  else V09Power.running=true;
+  message(V09Power.running?'Генератор запущен · доступно 10 кВт':'Генератор остановлен');v09PowerChanged();
+}
+function v09OpenGenerator(refuel=false){
+  const overlay=v09Overlay('v09GeneratorOverlay',refuel?'Энергоблок · топливный бак':'Энергоблок · генератор'),body=overlay.querySelector('.v09Body');body.innerHTML=v09PowerStats();
+  if(refuel){
+    const gauge=document.createElement('div');gauge.className='v09TankGauge';gauge.innerHTML='<i data-power="tankbar"></i><b data-power="tankvalue"></b>';body.appendChild(gauge);
+    const note=document.createElement('p');note.className='v09PowerNote';note.dataset.power='bagfuel';body.appendChild(note);
+    const buttons=document.createElement('div');buttons.className='v09PowerActions';for(const qty of [1,10,100])buttons.appendChild(v09Button(qty===100?'Заправить максимум':'Добавить '+qty,()=>v09Refuel(qty)));body.appendChild(buttons);
+  }
+  const toggle=v09Button('',v09ToggleGenerator);toggle.dataset.power='generatorToggle';body.appendChild(toggle);
+  const note=document.createElement('p');note.className='v09PowerNote';note.textContent='Мощность: 10 кВт. 1 единица топлива ≈ 1 минута работы. При остановке генератора производство сохраняет прогресс. Резервная батарея будет подключена позже.';body.appendChild(note);
+  body.appendChild(renderDeviceSwitch('light_room5'));v09RefreshPowerUI();openOverlay(overlay);
+}
+function v09Refuel(amount){
+  const n=Math.min(amount,bagCount('fuel'),Math.ceil(V09Power.capacity-V09Power.fuel));
+  if(n<=0){message(V09Power.fuel>=V09Power.capacity?'Бак уже заполнен':'В рюкзаке нет топлива');return;}
+  // Do not consume a whole unit for a fractional gap at the top of the tank.
+  const whole=Math.min(n,Math.floor(V09Power.capacity-V09Power.fuel));
+  if(whole<=0){message('Бак почти полный');return;}
+  removeFromSlots(bag,'fuel',whole);V09Power.fuel+=whole;message('Заправлено: '+whole+' топлива');renderBag();v09PowerChanged();
+}
+function v09OpenDevice(id){
+  const d=V09Power.devices[id];if(!d)return;const overlay=v09Overlay('v09PowerDeviceOverlay',d.name),body=overlay.querySelector('.v09Body');body.innerHTML=v09PowerStats();body.appendChild(renderDeviceSwitch(id));
+  const note=document.createElement('p');note.className='v09PowerNote';note.textContent='Контур: '+V09Power.rooms[d.room]+'. Общий выключатель комнаты имеет приоритет над настройкой прибора.';body.appendChild(note);v09RefreshPowerUI();openOverlay(overlay);
+}
+function v09RefreshPowerUI(){
+  const a=V09Power.allocation();
+  document.querySelectorAll('[data-power]').forEach(node=>{
+    const key=node.dataset.power;
+    if(key==='running')node.textContent=V09Power.running?'Работает':'Выключен';
+    if(key==='fuel')node.textContent=V09Power.fuel.toFixed(1)+' / 100';
+    if(key==='load')node.textContent=a.load.toFixed(2)+' / '+a.supply+' кВт';
+    if(key==='fuelbar'||key==='tankbar')node.style[key==='tankbar'?'height':'width']=V09Power.fuel+'%';
+    if(key==='tankvalue')node.textContent=V09Power.fuel.toFixed(1)+' / 100';
+    if(key==='bagfuel')node.textContent='В рюкзаке: '+bagCount('fuel')+' топлива';
+    if(key==='generatorToggle')node.textContent=V09Power.running?'Остановить генератор':'Запустить генератор';
+    if(key==='warning')node.textContent=V09Power.running?(a.demand>V09Power.supply?'Запрошено '+a.demand.toFixed(2)+' кВт. Приборы без мощности ждут — отключите лишние.':'Свободно '+(V09Power.supply-a.load).toFixed(2)+' кВт'):'Нет генерации. Запустите генератор, чтобы включить освещение и производство.';
+  });
+  document.querySelectorAll('[data-power-device]').forEach(v09UpdateDeviceRow);
+  document.querySelectorAll('[data-room-power-toggle]').forEach(node=>{const enabled=V09Power.roomEnabled[node.dataset.roomPowerToggle];node.textContent=enabled?'Вкл.':'Выкл.';node.classList.toggle('on',enabled);node.setAttribute('aria-pressed',String(enabled));});
+  document.querySelectorAll('[data-room-power-status]').forEach(node=>{const room=node.dataset.roomPowerStatus;const demand=Object.values(V09Power.devices).filter(d=>d.room===room&&d.enabled&&d.active()).reduce((n,d)=>n+d.watts,0);node.textContent=(V09Power.roomEnabled[room]?'Контур включён':'Контур отключён')+' · '+demand.toFixed(2)+' кВт';});
+  document.querySelectorAll('[data-power-room]').forEach(node=>{
+    const room=node.dataset.powerRoom,enabled=V09Power.roomEnabled[room],devices=Object.values(V09Power.devices).filter(d=>d.room===room&&d.enabled&&d.active()),powered=enabled&&V09Power.running&&devices.every(d=>a.served.has(d.id));
+    node.classList.toggle('powered',powered);node.classList.toggle('waiting',enabled&&!powered);node.classList.toggle('selected',room===V09Power.selectedRoom);
+    node.querySelector('small').textContent=room==='corridor'?'':!enabled?'Выкл.':!powered?'Нет энергии':devices.reduce((s,d)=>s+d.watts,0).toFixed(2)+' кВт';
+  });
+  document.querySelectorAll('[data-power-spot]').forEach(node=>{const d=V09Power.devices[node.dataset.powerSpot];node.classList.toggle('powered',a.served.has(d.id));node.classList.toggle('waiting',d.enabled&&V09Power.roomEnabled.yard&&!a.served.has(d.id));});
+}
+
+function v09DrawDoor(d){
+  ctx.save();ctx.lineWidth=2;const powered=devicePowered('door_'+d.room),cx=d.x+d.w/2,cy=d.y+d.h/2;
+  ctx.fillStyle='#1c292d';ctx.strokeStyle='#687b7e';ctx.fillRect(d.x-3,d.y-3,d.w+6,d.h+6);ctx.strokeRect(d.x-3,d.y-3,d.w+6,d.h+6);
+  ctx.fillStyle='#333c3e';ctx.fillRect(d.x,d.y,d.w,d.h);
+  for(const panel of v09DoorPanels(d)){
+    const gradient=d.horizontal?ctx.createLinearGradient(0,panel.y,0,panel.y+panel.h):ctx.createLinearGradient(panel.x,0,panel.x+panel.w,0);
+    gradient.addColorStop(0,'#56696a');gradient.addColorStop(.5,'#98a6a2');gradient.addColorStop(1,'#465d60');ctx.fillStyle=gradient;ctx.fillRect(panel.x,panel.y,panel.w,panel.h);ctx.strokeStyle='#c5cabe';ctx.lineWidth=1;ctx.strokeRect(panel.x+1,panel.y+1,Math.max(0,panel.w-2),Math.max(0,panel.h-2));
+  }
+  ctx.fillStyle=powered?'#8dc7aa':'#d2ad69';
+  if(d.horizontal){ctx.fillRect(cx-13,d.y-6,26,3);ctx.fillRect(cx-13,d.y+d.h+3,26,3);}else{ctx.fillRect(d.x-6,cy-13,3,26);ctx.fillRect(d.x+d.w+3,cy-13,3,26);}
+  if(!powered&&scene==='bunker'&&distance(player.x,player.y,cx,cy)<120&&d.open<.2){ctx.font='10px Arial';ctx.textAlign='center';ctx.fillStyle='#e0c48e';ctx.fillText('ОТКРЫТЬ ВРУЧНУЮ',cx,cy-23);}
+  ctx.restore();
+}
+function v09LightPoints(room){
+  const r=bunker[room];if(room==='corridor')return [120,620,1100].map(y=>({x:725,y}));
+  if(room==='farm')return [{x:430,y:r.top+24},{x:1040,y:r.top+24}];
+  return [{x:(r.left+r.right)/2,y:r.top+17}];
+}
+function v09DrawRoomLight(room){
+  const r=bunker[room];if(!r)return;const lit=devicePowered('light_'+room);
+  ctx.save();ctx.beginPath();ctx.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);ctx.clip();
+  ctx.fillStyle=lit?'rgba(4,12,18,.04)':'rgba(2,7,13,.67)';ctx.fillRect(r.left,r.top,r.right-r.left,r.bottom-r.top);
+  if(lit){
+    for(const p of v09LightPoints(room)){
+      const radius=room==='farm'?530:room==='corridor'?280:510;const gradient=ctx.createRadialGradient(p.x,p.y,5,p.x,p.y,radius);
+      gradient.addColorStop(0,'rgba(250,241,191,.20)');gradient.addColorStop(.4,'rgba(220,225,184,.08)');gradient.addColorStop(1,'rgba(220,230,195,0)');ctx.fillStyle=gradient;ctx.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);
+    }
+  }
+  ctx.restore();
+  for(const p of v09LightPoints(room)){
+    ctx.save();ctx.fillStyle='#1c2b30';ctx.fillRect(p.x-35,p.y-5,70,10);ctx.fillStyle=lit?'#e8edce':'#626c66';ctx.shadowColor=lit?'#efe8af':'transparent';ctx.shadowBlur=lit?12:0;ctx.fillRect(p.x-28,p.y-2,56,4);ctx.restore();
+  }
+}
+function v09DrawRoomSwitch(room){
+  const s=v09RoomSwitches.find(v=>v.room===room);if(!s)return;
+  ctx.save();ctx.fillStyle='#223238';ctx.strokeStyle='#738984';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(s.x-7,s.y-11,14,22,2);ctx.fill();ctx.stroke();
+  const enabled=V09Power.roomEnabled[room];ctx.fillStyle=enabled?'#87a699':'#56656a';ctx.fillRect(s.x-4,s.y+(enabled?-6:0),8,7);ctx.fillStyle=enabled&&V09Power.running?'#b1e0b5':enabled?'#d3ac63':'#65746f';ctx.fillRect(s.x-2,s.y-9,4,2);ctx.restore();
+}
+V09Power.drawRoom=function(room){v09DrawRoomLight(room);v09DrawRoomSwitch(room);const d=v09Doors.find(d=>d.room===room);if(d)v09DrawDoor(d);};
+function v09DrawEnergyReadouts(){
+  ctx.save();ctx.textAlign='center';ctx.fillStyle='#252d29';ctx.fillRect(905,392,85,72);ctx.fillStyle='#b7a361';ctx.fillRect(905,464-72*V09Power.fuel/100,85,72*V09Power.fuel/100);ctx.fillStyle='#ede5b9';ctx.font='12px Arial';ctx.fillText(V09Power.fuel.toFixed(1)+' / 100',947,430);ctx.font='9px Arial';ctx.fillText('ТОПЛИВО',947,448);
+  ctx.fillStyle='#232927';ctx.fillRect(1065,350,125,50);ctx.fillStyle=V09Power.running?'#98d8ab':'#63716b';ctx.fillRect(1080,365,16,16);ctx.fillStyle='#d8e7d8';ctx.font='10px Arial';ctx.fillText(V09Power.running?'ВКЛЮЧЁН':'ВЫКЛЮЧЕН',1140,377);
+  ctx.fillStyle='#46504b';ctx.fillRect(1050,431,154,48);ctx.fillStyle=V09Power.running?'#d8ecd4':'#b6c1b6';ctx.font='13px Arial';ctx.fillText(V09Power.load.toFixed(2)+' / '+(V09Power.running?'10':'0')+' кВт',1127,451);ctx.font='9px Arial';ctx.fillText(V09Power.running?'1 топливо / мин':'ОЖИДАЕТ ЗАПУСКА',1127,469);
+  ctx.fillStyle='#435352';ctx.fillRect(1253,340,69,105);ctx.strokeStyle='#62736b';ctx.lineWidth=2;ctx.strokeRect(1264,361,47,61);ctx.fillStyle='#b0bbb1';ctx.font='18px Arial';ctx.fillText('—',1287,399);ctx.fillStyle='#39474c';ctx.fillRect(1239,479,97,27);ctx.fillStyle='#9fb1b5';ctx.font='9px Arial';ctx.fillText('НЕ ПОДКЛЮЧЕНА',1287,493);ctx.restore();
+}
+const v09PowerOldDrawBunker=drawBunker;
+drawBunker=function(){
+  v09PowerOldDrawBunker();v09DrawEnergyReadouts();
+  for(const room of Object.keys(V09Power.rooms))if(room!=='yard')v09DrawRoomLight(room);
+  for(const d of v09Doors)v09DrawDoor(d);
+  for(const room of Object.keys(V09Power.rooms))if(room!=='yard')v09DrawRoomSwitch(room);
+};
+let v09SpotCacheRevision=-1,v09SpotCache={};
+function v09SpotPolygon(s){
+  if(v09SpotCacheRevision!==geometryRevision){v09SpotCacheRevision=geometryRevision;v09SpotCache={};}
+  if(v09SpotCache[s.id])return v09SpotCache[s.id];
+  const ox=s.x,oy=surface.outer.bottom+8,points=[];
+  for(let i=0;i<=40;i++){const a=s.angle-.40+i*.80/40,dx=Math.cos(a),dy=Math.sin(a);let distance=8;for(;distance<610;distance+=7)if(worldCollision(ox+dx*distance,oy+dy*distance,1,'surface',s.id))break;points.push({x:ox+dx*Math.max(0,distance-7),y:oy+dy*Math.max(0,distance-7)});}
+  return v09SpotCache[s.id]={ox,oy,points};
+}
+function v09DrawSpotlights(){
+  for(const s of v09Spotlights){
+    const on=devicePowered(s.id);
+    if(on){const poly=v09SpotPolygon(s);ctx.save();ctx.beginPath();ctx.moveTo(poly.ox,poly.oy);for(const p of poly.points)ctx.lineTo(p.x,p.y);ctx.closePath();ctx.clip();const g=ctx.createRadialGradient(poly.ox,poly.oy,0,poly.ox,poly.oy,610);g.addColorStop(0,'rgba(255,245,181,.38)');g.addColorStop(.5,'rgba(248,239,178,.16)');g.addColorStop(1,'rgba(248,239,178,0)');ctx.fillStyle=g;ctx.fillRect(poly.ox-610,poly.oy,1220,620);ctx.restore();}
+    ctx.save();ctx.translate(s.x,s.y);ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(7,12,23,12,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#3b5159';ctx.beginPath();ctx.roundRect(-13,-12,26,27,4);ctx.fill();ctx.strokeStyle='#8fa3a0';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#1b2b30';ctx.fillRect(-17,2,34,15);ctx.fillStyle=on?'#edf0ca':'#788984';ctx.shadowColor=on?'#fff1a3':'transparent';ctx.shadowBlur=on?15:0;ctx.fillRect(-13,9,26,5);ctx.restore();
+  }
+}
+const v09PowerOldDrawSurface=drawSurface;
+drawSurface=function(){v09PowerOldDrawSurface();v09DrawSpotlights();};
+
+
+/* 0.9 workshop, safe manufacturing queues and two functional rifles. */
+const V09Craft = (() => {
+  const RECIPES = {
+    iron: {station:'furnace',category:'Металлы',name:'Железо',input:{iron_ore:1},output:'iron',qty:1,ms:4000},
+    copper: {station:'furnace',category:'Металлы',name:'Медь',input:{copper_ore:1},output:'copper',qty:1,ms:4000},
+    ammo: {station:'craft_bench',category:'Патроны',name:'Патроны 5,45 × 39',input:{iron:2,copper:1},output:'ammo',qty:30,ms:10000},
+    ammo556: {station:'craft_bench',category:'Патроны',name:'Патроны 5,56 × 45',input:{iron:2,copper:1},output:'ammo556',qty:30,ms:10000},
+    rifle_ak74: {station:'craft_bench',category:'Оружие',name:'АК-74',input:{iron:20,copper:10,parts:4,wood:4},output:'rifle_ak74',qty:1,ms:60000},
+    rifle_m4: {station:'craft_bench',category:'Оружие',name:'M4',input:{iron:18,copper:12,parts:4,wood:4},output:'rifle_m4',qty:1,ms:60000}
+  };
+  const GUNS = {
+    rifle_ak74:{name:'АК-74',ammo:'ammo',caliber:'5,45 × 39',damage:35,delay:155,spread:.045,recoil:.019,range:660,mag:30},
+    rifle_m4:{name:'M4',ammo:'ammo556',caliber:'5,56 × 45',damage:28,delay:115,spread:.021,recoil:.011,range:720,mag:30}
+  };
+  let jobs={furnace:null,craft_bench:null};
+  let magazines={rifle_ak74:magazine,rifle_m4:0};
+  let selected={furnace:'iron',craft_bench:'ammo'},quantity={furnace:1,craft_bench:1};
+  let activeStation=null,uiClock=0,burst=0,lastWeapon=null;
+  const fixtures=[{id:'furnace',x:145,y:800,w:175,h:125},{id:'craft_bench',x:160,y:1135,w:265,h:80}];
+  const labels={furnace:'Плавильная печь',craft_bench:'Универсальный станок'};
+  const deep=o=>JSON.parse(JSON.stringify(o));
+  const powered=id=>devicePowered(id);
+  const remainingFeed=()=>pendingFeedCraft?Math.max(0,Number.isFinite(pendingFeedCraft.remainingMs)?pendingFeedCraft.remainingMs:pendingFeedCraft.readyAt-Date.now()):0;
+  const active=id=>!!jobs[id]&&jobs[id].remainingMs>0;
+  registerPowerDevice('furnace','workshop',6,()=>active('furnace'),'Плавильная печь');
+  registerPowerDevice('craft_bench','workshop',2,()=>active('craft_bench'),'Универсальный станок');
+  registerPowerDevice('feed_craft','farm',1,()=>!!pendingFeedCraft&&remainingFeed()>0,'Кормодробилка');
+  if(!HAND_TYPES.includes('rifle_m4'))HAND_TYPES.push('rifle_m4');
+  handSvg.rifle_m4='<path fill="#465152" d="M3 25h21v13H4z"/><path fill="#1c292c" d="M22 21h48v18H22z"/><path fill="#657477" d="M48 23h27v11H48z"/><path stroke="#172528" stroke-width="4" d="M72 26h24m-23 6h23"/><path fill="#2c393d" d="M38 36h10l5 21-11 3zM25 37h9l-2 15h-8z"/><path stroke="#a0ada9" stroke-width="2" d="M25 20h46"/><path fill="#263333" d="M40 15h17v7H40zM84 17h5v10h-5z"/>';
+
+  v09Style(`.v09RecipeTabs{display:flex;gap:8px;margin:12px 0}.v09RecipeTabs button{flex:1}.v09RecipeGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.v09RecipeCard{border:1px solid #455a5d;background:#202f34;color:#e7eeee;border-radius:10px;padding:12px 6px;font:inherit;cursor:pointer}.v09RecipeCard.selected{border-color:#dcb36b;background:#344144}.v09CraftInfo{padding:13px;background:#18272c;border:1px solid #3a5156;border-radius:11px;line-height:1.7;margin:10px 0}.v09CraftMaterials{display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:13px}.v09CraftShort{color:#efa496}.v09CraftReady{color:#a7d6aa}.v09CraftQuantity{display:flex;align-items:center;justify-content:center;gap:9px;margin:12px 0}.v09CraftQuantity input{width:75px;background:#122126;color:#eef4ee;border:1px solid #596a69;border-radius:8px;padding:10px;text-align:center;font:inherit}.v09CraftQuantity button{margin:0;min-height:42px;padding:8px 14px}.v09CraftProgress{height:10px;background:#0e1b1f;border-radius:9px;overflow:hidden;margin:13px 0}.v09CraftProgress>div{height:100%;background:linear-gradient(90deg,#a48047,#edc879);transition:width .2s}.v09GunStats{font-size:12px;color:#b5c9c7;line-height:1.6}.v09CraftNote{font-size:12px;color:#9fb4b4;line-height:1.5;margin:10px 0}`);
+  const overlay=v09Overlay('v09CraftOverlay','Мастерская');
+  const body=overlay.querySelector('.v09Body');
+  function gunStats(type){const g=GUNS[type];if(!g)return '';return `<div class="v09GunStats">Урон <b>${g.damage}</b> · ${Math.round(60000/g.delay)} выстр./мин · магазин ${g.mag}<br>Разброс ${(g.spread*180/Math.PI).toFixed(1)}° · дальность ${g.range} · отдача ${type==='rifle_ak74'?'выше':'ниже'}<br>Патроны: ${g.caliber}</div>`;}
+  function maximum(r){return Math.min(100,...Object.entries(r.input).map(([type,n])=>Math.floor(bagCount(type)/n)));}
+  function commitIngredients(input,batches){
+    if(!Object.entries(input).every(([type,n])=>bagCount(type)>=n*batches))return false;
+    const next=deep(bag);
+    for(const [type,n] of Object.entries(input))if(removeFromSlots(next,type,n*batches)!==n*batches)return false;
+    bag=next;return true;
+  }
+  function start(id,recipe=selected[id],batches=quantity[id]){
+    const r=RECIPES[recipe];
+    if(!r||r.station!==id||jobs[id]||!Number.isInteger(batches)||batches<1||batches>100)return false;
+    if(!commitIngredients(r.input,batches)){message('Не хватает материалов в рюкзаке');render();return false;}
+    jobs[id]={recipe,batches,remainingMs:r.ms*batches,totalMs:r.ms*batches,outputQty:r.qty*batches};
+    render();queueGameSave();return true;
+  }
+  function collect(id){
+    const job=jobs[id];if(!job||job.remainingMs>0)return;
+    const recipe=RECIPES[job.recipe],before=job.outputQty;
+    job.outputQty=addItem(recipe.output,before);
+    const collected=before-job.outputQty;
+    if(job.outputQty===0)jobs[id]=null;
+    message(collected?`${ITEM[recipe.output].name}: +${collected}${job.outputQty?' · остальное ждёт в устройстве':''}`:'Освободите место в рюкзаке');
+    render();renderQuickSlots();updateAmmoHud();queueGameSave();
+  }
+  function render(){
+    if(!activeStation)return;
+    const id=activeStation,job=jobs[id];
+    body.innerHTML='';
+    const title=overlay.querySelector('h2,h3,.v09Title');if(title)title.textContent=labels[id];
+    body.append(renderDeviceSwitch(id));
+    const info=document.createElement('div');info.className='v09CraftInfo';
+    if(job){
+      const r=RECIPES[job.recipe],done=job.remainingMs<=0,percent=clamp(100*(1-job.remainingMs/job.totalMs),0,100);
+      info.innerHTML=`<b>${r.name} × ${r.qty*job.batches}</b><div class="${done?'v09CraftReady':''}">${done?'Готово к выдаче':powered(id)?'Производство работает':'Пауза: нет питания'}</div><div class="v09CraftProgress"><div style="width:${percent}%"></div></div><div>${done?`В устройстве: ${job.outputQty}`:`${Math.floor(percent)}% · осталось ${Math.ceil(job.remainingMs/1000)} сек.`}</div>${gunStats(r.output)}`;
+      body.append(info);
+      if(done)body.append(v09Button('Забрать в рюкзак',()=>collect(id),'primary'));
+      const note=document.createElement('p');note.className='v09CraftNote';note.textContent=done?'Готовая продукция хранится здесь до получения.':'Материалы загружены. При отключении электричества прогресс сохраняется. Можно закрыть окно и заняться базой.';body.append(note);return;
+    }
+    if(id==='craft_bench'){
+      const tabs=document.createElement('div');tabs.className='v09RecipeTabs';
+      for(const cat of ['Патроны','Оружие'])tabs.append(v09Button(cat,()=>{selected[id]=cat==='Оружие'?'rifle_ak74':'ammo';quantity[id]=1;render();},RECIPES[selected[id]].category===cat?'primary':''));
+      body.append(tabs);
+    }
+    const grid=document.createElement('div');grid.className='v09RecipeGrid';
+    for(const [key,r] of Object.entries(RECIPES)){
+      if(r.station!==id||r.category!==RECIPES[selected[id]].category)continue;
+      const b=document.createElement('button');b.className='v09RecipeCard'+(key===selected[id]?' selected':'');b.innerHTML=`${itemIconHTML(r.output)}<br>${r.name}`;b.onclick=()=>{selected[id]=key;quantity[id]=1;render();};grid.append(b);
+    }body.append(grid);
+    const r=RECIPES[selected[id]],count=quantity[id];
+    info.innerHTML=`<b>Результат: ${r.name} × ${r.qty*count}</b><div class="v09CraftMaterials">${Object.entries(r.input).map(([type,n])=>`<span class="${bagCount(type)<n*count?'v09CraftShort':''}">${ITEM[type].icon} ${ITEM[type].name}: ${n*count} / ${bagCount(type)}</span>`).join('')}</div><div class="v09CraftNote">Нужно / в рюкзаке · время ${Math.ceil(r.ms*count/1000)} сек. · ${id==='furnace'?6:2} кВт во время работы</div>${gunStats(r.output)}`;body.append(info);
+    const q=document.createElement('div');q.className='v09CraftQuantity';
+    const input=document.createElement('input');input.type='number';input.min='1';input.max='100';input.value=count;input.setAttribute('aria-label','Количество партий');input.onchange=()=>{quantity[id]=clamp(Math.floor(Number(input.value)||1),1,100);render();};
+    q.append(v09Button('−',()=>{quantity[id]=Math.max(1,count-1);render();}),input,v09Button('+',()=>{quantity[id]=Math.min(100,count+1);render();}),v09Button('MAX',()=>{quantity[id]=Math.max(1,maximum(r));render();}));body.append(q);
+    const startButton=v09Button('Загрузить материалы и изготовить',()=>start(id), 'primary');startButton.disabled=maximum(r)<count;body.append(startButton);
+    const note=document.createElement('p');note.className='v09CraftNote';note.textContent='Рецепты условные, игровые. Готовые предметы останутся в устройстве до получения.';body.append(note);
+  }
+  function open(id){activeStation=id;render();openOverlay(overlay);}
+  const oldInteractions=interactionObjects;
+  interactionObjects=function(which=scene){return [...oldInteractions(which).filter(o=>o.kind!=='workshop'),...(which==='bunker'?fixtures.map(o=>({...o,kind:'v09craft',name:labels[o.id],range:48})):[])];};
+  const oldExecute=executeInteraction;
+  executeInteraction=function(target){
+    if(target?.kind!=='v09craft')return oldExecute(target);
+    if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+    navigation=null;movePower=0;moveX=0;moveY=0;open(target.id);
+  };
+  const feedPower=document.createElement('div');feedPower.id='v09FeedPower';
+  el('feedCraftList').before(feedPower);
+  const feedCollect=v09Button('Забрать корм',()=>collectFeed(),'primary');el('feedCraftProgress').append(feedCollect);
+  const oldFeedOpen=openFeedCraftMenu;
+  openFeedCraftMenu=function(){feedPower.replaceChildren(renderDeviceSwitch('feed_craft'));oldFeedOpen();};
+  renderPendingFeedCraft=function(){
+    if(!pendingFeedCraft)return;
+    const ms=remainingFeed();
+    el('feedCraftList').style.display='none';el('feedCraftRecipe').style.display='none';el('feedCraftProgress').style.display='';
+    el('feedCraftBar').style.width=(clamp(1-ms/2500,0,1)*100).toFixed(0)+'%';
+    el('feedCraftProgressText').textContent=ms<=0?`Готово: ${pendingFeedCraft.qty} корма. Можно забрать.`:powered('feed_craft')?'Изготовление корма…':'Пауза: нет питания фермы или кормодробилки';
+    feedCollect.style.display=ms<=0?'':'none';
+  };
+  function startFeed(){
+    if(pendingFeedCraft||feedCraftBusy)return;
+    const batches=Math.floor(feedCraftLoaded/10);
+    if(batches<1||!commitIngredients({grain:10},batches)){message('Для партии нужно 10 зерна');renderFeedCraftMenu();return;}
+    pendingFeedCraft={qty:batches*20,total:batches*20,remainingMs:2500,readyAt:Date.now()+2500};
+    feedCraftBusy=true;feedCraftLoaded=0;renderPendingFeedCraft();queueGameSave();
+  }
+  function collectFeed(){
+    if(!pendingFeedCraft||remainingFeed()>0)return;
+    const before=pendingFeedCraft.qty;let left=addItem('animal_feed',before);
+    if(left>0)left=addToSlots(storageChests[12].items,'animal_feed',left,12);
+    pendingFeedCraft.qty=left;
+    if(left===0){pendingFeedCraft=null;feedCraftBusy=false;showFeedGrainRecipe();}
+    else renderPendingFeedCraft();
+    message(before>left?`Корм: +${before-left}${left?' · остальное ждёт в дробилке':''}`:'Нет места в рюкзаке и хранилище корма');queueGameSave();
+  }
+  function tick(ms){
+    if(document.hidden||playerDead)return;
+    ms=clamp(ms,0,100);
+    for(const id of Object.keys(jobs)){
+      const job=jobs[id];if(!job||job.remainingMs<=0||!powered(id))continue;
+      job.remainingMs=Math.max(0,job.remainingMs-ms);
+      if(job.remainingMs===0){message(`${labels[id]}: ${RECIPES[job.recipe].name} готовы`);queueGameSave();}
+    }
+    if(pendingFeedCraft){
+      if(!Number.isFinite(pendingFeedCraft.remainingMs))pendingFeedCraft.remainingMs=clamp(remainingFeed(),0,2500);
+      const before=pendingFeedCraft.remainingMs;
+      if(before>0&&powered('feed_craft'))pendingFeedCraft.remainingMs=Math.max(0,before-ms);
+      pendingFeedCraft.readyAt=Date.now()+pendingFeedCraft.remainingMs;
+      if(before>0&&pendingFeedCraft.remainingMs===0){message('Корм готов в кормодробилке');queueGameSave();}
+    }
+    uiClock+=ms;
+    if(uiClock>=250){uiClock=0;if(overlay.classList.contains('open')&&jobs[activeStation])render();if(el('feedCraftOverlay').classList.contains('open')&&pendingFeedCraft)renderPendingFeedCraft();}
+  }
+  updateFeedCraft=function(){tick(16.667*frameScale);};
+  function state(id){const j=jobs[id];return j&&j.remainingMs===0?'ГОТОВО':!powered(id)?'НЕТ ПИТАНИЯ':j?'РАБОТАЕТ':'ОЖИДАНИЕ';}
+  function drawWorkshop(){
+    ctx.save();
+    ctx.fillStyle='#e4e8dc';ctx.font='15px Arial';ctx.textAlign='center';ctx.fillText('МАСТЕРСКАЯ',450,795);
+    // Fireproof plinth and vent sit against the upper wall; clear aisle to the right.
+    ctx.fillStyle='#292d2d';ctx.fillRect(130,784,208,153);ctx.strokeStyle='#666d67';ctx.lineWidth=2;ctx.strokeRect(130,784,208,153);
+    ctx.fillStyle='#697170';ctx.fillRect(205,768,48,43);ctx.fillStyle='#92958d';ctx.fillRect(190,795,78,13);
+    ctx.fillStyle='#525c5c';ctx.fillRect(145,800,175,125);ctx.strokeStyle='#96a29b';ctx.lineWidth=3;ctx.strokeRect(145,800,175,125);
+    ctx.fillStyle='#252c2c';ctx.fillRect(160,815,96,72);ctx.strokeStyle='#868c7e';ctx.lineWidth=4;ctx.strokeRect(160,815,96,72);
+    const working=active('furnace')&&powered('furnace');
+    if(working){const glow=ctx.createRadialGradient(209,855,3,209,855,46);glow.addColorStop(0,'#ffd68c');glow.addColorStop(.4,'#d67835');glow.addColorStop(1,'#492a1b');ctx.fillStyle=glow;ctx.fillRect(164,819,88,64);ctx.fillStyle='#ffe0a0';for(let i=0;i<4;i++)ctx.fillRect(177+i*16,856+Math.sin(performance.now()/150+i)*5,11,15);}
+    else{ctx.fillStyle='#172020';ctx.fillRect(164,819,88,64);ctx.fillStyle='#5c6160';ctx.fillRect(175,862,63,8);}
+    ctx.fillStyle=working?'#ecb967':state('furnace')==='ГОТОВО'?'#9fccad':'#7d8b84';ctx.fillRect(276,822,24,7);
+    ctx.strokeStyle='#253332';ctx.lineWidth=3;for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(270,845+i*7);ctx.lineTo(304,845+i*7);ctx.stroke();}
+    ctx.fillStyle='#e3e7dc';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText('ПЛАВИЛЬНАЯ ПЕЧЬ',231,905);ctx.font='9px Arial';ctx.fillStyle='#c5cbb8';ctx.fillText(state('furnace'),231,920);
+    // Main bench: restrained tool rail, cutting mat, vise and receiving tray.
+    ctx.fillStyle='#263232';ctx.fillRect(170,1124,245,10);ctx.fillStyle='#7b8c84';for(let i=0;i<7;i++)ctx.fillRect(184+i*32,1123,7,13);
+    ctx.fillStyle='#786345';ctx.fillRect(160,1135,265,80);ctx.strokeStyle='#b09568';ctx.lineWidth=3;ctx.strokeRect(160,1135,265,80);
+    ctx.fillStyle='#31484a';ctx.fillRect(177,1144,144,37);ctx.strokeStyle='#567075';ctx.lineWidth=1;for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(184+i*25,1144);ctx.lineTo(184+i*25,1181);ctx.stroke();}
+    ctx.fillStyle='#899898';ctx.fillRect(192,1154,39,9);ctx.fillRect(213,1149,8,28);ctx.fillStyle='#293438';ctx.fillRect(251,1153,46,14);
+    ctx.fillStyle='#3b4541';ctx.fillRect(337,1148,64,31);ctx.strokeStyle='#a3ab98';ctx.strokeRect(337,1148,64,31);
+    if(jobs.craft_bench?.remainingMs===0){ctx.fillStyle='#d4bc79';ctx.fillRect(347,1158,15,10);ctx.fillRect(372,1158,15,10);}
+    ctx.fillStyle=active('craft_bench')&&powered('craft_bench')?'#f3c476':state('craft_bench')==='ГОТОВО'?'#93cca2':'#758b80';ctx.beginPath();ctx.arc(407,1194,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#f1ecdc';ctx.font='11px Arial';ctx.fillText('УНИВЕРСАЛЬНЫЙ СТАНОК',290,1198);ctx.font='9px Arial';ctx.fillStyle='#c4cbb9';ctx.fillText(state('craft_bench'),290,1231);
+    ctx.restore();
+  }
+
+  // Store ammunition per weapon. The legacy magazine field is kept compatible with old saves.
+  canFire=function(){const type=heldItem();return !!GUNS[type]&&bagCount(type)>0;};
+  function syncMagazine(){magazine=magazines[heldItem()]??magazines.rifle_ak74;magazineMax=30;}
+  updateAmmoHud=function(){syncMagazine();const g=GUNS[heldItem()],hud=el('ammoHud');hud.style.display=canFire()?'block':'none';if(g)hud.textContent=`${g.name} · ${magazines[heldItem()]} / ${bagCount(g.ammo)} · ${g.caliber}`;};
+  reloadWeapon=function(){
+    const type=heldItem(),g=GUNS[type];if(!g||bagCount(type)<1)return;
+    const got=removeItem(g.ammo,g.mag-magazines[type]);magazines[type]+=got;syncMagazine();updateAmmoHud();
+    if(got>0){message(`${g.name}: перезаряжено`);queueGameSave();}else if(magazines[type]===0)message(`Нет патронов ${g.caliber}`);
+  };
+  shoot=function(){
+    if(menuOpen||playerDead||!canFire()||document.hidden)return;
+    const type=heldItem(),g=GUNS[type],now=performance.now();
+    if(now-lastShot<g.delay)return;
+    if(magazines[type]<=0){lastShot=now;reloadWeapon();return;}
+    if(type!==lastWeapon||now-lastShot>420)burst=0;
+    burst=Math.min(7,burst+1);lastWeapon=type;lastShot=now;magazines[type]--;updateAmmoHud();
+    const base=Math.atan2(player.aimY,player.aimX),cone=g.spread+g.recoil*Math.max(0,burst-1),angle=base+(Math.random()*2-1)*cone;
+    const dx=Math.cos(angle),dy=Math.sin(angle),x=player.x+dx*43,y=player.y+dy*43;
+    if(lineClear(player.x,player.y,x,y,2,scene)){
+      bullets.push({x,y,dx:dx*12,dy:dy*12,radius:3,life:g.range/12,damage:g.damage,weapon:type});muzzleFlash.time=now;muzzleFlash.x=x;muzzleFlash.y=y;
+    }
+    playGunshot();createNoise(player.x,player.y,550);queueGameSave();
+  };
+  function drawM4Held(recoil){
+    ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(26+recoil,-1);ctx.moveTo(3,11);ctx.lineTo(13+recoil,3);ctx.stroke();
+    ctx.save();ctx.translate(recoil,0);ctx.fillStyle='#4e5c5c';ctx.fillRect(-4,-5,13,10);ctx.fillStyle='#243334';ctx.fillRect(8,-4,22,8);ctx.fillStyle='#627572';ctx.fillRect(25,-4,12,7);
+    ctx.fillStyle='#263437';ctx.fillRect(17,4,5,11);ctx.fillRect(10,4,4,7);ctx.fillStyle='#8a9b96';ctx.fillRect(37,-2,9,3);ctx.fillStyle='#1d292a';ctx.fillRect(41,-5,3,4);ctx.fillRect(13,-7,10,3);
+    ctx.strokeStyle='#afbab0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(12,-4);ctx.lineTo(34,-4);ctx.stroke();ctx.restore();
+  }
+  const oldAssign=openHandAssignment;
+  openHandAssignment=function(type){oldAssign(type);const old=el('v09HeldGunStats');if(old)old.remove();if(!GUNS[type])return;const box=document.createElement('div');box.id='v09HeldGunStats';box.className='v09CraftInfo';box.innerHTML=gunStats(type);el('handAssignChoices').before(box);};
+  const oldPlayerDraw=drawPlayer;
+  drawPlayer=function(){
+    oldPlayerDraw();
+    const g=GUNS[heldItem()];if(!g||!rightAimActive)return;
+    const angle=Math.atan2(player.aimY,player.aimX),cone=g.spread+(performance.now()-lastShot<420?g.recoil*Math.max(0,burst-1):0);
+    ctx.save();ctx.strokeStyle='rgba(235,220,162,.28)';ctx.lineWidth=1;ctx.beginPath();
+    for(const a of [angle-cone,angle+cone]){ctx.moveTo(player.x+Math.cos(a)*47,player.y+Math.sin(a)*47);ctx.lineTo(player.x+Math.cos(a)*125,player.y+Math.sin(a)*125);}ctx.stroke();ctx.restore();
+  };
+  function capture(){return {jobs:deep(jobs),magazines:deep(magazines),feed:pendingFeedCraft?{qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,remainingMs:clamp(remainingFeed(),0,2500)}:null};}
+  function validate(data){
+    const fail=()=>{throw new Error('Некорректное сохранение производства');};
+    const num=(v,min,max)=>Number.isFinite(v)&&v>=min&&v<=max,int=(v,min,max)=>Number.isInteger(v)&&num(v,min,max);
+    if(!data||!data.jobs||!data.magazines)fail();
+    for(const id of ['furnace','craft_bench']){
+      const j=data.jobs[id];if(j===null)continue;
+      const r=j&&RECIPES[j.recipe];if(!r||r.station!==id||!int(j.batches,1,100)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs)||!int(j.outputQty,1,r.qty*j.batches)||(j.remainingMs>0&&j.outputQty!==r.qty*j.batches))fail();
+    }
+    if(!int(data.magazines.rifle_ak74,0,30)||!int(data.magazines.rifle_m4,0,30))fail();
+    const f=data.feed;if(f!==null&&(!f||!int(f.qty,1,100000)||!int(f.total,f.qty,100000)||!num(f.remainingMs,0,2500)))fail();
+    return true;
+  }
+  function restore(data){
+    if(data){validate(data);jobs=deep(data.jobs);magazines=deep(data.magazines);pendingFeedCraft=data.feed?{...deep(data.feed),readyAt:Date.now()+data.feed.remainingMs}:null;}
+    else{jobs={furnace:null,craft_bench:null};magazines={rifle_ak74:clamp(magazine,0,30),rifle_m4:0};if(pendingFeedCraft)pendingFeedCraft.remainingMs=clamp(remainingFeed(),0,2500);}
+    feedCraftBusy=!!pendingFeedCraft;feedCraftLoaded=0;burst=0;lastWeapon=null;selected={furnace:'iron',craft_bench:'ammo'};quantity={furnace:1,craft_bench:1};syncMagazine();updateAmmoHud();
+  }
+  return {capture,restore,validate,open,start,collect,tick,startFeed,collectFeed,drawWorkshop,drawM4Held,recipes:RECIPES,weapons:GUNS,fixtures,gunStats};
+})();
+
+
+/* 0.9 — independent save slots, portable backups and chickens. */
+const V09_SAVE_PREFIX='survival_base_v09_slot_';
+const V09_ACTIVE_KEY='survival_base_v09_active_slot';
+const V09_SLOT_COUNT=5;
+const V09_CHICKEN_MAX=50;
+const V09_CHICKEN_BREED_MS=300000;
+let v09ActiveSlot=null;
+let v09SaveTransaction=false;
+let v09ChickenBreedMs=0;
+let v09ChickenClock=performance.now();
+const v09OriginalCapture=captureGameProgress;
+const v09OriginalDecode=decodeGameProgress;
+const v09OriginalRestore=restoreGameProgress;
+
+function v09ChickenCount(){return livestockAnimals.filter(a=>a.kind==='chicken').length;}
+function v09AddChicken(){
+  if(v09ChickenCount()>=V09_CHICKEN_MAX)return false;
+  const f=bunker.farm;
+  const mid=(f.top+f.bottom)/2;
+  livestockAnimals.push({kind:'chicken',icon:'🐔',x:f.left+55+Math.random()*100,
+    y:mid+65+Math.random()*Math.max(10,f.bottom-mid-145),
+    vx:Math.random()>.5?.07:-.07,vy:Math.random()>.5?.05:-.05,size:24});
+  return true;
+}
+const v09OriginalProduction=updateLivestockProduction;
+updateLivestockProduction=function(){
+  v09OriginalProduction();
+  const now=performance.now();
+  const dt=Math.max(0,Math.min(now-v09ChickenClock,1000));
+  v09ChickenClock=now;
+  if(!livestockAlive||v09ChickenCount()<2||v09ChickenCount()>=V09_CHICKEN_MAX||
+    storageCount(12,'animal_feed')<=0||storageCount(13,'water')<=0)return;
+  v09ChickenBreedMs+=dt;
+  if(v09ChickenBreedMs>=V09_CHICKEN_BREED_MS){
+    v09ChickenBreedMs=0;
+    if(v09AddChicken()){
+      message('🐔 В курятнике появилась новая курица.');
+      if(el('cowOverlay').classList.contains('open'))renderCowMenu();
+      queueGameSave();
+    }
+  }
+};
+const v09OriginalCowMenu=renderCowMenu;
+renderCowMenu=function(){
+  v09OriginalCowMenu();
+  const n=v09ChickenCount();
+  const status=el('cowStatus');
+  status.innerHTML=status.innerHTML.replace(/🐔 Куры: \d+/,`🐔 Куры: ${n} / ${V09_CHICKEN_MAX}`);
+  const hint=document.createElement('div');
+  hint.className='subtitle';
+  hint.style.margin='8px 0 0';
+  hint.textContent=n>=V09_CHICKEN_MAX?'Курятник заполнен.':
+    'Куры размножаются при наличии корма и воды: одна за 5 минут игры.';
+  status.append(hint);
+  const btn=el('v09ChickenSlaughter');
+  if(btn){btn.disabled=n<=2||!livestockAlive;btn.style.opacity=btn.disabled?'.45':'1';}
+};
+const v09ChickenSlaughter=v09Button('🍗 Зарезать курицу · 5 мяса',()=>{
+  const chickens=livestockAnimals.filter(a=>a.kind==='chicken');
+  if(!livestockAlive||chickens.length<=2){message('🐔 Нужно оставить минимум 2 живые курицы.');return;}
+  const food=storageChests[4].items;
+  if(freeItemSpace(bag,'chicken_meat',BAG_SLOTS)+freeItemSpace(food,'chicken_meat',12)<5){
+    message('🎒 Освободите место для 5 куриного мяса в рюкзаке или ящике еды.');return;
+  }
+  const victim=chickens[chickens.length-1];
+  livestockAnimals.splice(livestockAnimals.indexOf(victim),1);
+  const left=addItem('chicken_meat',5);
+  if(left)addToSlots(food,'chicken_meat',left,12);
+  message('🍗 Получено куриного мяса: 5.');renderCowMenu();queueGameSave();
+});
+v09ChickenSlaughter.id='v09ChickenSlaughter';
+el('cowSlaughterBtn').after(v09ChickenSlaughter);
+
+captureGameProgress=function(){
+  const d=v09OriginalCapture();
+  d.gameVersion='0.9';
+  d.v09={schema:1,power:V09Power.snapshot(),world:V09World.capture(),
+    crafting:V09Craft.capture(),chickenBreedMs:v09ChickenBreedMs};
+  return d;
+};
+// Capture before the first load, so New Game can never clone an old base.
+const v09NewGameTemplate=clone(captureGameProgress());
+
+function v09MigrateItems(d){
+  const migrate=slots=>{if(Array.isArray(slots))for(const s of slots)if(s&&s.type==='metal')s.type='iron';};
+  migrate(d.bag);
+  if(Array.isArray(d.storage))for(const c of d.storage){
+    migrate(c&&c.items);if(c&&c.name==='Металл')c.name='Железо';
+  }
+  if(Array.isArray(d.loot))for(const l of d.loot)migrate(l&&l.loot);
+}
+function v09MergeLegacyEntries(entries,all,required,make){
+  if(!Array.isArray(entries))throw new Error('Missing legacy world data');
+  const ids=new Set();
+  for(const entry of entries){
+    if(!entry||typeof entry.id!=='string'||ids.has(entry.id)||!all.some(o=>o.id===entry.id))
+      throw new Error('Invalid legacy world IDs');
+    ids.add(entry.id);
+  }
+  if(!required.every(id=>ids.has(id)))throw new Error('Incomplete legacy world data');
+  const byId=new Map(entries.map(o=>[o.id,o]));
+  return all.map(o=>byId.has(o.id)?byId.get(o.id):make(o));
+}
+decodeGameProgress=function(raw){
+  if(typeof raw!=='string'||raw.length>2*1024*1024)throw new Error('Save file is too large');
+  let d=JSON.parse(raw);
+  if(!d||typeof d!=='object'||Array.isArray(d))throw new Error('Invalid save');
+  const legacy=d.v09===undefined;
+  const legacySchema=d.schema;
+  if(!legacy&&(d.schema!==2||!/^0\.9(?:\.\d+)?$/.test(d.gameVersion||'')))
+    throw new Error('Unsupported current save version');
+  if(legacy){
+    if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
+      throw new Error('Unsupported save version');
+    v09MigrateItems(d);
+    const oldLoot=['car1','car2','car3','house1','house2','house3'];
+    if(!['0.7.1','0.7','0.8'].includes(d.gameVersion))oldLoot.push('yard_car');
+    d.loot=v09MergeLegacyEntries(d.loot,scavenges,oldLoot,o=>({id:o.id,searched:false,loot:[]}));
+    if(d.schema===2)d.trees=v09MergeLegacyEntries(d.trees,worldTrees,
+      Array.from({length:11},(_,i)=>'tree'+i),o=>({id:o.id,felled:false,wood:15,regrowMs:0}));
+  }
+  d=v09OriginalDecode(JSON.stringify(d));
+  if(d.livestock.animals.filter(a=>a.kind==='chicken').length>V09_CHICKEN_MAX)
+    throw new Error('Too many chickens');
+  if(legacy){
+    if(legacySchema===1)d.starterPending=d.starterPending.filter(type=>type!=='rifle_m4');
+    d.v09=clone(v09NewGameTemplate.v09);
+    d.v09.crafting.magazines.rifle_ak74=d.magazine;
+    d.v09.crafting.magazines.rifle_m4=0;
+    d.v09.crafting.feed=d.feedCraft?clone(d.feedCraft):null;
+    for(const type of ['remote','pickaxe']){
+      const owned=d.bag.some(s=>s.type===type)||d.storage.some(c=>c.items.some(s=>s.type===type));
+      if(!owned&&!d.starterPending.includes(type))d.starterPending.push(type);
+    }
+    if(!d.handSlots[3]&&d.bag.some(s=>s.type==='remote'))d.handSlots[3]='remote';
+    d.gameVersion='0.9';
+  }
+  const s=d.v09;
+  if(!s||s.schema!==1||!Number.isFinite(s.chickenBreedMs)||s.chickenBreedMs<0||
+    s.chickenBreedMs>V09_CHICKEN_BREED_MS)throw new Error('Invalid 0.9 state');
+  if(!s.power||!s.world||!s.crafting)throw new Error('Incomplete 0.9 state');
+  if(V09Power.validate(s.power)===false||V09World.validate(s.world)===false||
+    V09Craft.validate(s.crafting)===false)throw new Error('Invalid subsystem state');
+  return d;
+};
+function v09CancelPendingSave(){
+  if(gameSaveTimer!==null){clearTimeout(gameSaveTimer);gameSaveTimer=null;}
+}
+restoreGameProgress=function(d){
+  const wasTransaction=v09SaveTransaction;
+  v09SaveTransaction=true;v09CancelPendingSave();
+  try{
+    document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
+    v09OriginalRestore(d);
+    V09Power.restore(d.v09.power);V09World.restore(d.v09.world);V09Craft.restore(d.v09.crafting);
+    v09ChickenBreedMs=d.v09.chickenBreedMs;v09ChickenClock=performance.now();
+    activeStorage=null;assigningHandType=null;
+    grantStarterItems();renderQuickSlots();updateAmmoHud();
+  }finally{v09SaveTransaction=wasTransaction;}
+};
+function v09SlotKey(id){return V09_SAVE_PREFIX+id;}
+function v09BackupKey(id){return v09SlotKey(id)+'_backup';}
+function v09OccupiedSlots(){
+  return Array.from({length:V09_SLOT_COUNT},(_,i)=>i+1).filter(id=>
+    localStorage.getItem(v09SlotKey(id))!==null||localStorage.getItem(v09BackupKey(id))!==null);
+}
+function v09FreeSlot(){const used=v09OccupiedSlots();return [1,2,3,4,5].find(id=>!used.includes(id))||null;}
+function v09ReadSlot(id){
+  let found=false;
+  for(const [key,recovered] of [[v09SlotKey(id),false],[v09BackupKey(id),true]]){
+    const raw=localStorage.getItem(key);if(raw===null)continue;found=true;
+    try{return {id,raw,data:decodeGameProgress(raw),recovered};}catch(error){/* Try the independent backup. */}
+  }
+  return found?{id,invalid:true}:null;
+}
+function v09WriteNewSlot(id,data){
+  if(localStorage.getItem(v09SlotKey(id))!==null||localStorage.getItem(v09BackupKey(id))!==null)
+    throw new Error('Slot is already occupied');
+  data=decodeGameProgress(JSON.stringify(data));
+  const raw=JSON.stringify(data);
+  localStorage.setItem(v09SlotKey(id),raw);
+  // Slot data is already durable if updating the active pointer fails.
+  localStorage.setItem(V09_ACTIVE_KEY,String(id));
+  return raw;
+}
+function v09ReportStorageFailure(manual=false){
+  updateSaveStatus('Не удалось сохранить: хранилище браузера недоступно или заполнено. Скачайте резервную копию.');
+  if(manual)message('Не удалось сохранить игру. Можно скачать сохранение файлом.');
+}
+loadGameProgress=function(){
+  try{
+    const occupied=v09OccupiedSlots();
+    const savedActive=Number(localStorage.getItem(V09_ACTIVE_KEY));
+    const order=occupied.includes(savedActive)?[savedActive,...occupied.filter(id=>id!==savedActive)]:occupied;
+    for(const id of order){
+      const entry=v09ReadSlot(id);if(!entry||entry.invalid)continue;
+      localStorage.setItem(V09_ACTIVE_KEY,String(id));
+      restoreGameProgress(entry.data);v09ActiveSlot=id;gameSaveBlocked=false;
+      lastVerifiedGameSave=JSON.stringify(entry.data);
+      updateSaveStatus(`💾 Слот ${id}: ${entry.recovered?'восстановлен из резервной копии':'прогресс восстановлен'}.`);
+      return true;
+    }
+    const legacy=[localStorage.getItem(GAME_SAVE_KEY),localStorage.getItem(GAME_SAVE_BACKUP_KEY)];
+    for(const raw of legacy){
+      if(raw===null)continue;
+      let data;try{data=decodeGameProgress(raw);}catch(error){continue;}
+      const id=v09FreeSlot();
+      if(!id){gameSaveBlocked=true;updateSaveStatus('Все слоты заняты. Откройте «Сохранения».');return false;}
+      const migratedRaw=v09WriteNewSlot(id,data);
+      restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=migratedRaw;
+      updateSaveStatus(`💾 Прогресс перенесён в слот ${id}. Исходное сохранение сохранено отдельно.`);
+      return true;
+    }
+    if(occupied.length||legacy.some(raw=>raw!==null)){
+      gameSaveBlocked=true;
+      updateSaveStatus('Сохранение не удалось прочитать. Оно не изменено. Доступны импорт и новая игра в свободном слоте.');
+      return false;
+    }
+    const id=v09FreeSlot();const raw=v09WriteNewSlot(id,captureGameProgress());
+    v09ActiveSlot=id;lastVerifiedGameSave=raw;gameSaveBlocked=false;
+    updateSaveStatus(`💾 Слот ${id} · автосохранение каждые 5 секунд.`);
+    return false;
+  }catch(error){gameSaveBlocked=true;v09ReportStorageFailure();return false;}
+};
+saveGameProgress=function(manual=false){
+  if(v09SaveTransaction)return false;
+  if(!gameSaveReady||gameSaveBlocked||!v09ActiveSlot){
+    if(manual)message('Откройте «Сохранения»: выберите игру или создайте свободный слот.');return false;
+  }
+  try{
+    const raw=JSON.stringify(captureGameProgress());decodeGameProgress(raw);
+    if(lastVerifiedGameSave){
+      decodeGameProgress(lastVerifiedGameSave);
+      localStorage.setItem(v09BackupKey(v09ActiveSlot),lastVerifiedGameSave);
+    }
+    localStorage.setItem(v09SlotKey(v09ActiveSlot),raw);
+    lastVerifiedGameSave=raw;
+    updateSaveStatus(`💾 Слот ${v09ActiveSlot} · сохранено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
+    if(manual)message(`💾 Игра сохранена в слот ${v09ActiveSlot}.`);
+    return true;
+  }catch(error){v09ReportStorageFailure(manual);return false;}
+};
+queueGameSave=function(){
+  if(!gameSaveReady||gameSaveBlocked||v09SaveTransaction||gameSaveTimer!==null)return;
+  const slot=v09ActiveSlot;
+  gameSaveTimer=setTimeout(()=>{gameSaveTimer=null;if(slot===v09ActiveSlot)saveGameProgress();},100);
+};
+flushGameSave=function(){v09CancelPendingSave();return saveGameProgress();};
+function v09BeforeSwitch(){
+  v09CancelPendingSave();
+  if(v09ActiveSlot&&!gameSaveBlocked&&!saveGameProgress()){
+    message('Не удалось сохранить текущую игру. Скачайте копию перед переключением.');return false;
+  }
+  return true;
+}
+function v09ChooseSlot(id){
+  try{
+    const entry=v09ReadSlot(id);
+    if(!entry||entry.invalid){message('Сохранение повреждено. Текущая игра не изменена.');return false;}
+    if(!v09BeforeSwitch())return false;
+    // Refresh if selecting the current slot: the flush just saved the latest progress.
+    const next=id===v09ActiveSlot?v09ReadSlot(id):entry;
+    if(!next||next.invalid)throw new Error('Save not available');
+    localStorage.setItem(V09_ACTIVE_KEY,String(id));
+    restoreGameProgress(next.data);
+    v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=JSON.stringify(next.data);
+    updateSaveStatus(`💾 Слот ${id} · игра загружена.`);message(`Продолжаем игру из слота ${id}.`);return true;
+  }catch(error){message('Не удалось загрузить игру. Сохранения не удалены.');return false;}
+}
+function v09NewGame(){
+  try{
+    const id=v09FreeSlot();
+    if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
+    const data=clone(v09NewGameTemplate);data.savedAt=Date.now();
+    decodeGameProgress(JSON.stringify(data));
+    if(!v09BeforeSwitch())return false;
+    const raw=v09WriteNewSlot(id,data);
+    restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=raw;
+    updateSaveStatus(`💾 Новая игра · слот ${id}.`);message(`Новая игра в слоте ${id}. Другие сохранения остались на месте.`);return true;
+  }catch(error){v09ReportStorageFailure(true);return false;}
+}
+function v09ImportSave(raw){
+  // Validate everything before autosaving, allocating a slot, or touching live state.
+  let data;try{data=decodeGameProgress(raw);}catch(error){message('Файл сохранения повреждён или несовместим. Игра не изменена.');return false;}
+  try{
+    const id=v09FreeSlot();if(!id){message('Нет свободного слота для импорта. Сохранения не изменены.');return false;}
+    if(!v09BeforeSwitch())return false;
+    const importedRaw=v09WriteNewSlot(id,data);
+    restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=importedRaw;
+    updateSaveStatus(`💾 Импортировано в слот ${id}.`);message(`Сохранение загружено в отдельный слот ${id}.`);return true;
+  }catch(error){v09ReportStorageFailure(true);return false;}
+}
+function v09DownloadSave(){
+  try{
+    const raw=JSON.stringify(captureGameProgress(),null,2);decodeGameProgress(raw);
+    const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+    const a=document.createElement('a');a.href=url;
+    a.download=`survival-base-0.9-slot-${v09ActiveSlot||'backup'}-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+    message('💾 Файл сохранения подготовлен для скачивания.');
+  }catch(error){message('Не удалось подготовить сохранение.');}
+}
+const v09SaveOverlay=v09Overlay('v09SaveOverlay','💾 Сохранения');
+function v09RenderSaveSlots(){
+  const body=v09SaveOverlay.querySelector('.v09Body');body.replaceChildren();
+  const intro=document.createElement('p');intro.className='subtitle';
+  intro.textContent='5 независимых слотов. Новая игра и импорт используют свободный слот. Для переноса на другой телефон или компьютер скачайте файл.';body.append(intro);
+  try{
+    for(let id=1;id<=V09_SLOT_COUNT;id++){
+      const entry=v09ReadSlot(id);const row=document.createElement('div');row.className='v09SaveRow';
+      const label=document.createElement('div');const name=document.createElement('b');
+      name.textContent=`Слот ${id}${id===v09ActiveSlot?' · текущий':''}`;label.append(name);
+      const meta=document.createElement('div');meta.className='subtitle';meta.style.margin='4px 0 0';
+      meta.textContent=!entry?'Свободен':entry.invalid?'Не удалось прочитать. Данные сохранены.':
+        `${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`;
+      label.append(meta);row.append(label);
+      if(entry&&!entry.invalid)row.append(v09Button(id===v09ActiveSlot?'Продолжить':'Загрузить',()=>v09ChooseSlot(id)));
+      body.append(row);
+    }
+  }catch(error){const warning=document.createElement('p');warning.textContent='Хранилище браузера недоступно. Скачайте текущий прогресс файлом.';body.append(warning);}
+  body.append(v09Button('＋ Новая игра в свободном слоте',()=>{if(!v09NewGame())v09RenderSaveSlots();}),
+    v09Button('⬇ Скачать сохранение',v09DownloadSave),v09Button('⬆ Загрузить из файла',()=>v09ImportInput.click()));
+}
+const v09ImportInput=document.createElement('input');
+v09ImportInput.type='file';v09ImportInput.accept='.json,application/json';v09ImportInput.hidden=true;
+v09ImportInput.addEventListener('change',async()=>{
+  const file=v09ImportInput.files&&v09ImportInput.files[0];v09ImportInput.value='';if(!file)return;
+  if(file.size>2*1024*1024){message('Файл слишком большой для сохранения игры.');return;}
+  try{const raw=await file.text();if(!v09ImportSave(raw))v09RenderSaveSlots();}
+  catch(error){message('Не удалось прочитать выбранный файл.');}
+});document.body.append(v09ImportInput);
+el('saveGameButton').after(v09Button('📂 Продолжить / загрузить / новая игра',()=>{v09RenderSaveSlots();openOverlay(v09SaveOverlay);}));
+v09Style('.v09SaveRow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #ffffff20}.v09SaveRow>div{min-width:0}.v09SaveRow .menuButton{width:auto;flex-shrink:0;margin:0;padding:10px 12px}.v09SaveRow .subtitle{line-height:1.45}');
+window.V09Saves={open(){v09RenderSaveSlots();openOverlay(v09SaveOverlay);},newGame:v09NewGame,
+  load:v09ChooseSlot,importRaw:v09ImportSave,download:v09DownloadSave,
+  get activeSlot(){return v09ActiveSlot;},get chickenBreedMs(){return v09ChickenBreedMs;}};
+
 
 loadGameProgress();
 gameSaveReady=true;
