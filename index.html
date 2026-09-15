@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Survival Base 0.9.1</title>
+<title>Survival Base 0.9.2</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.9.1</div>
+<div id="versionBadge">VERSION 0.9.2</div>
 
 <div id="game">
 
@@ -628,7 +628,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.9.1 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
+    <div class="subtitle">Survival Base 0.9.2 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
@@ -1687,6 +1687,7 @@ function toggleGate(){
 }
 
 
+const V092_ICONS={"copper_ore": "assets/icons/resources/copper_ore.png", "copper": "assets/icons/resources/copper.png", "wood": "assets/icons/resources/wood.png", "parts": "assets/icons/resources/parts.png", "fuel": "assets/icons/resources/fuel.png", "iron_ore": "assets/icons/resources/iron_ore.png", "iron": "assets/icons/resources/iron.png", "food": "assets/icons/food/food.png", "carrot": "assets/icons/food/carrot.png", "potato": "assets/icons/food/potato.png", "tomato": "assets/icons/food/tomato.png", "corn": "assets/icons/food/corn.png", "grain": "assets/icons/food/grain.png", "beans": "assets/icons/food/beans.png", "onion": "assets/icons/food/onion.png", "berries": "assets/icons/food/berries.png", "medicinal_herbs": "assets/icons/food/medicinal_herbs.png", "technical_crop": "assets/icons/food/technical_crop.png", "meds": "assets/icons/food/meds.png", "eggs": "assets/icons/food/eggs.png", "milk": "assets/icons/food/milk.png", "animal_feed": "assets/icons/food/animal_feed.png", "beef": "assets/icons/food/beef.png", "water": "assets/icons/food/water.png", "chicken_meat": "assets/icons/food/chicken_meat.png", "rifle_m4": "assets/icons/weapons/rifle_m4.png", "ammo556": "assets/icons/weapons/ammo556.png", "ammo": "assets/icons/weapons/ammo.png", "rifle_ak74": "assets/icons/weapons/rifle_ak74.png", "axe": "assets/icons/tools/axe.png", "pickaxe": "assets/icons/tools/pickaxe.png", "remote": "assets/icons/tools/remote.png", "flashlight": "assets/icons/tools/flashlight.png", "backpack1": "assets/icons/equipment/backpack1.png", "backpack2": "assets/icons/equipment/backpack2.png", "backpack3": "assets/icons/equipment/backpack3.png", "backpack4": "assets/icons/equipment/backpack4.png", "gloves1": "assets/icons/equipment/gloves1.png", "boots1": "assets/icons/equipment/boots1.png", "pants1": "assets/icons/equipment/pants1.png", "vest1": "assets/icons/equipment/vest1.png", "vest2": "assets/icons/equipment/vest2.png", "vest3": "assets/icons/equipment/vest3.png", "vest4": "assets/icons/equipment/vest4.png", "vest5": "assets/icons/equipment/vest5.png"};
 const ITEM={
   rifle_ak74:{name:'АК-74',icon:'🔫',hand:true},
   axe:{name:'Топор',icon:'🪓',hand:true},
@@ -1785,9 +1786,8 @@ const handSvg={
   axe:'<path stroke="#bc8855" stroke-width="9" stroke-linecap="round" d="M28 57L66 13"/><path stroke="#6b4931" stroke-width="2" d="M28 59L68 13"/><path fill="#c3ced0" stroke="#63757a" stroke-width="2" d="M51 13L75 6l14 14-5 16-17-7-8-2z"/><path fill="#e5eeee" d="M84 13l5 7-5 16-6-4z"/>',
   flashlight:'<path fill="#253c45" stroke="#8c9c9f" stroke-width="2" d="M19 32l37-13 9 24-37 13z"/><path fill="#3c535c" stroke="#9eacad" stroke-width="2" d="M52 18L70 8l13 35-21 1z"/><path fill="#e9e4ba" d="M70 10l11 31 5-4-9-28z"/><path stroke="#6c8991" stroke-width="3" d="M28 34l7 18m3-22 7 18"/><path fill="#dec987" d="M78 9l18-3v32l-10-1z" opacity=".38"/>'
 };
-function itemIconHTML(type){
-  return handSvg[type]?`<svg class="itemArt" viewBox="0 0 100 68" aria-hidden="true">${handSvg[type]}</svg>`:ITEM[type].icon;
-}
+function itemIconHTML(type){const src=V092_ICONS[type==='metal'?'iron':type];return src?`<img class="itemIcon" src="${src}" alt="" draggable="false">`:ITEM[type]?.icon||'';}
+
 function heldItem(){return Number.isInteger(activeHandSlot)?handSlots[activeHandSlot]||null:null;}
 function canFire(){return heldItem()==='rifle_ak74'&&bagCount('rifle_ak74')>0;}
 function reconcileHands(){
@@ -1973,7 +1973,7 @@ function renderLoot(){
   const box=el("lootList"); box.innerHTML="";
   for(const s of activeLoot||[]){
     const r=document.createElement("div"); r.className="lootRow";
-    r.innerHTML=`<span>${ITEM[s.type].icon} ${ITEM[s.type].name}</span><b>×${s.qty}</b>`; box.appendChild(r);
+    r.innerHTML=`<span>${itemIconHTML(s.type)} ${ITEM[s.type].name}</span><b>×${s.qty}</b>`; box.appendChild(r);
   }
 }
 function openLoot(obj){
@@ -2905,10 +2905,11 @@ function executeInteraction(target){
 function cancelNavigation(){navigation=null;movePower=0;moveX=0;moveY=0;}
 
 // A* on a 24 px grid; each edge is swept with the actor's radius.
-function findWalkPath(startX,startY,target,which=scene,radius=player.radius){
+const v092PathCache=new Map();
+function* v092PathSearch(startX,startY,target,which=scene,radius=player.radius){
   const bounds=which==='surface'?{x:surface.minX??0,y:0,w:surface.width,h:surface.height}:{x:-150,y:-940,w:1510,h:2200};
   const cell=12,cols=Math.ceil(bounds.w/cell),rows=Math.ceil(bounds.h/cell),size=cols*rows;
-  const cached=new Uint8Array(size),closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
+  const key=which+':'+radius+':'+geometryRevision;let entry=v092PathCache.get(key);if(!entry){if(v092PathCache.size>5)v092PathCache.clear();entry={cells:new Uint8Array(size),edges:new Map()};v092PathCache.set(key,entry);}const cached=entry.cells,closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
   const point=id=>({x:bounds.x+(id%cols+.5)*cell,y:bounds.y+(Math.floor(id/cols)+.5)*cell});
   const walkable=id=>{if(id<0||id>=size)return false;if(!cached[id]){const p=point(id);cached[id]=worldCollision(p.x,p.y,radius,which)?2:1;}return cached[id]===1;};
   const sx=Math.floor((startX-bounds.x)/cell),sy=Math.floor((startY-bounds.y)/cell);
@@ -2928,14 +2929,15 @@ function findWalkPath(startX,startY,target,which=scene,radius=player.radius){
   const heap=[];
   const push=(id,f)=>{let i=heap.length;heap.push({id,f});while(i>0){const p=(i-1)>>1;if(heap[p].f<=f)break;[heap[p],heap[i]]=[heap[i],heap[p]];i=p;}};
   const pop=()=>{const out=heap[0],last=heap.pop();if(heap.length){heap[0]=last;let i=0;while(true){let j=i*2+1;if(j>=heap.length)break;if(j+1<heap.length&&heap[j+1].f<heap[j].f)j++;if(heap[i].f<=heap[j].f)break;[heap[i],heap[j]]=[heap[j],heap[i]];i=j;}}return out.id;};
+  const edgeClear=(a,b,p,q)=>{const k=Math.min(a,b)*size+Math.max(a,b);if(!entry.edges.has(k))entry.edges.set(k,lineClear(p.x,p.y,q.x,q.y,radius,which));return entry.edges.get(k);};
   cost[start]=0;push(start,heuristic(start));
-  while(heap.length){
+  let work=0;while(heap.length){if(++work%12===0)yield null;
     const id=pop();if(closed[id])continue;closed[id]=1;const p=point(id);
     if(near(p)){
       const result=[];for(let n=id;n!==-1;n=parent[n])result.push(point(n));result.reverse();
       // Remove unnecessary waypoints while preserving all obstacle checks.
       const smooth=[];let from={x:startX,y:startY},i=0;
-      while(i<result.length){let far=i;while(far+1<result.length&&lineClear(from.x,from.y,result[far+1].x,result[far+1].y,radius,which))far++;smooth.push(result[far]);from=result[far];i=far+1;}
+      while(i<result.length){yield null;let far=i;for(let j=Math.min(i+16,result.length-1);j>i;j--)if(lineClear(from.x,from.y,result[j].x,result[j].y,radius,which)){far=j;break;}smooth.push(result[far]);from=result[far];i=far+1;}
       if(target.kind==='ground')smooth.push({x:target.x,y:target.y});
       return smooth;
     }
@@ -2943,12 +2945,14 @@ function findWalkPath(startX,startY,target,which=scene,radius=player.radius){
     for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
       if(!dx&&!dy)continue;const x=ix+dx,y=iy+dy;if(x<0||x>=cols||y<0||y>=rows)continue;
       const next=y*cols+x;if(closed[next]||!walkable(next))continue;
-      const q=point(next),g=cost[id]+Math.hypot(dx,dy)*cell;if(g>=cost[next]||!lineClear(p.x,p.y,q.x,q.y,radius,which))continue;
+      const q=point(next),g=cost[id]+Math.hypot(dx,dy)*cell;if(g>=cost[next]||!edgeClear(id,next,p,q))continue;
       cost[next]=g;parent[next]=id;push(next,g+heuristic(next));
     }
   }
   return null;
 }
+function findWalkPath(...args){const g=v092PathSearch(...args);let out;do{out=g.next();}while(!out.done);return out.value;}
+
 function approachObject(target){
   stopControls();cancelSearch();cancelChop();
   if(canInteract(target,player.x,player.y)){executeInteraction(target);return;}
@@ -3182,12 +3186,12 @@ function updateLivestockProduction(){
   const now=Date.now();
   if(now-lastEggProduction>=LIVESTOCK_EGG_MS){
     const ticks=Math.floor((now-lastEggProduction)/LIVESTOCK_EGG_MS);
-    addToSlots(storageChests[10].items,"eggs",ticks*2,12);
+    addToSlots(storageChests[10].items,"eggs",ticks*2,60);
     lastEggProduction+=ticks*LIVESTOCK_EGG_MS;
   }
   if(now-lastMilkProduction>=LIVESTOCK_MILK_MS){
     const ticks=Math.floor((now-lastMilkProduction)/LIVESTOCK_MILK_MS);
-    addToSlots(storageChests[11].items,"milk",ticks,12);
+    addToSlots(storageChests[11].items,"milk",ticks,60);
     lastMilkProduction+=ticks*LIVESTOCK_MILK_MS;
   }
 }
@@ -3359,7 +3363,7 @@ function updateFeedCraft(){
   if(Date.now()<pendingFeedCraft.readyAt)return;
   const before=pendingFeedCraft.qty;
   let left=addItem("animal_feed",before);
-  if(left>0)left=addToSlots(storageChests[12].items,"animal_feed",left,12);
+  if(left>0)left=addToSlots(storageChests[12].items,"animal_feed",left,60);
   pendingFeedCraft.qty=left;
   if(left>0){
     if(left!==before)queueGameSave();
@@ -3404,7 +3408,7 @@ function nearestStorageChest(){
   }
   return best;
 }
-function addToSlots(slots,type,qty,maxSlots=12){
+function addToSlots(slots,type,qty,maxSlots=60){
   let left=qty;
   for(const s of slots){
     if(s.type===type&&s.qty<STACK_MAX){
@@ -3438,7 +3442,7 @@ function renderStorage(){
   if(!ch)return;
   el("storageTitle").textContent=`${ch.icon} ${ch.name}`;
   const a=el("storageContents"),b=el("storageBag");a.innerHTML="";b.innerHTML="";
-  for(let i=0;i<12;i++){
+  for(let i=0;i<60;i++){
     const d=document.createElement("div");d.className="invSlot";d.dataset.chestSlot=i;
     d.innerHTML=slotHTML(ch.items[i]);a.appendChild(d);
   }
@@ -4974,7 +4978,7 @@ function refillLivestockNeed(storageIndex,type,label,icon){
     return;
   }
   const wanted=Math.min(need,available);
-  const left=addToSlots(storageChests[storageIndex].items,type,wanted,12);
+  const left=addToSlots(storageChests[storageIndex].items,type,wanted,60);
   const added=wanted-left;
   if(added>0) removeItem(type,added);
   message(`${icon} Добавлено: ${added}. Теперь ${storageCount(storageIndex,type)} / ${capacity}.`);
@@ -4998,14 +5002,14 @@ el("cowSlaughterBtn").addEventListener("click",function(){
   }
   const victim=cows[cows.length-1];
   const meat=20; // test yield
-  if(freeItemSpace(bag,"beef",BAG_SLOTS)+freeItemSpace(storageChests[4].items,"beef",12)<meat){
+  if(freeItemSpace(bag,"beef",BAG_SLOTS)+freeItemSpace(storageChests[4].items,"beef",60)<meat){
     message("🎒 Освободите место для 20 мяса в рюкзаке или ящике еды.");
     return;
   }
   const idx=livestockAnimals.indexOf(victim);
   if(idx>=0) livestockAnimals.splice(idx,1);
   const left=addItem("beef",meat);
-  if(left>0) addToSlots(storageChests[4].items,"beef",left,12);
+  if(left>0) addToSlots(storageChests[4].items,"beef",left,60);
   message("🥩 Корова переработана. Получено мяса: "+meat);
   renderCowMenu();
 });
@@ -5449,7 +5453,7 @@ el("storageOverlay").addEventListener("click",e=>{
 
   if(bagSlot){
     const i=Number(bagSlot.dataset.bagSlot),s=bag[i];if(!s)return;
-    const qty=s.qty,left=addToSlots(ch.items,s.type,qty,12);
+    const qty=s.qty,left=addToSlots(ch.items,s.type,qty,60);
     const moved=qty-left;if(moved>0)removeItem(s.type,moved);
     renderStorage();updateAmmoHud();return;
   }
@@ -5754,7 +5758,7 @@ function decodeGameProgress(raw){
   if(!slots(d.bag,capacity)||!integer(d.magazine,0,magazineMax))fail();
   if(!Array.isArray(d.storage)||d.storage.length!==storageChests.length||
     !d.storage.every(c=>c&&typeof c.name==="string"&&c.name.length<=64&&
-      typeof c.icon==="string"&&c.icon.length<=64&&slots(c.items,12)))fail();
+      typeof c.icon==="string"&&c.icon.length<=64&&slots(c.items,60)))fail();
   if(!Array.isArray(d.farm)||d.farm.length!==5||!d.farm.every(st=>
     st&&(st.crop===null||integer(st.crop,0,window.farmCrops.length-1))&&
     duration(st.elapsedMs)&&(st.harvestLeft===null||integer(st.harvestLeft,1,160))))fail();
@@ -6657,7 +6661,7 @@ const v09PowerOldDrawSurface=drawSurface;
 drawSurface=function(){v09PowerOldDrawSurface();v09DrawSpotlights();};
 
 
-/* 0.9.1 — incremental manufacturing, stable production UI, powered machine animation. */
+/* 0.9.2 — incremental manufacturing, stable production UI, powered machine animation. */
 const V09Craft = (() => {
   const RECIPES = {
     feed: {station:'feed_craft',category:'Корм',name:'Корм для животных',input:{grain:10},output:'animal_feed',qty:20,ms:2500},
@@ -6743,7 +6747,7 @@ const V09Craft = (() => {
     const job=getJob(id);if(!job||job.outputQty<1)return 0;
     const recipe=RECIPES[job.recipe],before=job.outputQty;
     let left=addItem(recipe.output,before);
-    if(id==='feed_craft'&&left>0)left=addToSlots(storageChests[12].items,recipe.output,left,12);
+    if(id==='feed_craft'&&left>0)left=addToSlots(storageChests[12].items,recipe.output,left,60);
     const collected=before-left;job.outputQty=left;job.collectedQty+=collected;
     if(id==='feed_craft')syncFeed(job);
     if(job.remainingMs===0&&job.outputQty===0)setJob(id,null);
@@ -6753,10 +6757,10 @@ const V09Craft = (() => {
   }
   function duration(ms){const sec=Math.ceil(ms/1000);return sec<60?`${sec} сек.`:sec<3600?`${Math.floor(sec/60)} мин. ${sec%60} сек.`:`${Math.floor(sec/3600)} ч. ${Math.floor(sec%3600/60)} мин.`;}
   function refreshProgress(){
-    if(!activeStation)return;const id=activeStation,j=getJob(id);if(!j)return;
+    if(!activeStation)return;const id=activeStation,j=getJob(id);if(!j){const idle=el('v092IdleStatus');if(idle)idle.textContent=!V09Power.devices[id].enabled?'Станок выключен':!powered(id)?'Нет питания · очередь будет ждать электричество':'Ожидание · готов к запуску';return;}
     const r=RECIPES[j.recipe],done=j.remainingMs<=0,percent=clamp(100*(1-j.remainingMs/j.totalMs),0,100);
     const status=el('v091CraftStatus'),bar=el('v091CraftBar'),made=el('v091CraftMade'),ready=el('v091CraftReady'),time=el('v091CraftTime'),taken=el('v091CraftTaken'),button=el('v091CraftCollect');
-    if(status){status.textContent=done?'Производство завершено':powered(id)?'Производство работает':'Пауза: нет питания';status.className=done?'v09CraftReady':'';}
+    if(status){status.textContent=done?'Производство завершено':powered(id)?'Производство работает':!V09Power.devices[id].enabled?'Станок выключен':'Пауза: нет питания';status.className=done?'v09CraftReady':'';}
     if(bar)bar.style.width=percent+'%';if(made)made.textContent=`${j.completedBatches*r.qty} / ${j.batches*r.qty}`;if(ready)ready.textContent=String(j.outputQty);
     if(time)time.textContent=`${Math.floor(percent)}% · ${done?'очередь завершена':'осталось '+duration(j.remainingMs)}`;
     if(taken)taken.textContent=`Уже забрано: ${j.collectedQty}${r.qty>1?' · партия: '+r.qty+' шт.':''}`;
@@ -6764,35 +6768,32 @@ const V09Craft = (() => {
   }
   function render(){
     if(!activeStation)return;const id=activeStation,job=getJob(id);
-    const prior=body.querySelector('.v091CraftScroll');const scrollTop=prior?.scrollTop||0;
-    body.innerHTML='';const panel=overlay.querySelector('.panel');panel.setAttribute('aria-label',labels[id]);overlay.querySelector('.v09Title').textContent=labels[id];
-    const scroll=document.createElement('div');scroll.className='v091CraftScroll';body.append(scroll);
-    const actions=document.createElement('div');actions.className='v091CraftActions';body.append(actions);
-    scroll.append(renderDeviceSwitch(id));
-    const info=document.createElement('div');info.className='v09CraftInfo';
-    if(job){
-      const r=RECIPES[job.recipe];info.innerHTML=`<b>${r.name} · очередь ${r.qty*job.batches} шт.</b><div id="v091CraftStatus"></div><div class="v09CraftProgress"><div id="v091CraftBar"></div></div><div id="v091CraftTime"></div><div class="v091CraftTotals"><div><strong id="v091CraftMade"></strong><span>Изготовлено / всего</span></div><div><strong id="v091CraftReady"></strong><span>Можно забрать сейчас</span></div></div><div id="v091CraftTaken" class="v09CraftNote"></div>${gunStats(r.output)}`;scroll.append(info);
-      const button=v09Button('',()=>collect(id),'primary');button.id='v091CraftCollect';actions.append(button);
-      const note=document.createElement('p');note.className='v09CraftNote';note.textContent='Готовое можно забирать во время работы. Остальная очередь продолжается; при отключении питания прогресс и материалы сохраняются.';scroll.append(note);refreshProgress();scroll.scrollTop=scrollTop;return;
+    body.innerHTML='';overlay.querySelector('.panel').setAttribute('aria-label',labels[id]);overlay.querySelector('.v09Title').textContent=labels[id];
+    body.append(renderDeviceSwitch(id));
+    const layout=document.createElement('div');layout.className='v092CraftLayout';body.append(layout);
+    const list=document.createElement('div');list.className='v092RecipeList';list.setAttribute('aria-label','Рецепты');layout.append(list);
+    let category='';for(const [key,r] of Object.entries(RECIPES)){
+      if(r.station!==id)continue;
+      if(category!==r.category){category=r.category;const heading=document.createElement('div');heading.className='v092Category';heading.textContent=category;list.append(heading);}
+      const b=v09Button('',()=>{selected[id]=key;quantity[id]=0;render();});b.className='v092Recipe'+(selected[id]===key?' selected':'');b.setAttribute('aria-pressed',String(selected[id]===key));b.innerHTML=`${itemIconHTML(r.output)}<span>${r.name}<small>×${r.qty} · ${duration(r.ms)}</small></span>`;list.append(b);
     }
-    if(id==='craft_bench'){
-      const tabs=document.createElement('div');tabs.className='v09RecipeTabs';
-      for(const cat of ['Патроны','Оружие'])tabs.append(v09Button(cat,()=>{selected[id]=cat==='Оружие'?'rifle_ak74':'ammo';quantity[id]=0;render();},RECIPES[selected[id]].category===cat?'primary':''));
-      scroll.append(tabs);
-    }
-    const grid=document.createElement('div');grid.className='v09RecipeGrid';
-    for(const [key,r] of Object.entries(RECIPES)){
-      if(r.station!==id||r.category!==RECIPES[selected[id]].category)continue;
-      const b=document.createElement('button');b.className='v09RecipeCard'+(key===selected[id]?' selected':'');b.innerHTML=`${itemIconHTML(r.output)}<br>${r.name}`;b.onclick=()=>{selected[id]=key;quantity[id]=0;render();};grid.append(b);
-    }scroll.append(grid);
+    const scroll=document.createElement('div');scroll.className='v091CraftScroll';layout.append(scroll);
     quantity[id]=clamp(quantity[id],0,maxSelection(id));const r=RECIPES[selected[id]],count=selectedBatches(id),watts=id==='furnace'?6:id==='craft_bench'?2:1;
-    info.classList.add('v091RecipeDetails');
-    info.innerHTML=`<b>Результат: ${r.name} × ${r.qty*count}</b><div class="v09CraftMaterials">${Object.entries(r.input).map(([type,n])=>`<span class="${bagCount(type)<n*count?'v09CraftShort':''}">${ITEM[type].icon} ${ITEM[type].name}: ${n*count} / ${bagCount(type)}</span>`).join('')}</div><div class="v09CraftNote">Нужно / в рюкзаке · время ${duration(r.ms*count)} · ${watts} кВт во время работы<br>${id==='furnace'?'1 руда → 1 металл':id==='feed_craft'?'10 зерна → 20 корма · неполная партия остаётся в рюкзаке':r.qty>1?'1 партия = '+r.qty+' патронов':'1 изготовление = 1 оружие'}</div>${gunStats(r.output)||'<div class="v09GunStats">Каждую готовую '+(r.qty>1?'партию':'единицу')+' можно забрать сразу.</div>'}`;scroll.append(info);
-    const amount=document.createElement('div');amount.className='v091QuantityCount';amount.textContent=`${id==='furnace'?'Выбрано руды':id==='feed_craft'?'Выбрано зерна':r.qty>1?'Выбрано партий':'Выбрано оружия'}: ${quantity[id]} / ${maxSelection(id)}`;scroll.append(amount);
-    const q=document.createElement('div');q.className='v09CraftQuantity';
-    for(const [label,value] of [['+1',quantity[id]+1],['+10',quantity[id]+10],['MAX',maxSelection(id)],['Сброс → 0',0]])q.append(v09Button(label,()=>{quantity[id]=clamp(value,0,maxSelection(id));render();}));scroll.append(q);
-    const startButton=v09Button(id==='furnace'?'Начать плавку':id==='feed_craft'?'Начать изготовление корма':'Начать изготовление',()=>start(id),'primary');startButton.disabled=count===0||maximum(r)<count;actions.append(startButton);
-    const note=document.createElement('p');note.className='v09CraftNote';note.textContent='Материалы списываются только после запуска. Готовое останется в устройстве, если рюкзак заполнен.';scroll.append(note);scroll.scrollTop=scrollTop;
+    const info=document.createElement('div');info.className='v092RecipeDetails';info.innerHTML=`<div class="v092RecipeHero">${itemIconHTML(r.output)}<div><b>${r.name}</b><div class="v09CraftNote">Выход за партию: ${r.qty} шт.<br>${duration(r.ms)} · ${watts} кВт при работе</div></div></div>${gunStats(r.output)}<div class="v092Category">Материалы · в рюкзаке / нужно</div>`;scroll.append(info);
+    const materials=document.createElement('div');materials.className='v092Materials';info.append(materials);
+    const help=document.createElement('div');help.className='v092MaterialHelp';help.textContent='Нажмите на материал, чтобы узнать, где его получить.';
+    for(const [type,n] of Object.entries(r.input)){
+      const need=n*Math.max(1,count),have=bagCount(type),b=v09Button('',()=>{
+        const recipe=Object.entries(RECIPES).find(([,v])=>v.output===type);
+        help.textContent=recipe?`${ITEM[type].name}: ${labels[recipe[1].station]}. ${Object.entries(recipe[1].input).map(([t,q])=>q+' × '+ITEM[t].name).join(' + ')} → ${recipe[1].qty} шт.`:({iron_ore:'Железная руда: добывайте киркой в месторождениях за крепостью.',copper_ore:'Медная руда: добывайте киркой за жилым кварталом.',wood:'Древесина: рубите деревья топором.',parts:'Детали: обыскивайте машины и заброшенные дома.',grain:'Зерно: выращивайте на ферме.'}[type]||'Ищите этот ресурс во время вылазок.');
+        if(recipe&&recipe[1].station===id){selected[id]=recipe[0];quantity[id]=0;render();}
+      });b.className='v092Ingredient'+(have<need?' v09CraftShort':'');b.innerHTML=`${itemIconHTML(type)}<span>${ITEM[type].name}<strong>${have} / ${need}</strong></span>`;materials.append(b);
+    }info.append(help);
+    const amount=document.createElement('div');amount.className='v091QuantityCount';amount.textContent=`${id==='furnace'?'Руды':id==='feed_craft'?'Зерна':'Партий'}: ${quantity[id]} / ${maxSelection(id)} · результат ${r.qty*count} шт.`;scroll.append(amount);
+    const q=document.createElement('div');q.className='v09CraftQuantity';for(const [label,value] of [['+1',quantity[id]+1],['+10',quantity[id]+10],['MAX',maxSelection(id)],['Сброс · 0',0]]){const b=v09Button(label,()=>{quantity[id]=clamp(value,0,maxSelection(id));render();});b.disabled=!!job;q.append(b);}scroll.append(q);
+    const actions=document.createElement('div');actions.className='v091CraftActions';body.append(actions);
+    if(job){const current=RECIPES[job.recipe];const progress=document.createElement('div');progress.className='v092Production';progress.innerHTML=`<b>${current.name}</b><span id="v091CraftStatus"></span><div class="v09CraftProgress"><div id="v091CraftBar"></div></div><div id="v091CraftTime"></div><div class="v092ProductionCounts">Изготовлено: <strong id="v091CraftMade"></strong> · доступно: <strong id="v091CraftReady"></strong></div><div id="v091CraftTaken" class="v09CraftNote"></div>`;actions.append(progress);const b=v09Button('',()=>collect(id),'primary');b.id='v091CraftCollect';actions.append(b);refreshProgress();}
+    else{const status=document.createElement('div');status.id='v092IdleStatus';status.className='v09CraftNote';status.textContent=!V09Power.devices[id].enabled?'Станок выключен':!powered(id)?'Нет питания · очередь будет ждать электричество':'Ожидание · готов к запуску';actions.append(status);const b=v09Button('Изготовить · '+r.qty*count+' шт.',()=>start(id),'primary');b.disabled=count===0||maximum(r)<count;actions.append(b);}
   }
   function open(id){if(!STATIONS.includes(id))return;activeStation=id;render();openOverlay(overlay);}
   const oldInteractions=interactionObjects;
@@ -6818,7 +6819,7 @@ const V09Craft = (() => {
       if(id==='feed_craft')syncFeed(job);if(id==='craft_bench')benchPhase+=ms/700;
       if(job.remainingMs===0){message(`${labels[id]}: производство завершено`);queueGameSave();}
     }
-    uiClock+=ms;if(uiClock>=200){uiClock=0;if(overlay.classList.contains('open')&&getJob(activeStation))refreshProgress();}
+    uiClock+=ms;if(uiClock>=200){uiClock=0;if(overlay.classList.contains('open'))refreshProgress();}
   }
   updateFeedCraft=function(){tick(16.667*frameScale);};
   function state(id){const j=getJob(id);return j&&j.remainingMs===0?'ГОТОВО':!powered(id)?'НЕТ ПИТАНИЯ':j?'РАБОТАЕТ':'ОЖИДАНИЕ';}
@@ -6922,7 +6923,7 @@ const V09Craft = (() => {
     if(data.feed!==null){
       const f=deep(data.feed);if(!f)fail();
       if(f.recipe===undefined){
-        // Before 0.9.1 the entire feed order took 2.5 seconds. Preserve that duration and elapsed work.
+        // Before 0.9.2 the entire feed order took 2.5 seconds. Preserve that duration and elapsed work.
         if(!int(f.qty,1,100000)||!int(f.total,f.qty,100000)||f.total%20!==0||!num(f.remainingMs,0,2500)||(f.remainingMs>0&&f.qty!==f.total))fail();
         f.recipe='feed';f.batches=f.total/20;f.totalMs=2500;f.completedBatches=completedAt(f);f.collectedQty=f.total-f.qty;f.outputQty=f.completedBatches*20-f.collectedQty;
       }
@@ -6941,15 +6942,15 @@ const V09Craft = (() => {
 })();
 
 
-/* 0.9.1: four watchtowers, a continuous protected wall walk and two metal gates. */
+/* 0.9.2: four watchtowers, a continuous protected wall walk and two metal gates. */
 (() => {
   'use strict';
   const outer=surface.outer;
   outer.thickness=72;
-  const innerGate={id:'v091innerGate',x:730,y:925,w:140,h:20};
+  const innerGate={id:'v091innerGate',x:730,y:1170,w:140,h:20};
   const vestibule=[
-    {id:'v091vestibuleW',x:714,y:925,w:16,h:100},
-    {id:'v091vestibuleE',x:870,y:925,w:16,h:100}
+    {id:'v091vestibuleW',x:714,y:1070,w:16,h:120},
+    {id:'v091vestibuleE',x:870,y:1070,w:16,h:120}
   ];
   const corners=[
     {id:'nw',name:'Северо-западная',x:206,y:166,foot:{x:287,y:247}},
@@ -6962,7 +6963,7 @@ const V09Craft = (() => {
     {x:170,y:130,w:1260,h:72},{x:170,y:130,w:72,h:940},
     {x:1358,y:130,w:72,h:940},{x:170,y:998,w:1260,h:72},...towerSolids
   ];
-  let innerGateOpen=false,transition=null;
+  let innerGateOpen=false,transition=null,stairsCooldown=0,groundAfter=null;
   player.wallLevel=false;
 
   const oldWalls=surfaceWalls;
@@ -7052,7 +7053,16 @@ const V09Craft = (() => {
       .filter(a=>a.path&&a.landing).sort((a,b)=>routeLength(a.path)+distance(a.landing.x,a.landing.y,destination.x,destination.y)-routeLength(b.path)-distance(b.landing.x,b.landing.y,destination.x,destination.y))[0]?.t;
   }
   function handlePoint(x,y,following=false){
-    if(transition)return true;if(!isElevated())return false;
+    if(transition)return true;
+    if(!isElevated()){
+      if(scene!=='surface'||elevatedCollision(x,y))return false;
+      const candidates=[];for(const t of [...corners].sort((a,b)=>distance(player.x,player.y,a.foot.x,a.foot.y)-distance(player.x,player.y,b.foot.x,b.foot.y))){const path=V091Navigation.plan({id:'ground',kind:'ground',...t.foot,r:0,range:1});if(path){candidates.push({t,path});break;}}
+      if(!candidates.length){message('К лестнице нет прохода');return true;}
+      groundAfter=()=>routeTo(x,y);const t=candidates[0].t;
+      approachObject({id:'v091stairs_'+t.id,kind:'v091stairs',tower:t.id,...t.foot,r:12,range:21});return true;
+    }
+    if(x>242&&x<1358&&y>202&&y<998){const p=inwardLanding();if(p){beginTransition(p,false,'jump',()=>approachPoint(x,y,following));return true;}}
+    if(x<170||x>1430||y<130||y>1070){if(!following)message('Спрыгнуть можно только внутрь двора');return true;}
     if(!elevatedCollision(x,y)){routeTo(x,y);return true;}
     if(following){
       // A dragged pointer outside the wall follows its nearest safe deck point;
@@ -7101,7 +7111,7 @@ const V09Craft = (() => {
   const oldInteractions=interactionObjects;
   interactionObjects=function(which=scene){
     const base=oldInteractions(which);if(which!=='surface')return base;
-    return [...base,{...innerGate,kind:'v091innerGate',name:innerGateOpen?'Закрыть внутреннюю дверь':'Открыть внутреннюю дверь',range:48},
+    return [...base,{...innerGate,kind:'v091innerGate',name:innerGateOpen?'Закрыть внешнюю дверь':'Открыть внешнюю дверь',range:48},
       ...corners.flatMap(t=>[
         {...towerSolids.find(o=>o.id==='v091tower_'+t.id),kind:'v091tower',tower:t.id,name:t.name+' башня',range:26},
         {id:'v091stairs_'+t.id,kind:'v091stairs',tower:t.id,name:isElevated()?'Спуститься во двор':'Подняться на башню',...(isElevated()?{x:t.x,y:t.y}:t.foot),r:12,range:21}
@@ -7123,10 +7133,10 @@ const V09Craft = (() => {
   function toggleInnerGate(){
     if(innerGateOpen){
       const occupants=[...(scene==='surface'&&!isElevated()?[player]:[]),...zombies.filter(z=>z.alive)];
-      if(occupants.some(p=>rectHit(p.x,p.y,(p.radius||17)+3,innerGate))){message('Отойдите от внутреннего проёма');return;}
+      if(occupants.some(p=>rectHit(p.x,p.y,(p.radius||17)+3,innerGate))){message('Отойдите от внешнего проёма');return;}
     }
     innerGateOpen=!innerGateOpen;invalidateGeometry();queueGameSave();
-    message(innerGateOpen?'Внутренняя металлическая дверь открыта':'Внутренняя металлическая дверь закрыта');
+    message(innerGateOpen?'Внешняя металлическая дверь открыта':'Внешняя металлическая дверь закрыта');
   }
   const oldExecute=executeInteraction;
   executeInteraction=function(target){
@@ -7134,7 +7144,7 @@ const V09Craft = (() => {
       if(menuOpen||playerDead||transition||!canInteract(target,player.x,player.y))return;
       cancelNavigation();
       if(target.kind==='v091innerGate')toggleInnerGate();
-      else{const t=towerFor(target);if(isElevated())descend(t);else beginTransition({x:t.x,y:t.y},true);}
+      else{const t=towerFor(target);if(isElevated())descend(t);else{const after=groundAfter;groundAfter=null;beginTransition({x:t.x,y:t.y},true,'stairs',after);}}
       return;
     }
     if(target?.kind==='v091tower')return handleObject(target);
@@ -7161,8 +7171,18 @@ const V09Craft = (() => {
       const t=transition;t.elapsed=Math.min(t.duration,t.elapsed+16.667*frameScale);
       const p=t.elapsed/t.duration,s=p*p*(3-2*p);
       player.x=t.source.x+(t.target.x-t.source.x)*s;player.y=t.source.y+(t.target.y-t.source.y)*s;player.moving=true;player.walkAnimation+=.21*frameScale;
-      if(p>=1){player.wallLevel=t.toUpper;transition=null;player.moving=false;movePower=moveX=moveY=0;queueGameSave();if(t.after)t.after();}
+      if(p>=1){stairsCooldown=performance.now()+900;player.wallLevel=t.toUpper;transition=null;player.moving=false;movePower=moveX=moveY=0;queueGameSave();if(t.after)t.after();}
       return;
+    }
+    if(!menuOpen&&!playerDead&&scene==='surface'&&movePower>JOY_DEAD&&performance.now()>stairsCooldown){
+      if(!isElevated()){
+        const t=corners.find(t=>distance(player.x,player.y,t.foot.x,t.foot.y)<31&&((t.x-player.x)*moveX+(t.y-player.y)*moveY)>0);
+        if(t){const after=groundAfter;groundAfter=null;beginTransition({x:t.x,y:t.y},true,'stairs',after);return;}
+      }else if(!navigation){
+        const x=player.x,y=player.y,r=player.radius;
+        const inward=(y<=202&&y>202-r-9&&moveY>.35)||(y>=998&&y<998+r+9&&moveY<-.35)||(x<=242&&x>242-r-9&&moveX>.35)||(x>=1358&&x<1358+r+9&&moveX<-.35);
+        if(inward&&jumpInward())return;
+      }
     }
     return oldPlayerUpdate();
   };
@@ -7280,9 +7300,9 @@ const V09Craft = (() => {
   drawSurface=function(){
     oldSurfaceDraw();ctx.save();
     // Covered entrance: the top deck remains continuous above the ground doors.
-    rect(730,925,140,100,'#666d62');for(let y=948;y<1018;y+=17)line(734,y,866,y,'#858e7c',1);
+    rect(730,1070,140,120,'#666d62');for(let y=1090;y<1170;y+=17)line(734,y,866,y,'#858e7c',1);
     for(const o of vestibule)wallDeck(o,true);
-    metalDoor(innerGate,innerGateOpen,'ВНУТРЕННЯЯ ДВЕРЬ');
+    metalDoor(innerGate,innerGateOpen,'ВНЕШНЯЯ ДВЕРЬ');
     for(const o of decks.slice(0,4)){
       if(o.y===998&&!isElevated()){
         wallDeck({x:170,y:998,w:560,h:72});wallDeck({x:870,y:998,w:560,h:72});
@@ -7313,7 +7333,7 @@ const V09Craft = (() => {
     if(data.wallLevel&&elevatedCollision(data.x,data.y,player.radius))throw new Error('Unsafe wall position');return true;
   }
   function restore(data){
-    if(data)validate(data);transition=null;cancelRoute();innerGateOpen=data?.innerGateOpen??false;player.wallLevel=!!data?.wallLevel&&scene==='surface';invalidateGeometry();
+    if(data)validate(data);transition=null;groundAfter=null;stairsCooldown=0;cancelRoute();innerGateOpen=data?.innerGateOpen??false;player.wallLevel=!!data?.wallLevel&&scene==='surface';invalidateGeometry();
     if(data&&scene==='surface'){
       if(player.wallLevel||!worldCollision(data.x,data.y,player.radius,'surface')){player.x=data.x;player.y=data.y;}
     }
@@ -7325,7 +7345,7 @@ const V09Craft = (() => {
 })();
 
 
-// 0.9.1: swept room geometry and continuous, obstacle-aware point following.
+// 0.9.2: swept room geometry and continuous, obstacle-aware point following.
 const V091Navigation=(()=>{
   const oldGeometry=bunkerGeometryBlocked;
   const walls=[];
@@ -7354,6 +7374,27 @@ const V091Navigation=(()=>{
   };
   const fortress=()=>typeof V091Fortress==='object'?V091Fortress:null;
   function withOpenDoors(fn){const old=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=old;}}
+  let pending=null;
+  function queuePath(destination){
+    if(pending){pending.latest=destination;return;}
+    pending={destination,latest:destination,scene,revision:geometryRevision,g:v092PathSearch(player.x,player.y,destination,scene,player.radius+1)};
+  }
+  function tickPath(){
+    if(!pending)return;
+    if(menuOpen||playerDead||pending.scene!==scene||pending.revision!==geometryRevision||leftPointerId!==null){pending=null;return;}
+    const task=pending,start=performance.now();let out,steps=0;
+    do{out=withOpenDoors(()=>task.g.next());if(out.done)break;}while(++steps<8&&performance.now()-start<1.5);
+    if(!out.done)return;
+    pending=null;
+    if(out.value){
+      const points=out.value;let first=-1;
+      for(let i=Math.min(points.length-1,3);i>=0;i--)if(withOpenDoors(()=>lineClear(player.x,player.y,points[i].x,points[i].y,player.radius+1,scene))){first=i;break;}
+      if(first>=0)navigation={destination:task.destination,points:points.slice(first),index:0,blockedMs:0,replans:0,scene,following:true};
+    }
+    if(distance(task.latest.x,task.latest.y,task.destination.x,task.destination.y)>16)queuePath(task.latest);
+  }
+  const oldCancel=cancelNavigation;
+  cancelNavigation=function(){pending=null;return oldCancel();};
   function plan(target){
     return withOpenDoors(()=>{
       if(target.kind==='ground'&&lineClear(player.x,player.y,target.x,target.y,player.radius+1,scene))return [{x:target.x,y:target.y}];
@@ -7394,6 +7435,10 @@ const V091Navigation=(()=>{
     }
     if(distance(player.x,player.y,goal.x,goal.y)<.5){cancelNavigation();return;}
     const destination={id:'ground',kind:'ground',x:goal.x,y:goal.y,r:0,range:.55};
+    if(following){
+      if(withOpenDoors(()=>lineClear(player.x,player.y,destination.x,destination.y,player.radius+1,scene))){pending=null;navigation={destination,points:[{x:destination.x,y:destination.y}],index:0,blockedMs:0,replans:0,scene,following};return;}
+      queuePath(destination);return;
+    }
     let points=plan(destination);
     if(!points&&following){
       const fallback=clippedPoint(x,y);
@@ -7408,11 +7453,12 @@ const V091Navigation=(()=>{
     if(!p.following)return;
     const x=p.screenX+camera.x,y=p.screenY+camera.y,now=performance.now();
     if(now<p.nextPathAt)return;
-    if(p.lastX!==undefined&&distance(x,y,p.lastX,p.lastY)<2&&navigation)return;
-    p.nextPathAt=now+100;p.lastX=x;p.lastY=y;
+    if(p.lastX!==undefined&&distance(x,y,p.lastX,p.lastY)<12&&navigation)return;
+    p.nextPathAt=now+180;p.lastX=x;p.lastY=y;
     approachPoint(x,y,true);
   };
   updateAutoWalk=function(){
+    tickPath();
     if(fortress()?.handleAutoWalk?.())return;
     if(!navigation)return;
     const nav=navigation,target=nav.destination||interactionObjects().find(o=>o.id===nav.targetId);
@@ -7421,6 +7467,7 @@ const V091Navigation=(()=>{
       cancelNavigation();if(target.kind!=='ground')executeInteraction(target);return;
     }
     if(nav.blockedMs>180){
+      if(nav.following){queuePath(target);nav.blockedMs=0;return;}
       const points=plan(target);
       if(points&&(nav.replans||0)<4){nav.points=points;nav.index=0;nav.blockedMs=0;nav.replans=(nav.replans||0)+1;}
       else {cancelNavigation();message('Проход закрыт. Откройте дверь или выберите другой путь');return;}
@@ -7438,11 +7485,11 @@ const V091Navigation=(()=>{
     if(!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
   };
   invalidateGeometry();
-  return {walls,clippedPoint,plan};
+  return {walls,clippedPoint,plan,tickPath,get pending(){return !!pending;}};
 })();
 
 
-// 0.9.1: per-container daily replenishment, persistent and safe for uncollected items.
+// 0.9.2: per-container daily replenishment, persistent and safe for uncollected items.
 const V091Loot=(()=>{
   const DAY=24*60*60*1000;
   for(const o of scavenges)o.searchedAt=null;
@@ -7479,7 +7526,7 @@ const V091Loot=(()=>{
 window.V091Loot=V091Loot;
 
 
-/* 0.9.1 — an occluded flashlight reveals the world through a darkness mask.
+/* 0.9.2 — an occluded flashlight reveals the world through a darkness mask.
    World artwork is drawn only once. Never copy/darken the game canvas itself. */
 const V091Light = (()=>{
   const range=380,halfAngle=.48,rayCount=96;
@@ -7638,7 +7685,7 @@ v09DrawRoomLight=function(room){
 drawFlashlight=function(){V091Light.illuminate();};
 
 
-/* 0.9.1 — distinct equipment state and four meaningful backpack sizes. */
+/* 0.9.2 — distinct equipment state and four meaningful backpack sizes. */
 for(const [type,capacity] of Object.entries({backpack1:24,backpack2:36,backpack3:48,backpack4:60}))ITEM[type].capacity=capacity;
 BAG_SLOTS=ITEM[equipment.backpack.type].capacity;
 
@@ -7668,7 +7715,7 @@ renderEquipment=function(){
   for(const key of ['head','body','legs','feet','backpack']){
     const eq=equipment[key],def=eq&&ITEM[eq.type];
     const row=document.createElement('button');row.type='button';row.className='equipSlot'+(def?' filled':' empty');row.dataset.equipSlot=key;
-    const icon=document.createElement('div');icon.className='equipIcon';icon.innerHTML=v091GearIcon(key,!!def);
+    const icon=document.createElement('div');icon.className='equipIcon';icon.innerHTML=def?itemIconHTML(eq.type):v091GearIcon(key,false);
     const text=document.createElement('div');text.className='equipText';
     const label=document.createElement('div');label.className='equipLabel';label.textContent=EQUIP_LABELS[key];
     const name=document.createElement('b');name.textContent=def?def.name:'Не надето';
@@ -7702,7 +7749,7 @@ v09Style(`
 window.V091Equipment={unequip:v091Unequip,render:renderEquipment};
 
 
-/* 0.9.1 — named independent saves, portable backups and chickens. */
+/* 0.9.2 — named independent saves, portable backups and chickens. */
 const V09_SAVE_PREFIX='survival_base_v09_slot_';
 const V09_ACTIVE_KEY='survival_base_v09_active_slot';
 const V09_SLOT_COUNT=5;
@@ -7771,13 +7818,13 @@ const v09ChickenSlaughter=v09Button('🍗 Зарезать курицу · 5 м�
   const chickens=livestockAnimals.filter(a=>a.kind==='chicken');
   if(!livestockAlive||chickens.length<=2){message('🐔 Нужно оставить минимум 2 живые курицы.');return;}
   const food=storageChests[4].items;
-  if(freeItemSpace(bag,'chicken_meat',BAG_SLOTS)+freeItemSpace(food,'chicken_meat',12)<5){
+  if(freeItemSpace(bag,'chicken_meat',BAG_SLOTS)+freeItemSpace(food,'chicken_meat',60)<5){
     message('🎒 Освободите место для 5 куриного мяса в рюкзаке или ящике еды.');return;
   }
   const victim=chickens[chickens.length-1];
   livestockAnimals.splice(livestockAnimals.indexOf(victim),1);
   const left=addItem('chicken_meat',5);
-  if(left)addToSlots(food,'chicken_meat',left,12);
+  if(left)addToSlots(food,'chicken_meat',left,60);
   message('🍗 Получено куриного мяса: 5.');renderCowMenu();queueGameSave();
 });
 v09ChickenSlaughter.id='v09ChickenSlaughter';
@@ -7785,7 +7832,7 @@ el('cowSlaughterBtn').after(v09ChickenSlaughter);
 
 captureGameProgress=function(){
   const d=v09OriginalCapture();
-  d.gameVersion='0.9.1';
+  d.gameVersion='0.9.2';
   d.saveName=v091SaveName;
   d.v09={schema:1,power:V09Power.snapshot(),world:V09World.capture(),
     crafting:V09Craft.capture(),chickenBreedMs:v09ChickenBreedMs};
@@ -7853,7 +7900,7 @@ decodeGameProgress=function(raw){
       if(!owned&&!d.starterPending.includes(type))d.starterPending.push(type);
     }
     if(!d.handSlots[3]&&d.bag.some(s=>s.type==='remote'))d.handSlots[3]='remote';
-    d.gameVersion='0.9.1';
+    d.gameVersion='0.9.2';
   }
   const s=d.v09;
   if(!s||s.schema!==1||!Number.isFinite(s.chickenBreedMs)||s.chickenBreedMs<0||
@@ -7870,12 +7917,12 @@ decodeGameProgress=function(raw){
     d.v091.loot.objects=d.loot.map(o=>({id:o.id,searchedAt:o.searched?Date.now():null}));
   }
   if(!d.v091||d.v091.schema!==1||!d.v091.fortress||!d.v091.loot)
-    throw new Error('Invalid 0.9.1 state');
+    throw new Error('Invalid 0.9.2 state');
   if(d.v091.fortress.wallLevel&&d.player.scene!=='surface')throw new Error('Invalid elevation');
   if(window.V091Fortress&&V091Fortress.validate(d.v091.fortress)===false)
     throw new Error('Invalid fortress');
   if(window.V091Loot&&V091Loot.validate(d.v091.loot)===false)throw new Error('Invalid loot clocks');
-  d.gameVersion='0.9.1';
+  d.gameVersion='0.9.2';
   return d;
 };
 function v09CancelPendingSave(){
@@ -8037,7 +8084,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.9.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.9.2-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -8111,8 +8158,8 @@ window.V09Saves={open(){v09RenderSaveSlots();openOverlay(v09SaveOverlay);},newGa
   get activeSlot(){return v09ActiveSlot;},get chickenBreedMs(){return v09ChickenBreedMs;}};
 
 
-loadGameProgress();
-gameSaveReady=true;
+v09Style(".itemIcon{width:44px;height:44px;object-fit:contain;vertical-align:middle;pointer-events:none}.slotArt .itemIcon{width:100%;height:100%}.equipIcon .itemIcon{width:37px;height:37px}.inventoryGrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}.invSlot{box-sizing:border-box;min-height:66px;height:66px;padding:3px;position:relative;overflow:hidden}.invSlot .ico{height:37px;line-height:37px}.invSlot .ico .itemIcon{width:38px;height:38px}.invSlot>div:nth-child(2){font-size:9px;line-height:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.invSlot .qty{font-size:10px;line-height:12px;margin:0}.invSlot>div:only-child{font-size:9px}.v092CraftLayout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;min-height:0;flex:1;margin-top:10px}.v092RecipeList{overflow-y:auto;border-right:1px solid #ffffff16;padding-right:10px}.v092Category{font-size:11px;letter-spacing:.5px;color:#afc1bc;margin:10px 0}.v092Recipe{display:flex;align-items:center;gap:6px;width:100%;padding:7px 4px;margin:4px 0;border:1px solid transparent;border-radius:8px;background:#1c2a30;color:#e3ece8;text-align:left;cursor:pointer;min-height:58px}.v092Recipe.selected{border-color:#c9ac70;background:#34413f}.v092Recipe span{font-size:12px}.v092Recipe small{display:block;color:#a5b7b3;font-size:10px;margin-top:4px}.v092Recipe .itemIcon{width:42px;height:42px;flex-shrink:0}.v092RecipeHero{display:flex;align-items:center;gap:14px;min-height:90px}.v092RecipeHero>.itemIcon{width:85px;height:85px}.v092Materials{display:grid;grid-template-columns:1fr 1fr;gap:6px;min-height:112px;align-content:start}.v092Ingredient{display:flex;align-items:center;gap:6px;background:#1b2b30;border:1px solid #3b5054;border-radius:7px;color:#dce9e4;padding:5px;text-align:left;cursor:pointer;font-size:11px}.v092Ingredient strong{display:block;margin-top:4px}.v092Ingredient .itemIcon{width:34px;height:34px}.v092MaterialHelp{font-size:11px;line-height:1.4;min-height:46px;color:#afc1b9;padding:8px 0}.v092Production{font-size:12px}.v092Production>span{float:right;color:#b3d5be}.v092Production .v09CraftProgress{margin:8px 0}.v092ProductionCounts{margin-top:5px}.v091CraftActions{min-height:160px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-end}.v091CraftActions .v09CraftNote{margin:6px 0}#v09CraftOverlay .v09Panel{width:min(820px,calc(100vw - 20px));height:min(710px,94dvh)}.v091QuantityCount{font-size:13px}.v09CraftQuantity{gap:5px}.v09CraftQuantity button{font-size:12px}.v09CraftShort{color:#efa496}.v09GunStats{min-height:58px}\n@media(max-width:540px){.v092CraftLayout{grid-template-columns:116px minmax(0,1fr);gap:8px}.v092Recipe{flex-direction:column;align-items:flex-start}.v092Recipe .itemIcon{width:38px;height:38px}.v092RecipeList{padding-right:5px}.v092RecipeHero{gap:5px}.v092RecipeHero>.itemIcon{width:48px;height:48px}.v092RecipeHero b{font-size:13px}.v092Materials{grid-template-columns:1fr;min-height:112px}.v092Ingredient{min-height:38px}.v092Production>span{float:none;display:block}.invSlot{height:62px;min-height:62px}.inventoryGrid{gap:3px}.v091CraftActions{min-height:160px}#v09CraftOverlay .v09Panel{padding:10px}.v09CraftQuantity{grid-template-columns:1fr 1fr}}\n@media(max-height:500px){.v091CraftActions{min-height:100px}.v092Production .v09CraftNote{display:none}#v09CraftOverlay .v09Panel{height:96dvh}}\n");
+loadGameProgress();gameSaveReady=true;
 grantStarterItems();
 renderQuickSlots();
 if(starterPending.length)message('Освободите место в рюкзаке: предметы обновления ждут выдачи');
