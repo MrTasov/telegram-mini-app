@@ -1,0 +1,5239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Survival Base 0.6.24</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#080a0c;
+  touch-action:none;
+  overscroll-behavior:none;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  position:fixed;
+  inset:0;
+}
+
+#game{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:#20251f;
+}
+
+#canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* HUD */
+
+#hud{
+  position:absolute;
+  top:calc(10px + env(safe-area-inset-top));
+  left:calc(10px + env(safe-area-inset-left));
+  right:calc(10px + env(safe-area-inset-right));
+  display:flex;
+  justify-content:space-between;
+  z-index:20;
+  pointer-events:none;
+}
+
+.hudBox{
+  padding:7px 10px;
+  border-radius:11px;
+  background:rgba(10,12,14,.60);
+  border:1px solid rgba(255,255,255,.10);
+  color:white;
+  font-size:11px;
+  backdrop-filter:blur(6px);
+}
+
+.hudBox strong{
+  font-size:14px;
+}
+
+#healthText{
+  font-weight:bold;
+}
+
+/* SETTINGS */
+
+#settingsButton{
+  position:absolute;
+  top:calc(62px + env(safe-area-inset-top));
+  right:calc(12px + env(safe-area-inset-right));
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(100,105,110,.20);
+  color:rgba(255,255,255,.78);
+  font-size:18px;
+  z-index:60;
+}
+
+/* CONTROLS */
+
+.gameControl{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  z-index:40;
+  touch-action:none;
+}
+
+.joystick{
+  width:92px;
+  height:92px;
+  border-radius:50%;
+}
+
+.joystickBase{
+  position:absolute;
+  left:8px;
+  top:8px;
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.25);
+  background:rgba(120,125,130,.10);
+}
+
+.joystickStick{
+  position:absolute;
+  left:28px;
+  top:28px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.35);
+  background:rgba(145,150,155,.32);
+  color:rgba(255,255,255,.80);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+}
+
+.joystick.active .joystickBase{
+  background:rgba(150,155,160,.20);
+}
+
+.joystick.active .joystickStick{
+  background:rgba(180,185,190,.45);
+}
+
+.controlButton{
+  width:46px;
+  height:46px;
+  padding:0;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.27);
+  background:rgba(120,125,130,.18);
+  color:rgba(255,255,255,.84);
+  font-size:21px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(5px);
+}
+
+.controlButton.pressed{
+  background:rgba(180,185,190,.43);
+  transform:translate(-50%,-50%) scale(.94);
+}
+
+#actionButton{
+  z-index:120 !important;
+  pointer-events:auto !important;
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:transparent;
+}
+
+#actionButton.inactive{
+  opacity:.42;
+}
+
+#actionButton.available{
+  opacity:.96;
+  background:rgba(135,140,145,.30);
+}
+
+
+/* DAMAGE FLASH */
+
+#damageFlash{
+  position:absolute;
+  inset:0;
+  z-index:70;
+  background:rgba(170,0,0,.25);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .12s;
+}
+
+#damageFlash.show{
+  opacity:1;
+}
+
+/* MESSAGE */
+
+#message{
+  position:absolute;
+  left:50%;
+  bottom:calc(150px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  z-index:90;
+  padding:8px 13px;
+  border-radius:10px;
+  background:rgba(0,0,0,.74);
+  color:white;
+  font-size:13px;
+  opacity:0;
+  transition:opacity .2s;
+  pointer-events:none;
+}
+
+#message.show{
+  opacity:1;
+}
+
+/* FADE */
+
+#fade{
+  position:absolute;
+  inset:0;
+  z-index:200;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:black;
+  color:white;
+  font-size:18px;
+  letter-spacing:2px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s;
+}
+
+#fade.show{
+  opacity:1;
+}
+
+/* OVERLAYS */
+
+.overlay{
+  position:absolute;
+  inset:0;
+  z-index:300;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    calc(18px + env(safe-area-inset-right))
+    calc(18px + env(safe-area-inset-bottom))
+    calc(18px + env(safe-area-inset-left));
+  background:rgba(0,0,0,.76);
+}
+
+.overlay.open{
+  display:flex;
+}
+
+.panel{
+  width:min(430px,95vw);
+  max-height:88vh;
+  overflow-y:auto;
+  padding:19px;
+  border-radius:18px;
+  background:#161b1f;
+  border:1px solid rgba(255,255,255,.12);
+  color:white;
+  touch-action:pan-y;
+}
+
+.panel h2{
+  margin:0 0 6px;
+}
+
+.subtitle{
+  margin-bottom:17px;
+  color:rgba(255,255,255,.55);
+  font-size:13px;
+}
+
+.menuButton{
+  width:100%;
+  margin-top:9px;
+  padding:13px;
+  border-radius:11px;
+  border:1px solid rgba(255,255,255,.10);
+  background:#242a2e;
+  color:white;
+  font-size:15px;
+}
+
+.primary{
+  background:#315f9e;
+}
+
+.settingBox{
+  margin-top:12px;
+  padding:13px;
+  border-radius:11px;
+  background:#22282c;
+}
+
+.settingTitle{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+#soundVolume{
+  width:100%;
+}
+
+/* CONTROL EDITOR */
+
+.orientationTabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.orientationTab{
+  padding:10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+  background:#22282c;
+  color:rgba(255,255,255,.65);
+}
+
+.orientationTab.active{
+  background:#315f9e;
+  color:white;
+}
+
+.editorWrap{
+  min-height:280px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#editorStage{
+  position:relative;
+  overflow:hidden;
+  background:#303638;
+  border:2px solid rgba(255,255,255,.15);
+  border-radius:13px;
+  touch-action:none;
+}
+
+#editorStage.portrait{
+  width:180px;
+  height:320px;
+}
+
+#editorStage.landscape{
+  width:320px;
+  height:180px;
+}
+
+.preview{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  border:1px solid rgba(255,255,255,.40);
+  background:rgba(140,145,150,.30);
+  touch-action:none;
+}
+
+.preview.joy{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+}
+
+.preview.btn{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  font-size:12px;
+}
+
+.preview.dragging{
+  background:rgba(190,195,200,.50);
+}
+
+.workshopItem{
+  margin-top:8px;
+  padding:13px;
+  border-radius:11px;
+  background:#22282c;
+  color:rgba(255,255,255,.70);
+}
+
+/* DEATH */
+
+#deathOverlay{
+  background:rgba(0,0,0,.88);
+}
+
+.deathTitle{
+  font-size:30px;
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.deathText{
+  text-align:center;
+  color:rgba(255,255,255,.60);
+  margin-bottom:18px;
+}
+
+@media (pointer:coarse){
+  .hudBox,
+  .controlButton{
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+}
+
+
+.floatingJoystick{
+  position:fixed !important;
+  width:92px;
+  height:92px;
+  opacity:.78;
+  pointer-events:none;
+  transition:opacity .06s linear;
+}
+.floatingJoystick.hiddenJoystick{opacity:.38}
+.floatingJoystick .joystickBase{
+  left:0;
+  top:0;
+  width:92px;
+  height:92px;
+  border:2px solid rgba(255,255,255,.34);
+  background:rgba(20,24,28,.10);
+}
+.floatingJoystick .joystickStick{
+  left:50%;
+  top:50%;
+  width:38px;
+  height:38px;
+  margin-left:0;
+  margin-top:0;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(255,255,255,.58);
+  background:rgba(255,255,255,.22);
+}
+
+
+/* Mobile landscape seam guard */
+#gameCanvas{
+  position:fixed !important;
+  left:-3px !important;
+  top:-3px !important;
+  width:calc(100% + 6px) !important;
+  height:calc(100dvh + 6px) !important;
+  max-width:none !important;
+  max-height:none !important;
+}
+html,body{
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  background:#050807 !important;
+}
+
+
+#versionBadge{
+  position:fixed;
+  left:max(10px, env(safe-area-inset-left));
+  top:max(10px, env(safe-area-inset-top));
+  z-index:9998;
+  pointer-events:none;
+  padding:4px 7px;
+  border-radius:7px;
+  background:rgba(0,0,0,.52);
+  border:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.88);
+  font:700 10px/1.1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  letter-spacing:.5px;
+  text-shadow:0 1px 2px #000;
+}
+
+
+/* 0.5.0 inventory / loot / storage */
+#bagButton{
+  position:fixed; right:max(14px,env(safe-area-inset-right)); top:auto;
+  bottom:calc(max(150px, 22vh) + env(safe-area-inset-bottom));
+  z-index:105; width:48px; height:42px; border-radius:12px;
+  border:1px solid rgba(255,255,255,.22); background:rgba(10,12,13,.72);
+  color:#fff; font-size:21px; touch-action:manipulation;
+}
+.inventoryGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.invSlot{min-height:64px;border:1px solid rgba(255,255,255,.16);border-radius:10px;
+ background:rgba(255,255,255,.055);padding:7px;font-size:12px;display:flex;
+ flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.invSlot .ico{font-size:23px}.invSlot .qty{font-weight:800;margin-top:3px}
+.lootRow,.storageRow{display:flex;align-items:center;justify-content:space-between;gap:8px;
+ padding:9px 10px;margin:6px 0;border-radius:10px;background:rgba(255,255,255,.06)}
+.smallBtn{border:0;border-radius:8px;padding:7px 10px;font-weight:800}
+#searchBarWrap{position:fixed;z-index:120;display:none;pointer-events:none;width:92px;height:9px;
+ border:1px solid rgba(255,255,255,.65);border-radius:8px;background:rgba(0,0,0,.65);overflow:hidden}
+#searchBarFill{height:100%;width:0%;background:#e8e8e8}
+#ammoHud{position:fixed;left:max(10px,env(safe-area-inset-left));top:44px;z-index:110;
+ padding:4px 7px;border-radius:7px;background:rgba(0,0,0,.52);color:#fff;font:700 11px Arial}
+.sectionTitle{margin-top:12px;font-weight:800;color:#ddd}
+
+
+/* 0.5.3 — nested chest settings must always be the top modal */
+#chestSettingsOverlay{
+  z-index:10050 !important;
+}
+#chestSettingsOverlay .panel{
+  position:relative;
+  z-index:10051;
+}
+
+</style>
+</head>
+
+<body>
+<div id="versionBadge">VERSION 0.6.24</div>
+
+<div id="game">
+
+<canvas id="canvas"></canvas>
+
+<div id="hud">
+  <div class="hudBox">
+    <strong id="locationName">БАЗА</strong><br>
+    ДЕНЬ 1 · 14:32
+  </div>
+
+  <div class="hudBox">
+    <span id="healthText">❤️ 100/100</span>
+    &nbsp; 🍖 100
+  </div>
+</div>
+
+<button id="settingsButton">⚙</button>
+
+<div id="moveControl" class="gameControl joystick floatingJoystick hiddenJoystick">
+  <div class="joystickBase"></div>
+  <div id="moveStick" class="joystickStick">●</div>
+</div>
+
+<div id="aimControl" class="gameControl joystick floatingJoystick hiddenJoystick">
+  <div class="joystickBase"></div>
+  <div id="aimStick" class="joystickStick">●</div>
+</div>
+
+<button id="actionButton" class="gameControl controlButton inactive">✋</button>
+
+<div id="damageFlash"></div>
+<div id="message"></div>
+<div id="fade">ПОДЗЕМНАЯ БАЗА</div>
+
+
+<div id="farmOverlay" class="overlay">
+  <div class="panel" style="max-width:420px">
+    <h2 id="farmTitle">🌱 Посадка</h2>
+    <div class="subtitle">Выбери, что посадить</div>
+    <button class="menuButton farmCropBtn" data-crop="0">🥔 Картофель</button>
+    <button class="menuButton farmCropBtn" data-crop="1">🥕 Овощи</button>
+    <button class="menuButton farmCropBtn" data-crop="2">🌾 Зерно</button>
+    <button class="menuButton farmCropBtn" data-crop="3">🌿 Лекарственные растения</button>
+    <button class="menuButton farmCropBtn" data-crop="4">🌻 Техническая культура</button>
+    <button id="farmClose" class="menuButton">Закрыть</button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+
+<div id="settingsOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>⚙️ Настройки</h2>
+    <div class="subtitle">Survival Base 0.6.24 · New Controls</div>
+
+    <button id="openControlSettings" class="menuButton">
+      🎮 Настройка управления
+    </button>
+
+    <button id="fullscreenButton" class="menuButton">
+      ⛶ Полноэкранный режим
+    </button>
+
+    <div class="settingBox">
+      <div class="settingTitle">
+        <span>🔊 Звук</span>
+        <span id="soundValue">70%</span>
+      </div>
+
+      <input id="soundVolume" type="range" min="0" max="100" value="70">
+    </div>
+
+    <button id="closeSettings" class="menuButton">
+      Закрыть
+    </button>
+
+  </div>
+</div>
+
+<!-- CONTROL EDITOR -->
+
+<div id="controlOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>🎮 Управление</h2>
+
+    <div class="subtitle">
+      Перетащи элементы туда, где тебе удобно.
+    </div>
+
+    <div class="orientationTabs">
+
+      <button id="portraitTab" class="orientationTab active">
+        📱 Вертикально
+      </button>
+
+      <button id="landscapeTab" class="orientationTab">
+        ↔ Горизонтально
+      </button>
+
+    </div>
+
+    <div class="editorWrap">
+
+      <div id="editorStage" class="portrait">
+
+        <div id="previewMove" class="preview joy">●</div>
+        <div id="previewAim" class="preview joy">●</div>
+        <div id="previewAction" class="preview btn">✋</div>
+
+      </div>
+
+    </div>
+
+    <button id="saveControls" class="menuButton primary">
+      Сохранить
+    </button>
+
+    <button id="resetControls" class="menuButton">
+      ↺ Сбросить раскладку
+    </button>
+
+    <button id="backControls" class="menuButton">
+      Назад
+    </button>
+
+  </div>
+</div>
+
+<!-- WORKSHOP -->
+
+<div id="workshopOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>🔧 Мастерская</h2>
+
+    <div class="subtitle">
+      Тест мастерской.
+    </div>
+
+    <div class="workshopItem">🔫 Оружие</div>
+    <div class="workshopItem">📦 Патроны</div>
+    <div class="workshopItem">🛡 Оборона</div>
+    <div class="workshopItem">🔩 Детали</div>
+
+    <button id="closeWorkshop" class="menuButton">
+      Закрыть
+    </button>
+
+  </div>
+</div>
+
+
+<button id="bagButton" aria-label="Рюкзак">🎒</button>
+<div id="ammoHud">🔫 30 / 60</div>
+<div id="searchBarWrap"><div id="searchBarFill"></div></div>
+
+<div id="inventoryOverlay" class="overlay"><div class="panel">
+  <h2>🎒 Рюкзак</h2>
+  <div class="subtitle">12 ячеек · обычные ресурсы складываются до ×100</div>
+  <div id="inventoryGrid" class="inventoryGrid"></div>
+  <button id="closeInventory" class="menuButton">Закрыть</button>
+</div></div>
+
+
+<div id="chestSettingsOverlay" class="overlay"><div class="panel">
+  <h2>⚙️ Настройки ящика</h2>
+  <div class="subtitle">Выбери значок, чтобы сразу понимать, что ты здесь хранишь.</div>
+  <div id="chestIconChoices" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0"></div>
+  <input id="chestNameInput" maxlength="18" placeholder="Название ящика"
+    style="width:100%;box-sizing:border-box;padding:11px;border-radius:9px;border:1px solid #666;background:#222;color:#fff;margin-bottom:10px">
+  <button id="saveChestSettings" class="menuButton primary">Сохранить</button>
+  <button id="closeChestSettings" class="menuButton">Отмена</button>
+</div></div>
+
+<div id="lootOverlay" class="overlay"><div class="panel">
+  <h2 id="lootTitle">🔎 Найдено</h2>
+  <div id="lootList"></div>
+  <button id="takeAllLoot" class="menuButton primary">Забрать всё</button>
+  <button id="closeLoot" class="menuButton">Закрыть</button>
+</div></div>
+
+<div id="storageOverlay" class="overlay"><div class="panel">
+  <h2 id="storageTitle">📦 Склад</h2>
+  <div class="subtitle">РЮКЗАК ↔ ХРАНИЛИЩЕ</div>
+  <div style="display:flex;gap:8px;margin:10px 0">
+    <button id="storageSettings" class="smallBtn">⚙️ Настройки ящика</button>
+  </div>
+  <div class="sectionTitle">Ящик</div>
+  <div id="storageContents" class="inventoryGrid"></div>
+  <div class="sectionTitle">Рюкзак</div>
+  <div id="storageBag" class="inventoryGrid"></div>
+  <div class="subtitle">Нажми предмет в рюкзаке → положить в ящик. Нажми предмет в ящике → забрать.</div>
+  <button id="closeStorage" class="menuButton">Закрыть</button>
+</div></div>
+
+<!-- DEATH -->
+
+<div id="deathOverlay" class="overlay">
+
+  <div class="panel">
+
+    <div class="deathTitle">
+      ВЫ ПОГИБЛИ
+    </div>
+
+    <div class="deathText">
+      Заражённые добрались до вас.
+    </div>
+
+    <button id="respawnButton" class="menuButton primary">
+      ВОЗРОДИТЬСЯ НА БАЗЕ
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function el(id){
+  return document.getElementById(id);
+}
+
+function clone(obj){
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function clamp(value,min,max){
+  return Math.max(min,Math.min(max,value));
+}
+
+function distance(x1,y1,x2,y2){
+  return Math.hypot(x1-x2,y1-y2);
+}
+
+/* =====================================================
+   TELEGRAM
+===================================================== */
+
+const tg =
+  window.Telegram &&
+  window.Telegram.WebApp
+  ? window.Telegram.WebApp
+  : null;
+
+if(tg){
+
+  try{
+    tg.ready();
+  }catch(e){}
+
+  try{
+    tg.expand();
+  }catch(e){}
+
+  try{
+
+    if(typeof tg.disableVerticalSwipes === "function"){
+      tg.disableVerticalSwipes();
+    }
+
+  }catch(e){}
+
+}
+
+function fullscreen(){
+
+  if(!tg){
+    return;
+  }
+
+  try{
+    tg.expand();
+  }catch(e){}
+
+  try{
+
+    if(typeof tg.requestFullscreen === "function"){
+      tg.requestFullscreen();
+    }
+
+  }catch(e){}
+
+}
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+/*
+  Эти пять файлов должны лежать рядом с index.html:
+
+  gunshot.mp3
+  zombie.mp3
+  hit.mp3
+  player_hit.mp3
+  footsteps.mp3
+*/
+
+let masterVolume = 0.70;
+
+function createSound(file){
+  const audio = new Audio(file);
+  audio.preload = "auto";
+  return audio;
+}
+
+const sounds = {
+  gunshot:createSound("gunshot.mp3"),
+  zombie:createSound("zombie.mp3"),
+  hit:createSound("hit.mp3"),
+  playerHit:createSound("player_hit.mp3"),
+  footsteps:createSound("footsteps.mp3")
+};
+
+/* =====================================================
+   MOBILE AUDIO ENGINE 0.4.5
+===================================================== */
+let audioCtx=null;
+const audioBuffers={};
+let audioLoadStarted=false;
+let footstepsSource=null;
+let footstepsGain=null;
+let lastZombieBufferAt=0;
+
+const AUDIO_FILES={
+  gunshot:"gunshot.mp3",
+  zombie:"zombie.mp3",
+  hit:"hit.mp3",
+  playerHit:"player_hit.mp3",
+  footsteps:"footsteps.mp3"
+};
+
+function ensureAudioContext(){
+  if(audioCtx) return audioCtx;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC) return null;
+  try{audioCtx=new AC();}catch(e){audioCtx=null;}
+  return audioCtx;
+}
+
+async function preloadGameAudio(){
+  if(audioLoadStarted) return;
+  audioLoadStarted=true;
+  const ctx=ensureAudioContext();
+  if(!ctx) return;
+
+  await Promise.all(
+    Object.entries(AUDIO_FILES).map(async function([name,url]){
+      try{
+        const r=await fetch(url,{cache:"force-cache"});
+        const data=await r.arrayBuffer();
+        audioBuffers[name]=await ctx.decodeAudioData(data);
+      }catch(e){}
+    })
+  );
+}
+
+function unlockGameAudio(){
+  const ctx=ensureAudioContext();
+  if(ctx && ctx.state==="suspended"){
+    ctx.resume().catch(function(){});
+  }
+  preloadGameAudio().catch(function(){});
+}
+
+window.addEventListener("pointerdown",unlockGameAudio,{once:true,passive:true});
+window.addEventListener("touchstart",unlockGameAudio,{once:true,passive:true});
+
+function playBuffer(name,volume=1){
+  // 0.4.11: only short decoded WebAudio effects are allowed.
+  if(name!=="gunshot" && name!=="hit" && name!=="footsteps" && name!=="zombie" && name!=="playerHit") return;
+  if(masterVolume<=0) return;
+
+  const ctx=ensureAudioContext();
+  const buffer=audioBuffers[name];
+
+  if(!ctx || !buffer || ctx.state!=="running") return;
+
+  try{
+    const source=ctx.createBufferSource();
+    const gain=ctx.createGain();
+
+    source.buffer=buffer;
+    gain.gain.value=clamp(volume*masterVolume,0,1);
+
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start(0);
+
+    source.onended=function(){
+      try{
+        source.disconnect();
+        gain.disconnect();
+      }catch(e){}
+    };
+  }catch(e){}
+}
+
+function stopFootsteps(){
+  if(footstepsSource){
+    const source=footstepsSource;
+    const gain=footstepsGain;
+
+    footstepsSource=null;
+    footstepsGain=null;
+
+    try{ source.stop(0); }catch(e){}
+    try{ source.disconnect(); }catch(e){}
+    try{ if(gain) gain.disconnect(); }catch(e){}
+  }
+}
+
+function startFootsteps(){
+  // 0.4.13 uses scheduled one-shot footsteps instead of MP3 looping.
+  return;
+}
+
+function updateFootstepsAudio(){
+  if(playerDead || menuOpen || movePower<=JOY_DEAD){
+    stopFootsteps();
+    return;
+  }
+
+  const ctx=ensureAudioContext();
+  const buffer=audioBuffers.footsteps;
+  if(!ctx || !buffer || ctx.state!=="running") return;
+
+  const running=movePower>=RUN_THRESHOLD;
+
+  // Never create a second footsteps source while one is already playing.
+  if(!footstepsSource){
+    try{
+      const source=ctx.createBufferSource();
+      const gain=ctx.createGain();
+
+      source.buffer=buffer;
+      source.loop=true;
+      source.playbackRate.value=running?1.08:.94;
+
+      // Footsteps are intentionally much louder than before.
+      gain.gain.value=clamp(masterVolume*(running?.48:.42),0,1);
+
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(0);
+
+      footstepsSource=source;
+      footstepsGain=gain;
+
+      source.onended=function(){
+        if(footstepsSource===source){
+          footstepsSource=null;
+          footstepsGain=null;
+        }
+        try{
+          source.disconnect();
+          gain.disconnect();
+        }catch(e){}
+      };
+    }catch(e){}
+  }else{
+    try{
+      footstepsGain.gain.setValueAtTime(
+        clamp(masterVolume*(running?.48:.42),0,1),
+        ctx.currentTime
+      );
+      footstepsSource.playbackRate.setValueAtTime(
+        running?1.08:.94,
+        ctx.currentTime
+      );
+    }catch(e){}
+  }
+}
+
+function zombieDistanceVolume(zombie){
+  const d=Math.hypot(zombie.x-player.x,zombie.y-player.y);
+  if(d>=520) return 0;
+  return clamp((1-d/520)*.38,0,.38);
+}
+
+let lastZombieAudioAt=0;
+
+function playZombieBuffer(zombie){
+  if(!zombie || zombie.dead || masterVolume<=0) return;
+
+  const now=performance.now();
+  // Never allow a crowd of zombies to spam audio simultaneously.
+  if(now-lastZombieAudioAt<2200) return;
+
+  const dx=zombie.x-player.x;
+  const dy=zombie.y-player.y;
+  const dist=Math.hypot(dx,dy);
+
+  const hearDistance=520;
+  if(dist>=hearDistance) return;
+
+  // Close zombie = louder; distant zombie = quiet.
+  const proximity=1-(dist/hearDistance);
+  const volume=.10 + proximity*.24;
+
+  lastZombieAudioAt=now;
+  playBuffer("zombie",volume);
+}
+
+
+
+function playSound(sound,volume){
+  // HTMLAudio playback stays disabled during audio diagnostics.
+  return;
+}
+
+/*
+  Для выстрелов создаём отдельный экземпляр,
+  чтобы быстрые выстрелы не обрывали друг друга.
+*/
+
+const gunshotPool = [
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3")
+];
+
+let gunshotPoolIndex = 0;
+
+function playGunshot(){
+  playBuffer("gunshot",.30);
+}
+
+
+/* =====================================================
+   CONTROL LAYOUTS
+===================================================== */
+
+const defaults = {
+
+  portrait:{
+    move:{x:.18,y:.82},
+    aim:{x:.82,y:.82},
+    action:{x:.72,y:.68}
+  },
+
+  landscape:{
+    move:{x:.14,y:.78},
+    aim:{x:.86,y:.78},
+    action:{x:.76,y:.62}
+  }
+
+};
+
+function validPoint(point,fallback){
+
+  if(
+    !point ||
+    typeof point.x !== "number" ||
+    typeof point.y !== "number"
+  ){
+    return clone(fallback);
+  }
+
+  return {
+    x:clamp(point.x,.05,.95),
+    y:clamp(point.y,.08,.94)
+  };
+
+}
+
+function sanitizeLayouts(saved){
+
+  const result =
+    clone(defaults);
+
+  for(const mode of ["portrait","landscape"]){
+
+    if(!saved || !saved[mode]){
+      continue;
+    }
+
+    for(const key of ["move","aim","action"]){
+
+      result[mode][key] =
+        validPoint(
+          saved[mode][key],
+          defaults[mode][key]
+        );
+
+    }
+
+  }
+
+  return result;
+}
+
+function loadLayouts(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        "base_controls_068"
+      );
+
+    if(!saved){
+      return clone(defaults);
+    }
+
+    return sanitizeLayouts(
+      JSON.parse(saved)
+    );
+
+  }catch(e){
+
+    return clone(defaults);
+
+  }
+
+}
+
+let layouts =
+  loadLayouts();
+
+function saveLayouts(){
+
+  try{
+
+    localStorage.setItem(
+      "base_controls_068",
+      JSON.stringify(layouts)
+    );
+
+  }catch(e){}
+
+}
+
+function orientation(){
+
+  return window.innerWidth >
+         window.innerHeight
+         ? "landscape"
+         : "portrait";
+
+}
+
+function positionControl(element,data){
+
+  if(!element || !data){
+    return;
+  }
+
+  element.style.left =
+    (data.x * 100) + "%";
+
+  element.style.top =
+    (data.y * 100) + "%";
+
+}
+
+function applyControls(){
+
+  const mode = orientation();
+  const layout = layouts[mode] || defaults[mode];
+
+  if(typeof positionFixedControls==="function"){
+    positionFixedControls();
+  }
+
+}
+
+/* =====================================================
+   CANVAS
+===================================================== */
+
+const canvas =
+  el("canvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+let screenWidth = 1;
+let screenHeight = 1;
+
+function resizeCanvas(){
+
+  screenWidth =
+    Math.max(
+      1,
+      window.innerWidth
+    );
+
+  screenHeight =
+    Math.max(
+      1,
+      window.innerHeight
+    );
+
+  const mobileDevice =
+    window.matchMedia &&
+    window.matchMedia("(pointer:coarse)").matches;
+
+  const ratio =
+    mobileDevice
+    ? 1
+    : Math.min(
+        window.devicePixelRatio || 1,
+        1.5
+      );
+
+  canvas.width =
+    Math.floor(
+      screenWidth * ratio
+    );
+
+  canvas.height =
+    Math.floor(
+      screenHeight * ratio
+    );
+
+  canvas.style.width =
+    screenWidth + "px";
+
+  canvas.style.height =
+    screenHeight + "px";
+
+  ctx.setTransform(
+    ratio,
+    0,
+    0,
+    ratio,
+    0,
+    0
+  );
+
+}
+
+/* =====================================================
+   WORLD
+===================================================== */
+
+let scene =
+  "surface";
+
+let menuOpen =
+  false;
+
+let playerDead =
+  false;
+
+const player = {
+
+  x:800,
+  y:860,
+
+  radius:15,
+
+  health:100,
+  maxHealth:100,
+
+  walkSpeed:3.15,
+  runSpeed:5.25,
+
+  aimX:0,
+  aimY:-1,
+
+  moving:false,
+  running:false,
+
+  lastFootstep:0,
+  lastDamage:0,
+
+  walkAnimation:0
+
+};
+
+const camera = {
+  x:0,
+  y:0
+};
+
+function visibleOnScreen(x,y,padding){
+
+  padding =
+    padding === undefined
+    ? 80
+    : padding;
+
+  return (
+    x >= camera.x-padding &&
+    x <= camera.x+screenWidth+padding &&
+    y >= camera.y-padding &&
+    y <= camera.y+screenHeight+padding
+  );
+
+}
+
+const surface = {
+
+  width:1600,
+  height:2200,
+
+  outer:{
+    left:170,
+    top:130,
+    right:1430,
+    bottom:1070,
+    thickness:45
+  },
+
+  inner:{
+    left:610,
+    top:420,
+    right:990,
+    bottom:760,
+    thickness:28,
+    gateX:750,
+    gateWidth:100
+  },
+
+  hatch:{
+    x:800,
+    y:590
+  }
+
+};
+
+const bunker = {
+
+  width:1450,
+  height:1450,
+
+  // №1 — central corridor: 230 × 1500
+  corridor:{
+    left:610,
+    right:840,
+    top:-240,
+    bottom:1260
+  },
+
+  entrance:{
+    x:725,
+    y:1180
+  },
+
+  // All six side rooms are exactly 520 × 500.
+  // №2 — existing workshop
+  workshop:{
+    left:90,right:610,top:760,bottom:1260,doorTop:930,doorBottom:1090
+  },
+
+  // №3 — existing storage room with the same six functional chests
+  storage:{
+    left:840,right:1360,top:760,bottom:1260,doorTop:930,doorBottom:1090
+  },
+
+  // №4–7 — empty rooms for future systems
+  room4:{left:90,right:610,top:260,bottom:760,doorTop:430,doorBottom:590},
+  room5:{left:840,right:1360,top:260,bottom:760,doorTop:430,doorBottom:590},
+  room6:{left:90,right:610,top:-240,bottom:260,doorTop:-70,doorBottom:90},
+  room7:{left:840,right:1360,top:-240,bottom:260,doorTop:-70,doorBottom:90},
+
+  // №8 — large farm, directly at the end of the corridor
+  farm:{
+    left:90,right:1360,top:-940,bottom:-240,
+    doorLeft:650,doorRight:800
+  }
+
+};
+
+
+/* =====================================================
+   0.5.0 INVENTORY / LOOT / AMMO
+===================================================== */
+const ITEM={
+  wood:{name:"Дерево",icon:"🪵"},
+  metal:{name:"Металл",icon:"🔩"},
+  parts:{name:"Детали",icon:"⚙️"},
+  food:{name:"Еда",icon:"🥫"},potato:{name:"Картофель",icon:"🥔"},vegetables:{name:"Овощи",icon:"🥕"},grain:{name:"Зерно",icon:"🌾"},medicinal_herbs:{name:"Лекарственные растения",icon:"🌿"},technical_crop:{name:"Техническая культура",icon:"🌻"},
+  meds:{name:"Медикаменты",icon:"💊"},
+  fuel:{name:"Топливо",icon:"⛽"},
+  ammo:{name:"Патроны",icon:"🔫"}
+};
+const STACK_MAX=100, BAG_SLOTS=12;
+let bag=[
+  {type:"ammo",qty:60}
+];
+let storageChests=[
+  {name:"Топливо",icon:"⛽",items:[]},
+  {name:"Оружие",icon:"🔫",items:[]},
+  {name:"Металл",icon:"🔩",items:[]},
+  {name:"Материалы",icon:"⚙️",items:[]},
+  {name:"Еда",icon:"🥫",items:[]},
+  {name:"Напитки",icon:"🥤",items:[]},
+  {name:"Медицина",icon:"💊",items:[]},
+  {name:"Разное",icon:"🧰",items:[]}
+];
+let magazine=30, magazineMax=30;
+let activeStorage=null, activeLoot=null;
+let searchState=null;
+
+const scavenges=[
+  {id:"car1",kind:"car",x:610,y:1450,w:130,h:64,searched:false},
+  {id:"car2",kind:"car",x:1030,y:1710,w:130,h:64,searched:false},
+  {id:"car3",kind:"car",x:390,y:1880,w:130,h:64,searched:false},
+  {id:"house1",kind:"house",x:230,y:1330,w:260,h:210,searched:false},
+  {id:"house2",kind:"house",x:1110,y:1320,w:270,h:220,searched:false},
+  {id:"house3",kind:"house",x:650,y:1800,w:300,h:240,searched:false}
+];
+
+function bagUsed(){return bag.length}
+function addItem(type,qty){
+  let left=qty;
+  for(const s of bag){
+    if(s.type===type && s.qty<STACK_MAX){
+      const n=Math.min(left,STACK_MAX-s.qty); s.qty+=n; left-=n;
+      if(left<=0) return 0;
+    }
+  }
+  while(left>0 && bag.length<BAG_SLOTS){
+    const n=Math.min(left,STACK_MAX); bag.push({type,qty:n}); left-=n;
+  }
+  return left;
+}
+function removeItem(type,qty){
+  let left=qty;
+  for(let i=bag.length-1;i>=0 && left>0;i--){
+    const s=bag[i]; if(s.type!==type) continue;
+    const n=Math.min(left,s.qty); s.qty-=n; left-=n;
+    if(s.qty<=0) bag.splice(i,1);
+  }
+  return qty-left;
+}
+function bagCount(type){return bag.filter(s=>s.type===type).reduce((a,s)=>a+s.qty,0)}
+function updateAmmoHud(){el("ammoHud").textContent=`🔫 ${magazine} / ${bagCount("ammo")}`}
+
+function renderBag(){
+  const g=el("inventoryGrid"); g.innerHTML="";
+  for(let i=0;i<BAG_SLOTS;i++){
+    const s=bag[i], d=document.createElement("div"); d.className="invSlot";
+    d.innerHTML=s?`<div class="ico">${ITEM[s.type].icon}</div><div>${ITEM[s.type].name}</div><div class="qty">×${s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`;
+    g.appendChild(d);
+  }
+}
+function randomLoot(kind){
+  const out=[];
+  function put(type,min,max,chance=1){if(Math.random()<=chance)out.push({type,qty:min+Math.floor(Math.random()*(max-min+1))})}
+  if(kind==="car"){put("fuel",3,14,.9);put("ammo",5,24,.72);put("metal",4,18,.82);put("parts",1,8,.58)}
+  else{put("food",2,12,.92);put("meds",1,5,.68);put("ammo",3,16,.35);put("wood",3,12,.45)}
+  return out.length?out:[{type:kind==="car"?"metal":"food",qty:2}];
+}
+function renderLoot(){
+  const box=el("lootList"); box.innerHTML="";
+  for(const s of activeLoot||[]){
+    const r=document.createElement("div"); r.className="lootRow";
+    r.innerHTML=`<span>${ITEM[s.type].icon} ${ITEM[s.type].name}</span><b>×${s.qty}</b>`; box.appendChild(r);
+  }
+}
+function openLoot(obj){
+  activeLoot=randomLoot(obj.kind); obj.searched=true;
+  el("lootTitle").textContent=obj.kind==="car"?"🚗 Машина":"🏚️ Здание";
+  renderLoot(); openOverlay(el("lootOverlay"));
+}
+function startSearch(obj){
+  if(searchState||obj.searched)return;
+  searchState={obj,start:performance.now(),duration:1000};
+}
+function cancelSearch(){searchState=null;el("searchBarWrap").style.display="none";el("searchBarFill").style.width="0%"}
+function updateSearch(){
+  if(!searchState)return;
+  if(movePower>JOY_DEAD){cancelSearch();return}
+  const p=clamp((performance.now()-searchState.start)/searchState.duration,0,1);
+  const bar=el("searchBarWrap");
+  bar.style.display="block";
+  bar.style.left=(screenWidth/2-46)+"px";
+  bar.style.top=(screenHeight/2-58)+"px";
+  el("searchBarFill").style.width=(p*100)+"%";
+  if(p>=1){const o=searchState.obj;cancelSearch();openLoot(o)}
+}
+function reloadWeapon(){
+  if(magazine>=magazineMax)return;
+  const need=magazineMax-magazine, got=removeItem("ammo",need); magazine+=got; updateAmmoHud();
+  if(got>0)message("Перезарядка");
+}
+function nearestScavenge(){
+  let best=null,bd=90;
+  for(const o of scavenges){
+    if(o.searched)continue;
+    const cx=o.x+o.w/2,cy=o.y+o.h/2,d=distance(player.x,player.y,cx,cy);
+    if(d<bd){bd=d;best=o}
+  }
+  return best;
+}
+
+/* =====================================================
+   NOISE SYSTEM
+===================================================== */
+
+let noiseEvent = {
+  x:0,
+  y:0,
+  radius:0,
+  time:0
+};
+
+function createNoise(x,y,radius){
+
+  noiseEvent.x = x;
+  noiseEvent.y = y;
+  noiseEvent.radius = radius;
+  noiseEvent.time = performance.now();
+
+}
+
+/* =====================================================
+   ZOMBIES
+===================================================== */
+
+function makeZombie(x,y){
+
+  return {
+
+    x:x,
+    y:y,
+
+    spawnX:x,
+    spawnY:y,
+
+    radius:17,
+
+    health:100,
+    maxHealth:100,
+
+    alive:true,
+
+    state:"wander",
+
+    speed:.65,
+    chaseSpeed:1.45,
+
+    wanderAngle:
+      Math.random() *
+      Math.PI * 2,
+
+    nextWanderChange:
+      performance.now() +
+      1000 +
+      Math.random()*2000,
+
+    lastAttack:0,
+
+    hitFlash:0,
+
+    deathTime:0,
+
+    lastGrowl:
+      performance.now() +
+      2000 +
+      Math.random()*5000
+
+  };
+
+}
+
+let zombies = [];
+
+function resetZombies(){
+
+  zombies = [
+
+    makeZombie(
+      420,
+      700
+    ),
+
+    makeZombie(
+      1190,
+      610
+    ),
+
+    makeZombie(
+      1050,
+      900
+    )
+
+  ];
+
+}
+
+resetZombies();
+
+/* =====================================================
+   0.4.8 FIXED TWIN-STICK
+   No floating bases. Each joystick stays in one fixed,
+   symmetric position. Only the inner knob follows the finger.
+===================================================== */
+
+let moveX=0, moveY=0, movePower=0;
+let rightAimActive=false, aimPower=0;
+let leftPointerId=null, rightPointerId=null;
+
+const JOY_RADIUS=46;
+const JOY_DEAD=.14;
+const RUN_THRESHOLD=.72;
+
+const moveControl=el("moveControl");
+const moveStick=el("moveStick");
+const aimControl=el("aimControl");
+const aimStick=el("aimStick");
+
+function centerJoystickKnob(stick){
+  stick.style.left="50%";
+  stick.style.top="50%";
+  stick.style.marginLeft="0";
+  stick.style.marginTop="0";
+  stick.style.transform="translate(-50%,-50%)";
+}
+
+function setFixedJoystick(control,x,y){
+  control.style.left=(x-JOY_RADIUS)+"px";
+  control.style.top=(y-JOY_RADIUS)+"px";
+  control.style.right="auto";
+  control.style.bottom="auto";
+  control.style.transform="none";
+  control.classList.remove("hiddenJoystick");
+}
+
+function fixedGeometry(){
+  const w=window.innerWidth;
+  const h=window.innerHeight;
+  const landscape=w>h;
+
+  if(landscape){
+    return {
+      leftX:w*.13,
+      rightX:w*.87,
+      y:h*.78,
+      actionX:w*.76,
+      actionY:h*.58
+    };
+  }
+
+  return {
+    leftX:w*.18,
+    rightX:w*.82,
+    y:h*.84,
+    actionX:w*.70,
+    actionY:h*.68
+  };
+}
+
+function positionFixedControls(){
+  const g=fixedGeometry();
+
+  setFixedJoystick(moveControl,g.leftX,g.y);
+  setFixedJoystick(aimControl,g.rightX,g.y);
+
+  centerJoystickKnob(moveStick);
+  centerJoystickKnob(aimStick);
+
+  const action=el("actionButton");
+  if(action){
+    action.style.left=g.actionX+"px";
+    action.style.top=g.actionY+"px";
+    action.style.right="auto";
+    action.style.bottom="auto";
+    action.style.transform="translate(-50%,-50%)";
+  }
+}
+
+function fixedVector(stick,cx,cy,x,y){
+  const dx=x-cx;
+  const dy=y-cy;
+  const distance=Math.hypot(dx,dy);
+  const maxDistance=30;
+
+  let drawX=dx;
+  let drawY=dy;
+
+  if(distance>maxDistance){
+    const k=maxDistance/distance;
+    drawX*=k;
+    drawY*=k;
+  }
+
+  stick.style.transform=
+    `translate(calc(-50% + ${drawX}px),calc(-50% + ${drawY}px))`;
+
+  const len=distance||1;
+
+  return {
+    x:dx/len,
+    y:dy/len,
+    power:Math.min(1,distance/maxDistance)
+  };
+}
+
+function uiTouch(target){
+  return !!(
+    target && target.closest &&
+    target.closest("button,.overlay,.panel,.menuCard,.workshopPanel")
+  );
+}
+
+function joystickCenters(){
+  const g=fixedGeometry();
+  return {
+    left:{x:g.leftX,y:g.y},
+    right:{x:g.rightX,y:g.y}
+  };
+}
+
+window.addEventListener("pointerdown",function(e){
+  if(menuOpen || playerDead || uiTouch(e.target)) return;
+
+  const centers=joystickCenters();
+
+  if(e.clientX<window.innerWidth*.5 && leftPointerId===null){
+    leftPointerId=e.pointerId;
+
+    const v=fixedVector(
+      moveStick,
+      centers.left.x,centers.left.y,
+      e.clientX,e.clientY
+    );
+
+    moveX=v.x;
+    moveY=v.y;
+    movePower=v.power;
+
+    if(movePower>JOY_DEAD && !rightAimActive){
+      player.aimX=moveX;
+      player.aimY=moveY;
+    }
+
+    e.preventDefault();
+    return;
+  }
+
+  if(e.clientX>=window.innerWidth*.5 && rightPointerId===null){
+    rightPointerId=e.pointerId;
+    rightAimActive=true;
+
+    const v=fixedVector(
+      aimStick,
+      centers.right.x,centers.right.y,
+      e.clientX,e.clientY
+    );
+
+    aimPower=v.power;
+
+    if(aimPower>JOY_DEAD){
+      player.aimX=v.x;
+      player.aimY=v.y;
+      firing=true;
+      shoot();
+    }else{
+      firing=false;
+    }
+
+    e.preventDefault();
+  }
+},{passive:false});
+
+window.addEventListener("pointermove",function(e){
+  const centers=joystickCenters();
+
+  if(e.pointerId===leftPointerId){
+    const v=fixedVector(
+      moveStick,
+      centers.left.x,centers.left.y,
+      e.clientX,e.clientY
+    );
+
+    moveX=v.x;
+    moveY=v.y;
+    movePower=v.power;
+
+    if(movePower>JOY_DEAD && !rightAimActive){
+      player.aimX=moveX;
+      player.aimY=moveY;
+    }
+
+    e.preventDefault();
+  }
+
+  if(e.pointerId===rightPointerId){
+    const v=fixedVector(
+      aimStick,
+      centers.right.x,centers.right.y,
+      e.clientX,e.clientY
+    );
+
+    aimPower=v.power;
+
+    if(aimPower>JOY_DEAD){
+      player.aimX=v.x;
+      player.aimY=v.y;
+
+      if(!firing){
+        firing=true;
+        shoot();
+      }
+    }else{
+      firing=false;
+    }
+
+    e.preventDefault();
+  }
+},{passive:false});
+
+function releaseFixedStick(e){
+  if(e.pointerId===leftPointerId){
+    leftPointerId=null;
+    moveX=0;
+    moveY=0;
+    movePower=0;
+    stopFootsteps();
+    centerJoystickKnob(moveStick);
+  }
+
+  if(e.pointerId===rightPointerId){
+    rightPointerId=null;
+    rightAimActive=false;
+    aimPower=0;
+    firing=false;
+    centerJoystickKnob(aimStick);
+
+    if(movePower>JOY_DEAD){
+      player.aimX=moveX;
+      player.aimY=moveY;
+    }
+  }
+}
+
+window.addEventListener("pointerup",releaseFixedStick,{passive:false});
+window.addEventListener("pointercancel",releaseFixedStick,{passive:false});
+
+window.addEventListener("resize",positionFixedControls);
+
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",positionFixedControls);
+}
+
+centerJoystickKnob(moveStick);
+centerJoystickKnob(aimStick);
+setTimeout(positionFixedControls,0);
+setTimeout(positionFixedControls,250);
+
+/* =====================================================
+   BULLETS / SHOOTING
+===================================================== */
+
+const bullets = [];
+
+let firing = false;
+let lastShot = 0;
+
+function shoot(){
+
+  if(
+    menuOpen ||
+    playerDead
+  ){
+    return;
+  }
+
+  if(magazine<=0){
+    if(bagCount("ammo")>0) reloadWeapon();
+    else message("Нет патронов");
+    return;
+  }
+
+  const now =
+    performance.now();
+
+  if(now-lastShot < 155){
+    return;
+  }
+
+  lastShot = now;
+  magazine--;
+  updateAmmoHud();
+
+  let length =
+    Math.hypot(
+      player.aimX,
+      player.aimY
+    );
+
+  if(length === 0){
+    length = 1;
+  }
+
+  const dx =
+    player.aimX /
+    length;
+
+  const dy =
+    player.aimY /
+    length;
+
+  bullets.push({
+
+    x:
+      player.x +
+      dx*29,
+
+    y:
+      player.y +
+      dy*29,
+
+    dx:
+      dx*12,
+
+    dy:
+      dy*12,
+
+    radius:4,
+
+    life:80
+
+  });
+
+  playGunshot();
+
+  createNoise(
+    player.x,
+    player.y,
+    550
+  );
+
+  muzzleFlash.time =
+    performance.now();
+
+  muzzleFlash.x =
+    player.x +
+    dx*30;
+
+  muzzleFlash.y =
+    player.y +
+    dy*30;
+
+}
+
+const muzzleFlash = {
+  x:0,
+  y:0,
+  time:0
+};
+
+function hitZombie(zombie){
+
+  zombie.health -= 25;
+
+  zombie.hitFlash =
+    performance.now();
+
+  zombie.state =
+    "chase";
+
+  playSound(
+    sounds.hit,
+    .65
+  );
+
+  if(zombie.health <= 0){
+
+    zombie.health = 0;
+
+    zombie.alive = false;
+
+    zombie.deathTime =
+      performance.now();
+
+  }
+
+}
+
+function updateBullets(){
+
+  if(firing){
+    shoot();
+  }
+
+  for(
+    let i =
+      bullets.length-1;
+
+    i >= 0;
+
+    i--
+  ){
+
+    const bullet =
+      bullets[i];
+
+    bullet.x +=
+      bullet.dx;
+
+    bullet.y +=
+      bullet.dy;
+
+    bullet.life--;
+
+    let removed = false;
+
+    if(scene === "surface"){
+
+      for(const zombie of zombies){
+
+        if(!zombie.alive){
+          continue;
+        }
+
+        if(
+          distance(
+            bullet.x,
+            bullet.y,
+            zombie.x,
+            zombie.y
+          )
+          <
+          zombie.radius +
+          bullet.radius
+        ){
+
+          hitZombie(zombie);
+
+          bullets.splice(
+            i,
+            1
+          );
+
+          removed = true;
+
+          break;
+
+        }
+
+      }
+
+    }
+
+    if(removed){
+      continue;
+    }
+
+    if(bullet.life <= 0){
+
+      bullets.splice(
+        i,
+        1
+      );
+
+    }
+
+  }
+
+}
+
+/* =====================================================
+   COLLISION
+===================================================== */
+
+function surfaceCollision(x,y){
+  const r=player.radius,o=surface.outer;
+  if(x<r || x>surface.width-r || y<r || y>surface.height-r)return true;
+
+  const gateLeft=730,gateRight=870;
+  const inBaseX=x>o.left-r&&x<o.right+r;
+  if(inBaseX){
+    if(y>o.top-r&&y<o.top+o.thickness+r)return true;
+    if(x>o.left-r&&x<o.left+o.thickness+r&&y>o.top-r&&y<o.bottom+r)return true;
+    if(x>o.right-o.thickness-r&&x<o.right+r&&y>o.top-r&&y<o.bottom+r)return true;
+    if(y>o.bottom-o.thickness-r&&y<o.bottom+r && !(x>gateLeft+r&&x<gateRight-r))return true;
+  }
+
+  const inner=surface.inner,wall=inner.thickness;
+  if(x>inner.left-r&&x<inner.right+r&&y>inner.top-r&&y<inner.top+wall+r)return true;
+  if(y>inner.top-r&&y<inner.bottom+r&&x>inner.left-r&&x<inner.left+wall+r)return true;
+  if(y>inner.top-r&&y<inner.bottom+r&&x>inner.right-wall-r&&x<inner.right+r)return true;
+  if(y>inner.bottom-wall-r&&y<inner.bottom+r&&x>inner.left-r&&x<inner.right+r){
+    const gate=x>inner.gateX+r&&x<inner.gateX+inner.gateWidth-r;
+    if(!gate)return true;
+  }
+  return false;
+}
+
+function bunkerCollision(x,y){
+  const r=player.radius,c=bunker.corridor;
+
+  const inside=(o)=>
+    x>=o.left+r && x<=o.right-r &&
+    y>=o.top+r && y<=o.bottom-r;
+
+  const sideDoor=(o,side)=>{
+    if(side==="left"){
+      return x>=o.right-30 && x<=c.left+30 &&
+             y>=o.doorTop && y<=o.doorBottom;
+    }
+    return x>=c.right-30 && x<=o.left+30 &&
+           y>=o.doorTop && y<=o.doorBottom;
+  };
+
+  const inCorridor=
+    x>=c.left+r && x<=c.right-r &&
+    y>=c.top+r && y<=c.bottom-r;
+
+  const inWorkshop=inside(bunker.workshop);
+  const inStorage=inside(bunker.storage);
+  const in4=inside(bunker.room4);
+  const in5=inside(bunker.room5);
+  const in6=inside(bunker.room6);
+  const in7=inside(bunker.room7);
+
+  const d2=sideDoor(bunker.workshop,"left");
+  const d3=sideDoor(bunker.storage,"right");
+  const d4=sideDoor(bunker.room4,"left");
+  const d5=sideDoor(bunker.room5,"right");
+  const d6=sideDoor(bunker.room6,"left");
+  const d7=sideDoor(bunker.room7,"right");
+
+  const f=bunker.farm;
+  const inFarm=
+    x>=f.left+r && x<=f.right-r &&
+    y>=f.top+r && y<=f.bottom-r;
+
+  const farmDoor=
+    y>=f.bottom-30 && y<=f.bottom+30 &&
+    x>=f.doorLeft && x<=f.doorRight;
+
+  return !(inCorridor||inWorkshop||inStorage||in4||in5||in6||in7||
+           d2||d3||d4||d5||d6||d7||inFarm||farmDoor);
+}
+
+/* =====================================================
+   MOVEMENT / FOOTSTEPS
+===================================================== */
+
+function updatePlayer(){
+
+  if(menuOpen || playerDead){
+    return;
+  }
+
+  player.moving = movePower > JOY_DEAD;
+  player.running = movePower >= RUN_THRESHOLD;
+
+  if(!player.moving){
+    return;
+  }
+
+  const length=Math.hypot(moveX,moveY)||1;
+  const x=moveX/length;
+  const y=moveY/length;
+
+  // Fully analog movement:
+  // just outside deadzone = 20% of max;
+  // full joystick = 100%;
+  // new maximum = half of the old maximum run speed.
+  const newMaxSpeed=player.runSpeed*.50;
+  const normalizedPower=clamp((movePower-JOY_DEAD)/(1-JOY_DEAD),0,1);
+  const speed=newMaxSpeed*(.20+.80*normalizedPower);
+
+  const collision =
+    scene === "surface"
+    ? surfaceCollision
+    : bunkerCollision;
+
+  const newX =
+    player.x +
+    x*speed;
+
+  const newY =
+    player.y +
+    y*speed;
+
+  if(
+    !collision(
+      newX,
+      player.y
+    )
+  ){
+    player.x = newX;
+  }
+
+  if(
+    !collision(
+      player.x,
+      newY
+    )
+  ){
+    player.y = newY;
+  }
+
+  player.walkAnimation +=
+    .21;
+
+  const now =
+    performance.now();
+
+  if(
+    now -
+    player.lastFootstep
+    >
+    430
+  ){
+
+    player.lastFootstep =
+      now;
+
+    /* footsteps handled by looped WebAudio */
+
+    if(scene === "surface"){
+
+      createNoise(
+        player.x,
+        player.y,
+        120
+      );
+
+    }
+
+  }
+
+}
+
+/* =====================================================
+   PLAYER DAMAGE
+===================================================== */
+
+function damagePlayer(amount){
+
+  if(playerDead){
+    return;
+  }
+
+  player.health -= amount;
+
+  if(player.health < 0){
+    player.health = 0;
+  }
+
+  el("healthText").textContent =
+    "❤️ " +
+    player.health +
+    "/" +
+    player.maxHealth;
+
+  playSound(
+    sounds.playerHit,
+    .8
+  );
+
+  const flash =
+    el("damageFlash");
+
+  flash.classList.add(
+    "show"
+  );
+
+  setTimeout(
+    function(){
+
+      flash.classList.remove(
+        "show"
+      );
+
+    },
+    120
+  );
+
+  if(player.health <= 0){
+    killPlayer();
+  }
+
+}
+
+function killPlayer(){
+
+  playerDead = true;
+
+  movePower = 0;
+  firing = false;
+
+  menuOpen = true;
+
+  el("deathOverlay").classList.add(
+    "open"
+  );
+
+}
+
+function respawn(){
+
+  player.health =
+    player.maxHealth;
+
+  el("healthText").textContent =
+    "❤️ 100/100";
+
+  scene =
+    "surface";
+
+  player.x =
+    800;
+
+  player.y =
+    860;
+
+  player.aimX =
+    0;
+
+  player.aimY =
+    -1;
+
+  bullets.length =
+    0;
+
+  resetZombies();
+
+  playerDead =
+    false;
+
+  menuOpen =
+    false;
+
+  el("locationName").textContent =
+    "БАЗА";
+
+  el("deathOverlay").classList.remove(
+    "open"
+  );
+
+}
+
+el("respawnButton").addEventListener(
+  "click",
+  respawn
+);
+
+/* =====================================================
+   ZOMBIE AI
+===================================================== */
+
+function zombieCanMoveTo(x,y){
+
+  /*
+    Пока заражённые используют ту же геометрию стен,
+    но с небольшим запасом.
+  */
+
+  const outer =
+    surface.outer;
+
+  if(
+    x <
+    outer.left +
+    outer.thickness +
+    15
+  ) return false;
+
+  if(
+    x >
+    outer.right -
+    outer.thickness -
+    15
+  ) return false;
+
+  if(
+    y <
+    outer.top +
+    outer.thickness +
+    15
+  ) return false;
+
+  if(
+    y >
+    outer.bottom -
+    outer.thickness -
+    15
+  ) return false;
+
+  return true;
+}
+
+function updateZombies(){
+  const aiNow=performance.now();
+  if(updateZombies._last && aiNow-updateZombies._last<32) return;
+  updateZombies._last=aiNow;
+
+
+  if(
+    scene !== "surface" ||
+    menuOpen ||
+    playerDead
+  ){
+    return;
+  }
+
+  const now =
+    performance.now();
+
+  for(const zombie of zombies){
+
+    if(!zombie.alive){
+      continue;
+    }
+
+    const playerDistance =
+      distance(
+        zombie.x,
+        zombie.y,
+        player.x,
+        player.y
+      );
+
+    /* SEE PLAYER */
+
+    if(playerDistance < 270){
+
+      zombie.state =
+        "chase";
+
+    }
+
+    /* HEAR NOISE */
+
+    if(
+      now -
+      noiseEvent.time
+      <
+      650
+    ){
+
+      const noiseDistance =
+        distance(
+          zombie.x,
+          zombie.y,
+          noiseEvent.x,
+          noiseEvent.y
+        );
+
+      if(
+        noiseDistance <
+        noiseEvent.radius
+      ){
+
+        zombie.state =
+          "chase";
+
+      }
+
+    }
+
+    /* GROWL */
+
+    if(
+      playerDistance < 330 &&
+      now > zombie.lastGrowl
+    ){
+
+      playZombieBuffer(zombie);
+
+      zombie.lastGrowl =
+        now +
+        3500 +
+        Math.random()*4500;
+
+    }
+
+    /* CHASE */
+
+    if(zombie.state === "chase"){
+
+      if(playerDistance > 430){
+
+        zombie.state =
+          "wander";
+
+      }
+
+      else if(playerDistance > 31){
+
+        const dx =
+          (
+            player.x -
+            zombie.x
+          ) /
+          playerDistance;
+
+        const dy =
+          (
+            player.y -
+            zombie.y
+          ) /
+          playerDistance;
+
+        const nextX =
+          zombie.x +
+          dx *
+          zombie.chaseSpeed;
+
+        const nextY =
+          zombie.y +
+          dy *
+          zombie.chaseSpeed;
+
+        if(
+          zombieCanMoveTo(
+            nextX,
+            zombie.y
+          )
+        ){
+          zombie.x = nextX;
+        }
+
+        if(
+          zombieCanMoveTo(
+            zombie.x,
+            nextY
+          )
+        ){
+          zombie.y = nextY;
+        }
+
+      }
+
+      /* ATTACK */
+
+      if(
+        playerDistance < 34 &&
+        now -
+        zombie.lastAttack
+        >
+        950
+      ){
+
+        zombie.lastAttack =
+          now;
+
+        damagePlayer(10);
+
+      }
+
+    }
+
+    /* WANDER */
+
+    else{
+
+      if(
+        now >
+        zombie.nextWanderChange
+      ){
+
+        zombie.wanderAngle =
+          Math.random() *
+          Math.PI * 2;
+
+        zombie.nextWanderChange =
+          now +
+          1200 +
+          Math.random()*2600;
+
+      }
+
+      const nextX =
+        zombie.x +
+        Math.cos(
+          zombie.wanderAngle
+        ) *
+        zombie.speed;
+
+      const nextY =
+        zombie.y +
+        Math.sin(
+          zombie.wanderAngle
+        ) *
+        zombie.speed;
+
+      if(
+        zombieCanMoveTo(
+          nextX,
+          zombie.y
+        )
+      ){
+        zombie.x = nextX;
+      }
+
+      if(
+        zombieCanMoveTo(
+          zombie.x,
+          nextY
+        )
+      ){
+        zombie.y = nextY;
+      }
+
+    }
+
+  }
+
+}
+
+/* =====================================================
+   CAMERA
+===================================================== */
+
+function updateCamera(){
+  const targetX=player.x-screenWidth/2;
+  const targetY=player.y-screenHeight/2;
+
+  if(scene==="bunker"){
+    // The bunker is larger than one viewport and uses negative world coordinates.
+    // Never clamp to the old bunker bounds: camera follows the player everywhere.
+    camera.x += (targetX-camera.x)*0.16;
+    camera.y += (targetY-camera.y)*0.16;
+    return;
+  }
+
+  camera.x += (targetX-camera.x)*0.12;
+  camera.y += (targetY-camera.y)*0.12;
+
+  const maxX=Math.max(0,surface.width-screenWidth);
+  const maxY=Math.max(0,surface.height-screenHeight);
+  camera.x=clamp(camera.x,0,maxX);
+  camera.y=clamp(camera.y,0,maxY);
+}
+
+
+// =====================================================
+// FARM ACTION HELPERS — 0.6.18
+// Uses the same contextual hand button as hatch/storage/workshop.
+// =====================================================
+window.farmCrops = window.farmCrops || [
+  {name:"Картофель",icon:"🥔"},
+  {name:"Овощи",icon:"🥕"},
+  {name:"Зерно",icon:"🌾"},
+  {name:"Лекарственные",icon:"🌿"},
+  {name:"Технические",icon:"🌻"}
+];
+window.farmState = window.farmState || Array.from({length:5},()=>({crop:null,plantedAt:0}));
+const FARM_GROW_TIME = 45000;
+
+function getFarmBeds(){
+  const f=bunker.farm;
+  return [
+    {x:f.left+75,  y:f.top+55, w:205, h:535},
+    {x:f.left+305, y:f.top+55, w:205, h:535},
+    {x:f.left+535, y:f.top+55, w:205, h:535},
+    {x:f.left+765, y:f.top+55, w:205, h:535},
+    {x:f.left+995, y:f.top+55, w:205, h:535}
+  ];
+}
+
+function nearestFarmBed(){
+  if(scene!=="bunker") return null;
+  const beds=getFarmBeds();
+  let best=null, bestD=72;
+  for(let i=0;i<beds.length;i++){
+    const b=beds[i];
+    const nx=clamp(player.x,b.x,b.x+b.w);
+    const ny=clamp(player.y,b.y,b.y+b.h);
+    const d=distance(player.x,player.y,nx,ny);
+    if(d<bestD){ bestD=d; best=i; }
+  }
+  return best;
+}
+
+function useFarmBed(i){
+  const st=window.farmState[i];
+  if(!st) return;
+
+  if(st.crop!==null){
+    const elapsed=Date.now()-st.plantedAt;
+    if(elapsed>=FARM_GROW_TIME){
+      const crop=window.farmCrops[st.crop];
+
+      // Every crop is now its own real backpack object/resource.
+      const harvestAmount=20;
+      const cropItemTypes=[
+        "potato",
+        "vegetables",
+        "grain",
+        "medicinal_herbs",
+        "technical_crop"
+      ];
+      const itemType=cropItemTypes[st.crop];
+
+      const added=addItemToBag(itemType,harvestAmount);
+      if(added<=0){
+        message("🎒 В рюкзаке нет места");
+        return;
+      }
+
+      message(crop.icon+" Собрано: "+added+" → рюкзак");
+      window.farmState[i]={crop:null,plantedAt:0};
+    }else{
+      const left=Math.max(1,Math.ceil((FARM_GROW_TIME-elapsed)/1000));
+      message("🌱 Растёт — ещё "+left+" сек.");
+    }
+    return;
+  }
+
+  window.activeFarmBed=i;
+  el("farmTitle").textContent="🌱 Грядка "+(i+1);
+  openOverlay(el("farmOverlay"));
+}
+
+/* =====================================================
+   ACTION
+===================================================== */
+
+let currentAction = null;
+let currentActionObject = null;
+
+const actionButton =
+  el("actionButton");
+
+function updateAction(){
+
+  currentAction = null;
+  currentActionObject = null;
+
+  let icon = "✋";
+
+  if(scene === "surface"){
+
+    if(
+      distance(
+        player.x,
+        player.y,
+        surface.hatch.x,
+        surface.hatch.y
+      )
+      <
+      82
+    ){
+
+      currentAction =
+        "bunker";
+
+      icon =
+        "↧";
+
+    }
+
+    const lootObj=nearestScavenge();
+    if(lootObj){
+      currentAction="search";
+      currentActionObject=lootObj;
+      icon="🔎";
+    }
+  }
+
+  else{
+
+    if(
+      distance(
+        player.x,
+        player.y,
+        bunker.entrance.x,
+        bunker.entrance.y
+      )
+      <
+      90
+    ){
+
+      currentAction =
+        "surface";
+
+      icon =
+        "↥";
+
+    }
+
+    if(
+      player.x > 315 &&
+      player.x < 500 &&
+      player.y > 855 &&
+      player.y < 1005
+    ){
+
+      currentAction =
+        "workshop";
+
+      icon =
+        "🔧";
+
+    }
+    const chest=nearestStorageChest();
+    if(chest !== null){
+      currentAction="storage";
+      currentActionObject=chest;
+      icon="📦";
+    }
+
+    const farmBed=nearestFarmBed();
+    if(farmBed !== null){
+      currentAction="farm";
+      currentActionObject=farmBed;
+      icon="🌱";
+    }
+  }
+
+  actionButton.textContent =
+    icon;
+
+  actionButton.classList.toggle(
+    "available",
+    currentAction !== null
+  );
+
+  actionButton.classList.toggle(
+    "inactive",
+    currentAction === null
+  );
+
+}
+
+
+
+function getChestPositions(){
+  const s=bunker.storage;
+  return [
+    // ВЕРХНЯЯ стена комнаты — 4 технических сундука
+    {x:s.left+85, y:s.top+58},
+    {x:s.left+200,y:s.top+58},
+    {x:s.left+320,y:s.top+58},
+    {x:s.left+435,y:s.top+58},
+
+    // НИЖНЯЯ противоположная стена — 4 бытовых/медицинских сундука
+    {x:s.left+85, y:s.bottom-58},
+    {x:s.left+200,y:s.bottom-58},
+    {x:s.left+320,y:s.bottom-58},
+    {x:s.left+435,y:s.bottom-58}
+  ];
+}
+function nearestStorageChest(){
+  if(scene!=="bunker")return null;
+  const ps=getChestPositions();
+  let best=null,bd=82;
+  for(let i=0;i<ps.length;i++){
+    const d=distance(player.x,player.y,ps[i].x,ps[i].y);
+    if(d<bd){bd=d;best=i}
+  }
+  return best;
+}
+function addToSlots(slots,type,qty,maxSlots=12){
+  let left=qty;
+  for(const s of slots){
+    if(s.type===type&&s.qty<STACK_MAX){
+      const n=Math.min(left,STACK_MAX-s.qty);s.qty+=n;left-=n;if(left<=0)return 0;
+    }
+  }
+  while(left>0&&slots.length<maxSlots){
+    const n=Math.min(left,STACK_MAX);slots.push({type,qty:n});left-=n;
+  }
+  return left;
+}
+function removeFromSlots(slots,type,qty){
+  let left=qty;
+  for(let i=slots.length-1;i>=0&&left>0;i--){
+    const s=slots[i];if(s.type!==type)continue;
+    const n=Math.min(left,s.qty);s.qty-=n;left-=n;if(s.qty<=0)slots.splice(i,1);
+  }
+  return qty-left;
+}
+function openStorage(index){
+  activeStorage=Number(index);
+  renderStorage();
+  openOverlay(el("storageOverlay"));
+}
+function slotHTML(s){
+  return s?`<div class="ico">${ITEM[s.type].icon}</div><div>${ITEM[s.type].name}</div><div class="qty">×${s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`;
+}
+function renderStorage(){
+  const ch=storageChests[activeStorage];
+  if(!ch)return;
+  el("storageTitle").textContent=`${ch.icon} ${ch.name}`;
+  const a=el("storageContents"),b=el("storageBag");a.innerHTML="";b.innerHTML="";
+  for(let i=0;i<12;i++){
+    const d=document.createElement("div");d.className="invSlot";d.dataset.chestSlot=i;
+    d.innerHTML=slotHTML(ch.items[i]);a.appendChild(d);
+  }
+  for(let i=0;i<BAG_SLOTS;i++){
+    const d=document.createElement("div");d.className="invSlot";d.dataset.bagSlot=i;
+    d.innerHTML=slotHTML(bag[i]);b.appendChild(d);
+  }
+}
+function openChestSettings(){
+  const ch=storageChests[activeStorage];if(!ch)return;
+  el("chestNameInput").value=ch.name;
+  const icons=["📦","🔫","🪵","🔩","⚙️","⛽","🥫","🥤","💊","🧰","⭐","🔧","🎒"];
+  const box=el("chestIconChoices");box.innerHTML="";
+  for(const ico of icons){
+    const bt=document.createElement("button");bt.className="smallBtn";bt.textContent=ico;
+    bt.style.fontSize="24px";bt.dataset.icon=ico;box.appendChild(bt);
+  }
+  const settingsOverlay=el("chestSettingsOverlay");
+  openOverlay(settingsOverlay);
+  settingsOverlay.style.zIndex="10050";
+}
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+let messageTimer = null;
+
+function message(text){
+
+  const box =
+    el("message");
+
+  box.textContent =
+    text;
+
+  box.classList.add(
+    "show"
+  );
+
+  clearTimeout(
+    messageTimer
+  );
+
+  messageTimer =
+    setTimeout(
+      function(){
+
+        box.classList.remove(
+          "show"
+        );
+
+      },
+      1300
+    );
+
+}
+
+/* =====================================================
+   TRANSITIONS
+===================================================== */
+
+function transition(title,callback){
+
+  const fade =
+    el("fade");
+
+  fade.textContent =
+    title;
+
+  fade.classList.add(
+    "show"
+  );
+
+  movePower = 0;
+  firing = false;
+
+  setTimeout(
+    function(){
+
+      callback();
+
+      setTimeout(
+        function(){
+
+          fade.classList.remove(
+            "show"
+          );
+
+        },
+        260
+      );
+
+    },
+    400
+  );
+
+}
+
+function enterBunker(){
+
+  transition(
+    "ПОДЗЕМНАЯ БАЗА",
+    function(){
+
+      scene =
+        "bunker";
+
+      player.x =
+        bunker.entrance.x;
+
+      player.y =
+        bunker.entrance.y -
+        70;
+
+      bullets.length =
+        0;
+
+      el("locationName").textContent =
+        "БУНКЕР";
+
+    }
+  );
+
+}
+
+function leaveBunker(){
+
+  transition(
+    "ПОВЕРХНОСТЬ",
+    function(){
+
+      scene =
+        "surface";
+
+      player.x =
+        800;
+
+      player.y =
+        690;
+
+      bullets.length =
+        0;
+
+      el("locationName").textContent =
+        "БАЗА";
+
+    }
+  );
+
+}
+
+actionButton.addEventListener(
+  "pointerdown",
+  function(e){
+
+    if(menuOpen || playerDead){
+      return;
+    }
+
+    e.preventDefault();
+
+    if(currentAction === "bunker"){
+      enterBunker();
+      return;
+    }
+
+    if(currentAction === "surface"){
+      leaveBunker();
+      return;
+    }
+
+    if(currentAction === "search"){
+      startSearch(currentActionObject);
+      return;
+    }
+
+    if(currentAction === "storage"){
+      openStorage(currentActionObject);
+      return;
+    }
+
+    if(currentAction === "workshop"){
+      openOverlay(el("workshopOverlay"));
+      return;
+    }
+
+    if(currentAction === "farm"){
+      useFarmBed(currentActionObject);
+      return;
+    }
+
+    message("Здесь пока нет действия");
+  }
+);
+
+/* =====================================================
+   DRAW SURFACE
+===================================================== */
+
+function drawSurface(){
+
+  ctx.fillStyle =
+    "#3c4439";
+
+  ctx.fillRect(
+    0,
+    0,
+    surface.width,
+    surface.height
+  );
+
+  /* GROUND */
+
+  for(
+    let x=50;
+    x<surface.width;
+    x+=160
+  ){
+
+    for(
+      let y=50;
+      y<surface.height;
+      y+=160
+    ){
+
+      ctx.fillStyle =
+        "rgba(0,0,0,.035)";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        x,
+        y,
+        20,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+    }
+
+  }
+
+  /* OUTER WALL */
+
+  const o =
+    surface.outer;
+
+  ctx.fillStyle =
+    "#5c6260";
+
+  ctx.fillRect(
+    o.left,
+    o.top,
+    o.right-o.left,
+    o.thickness
+  );
+
+  ctx.fillRect(
+    o.left,
+    o.top,
+    o.thickness,
+    o.bottom-o.top
+  );
+
+  ctx.fillRect(
+    o.right-o.thickness,
+    o.top,
+    o.thickness,
+    o.bottom-o.top
+  );
+
+  ctx.fillRect(
+    o.left,
+    o.bottom-o.thickness,
+    o.right-o.left,
+    o.thickness
+  );
+
+  /* MAIN GATE */
+
+  ctx.fillStyle =
+    "#292d2d";
+
+  ctx.fillRect(
+    730,
+    o.bottom-o.thickness,
+    140,
+    o.thickness
+  );
+
+  /* INNER WALL */
+
+  const i =
+    surface.inner;
+
+  ctx.fillStyle =
+    "#6d6d64";
+
+  ctx.fillRect(
+    i.left,
+    i.top,
+    i.right-i.left,
+    i.thickness
+  );
+
+  ctx.fillRect(
+    i.left,
+    i.top,
+    i.thickness,
+    i.bottom-i.top
+  );
+
+  ctx.fillRect(
+    i.right-i.thickness,
+    i.top,
+    i.thickness,
+    i.bottom-i.top
+  );
+
+  ctx.fillRect(
+    i.left,
+    i.bottom-i.thickness,
+    i.gateX-i.left,
+    i.thickness
+  );
+
+  ctx.fillRect(
+    i.gateX+i.gateWidth,
+    i.bottom-i.thickness,
+    i.right-
+    (
+      i.gateX+
+      i.gateWidth
+    ),
+    i.thickness
+  );
+
+  /* INNER FLOOR */
+
+  ctx.fillStyle =
+    "#57584f";
+
+  ctx.fillRect(
+    i.left+i.thickness,
+    i.top+i.thickness,
+    i.right-i.left-i.thickness*2,
+    i.bottom-i.top-i.thickness*2
+  );
+
+  /* HATCH */
+
+  ctx.fillStyle =
+    "#17191a";
+
+  ctx.fillRect(
+    765,
+    555,
+    70,
+    70
+  );
+
+  ctx.strokeStyle =
+    "#aaaaaa";
+
+  ctx.lineWidth =
+    4;
+
+  ctx.strokeRect(
+    765,
+    555,
+    70,
+    70
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.font =
+    "13px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    "ЛЮК",
+    800,
+    595
+  );
+
+  /* FARM */
+
+  ctx.fillStyle =
+    "#566e42";
+
+  ctx.fillRect(
+    300,
+    300,
+    190,
+    120
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.fillText(
+    "ФЕРМА",
+    395,
+    365
+  );
+
+  /* GENERATOR */
+
+  ctx.fillStyle =
+    "#454a4d";
+
+  ctx.fillRect(
+    1080,
+    310,
+    125,
+    90
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.fillText(
+    "ГЕНЕРАТОР",
+    1142,
+    362
+  );
+
+  /* CAR */
+
+  ctx.fillStyle =
+    "#38444b";
+
+  ctx.fillRect(
+    1100,
+    790,
+    160,
+    75
+  );
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.fillText(
+    "МАШИНА",
+    1180,
+    833
+  );
+
+  /* TOWERS */
+
+  const towers = [
+    [200,160],
+    [800,150],
+    [1400,160],
+    [200,1040],
+    [800,1040],
+    [1400,1040]
+  ];
+
+  for(const tower of towers){
+
+    ctx.fillStyle =
+      "#282c2d";
+
+    ctx.fillRect(
+      tower[0]-25,
+      tower[1]-25,
+      50,
+      50
+    );
+
+    ctx.fillStyle =
+      "#777c7c";
+
+    ctx.fillRect(
+      tower[0]-16,
+      tower[1]-16,
+      32,
+      32
+    );
+
+  }
+
+  /* 0.5.0 ABANDONED CITY SOUTH OF BASE */
+  ctx.fillStyle="#2d3030"; ctx.fillRect(110,1120,1380,1030);
+  ctx.fillStyle="#555957"; ctx.fillRect(650,1070,300,1130);
+  ctx.fillStyle="#242727"; ctx.fillRect(785,1070,8,1130);
+  ctx.strokeStyle="rgba(230,220,170,.35)";ctx.lineWidth=4;ctx.setLineDash([28,24]);
+  ctx.beginPath();ctx.moveTo(800,1120);ctx.lineTo(800,2160);ctx.stroke();ctx.setLineDash([]);
+
+  // sidewalks
+  ctx.fillStyle="#696b66";ctx.fillRect(120,1180,500,42);ctx.fillRect(980,1180,390,42);
+  ctx.fillRect(120,1580,500,42);ctx.fillRect(980,1580,390,42);
+
+  // ruined houses
+  for(const o of scavenges){
+    if(o.kind!=="house")continue;
+    ctx.fillStyle="#4b4742";ctx.fillRect(o.x,o.y,o.w,o.h);
+    ctx.fillStyle="#1e2020";ctx.fillRect(o.x+18,o.y+18,o.w-36,o.h-36);
+    ctx.fillStyle="#5b5147";ctx.fillRect(o.x+o.w/2-24,o.y+o.h-48,48,48);
+    ctx.fillStyle="rgba(255,255,255,.75)";ctx.font="12px Arial";ctx.textAlign="center";
+    ctx.fillText(o.searched?"ОБЫСКАНО":"ЗАБРОШЕННЫЙ ДОМ",o.x+o.w/2,o.y+24);
+  }
+
+  // abandoned cars
+  for(const o of scavenges){
+    if(o.kind!=="car")continue;
+    ctx.fillStyle=o.searched?"#343536":"#5a4b43";ctx.fillRect(o.x,o.y,o.w,o.h);
+    ctx.fillStyle="#22282b";ctx.fillRect(o.x+25,o.y+8,70,o.h-16);
+    ctx.fillStyle="#111";ctx.beginPath();ctx.arc(o.x+25,o.y+o.h,13,0,Math.PI*2);ctx.arc(o.x+105,o.y+o.h,13,0,Math.PI*2);ctx.fill();
+  }
+
+  // trees / overgrowth
+  const trees=[[180,1260],[560,1260],[1430,1280],[170,1700],[560,1730],[1400,1780],[1030,2030],[250,2070],[1180,1880]];
+  for(const q of trees){
+    ctx.fillStyle="#493b2b";ctx.fillRect(q[0]-6,q[1],12,34);
+    ctx.fillStyle="#315137";ctx.beginPath();ctx.arc(q[0],q[1],28,0,Math.PI*2);ctx.fill();
+  }
+
+}
+
+/* =====================================================
+   DRAW BUNKER
+===================================================== */
+
+function drawBunker(){
+
+  ctx.fillStyle="#101417";
+  ctx.fillRect(-300,-1100,2050,2600);
+
+  const c=bunker.corridor;
+
+  // №1 CORRIDOR
+  ctx.fillStyle="#3b4042";
+  ctx.fillRect(c.left,c.top,c.right-c.left,c.bottom-c.top);
+
+  // subtle corridor floor seams
+  ctx.strokeStyle="rgba(255,255,255,.05)";
+  ctx.lineWidth=1;
+  for(let y=c.top+60;y<c.bottom;y+=70){
+    ctx.beginPath();
+    ctx.moveTo(c.left,y);
+    ctx.lineTo(c.right,y);
+    ctx.stroke();
+  }
+
+  function drawSideRoom(o,side,label,fill="#303638"){
+    ctx.fillStyle=fill;
+    ctx.fillRect(o.left,o.top,o.right-o.left,o.bottom-o.top);
+
+    ctx.strokeStyle="#747878";
+    ctx.lineWidth=16;
+    ctx.strokeRect(o.left,o.top,o.right-o.left,o.bottom-o.top);
+
+    // Open doorway toward corridor
+    ctx.fillStyle=fill;
+    if(side==="left"){
+      ctx.fillRect(o.right-18,o.doorTop,40,o.doorBottom-o.doorTop);
+    }else{
+      ctx.fillRect(o.left-22,o.doorTop,40,o.doorBottom-o.doorTop);
+    }
+
+    ctx.fillStyle="rgba(255,255,255,.72)";
+    ctx.font="15px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(label,(o.left+o.right)/2,o.top+34);
+  }
+
+  // №2 — WORKSHOP (visual redesign; existing interaction preserved)
+  drawSideRoom(bunker.workshop,"left","МАСТЕРСКАЯ","#343a3c");
+
+  // №2 — WORKSHOP: layout matched to the approved reference image
+
+  // TOP WALL — technical station
+  ctx.fillStyle="#414b4e";
+  ctx.fillRect(125,790,185,86);
+  ctx.strokeStyle="#7e9094"; ctx.lineWidth=3; ctx.strokeRect(125,790,185,86);
+  ctx.fillStyle="#687679"; ctx.fillRect(145,805,55,36);
+  ctx.fillStyle="#dce4e5"; ctx.font="10px Arial"; ctx.textAlign="center";
+  ctx.fillText("ТЕХНИЧЕСКИЙ СТАНОК",217,861);
+
+  // TOP WALL — ammunition station beside it
+  ctx.fillStyle="#555146";
+  ctx.fillRect(335,790,190,86);
+  ctx.strokeStyle="#938a70"; ctx.lineWidth=3; ctx.strokeRect(335,790,190,86);
+  ctx.fillStyle="#b3a36f"; ctx.fillRect(395,805,38,40);
+  ctx.fillStyle="#ece6d5"; ctx.font="10px Arial";
+  ctx.fillText("СТАНОК ПАТРОНОВ",430,861);
+
+  // LEFT WALL — vertical weapon / tool panel
+  ctx.fillStyle="#282e30";
+  ctx.fillRect(108,900,58,215);
+  ctx.strokeStyle="#657174"; ctx.lineWidth=3; ctx.strokeRect(108,900,58,215);
+  ctx.save();
+  ctx.translate(124,1007);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillStyle="#d9dfe0"; ctx.font="9px Arial"; ctx.textAlign="center";
+  ctx.fillText("ОРУЖИЕ / ИНСТРУМЕНТЫ",0,0);
+  ctx.restore();
+  ctx.fillStyle="#e2e6e7"; ctx.font="17px Arial"; ctx.textAlign="center";
+  ctx.fillText("⚒",145,947);
+  ctx.fillText("⚙️",145,986);
+  ctx.fillText("🔧",145,1025);
+  ctx.fillText("🔫",145,1064);
+
+  // BOTTOM WALL — large main workbench
+  ctx.fillStyle="#60472f";
+  ctx.fillRect(110,1130,215,76);
+  ctx.strokeStyle="#9a7956"; ctx.lineWidth=4; ctx.strokeRect(110,1130,215,76);
+  ctx.fillStyle="#343a3c"; ctx.fillRect(130,1140,175,18);
+  ctx.fillStyle="#eee9df"; ctx.font="11px Arial";
+  ctx.fillText("ГЛАВНЫЙ ВЕРСТАК",217,1186);
+
+  // BOTTOM WALL — parts and metal crates beside the main workbench
+  ctx.fillStyle="#66513a";
+  ctx.fillRect(380,1150,60,52);
+  ctx.fillRect(455,1150,60,52);
+  ctx.strokeStyle="#8a704f"; ctx.lineWidth=3;
+  ctx.strokeRect(380,1150,60,52);
+  ctx.strokeRect(455,1150,60,52);
+  ctx.fillStyle="#fff"; ctx.font="9px Arial";
+  ctx.fillText("ДЕТАЛИ",410,1181);
+  ctx.fillText("МЕТАЛЛ",485,1181);
+
+  // RIGHT WALL / DOOR SIDE AND ROOM CENTER intentionally remain empty.
+  // This keeps the entrance and movement path completely unobstructed.
+
+  // №3 — STORAGE: 8 independent functional chests, 4 on top wall + 4 on bottom wall
+  drawSideRoom(bunker.storage,"right","СКЛАД","#303638");
+
+  const chestPos=getChestPositions();
+  for(let i=0;i<chestPos.length;i++){
+    const p=chestPos[i],ch=storageChests[i];
+    ctx.fillStyle="#66513a";
+    ctx.fillRect(p.x-34,p.y-25,68,50);
+    ctx.strokeStyle="#8a704f";
+    ctx.lineWidth=3;
+    ctx.strokeRect(p.x-34,p.y-25,68,50);
+    ctx.fillStyle="#fff";
+    ctx.font="22px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(ch.icon,p.x,p.y+3);
+    ctx.font="10px Arial";
+    ctx.fillText(ch.name,p.x,p.y+40);
+  }
+
+  // №4–7 — equal-size empty rooms
+  // №4 — MEDICAL ROOM
+  drawSideRoom(bunker.room4,"left","МЕДБЛОК","#343b3c");
+
+  // Main medical crafting station — placed on the far/top wall, away from doorway
+  ctx.fillStyle="#46575a";
+  ctx.fillRect(145,300,245,78);
+  ctx.strokeStyle="#83999d"; ctx.lineWidth=3; ctx.strokeRect(145,300,245,78);
+  ctx.fillStyle="#dce8e9"; ctx.font="12px Arial"; ctx.textAlign="center";
+  ctx.fillText("МЕДИЦИНСКИЙ СТОЛ",267,330);
+  ctx.font="19px Arial";
+  ctx.fillText("💊  🧪  🩹",267,359);
+
+  // Decorative examination bed along the lower wall
+  ctx.fillStyle="#596568";
+  ctx.fillRect(145,650,225,58);
+  ctx.strokeStyle="#879699"; ctx.lineWidth=3; ctx.strokeRect(145,650,225,58);
+  ctx.fillStyle="#cbd5d7";
+  ctx.fillRect(160,658,55,42);
+  ctx.fillStyle="#e8eeee"; ctx.font="10px Arial";
+  ctx.fillText("МЕДИЦИНСКАЯ КУШЕТКА",257,728);
+
+  // Medicine cabinet on the left wall
+  ctx.fillStyle="#e1e7e8";
+  ctx.fillRect(110,430,58,130);
+  ctx.strokeStyle="#8da0a3"; ctx.lineWidth=3; ctx.strokeRect(110,430,58,130);
+  ctx.strokeStyle="#aebabc"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(139,430); ctx.lineTo(139,560); ctx.stroke();
+  ctx.fillStyle="#d64f4f"; ctx.fillRect(128,472,22,8); ctx.fillRect(135,465,8,22);
+
+  // Small sink / sanitation corner, decorative
+  ctx.fillStyle="#4c595c";
+  ctx.fillRect(455,315,100,58);
+  ctx.strokeStyle="#819194"; ctx.strokeRect(455,315,100,58);
+  ctx.fillStyle="#b7c5c7";
+  ctx.beginPath(); ctx.ellipse(505,342,26,12,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#dce4e5"; ctx.font="9px Arial";
+  ctx.fillText("МОЙКА",505,366);
+
+  // Two compact supply crates beside the examination bed
+  ctx.fillStyle="#59694f";
+  ctx.fillRect(430,650,55,52);
+  ctx.fillRect(500,650,55,52);
+  ctx.strokeStyle="#829174";
+  ctx.strokeRect(430,650,55,52); ctx.strokeRect(500,650,55,52);
+  ctx.fillStyle="#fff"; ctx.font="9px Arial";
+  ctx.fillText("БИНТЫ",457,681);
+  ctx.fillText("МЕД.",527,681);
+
+  // Door side and the central approach remain clear for movement.
+  // №5 — POWER ROOM: FUEL -> GENERATOR -> BATTERY
+  drawSideRoom(bunker.room5,"right","ЭНЕРГОБЛОК","#303739");
+
+  // Three large objects along the far wall. Door side and center stay clear.
+  // 1) FUEL TANK
+  ctx.fillStyle="#514a3b";
+  ctx.fillRect(885,315,125,185);
+  ctx.strokeStyle="#81765d"; ctx.lineWidth=4; ctx.strokeRect(885,315,125,185);
+  ctx.fillStyle="#252a28"; ctx.fillRect(905,338,85,34);
+  ctx.fillStyle="#d9d7cc"; ctx.font="11px Arial"; ctx.textAlign="center";
+  ctx.fillText("ТОПЛИВО",947,361);
+  ctx.fillStyle="#b9a56a"; ctx.fillRect(905,392,85,72);
+  ctx.fillStyle="#202524"; ctx.font="12px Arial";
+  ctx.fillText("320 / 500 Л",947,435);
+
+  // pipe from tank to generator
+  ctx.strokeStyle="#7a7467"; ctx.lineWidth=8;
+  ctx.beginPath(); ctx.moveTo(1010,430); ctx.lineTo(1045,430); ctx.stroke();
+
+  // 2) GENERATOR
+  ctx.fillStyle="#46504b";
+  ctx.fillRect(1045,330,165,155);
+  ctx.strokeStyle="#7f8b84"; ctx.lineWidth=4; ctx.strokeRect(1045,330,165,155);
+  ctx.fillStyle="#232927"; ctx.fillRect(1065,350,125,50);
+  ctx.fillStyle="#9eb58d"; ctx.fillRect(1080,365,16,16);
+  ctx.fillStyle="#dfe5df"; ctx.font="11px Arial";
+  ctx.fillText("ГЕНЕРАТОР",1127,420);
+  ctx.font="13px Arial"; ctx.fillText("7.4 / 10 кВт",1127,450);
+  ctx.font="9px Arial"; ctx.fillText("1.2 л/ч",1127,470);
+
+  // cable from generator to battery
+  ctx.strokeStyle="#66777b"; ctx.lineWidth=7;
+  ctx.beginPath(); ctx.moveTo(1210,430); ctx.lineTo(1235,430); ctx.stroke();
+
+  // 3) LARGE BACKUP BATTERY
+  ctx.fillStyle="#39474c";
+  ctx.fillRect(1235,300,105,215);
+  ctx.strokeStyle="#71858b"; ctx.lineWidth=4; ctx.strokeRect(1235,300,105,215);
+  ctx.fillStyle="#91aa83"; ctx.fillRect(1253,340,69,105);
+  ctx.fillStyle="#172018"; ctx.font="22px Arial"; ctx.fillText("⚡",1287,392);
+  ctx.fillStyle="#e2e8e9"; ctx.font="10px Arial"; ctx.fillText("БАТАРЕЯ",1287,472);
+  ctx.font="11px Arial"; ctx.fillText("42 / 50 кВт·ч",1287,492);
+
+  // Simple flow marks make the energy chain readable without adding another object.
+  ctx.fillStyle="#aeb9b6"; ctx.font="13px Arial";
+  ctx.fillText("→",1027,416);
+  ctx.fillText("→",1222,416);
+
+  // The room center and the corridor/door side intentionally remain empty.
+  // №6 — KITCHEN / FOOD BLOCK
+  drawSideRoom(bunker.room6,"left","КУХНЯ","#3a3732");
+
+  // TOP WALL — long main kitchen counter, the future functional cooking point
+  ctx.fillStyle="#66513d";
+  ctx.fillRect(145,-205,330,92);
+  ctx.strokeStyle="#9a7b59"; ctx.lineWidth=4; ctx.strokeRect(145,-205,330,92);
+
+  // Worktop
+  ctx.fillStyle="#3d4443";
+  ctx.fillRect(158,-192,304,24);
+
+  // Stove
+  ctx.fillStyle="#252a29";
+  ctx.fillRect(180,-160,100,35);
+  ctx.strokeStyle="#747c79"; ctx.lineWidth=2; ctx.strokeRect(180,-160,100,35);
+  ctx.fillStyle="#b36f54";
+  ctx.beginPath(); ctx.arc(205,-143,9,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(253,-143,9,0,Math.PI*2); ctx.fill();
+
+  // Sink
+  ctx.fillStyle="#9aa6a4";
+  ctx.fillRect(335,-160,92,34);
+  ctx.fillStyle="#505a58";
+  ctx.fillRect(348,-153,66,20);
+
+  ctx.fillStyle="#eee8dc"; ctx.font="11px Arial"; ctx.textAlign="center";
+  ctx.fillText("КУХНЯ • ГОТОВКА",310,-180);
+
+  // LEFT WALL — refrigerator
+  ctx.fillStyle="#596466";
+  ctx.fillRect(110,-75,72,165);
+  ctx.strokeStyle="#879496"; ctx.lineWidth=3; ctx.strokeRect(110,-75,72,165);
+  ctx.strokeStyle="#778285"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(110,0); ctx.lineTo(182,0); ctx.stroke();
+  ctx.fillStyle="#dfe6e6"; ctx.font="10px Arial";
+  ctx.fillText("ХОЛОДИЛЬНИК",146,112);
+
+  // BOTTOM WALL — dining table
+  ctx.fillStyle="#624c37";
+  ctx.fillRect(225,135,190,70);
+  ctx.strokeStyle="#8e704e"; ctx.lineWidth=3; ctx.strokeRect(225,135,190,70);
+  // chairs
+  ctx.fillStyle="#4c4033";
+  ctx.fillRect(245,110,42,22);
+  ctx.fillRect(352,110,42,22);
+  ctx.fillRect(245,208,42,22);
+  ctx.fillRect(352,208,42,22);
+
+  // Decorative shelves / food supplies in the lower-left corner
+  ctx.fillStyle="#4d4438";
+  ctx.fillRect(110,145,72,78);
+  ctx.strokeStyle="#786b57"; ctx.strokeRect(110,145,72,78);
+  ctx.fillStyle="#d7c8a7"; ctx.font="14px Arial";
+  ctx.fillText("🥫",128,175);
+  ctx.fillText("🍞",161,175);
+  ctx.fillText("🥣",145,207);
+
+  // Door side and central approach remain unobstructed.
+  // №7 — LIVING ROOM, matched to the latest approved screenshot
+  drawSideRoom(bunker.room7,"right","ЖИЛАЯ КОМНАТА","#393837");
+
+  // TOP WALL — wide cabinet
+  ctx.fillStyle="#4b5553";
+  ctx.fillRect(885,-205,155,72);
+  ctx.strokeStyle="#778582"; ctx.lineWidth=3; ctx.strokeRect(885,-205,155,72);
+  ctx.strokeStyle="#66736f"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(962,-205); ctx.lineTo(962,-133); ctx.stroke();
+
+  // Small square bedside cabinet
+  ctx.fillStyle="#554735";
+  ctx.fillRect(1080,-190,82,62);
+  ctx.strokeStyle="#806b4e"; ctx.lineWidth=3; ctx.strokeRect(1080,-190,82,62);
+
+  // RIGHT WALL — vertical bed
+  ctx.fillStyle="#674f3c";
+  ctx.fillRect(1240,-205,95,225);
+  ctx.strokeStyle="#98765a"; ctx.lineWidth=4; ctx.strokeRect(1240,-205,95,225);
+  ctx.fillStyle="#cbc8bc"; ctx.fillRect(1256,-188,63,190);
+  ctx.fillStyle="#e1ded4"; ctx.fillRect(1265,-174,45,48);
+  ctx.fillStyle="#e8e3d8"; ctx.font="10px Arial"; ctx.textAlign="center";
+  ctx.save(); ctx.translate(1224,-92); ctx.rotate(-Math.PI/2);
+  ctx.fillText("КРОВАТЬ",0,0); ctx.restore();
+
+  // LOWER-RIGHT — dresser, positioned like in the newest reference screenshot
+  ctx.fillStyle="#594a39";
+  ctx.fillRect(1190,125,145,92);
+  ctx.strokeStyle="#806b51"; ctx.lineWidth=3; ctx.strokeRect(1190,125,145,92);
+  ctx.strokeStyle="#74604a"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(1190,171); ctx.lineTo(1335,171); ctx.stroke();
+
+  // LOWER-RIGHT — bathroom exactly in the lower corner, as in the screenshot.
+  // L-shaped partition: open access from the left.
+  ctx.strokeStyle="#747d7d"; ctx.lineWidth=8;
+  ctx.beginPath(); ctx.moveTo(920,65); ctx.lineTo(1120,65); ctx.lineTo(1120,245); ctx.stroke();
+
+  // Toilet on the left side of the bathroom
+  ctx.fillStyle="#2f3434";
+  ctx.fillRect(930,130,62,105);
+  ctx.strokeStyle="#596160"; ctx.lineWidth=3; ctx.strokeRect(930,130,62,105);
+  ctx.fillStyle="#d8dfde";
+  ctx.fillRect(944,145,34,35);
+  ctx.beginPath(); ctx.ellipse(961,184,18,14,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#e7ebea"; ctx.font="7px Arial"; ctx.textAlign="center";
+  ctx.fillText("ТУАЛЕТ",961,224);
+
+  // Shower on the right side of the bathroom
+  ctx.fillStyle="#35464b";
+  ctx.fillRect(1020,88,90,145);
+  ctx.strokeStyle="#799096"; ctx.lineWidth=3; ctx.strokeRect(1020,88,90,145);
+  ctx.fillStyle="rgba(178,202,207,.20)"; ctx.fillRect(1031,100,68,118);
+  ctx.fillStyle="#dce5e6"; ctx.font="17px Arial"; ctx.fillText("🚿",1065,154);
+  ctx.font="8px Arial"; ctx.fillText("ДУШ",1065,207);
+
+  // Center, corridor entrance and the area around the bed remain clear.
+
+  // Corridor side walls, drawn in separate segments so every doorway stays open.
+  const wall="#747878";
+  ctx.strokeStyle=wall;
+  ctx.lineWidth=18;
+
+  const leftDoors=[
+    [bunker.room6.doorTop,bunker.room6.doorBottom],
+    [bunker.room4.doorTop,bunker.room4.doorBottom],
+    [bunker.workshop.doorTop,bunker.workshop.doorBottom]
+  ];
+  const rightDoors=[
+    [bunker.room7.doorTop,bunker.room7.doorBottom],
+    [bunker.room5.doorTop,bunker.room5.doorBottom],
+    [bunker.storage.doorTop,bunker.storage.doorBottom]
+  ];
+
+  function drawWallWithDoors(x,doors){
+    let y=c.top;
+    for(const d of doors){
+      if(d[0]>y){
+        ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,d[0]);ctx.stroke();
+      }
+      y=d[1];
+    }
+    if(y<c.bottom){
+      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,c.bottom);ctx.stroke();
+    }
+  }
+  drawWallWithDoors(c.left,leftDoors);
+  drawWallWithDoors(c.right,rightDoors);
+
+  // №8 — LARGE UNDERGROUND FARM, directly connected to corridor end
+  const f=bunker.farm;
+  ctx.fillStyle="#29352c";
+  ctx.fillRect(f.left,f.top,f.right-f.left,f.bottom-f.top);
+  ctx.strokeStyle="#68766b";
+  ctx.lineWidth=18;
+  ctx.strokeRect(f.left,f.top,f.right-f.left,f.bottom-f.top);
+
+  // Wide doorway from corridor into farm
+  ctx.fillStyle="#29352c";
+  ctx.fillRect(f.doorLeft,f.bottom-22,f.doorRight-f.doorLeft,44);
+
+  // Five large long farm beds — one future crop per bed
+  const farmBeds=[
+    {x:f.left+75,  y:f.top+55, w:205, h:535},
+    {x:f.left+305, y:f.top+55, w:205, h:535},
+    {x:f.left+535, y:f.top+55, w:205, h:535},
+    {x:f.left+765, y:f.top+55, w:205, h:535},
+    {x:f.left+995, y:f.top+55, w:205, h:535}
+  ];
+
+  // 0.6.17 farm prototype: each bed can hold any crop.
+  window.farmCrops = window.farmCrops || [
+    {name:"Картофель",icon:"🥔"},
+    {name:"Овощи",icon:"🥕"},
+    {name:"Зерно",icon:"🌾"},
+    {name:"Лекарственные",icon:"🌿"},
+    {name:"Технические",icon:"🌻"}
+  ];
+  window.farmState = window.farmState || Array.from({length:5},()=>({crop:null,plantedAt:0}));
+  const FARM_GROW_MS = 45000;
+
+  function farmStage(st){
+    if(st.crop===null) return 0;
+    const p=Math.min(1,(Date.now()-st.plantedAt)/FARM_GROW_MS);
+    if(p < 0.25) return 1;
+    if(p < 0.50) return 2;
+    if(p < 0.75) return 3;
+    return 4; // 75%+, including ~95% and fully mature
+  }
+
+  for(let i=0;i<farmBeds.length;i++){
+    const b=farmBeds[i];
+
+    // raised border
+    ctx.fillStyle="#594735";
+    ctx.fillRect(b.x-7,b.y-7,b.w+14,b.h+14);
+    ctx.strokeStyle="#71806a";
+    ctx.lineWidth=3;
+    ctx.strokeRect(b.x-7,b.y-7,b.w+14,b.h+14);
+
+    // empty soil — crops will be planted here later
+    ctx.fillStyle="#493a2b";
+    ctx.fillRect(b.x,b.y,b.w,b.h);
+
+    // soil furrows
+    ctx.strokeStyle="#5b4935";
+    ctx.lineWidth=2;
+    for(let yy=b.y+38;yy<b.y+b.h-15;yy+=48){
+      ctx.beginPath();
+      ctx.moveTo(b.x+14,yy);
+      ctx.lineTo(b.x+b.w-14,yy);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle="#b9b39f";
+    ctx.font="11px Arial";
+    ctx.textAlign="center";
+    ctx.fillText("ГРЯДКА "+(i+1),b.x+b.w/2,b.y+23);
+
+    const st=window.farmState[i];
+    const stage=farmStage(st);
+    if(st.crop!==null){
+      const crop=window.farmCrops[st.crop];
+      // Dense crop field: 8 × 20. Four visible growth sizes.
+      const cols=8, rows=20;
+      const growthSizes={1:9,2:11,3:13,4:15};
+      ctx.font=growthSizes[stage]+"px Arial";
+      for(let r=0;r<rows;r++){
+        for(let c=0;c<cols;c++){
+          const xx=b.x+16+c*((b.w-32)/(cols-1));
+          const yy=b.y+48+r*((b.h-82)/(rows-1));
+          ctx.fillText(crop.icon,xx,yy);
+        }
+      }
+
+      const progress=Math.min(100,Math.floor(((Date.now()-st.plantedAt)/FARM_GROW_MS)*100));
+      const ready=progress>=100;
+      ctx.font="10px Arial";
+      ctx.fillStyle=ready ? "#dfe8b6" : "#aeb99b";
+      ctx.fillText(ready ? "ГОТОВО" : "РАСТЁТ • "+progress+"%",b.x+b.w/2,b.y+b.h-18);
+    }
+  }
+
+  ctx.fillStyle="#fff";
+  ctx.font="20px Arial";
+  ctx.textAlign="center";
+  ctx.fillText("ПОДЗЕМНАЯ ФЕРМА",(f.left+f.right)/2,f.top+52);
+
+  // Rear wall and exit/hatch
+  ctx.strokeStyle="#747878";
+  ctx.lineWidth=18;
+  ctx.beginPath();
+  ctx.moveTo(c.left,c.bottom);
+  ctx.lineTo(c.right,c.bottom);
+  ctx.stroke();
+
+  ctx.fillStyle="#17191a";
+  ctx.fillRect(690,1145,70,70);
+  ctx.strokeStyle="#aaaaaa";
+  ctx.lineWidth=4;
+  ctx.strokeRect(690,1145,70,70);
+  ctx.fillStyle="white";
+  ctx.font="12px Arial";
+  ctx.textAlign="center";
+  ctx.fillText("ВЫХОД",725,1187);
+}
+
+/* =====================================================
+   DRAW PLAYER
+===================================================== */
+
+function drawPlayer(){
+
+  let length =
+    Math.hypot(
+      player.aimX,
+      player.aimY
+    );
+
+  if(length === 0){
+    length = 1;
+  }
+
+  const ax =
+    player.aimX /
+    length;
+
+  const ay =
+    player.aimY /
+    length;
+
+  const angle =
+    Math.atan2(
+      ay,
+      ax
+    );
+
+  const bob =
+    player.moving
+    ? Math.sin(
+        player.walkAnimation
+      ) * 2
+    : 0;
+
+  ctx.save();
+
+  ctx.translate(
+    player.x,
+    player.y
+  );
+
+  ctx.rotate(angle);
+
+  /* SHADOW */
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.30)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    0,
+    12,
+    18,
+    10,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* LEGS */
+
+  ctx.strokeStyle =
+    "#252b2d";
+
+  ctx.lineWidth =
+    7;
+
+  ctx.lineCap =
+    "round";
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    -5,
+    8
+  );
+
+  ctx.lineTo(
+    -8,
+    22+bob
+  );
+
+  ctx.stroke();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    5,
+    8
+  );
+
+  ctx.lineTo(
+    8,
+    22-bob
+  );
+
+  ctx.stroke();
+
+  /* BODY */
+
+  ctx.fillStyle =
+    "#3d5865";
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    -11,
+    -10,
+    22,
+    29,
+    6
+  );
+
+  ctx.fill();
+
+  /* BACKPACK */
+
+  ctx.fillStyle =
+    "#303a34";
+
+  ctx.fillRect(
+    -14,
+    -5,
+    7,
+    19
+  );
+
+  /* HEAD */
+
+  ctx.fillStyle =
+    "#c9a27d";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    3,
+    -16,
+    8,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* ARMS */
+
+  ctx.strokeStyle =
+    "#c39c78";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    5,
+    -4
+  );
+
+  ctx.lineTo(
+    18,
+    -1
+  );
+
+  ctx.stroke();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    4,
+    7
+  );
+
+  ctx.lineTo(
+    18,
+    3
+  );
+
+  ctx.stroke();
+
+  /* WEAPON */
+
+  ctx.strokeStyle =
+    "#141718";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    11,
+    1
+  );
+
+  ctx.lineTo(
+    31,
+    1
+  );
+
+  ctx.stroke();
+
+  ctx.strokeStyle =
+    "#555b5c";
+
+  ctx.lineWidth =
+    2;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    28,
+    1
+  );
+
+  ctx.lineTo(
+    36,
+    1
+  );
+
+  ctx.stroke();
+
+  ctx.restore();
+
+  /* AIM LINE */
+
+  ctx.strokeStyle =
+    "rgba(255,230,160,.25)";
+
+  ctx.lineWidth =
+    1;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    player.x+ax*34,
+    player.y+ay*34
+  );
+
+  ctx.lineTo(
+    player.x+ax*80,
+    player.y+ay*80
+  );
+
+  ctx.stroke();
+
+  ctx.strokeStyle =
+    "rgba(255,235,175,.68)";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    player.x+ax*88,
+    player.y+ay*88,
+    4,
+    0,
+    Math.PI*2
+  );
+
+  ctx.stroke();
+
+}
+
+/* =====================================================
+   DRAW ZOMBIES
+===================================================== */
+
+function drawZombie(zombie){
+
+  if(!zombie.alive){
+
+    /*
+      Тело остаётся на земле.
+    */
+
+    ctx.save();
+
+    ctx.translate(
+      zombie.x,
+      zombie.y
+    );
+
+    ctx.rotate(.9);
+
+    ctx.fillStyle =
+      "rgba(70,83,64,.70)";
+
+    ctx.fillRect(
+      -15,
+      -7,
+      30,
+      14
+    );
+
+    ctx.fillStyle =
+      "rgba(118,130,101,.65)";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      17,
+      0,
+      7,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+
+    return;
+  }
+
+  const angle =
+    Math.atan2(
+      player.y-zombie.y,
+      player.x-zombie.x
+    );
+
+  const hit =
+    performance.now() -
+    zombie.hitFlash
+    <
+    100;
+
+  ctx.save();
+
+  ctx.translate(
+    zombie.x,
+    zombie.y
+  );
+
+  ctx.rotate(angle);
+
+  /* SHADOW */
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.28)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    0,
+    12,
+    17,
+    9,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* BODY */
+
+  ctx.fillStyle =
+    hit
+    ? "#b9b5a5"
+    : "#59634f";
+
+  ctx.fillRect(
+    -10,
+    -8,
+    20,
+    29
+  );
+
+  /* HEAD */
+
+  ctx.fillStyle =
+    hit
+    ? "#d3cbb5"
+    : "#87917a";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    3,
+    -15,
+    8,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  /* ARMS */
+
+  ctx.strokeStyle =
+    "#747e68";
+
+  ctx.lineWidth =
+    5;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    5,
+    -2
+  );
+
+  ctx.lineTo(
+    22,
+    -5
+  );
+
+  ctx.stroke();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    5,
+    6
+  );
+
+  ctx.lineTo(
+    22,
+    8
+  );
+
+  ctx.stroke();
+
+  ctx.restore();
+
+  /* HEALTH */
+
+  if(
+    zombie.health <
+    zombie.maxHealth
+  ){
+
+    const width = 34;
+
+    ctx.fillStyle =
+      "rgba(0,0,0,.65)";
+
+    ctx.fillRect(
+      zombie.x-width/2,
+      zombie.y-36,
+      width,
+      4
+    );
+
+    ctx.fillStyle =
+      "#b94d4d";
+
+    ctx.fillRect(
+      zombie.x-width/2,
+      zombie.y-36,
+      width *
+      (
+        zombie.health /
+        zombie.maxHealth
+      ),
+      4
+    );
+
+  }
+
+}
+
+/* =====================================================
+   DRAW BULLETS / MUZZLE
+===================================================== */
+
+function drawBullets(){
+
+  for(const bullet of bullets){
+
+    if(!visibleOnScreen(bullet.x,bullet.y,30)){
+      continue;
+    }
+
+    ctx.fillStyle =
+      "rgba(255,215,120,.25)";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      bullet.x,
+      bullet.y,
+      8,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle =
+      "#ffd778";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      bullet.x,
+      bullet.y,
+      3.5,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  }
+
+  if(
+    performance.now() -
+    muzzleFlash.time
+    <
+    65
+  ){
+
+    ctx.fillStyle =
+      "rgba(255,220,100,.85)";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      muzzleFlash.x,
+      muzzleFlash.y,
+      10,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  }
+
+}
+
+/* =====================================================
+   OVERLAYS
+===================================================== */
+
+function stopControls(){
+
+  movePower = 0;
+  firing = false;
+
+}
+
+function openOverlay(overlay){
+
+  stopControls();
+
+  menuOpen = true;
+
+  overlay.classList.add(
+    "open"
+  );
+
+}
+
+function closeOverlay(overlay){
+
+  overlay.classList.remove(
+    "open"
+  );
+
+  menuOpen =
+    document.querySelector(
+      ".overlay.open"
+    ) !== null;
+
+}
+
+el("settingsButton").addEventListener(
+  "click",
+  function(){
+
+    openOverlay(
+      el("settingsOverlay")
+    );
+
+  }
+);
+
+el("closeSettings").addEventListener(
+  "click",
+  function(){
+
+    closeOverlay(
+      el("settingsOverlay")
+    );
+
+  }
+);
+
+el("fullscreenButton").addEventListener(
+  "click",
+  fullscreen
+);
+
+el("closeWorkshop").addEventListener(
+  "click",
+  function(){
+
+    closeOverlay(
+      el("workshopOverlay")
+    );
+
+  }
+);
+
+/* =====================================================
+   SOUND SETTING
+===================================================== */
+
+const soundSlider =
+  el("soundVolume");
+
+const soundValue =
+  el("soundValue");
+
+try{
+
+  const savedSound =
+    localStorage.getItem(
+      "base_sound"
+    );
+
+  if(savedSound !== null){
+
+    soundSlider.value =
+      savedSound;
+
+  }
+
+}catch(e){}
+
+masterVolume =
+  Number(
+    soundSlider.value
+  ) / 100;
+
+soundValue.textContent =
+  soundSlider.value +
+  "%";
+
+soundSlider.addEventListener(
+  "input",
+  function(){
+
+    masterVolume =
+      Number(
+        soundSlider.value
+      ) / 100;
+
+    soundValue.textContent =
+      soundSlider.value +
+      "%";
+
+    try{
+
+      localStorage.setItem(
+        "base_sound",
+        soundSlider.value
+      );
+
+    }catch(e){}
+
+  }
+);
+
+/* =====================================================
+   CONTROL EDITOR
+===================================================== */
+
+let editingMode =
+  "portrait";
+
+let editingLayout =
+  clone(
+    layouts.portrait
+  );
+
+const stage =
+  el("editorStage");
+
+const previews = {
+
+  aim:
+    el("previewAim"),
+
+  action:
+    el("previewAction"),
+
+  move:
+    el("previewMove"),
+
+};
+
+function previewPosition(element,position){
+
+  element.style.left =
+    position.x*100 +
+    "%";
+
+  element.style.top =
+    position.y*100 +
+    "%";
+
+}
+
+function renderEditor(){
+
+  for(const key of Object.keys(previews)){
+
+    previewPosition(
+      previews[key],
+      editingLayout[key]
+    );
+
+  }
+
+}
+
+function switchEditor(mode){
+
+  /*
+    Сохраняем временное положение текущей вкладки
+    в памяти, чтобы переключение portrait/landscape
+    не теряло изменения.
+  */
+
+  layouts[editingMode] =
+    clone(
+      editingLayout
+    );
+
+  editingMode =
+    mode;
+
+  editingLayout =
+    clone(
+      layouts[mode]
+    );
+
+  stage.className =
+    mode;
+
+  el("portraitTab").classList.toggle(
+    "active",
+    mode === "portrait"
+  );
+
+  el("landscapeTab").classList.toggle(
+    "active",
+    mode === "landscape"
+  );
+
+  renderEditor();
+
+}
+
+el("portraitTab").addEventListener(
+  "click",
+  function(){
+
+    switchEditor(
+      "portrait"
+    );
+
+  }
+);
+
+el("landscapeTab").addEventListener(
+  "click",
+  function(){
+
+    switchEditor(
+      "landscape"
+    );
+
+  }
+);
+
+function draggable(element,key){
+
+  let pointer = null;
+
+  function update(e){
+
+    const rect =
+      stage.getBoundingClientRect();
+
+    let x =
+      (
+        e.clientX -
+        rect.left
+      ) /
+      rect.width;
+
+    let y =
+      (
+        e.clientY -
+        rect.top
+      ) /
+      rect.height;
+
+    const margin =
+      (key === "aim" || key === "move")
+      ? .09
+      : .06;
+
+    x =
+      clamp(
+        x,
+        margin,
+        1-margin
+      );
+
+    y =
+      clamp(
+        y,
+        margin,
+        1-margin
+      );
+
+    editingLayout[key] = {
+      x:x,
+      y:y
+    };
+
+    previewPosition(
+      element,
+      editingLayout[key]
+    );
+
+  }
+
+  element.addEventListener(
+    "pointerdown",
+    function(e){
+
+      e.preventDefault();
+
+      pointer =
+        e.pointerId;
+
+      element.classList.add(
+        "dragging"
+      );
+
+      try{
+
+        element.setPointerCapture(
+          e.pointerId
+        );
+
+      }catch(error){}
+
+      update(e);
+
+    }
+  );
+
+  element.addEventListener(
+    "pointermove",
+    function(e){
+
+      if(e.pointerId !== pointer){
+        return;
+      }
+
+      e.preventDefault();
+
+      update(e);
+
+    }
+  );
+
+  function stop(){
+
+    pointer = null;
+
+    element.classList.remove(
+      "dragging"
+    );
+
+  }
+
+  element.addEventListener(
+    "pointerup",
+    stop
+  );
+
+  element.addEventListener(
+    "pointercancel",
+    stop
+  );
+
+}
+
+for(const key of Object.keys(previews)){
+
+  draggable(
+    previews[key],
+    key
+  );
+
+}
+
+el("openControlSettings").addEventListener(
+  "click",
+  function(){
+
+    closeOverlay(
+      el("settingsOverlay")
+    );
+
+    editingMode =
+      orientation();
+
+    editingLayout =
+      clone(
+        layouts[editingMode]
+      );
+
+    stage.className =
+      editingMode;
+
+    el("portraitTab").classList.toggle(
+      "active",
+      editingMode === "portrait"
+    );
+
+    el("landscapeTab").classList.toggle(
+      "active",
+      editingMode === "landscape"
+    );
+
+    renderEditor();
+
+    openOverlay(
+      el("controlOverlay")
+    );
+
+  }
+);
+
+el("saveControls").addEventListener(
+  "click",
+  function(){
+
+    layouts[editingMode] =
+      clone(
+        editingLayout
+      );
+
+    layouts =
+      sanitizeLayouts(
+        layouts
+      );
+
+    saveLayouts();
+
+    applyControls();
+
+    message(
+      "Управление сохранено"
+    );
+
+  }
+);
+
+el("resetControls").addEventListener(
+  "click",
+  function(){
+
+    editingLayout =
+      clone(
+        defaults[editingMode]
+      );
+
+    layouts[editingMode] =
+      clone(
+        editingLayout
+      );
+
+    saveLayouts();
+
+    renderEditor();
+
+    applyControls();
+
+    message(
+      "Раскладка сброшена"
+    );
+
+  }
+);
+
+el("backControls").addEventListener(
+  "click",
+  function(){
+
+    layouts =
+      loadLayouts();
+
+    closeOverlay(
+      el("controlOverlay")
+    );
+
+    openOverlay(
+      el("settingsOverlay")
+    );
+
+    applyControls();
+
+  }
+);
+
+
+/* 0.5.0 UI */
+el("bagButton").addEventListener("click",()=>{renderBag();openOverlay(el("inventoryOverlay"))});
+el("closeInventory").addEventListener("click",()=>closeOverlay(el("inventoryOverlay")));
+el("closeLoot").addEventListener("click",()=>closeOverlay(el("lootOverlay")));
+el("takeAllLoot").addEventListener("click",()=>{
+  if(!activeLoot)return;
+  const remain=[];
+  for(const s of activeLoot){const left=addItem(s.type,s.qty);if(left>0)remain.push({type:s.type,qty:left})}
+  activeLoot=remain;renderLoot();updateAmmoHud();
+  if(!activeLoot.length){closeOverlay(el("lootOverlay"));message("Добыча в рюкзаке")}
+  else message("Рюкзак заполнен");
+});
+el("closeStorage").addEventListener("click",()=>closeOverlay(el("storageOverlay")));
+el("storageOverlay").addEventListener("click",e=>{
+  const chestSlot=e.target.closest("[data-chest-slot]");
+  const bagSlot=e.target.closest("[data-bag-slot]");
+  const ch=storageChests[activeStorage];if(!ch)return;
+
+  if(bagSlot){
+    const i=Number(bagSlot.dataset.bagSlot),s=bag[i];if(!s)return;
+    const qty=s.qty,left=addToSlots(ch.items,s.type,qty,12);
+    const moved=qty-left;if(moved>0)removeItem(s.type,moved);
+    renderStorage();updateAmmoHud();return;
+  }
+  if(chestSlot){
+    const i=Number(chestSlot.dataset.chestSlot),s=ch.items[i];if(!s)return;
+    const qty=s.qty,left=addItem(s.type,qty),moved=qty-left;
+    if(moved>0)removeFromSlots(ch.items,s.type,moved);
+    renderStorage();updateAmmoHud();return;
+  }
+});
+el("storageSettings").addEventListener("click",openChestSettings);
+el("closeChestSettings").addEventListener("click",()=>closeOverlay(el("chestSettingsOverlay")));
+el("chestIconChoices").addEventListener("click",e=>{
+  const b=e.target.closest("[data-icon]");if(!b)return;
+  el("chestIconChoices").querySelectorAll("button").forEach(x=>x.style.outline="");
+  b.style.outline="2px solid white";el("chestSettingsOverlay").dataset.icon=b.dataset.icon;
+});
+el("saveChestSettings").addEventListener("click",()=>{
+  const ch=storageChests[activeStorage];if(!ch)return;
+  const name=el("chestNameInput").value.trim();
+  if(name)ch.name=name;
+  const ico=el("chestSettingsOverlay").dataset.icon;if(ico)ch.icon=ico;
+  closeOverlay(el("chestSettingsOverlay"));renderStorage();message("Ящик настроен");
+});
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+function refreshViewport(){
+  resizeCanvas();
+  applyControls();
+  updateCamera();
+}
+
+window.addEventListener("resize",refreshViewport);
+
+window.addEventListener("orientationchange",function(){
+  refreshViewport();
+  setTimeout(refreshViewport,80);
+  setTimeout(refreshViewport,180);
+
+  setTimeout(function(){
+    fullscreen();
+    refreshViewport();
+  },420);
+
+  setTimeout(refreshViewport,750);
+});
+
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",refreshViewport);
+}
+
+try{
+  if(tg && tg.onEvent){
+    tg.onEvent("viewportChanged",refreshViewport);
+    tg.onEvent("safeAreaChanged",refreshViewport);
+    tg.onEvent("contentSafeAreaChanged",refreshViewport);
+  }
+}catch(e){}
+
+
+/* =====================================================
+   PREVENT TELEGRAM SWIPE
+===================================================== */
+
+document.addEventListener(
+  "touchmove",
+  function(e){
+
+    if(
+      !e.target.closest(
+        ".panel"
+      )
+    ){
+
+      e.preventDefault();
+
+    }
+
+  },
+  {
+    passive:false
+  }
+);
+
+/* =====================================================
+   UPDATE
+===================================================== */
+
+function update(){
+
+  updatePlayer();
+
+  updateBullets();
+
+  updateZombies();
+
+  updateAction();
+
+  updateSearch();
+
+  updateCamera();
+
+}
+
+/* =====================================================
+   DRAW
+===================================================== */
+
+function draw(){
+
+  ctx.clearRect(
+    0,
+    0,
+    screenWidth,
+    screenHeight
+  );
+
+  ctx.save();
+
+  ctx.translate(
+    -camera.x,
+    -camera.y
+  );
+
+  if(scene === "surface"){
+
+    drawSurface();
+
+  }else{
+
+    drawBunker();
+
+  }
+
+  if(scene === "surface"){
+
+    for(const zombie of zombies){
+      drawZombie(zombie);
+    }
+
+  }
+
+  drawBullets();
+
+  drawPlayer();
+
+  ctx.restore();
+
+}
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+function gameLoop(){
+  updateFootstepsAudio();
+
+
+  if(rightAimActive && aimPower>JOY_DEAD && firing && !menuOpen && !playerDead){
+    shoot();
+  }
+
+
+  if(document.hidden){
+    requestAnimationFrame(gameLoop);
+    return;
+  }
+
+
+  try{
+
+    update();
+    draw();
+
+  }catch(error){
+
+    console.error(
+      "Game loop error:",
+      error
+    );
+
+  }
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+updateAmmoHud();
+
+/* =====================================================
+   START
+===================================================== */
+
+/*
+  Всё важное уже создано ВЫШЕ.
+  Только теперь запускается Canvas.
+*/
+
+resizeCanvas();
+
+applyControls();
+
+updateCamera();
+
+console.log("0.6.24: four-stage crop growth and distinct harvest inventory objects");
+
+gameLoop();
+
+/*
+  Telegram fullscreen запускается ПОСЛЕ игры.
+*/
+
+setTimeout(
+  fullscreen,
+  400
+);
+
+
+// 0.6.18: direct canvas farm taps removed; contextual action button is used instead.
+
+// 0.6.22 — FARM MENU BUTTONS.
+// Important: these handlers must live INSIDE the script tag.
+window.activeFarmBed = null;
+
+document.querySelectorAll(".farmCropBtn").forEach(function(btn){
+  btn.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const bed = window.activeFarmBed;
+    const crop = Number(this.dataset.crop);
+    if(bed === null || !window.farmState[bed]) return;
+
+    window.farmState[bed] = {crop:crop, plantedAt:Date.now()};
+    closeOverlay(el("farmOverlay"));
+    message(window.farmCrops[crop].icon + " Посажено");
+  });
+});
+
+el("farmClose").addEventListener("click", function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  closeOverlay(el("farmOverlay"));
+});
+
+</script>
+
+</body>
+</html>
+>
