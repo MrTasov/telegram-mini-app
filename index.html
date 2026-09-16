@@ -2302,6 +2302,7 @@ function releaseFixedStick(e){
 
 window.addEventListener("pointerup",releaseFixedStick,{passive:false});
 window.addEventListener("pointercancel",releaseFixedStick,{passive:false});
+window.addEventListener("lostpointercapture",releaseFixedStick,{passive:false,capture:true});
 
 window.addEventListener("resize",positionFixedControls);
 
@@ -9509,7 +9510,9 @@ const V010Camera=(()=>{
   mini.addEventListener('pointercancel',()=>{clearTimeout(miniTimer);miniDown=null;});
   function worldInput(e){return e.target===canvas;}
   window.addEventListener('wheel',e=>{if(!worldInput(e)||menuOpen)return;e.preventDefault();const unit=e.deltaMode===1?16:e.deltaMode===2?screenHeight:1;const delta=clamp(e.deltaY*unit,-400,400),direction=Math.sign(delta);if(direction&&wheelDirection&&direction!==wheelDirection)targetZoom=zoom;if(direction)wheelDirection=direction;setZoom(targetZoom*Math.exp(-delta*.0012));queueGameSave();},{passive:false,capture:true});
-  window.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch'||!worldInput(e)||menuOpen)return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(touches.size===2){const [a,b]=[...touches.values()];pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),zoom};objectPointer=null;cancelNavigation();moveX=moveY=movePower=0;e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
+  // Joysticks are transparent overlays, so their touches also target canvas.
+  // Reserve those contacts for controls before considering a map pinch.
+  window.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch'||!worldInput(e)||menuOpen)return;if(joystickAt(e.clientX,e.clientY)||leftPointerId!==null||rightPointerId!==null)return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(touches.size===2){const [a,b]=[...touches.values()];pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),zoom};stopControls();e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
   window.addEventListener('pointermove',e=>{if(!touches.has(e.pointerId))return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch&&touches.size>=2){const [a,b]=[...touches.values()];setZoom(pinch.zoom*Math.hypot(a.x-b.x,a.y-b.y)/Math.max(1,pinch.distance));e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
   function endTouch(e){if(!touches.has(e.pointerId))return;touches.delete(e.pointerId);if(pinch||performance.now()<suppressTouchUntil){e.preventDefault();e.stopImmediatePropagation();objectPointer=null;cancelNavigation();moveX=moveY=movePower=0;suppressTouchUntil=performance.now()+250;if(!touches.size){pinch=null;queueGameSave();}}}
   window.addEventListener('pointerup',endTouch,{passive:false,capture:true});window.addEventListener('pointercancel',endTouch,{passive:false,capture:true});
