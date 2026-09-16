@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>0.10.0 · Исправление 1 — Survival Base</title>
+<title>0.10.4 · Исправление 1 — Survival Base</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.10.0</div>
+<div id="versionBadge">VERSION 0.10.4</div>
 
 <div id="game">
 
@@ -628,12 +628,12 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.10.0 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
+    <div class="subtitle">Survival Base 0.10.4 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Для рубки дерева выберите топор.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
       <button id="saveGameButton" class="menuButton">💾 Сохранить игру</button>
-      <div class="subtitle" style="margin:0">Прогресс хранится на этом устройстве. После закрытия игры таймеры продолжатся с сохранённого момента.</div>
+      <div class="subtitle" style="margin:0">Прогресс хранится на этом устройстве. Урожай растёт и после закрытия игры.</div>
     </div>
 
     <button id="openControlSettings" class="menuButton">
@@ -755,7 +755,7 @@ html,body{
 
   <div id="bagCapacityText" class="sectionTitle">🎒 Рюкзак</div>
   <div id="inventoryGrid" class="inventoryGrid"></div>
-  <div class="subtitle">Перетащите предмет в нужную ячейку. Удержание без движения — сведения о предмете.</div>
+  <div class="subtitle">Листайте пальцем по ячейкам. Для переноса удерживайте вещь и перетащите.</div>
   <button id="closeInventory" class="menuButton">Закрыть</button>
 </div></div>
 
@@ -1395,17 +1395,7 @@ function resizeCanvas(){
       window.innerHeight
     );
 
-  const mobileDevice =
-    window.matchMedia &&
-    window.matchMedia("(pointer:coarse)").matches;
-
-  const ratio =
-    mobileDevice
-    ? 1
-    : Math.min(
-        window.devicePixelRatio || 1,
-        1.5
-      );
+  const ratio = Math.max(1,Math.min(window.devicePixelRatio||1,3,Math.sqrt(8000000/(screenWidth*screenHeight))));
 
   canvas.width =
     Math.floor(
@@ -1611,7 +1601,7 @@ function solidObjects(which){
     ...scavenges,
     {id:'yard_generator',x:1080,y:310,w:125,h:90},
     ...[[200,160],[800,150],[1400,160],[200,1040],[1400,1040]].map((p,i)=>({id:'tower'+i,x:p[0]-25,y:p[1]-25,w:50,h:50})),
-    ...worldTrees.filter(t=>!t.felled)
+    // Trees remain visible and harvestable, but are not solid.
   ];
   const chests=getChestPositions();
   const fixtures=[
@@ -2763,7 +2753,12 @@ window.farmCrops = [
   {name:"Технические",icon:"🌻",itemType:"technical_crop"}
 ];
 window.farmState = window.farmState || Array.from({length:5},()=>({crop:null,plantedAt:0}));
-const FARM_GROW_TIME = 45000;
+const FARM_GROW_TIME = 15*60000;
+// Game balance, not a universal agricultural calendar; berries use established seedlings.
+const FARM_CROP_MINUTES=[18,13,16,15,19,10,17,12.5,9.5,20];
+function farmGrowMs(crop){return (FARM_CROP_MINUTES[crop]??15)*60000;}
+function farmElapsed(st,d,now){const total=farmGrowMs(st.crop);const elapsed=d.farmClock===1?st.elapsedMs:Math.min(1,st.elapsedMs/45000)*total;return Math.min(total,elapsed+Math.max(0,now-d.savedAt));}
+function farmTimeLabel(ms){const sec=Math.max(0,Math.ceil(ms/1000));return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
 
 function getFarmBeds(){
   const f=bunker.farm;
@@ -2809,7 +2804,7 @@ function useFarmBed(i){
 
   if(st.crop!==null){
     const elapsed=Date.now()-st.plantedAt;
-    if(elapsed>=FARM_GROW_TIME){
+    if(elapsed>=farmGrowMs(st.crop)){
       const crop=window.farmCrops[st.crop];
 
       // Every crop is now its own real backpack object/resource.
@@ -2839,8 +2834,8 @@ function useFarmBed(i){
       message(crop.icon+" Собрано: "+collected+" → рюкзак");
       window.farmState[i]={crop:null,plantedAt:0};
     }else{
-      const left=Math.max(1,Math.ceil((FARM_GROW_TIME-elapsed)/1000));
-      message("🌱 Растёт — ещё "+left+" сек.");
+      const left=Math.max(1,Math.ceil((farmGrowMs(st.crop)-elapsed)/1000));
+      message("🌱 До урожая "+farmTimeLabel(left*1000)+" · автополив включён");
     }
     return;
   }
@@ -3215,7 +3210,7 @@ const livestockAnimals=[
 ];
 
 const COW_BREED_MS=600000; // test: herd can grow by one cow every 10 minutes
-const COW_MAX=6;
+const COW_MAX=21;
 let lastCowBreed=Date.now();
 
 function cowCount(){
@@ -4352,11 +4347,11 @@ function drawBunker(){
     {name:"Технические",icon:"🌻"}
   ];
   window.farmState = window.farmState || Array.from({length:5},()=>({crop:null,plantedAt:0}));
-  const FARM_GROW_MS = 45000;
+  // Each crop has its own real-time maturity interval.
 
   function farmStage(st){
     if(st.crop===null) return 0;
-    const p=Math.min(1,(Date.now()-st.plantedAt)/FARM_GROW_MS);
+    const p=Math.min(1,(Date.now()-st.plantedAt)/farmGrowMs(st.crop));
     if(p < 0.25) return 1;
     if(p < 0.50) return 2;
     if(p < 0.75) return 3;
@@ -4408,18 +4403,18 @@ function drawBunker(){
         }
       }
 
-      const progress=Math.min(100,Math.floor(((Date.now()-st.plantedAt)/FARM_GROW_MS)*100));
+      const progress=Math.min(100,Math.floor(((Date.now()-st.plantedAt)/farmGrowMs(st.crop))*100));
       const ready=progress>=100;
       ctx.font="10px Arial";
       ctx.fillStyle=ready ? "#dfe8b6" : "#aeb99b";
-      ctx.fillText(ready ? "ГОТОВО" : "РАСТЁТ • "+progress+"%",b.x+b.w/2,b.y+b.h-18);
+      ctx.fillText(ready ? "ГОТОВО" : farmTimeLabel(farmGrowMs(st.crop)-(Date.now()-st.plantedAt)),b.x+b.w/2,b.y+b.h-18);
     }
   }
 
   ctx.fillStyle="#fff";
   ctx.font="20px Arial";
   ctx.textAlign="center";
-  ctx.fillText("ПОДЗЕМНАЯ ФЕРМА",(f.left+f.right)/2,f.top+52);
+  ctx.fillText("ПОДЗЕМНАЯ ФЕРМА",(f.left+f.right)/2,f.top+22);
 
   // Rear wall and exit/hatch
   ctx.strokeStyle="#747878";
@@ -5436,7 +5431,7 @@ el("closeLoot").addEventListener("click",()=>closeOverlay(el("lootOverlay")));
 el("takeAllLoot").addEventListener("click",()=>{
   if(!activeLoot || !activeLootObject)return;
   const remain=[];
-  for(const s of activeLoot){const left=addItem(s.type,s.qty);if(left>0)remain.push({type:s.type,qty:left})}
+  for(const s of activeLoot){const left=addItem(s.type,s.qty,s);if(left>0)remain.push({...s,qty:left})}
   activeLootObject.loot=remain;
   activeLoot=remain;renderLoot();updateAmmoHud();
   queueGameSave();
@@ -5677,6 +5672,7 @@ function captureGameProgress(){
       aimX:player.aimX,aimY:player.aimY,dead:playerDead},
     magazine,bag:clone(bag),equipment:clone(equipment),
     storage:clone(storageChests),
+    farmClock:1,
     farm:window.farmState.map(st=>({
       crop:st.crop,
       elapsedMs:st.crop===null?0:saveElapsed(now,st.plantedAt),
@@ -5753,7 +5749,7 @@ function decodeGameProgress(raw){
     z.alive===(z.health>0)&&['wander','chase'].includes(z.state)))fail();
   const l=d.livestock;
   if(!l||typeof l.alive!=="boolean"||typeof l.warned!=="boolean"||
-    !Array.isArray(l.animals)||l.animals.length>64||!l.animals.every(a=>
+    !Array.isArray(l.animals)||l.animals.length>71||!l.animals.every(a=>
       position(a)&&['cow','chicken'].includes(a.kind)&&
       number(a.vx,-1,1)&&number(a.vy,-1,1)&&number(a.size,1,100))||
     l.animals.filter(a=>a.kind==="cow").length>COW_MAX||
@@ -5804,7 +5800,7 @@ function restoreGameProgress(d){
   }
   playerDead=d.player.dead;
   window.farmState=d.farm.map(st=>({crop:st.crop,
-    plantedAt:st.crop===null?0:now-st.elapsedMs,
+    plantedAt:st.crop===null?0:now-farmElapsed(st,d,now),
     ...(st.harvestLeft===null?{}:{harvestLeft:st.harvestLeft})}));
   d.loot.forEach((o,i)=>{
     scavenges[i].searched=o.searched;
@@ -6786,9 +6782,9 @@ const V09Craft = (() => {
     if(status)status.textContent=pauseExtra[id]?'Пауза':!V09Power.devices[id].enabled?'Выключен':!powered(id)?'Нет питания':j?'Работает':sumReady(id)?'Готово':'Ожидание';
     const percent=j?clamp(100*(1-j.remainingMs/j.totalMs),0,100):0;
     if(bar)bar.style.width=percent+'%';if(made)made.textContent=j?`${j.completedBatches*r.qty} / ${j.batches*r.qty}`:'—';if(ready)ready.textContent=String(sumReady(id));
-    if(time)time.textContent=j?`${r.name} · ${Math.floor(percent)}% · ${duration(j.remainingMs/(craftUpgrades.workshop?1.2:1))}`:'Выберите рецепт и количество';
-    if(button){button.disabled=sumReady(id)===0;button.textContent=sumReady(id)>0?`Забрать готовое · ${sumReady(id)}`:'Нет готовых предметов';}
-    const readyList=el('v010ReadyList');if(readyList){const items={...readyExtra[id]};if(j?.outputQty)mix(items,r.output,j.outputQty);const html=Object.entries(items).map(([t,n])=>`<span title="${ITEM[t]?.name||t}">${itemIconHTML(t)} ${n}</span>`).join('');if(readyList._craftHTML!==html){readyList.innerHTML=html;readyList._craftHTML=html;}}
+    if(time){const key=j?r.output:'';if(time.dataset.output!==key){time.innerHTML=j?itemIconHTML(key)+'<span></span>':'<span></span>';time.dataset.output=key;}time.querySelector('span').textContent=j?`Сейчас: ${r.name} · ${duration(j.remainingMs/(craftUpgrades.workshop?1.2:1))}`:'Выберите рецепт';}
+    if(button){button.disabled=sumReady(id)===0;button.textContent=sumReady(id)>0?`Забрать готовое · ${sumReady(id)}`:'Забрать готовое';}
+    const readyList=el('v010ReadyList');if(readyList){const items={...readyExtra[id]};if(j?.outputQty)mix(items,r.output,j.outputQty);const html=Object.entries(items).map(([t,n])=>`<span title="${ITEM[t]?.name||t}">${itemIconHTML(t)}<span>${ITEM[t]?.name||t}<b> × ${n}</b></span></span>`).join('');if(readyList._craftHTML!==html){readyList.innerHTML=html;readyList._craftHTML=html;}}
   }
   function render(){
     if(!activeStation)return;const id=activeStation,job=getJob(id);
@@ -6826,18 +6822,18 @@ const V09Craft = (() => {
     }
     scroll.replaceChildren();actions.replaceChildren();craftView.detailRecipe=selected[id];
     quantity[id]=clamp(quantity[id],0,maxSelection(id));const r=RECIPES[selected[id]],count=selectedBatches(id),watts=id==='furnace'?6:id==='craft_bench'?2:1;
-    const info=document.createElement('div');info.className='v092RecipeDetails';info.innerHTML=`<div class="v092RecipeHero">${itemIconHTML(r.output)}<div><b>${r.name}</b><div class="v09CraftNote">${r.qty} шт. · ${duration(r.ms/(craftUpgrades.workshop?1.2:1))} · ${watts} кВт</div></div></div>${gunStats(r.output)}<div class="v092Category">Материалы · рюкзак / склад → нужно</div>`;scroll.append(info);
+    const info=document.createElement('div');info.className='v092RecipeDetails';info.innerHTML=`<div class="v092RecipeHero">${itemIconHTML(r.output)}<div><b>${r.name}</b><div class="v09CraftNote">${r.qty} шт. · ${duration(r.ms/(craftUpgrades.workshop?1.2:1))} · ${watts} кВт</div></div></div>${gunStats(r.output)}<div class="v092Category">Материалы</div>`;scroll.append(info);
     const pin=v09Button(pinnedRecipe?.recipe===selected[id]?'Открепить рецепт':'Закрепить рецепт',()=>{pinnedRecipe=pinnedRecipe?.recipe===selected[id]?null:{recipe:selected[id],batches:Math.max(1,count)};render();queueGameSave();});pin.className='v010CraftSmall';pin.dataset.craftControl='pin';info.append(pin);
     const materials=document.createElement('div');materials.className='v092Materials';info.append(materials);
-    const help=document.createElement('div');help.className='v092MaterialHelp';help.textContent='Материал: нажмите, чтобы узнать источник. Закреплённые предметы не расходуются.';
+    const help=document.createElement('div');help.className='v092MaterialHelp';help.textContent='';
     for(const [type,n] of Object.entries(r.input)){
       const need=n*Math.max(1,count),have=materialCount(type),bagHave=bag.filter(s=>s?.type===type&&!s.locked).reduce((a,s)=>a+s.qty,0),storeHave=Math.max(0,have-bagHave),b=v09Button('',()=>{
         const recipe=Object.entries(RECIPES).find(([,v])=>v.output===type);
         help.textContent=recipe?`${ITEM[type].name}: ${labels[recipe[1].station]}. ${Object.entries(recipe[1].input).map(([t,q])=>q+' × '+ITEM[t].name).join(' + ')} → ${recipe[1].qty} шт.`:({iron_ore:'Железная руда: добывайте киркой за крепостью.',copper_ore:'Медная руда: добывайте киркой на каменистых участках.',wood:'Древесина: рубите деревья топором.',parts:'Детали: обыскивайте гаражи, машины и дома.',grain:'Зерно: выращивайте на ферме.',advanced_parts:'Редкие компоненты: исследуйте удалённые склады и гаражи.'}[type]||'Ищите во время вылазок.');
         if(recipe&&recipe[1].station===id){selected[id]=recipe[0];quantity[id]=0;render();}
-      });b.className='v092Ingredient'+(have<need?' v09CraftShort':'');b.innerHTML=`${itemIconHTML(type)}<span>${ITEM[type]?.name||type}<strong>${bagHave} / ${storeHave} → ${need}</strong></span>`;materials.append(b);
+      });b.className='v092Ingredient'+(have<need?' v09CraftShort':'');b.innerHTML=`${itemIconHTML(type)}<span>${ITEM[type]?.name||type}<strong>${have} / ${need}</strong></span>`;materials.append(b);
     }info.append(help);
-    const amount=document.createElement('div');amount.className='v091QuantityCount';amount.textContent=`${id==='furnace'?'Руды':id==='feed_craft'?'Зерна':'Партий'}: ${quantity[id]} / ${maxSelection(id)} · выход ${r.qty*count}`;scroll.append(amount);
+    const amount=document.createElement('div');amount.className='v091QuantityCount';amount.textContent=`Изготовить: ${r.qty*count} шт.`;scroll.append(amount);
     const q=document.createElement('div');q.className='v09CraftQuantity';for(const [label,value] of [['+1',quantity[id]+1],['+10',quantity[id]+10],['MAX',maxSelection(id)],['0',0]]){const b=v09Button(label,()=>{quantity[id]=clamp(value,0,maxSelection(id));render();});b.dataset.craftControl='quantity-'+label;q.append(b);}scroll.append(q);
     if(id==='craft_bench'){
       const mods=document.createElement('div');mods.className='v010CraftExtras';
@@ -6848,10 +6844,10 @@ const V09Craft = (() => {
       }scroll.append(mods);
     }
     const queue=document.createElement('div');queue.className='v010CraftQueue';
-    if(queueExtra[id].length){const h=document.createElement('div');h.className='v092Category';h.textContent='Далее · материалы зарезервированы';queue.append(h);}
-    queueExtra[id].forEach((j,index)=>{const line=document.createElement('div');line.className='v010QueueRow';line.innerHTML=`${itemIconHTML(RECIPES[j.recipe].output)}<span>${RECIPES[j.recipe].name} × ${j.batches}</span>`;const x=v09Button('×',()=>cancelQueued(id,index));x.title='Отменить заказ и вернуть материалы';x.setAttribute('aria-label',x.title);line.append(x);queue.append(line);});scroll.append(queue);
+    if(queueExtra[id].length){const h=document.createElement('div');h.className='v092Category';h.textContent='В очереди';queue.append(h);}
+    queueExtra[id].forEach((j,index)=>{const line=document.createElement('div');line.className='v010QueueRow';line.innerHTML=`${itemIconHTML(RECIPES[j.recipe].output)}<span>${RECIPES[j.recipe].name} × ${j.batches*RECIPES[j.recipe].qty}</span>`;const x=v09Button('×',()=>cancelQueued(id,index));x.title='Отменить заказ и вернуть материалы';x.setAttribute('aria-label',x.title);line.append(x);queue.append(line);});scroll.append(queue);
     const refunds=Object.values(refundExtra[id]).reduce((a,n)=>a+n,0);if(refunds){const b=v09Button('Забрать возврат материалов · '+refunds,()=>collectRefund(id));b.className='v010CraftSmall';scroll.append(b);}
-    const progress=document.createElement('div');progress.className='v092Production';progress.innerHTML='<span id="v091CraftStatus"></span><div id="v091CraftTime"></div><div class="v09CraftProgress"><div id="v091CraftBar"></div></div><div class="v092ProductionCounts">Изготовлено: <strong id="v091CraftMade"></strong> · доступно: <strong id="v091CraftReady"></strong></div><div id="v010ReadyList"></div>';actions.append(progress);
+    const progress=document.createElement('div');progress.className='v092Production';progress.innerHTML='<span id="v091CraftStatus"></span><div id="v091CraftTime"></div><div class="v09CraftProgress"><div id="v091CraftBar"></div></div><div class="v092ProductionCounts"><strong id="v091CraftMade"></strong> изготовлено · <strong id="v091CraftReady"></strong> готово</div><div id="v010ReadyList"></div>';actions.append(progress);
     if(job){const controls=document.createElement('div');controls.className='v010CraftControls';const p=v09Button(pauseExtra[id]?'Продолжить':'Пауза',()=>setPaused(id,!pauseExtra[id]));p.className='v010CraftSmall';p.dataset.craftControl='pause';controls.append(p);const cancel=v09Button('Отменить не начатое',()=>cancelUnstarted(id));cancel.className='v010CraftSmall';cancel.dataset.craftControl='cancel';cancel.title='Текущая начатая партия сохранится, материалы следующих вернутся';controls.append(cancel);actions.append(controls);}
     const buttons=document.createElement('div');buttons.className='v010CraftBottom';const make=v09Button((job?'В очередь':'Изготовить')+' · '+r.qty*count+' шт.',()=>start(id),'primary');make.dataset.craftControl='make';make.disabled=count===0||maximum(r)<count||!availableRecipe(r)||queueExtra[id].length>=30;buttons.append(make);const take=v09Button('',()=>collect(id));take.id='v091CraftCollect';take.dataset.craftControl='collect';buttons.append(take);actions.append(buttons);refreshProgress();
     if(focusControl){const next=Array.from(body.querySelectorAll('[data-craft-control]')).find(b=>b.dataset.craftControl===focusControl);if(next&&!next.disabled)next.focus({preventScroll:true});}
@@ -8037,7 +8033,7 @@ decodeGameProgress=function(raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|10\.[0123])$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|10\.[01234])$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -8150,7 +8146,7 @@ loadGameProgress=function(){
       updateSaveStatus(`💾 Слот ${id}: ${entry.recovered?'восстановлен из резервной копии':'прогресс восстановлен'}.`);
       return true;
     }
-    const legacy=[localStorage.getItem(GAME_SAVE_KEY),localStorage.getItem(GAME_SAVE_BACKUP_KEY)];
+    const legacy=localStorage.getItem('survival_base_slots_deleted')==='1'?[]:[localStorage.getItem(GAME_SAVE_KEY),localStorage.getItem(GAME_SAVE_BACKUP_KEY)];
     for(const raw of legacy){
       if(raw===null)continue;
       let data;try{data=decodeGameProgress(raw);}catch(error){continue;}
@@ -8222,7 +8218,7 @@ function v09NewGame(){
   try{
     const id=v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
-    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.10.0';data.v010={schema:1,modules:clone(V010.initialModules)};
+    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.10.4';data.v010={schema:1,modules:clone(V010.initialModules)};
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
     const raw=v09WriteNewSlot(id,data);
@@ -8247,7 +8243,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.10.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.10.4-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -8299,6 +8295,7 @@ function v09RenderSaveSlots(){
         actions.append(v09Button(id===v09ActiveSlot?'Продолжить':'Загрузить',()=>v09ChooseSlot(id)),
           v09Button('Переименовать',()=>v091EditSaveName(id,row,entry.data.saveName)));row.append(actions);
       }
+      if(entry){const del=v09Button('Удалить',()=>V0104.requestDelete(id));del.classList.add('v104Delete');row.append(del);}
       body.append(row);
     }
   }catch(error){const warning=document.createElement('p');warning.textContent='Хранилище браузера недоступно. Скачайте текущий прогресс файлом.';body.append(warning);}
@@ -8521,14 +8518,24 @@ window.V010Inventory=(()=>{
   }
   function startPointer(e,where,index,node){
     if(e.button!==undefined&&e.button!==0)return;
-    const item=where==='equipment'?equipment[index]:list(where)?.[index];if(!item)return;
-    e.stopPropagation();drag={where,index,node,item,x:e.clientX,y:e.clientY,id:e.pointerId,start:performance.now(),active:false,ghost:null,target:null};
+    const item=where==='equipment'?equipment[index]:list(where)?.[index];if(!item&&e.pointerType!=='touch')return;
+    e.stopPropagation();drag={where,index,node,item,x:e.clientX,y:e.clientY,id:e.pointerId,start:performance.now(),active:false,ghost:null,target:null,touch:e.pointerType==='touch',scrolling:false,lastY:e.clientY};
     try{node.setPointerCapture(e.pointerId);}catch(_){}
   }
   function targetAt(x,y){const target=document.elementFromPoint?.(x,y);return target?.closest?.('[data-v010-container],[data-equip-slot],[data-body-part]')||null;}
   function pointerMove(e){
     if(!drag||drag.id!==e.pointerId)return;
-    const d=drag;if(!d.active&&Math.hypot(e.clientX-d.x,e.clientY-d.y)<7)return;
+    const d=drag,dist=Math.hypot(e.clientX-d.x,e.clientY-d.y);
+    if(d.touch&&!d.active){
+      if(!d.scrolling&&dist<7)return;
+      if(d.scrolling||!d.item||performance.now()-d.start<380){
+        d.scrolling=true;let node=d.node.parentNode;
+        while(node&&node!==document.body){const css=getComputedStyle(node);if(node.scrollHeight>node.clientHeight+1&&/(auto|scroll)/.test(css.overflowY||css.overflow||''))break;node=node.parentNode;}
+        if(node&&node!==document.body)node.scrollTop+=d.lastY-e.clientY;
+        d.lastY=e.clientY;suppressClick=performance.now()+500;e.preventDefault();return;
+      }
+    }
+    if(!d.active&&dist<7)return;
     if(!d.active){d.active=true;d.ghost=document.createElement('div');d.ghost.className='v010DragGhost';d.ghost.innerHTML=itemIconHTML(d.item.type);document.body.append(d.ghost);d.node.classList.add('dragging');}
     e.preventDefault();d.ghost.style.left=(e.clientX-27)+'px';d.ghost.style.top=(e.clientY-27)+'px';
     d.target?.classList.remove('v010DropTarget');d.target=targetAt(e.clientX,e.clientY);d.target?.classList.add('v010DropTarget');
@@ -8539,7 +8546,7 @@ window.V010Inventory=(()=>{
   function pointerEnd(e,cancelled=false){
     if(!drag||drag.id!==e.pointerId)return;const d=drag;drag=null;d.ghost?.remove();d.target?.classList.remove('v010DropTarget');d.node.classList.remove('dragging');
     try{d.node.releasePointerCapture(e.pointerId);}catch(_){}
-    if(cancelled){suppressClick=performance.now()+400;return;}
+    if(cancelled||d.scrolling||!d.item){suppressClick=performance.now()+400;return;}
     if(!d.active){if(performance.now()-d.start>450){suppressClick=performance.now()+400;details(d.where,d.index);}return;}
     suppressClick=performance.now()+400;e.preventDefault();
     const target=targetAt(e.clientX,e.clientY)||d.target;if(!target)return;
@@ -8641,7 +8648,7 @@ window.V010Combat=(() => {
   function gunSpec(item){
     if(typeof item==='string')item=bag.find(s=>s?.type===item)||{type:item};
     const g=GUNS[item?.type];if(!g)return null;const m=item.modules||{},level=clamp(Number(item.level)||0,0,5),head=equipment.head?getItemStats(equipment.head).accuracy||0:0;
-    return {...g,damage:Math.round(g.damage*(1+level*.05+(item.variant==='sturdy'?.02:0))),mag:m.magazine?45:30,reloadMs:(item.type==='rifle_m4'?3000:3500)+(m.magazine?500:0),spread:Math.max(.006,g.spread*(1-head)*(m.scope?.78:1)),recoil:g.recoil*(m.grip?.72:1),noise:m.suppressor?230:550,modules:copy(m)};
+    return {...g,damage:Math.round(g.damage*(1+level*.05+(item.variant==='sturdy'?.02:0))),mag:m.magazine?45:30,reloadMs:(item.type==='rifle_m4'?1800:2000),spread:Math.max(.006,g.spread*(1-head)*(m.scope?.78:1)),recoil:g.recoil*(m.grip?.72:1),noise:m.suppressor?230:550,modules:copy(m)};
   }
   function refreshStats(){
     let hp=100,armor=0,speed=0,accuracy=0;
@@ -9234,7 +9241,7 @@ const V010Energy=(()=>{
       edge('feed',count(12,'animal_feed')===0,'Ферма: у животных закончился корм.');
       edge('water',count(13,'water')===0,'Ферма: у животных закончилась вода.');
     }
-    if(Array.isArray(window.farmState)&&typeof FARM_GROW_MS!=='undefined')window.farmState.forEach((s,i)=>{const ready=!!s?.crop&&Date.now()-s.plantedAt>=FARM_GROW_MS;if(ready&&!harvestSeen[i])log('Ферма: урожай на грядке '+(i+1)+' созрел.');harvestSeen[i]=ready;});
+    if(Array.isArray(window.farmState))window.farmState.forEach((s,i)=>{const ready=s?.crop!==null&&s?.crop!==undefined&&Date.now()-s.plantedAt>=farmGrowMs(s.crop);if(ready&&!harvestSeen[i])log('Ферма: урожай на грядке '+(i+1)+' созрел.');harvestSeen[i]=ready;});
   }
   powerTick=function(dt){
     if(document.hidden||playerDead)return;dt=clamp(Number(dt)||0,0,.1);if(!dt)return;
@@ -9614,7 +9621,7 @@ function viewHeight(){return V010Camera.view().h;}
   const snapshot=()=>Object.fromEntries(order.filter(k=>V010.modules[k]).map(k=>[k,V010.modules[k].capture()]));
   V010.initialModules=clone(snapshot());
   const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.10.0';d.v010={schema:1,modules:snapshot()};return d;};
+  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.10.4';d.v010={schema:1,modules:snapshot()};return d;};
   decodeGameProgress=function(raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -9623,7 +9630,7 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.10.0';return d;
+    d.gameVersion='0.10.4';return d;
   };
   restoreGameProgress=function(d){
     const was=v09SaveTransaction;v09SaveTransaction=true;
@@ -9632,11 +9639,135 @@ function viewHeight(){return V010Camera.view().h;}
   };
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(text);};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.10.0 · Большой мир и свободное развитие';
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.10.0';
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.10.4 · Большой мир и свободное развитие';
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.10.4';
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
+})();
+
+/* 0.10.4 — top-down usability, farm irrigation and save management. */
+const V0104=(()=>{
+  // Keep small world labels legible at distant zoom without scaling the HUD.
+  const baseFillText=ctx.fillText.bind(ctx);
+  ctx.fillText=function(text,x,y,...args){
+    const font=this.font,m=font.match(/([\d.]+)px/),t=this.getTransform();
+    const density=canvas.width/Math.max(1,screenWidth),scale=Math.hypot(t.a,t.b)/density;
+    if(m&&+m[1]>=9&&+m[1]<=22&&scale>.1&&scale<1&&+m[1]*scale<9.5)this.font=font.replace(m[0],(9.5/scale).toFixed(2)+'px');
+    try{return baseFillText(text,x,y,...args);}finally{this.font=font;}
+  };
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+
+  const oldBunker=drawBunker;
+  drawBunker=function(){
+    oldBunker();const beds=getFarmBeds(),y=beds[0].y-24;
+    ctx.save();ctx.lineCap='round';
+    function pipe(points,color,width){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();}
+    pipe([[beds[0].x-20,y],[beds.at(-1).x+beds.at(-1).w/2,y]],'#152f32',9);
+    pipe([[beds[0].x-20,y-18],[beds[0].x-20,y],[beds.at(-1).x+beds.at(-1).w/2,y]],'#6b9ea0',4);
+    for(let i=0;i<beds.length;i++){
+      const b=beds[i],cx=b.x+b.w/2,st=window.farmState[i],watering=st.crop!==null&&Date.now()-st.plantedAt<farmGrowMs(st.crop);
+      pipe([[cx,y],[cx,b.y+6]],'#182d2c',7);pipe([[cx,y],[cx,b.y+6]],'#71a6a4',3);
+      ctx.fillStyle=watering?'#91d9c1':'#546968';ctx.fillRect(cx-7,b.y-6,14,10);
+      // Drip lines distribute water along the complete bed, not just the top edge.
+      for(const x of [b.x+8,b.x+b.w-8]){
+        pipe([[cx,b.y+6],[x,b.y+6],[x,b.y+b.h-30]],'#1d3532',2);
+        if(watering){ctx.fillStyle='#79c7d580';for(let n=0;n<10;n++){const yy=b.y+35+n*(b.h-75)/10+(performance.now()/160+i*3)%12;ctx.beginPath();ctx.arc(x+(x<cx?5:-5),yy,1.8,0,Math.PI*2);ctx.fill();}}
+      }
+      if(watering){ctx.fillStyle='#6fb2b509';ctx.fillRect(b.x,b.y,b.w,b.h);}
+    }
+    ctx.restore();
+  };
+
+  let selectedLoot=-1;
+  const oldOpenLoot=openLoot;
+  openLoot=function(obj){selectedLoot=-1;oldOpenLoot(obj);};
+  function takeLoot(index,amount){
+    const s=activeLoot?.[index];if(!s||!activeLootObject)return false;
+    const count=Math.min(s.qty,Math.max(1,Math.floor(amount))),left=addItem(s.type,count,s),taken=count-left;
+    if(!taken){message('Рюкзак заполнен');return false;}
+    s.qty-=taken;if(!s.qty){activeLoot.splice(index,1);selectedLoot=-1;}
+    activeLootObject.loot=activeLoot;renderLoot();renderQuickSlots();updateAmmoHud();queueGameSave();return true;
+  }
+  renderLoot=function(){
+    const box=el('lootList');box.replaceChildren();box.className='v104LootGrid';
+    for(let i=0;i<Math.max(8,activeLoot?.length||0);i++){
+      const s=activeLoot?.[i],cell=document.createElement('button');cell.type='button';cell.className='v104LootCell'+(i===selectedLoot?' selected':'');
+      cell.innerHTML=s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'';
+      cell.disabled=!s;cell.setAttribute('aria-label',s?ITEM[s.type].name+' × '+s.qty:'Пусто');
+      cell.onclick=()=>{selectedLoot=i;renderLoot();};box.append(cell);
+    }
+    let details=el('v104LootDetails');if(!details){details=document.createElement('div');details.id='v104LootDetails';box.after(details);}details.replaceChildren();
+    const s=activeLoot?.[selectedLoot],label=document.createElement('div');label.className='v104LootLabel';label.textContent=s?ITEM[s.type].name+' · '+s.qty:'Выберите предмет';details.append(label);
+    if(s){const controls=document.createElement('div');controls.className='v104LootActions';controls.append(v09Button('Взять 1',()=>takeLoot(selectedLoot,1)),v09Button('Взять стопку',()=>takeLoot(selectedLoot,s.qty)));details.append(controls);}
+    el('takeAllLoot').disabled=!activeLoot?.length;
+  };
+
+  function deleteSlot(id){
+    if(!Number.isInteger(id)||id<1||id>V09_SLOT_COUNT)return false;
+    try{
+      if(!v09OccupiedSlots().includes(id))return false;
+      if(id===v09ActiveSlot){v09CancelPendingSave();v09ActiveSlot=null;gameSaveBlocked=true;lastVerifiedGameSave=null;localStorage.removeItem(V09_ACTIVE_KEY);stopControls();}
+      localStorage.setItem('survival_base_slots_deleted','1');
+      localStorage.removeItem(v09SlotKey(id));localStorage.removeItem(v09BackupKey(id));
+      updateSaveStatus(v09ActiveSlot?'Слот '+id+' удалён.':'Выберите сохранение или создайте новую игру.');v09RenderSaveSlots();return true;
+    }catch(error){message('Не удалось удалить сохранение');return false;}
+  }
+  function requestDelete(id){
+    const entry=v09ReadSlot(id);if(!entry)return;
+    const o=v09Overlay('v104DeleteSave','Удалить сохранение?'),body=o.querySelector('.v09Body');body.replaceChildren();
+    const label=document.createElement('p');label.textContent=(entry.invalid?'Слот '+id:entry.data.saveName)+' — сохранение и его резервная копия будут удалены.';body.append(label);
+    const actions=document.createElement('div');actions.className='v104LootActions';
+    actions.append(v09Button('Отмена',()=>{closeOverlay(o);openOverlay(v09SaveOverlay);}),v09Button('Удалить',()=>{if(deleteSlot(id)){closeOverlay(o);openOverlay(v09SaveOverlay);message('Слот '+id+' освобождён');}}));body.append(actions);openOverlay(o);
+  }
+  V09Saves.deleteSlot=requestDelete;
+  // Move the long control explanation into an optional disclosure.
+  const settings=el('settingsOverlay').querySelector('.panel'),paragraphs=settings.querySelectorAll('.subtitle');
+  if(paragraphs[1]){const help=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Как управлять';paragraphs[1].before(help);help.append(summary,paragraphs[1]);}
+  settings.append(el('closeSettings'));
+  v09Style(`
+    .v010Slot,.equipSlot{touch-action:none!important;-webkit-touch-callout:none;user-select:none}
+    #inventoryOverlay .panel,#storageOverlay .panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+    #settingsOverlay .panel{box-sizing:border-box;width:min(390px,94vw);max-height:86dvh;padding:12px;border-radius:12px;font-size:11px}
+    #settingsOverlay h2{font-size:17px;margin:0 0 6px}#settingsOverlay .subtitle{font-size:10px;line-height:1.4;margin:4px 0 7px!important}
+    #settingsOverlay .menuButton{font-size:11px;padding:7px 10px;min-height:34px;margin-top:5px;border-radius:8px}
+    #settingsOverlay .settingBox{padding:8px;margin:7px 0}#settingsOverlay .settingTitle{font-size:11px;margin-bottom:5px}
+    #settingsOverlay #saveStatus{font-size:10px!important}#settingsOverlay details{margin:6px 0;color:#afc2bd}#settingsOverlay summary{padding:5px;cursor:pointer}
+    #settingsOverlay .v010CameraControls{gap:4px}#settingsOverlay .v010CameraControls .menuButton{font-size:10px}#settingsOverlay input[type=range]{height:24px}
+    #lootOverlay .panel{width:min(340px,92vw);box-sizing:border-box;padding:13px}#lootOverlay h2{font-size:17px}
+    #lootOverlay .subtitle{font-size:11px;margin-bottom:8px}.v104LootGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+    .v104LootCell{position:relative;height:60px;padding:3px;border:1px solid #526866;border-radius:8px;background:#16262b;touch-action:pan-y;color:#e2ede6}
+    .v104LootCell.selected{border-color:#e2bd73;background:#32413b}.v104LootCell:disabled{opacity:.35}.v104LootCell .itemIcon{width:46px;height:46px}.v104LootCell small{position:absolute;right:4px;bottom:3px;font-size:11px}
+    .v104LootLabel{font-size:12px;min-height:18px;margin-top:10px}.v104LootActions{display:flex;gap:6px}.v104LootActions .menuButton{font-size:12px;padding:9px;margin-top:5px}
+    #lootOverlay>.panel>.menuButton{font-size:12px;padding:9px;min-height:36px}.v104Delete{color:#ffc0ad!important;border-color:#9c6559!important}
+    #v104DeleteSave{z-index:15000}.farmCropBtn small{display:block;font-size:10px;color:#9dc7b7;margin-top:3px}
+    #v09CraftOverlay .v09Panel{height:min(690px,88dvh);max-height:88dvh;padding:10px;box-sizing:border-box}
+    #v09CraftOverlay .v09Header{flex:0 0 auto}#v09CraftOverlay .v09Title{font-size:16px}
+    #v09CraftOverlay .v092CraftLayout{grid-template-columns:140px minmax(0,1fr);gap:8px}
+    #v09CraftOverlay .v092Recipe{height:48px;min-height:48px;max-height:48px;flex-basis:48px;padding:1px;margin:2px 0;border-radius:6px;gap:4px}
+    #v09CraftOverlay .v092Recipe .itemIcon{width:44px;min-width:44px;max-width:44px;height:44px;min-height:44px;max-height:44px;flex-basis:44px}
+    #v09CraftOverlay .v092Recipe span{font-size:10px}#v09CraftOverlay .v092Recipe small{font-size:9px}
+    #v09CraftOverlay .v092RecipeHero{min-height:48px}#v09CraftOverlay .v092RecipeHero>.itemIcon{width:44px;height:44px}#v09CraftOverlay .v092RecipeHero b{font-size:12px}
+    #v09CraftOverlay .v092Materials{min-height:0;grid-template-columns:1fr;margin:5px 0}#v09CraftOverlay .v092MaterialHelp{min-height:0;padding:0;margin:3px 0;font-size:10px}
+    #v09CraftOverlay .v092Ingredient{min-height:40px;box-sizing:border-box;font-size:10px;margin:0;align-items:center}
+    #v09CraftOverlay .v092Ingredient strong{font-size:12px;color:inherit}#v09CraftOverlay .v092Ingredient .itemIcon{width:36px;height:36px}
+    #v09CraftOverlay .v010CraftSmall{min-height:30px;font-size:10px;padding:3px 6px}
+    #v09CraftOverlay .v091CraftScroll{display:block;overflow-y:auto;touch-action:pan-y;min-height:0}
+    #v09CraftOverlay .v010CraftQueue{margin-top:9px}#v09CraftOverlay .v010QueueRow{background:#213137;border:1px solid #3f5556;border-radius:7px;margin:4px 0;padding:3px;font-size:10px}
+    #v09CraftOverlay .v010QueueRow>.itemIcon{width:36px;height:36px;flex-shrink:0}
+    #v09CraftOverlay .v091CraftActions{height:auto;min-height:0;max-height:42%;flex:0 0 auto;overflow-y:auto;padding-top:7px;gap:5px}
+    #v09CraftOverlay #v091CraftTime{display:flex;align-items:center;gap:5px;min-height:36px;height:auto;white-space:normal;line-height:1.3;font-size:11px}
+    #v09CraftOverlay #v091CraftTime .itemIcon{width:36px;height:36px;flex-shrink:0}#v09CraftOverlay #v091CraftStatus{float:right;font-size:10px;color:#b4d9bc}
+    #v09CraftOverlay .v092ProductionCounts{font-size:10px;margin:4px 0}#v09CraftOverlay .v092ProductionCounts strong{font-weight:500}
+    #v09CraftOverlay #v010ReadyList{height:auto;min-height:0;max-height:78px;overflow:auto;flex-wrap:wrap;font-size:10px;gap:4px}
+    #v09CraftOverlay #v010ReadyList>span{border:1px solid #50795c;background:#22392e;border-radius:6px;padding:3px;gap:3px}#v09CraftOverlay #v010ReadyList .itemIcon{width:30px;height:30px}
+    #v09CraftOverlay .v010CraftBottom .menuButton{min-height:36px;padding:7px 4px;font-size:11px;border-radius:8px}
+    #v09CraftOverlay .v09DeviceRow{padding:3px 0}#v09CraftOverlay .v09DeviceRow strong{display:none}
+    @media(max-width:540px){#v09CraftOverlay .v092CraftLayout{grid-template-columns:106px minmax(0,1fr);gap:6px}#v09CraftOverlay .v092Recipe .itemIcon{width:40px;min-width:40px;max-width:40px;height:40px;min-height:40px;max-height:40px;flex-basis:40px}#v09CraftOverlay .v092Recipe{height:46px;min-height:46px;max-height:46px;flex-basis:46px}#v09CraftOverlay .v09CraftQuantity{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}#v09CraftOverlay .v09CraftQuantity button{min-width:0;font-size:10px;padding:4px 2px}}
+    @media(max-height:500px){#v09CraftOverlay .v09Panel{height:94dvh;max-height:94dvh}#v09CraftOverlay .v091CraftActions{max-height:44%;padding-top:3px}#v09CraftOverlay .v092ProductionCounts{display:none}#v09CraftOverlay #v091CraftTime{min-height:24px}#v09CraftOverlay #v091CraftTime .itemIcon{width:24px;height:24px}}
+  `);
+  invalidateGeometry();
+  return {deleteSlot,requestDelete,takeLoot,farmGrowMs};
 })();
 
 loadGameProgress();gameSaveReady=true;
@@ -9690,7 +9821,7 @@ setTimeout(
 window.activeFarmBed = null;
 
 document.querySelectorAll(".farmCropBtn").forEach(function(btn){
-  const crop=window.farmCrops[Number(btn.dataset.crop)];if(crop)btn.innerHTML=itemIconHTML(crop.itemType)+" <span>"+crop.name+"</span>";
+  const crop=window.farmCrops[Number(btn.dataset.crop)];if(crop)btn.innerHTML=itemIconHTML(crop.itemType)+" <span>"+crop.name+"<small>"+farmTimeLabel(farmGrowMs(Number(btn.dataset.crop)))+" · автополив</small></span>";
   btn.addEventListener("click", function(e){
     e.preventDefault();
     e.stopPropagation();
@@ -9702,7 +9833,7 @@ document.querySelectorAll(".farmCropBtn").forEach(function(btn){
     window.farmState[bed] = {crop:crop, plantedAt:Date.now()};
     queueGameSave();
     closeOverlay(el("farmOverlay"));
-    message(window.farmCrops[crop].icon + " Посажено");
+    message(window.farmCrops[crop].icon + " Посажено · "+farmTimeLabel(farmGrowMs(crop))+" до урожая · автополив");
   });
 });
 
