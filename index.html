@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>0.14.1 · Survival Base</title>
+<title>0.14.2 · Survival Base</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.14.1</div>
+<div id="versionBadge">VERSION 0.14.2</div>
 
 <div id="game">
 
@@ -628,7 +628,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.12.1 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
+    <div class="subtitle">Survival Base 0.14.2 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
@@ -7841,7 +7841,7 @@ decodeGameProgress=function(raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[01]))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[012]))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -8026,7 +8026,7 @@ function v09NewGame(){
   try{
     const id=v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
-    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.14.1';data.v010={schema:1,modules:clone(V010.initialModules)};
+    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.14.2';data.v010={schema:1,modules:clone(V010.initialModules)};
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
     const raw=v09WriteNewSlot(id,data);
@@ -8051,7 +8051,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.14.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.14.2-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -8535,7 +8535,7 @@ window.V010Combat=(() => {
   const oldSelectHand=selectHandSlot;
   selectHandSlot=function(index){const prev=currentWeapon()?.uid;oldSelectHand(index);if(currentWeapon()?.uid!==prev)cancelReload();updateAmmoHud();};
   const oldHit=hitZombie;
-  hitZombie=function(z,damage=25){if(!z.alive||z.health<=0)return;const amount=window.V010World?.zombieDamage?V010World.zombieDamage(z,damage):damage;oldHit(z,amount);if(!z.alive){emit('combatkill',{id:z.id??zombies.indexOf(z),type:z.type||'normal',weapon:heldItem(),amount:1});}};
+  hitZombie=function(z,damage=25,options){if(!z.alive||z.health<=0)return;const amount=options?.fixedDamage?damage:window.V010World?.zombieDamage?V010World.zombieDamage(z,damage):damage;oldHit(z,amount);if(!z.alive){emit('combatkill',{id:z.id??zombies.indexOf(z),type:z.type||'normal',weapon:heldItem(),amount:1});}};
   const oldUpdate=update;
   update=function(){tick(Math.max(0,frameScale)*1000/60);oldUpdate();};
   document.addEventListener('keydown',e=>{if(e.key?.toLowerCase()==='r'&&!['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName)){e.preventDefault();reloadWeapon();}});
@@ -9449,7 +9449,7 @@ function viewHeight(){return V010Camera.view().h;}
   const snapshot=()=>Object.fromEntries(order.filter(k=>V010.modules[k]).map(k=>[k,V010.modules[k].capture()]));
   V010.initialModules=clone(snapshot());
   const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.14.1';d.v010={schema:1,modules:snapshot()};return d;};
+  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.14.2';d.v010={schema:1,modules:snapshot()};return d;};
   decodeGameProgress=function(raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -9458,7 +9458,7 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.14.1';return d;
+    d.gameVersion='0.14.2';return d;
   };
   restoreGameProgress=function(d){
     const was=v09SaveTransaction;v09SaveTransaction=true;
@@ -9467,8 +9467,8 @@ function viewHeight(){return V010Camera.view().h;}
   };
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(text);};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.12.1 · Большой мир и свободное развитие';
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.14.1';
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.14.2 · Большой мир и свободное развитие';
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.14.2';
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
@@ -9676,7 +9676,7 @@ window.V0105=(()=>{
     renderQuickSlots();updateAmmoHud();
   };
   const history=[
-    ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
+    ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
  'Новое':['Мини-инвентарь готовой продукции каждого станка: выбор стопки и выдача всего.','Общий бачок полива: 100 л, 10 секунд полива после 45 секунд паузы.','Отдых на кровати восстанавливает здоровье; душ смывает загрязнение после боя.','Дом и автосервис с открывающимися дверями, скрываемой крышей и добычей внутри.','Новые изображения оборудования и животных, механическая анимация станков и открывания ящиков.'],
  'Улучшения':['Единый компактный стиль карточек и производства: материалы → результат.','Прибавки улучшений после итоговых характеристик; четыре строки параметров персонажа.','Настройки слоёв обеих карт и отдельная кнопка снятия цели.','Новые покрытия комнат, двери, лампы, мягкий свет и тени.','Отдельные кормушки и общая поилка, движения и поведение животных.','Метки АК и M4 на патронах; компактная заправка по 10 или до максимума.'],
  'Баланс':['Полный сбалансированный комплект +5 даёт около 300 максимального HP.','Новый урожай — 50 единиц с грядки; старые остатки урожая сохраняются.','Без воды культуры растут со скоростью 35% и не погибают.','Тела зомби плавно исчезают через 75–90 секунд.'],
@@ -9691,7 +9691,7 @@ window.V0105=(()=>{
     const o=v09Overlay('v105Changes','Обновления'),body=o.querySelector('.v09Body');body.replaceChildren();
     history.forEach(([version,groups],i)=>{const d=document.createElement('details');d.open=i===0;const s=document.createElement('summary');s.textContent=version+(i===0?' — текущее':'');d.append(s);for(const [title,items] of Object.entries(groups)){const h=document.createElement('h3');h.textContent=title;const ul=document.createElement('ul');for(const text of items){const li=document.createElement('li');li.textContent=text;ul.append(li);}d.append(h,ul);}body.append(d);});openOverlay(o);
   }
-  const changes=v09Button('Что нового? · Version 0.14.1',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
+  const changes=v09Button('Что нового? · Version 0.14.2',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
   v09Style('#v105Changes .panel{width:min(480px,94vw);padding:14px;font-size:12px;max-height:85dvh}#v105Changes details{border-bottom:1px solid #405452;padding:8px 0}#v105Changes summary{font-size:14px;cursor:pointer;color:#e2c58d}#v105Changes h3{font-size:12px;margin:12px 0 4px;color:#97cab5}#v105Changes ul{padding-left:18px;margin:4px 0;line-height:1.5}#v105Changes li{margin:5px 0}');
   return {tapWorld,equip,markers,drawMapMarkers,showHistory,history,get target(){return liveTarget();},get contextHand(){return contextHand;}};
 })();
@@ -11593,11 +11593,12 @@ window.V014Robots=(()=>{
   // `carry` was the old label in early saves.  Keep it as a migration alias,
   // but show the clearer user-facing mode "Преследование".
   const modes={follow:'Следовать',carry:'Следовать',defense:'Защита',attack:'Атака'};
-  const DOCK={id:'robots014_dock',kind:'robots014_dock',name:'Станция дрона',x:1160,y:550,w:148,h:86,range:65};
-  function dockPosition(){return {x:1234,y:595,scene:'bunker'};}
-  function defaults(){return {schema:1,id:'drone014',name:'Спутник',x:1234,y:595,scene:'bunker',battery:100,hp:100,ammo:30,packed:false,mode:'defense',task:'docked',modules:{body:0,battery:0,cargo:0,weapon:0,engine:0},cargo:[],light:false,autoCollect:true,economy:true,guard:null,targetIndex:null,lowWarn:false};}
+  const DOCK={id:'robots014_dock',kind:'robots014_dock',name:'Станция дрона',x:1190,y:650,w:148,h:86,range:65};
+  const combat=Object.freeze({ammoType:'ammo',capacity:600,damage:20,intervalMs:V09Craft.weapons.rifle_ak74.delay,range:270});
+  function dockPosition(){return {x:DOCK.x+74,y:DOCK.y+45,scene:'bunker'};}
+  function defaults(){return {schema:1,id:'drone014',name:'Спутник',...dockPosition(),battery:100,hp:100,ammo:30,packed:false,mode:'defense',combatMode:'defense',resumeTask:null,task:'docked',modules:{body:0,battery:0,cargo:0,weapon:0,engine:0},cargo:[],light:false,autoCollect:true,economy:true,guard:null,targetIndex:null,lowWarn:false};}
   const state=defaults();
-  let shot=0,hurt=0,saveClock=0,uiClock=0,angle=0,flash=0,tracer=null,lootSelection=-1;
+  let shot=0,hurt=0,saveClock=0,uiClock=0,angle=0,flash=0,tracer=null,lootSelection=-1,observedTarget=null;
   const motion=V0141DroneMotion.create(state);
   ITEM.drone014={name:'Дрон-компаньон',icon:'🛸',robot:true,description:'Заряд, улучшения и весь груз сохраняются внутри. Можно запустить рядом с собой.'};
   function capacity(){return 12+Math.floor(state.modules.cargo/2)*6;}
@@ -11608,6 +11609,15 @@ window.V014Robots=(()=>{
   function stationNear(){return scene==='bunker'&&distance(player.x,player.y,DOCK.x+DOCK.w/2,DOCK.y+DOCK.h/2)<210;}
   function clearRoute(){motion.reset();}
   function changed(){queueGameSave();updateHUD();}
+  const combatEnabled=()=>state.mode==='defense'||state.mode==='attack';
+  const selectedTarget=()=>window.V014Controls?.target?.()||V0105.target||null;
+  function finishAttack(){
+    if(state.task!=='attack')return;
+    const task=state.resumeTask||'follow';
+    state.task=task==='docked'?'return':task==='guard'&&!state.guard?'follow':task;
+    state.resumeTask=null;state.targetIndex=null;clearRoute();changed();
+  }
+  function primaryCommand(){state.resumeTask=null;observedTarget=selectedTarget();}
   function validStack(s){return s===null||!!(s&&ITEM[s.type]&&!ITEM[s.type].robot&&Number.isInteger(s.qty)&&s.qty>0&&s.qty<=(ITEM[s.type]?.equip||ITEM[s.type]?.hand?1:['ammo','ammo556'].includes(s.type)?600:s.type==='fish'?20:100)&&V010Combat.validateItem(s)!==false);}
   function portion(s,n){return s.type==='fish'&&window.V014Fish?V014Fish.portion(s,n):{...copy(s),qty:n};}
   function removePart(s,n){if(s.type==='fish'&&window.V014Fish)V014Fish.remove(s,n);s.qty-=n;}
@@ -11622,7 +11632,7 @@ window.V014Robots=(()=>{
   function pack(){
     if(state.packed)return false;
     if(addItem('drone014',1,{robotId:'drone014'})){message('Нужна свободная ячейка');return false;}
-    state.packed=true;state.task='packed';state.targetIndex=null;state.guard=null;clearRoute();changed();renderBag();return true;
+    state.packed=true;state.task='packed';state.targetIndex=null;state.guard=null;primaryCommand();clearRoute();changed();renderBag();return true;
   }
   function deploy(item){
     if(!state.packed||item?.type!=='drone014'||item.robotId!=='drone014')return false;
@@ -11631,23 +11641,45 @@ window.V014Robots=(()=>{
       if(!worldCollision(x,y,10,scene)&&lineClear(player.x,player.y,x,y,10,scene)){p={x,y,scene};break;}}if(p)break;}
 
     if(!p){message('Недостаточно места');return false;}
-    bag[index]=null;Object.assign(state,p,{packed:false,task:state.hp>0&&state.battery>0?'follow':'disabled'});clearRoute();changed();renderBag();return true;
+    bag[index]=null;Object.assign(state,p,{packed:false,task:state.hp>0&&state.battery>0?'follow':'disabled'});primaryCommand();clearRoute();changed();renderBag();return true;
   }
   function follow(){
     if(state.packed||state.hp<=0||state.battery<=0){message('Разместите, зарядите и отремонтируйте дрона');return false;}
-    state.task='follow';state.guard=null;state.targetIndex=null;clearRoute();changed();return true;
+    state.task='follow';state.guard=null;state.targetIndex=null;primaryCommand();clearRoute();changed();return true;
   }
   function recall(){return follow();}
-  function returnToDock(){if(state.packed||state.hp<=0||state.battery<=0)return false;state.task='return';state.targetIndex=null;state.guard=null;clearRoute();changed();return true;}
-  function attack(z){
-    if(state.packed||state.hp<=0||state.battery<=0||scene!=='surface'||!z?.alive||!zombies.includes(z)){message('Дрон не готов к вылету');return false;}
-    if(distance(player.x,player.y,z.x,z.y)>850){message('Цель вне радиуса связи · 850 м');return false;}
-    if(!state.ammo){message('Загрузите патроны 5,45 в дрона');return false;}
-    state.mode='attack';state.targetIndex=zombies.indexOf(z);state.task='attack';clearRoute();changed();return true;
+  function returnToDock(){if(state.packed||state.hp<=0||state.battery<=0)return false;state.task='return';state.targetIndex=null;state.guard=null;primaryCommand();clearRoute();changed();return true;}
+  function attack(z,quiet=false){
+    const fail=text=>{if(!quiet)message(text);return false;};
+    if(!combatEnabled())return fail('Включите боевой режим');
+    if(state.packed||state.hp<=0||state.battery<=0||scene!=='surface'||!z?.alive||z.health<=0||!zombies.includes(z))return fail('Дрон не готов к вылету');
+    if(state.lowWarn&&state.battery<=30)return fail('Дрон возвращается на зарядку');
+    if(!state.ammo)return fail('Загрузите патроны 5,45 в дрона');
+    const index=zombies.indexOf(z);if(state.task==='attack'&&state.targetIndex===index)return true;
+    if(state.task!=='attack')state.resumeTask=['follow','guard','return','docked'].includes(state.task)?state.task:'follow';
+    state.mode=state.combatMode='attack';state.targetIndex=index;state.task='attack';clearRoute();changed();return true;
   }
   function guard(){if(!follow())return false;state.task='guard';state.guard={x:player.x,y:player.y,scene};changed();return true;}
-  function mode(value){if(!modes[value])return false;state.mode=value==='carry'?'follow':value;if(state.task==='attack')follow();changed();return true;}
-  function reload(){if(!near()){message('Дрон должен быть рядом');return false;}const n=Math.min(120-state.ammo,bagCount('ammo'));if(n<=0){message(state.ammo>=120?'Боезапас полный':'Нужны патроны 5,45');return false;}const used=removeItem('ammo',n);state.ammo+=used;changed();renderBag();return used>0;}
+  function mode(value){
+    if(!modes[value])return false;state.mode=value==='carry'?'follow':value;
+    if(combatEnabled())state.combatMode=state.mode;
+    if(state.mode!=='attack')finishAttack();
+    observedTarget=state.mode==='attack'?null:selectedTarget();changed();return true;
+  }
+  function setCombat(on){return mode(on?(state.combatMode||'defense'):'follow');}
+  function availableAmmo(){return [bag,state.cargo].reduce((n,a)=>n+a.reduce((v,s)=>v+(s?.type===combat.ammoType&&!s.locked?s.qty:0),0),0);}
+  function reload(){
+    if(!near()){message('Дрон должен быть рядом');return false;}
+    let need=Math.max(0,combat.capacity-state.ammo),used=0;
+    // Reserved cargo is ammunition only after this explicit transfer. Preserve
+    // cell positions, incompatible rounds, locked stacks and all other items.
+    for(const source of [bag,state.cargo])for(let i=0;i<source.length&&need>0;i++){
+      const s=source[i];if(s?.type!==combat.ammoType||s.locked)continue;
+      const n=Math.min(need,s.qty);s.qty-=n;need-=n;used+=n;if(!s.qty)source[i]=null;
+    }
+    if(!used){message(state.ammo>=combat.capacity?'Боезапас полный':'Нужны патроны 5,45');return false;}
+    state.ammo+=used;if(state.mode==='attack')observedTarget=null;changed();renderBag();return true;
+  }
   function cost(key){const l=state.modules[key]??5;return {metal:8*(l+1),parts:3*(l+1),...(l>=3?{copper:5*(l-1)}:{})};}
   function upgrade(key){
     if(!levels.includes(key)||state.modules[key]>=5||!atDock()||!stationNear())return false;
@@ -11660,14 +11692,14 @@ window.V014Robots=(()=>{
   function doorNear(d){return !state.packed&&state.scene==='bunker'&&state.hp>0&&state.battery>0&&state.task!=='docked'&&distance(state.x,state.y,d.x+d.w/2,d.y+d.h/2)<105;}
   function doorOccupies(d){return !state.packed&&state.scene==='bunker'&&rectHit(state.x,state.y,18,d);}
   function targetForDefense(){
-    if((state.mode==='carry'||state.mode==='follow')||state.scene!=='surface'||scene!=='surface')return null;
+    if(state.mode!=='defense'||state.scene!=='surface'||scene!=='surface')return null;
     const selected=window.V014Controls?.target?.()||V0105.target,anchor=state.task==='guard'&&state.guard?state.guard:player;
-    if(selected?.alive&&distance(selected.x,selected.y,anchor.x,anchor.y)<=290)return selected;if(state.mode==='attack')return null;
+    if(selected?.alive&&distance(selected.x,selected.y,anchor.x,anchor.y)<=290)return selected;
     return zombies.filter(z=>z.alive&&distance(z.x,z.y,anchor.x,anchor.y)<250).sort((a,b)=>distance(a.x,a.y,anchor.x,anchor.y)-distance(b.x,b.y,anchor.x,anchor.y))[0]||null;
   }
   function shootAt(z){
-    if(shot>0||state.ammo<=0||distance(state.x,state.y,z.x,z.y)>270||!lineClear(state.x,state.y,z.x,z.y,2,'surface'))return false;
-    state.ammo--;state.battery=Math.max(0,state.battery-.025);shot=.55;angle=Math.atan2(z.y-state.y,z.x-state.x);flash=.07;tracer={x:z.x,y:z.y};hitZombie(z,12+state.modules.weapon*1.2);createNoise(state.x,state.y,280);changed();return true;
+    if(!combatEnabled()||!z?.alive||z.health<=0||shot>1e-9||state.ammo<=0||distance(state.x,state.y,z.x,z.y)>combat.range||!lineClear(state.x,state.y,z.x,z.y,2,'surface'))return false;
+    state.ammo--;state.battery=Math.max(0,state.battery-.025);shot+=combat.intervalMs/1000;angle=Math.atan2(z.y-state.y,z.x-state.x);flash=.07;tracer={x:z.x,y:z.y};hitZombie(z,combat.damage,{fixedDamage:true});createNoise(state.x,state.y,280);changed();return true;
   }
   function collectLoose(){
     if(!['follow','carry'].includes(state.mode)||!state.autoCollect||state.scene!==scene||state.economy&&state.battery<20)return;
@@ -11676,15 +11708,24 @@ window.V014Robots=(()=>{
   }
   function tick(ms){
     const dt=clamp(Number(ms)||0,0,100)/1000;if(!dt||document.hidden||playerDead)return;
-    shot=Math.max(0,shot-dt);hurt=Math.max(0,hurt-dt);flash=Math.max(0,flash-dt);saveClock+=dt;uiClock+=dt;
+    // Keep the fractional remainder, so frame boundaries cannot slow the gun.
+    // Idle time never accumulates into a burst of overdue shots.
+    shot=Math.max(-dt,shot-dt);hurt=Math.max(0,hurt-dt);flash=Math.max(0,flash-dt);saveClock+=dt;uiClock+=dt;
+    const selected=selectedTarget();
+    if(selected!==observedTarget){
+      const previous=observedTarget;observedTarget=selected;
+      if(state.mode==='attack'&&selected)attack(selected,true);
+      else if(state.task==='attack'&&previous===zombies[state.targetIndex])finishAttack();
+    }
     if(!state.packed&&state.hp>0&&state.battery>0&&state.task!=='docked'){
       const before={x:state.x,y:state.y};let z=null;
       if(state.task==='return'){if(sceneTravel(dockPosition('drone'),dt)){state.task='docked';state.lowWarn=false;changed();}}
       else if(state.task==='attack'){
-        z=zombies[state.targetIndex];if(!z?.alive||scene!=='surface'||distance(player.x,player.y,z.x,z.y)>850||!state.ammo){state.targetIndex=null;state.task='follow';clearRoute();}
+        z=zombies[state.targetIndex];if(!combatEnabled()||!z?.alive||z.health<=0||scene!=='surface'||!state.ammo){finishAttack();}
         else{if(state.scene!=='surface')sceneTravel({x:800,y:690,scene:'surface'},dt);else if(distance(state.x,state.y,z.x,z.y)>225||!lineClear(state.x,state.y,z.x,z.y,2,'surface')){
-          let p=null;for(let i=0;i<12;i++){const a=Math.atan2(state.y-z.y,state.x-z.x)+i*Math.PI/6,q={x:z.x+Math.cos(a)*185,y:z.y+Math.sin(a)*185};if(!worldCollision(q.x,q.y,10,'surface')&&lineClear(q.x,q.y,z.x,z.y,2,'surface')){p=q;break;}}if(p)moveTo(p,dt);else{state.task='follow';message('Дрон: нет позиции для атаки');}}
-          if(state.scene==='surface')shootAt(z);}
+          let p=null;for(let i=0;i<12;i++){const a=Math.atan2(state.y-z.y,state.x-z.x)+i*Math.PI/6,q={x:z.x+Math.cos(a)*185,y:z.y+Math.sin(a)*185};if(!worldCollision(q.x,q.y,10,'surface')&&lineClear(q.x,q.y,z.x,z.y,2,'surface')){p=q;break;}}if(p)moveTo(p,dt);else{finishAttack();message('Дрон: нет позиции для атаки');}}
+          if(state.task==='attack'&&state.scene==='surface')shootAt(z);
+          if(!z.alive||!state.ammo)finishAttack();}
       }else{
         if(state.task==='guard'&&state.guard)sceneTravel(state.guard,dt);
         else {motion.follow(dt);angle=motion.heading;}
@@ -11692,12 +11733,13 @@ window.V014Robots=(()=>{
       }
       if(state.task!=='docked')state.battery=Math.max(0,state.battery-dt*(.08+(state.light&&!(state.economy&&state.battery<20)?.018:0))/(1+state.modules.battery*.3));
       if(state.scene==='surface'&&hurt<=0){const touch=zombies.find(q=>q.alive&&distance(q.x,q.y,state.x,state.y)<(q.radius||16)+16);if(touch){state.hp=Math.max(0,state.hp-12*(1-armor()/100));hurt=1;changed();}}
-      if(state.hp<=0||state.battery<=0){state.task='disabled';state.targetIndex=null;clearRoute();message(state.hp<=0?'Дрон повреждён — подберите его для ремонта':'Дрон разрядился — подберите его');}
+      if(state.hp<=0||state.battery<=0){state.task='disabled';state.targetIndex=null;primaryCommand();clearRoute();message(state.hp<=0?'Дрон повреждён — подберите его для ремонта':'Дрон разрядился — подберите его');}
       else if(state.battery<=30&&!state.lowWarn){state.lowWarn=true;message('Дрон: низкий заряд, возвращаюсь на станцию');returnToDock();}
     }
     if(V09Power.devices.robot_drone_charge.active()&&devicePowered('robot_drone_charge')){
       state.battery=Math.min(100,state.battery+dt*(100/180)/(1+state.modules.battery*.3));if(state.battery===100)state.lowWarn=false;
     }
+    shot=Math.max(0,shot);
     if(saveClock>=5){saveClock=0;queueGameSave();}if(uiClock>.25){uiClock=0;updateHUD();}
   }
   registerPowerDevice('robot_drone_charge','room5',1,()=>atDock()&&state.battery<99.999,'Станция · дрон');
@@ -11740,7 +11782,8 @@ window.V014Robots=(()=>{
   const updateOld=update;update=function(...a){const r=updateOld(...a);tick(16.667*frameScale);return r;};
   function validate(d){
     if(d?.mode==='carry')d.mode='follow';
-    if(!d||d.schema!==1||d.id!=='drone014'||typeof d.name!=='string'||d.name.length>24||!['surface','bunker'].includes(d.scene)||![d.x,d.y].every(Number.isFinite)||Math.abs(d.x)>25000||Math.abs(d.y)>25000||!Number.isFinite(d.battery)||d.battery<0||d.battery>100||!Number.isFinite(d.hp)||d.hp<0||d.hp>100+25*(d.modules?.body||0)||!Number.isInteger(d.ammo)||d.ammo<0||d.ammo>120||typeof d.packed!=='boolean'||!Object.hasOwn(modes,d.mode)||!['packed','follow','return','docked','disabled','guard','attack'].includes(d.task)||!d.modules||levels.some(k=>!Number.isInteger(d.modules[k])||d.modules[k]<0||d.modules[k]>5)||!Array.isArray(d.cargo)||d.cargo.length>12+Math.floor(d.modules.cargo/2)*6||!d.cargo.every(validStack)||['light','autoCollect','economy','lowWarn'].some(k=>typeof d[k]!=='boolean')||d.targetIndex!==null&&(!Number.isInteger(d.targetIndex)||d.targetIndex<0||d.targetIndex>1000)||d.guard!==null&&(!d.guard||!['surface','bunker'].includes(d.guard.scene)||![d.guard.x,d.guard.y].every(Number.isFinite)))throw Error('Некорректное состояние дрона');
+    if(!d||d.schema!==1||d.id!=='drone014'||typeof d.name!=='string'||d.name.length>24||!['surface','bunker'].includes(d.scene)||![d.x,d.y].every(Number.isFinite)||Math.abs(d.x)>25000||Math.abs(d.y)>25000||!Number.isFinite(d.battery)||d.battery<0||d.battery>100||!Number.isFinite(d.hp)||d.hp<0||d.hp>100+25*(d.modules?.body||0)||!Number.isInteger(d.ammo)||d.ammo<0||d.ammo>combat.capacity||typeof d.packed!=='boolean'||!Object.hasOwn(modes,d.mode)||!['packed','follow','return','docked','disabled','guard','attack'].includes(d.task)||!d.modules||levels.some(k=>!Number.isInteger(d.modules[k])||d.modules[k]<0||d.modules[k]>5)||!Array.isArray(d.cargo)||d.cargo.length>12+Math.floor(d.modules.cargo/2)*6||!d.cargo.every(validStack)||['light','autoCollect','economy','lowWarn'].some(k=>typeof d[k]!=='boolean')||d.targetIndex!==null&&(!Number.isInteger(d.targetIndex)||d.targetIndex<0||d.targetIndex>1000)||d.guard!==null&&(!d.guard||!['surface','bunker'].includes(d.guard.scene)||![d.guard.x,d.guard.y].every(Number.isFinite)))throw Error('Некорректное состояние дрона');
+    if(d.combatMode!==undefined&&!['defense','attack'].includes(d.combatMode)||d.resumeTask!==undefined&&d.resumeTask!==null&&!['follow','guard','return','docked'].includes(d.resumeTask))throw Error('Некорректная команда дрона');
     return true;
   }
   function tokenCheck(d){
@@ -11750,9 +11793,16 @@ window.V014Robots=(()=>{
   }
   const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.robots014=copy(state);return d;};
   const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const preliminary=JSON.parse(raw);if(preliminary.v09?.power?.deviceEnabled){for(const id of ['robot_drone_charge'])if(preliminary.v09.power.deviceEnabled[id]===undefined)preliminary.v09.power.deviceEnabled[id]=true;}const d=decodeOld(JSON.stringify(preliminary));if(d.robots014)validate(d.robots014);tokenCheck(d);return d;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){if(d.robots014)validate(d.robots014);restoreOld(d);Object.assign(state,defaults(),d.robots014?copy(d.robots014):{});clearRoute();shot=hurt=saveClock=0;state.targetIndex=state.task==='attack'&&zombies[state.targetIndex]?.alive?state.targetIndex:null;if(state.task==='attack'&&state.targetIndex===null)state.task='follow';if(state.task==='docked'&&!state.packed)Object.assign(state,dockPosition());updateHUD();};
+  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){
+    if(d.robots014)validate(d.robots014);restoreOld(d);Object.assign(state,defaults(),d.robots014?copy(d.robots014):{});
+    if(!d.robots014?.combatMode)state.combatMode=state.mode==='attack'?'attack':'defense';
+    clearRoute();shot=hurt=saveClock=0;observedTarget=selectedTarget();
+    state.targetIndex=state.task==='attack'&&zombies[state.targetIndex]?.alive?state.targetIndex:null;
+    if(state.task==='attack'&&(state.targetIndex===null||!combatEnabled()))finishAttack();
+    if(state.task==='docked'&&!state.packed)Object.assign(state,dockPosition());updateHUD();
+  };
   v09Style('.v014DroneHUD{position:fixed;right:12px;top:calc(220px + env(safe-area-inset-top,0px));z-index:38;width:auto;min-height:28px!important;padding:5px 8px!important;border-radius:9px!important;font:11px Arial!important;background:#172c2cd9!important;color:#b7d5c8!important}.v014RobotActions{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.v014RobotActions .menuButton,#v014DronePanel details .menuButton{width:auto;min-height:30px!important;padding:6px 8px!important;font-size:11px!important;margin:0}.v014RobotActions .selected{background:#376351!important}.v014RobotGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.v014RobotGrid .menuButton{position:relative;min-height:45px;padding:4px;margin:0}.v014RobotGrid img{max-height:34px;max-width:100%}.v014RobotGrid small{position:absolute;bottom:2px;right:4px;font-size:10px}.v014DroneHeader{display:flex;align-items:center;gap:10px;padding:6px 0 9px;border-bottom:1px solid #58716a55}.v014DroneHeader img{width:64px;height:48px;object-fit:contain;border-radius:8px;background:#1a3436}.v014DroneStats{font-size:11px;line-height:1.55;color:#c7ddd3}.v014DroneStats b{color:#f0d892;font-size:12px}#v014DronePanel .panel{width:min(500px,94vw);max-height:83dvh;overflow-y:auto;padding:12px;min-height:420px}#v014DronePanel p{font-size:11px;line-height:1.5;margin:9px 0}#v014DronePanel input,#v014DronePanel select{max-width:100%;background:#203b3c;color:#deece5;border:1px solid #648178;border-radius:7px;padding:7px}#v014DroneLoot{font-size:11px;min-height:28px;padding:6px 10px}@media(max-height:520px){.v014DroneHUD{top:calc(110px + env(safe-area-inset-top,0px));right:65px}}');
-  return {state,dockPosition,station:DOCK,status:()=>({...state,maxHp:maxHp(),capacity:capacity(),atDock:atDock()}),capacity,maxHp,near,atDock,open,openStation,follow,recall,returnToDock,attack,guard,mode,pack,deploy,store,take,reload,upgrade,repair,cost,transfer,validate,tick,doorNear,doorOccupies,planningKey:motion.key,motion,statusText,changed,draw:drawDrone,setLootSelection:i=>{lootSelection=i;},dispatchLoot};
+  return {state,combat,combatEnabled,setCombat,availableAmmo,dockPosition,station:DOCK,status:()=>({...state,maxHp:maxHp(),capacity:capacity(),atDock:atDock()}),capacity,maxHp,near,atDock,open,openStation,follow,recall,returnToDock,attack,guard,mode,pack,deploy,store,take,reload,upgrade,repair,cost,transfer,validate,tick,doorNear,doorOccupies,planningKey:motion.key,motion,statusText,changed,draw:drawDrone,setLootSelection:i=>{lootSelection=i;},dispatchLoot};
 })();
 
 /* 0.14: stationary aiming stance, target fire button and incremental map routes. */
@@ -11901,9 +11951,13 @@ window.V0141DroneUI=(()=>{
     const stats=node('div','droneCardStats');refs.status=node('b','droneStatus');stats.append(refs.status);stat(stats,'battery','Заряд');stat(stats,'hp','Здоровье');stat(stats,'damage','Урон');stat(stats,'load','Груз');head.append(stats);
     const ammo=node('section','droneAmmo');const ammoHead=node('div','droneStatRow');ammoHead.append(node('span','','Боезапас'));refs.ammo=node('b');ammoHead.append(refs.ammo);ammo.append(ammoHead);
     const ammoIcon=node('div','droneAmmoIcon');ammoIcon.innerHTML=itemIconHTML('ammo');ammoIcon.append(node('small','','АК · 5,45'));ammo.append(ammoIcon);command(ammo,'reload','Загрузить патроны',()=>robot.reload());
-    for(const [key,label]of [['light','Фонарь'],['combat','Боевой режим']]){const row=node('label','droneToggle',label),input=node('input');input.type='checkbox';refs[key]=input;input.addEventListener('change',()=>{if(key==='combat')robot.mode(input.checked?'defense':'follow');else{state.light=input.checked;robot.changed();}refresh();});row.append(input);ammo.append(row);}head.append(ammo);body.append(head);
+    for(const [key,label]of [['light','Фонарь'],['combat','Боевой режим']]){
+      const toggle=node('button','droneSwitch'),rail=node('span','droneSwitchRail');toggle.type='button';toggle.setAttribute('role','switch');toggle.setAttribute('aria-label',label);rail.setAttribute('aria-hidden','true');
+      refs[key]=toggle;refs[key+'Value']=node('span','droneSwitchValue');rail.append(refs[key+'Value']);toggle.append(node('span','',label),rail);
+      toggle.addEventListener('click',()=>{if(key==='combat')robot.setCombat(!robot.combatEnabled());else{state.light=!state.light;robot.changed();}refresh();});ammo.append(toggle);
+    }head.append(ammo);body.append(head);
     const commands=section(body,'Команды дрону'),row=node('div','droneCommandGrid');command(row,'follow','Следовать',robot.follow);command(row,'guard','Охранять здесь',robot.guard);command(row,'dock','На станцию',robot.returnToDock);commands.append(row);
-    const combat=node('div','droneCombatGrid');command(combat,'defense','Защищать',()=>robot.mode('defense'));command(combat,'attack','Атаковать цель',()=>{const t=V014Controls.target()||V0105.target;if(t)robot.attack(t);else{robot.mode('attack');message('Выберите противника на экране или карте');}});commands.append(combat);
+    const combat=node('div','droneCombatGrid');command(combat,'defense','Защищать',()=>robot.mode('defense'));command(combat,'attack','Атаковать цель',()=>{robot.mode('attack');const t=V014Controls.target()||V0105.target;if(t)robot.attack(t);else message('Выберите противника на экране или карте');});commands.append(combat);
     const inv=section(body,'Инвентарь дрона');refs.cargoTitle=inv.children[0];grids.drone=node('div','droneItemGrid');inv.append(grids.drone);
     const cargoFooter=node('div','droneInventoryActions');refs.selection=node('span','droneTransferHint','Выберите предмет');cargoFooter.append(refs.selection);command(cargoFooter,'transfer','Переложить',transferSelected);inv.append(cargoFooter);
     const bagDetails=node('details','dronePlayerBag');bagDetails.open=true;const summary=node('summary');refs.bagTitle=node('span','','Мой рюкзак');summary.append(refs.bagTitle);bagDetails.append(summary);grids.bag=node('div','droneItemGrid');bagDetails.append(grids.bag);body.append(bagDetails);
@@ -11944,11 +11998,13 @@ window.V0141DroneUI=(()=>{
     if(!d.active)return;suppressUntil=performance.now()+450;if(cancel)return;const b=document.elementFromPoint?.(e.clientX,e.clientY)?.closest?.('[data-drone-index]');if(b&&!moveCell(d.side,d.i,b.dataset.droneSide,Number(b.dataset.droneIndex)))message('Выберите пустую ячейку или подходящую стопку');}
   document.addEventListener('pointerup',e=>endDrag(e));document.addEventListener('pointercancel',e=>endDrag(e,true));
   function refresh(force=false){if(!overlay||!force&&!overlay.classList.contains('open'))return;const active=!state.packed&&state.hp>0&&state.battery>0;
-    set(refs.status,robot.statusText());set(refs.battery,Math.round(state.battery)+'%');set(refs.hp,Math.round(state.hp)+' / '+robot.maxHp());set(refs.damage,Math.round(12+state.modules.weapon*1.2));set(refs.load,state.cargo.filter(Boolean).length+' / '+robot.capacity());set(refs.ammo,state.ammo+' / 120');
-    for(const key of ['light','autoCollect','economy'])refs[key].checked=state[key];refs.combat.checked=state.mode!=='follow'&&state.mode!=='carry';
-    for(const id of ['follow','guard','dock','defense','attack'])buttons[id].disabled=!active;
+    set(refs.status,robot.statusText());set(refs.battery,Math.round(state.battery)+'%');set(refs.hp,Math.round(state.hp)+' / '+robot.maxHp());set(refs.damage,robot.combat.damage);set(refs.load,state.cargo.filter(Boolean).length+' / '+robot.capacity());set(refs.ammo,state.ammo+' / '+robot.combat.capacity);
+    for(const key of ['autoCollect','economy'])refs[key].checked=state[key];
+    for(const key of ['light','combat']){const on=key==='light'?state.light:robot.combatEnabled();refs[key].setAttribute('aria-checked',String(on));set(refs[key+'Value'],on?'ВКЛ':'ВЫКЛ');}
+    for(const id of ['follow','guard','dock'])buttons[id].disabled=!active;
+    for(const id of ['defense','attack'])buttons[id].disabled=!active||!robot.combatEnabled();
     buttons.follow.classList.toggle('selected',state.task==='follow');buttons.guard.classList.toggle('selected',state.task==='guard');buttons.dock.classList.toggle('selected',['return','docked'].includes(state.task));buttons.defense.classList.toggle('selected',state.mode==='defense');buttons.attack.classList.toggle('selected',state.mode==='attack');
-    buttons.reload.disabled=!robot.near()||state.ammo>=120||bagCount('ammo')<1;buttons.pack.disabled=state.packed;buttons.launch.disabled=!state.packed||!bag.some(s=>s?.type==='drone014');
+    buttons.reload.disabled=!robot.near()||state.ammo>=robot.combat.capacity||robot.availableAmmo()<1;buttons.pack.disabled=state.packed;buttons.launch.disabled=!state.packed||!bag.some(s=>s?.type==='drone014');
     set(refs.cargoTitle,'Инвентарь дрона · '+state.cargo.filter(Boolean).length+' / '+robot.capacity());set(refs.bagTitle,'Мой рюкзак · '+bag.filter(Boolean).length+' / '+BAG_SLOTS);
     refreshGrid('drone');refreshGrid('bag');const s=selected&&slots(selected.side)[selected.i];set(refs.selection,s?ITEM[s.type].name+' × '+s.qty:'Выберите предмет');set(buttons.transfer,selected?.side==='bag'?'В дрона':'В рюкзак');buttons.transfer.disabled=!s||s.locked||ITEM[s.type]?.robot||!robot.near();
     set(refs.range,robot.near()?'Нажмите предмет или удерживайте для переноса.':'Для переноса предметов дрон должен быть рядом. Команды доступны удалённо.');
@@ -11966,12 +12022,20 @@ window.V0141DroneUI=(()=>{
     .droneStatus{display:block;color:#a7d7b4;font-size:12px;min-height:32px}.droneStatRow{display:flex;justify-content:space-between;gap:5px;margin:6px 0;font-size:11px}.droneStatRow span{color:#a8bfb9}.droneStatRow b{font-weight:400;white-space:nowrap;font-variant-numeric:tabular-nums}
     .droneAmmoIcon{display:flex;align-items:center;gap:8px;height:42px}.droneAmmoIcon .itemIcon{width:38px;height:38px}.droneAmmoIcon small{font-size:10px;color:#aac0b6}.droneAmmo>.menuButton{width:100%}
     .droneToggle{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;margin:7px 0}.droneToggle input{width:17px;height:17px;accent-color:#7dae91}
+    #v014DronePanel .droneSwitch{display:flex;align-items:center;justify-content:flex-start;gap:7px;min-height:44px;width:max-content;max-width:100%;padding:2px 0;margin:0;background:none;border:0;color:#c9dcd3;font:11px Arial;text-align:left;cursor:pointer;touch-action:manipulation}
+    .droneSwitchRail{box-sizing:border-box;display:block;flex:0 0 52px;height:25px;position:relative;border:1px solid #738c7d88;border-radius:14px;background:#283e40;transition:background .16s ease}
+    .droneSwitchRail::after{content:'';position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:#a6b6b0;transition:transform .16s ease,background .16s ease}
+    .droneSwitchValue{position:absolute;right:4px;top:6px;font-size:8px;line-height:11px;color:#bbc8c1}
+    .droneSwitch[aria-checked=true] .droneSwitchRail{background:#35674e;border-color:#7baf8a}.droneSwitch[aria-checked=true] .droneSwitchRail::after{transform:translateX(27px);background:#d1edc9}.droneSwitch[aria-checked=true] .droneSwitchValue{left:5px;right:auto;color:#e2f1df}
+    .droneSwitch:focus-visible{outline:2px solid #ceb87d;outline-offset:2px;border-radius:6px}#v014DronePanel .droneCombatGrid button:disabled{opacity:.38;background:#263639;border-color:#405552;cursor:default}
     .droneCardSection,.dronePlayerBag{margin-top:9px}.droneSectionTitle,.dronePlayerBag summary{font-size:12px;color:#c5dacf;margin-bottom:7px}.droneCommandGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.droneCombatGrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}
-    #v014DronePanel .selected{border-color:#b8ce9c;background:#365b4c}.droneItemGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;touch-action:pan-y;overflow-y:auto;max-height:196px;overscroll-behavior:contain}
-    #v014DronePanel .droneItemCell{position:relative;aspect-ratio:1;min-height:42px!important;padding:3px!important;background:#15272c!important;border:1px solid #42595a;border-radius:7px;touch-action:pan-y;user-select:none}
-    .droneItemCell .itemIcon{width:100%;height:100%;max-height:49px;object-fit:contain;pointer-events:none}.droneItemCell small{position:absolute;right:4px;bottom:2px;font:10px Arial;color:#e3e8d9;text-shadow:0 1px 3px #000;pointer-events:none}.droneItemCell.selected{outline:1px solid #d4bd82}.droneItemCell.dragging{opacity:.45}
+    #v014DronePanel .selected{border-color:#b8ce9c;background:#365b4c}
+    #v014DronePanel .droneItemGrid{box-sizing:border-box;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:max-content;align-content:start;align-items:start;gap:5px;width:100%;min-width:0;padding:2px;touch-action:pan-y;overflow-y:auto;overflow-x:hidden;max-height:196px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-gutter:stable}
+    #v014DronePanel .droneItemGrid>.droneItemCell{box-sizing:border-box;display:block;position:relative;width:100%;min-width:0;max-width:100%;height:auto!important;aspect-ratio:1/1;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden;background:#15272c!important;border:1px solid #42595a;border-radius:7px;touch-action:pan-y;user-select:none;font-size:20px!important;line-height:1}
+    #v014DronePanel .droneItemCell .itemIcon{position:absolute;left:7%;top:5%;width:86%;height:83%;min-width:0;min-height:0;max-width:86%;max-height:83%;object-fit:contain;pointer-events:none}.droneItemCell small{position:absolute;right:4px;bottom:2px;font:10px Arial;color:#e3e8d9;text-shadow:0 1px 3px #000;pointer-events:none}.droneItemCell.selected{outline:1px solid #d4bd82;outline-offset:-2px}.droneItemCell.dragging{opacity:.45}
     .droneInventoryActions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px;min-height:33px}.droneTransferHint{font-size:10px!important;color:#a6b9b3!important;margin:7px 0!important;min-height:27px}.droneRescue{display:flex;gap:7px}.droneMore{margin-top:12px;font-size:11px}.droneMore summary{cursor:pointer;padding:7px 0;color:#adbfba}.droneUpgradeRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0;font-size:10px}.droneRename{display:flex;gap:6px}.droneRename input{width:55%;font-size:12px}
-    @media(max-width:480px){.droneCardHead{grid-template-columns:1fr 1.25fr}.droneAmmo{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;column-gap:12px}.droneAmmo .droneStatRow{grid-column:2;grid-row:1}.droneAmmoIcon{grid-row:1/3;height:62px}.droneAmmoIcon .itemIcon{width:48px;height:48px}.droneAmmo>.menuButton{grid-column:2}.dronePortrait img{height:125px}.droneItemGrid{max-height:175px}.droneStatus{min-height:28px}.droneItemCell .itemIcon{max-height:40px}}
+    @media(max-width:480px){.droneCardHead{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}.droneAmmo{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:8px}.droneAmmo .droneStatRow{grid-column:2;grid-row:1}.droneAmmoIcon{grid-row:1/3;height:62px}.droneAmmoIcon .itemIcon{width:48px;height:48px}.droneAmmo>.menuButton{grid-column:2}.dronePortrait img{height:125px}#v014DronePanel .droneItemGrid{max-height:175px}.droneStatus{min-height:28px}}
+    @media(max-width:380px){#v014DronePanel .droneItemGrid{grid-template-columns:repeat(5,minmax(0,1fr))}#v014DronePanel .droneSwitch{font-size:10px;gap:4px}.droneSwitchRail{flex-basis:48px}.droneSwitch[aria-checked=true] .droneSwitchRail::after{transform:translateX(23px)}}
   `);
   return {open,refresh,moveCell,transferSelected};
 })();
