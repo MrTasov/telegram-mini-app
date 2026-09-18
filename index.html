@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>0.16.1 · Survival Base</title>
+<title>0.16.2 · Survival Base</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.16.1</div>
+<div id="versionBadge">VERSION 0.16.2</div>
 
 <div id="game">
 
@@ -628,7 +628,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.16.1 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
+    <div class="subtitle">Survival Base 0.16.2 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
@@ -1843,7 +1843,7 @@ function renderQuickSlots(){
       button.setAttribute('aria-label',`Слот ${i+1}: ${type?ITEM[type].name:'свободный'}`);
       button.setAttribute('aria-pressed',String(activeHandSlot===i));
       button.innerHTML=`<span class="slotNumber">${i+1}</span><span class="slotArt">${type?itemIconHTML(type):'＋'}</span><span class="slotName">${type?ITEM[type].name:'Пусто'}</span>`;
-      button.addEventListener('click',()=>selectHandSlot(i));holder.appendChild(button);
+      button.addEventListener('click',()=>{if(window.V010Inventory?.clickSuppressed())return;if(name==='quickSlots'&&window.V0162Quick)V0162Quick.open(i);else selectHandSlot(i);});holder.appendChild(button);
     });
   }
   el('heldItemName').textContent=heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны';
@@ -5175,7 +5175,7 @@ function decodeGameProgress(raw){
   }))fail();
   if(!d.equipment.backpack)fail();
   const capacity=ITEM[d.equipment.backpack.type].capacity;
-  if(!slots(d.bag,capacity)||!integer(d.magazine,0,45))fail();
+  if(!slots(d.bag,capacity)||!integer(d.magazine,0,60))fail();
   if(!Array.isArray(d.storage)||d.storage.length!==storageChests.length||
     !d.storage.every(c=>c&&typeof c.name==="string"&&c.name.length<=64&&
       typeof c.icon==="string"&&c.icon.length<=64&&slots(c.items,60)))fail();
@@ -7548,7 +7548,7 @@ decodeGameProgress=function(raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[01]))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[012]))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -7733,7 +7733,7 @@ function v09NewGame(){
   try{
     const id=v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
-    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.16.1';data.v010={schema:1,modules:clone(V010.initialModules)};
+    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.16.2';data.v010={schema:1,modules:clone(V010.initialModules)};
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
     const raw=v09WriteNewSlot(id,data);
@@ -7758,7 +7758,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.16.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.16.2-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -8138,7 +8138,7 @@ window.V010Combat=(() => {
       if(!Number.isInteger(item.level))item.level=0;
       if(!item.variant)item.variant='balanced';
       if(!item.specialization)item.specialization='balanced';
-      if(GUNS[item.type]){item.modules??={};if(!Number.isInteger(item.rounds))item.rounds=0;}
+      if(GUNS[item.type]){item.modules??={};if(!Object.hasOwn(item,'magazineType'))item.magazineType=item.modules.magazine?'magazine_module':'magazine_standard';delete item.modules.magazine;if(!Number.isInteger(item.rounds))item.rounds=0;}
     }
     return item;
   }
@@ -8173,7 +8173,7 @@ window.V010Combat=(() => {
   function gunSpec(item){
     if(typeof item==='string')item=bag.find(s=>s?.type===item)||{type:item};
     const g=GUNS[item?.type];if(!g)return null;const m=item.modules||{},level=clamp(Number(item.level)||0,0,5),head=equipment.head?getItemStats(equipment.head).accuracy||0:0;
-    return {...g,damage:Math.round(g.damage*(1+level*.05+(item.variant==='sturdy'?.02:0))),mag:m.magazine?45:30,reloadMs:(item.type==='rifle_m4'?1800:2000),spread:Math.max(.006,g.spread*(1-head)),recoil:g.recoil,noise:550,modules:copy(m)};
+    return {...g,damage:Math.round(g.damage*(1+level*.05+(item.variant==='sturdy'?.02:0))),mag:Object.hasOwn(item,'magazineType')?(item.magazineType==='magazine_module'?60:item.magazineType==='magazine_standard'?30:0):(m.magazine?60:30),reloadMs:(item.type==='rifle_m4'?1800:2000),spread:Math.max(.006,g.spread*(1-head)),recoil:g.recoil,noise:550,modules:copy(m)};
   }
   function refreshStats(){
     let hp=100,armor=0,speed=0,accuracy=0;
@@ -8189,10 +8189,10 @@ window.V010Combat=(() => {
   function cancelReload(){if(!reloading)return false;reloading=null;updateAmmoHud();return true;}
   function practiceAllowed(){return scene==='surface'&&player.x>=930&&player.x<=1280&&player.y>=650&&player.y<=790&&!window.V091Fortress?.isElevated?.();}
   function setPractice(on){if(on&&!practiceAllowed()){message('Подойдите к тренировочной площадке');return false;}cancelReload();practice=!!on;trainingRounds=30;practiceHits=0;practiceDamage=0;updateAmmoHud();return true;}
-  canFire=function(){return !!currentWeapon();};
+  canFire=function(){const s=currentWeapon();return !!s&&gunSpec(s).mag>0;};
   reloadWeapon=function(){
     const item=currentWeapon();if(!item||menuOpen||playerDead||document.hidden||reloading)return false;const g=gunSpec(item),rounds=practice?trainingRounds:item.rounds;
-    if(rounds>=g.mag)return false;if(!practice&&bagCount(g.ammo)<=0){message('Нет патронов '+g.caliber);return false;}
+    if(!g.mag||rounds>=g.mag)return false;if(!practice&&bagCount(g.ammo)<=0){message('Нет патронов '+g.caliber);return false;}
     reloading={uid:item.uid,type:item.type,remainingMs:g.reloadMs,totalMs:g.reloadMs,practice};updateAmmoHud();return true;
   };
   updateAmmoHud=function(){
@@ -8200,7 +8200,7 @@ window.V010Combat=(() => {
     if(!g){if(hud)hud.style.display='none';if(b)b.style.display='none';return;}
     magazine=item.rounds;magazineMax=g.mag;
     if(hud)hud.style.display='block';if(b){b.style.display=menuOpen?'none':'block';b.disabled=!!reloading;}
-    const text=practice?`МИШЕНЬ · ${trainingRounds}/${g.mag} · попадания ${practiceHits} · урон ${practiceDamage}`:`${g.name} +${item.level} · ${item.rounds}/${g.mag} · запас ${bagCount(g.ammo)}`;
+    const text=practice?`МИШЕНЬ · ${g.mag?Math.min(trainingRounds,g.mag):0}/${g.mag} · попадания ${practiceHits} · урон ${practiceDamage}`:`${g.name} +${item.level} · ${item.rounds}/${g.mag} · запас ${bagCount(g.ammo)}`;
     const progress=reloading?' · '+(reloading.remainingMs/1000).toFixed(1)+' с':'';
     if(hud&&text+progress!==lastHud){hud.textContent=text+progress;lastHud=text+progress;}
     if(b){b.textContent=reloading?'↻ '+(reloading.remainingMs/1000).toFixed(1):'↻';b.style.setProperty('--reload-progress',reloading?Math.round(100*(1-reloading.remainingMs/reloading.totalMs))+'%':'0%');}
@@ -8225,7 +8225,7 @@ window.V010Combat=(() => {
   }
   shoot=function(){
     if(menuOpen||playerDead||document.hidden||window.V091Fortress?.transitioning)return;const item=currentWeapon();if(!item||reloading)return;const g=gunSpec(item),now=performance.now();
-    if(now-lastShot<g.delay)return;
+    if(!g.mag||now-lastShot<g.delay)return;
     if((practice?trainingRounds:item.rounds)<=0){reloadWeapon();return;}
     if(lastUid!==item.uid||now-lastShot>420)burst=0;burst=Math.min(7,burst+1);lastUid=item.uid;lastShot=now;
     const base=Math.atan2(player.aimY,player.aimX),cone=g.spread+g.recoil*Math.max(0,burst-1),angle=base+(Math.random()*2-1)*cone;
@@ -8274,23 +8274,8 @@ window.V010Combat=(() => {
   function owns(item){return (window.V0161Upgrade?.slots||[]).includes(item)||(window.V013Inventory?.items||[]).includes(item)||bag.includes(item)||Object.values(equipment).includes(item);}
   function upgrade(item){return window.V0161Upgrade?.upgrade(item)||false;}
   function insertItem(item){if(window.V010Inventory?.insertItem)return V010Inventory.insertItem(item);const at=bag.findIndex(x=>!x);if(at>=0){bag[at]=copy(item);return 0;}if(bag.length>=BAG_SLOTS)return item.qty;bag.push(copy(item));return 0;}
-  function install(item,key){
-    if(!item||!owns(item)||!GUNS[item.type]||!MODULES[key]||!inWorkshop()||!devicePowered(window.V0161Upgrade?.slots.includes(item)?'upgrade0161':'craft_bench'))return false;ensure(item);const def=MODULES[key];
-    if(item.modules[key]||!unlocked(def.unlock)||available(def.type)<1)return false;
-    if(!spend({[def.type]:1}))return false;item=ownedByUid(item.uid);item.modules[key]=true;cancelReload();updateAmmoHud();queueGameSave();return true;
-  }
-  function detach(item,key){
-    if(!item||!owns(item)||!GUNS[item.type]||!item.modules?.[key]||!MODULES[key]||!inWorkshop())return false;
-    // Keep ammunition capacity consistent before removing the larger magazine; return both atomically.
-    const excess=key==='magazine'?Math.max(0,item.rounds-30):0,next=copy(bag);
-    const inv=window.V010Inventory;
-    if(inv?.insertItem){
-      if(insertItem({type:MODULES[key].type,qty:1})>0)return false;
-      if(excess&&addItem(GUNS[item.type].ammo,excess)>0){bag=next;message('Освободите место для патронов');return false;}
-    }else{if(insertItem({type:MODULES[key].type,qty:1})>0)return false;if(excess&&addItem(GUNS[item.type].ammo,excess)>0){bag=next;return false;}}
-    // A rollback can replace references only on failure. A successful insert must preserve weapon identity.
-    delete item.modules[key];if(excess)item.rounds-=excess;cancelReload();updateAmmoHud();renderBag();queueGameSave();return true;
-  }
+  function install(item,key){return key==='magazine'&&!!window.V0162Magazines?.installFirst(item,'magazine_module');}
+  function detach(item,key){return key==='magazine'&&!!window.V0162Magazines?.remove(item);}
   const upgradeOverlay=v09Overlay('v010UpgradeOverlay','Улучшения и модули');
   function textStats(s){if(s.damage)return `Урон ${s.damage} · магазин ${s.mag} · перезарядка ${(s.reloadMs/1000).toFixed(1)} с<br>Разброс ${(s.spread*180/Math.PI).toFixed(2)}° · отдача ${(s.recoil*180/Math.PI).toFixed(2)}°`;return [s.armor?'Защита '+s.armor+'%':'',s.hp?'HP +'+Math.round(s.hp):'',s.speed?'Скорость +'+Math.round(s.speed*100)+'%':'',s.accuracy?'Точность +'+Math.round(s.accuracy*100)+'%':''].filter(Boolean).join(' · ');}
   function renderWorkshop(){
@@ -8307,7 +8292,7 @@ window.V010Combat=(() => {
     const note=document.createElement('p');note.className='v010UpgradeNote';note.textContent='Без случайных провалов. Материалы берутся из рюкзака и складов базы. Улучшение HP не восстанавливает здоровье.';body.append(note);
   }
   function openWorkshop(){if(window.V0161Upgrade)return V0161Upgrade.open();if(!inWorkshop()){message('Улучшения доступны в мастерской');return false;}renderWorkshop();openOverlay(upgradeOverlay);return true;}
-  function validateItem(item){if(!item)return true;if(item.type==='hmg016'&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==item.type||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,5))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,item.modules?.magazine?45:30)))return false;return true;}
+  function validateItem(item){if(!item)return true;if(item.type==='hmg016'&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==item.type||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,5))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.magazineType!==undefined&&(!GUNS[item.type]||![null,'magazine_standard','magazine_module'].includes(item.magazineType)))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,gunSpec(item).mag)))return false;return true;}
   function capture(){migrateItems(null);return {schema:1,nextUid};}
   function validate(d){if(!d||d.schema!==1||!Number.isInteger(d.nextUid)||d.nextUid<1||d.nextUid>100000000)throw Error('Некорректные данные экипировки');return true;}
   function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;lastHud='';const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();updateAmmoHud();}
@@ -9168,7 +9153,7 @@ function viewHeight(){return V010Camera.view().h;}
   const snapshot=()=>Object.fromEntries(order.filter(k=>V010.modules[k]).map(k=>[k,V010.modules[k].capture()]));
   V010.initialModules=clone(snapshot());
   const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.16.1';d.v010={schema:1,modules:snapshot()};return d;};
+  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.16.2';d.v010={schema:1,modules:snapshot()};return d;};
   decodeGameProgress=function(raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -9177,7 +9162,7 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.16.1';return d;
+    d.gameVersion='0.16.2';return d;
   };
   restoreGameProgress=function(d){
     const was=v09SaveTransaction;v09SaveTransaction=true;
@@ -9186,8 +9171,8 @@ function viewHeight(){return V010Camera.view().h;}
   };
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(text);};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.16.1 · Большой мир и свободное развитие';
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.16.1';
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.16.2 · Большой мир и свободное развитие';
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.16.2';
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
@@ -9395,7 +9380,7 @@ window.V0105=(()=>{
     renderQuickSlots();updateAmmoHud();
   };
   const history=[
-    ['0.16.1',{'Новое':['Физический станок усиления в углу мастерской: оружие, экипировка, пулемёт и модули дрона до +5.','Новые иконки шлема, увеличенного магазина, дрона и станка.','Перенос предметов удержанием между быстрыми слотами, рюкзаком, ящиками и дроном.'],'Улучшения':['Мини-карта немного меньше и сохраняет правильное положение до и после масштабирования.','Окна сразу скрывают игровые кнопки и мини-карту, закрываются крестиком и нажатием на фон.','Поднятые лампы освещают двор поверх низких декораций; вещи расположены ближе к стенам.','Единая прозрачность игровых кнопок и новая иконка тихого шага.'],'Баланс':['Ёмкость батареи дрона увеличена в 2,5 раза.','Добыча руды: 10 за цикл; переплавка железа и меди: 2 секунды за слиток.','Удалены прицел, рукоятка, глушитель и положение на колене.'],'Исправления':['Улучшенные предметы сохраняются на станке без дублирования.','Старые сохранения переносятся с сохранением прогресса плавки; материалы незавершённых удалённых рецептов возвращаются.','Все лестницы остаются доступны после перестановки декораций.']}], ['0.16.0',{'Новое':['Сутки за 20 минут активной игры: плавный рассвет, вечер и ночь; время сохраняется.','Съёмный тяжёлый пулемёт: урон 65, поворот 360°, изготовление и размещение на стенах.'],'Улучшения':['Мягкое локальное освещение бункера, усиленный фонарик и свет дрона.','Лампы на стенах и восемь наружных прожекторов по углам базы.','Открытый двор без машин и лишних перегородок; более тёмный бетон.'],'Исправления':['Перенос прежних сохранений сохраняет прочность внешних и внутренних укреплений.','Проходы и лестницы остаются свободными при установленном пулемёте.','Ворота не закрываются на дроне; разрушение стены во время подъёма не портит положение персонажа.','Северный мост больше не перекрывает верхнюю линию выстрела и света.']}], ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
+    ['0.16.2',{'Улучшения':['Пять быстрых слотов уменьшены на 30%; компактный выбор из всего рюкзака.','Недоступные для быстрого слота предметы приглушены и подсвечиваются красным при нажатии.'],'Новое':['Съёмные магазины АК и M4 на 30 и 60 патронов.','Без магазина оружие не стреляет; снятие возвращает пустой магазин и весь боезапас в рюкзак.'],'Исправления':['Атомарные операции с магазинами, заполнение стаков до 600 и сохранение точного боезапаса.']}], ['0.16.1',{'Новое':['Физический станок усиления в углу мастерской: оружие, экипировка, пулемёт и модули дрона до +5.','Новые иконки шлема, увеличенного магазина, дрона и станка.','Перенос предметов удержанием между быстрыми слотами, рюкзаком, ящиками и дроном.'],'Улучшения':['Мини-карта немного меньше и сохраняет правильное положение до и после масштабирования.','Окна сразу скрывают игровые кнопки и мини-карту, закрываются крестиком и нажатием на фон.','Поднятые лампы освещают двор поверх низких декораций; вещи расположены ближе к стенам.','Единая прозрачность игровых кнопок и новая иконка тихого шага.'],'Баланс':['Ёмкость батареи дрона увеличена в 2,5 раза.','Добыча руды: 10 за цикл; переплавка железа и меди: 2 секунды за слиток.','Удалены прицел, рукоятка, глушитель и положение на колене.'],'Исправления':['Улучшенные предметы сохраняются на станке без дублирования.','Старые сохранения переносятся с сохранением прогресса плавки; материалы незавершённых удалённых рецептов возвращаются.','Все лестницы остаются доступны после перестановки декораций.']}], ['0.16.0',{'Новое':['Сутки за 20 минут активной игры: плавный рассвет, вечер и ночь; время сохраняется.','Съёмный тяжёлый пулемёт: урон 65, поворот 360°, изготовление и размещение на стенах.'],'Улучшения':['Мягкое локальное освещение бункера, усиленный фонарик и свет дрона.','Лампы на стенах и восемь наружных прожекторов по углам базы.','Открытый двор без машин и лишних перегородок; более тёмный бетон.'],'Исправления':['Перенос прежних сохранений сохраняет прочность внешних и внутренних укреплений.','Проходы и лестницы остаются свободными при установленном пулемёте.','Ворота не закрываются на дроне; разрушение стены во время подъёма не портит положение персонажа.','Северный мост больше не перекрывает верхнюю линию выстрела и света.']}], ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
  'Новое':['Мини-инвентарь готовой продукции каждого станка: выбор стопки и выдача всего.','Общий бачок полива: 100 л, 10 секунд полива после 45 секунд паузы.','Отдых на кровати восстанавливает здоровье; душ смывает загрязнение после боя.','Дом и автосервис с открывающимися дверями, скрываемой крышей и добычей внутри.','Новые изображения оборудования и животных, механическая анимация станков и открывания ящиков.'],
  'Улучшения':['Единый компактный стиль карточек и производства: материалы → результат.','Прибавки улучшений после итоговых характеристик; четыре строки параметров персонажа.','Настройки слоёв обеих карт и отдельная кнопка снятия цели.','Новые покрытия комнат, двери, лампы, мягкий свет и тени.','Отдельные кормушки и общая поилка, движения и поведение животных.','Метки АК и M4 на патронах; компактная заправка по 10 или до максимума.'],
  'Баланс':['Полный сбалансированный комплект +5 даёт около 300 максимального HP.','Новый урожай — 50 единиц с грядки; старые остатки урожая сохраняются.','Без воды культуры растут со скоростью 35% и не погибают.','Тела зомби плавно исчезают через 75–90 секунд.'],
@@ -9410,7 +9395,7 @@ window.V0105=(()=>{
     const o=v09Overlay('v105Changes','Обновления'),body=o.querySelector('.v09Body');body.replaceChildren();
     history.forEach(([version,groups],i)=>{const d=document.createElement('details');d.open=i===0;const s=document.createElement('summary');s.textContent=version+(i===0?' — текущее':'');d.append(s);for(const [title,items] of Object.entries(groups)){const h=document.createElement('h3');h.textContent=title;const ul=document.createElement('ul');for(const text of items){const li=document.createElement('li');li.textContent=text;ul.append(li);}d.append(h,ul);}body.append(d);});openOverlay(o);
   }
-  const changes=v09Button('Что нового? · Version 0.16.1',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
+  const changes=v09Button('Что нового? · Version 0.16.2',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
   v09Style('#v105Changes .panel{width:min(480px,94vw);padding:14px;font-size:12px;max-height:85dvh}#v105Changes details{border-bottom:1px solid #405452;padding:8px 0}#v105Changes summary{font-size:14px;cursor:pointer;color:#e2c58d}#v105Changes h3{font-size:12px;margin:12px 0 4px;color:#97cab5}#v105Changes ul{padding-left:18px;margin:4px 0;line-height:1.5}#v105Changes li{margin:5px 0}');
   return {tapWorld,equip,markers,drawMapMarkers,showHistory,history,get target(){return liveTarget();},get contextHand(){return contextHand;}};
 })();
@@ -11029,7 +11014,7 @@ window.V013Inventory=(()=>{
   const oldAssign=openHandAssignment;openHandAssignment=function(type){oldAssign(type);const i=items.findIndex(s=>s?.type===type);if(i>=0)el('handAssignChoices').append(v09Button('Убрать в рюкзак',()=>{if(returnItem(i))closeOverlay(el('handAssignOverlay'));}));};
   const oldRender=renderQuickSlots;renderQuickSlots=function(){oldRender();for(const id of ['hotbar','quickSlots'])for(const [i,b]of [...el(id).children].entries()){b.oncontextmenu=e=>{e.preventDefault();if(items[i])openHandAssignment(items[i].type);};}};
   const tools=el('inventoryGrid').previousElementSibling||el('inventoryGrid').parentNode;
-  const manage=v09Button('Быстрые слоты',()=>{const o=v09Overlay('v013Hands','Быстрые слоты'),body=o.querySelector('.v09Body');body.replaceChildren();items.forEach((s,i)=>{const b=v09Button((i+1)+' · '+(s?ITEM[s.type].name:'Пусто'),()=>s&&openHandAssignment(s.type));body.append(b);});openOverlay(o);});tools.append(manage);
+  const manage=v09Button('Быстрые слоты',()=>{const o=v09Overlay('v013Hands','Быстрые слоты'),body=o.querySelector('.v09Body');body.replaceChildren();items.forEach((s,i)=>{const b=v09Button((i+1)+' · '+(s?ITEM[s.type].name:'Пусто'),()=>window.V0162Quick?V0162Quick.open(i):s&&openHandAssignment(s.type));body.append(b);});openOverlay(o);});tools.append(manage);
   ITEM.cooked_fish={name:'Жареная рыба',icon:'🍽️',description:'Порция из 0,5 кг рыбы.'};V092_ICONS.cooked_fish=V011Art.sources.fish;
   let reserve=0;
   function fishWeight(){return reserve+bag.reduce((n,s)=>n+(s?.type==='fish'?V014Fish.weight(s):0),0);}
@@ -12866,7 +12851,7 @@ window.V0161Upgrade=(()=>{
     refs.bag.replaceChildren();for(let i=0;i<BAG_SLOTS;i++){const item=bag[i],cell=inv.cell('bag',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)deposit('bag',i);};if(item&&!accepts(item))cell.classList.add('v161Unavailable');refs.bag.append(cell);}
     // Retain magazine installation and existing specialization without a second
     // cheap enhancement route. Components still consume the correct module.
-    if(s&&V09Craft.weapons[s.type]){const b=v09Button(s.modules?.magazine?'Снять увеличенный магазин':'Установить увеличенный магазин',()=>{const ok=s.modules?.magazine?combat.detach(s,'magazine'):combat.install(s,'magazine');if(!ok)message('Нужен увеличенный магазин и свободное место');changed();});refs.pick.append(b);}
+    if(s&&V09Craft.weapons[s.type])window.V0162Magazines?.render(refs.pick,s,changed);
     else if(s&&eligibleGear(s))for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[s.type].equip==='feet'?[['speed','Скорость']]:[])]){const b=v09Button((s.specialization===key?'✓ ':'')+label,()=>{s.specialization=key;combat.refreshStats();changed();});b.disabled=!!s.locked;refs.pick.append(b);}
   }
   function quickItems(){return V013Inventory.items;}
@@ -12906,6 +12891,152 @@ window.V0161Upgrade=(()=>{
   const oldIcon=itemIconHTML;itemIconHTML=function(type){const key=icons[type];return key&&V011Art.sources[key]?'<img class="itemIcon" src="'+V011Art.sources[key]+'" alt="'+ITEM[type].name+'" draggable="false">':oldIcon(type);};
   for(const [type,key]of Object.entries(icons))V092_ICONS[type]=V011Art.sources[key];
   renderBag();V0161UI.refreshQuick();
+})();
+
+/* 0.16.2: only quick-slot picking and detachable AK/M4 magazines. */
+window.V0162Quick=(()=>{
+  const inv=V010Inventory,quick=V013Inventory;
+  let target=0;
+  function flash(cell){cell.classList.remove('v013Missing');void cell.offsetWidth;cell.classList.add('v013Missing');}
+  function allowed(item,i=target){
+    if(!item||!HAND_TYPES.includes(item.type)||item.qty!==1||item.locked||quick.items[i]?.locked)return false;
+    return !quick.items.some((s,k)=>k!==i&&s?.type===item.type&&s.locked);
+  }
+  function assign(i,index,expected){
+    const item=bag[index];if(!Number.isInteger(i)||i<0||i>4||!item||(expected&&item!==expected)||!allowed(item,i))return false;
+    // A second copy of a weapon replaces the actual selected copy, not a type alias.
+    // Keep the existing one-slot-per-type invariant without losing either item.
+    const previous=quick.items[i],other=quick.items.findIndex((s,k)=>k!==i&&s?.type===item.type);
+    if(other>=0){bag[index]=quick.items[other];quick.items[other]=previous||null;}
+    else bag[index]=previous||null;
+    quick.items[i]=item;V010Combat.cancelReload();firing=false;
+    activeHandSlot=i;quick.sync();selectHandSlot(i);inv.render();
+    closeOverlay(el('v0162QuickPicker'));return true;
+  }
+  function open(i){
+    if(!Number.isInteger(i)||i<0||i>4)return false;target=i;
+    const o=v09Overlay('v0162QuickPicker','Слот '+(i+1)+' · Рюкзак'),body=o.querySelector('.v09Body');body.replaceChildren();
+    const grid=document.createElement('div');grid.className='v162PickGrid';body.append(grid);
+    bag.forEach((item,index)=>{
+      if(!item)return;const ok=allowed(item,i),b=v09Button('',()=>{
+        if(bag[index]!==item){open(i);return;}
+        if(!allowed(item,i)){flash(b);return;}
+        if(!assign(i,index,item))flash(b);
+      });
+      b.className='v162PickCell'+(ok?'':' v162Unavailable');b.dataset.bagIndex=index;
+      b.setAttribute('aria-disabled',String(!ok));b.setAttribute('aria-label',ITEM[item.type].name+(ok?'':' · недоступно для быстрого слота'));
+      b.innerHTML='<span class="v162PickArt">'+itemIconHTML(item.type)+'</span>';
+      const name=document.createElement('span');name.className='v162PickName';name.textContent=ITEM[item.type].name;
+      const qty=document.createElement('small');qty.textContent='×'+item.qty+(item.level?' · +'+item.level:'');b.append(name,qty);grid.append(b);
+    });
+    if(!grid.children.length){const empty=document.createElement('p');empty.textContent='Рюкзак пуст';body.append(empty);}
+    openOverlay(o);return true;
+  }
+  const select=selectHandSlot;selectHandSlot=function(i){if(Number.isInteger(i)&&i>=0&&i<5&&!quick.items[i])return open(i);return select(i);};
+  const render=renderQuickSlots;renderQuickSlots=function(){render();for(const id of ['hotbar','quickSlots'])for(const [i,b]of [...el(id).children].entries())b.oncontextmenu=e=>{e.preventDefault();open(i);};};
+  const details=V011UI.details;V011UI.details=function(where,i){details(where,i);if(where==='quick'&&quick.items[i])el('v010ItemDetails').querySelector('.v09Body').append(v09Button('Выбрать предмет',()=>{closeOverlay(el('v010ItemDetails'));open(i);}));};
+  v09Style(`
+    #hotbar{transform:translateX(-50%) scale(.7);transform-origin:center bottom}
+    #v0162QuickPicker .v09Panel,#v0162MagazinePicker .v09Panel{width:min(350px,92vw);max-height:65dvh;padding:12px}
+    #v0162QuickPicker .v09Body,#v0162MagazinePicker .v09Body{overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+    .v162PickGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;align-content:start}
+    .v162PickGrid .v162PickCell{width:100%;min-width:0;min-height:75px;margin:0;padding:5px 3px;border:1px solid #8fa99b33;border-radius:8px;background:#1b302f;color:#dce7e0;text-align:center;touch-action:pan-y}
+    .v162PickArt{display:block;height:39px}.v162PickArt .itemIcon{width:39px;height:39px;object-fit:contain}
+    .v162PickName{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;line-height:13px}
+    .v162PickCell small{display:block;font-size:9px;color:#a1b6ac}
+    .v162Unavailable .v162PickArt,.v162Unavailable .v162PickName,.v162Unavailable small{filter:grayscale(1);opacity:.4}
+    .v162Unavailable{cursor:default}
+  `);
+  renderQuickSlots();return{open,assign,allowed,flash};
+})();
+
+window.V0162Magazines=(()=>{
+  const inv=V010Inventory,combat=V010Combat,copy=x=>JSON.parse(JSON.stringify(x));
+  const TYPES={magazine_standard:30,magazine_module:60};
+  ITEM.magazine_standard={name:'Обычный магазин',icon:'▥',description:'Съёмный магазин АК / M4 · 30 патронов. В рюкзаке хранится пустым.'};
+  ITEM.magazine_module.description='Съёмный магазин АК / M4 · 60 патронов. После установки зарядите подходящими патронами.';
+  const oldIcon=itemIconHTML;itemIconHTML=function(type){return type==='magazine_standard'?oldIcon('magazine_module').replace('alt="Увеличенный магазин"','alt="Обычный магазин"'):oldIcon(type);};
+  const rifle=s=>!!s&&['rifle_ak74','rifle_m4'].includes(s.type);
+  function owner(s){
+    if(bag.includes(s)||V013Inventory.items.includes(s))return true;
+    if(V0161Upgrade.slots.includes(s))return V0161Upgrade.near();
+    if(V014Robots.state.cargo.includes(s))return V014Robots.near();
+    return activeStorage!==null&&!!el('storageOverlay')?.classList.contains('open')&&!!storageChests[activeStorage]?.items.includes(s);
+  }
+  function change(s,index=null,expected=null){
+    if(!rifle(s)||!owner(s))return false;combat.ensure(s);
+    const incoming=index===null?null:bag[index];
+    if(index!==null&&(!Number.isInteger(index)||!incoming||!Object.hasOwn(TYPES,incoming.type)||!Number.isInteger(incoming.qty)||incoming.qty<1||incoming.locked||(expected&&incoming!==expected)))return false;
+    if(!s.magazineType&&!incoming)return false;
+    if(combat.validateItem(s)===false)return false;
+    const next=copy(bag),weaponIndex=bag.indexOf(s),newType=incoming?.type||null;
+    if(incoming){next[index].qty--;if(!next[index].qty)next[index]=null;}
+    // Run the existing fill-partial-stacks-first insertion on a private draft.
+    // Neither the real inventory nor the weapon changes on any failed insertion.
+    if(s.rounds&&addToSlots(next,V09Craft.weapons[s.type].ammo,s.rounds,BAG_SLOTS)>0||
+       s.magazineType&&addToSlots(next,s.magazineType,1,BAG_SLOTS)>0){
+      message('Нет места в рюкзаке');return false;
+    }
+    combat.cancelReload();firing=false;
+    if(weaponIndex>=0)next[weaponIndex]=s;
+    bag.splice(0,bag.length,...next);s.magazineType=newType;s.rounds=0;delete s.modules.magazine;
+    inv.render();updateAmmoHud();queueGameSave();return true;
+  }
+  const remove=s=>change(s);
+  const install=(s,index,expected)=>change(s,index,expected);
+  function installFirst(s,type){const i=bag.findIndex(x=>x?.type===type&&!x.locked);return i>=0&&install(s,i);}
+  function choose(s,after){
+    if(!rifle(s)||!owner(s))return false;
+    const o=v09Overlay('v0162MagazinePicker','Магазин · Рюкзак'),body=o.querySelector('.v09Body');body.replaceChildren();
+    const grid=document.createElement('div');grid.className='v162PickGrid';body.append(grid);
+    bag.forEach((m,i)=>{if(!m||!Object.hasOwn(TYPES,m.type))return;
+      const b=v09Button('',()=>{if(m.locked){V0162Quick.flash(b);return;}if(install(s,i,m)){closeOverlay(o);after?.();}else if(bag[i]!==m)choose(s,after);});
+      b.className='v162PickCell'+(m.locked?' v162Unavailable':'');b.setAttribute('aria-disabled',String(!!m.locked));b.dataset.magazineIndex=i;
+      b.innerHTML='<span class="v162PickArt">'+itemIconHTML(m.type)+'</span><span class="v162PickName">'+TYPES[m.type]+' патронов</span><small>Пустой · ×'+m.qty+'</small>';grid.append(b);
+    });
+    if(!grid.children.length){const note=document.createElement('p');note.textContent='В рюкзаке нет свободного магазина';body.append(note);}
+    openOverlay(o);return true;
+  }
+  function render(parent,s,after){
+    if(!rifle(s))return;combat.ensure(s);
+    const section=document.createElement('section');section.className='v162Magazine';parent.append(section);
+    const label=document.createElement('div');label.className='v162MagazineLabel';label.textContent='Магазин';section.append(label);
+    const row=document.createElement('div');row.className='v162MagazineRow';section.append(row);
+    const slot=v09Button('',()=>choose(s,after),'v162MagazineSlot');slot.dataset.magazineAction='choose';slot.setAttribute('aria-label','Магазин · выбрать или заменить');
+    slot.innerHTML=s.magazineType?itemIconHTML(s.magazineType):'＋';row.append(slot);
+    const info=document.createElement('div');info.className='v162MagazineInfo';
+    const name=document.createElement('span');name.textContent=s.magazineType?ITEM[s.magazineType].name:'Не установлен';
+    const count=document.createElement('b');count.textContent=s.rounds+'/'+combat.gunSpec(s).mag;
+    info.append(name,count);row.append(info);
+    const actions=document.createElement('div');actions.className='v162MagazineActions';section.append(actions);
+    const put=v09Button(s.magazineType?'Заменить':'Установить',()=>choose(s,after));put.dataset.magazineAction='install';put.disabled=!owner(s);slot.disabled=put.disabled;
+    const take=v09Button('Снять',()=>{if(remove(s))after?.();});take.dataset.magazineAction='remove';take.disabled=!s.magazineType||!owner(s);actions.append(put,take);
+  }
+  const details=V011UI.details;V011UI.details=function(where,i){details(where,i);const s=inv.list(where)?.[i];if(!rifle(s))return;
+    const body=el('v010ItemDetails').querySelector('.v09Body');render(body,s,()=>{if(inv.list(where)?.[i]===s)V011UI.details(where,i);else closeOverlay(el('v010ItemDetails'));});
+  };
+  // Historical saves have an implicit standard magazine or a Boolean extended
+  // attachment. Add the physical component exactly once; retain all loaded rounds.
+  function migrate(d){
+    function visit(v){if(!v||typeof v!=='object')return;
+      if(rifle(v)){
+        if(!Object.hasOwn(v,'magazineType'))v.magazineType=v.modules?.magazine?'magazine_module':'magazine_standard';
+        if(v.modules)delete v.modules.magazine;
+      }
+      for(const x of Object.values(v))if(x&&typeof x==='object')visit(x);
+    }visit(d);return d;
+  }
+  const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};
+  const restore=restoreGameProgress;restoreGameProgress=function(d){return restore(migrate(copy(d)));};
+  v09Style(`
+    .v162Magazine{width:100%;box-sizing:border-box;border:1px solid #91ac9b38;border-radius:9px;padding:9px;margin-top:10px;background:#172d2b66}
+    .v162MagazineLabel{font-size:11px;color:#a9bfb4;margin-bottom:6px}.v162MagazineRow{display:flex;gap:10px;align-items:center}
+    .v162Magazine .v162MagazineSlot{width:52px!important;min-width:52px;height:52px;min-height:52px!important;padding:3px!important;margin:0!important;background:#233a35;border:1px solid #9ab29b66;border-radius:8px;font-size:26px}
+    .v162MagazineSlot .itemIcon{width:44px;height:44px;object-fit:contain}.v162MagazineInfo{font-size:11px;line-height:1.5;color:#afc1b7}
+    .v162MagazineInfo b{display:block;font-size:15px;color:#e3e9d9;font-weight:500;font-variant-numeric:tabular-nums}
+    .v162MagazineActions{display:flex;gap:5px;margin-top:7px}.v162MagazineActions button{flex:1;width:auto!important;font-size:11px!important;min-height:30px!important;margin:0!important;padding:5px 8px!important}
+  `);
+  renderBag();return{TYPES,install,installFirst,remove,choose,render,migrate};
 })();
 
 loadGameProgress();gameSaveReady=true;
