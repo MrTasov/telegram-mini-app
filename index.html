@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>0.16.2 · Survival Base</title>
+<title>0.16.3 · Survival Base</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.16.2</div>
+<div id="versionBadge">VERSION 0.16.3</div>
 
 <div id="game">
 
@@ -628,7 +628,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.16.2 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
+    <div class="subtitle">Survival Base 0.16.3 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
@@ -1870,6 +1870,7 @@ function updateChop(){
   const tree=worldTrees.find(t=>t.id===chopState.id);
   const target=interactionObjects('surface').find(o=>o.id===tree?.id);
   if(!tree||scene!=='surface'||playerDead||movePower>JOY_DEAD||bagCount('axe')<1||!canInteract(target,player.x,player.y)){cancelChop();return;}
+  if(freeItemSpace(bag,'wood',BAG_SLOTS)<=0){cancelChop();message('Рюкзак заполнен');return;}
   const p=clamp((Date.now()-chopState.startedAt)/chopState.duration,0,1);
   const bar=el('searchBarWrap');bar.style.display=menuOpen?'none':'block';bar.style.left=(worldToScreen(player.x,player.y).x-46)+'px';bar.style.top=(worldToScreen(player.x,player.y).y-58)+'px';el('searchBarFill').style.width=(p*100)+'%';
   if(p>=1){tree.felled=true;tree.regrowMs=600000;invalidateGeometry();cancelChop();collectTreeWood(tree);}
@@ -2526,7 +2527,7 @@ function updatePlayer(){
 
   if(navigation&&!navigation._pointerFollow){
     navigation.blockedMs=distance(oldX,oldY,player.x,player.y)<.05?navigation.blockedMs+16.67*frameScale:0;
-    if(navigation.blockedMs>600){cancelNavigation();message('Проход занят. Выберите другой путь');}
+    if(navigation.blockedMs>600&&!navigation.map014){cancelNavigation();message('Проход занят. Выберите другой путь');}
   }
   player.walkAnimation += .21*frameScale;
 
@@ -2574,6 +2575,7 @@ function damagePlayer(amount){
   // not consumed yet; we first test the core equipment/armor loop.
   const armorPct=equippedArmor();
   const finalDamage=Math.max(1,Math.round(amount*(1-armorPct/100)));
+  cancelChop();
   player.health -= finalDamage;
 
   if(player.health < 0){
@@ -2915,8 +2917,8 @@ function* v092PathSearch(startX,startY,target,which=scene,radius=player.radius,f
     const x=Math.max(bounds.x,Math.floor((Math.min(startX,tx)-pad)/12)*12),y=Math.max(bounds.y,Math.floor((Math.min(startY,ty)-pad)/12)*12),right=Math.min(bounds.x+bounds.w,Math.ceil((Math.max(startX,tx)+pad)/12)*12),bottom=Math.min(bounds.y+bounds.h,Math.ceil((Math.max(startY,ty)+pad)/12)*12);bounds={x,y,w:right-x,h:bottom-y};}
 
   if(target.navBounds)bounds=target.navBounds;
-  const cell=12,cols=Math.ceil(bounds.w/cell),rows=Math.ceil(bounds.h/cell),size=cols*rows;
-  const key=which+':'+radius+':'+geometryRevision+':'+[bounds.x,bounds.y,bounds.w,bounds.h].join(',')+':'+(window.V014Robots?.planningKey()||'');let entry=v092PathCache.get(key);if(!entry){if(v092PathCache.size>5)v092PathCache.clear();entry={cells:new Uint8Array(size),edges:new Map()};v092PathCache.set(key,entry);}const cached=entry.cells,closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
+  const cell=target.navCell===36?36:12,cols=Math.ceil(bounds.w/cell),rows=Math.ceil(bounds.h/cell),size=cols*rows;
+  const key=which+':'+radius+':'+cell+':'+geometryRevision+':'+[bounds.x,bounds.y,bounds.w,bounds.h].join(',')+':'+(window.V014Robots?.planningKey()||'');let entry=v092PathCache.get(key);if(!entry){if(v092PathCache.size>5)v092PathCache.clear();entry={cells:new Uint8Array(size),edges:new Map()};v092PathCache.set(key,entry);}const cached=entry.cells,closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
   const point=id=>({x:bounds.x+(id%cols+.5)*cell,y:bounds.y+(Math.floor(id/cols)+.5)*cell});
   const walkable=id=>{if(id<0||id>=size)return false;if(!cached[id]){const p=point(id);cached[id]=worldCollision(p.x,p.y,radius,which)?2:1;}return cached[id]===1;};
   const sx=Math.floor((startX-bounds.x)/cell),sy=Math.floor((startY-bounds.y)/cell);
@@ -2928,11 +2930,11 @@ function* v092PathSearch(startX,startY,target,which=scene,radius=player.radius,f
   }
   if(start<0)return null;
   const near=(p)=>{
-    if(target.kind==='ground')return distance(p.x,p.y,target.x,target.y)<=24&&lineClear(p.x,p.y,target.x,target.y,radius,which);
+    if(target.kind==='ground')return distance(p.x,p.y,target.x,target.y)<=Math.max(24,cell*1.5)&&lineClear(p.x,p.y,target.x,target.y,radius,which);
     const c=contactPoint(target,p.x,p.y);
     return distance(p.x,p.y,c.x,c.y)<=target.range&&lineClear(p.x,p.y,c.x,c.y,0,which,target.id);
   };
-  const heuristic=id=>{const p=point(id),c=contactPoint(target,p.x,p.y);return Math.max(0,distance(p.x,p.y,c.x,c.y)-target.range);};
+  const heuristic=id=>{const p=point(id),c=contactPoint(target,p.x,p.y);return Math.max(0,distance(p.x,p.y,c.x,c.y)-target.range)*(target.navWeight===1.2?1.2:1);};
   const heap=[];
   const push=(id,f)=>{let i=heap.length;heap.push({id,f});while(i>0){const p=(i-1)>>1;if(heap[p].f<=f)break;[heap[p],heap[i]]=[heap[i],heap[p]];i=p;}};
   const pop=()=>{const out=heap[0],last=heap.pop();if(heap.length){heap[0]=last;let i=0;while(true){let j=i*2+1;if(j>=heap.length)break;if(j+1<heap.length&&heap[j+1].f<heap[j].f)j++;if(heap[i].f<=heap[j].f)break;[heap[i],heap[j]]=[heap[j],heap[i]];i=j;}}return out.id;};
@@ -4871,16 +4873,7 @@ el('handAssignClose').addEventListener('click',()=>closeOverlay(el('handAssignOv
 el("closeInventory").addEventListener("click",()=>closeOverlay(el("inventoryOverlay")));
 /* Inventory interactions are installed by V010Inventory. */
 el("closeLoot").addEventListener("click",()=>closeOverlay(el("lootOverlay")));
-el("takeAllLoot").addEventListener("click",()=>{
-  if(!activeLoot || !activeLootObject)return;
-  const remain=[];
-  for(const s of activeLoot){const left=addItem(s.type,s.qty,s);if(left>0)remain.push(s.type==='fish'?V014Fish.portion(s,left,s.qty-left):{...s,qty:left})}
-  activeLootObject.loot=remain;
-  activeLoot=remain;renderLoot();updateAmmoHud();
-  queueGameSave();
-  if(!activeLoot.length){closeOverlay(el("lootOverlay"));message("Добыча в рюкзаке")}
-  else message("Рюкзак заполнен");
-});
+el("takeAllLoot").addEventListener("click",()=>window.V0163Loot?.take('bag'));
 el("closeStorage").addEventListener("click",()=>closeOverlay(el("storageOverlay")));
 /* Storage interactions are installed by V010Inventory. */
 el("storageSettings").addEventListener("click",openChestSettings);
@@ -7068,9 +7061,9 @@ const V091Navigation=(()=>{
   }
   approachObject=function(target){
     if(fortress()?.handleObject?.(target))return;
-    stopControls();cancelSearch();cancelChop();
     if(!target)return;
     if(canInteract(target,player.x,player.y)){executeInteraction(target);return;}
+    stopControls();cancelSearch();cancelChop();
     const points=plan(target);
     if(!points){message('К объекту нет свободного прохода');return;}
     navigation={targetId:target.id,points,index:0,blockedMs:0,replans:0,scene};
@@ -7123,6 +7116,7 @@ const V091Navigation=(()=>{
     steerHeldPointer();
   };
   updateAutoWalk=function(){
+    if(navigation?.map014&&window.V014Controls)return V014Controls.advanceRoute();
     if(navigation?._pointerFollow){
       if(!objectPointer?.following||navigation.scene!==scene){cancelNavigation();return;}
       steerHeldPointer();
@@ -7548,7 +7542,7 @@ decodeGameProgress=function(raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[012]))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -7733,7 +7727,7 @@ function v09NewGame(){
   try{
     const id=v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
-    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.16.2';data.v010={schema:1,modules:clone(V010.initialModules)};
+    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.16.3';data.v010={schema:1,modules:clone(V010.initialModules)};
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
     const raw=v09WriteNewSlot(id,data);
@@ -7758,7 +7752,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.16.2-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.16.3-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -8038,7 +8032,7 @@ window.V010Inventory=(()=>{
   }
   function startPointer(e,where,index,node){
     if(e.button!==undefined&&e.button!==0)return;
-    const item=where==='equipment'?equipment[index]:list(where)?.[index];if(!item&&e.pointerType!=='touch')return;
+    const item=where==='equipment'?equipment[index]:list(where)?.[index];if(!item&&(where==='quick'||e.pointerType!=='touch'))return;
     if(drag){clearTimeout(drag.holdTimer);drag.node.classList.remove('v011DragArmed');}
     e.stopPropagation();drag={where,index,node,item,x:e.clientX,y:e.clientY,id:e.pointerId,start:performance.now(),active:false,ghost:null,target:null,touch:e.pointerType==='touch',scrolling:false,armed:false};
     const current=drag;
@@ -9107,7 +9101,7 @@ const V010Camera=(()=>{
   let mapDrag=null;const mapTouches=new Map();let mapPinch=null;
   full.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();full.setPointerCapture?.(e.pointerId);mapTouches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(mapTouches.size===2){const [a,b]=[...mapTouches.values()];mapPinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:mapZoom};mapDrag=null;}else mapDrag={x:e.clientX,y:e.clientY,pan:{...mapPan},moved:false};});
   full.addEventListener('pointermove',e=>{if(!mapTouches.has(e.pointerId))return;mapTouches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(mapPinch&&mapTouches.size===2){const[a,b]=[...mapTouches.values()];mapZoom=clamp(mapPinch.z*Math.hypot(a.x-b.x,a.y-b.y)/Math.max(1,mapPinch.d),1,6);drawFull();return;}if(!mapDrag)return;const dx=e.clientX-mapDrag.x,dy=e.clientY-mapDrag.y;if(Math.hypot(dx,dy)>7)mapDrag.moved=true;if(mapDrag.moved){const b=bounds(),s=Math.min(full.width/b.w,full.height/b.h)*mapZoom;const rect=full.getBoundingClientRect();mapPan={x:mapDrag.pan.x-dx*full.width/Math.max(1,rect.width)/s,y:mapDrag.pan.y-dy*full.height/Math.max(1,rect.height)/s};drawFull();}});
-  full.addEventListener('pointerup',e=>{mapTouches.delete(e.pointerId);if(!mapPinch&&mapDrag&&!mapDrag.moved){selected=mapPoint(e);const b=bounds();selected.x=clamp(selected.x,b.x,b.x+b.w);selected.y=clamp(selected.y,b.y,b.y+b.h);el('v010MapHint').textContent='Выбрано место · '+Math.round(selected.x)+', '+Math.round(selected.y);}if(!mapTouches.size){mapPinch=null;mapDrag=null;}drawFull();});
+  full.addEventListener('pointerup',e=>{mapTouches.delete(e.pointerId);if(!mapPinch&&mapDrag&&!mapDrag.moved){window.V014Controls?.stopRoute();selected=mapPoint(e);const b=bounds();selected.x=clamp(selected.x,b.x,b.x+b.w);selected.y=clamp(selected.y,b.y,b.y+b.h);el('v010MapHint').textContent='Выбрано место · '+Math.round(selected.x)+', '+Math.round(selected.y);}if(!mapTouches.size){mapPinch=null;mapDrag=null;}drawFull();});
   full.addEventListener('pointercancel',()=>{mapTouches.clear();mapPinch=null;mapDrag=null;});
   full.addEventListener('wheel',e=>{e.preventDefault();mapZoom=clamp(mapZoom*Math.exp(-e.deltaY*.001),1,6);drawFull();},{passive:false});
   el('v010MapMark').onclick=()=>{if(!selected)return;if(markers.length>=40){message('Можно поставить до 40 меток');return;}markers.push({...selected,scene,name:(el('v010MarkerName').value.trim()||'Метка').slice(0,36)});queueGameSave();drawFull();};
@@ -9153,7 +9147,7 @@ function viewHeight(){return V010Camera.view().h;}
   const snapshot=()=>Object.fromEntries(order.filter(k=>V010.modules[k]).map(k=>[k,V010.modules[k].capture()]));
   V010.initialModules=clone(snapshot());
   const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.16.2';d.v010={schema:1,modules:snapshot()};return d;};
+  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.16.3';d.v010={schema:1,modules:snapshot()};return d;};
   decodeGameProgress=function(raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -9162,7 +9156,7 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.16.2';return d;
+    d.gameVersion='0.16.3';return d;
   };
   restoreGameProgress=function(d){
     const was=v09SaveTransaction;v09SaveTransaction=true;
@@ -9171,8 +9165,8 @@ function viewHeight(){return V010Camera.view().h;}
   };
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(text);};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.16.2 · Большой мир и свободное развитие';
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.16.2';
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.16.3 · Большой мир и свободное развитие';
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.16.3';
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
@@ -9317,7 +9311,7 @@ window.V0105=(()=>{
     if(!z){target=null;return false;}
     const gun=[heldItem(),lastGun,...guns].find(t=>guns.includes(t)&&bagCount(t)>0);
     if(!gun){message('В рюкзаке нет оружия');return true;}
-    cancelNavigation();cancelSearch();if(!equip(gun))return true;target=z;aim();return true;
+    if(!window.V014Controls?.route)cancelNavigation();cancelSearch();if(!equip(gun))return true;target=z;aim();return true;
   }
   const oldShoot=shoot;shoot=function(...args){aim();return oldShoot(...args);};
   const oldPlayer=updatePlayer;updatePlayer=function(...args){const out=oldPlayer(...args);aim();return out;};
@@ -9380,7 +9374,7 @@ window.V0105=(()=>{
     renderQuickSlots();updateAmmoHud();
   };
   const history=[
-    ['0.16.2',{'Улучшения':['Пять быстрых слотов уменьшены на 30%; компактный выбор из всего рюкзака.','Недоступные для быстрого слота предметы приглушены и подсвечиваются красным при нажатии.'],'Новое':['Съёмные магазины АК и M4 на 30 и 60 патронов.','Без магазина оружие не стреляет; снятие возвращает пустой магазин и весь боезапас в рюкзак.'],'Исправления':['Атомарные операции с магазинами, заполнение стаков до 600 и сохранение точного боезапаса.']}], ['0.16.1',{'Новое':['Физический станок усиления в углу мастерской: оружие, экипировка, пулемёт и модули дрона до +5.','Новые иконки шлема, увеличенного магазина, дрона и станка.','Перенос предметов удержанием между быстрыми слотами, рюкзаком, ящиками и дроном.'],'Улучшения':['Мини-карта немного меньше и сохраняет правильное положение до и после масштабирования.','Окна сразу скрывают игровые кнопки и мини-карту, закрываются крестиком и нажатием на фон.','Поднятые лампы освещают двор поверх низких декораций; вещи расположены ближе к стенам.','Единая прозрачность игровых кнопок и новая иконка тихого шага.'],'Баланс':['Ёмкость батареи дрона увеличена в 2,5 раза.','Добыча руды: 10 за цикл; переплавка железа и меди: 2 секунды за слиток.','Удалены прицел, рукоятка, глушитель и положение на колене.'],'Исправления':['Улучшенные предметы сохраняются на станке без дублирования.','Старые сохранения переносятся с сохранением прогресса плавки; материалы незавершённых удалённых рецептов возвращаются.','Все лестницы остаются доступны после перестановки декораций.']}], ['0.16.0',{'Новое':['Сутки за 20 минут активной игры: плавный рассвет, вечер и ночь; время сохраняется.','Съёмный тяжёлый пулемёт: урон 65, поворот 360°, изготовление и размещение на стенах.'],'Улучшения':['Мягкое локальное освещение бункера, усиленный фонарик и свет дрона.','Лампы на стенах и восемь наружных прожекторов по углам базы.','Открытый двор без машин и лишних перегородок; более тёмный бетон.'],'Исправления':['Перенос прежних сохранений сохраняет прочность внешних и внутренних укреплений.','Проходы и лестницы остаются свободными при установленном пулемёте.','Ворота не закрываются на дроне; разрушение стены во время подъёма не портит положение персонажа.','Северный мост больше не перекрывает верхнюю линию выстрела и света.']}], ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
+    ['0.16.3',{'Улучшения':['Маршрут начинается с безопасного участка сразу; дальнейший путь рассчитывается по кадрам.','Мягкая полупрозрачная линия маршрута; здоровье и сытость над быстрыми слотами.','Рюкзак и хранилище: непрозрачность 100%, 70% или 40%.','Добыча: три действия, выбор одной стопки или выдача всего в рюкзак либо дрон.'],'Исправления':['Пустые быстрые слоты открывают выбор предмета и при касании пальцем.','Нажатие за окном закрывает только верхнюю карточку и не проходит под неё.','Открытие интерфейса сохраняет автопуть и добычу; получение урона останавливает добычу.','Убран отдельный индикатор заряда дрона поверх игрового мира.']}], ['0.16.2',{'Улучшения':['Пять быстрых слотов уменьшены на 30%; компактный выбор из всего рюкзака.','Недоступные для быстрого слота предметы приглушены и подсвечиваются красным при нажатии.'],'Новое':['Съёмные магазины АК и M4 на 30 и 60 патронов.','Без магазина оружие не стреляет; снятие возвращает пустой магазин и весь боезапас в рюкзак.'],'Исправления':['Атомарные операции с магазинами, заполнение стаков до 600 и сохранение точного боезапаса.']}], ['0.16.1',{'Новое':['Физический станок усиления в углу мастерской: оружие, экипировка, пулемёт и модули дрона до +5.','Новые иконки шлема, увеличенного магазина, дрона и станка.','Перенос предметов удержанием между быстрыми слотами, рюкзаком, ящиками и дроном.'],'Улучшения':['Мини-карта немного меньше и сохраняет правильное положение до и после масштабирования.','Окна сразу скрывают игровые кнопки и мини-карту, закрываются крестиком и нажатием на фон.','Поднятые лампы освещают двор поверх низких декораций; вещи расположены ближе к стенам.','Единая прозрачность игровых кнопок и новая иконка тихого шага.'],'Баланс':['Ёмкость батареи дрона увеличена в 2,5 раза.','Добыча руды: 10 за цикл; переплавка железа и меди: 2 секунды за слиток.','Удалены прицел, рукоятка, глушитель и положение на колене.'],'Исправления':['Улучшенные предметы сохраняются на станке без дублирования.','Старые сохранения переносятся с сохранением прогресса плавки; материалы незавершённых удалённых рецептов возвращаются.','Все лестницы остаются доступны после перестановки декораций.']}], ['0.16.0',{'Новое':['Сутки за 20 минут активной игры: плавный рассвет, вечер и ночь; время сохраняется.','Съёмный тяжёлый пулемёт: урон 65, поворот 360°, изготовление и размещение на стенах.'],'Улучшения':['Мягкое локальное освещение бункера, усиленный фонарик и свет дрона.','Лампы на стенах и восемь наружных прожекторов по углам базы.','Открытый двор без машин и лишних перегородок; более тёмный бетон.'],'Исправления':['Перенос прежних сохранений сохраняет прочность внешних и внутренних укреплений.','Проходы и лестницы остаются свободными при установленном пулемёте.','Ворота не закрываются на дроне; разрушение стены во время подъёма не портит положение персонажа.','Северный мост больше не перекрывает верхнюю линию выстрела и света.']}], ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
  'Новое':['Мини-инвентарь готовой продукции каждого станка: выбор стопки и выдача всего.','Общий бачок полива: 100 л, 10 секунд полива после 45 секунд паузы.','Отдых на кровати восстанавливает здоровье; душ смывает загрязнение после боя.','Дом и автосервис с открывающимися дверями, скрываемой крышей и добычей внутри.','Новые изображения оборудования и животных, механическая анимация станков и открывания ящиков.'],
  'Улучшения':['Единый компактный стиль карточек и производства: материалы → результат.','Прибавки улучшений после итоговых характеристик; четыре строки параметров персонажа.','Настройки слоёв обеих карт и отдельная кнопка снятия цели.','Новые покрытия комнат, двери, лампы, мягкий свет и тени.','Отдельные кормушки и общая поилка, движения и поведение животных.','Метки АК и M4 на патронах; компактная заправка по 10 или до максимума.'],
  'Баланс':['Полный сбалансированный комплект +5 даёт около 300 максимального HP.','Новый урожай — 50 единиц с грядки; старые остатки урожая сохраняются.','Без воды культуры растут со скоростью 35% и не погибают.','Тела зомби плавно исчезают через 75–90 секунд.'],
@@ -9395,7 +9389,7 @@ window.V0105=(()=>{
     const o=v09Overlay('v105Changes','Обновления'),body=o.querySelector('.v09Body');body.replaceChildren();
     history.forEach(([version,groups],i)=>{const d=document.createElement('details');d.open=i===0;const s=document.createElement('summary');s.textContent=version+(i===0?' — текущее':'');d.append(s);for(const [title,items] of Object.entries(groups)){const h=document.createElement('h3');h.textContent=title;const ul=document.createElement('ul');for(const text of items){const li=document.createElement('li');li.textContent=text;ul.append(li);}d.append(h,ul);}body.append(d);});openOverlay(o);
   }
-  const changes=v09Button('Что нового? · Version 0.16.2',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
+  const changes=v09Button('Что нового? · Version 0.16.3',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
   v09Style('#v105Changes .panel{width:min(480px,94vw);padding:14px;font-size:12px;max-height:85dvh}#v105Changes details{border-bottom:1px solid #405452;padding:8px 0}#v105Changes summary{font-size:14px;cursor:pointer;color:#e2c58d}#v105Changes h3{font-size:12px;margin:12px 0 4px;color:#97cab5}#v105Changes ul{padding-left:18px;margin:4px 0;line-height:1.5}#v105Changes li{margin:5px 0}');
   return {tapWorld,equip,markers,drawMapMarkers,showHistory,history,get target(){return liveTarget();},get contextHand(){return contextHand;}};
 })();
@@ -10707,8 +10701,8 @@ window.V012Map=(()=>{
 /* 0.12 — smaller inventory windows; shared background opacity, native scrolling. */
 window.V012Windows=(()=>{
   'use strict';
-  const KEY='survival_base_window_opacity_v012',levels=[90,75,60,100],buttons=[];
-  let opacity=90;
+  const KEY='survival_base_window_opacity_v012',levels=[100,70,40],buttons=[];
+  let opacity=100;
   try{const saved=Number(localStorage.getItem(KEY));if(levels.includes(saved))opacity=saved;}catch(_){}
   function apply(){
     document.documentElement.style.setProperty('--v012-window-alpha',String(opacity/100));
@@ -11509,8 +11503,7 @@ window.V014Robots=(()=>{
   registerPowerDevice('robot_drone_charge','room5',DOCK.watts,()=>atDock()&&state.battery<100,'Станция · дрон');
 
   function statusText(){return state.packed?'В рюкзаке':state.task==='docking'?'Стыковка':atDock()?(state.battery>=100?(state.hp<=0?'Требуется ремонт':'Заряжен · на станции'):stationInfo().charging?'Заряжается':'На станции · нет питания'):state.hp<=0?'Требуется ремонт':state.battery<=0?'Разряжен':({follow:'Сопровождает',attack:'Атакует',guard:'Охраняет точку',return:home.blocked?'Путь закрыт · ожидание':'Возвращается на станцию',disabled:'Остановлен'})[state.task]||'Ожидание';}
-  const hud=v09Button('◈',()=>open(),'v014DroneHUD');hud.id='v014DroneHUD';hud.setAttribute('aria-label','Дрон-компаньон');document.body.append(hud);
-  function updateHUD(){hud.style.display=menuOpen||playerDead?'none':'block';hud.textContent='◈ '+Math.round(state.battery)+'%';hud.title=state.name+' · '+statusText();window.V0141DroneUI?.refresh();window.V0151Station?.refresh();}
+  function updateHUD(){window.V0141DroneUI?.refresh();window.V0151Station?.refresh();window.V0163Loot?.refresh();}
   function open(){window.V0141DroneUI.open();}
   function openStation(){window.V0151Station?.open();}
   function dispatchLoot(){if(!near()||!activeLootObject){message('Дрон должен быть рядом');return false;}let n=0;if(lootSelection>=0)n=transfer(activeLoot,lootSelection,state.cargo,capacity());else for(let i=0;i<activeLoot.length;i++)n+=transfer(activeLoot,i,state.cargo,capacity());activeLoot=activeLoot.filter(Boolean);activeLootObject.loot=activeLoot;lootSelection=-1;renderLoot();if(!n)message('Нет места в дроне');return n>0;}
@@ -11606,6 +11599,41 @@ window.V014Controls=(()=>{
   function release(e){if(e.pointerId===lockedPress){lockedPress=null;aimControl.classList.remove('v014TargetFire');}}
   window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);window.addEventListener('lostpointercapture',release);
   function openDoors(fn){const before=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=before;}}
+  function installPath(points,provisional=false){
+    navigation={destination:route.destination,points,index:0,blockedMs:0,replans:0,scene,map014:true,provisional};
+    const corners=[];
+    for(let i=1;i<points.length-1;i++){
+      const a=points[i-1],b=points[i],c=points[i+1],ab=distance(a.x,a.y,b.x,b.y),bc=distance(b.x,b.y,c.x,c.y),r=Math.min(14,ab/3,bc/3);
+      if(r<1)continue;
+      const from={x:b.x+(a.x-b.x)*r/ab,y:b.y+(a.y-b.y)*r/ab},to={x:b.x+(c.x-b.x)*r/bc,y:b.y+(c.y-b.y)*r/bc};
+      let prev=from,clear=true;
+      for(let k=1;k<=8;k++){const t=k/8,u=1-t,q={x:u*u*from.x+2*u*t*b.x+t*t*to.x,y:u*u*from.y+2*u*t*b.y+t*t*to.y};if(!openDoors(()=>lineClear(prev.x,prev.y,q.x,q.y,player.radius,scene))){clear=false;break;}prev=q;}
+      if(clear)corners[i]={from,to};
+    }
+    navigation.corners=corners;
+  }
+  function beginPlan(fine=false){
+    if(!route)return;
+    const d=distance(player.x,player.y,route.destination.x,route.destination.y);
+    const navCell=!fine&&d>700?36:12;
+    const dest={...route.destination,navCell,navWeight:1.2};
+    pending={generator:v092PathSearch(player.x,player.y,dest,scene,player.radius),start:{x:player.x,y:player.y},scene,revision:geometryRevision,navCell};
+  }
+  function immediatePrefix(){
+    const dest=route.destination,angle=Math.atan2(dest.y-player.y,dest.x-player.x),limit=Math.min(200,distance(player.x,player.y,dest.x,dest.y));
+    // Bounded local sweep: begin on a safe edge while the global search yields.
+    // Collision checks include the player's radius, including narrow doorways.
+    let best=null,score=-Infinity;
+    for(const offset of [0,.45,-.45,.9,-.9,1.4,-1.4]){
+      const a=angle+offset;let last=null;
+      for(let n=8;n<=limit;n+=8){const p={x:player.x+Math.cos(a)*n,y:player.y+Math.sin(a)*n};
+        if(!openDoors(()=>lineClear(player.x,player.y,p.x,p.y,player.radius,scene)))break;last=p;
+      }
+      if(last){const value=distance(player.x,player.y,dest.x,dest.y)-distance(last.x,last.y,dest.x,dest.y);if(value>score){score=value;best=last;}}
+      if(offset===0&&best&&distance(player.x,player.y,best.x,best.y)>limit-10)break;
+    }
+    if(best&&score>1)installPath([best],true);
+  }
   function goTo(p){
     if(!p||playerDead)return false;
     if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.scene&&p.scene!==scene)return false;
@@ -11613,23 +11641,46 @@ window.V014Controls=(()=>{
     if(openDoors(()=>worldCollision(p.x,p.y,player.radius,scene))){message('Нет доступного пути');return false;}
     const destination={id:'ground',kind:'ground',x:p.x,y:p.y,r:0,range:.55};
     route={destination,scene,revision:geometryRevision};V010Camera.setGoal(destination);
-    if(openDoors(()=>lineClear(player.x,player.y,p.x,p.y,player.radius+1,scene)))navigation={destination,points:[{x:p.x,y:p.y}],index:0,blockedMs:0,replans:0,scene,map014:true};
-    else pending={generator:v092PathSearch(player.x,player.y,destination,scene,player.radius+1),start:{x:player.x,y:player.y},scene,revision:geometryRevision};
+    if(openDoors(()=>lineClear(player.x,player.y,p.x,p.y,player.radius,scene)))installPath([{x:p.x,y:p.y}]);
+    else {immediatePrefix();beginPlan();}
     stop.style.display=menuOpen?'none':'block';return true;
   }
   function tickPath(){
     if(!pending)return;
     if(playerDead||route?.scene!==scene){stopRoute();return;}
-    if(pending.revision!==geometryRevision){pending.generator=v092PathSearch(player.x,player.y,route.destination,scene,player.radius+1);pending.revision=geometryRevision;}
+    if(pending.revision!==geometryRevision){beginPlan(pending.navCell===12);}
     const start=performance.now();let out;
     for(let i=0;i<40;i++){out=openDoors(()=>pending.generator.next());if(out.done||performance.now()-start>3)break;}
     if(!out.done)return;
-    pending=null;
-    if(!out.value){stopRoute();message('Нет доступного пути');return;}
-    navigation={destination:route.destination,points:out.value,index:0,blockedMs:0,replans:0,scene,map014:true};
+    const coarse=pending.navCell!==12;pending=null;
+    if(!out.value){if(coarse){beginPlan(true);return;}stopRoute();message('Нет доступного пути');return;}
+    // Join ahead of the moving player, never snap back to the search origin.
+    let join=-1;for(let i=out.value.length-1;i>=0;i--)if(openDoors(()=>lineClear(player.x,player.y,out.value[i].x,out.value[i].y,player.radius,scene))){join=i;break;}
+    if(join<0){beginPlan(true);return;}
+    installPath(out.value.slice(join));
+  }
+  function advanceRoute(){
+    if(!route||route.scene!==scene||playerDead){stopRoute();return;}
+    const nav=navigation;if(!nav)return;
+    if(nav.blockedMs>250){nav.blockedMs=0;if(!pending)beginPlan(true);}
+    let p=nav.points[nav.index];
+    while(p&&distance(player.x,player.y,p.x,p.y)<(nav.index===nav.points.length-1?.4:3)){
+      const next=nav.points[nav.index+1];if(next&&!openDoors(()=>lineClear(player.x,player.y,next.x,next.y,player.radius,scene)))break;
+      nav.index++;p=nav.points[nav.index];
+    }
+    if(!p){moveX=moveY=movePower=0;
+      if(pending){navigation=null;return;}
+      if(distance(player.x,player.y,route.destination.x,route.destination.y)<1){stopRoute();return;}
+      beginPlan(true);navigation=null;return;
+    }
+    const d=distance(player.x,player.y,p.x,p.y)||1;moveX=(p.x-player.x)/d;moveY=(p.y-player.y)/d;movePower=.84;
+    if(!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
   }
   const oldApproachPoint=approachPoint;approachPoint=function(...args){if(route||pending)stopRoute();return oldApproachPoint(...args);};
-  const oldApproachObject=approachObject;approachObject=function(...args){if(route||pending)stopRoute();return oldApproachObject(...args);};
+  const oldApproachObject=approachObject;approachObject=function(o,...args){
+    if((route||pending)&&(!o||!canInteract(o,player.x,player.y)))stopRoute();
+    return oldApproachObject(o,...args);
+  };
   const oldStartFollow=startPointerFollow;startPointerFollow=function(...args){if(route||pending)stopRoute();return oldStartFollow(...args);};
   // UI may release controls without cancelling an explicitly requested map route.
   const oldStopControls=stopControls;stopControls=function(preserve=false,...args){const nav=preserve&&route?navigation:null,task=preserve?pending:null;const out=oldStopControls(preserve,...args);if(nav)navigation=nav;if(task)pending=task;return out;};
@@ -11638,7 +11689,12 @@ window.V014Controls=(()=>{
     // The world continues while a panel is open. Only the route resumes input here.
     const restoreMenu=menuOpen;try{if(route&&navigation&&!document.hidden)menuOpen=false;return oldPlayer(...args);}finally{menuOpen=restoreMenu;}
   };
-  function drawRoute(c,scale){if(!route||route.scene!==scene||!navigation?.points)return;c.save();c.strokeStyle='#d9c995bb';c.lineWidth=1.2/scale;c.beginPath();c.moveTo(player.x,player.y);for(const p of navigation.points.slice(navigation.index))c.lineTo(p.x,p.y);c.stroke();c.restore();}
+  function drawRoute(c,scale){if(!route||route.scene!==scene||!navigation?.points)return;
+    const nav=navigation;c.save();c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(player.x,player.y);
+    for(let i=nav.index;i<nav.points.length;i++){const p=nav.points[i],corner=i>nav.index?nav.corners?.[i]:null;if(corner){c.lineTo(corner.from.x,corner.from.y);c.quadraticCurveTo(p.x,p.y,corner.to.x,corner.to.y);}else c.lineTo(p.x,p.y);}
+    c.strokeStyle='rgba(178,205,183,.10)';c.lineWidth=5/scale;c.stroke();
+    c.strokeStyle='rgba(207,220,183,.48)';c.lineWidth=2.4/scale;c.stroke();c.restore();
+  }
   const oldNavDraw=drawNavigationTarget;drawNavigationTarget=function(...args){oldNavDraw(...args);drawRoute(ctx,V010Camera.zoom||1);};
   const goButton=v09Button('Идти сюда',()=>{if(goTo(V010Camera.selected||V010Camera.goal)){el('v010MapClose').click();}});goButton.id='v014MapGo';
   const droneButton=v09Button('Атаковать дроном',()=>{const z=mapSelectedTarget();if(z&&window.V014Robots?.attack(z))el('v010MapClose').click();});droneButton.id='v014MapAttack';droneButton.hidden=true;
@@ -11674,7 +11730,7 @@ window.V014Controls=(()=>{
     @media(max-height:550px){#v010Minimap{top:calc(var(--v011-game-top) + 55px)!important}}
   `);
   window.addEventListener('resize',layout);window.visualViewport?.addEventListener('resize',layout);el('v010MapCorner').addEventListener('click',layout);layout();
-  return {target,contactTarget,beginStick,moveStick:moveStick014,goTo,stopRoute,tickPath,drawRoute,mapSelectedTarget,layout,get route(){return route;},get planning(){return !!pending;}};
+  return {target,contactTarget,beginStick,moveStick:moveStick014,goTo,stopRoute,tickPath,advanceRoute,drawRoute,mapSelectedTarget,layout,get route(){return route;},get planning(){return !!pending;}};
 })();
 
 /* Generation follows useful output: loads plus reserve battery charging. */
@@ -12699,22 +12755,37 @@ window.V016Turret=(()=>{
 /* 0.16.1: synchronous modal visibility, shared slot dragging, save migration. */
 window.V0161UI=(()=>{
   const inv=V010Inventory,robot=V014Robots,quick=V013Inventory;
-  const controls=['v010Minimap','moveControl','aimControl','actionButton','bagButton','settingsButton','hotbar','v010SneakButton','v010ReloadButton','v014DroneHUD','v091JumpInward','v014RouteStop','v010PracticeStop','v010PinnedRecipe','v010PinnedGoal','searchBarWrap','v016Placement'];
-  let serial=15000,backdropPointer=null;
+  const controls=['v010Minimap','moveControl','aimControl','actionButton','bagButton','settingsButton','hotbar','v010SneakButton','v010ReloadButton','v014DroneHUD','v091JumpInward','v014RouteStop','v010PracticeStop','v010PinnedRecipe','v010PinnedGoal','searchBarWrap','v016Placement','v163Vitals','heldItemName'];
+  let serial=15000,dismissGesture=null;
   function sync(){const open=!!document.querySelector('.overlay.open');menuOpen=open||playerDead;if(document.body.classList.contains('v0161Modal')!==menuOpen)document.body.classList.toggle('v0161Modal',menuOpen);}
   function opened(o){
     o.style.zIndex=String(++serial);const panel=o.querySelector('.panel');
-    if(panel&&!o.querySelector('.v09Close,.v012InventoryClose,.v0161Close,#v010MapClose')){
+    if(panel&&!o.querySelector('.v09Close,.v012InventoryClose,.v0161Close,#v010MapClose,#closeLoot')){
       const b=v09Button('×',()=>closeOverlay(o),'v0161Close');b.title='Закрыть';b.setAttribute('aria-label','Закрыть');panel.prepend(b);
     }
     if(o.id==='v014DronePanel'||o.id==='storageOverlay')refreshQuick();sync();
   }
   function closed(o){if(o.id==='v010MapOverlay')V010Camera.closeMap();sync();}
-  document.addEventListener('pointerdown',e=>{
-    const o=e.target?.closest?.('.overlay.open');if(!o||e.target.closest?.('.panel'))return;
-    backdropPointer=e.pointerId;e.preventDefault();e.stopImmediatePropagation();closeOverlay(o);
+  const topOverlay=()=>[...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||getComputedStyle(b).zIndex||0)-Number(a.style.zIndex||getComputedStyle(a).zIndex||0))[0];
+  const consume=e=>{e.preventDefault();e.stopImmediatePropagation();};
+  const inside=(o,node)=>node?.closest?.('.overlay')===o&&!!node?.closest?.('.panel');
+  // Consume the whole dismissal gesture, including the compatibility click after
+  // pointerup. A fresh pointerdown unlocks the next tap without a time delay.
+  window.addEventListener('pointerdown',e=>{
+    if(dismissGesture&&!dismissGesture.released){dismissGesture.ids.add(e.pointerId);consume(e);return;}
+    dismissGesture=null;
+    const o=topOverlay();if(!o||inside(o,e.target))return;
+    dismissGesture={ids:new Set([e.pointerId]),released:false};consume(e);closeOverlay(o);
   },true);
-  document.addEventListener('pointerup',e=>{if(e.pointerId!==backdropPointer)return;backdropPointer=null;e.preventDefault();e.stopImmediatePropagation();},true);
+  for(const type of ['pointermove','pointerup','pointercancel'])window.addEventListener(type,e=>{
+    if(!dismissGesture?.ids.has(e.pointerId))return;consume(e);
+    if(type!=='pointermove'){dismissGesture.ids.delete(e.pointerId);dismissGesture.released=!dismissGesture.ids.size;}
+  },true);
+  window.addEventListener('click',e=>{
+    if(dismissGesture){consume(e);if(dismissGesture.released)dismissGesture=null;return;}
+    const o=topOverlay();if(o&&!inside(o,e.target)){consume(e);closeOverlay(o);}
+  },true);
+  window.addEventListener('contextmenu',e=>{if(dismissGesture)consume(e);},true);
   document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const a=[...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||0)-Number(a.style.zIndex||0));if(a[0]){e.preventDefault();closeOverlay(a[0]);}});
   // Covers legacy direct class changes (death, load, layout editor). :has below
   // hides controls in the same style update, before the observer callback.
@@ -13037,6 +13108,118 @@ window.V0162Magazines=(()=>{
     .v162MagazineActions{display:flex;gap:5px;margin-top:7px}.v162MagazineActions button{flex:1;width:auto!important;font-size:11px!important;min-height:30px!important;margin:0!important;padding:5px 8px!important}
   `);
   renderBag();return{TYPES,install,installFirst,remove,choose,render,migrate};
+})();
+
+/* 0.16.3 — compact loot actions and bottom vitals. */
+// An in-range interaction that opens UI is not a movement command. Some older
+// object handlers release input before opening their panel; preserve work only
+// for that UI transition, never for movement, damage or a new gathering target.
+(()=>{
+  const execute=executeInteraction;
+  executeInteraction=function(...args){
+    const opened=new Set(document.querySelectorAll('.overlay.open'));
+    const before={chop:chopState,mining:V09World.miningState(),nav:navigation,x:player.x,y:player.y,hp:player.health,scene};
+    const out=execute(...args);
+    if(!playerDead&&player.health===before.hp&&scene===before.scene&&player.x===before.x&&player.y===before.y&&[...document.querySelectorAll('.overlay.open')].some(o=>!opened.has(o))){
+      if(before.chop&&!chopState)chopState=before.chop;
+      if(before.mining&&!V09World.miningState())V09World.resumeMining(before.mining);
+      if(before.nav?.map014&&V014Controls.route)navigation=before.nav;
+    }
+    return out;
+  };
+})();
+window.V0163Loot=(()=>{
+  let selected=-1,source=null,capacity=6;
+  const open=openLoot;openLoot=function(...args){selected=-1;capacity=6;return open(...args);};
+  const panel=el('lootOverlay').querySelector('.panel'),list=el('lootList');
+  const actions=document.createElement('div');actions.className='v163LootActions';
+  const takeButton=el('takeAllLoot'),closeButton=el('closeLoot');
+  el('v014DroneLoot')?.remove();panel.querySelector('.v0161Close')?.remove();
+  const droneButton=v09Button('Забрать дроном',()=>take('drone'));droneButton.id='v014DroneLoot';
+  takeButton.textContent='Забрать';actions.append(takeButton,droneButton,closeButton);panel.append(actions);
+  function render(){
+    if(source!==activeLootObject){source=activeLootObject;selected=-1;capacity=6;}
+    if(!activeLoot?.[selected])selected=-1;
+    list.className='v163LootGrid';list.replaceChildren();
+    // Loot is selected, never transferred on the first tap.
+    capacity=Math.max(capacity,activeLoot?.length||0);
+    for(let i=0;i<capacity;i++){
+      const s=activeLoot?.[i],cell=document.createElement('div');cell.className='v010Slot v163LootCell';
+      if(s){cell.dataset.lootIndex=i;cell.setAttribute('role','button');cell.tabIndex=0;
+        cell.innerHTML='<span class="ico">'+itemIconHTML(s.type)+'</span><span class="qty">'+s.qty+'</span>';
+        cell.title=ITEM[s.type]?.name||s.type;
+        const choose=()=>{selected=selected===i?-1:i;refreshSelection();};
+        cell.addEventListener('click',choose);cell.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}});
+      }
+      list.append(cell);
+    }
+    refreshSelection();
+  }
+  function refreshSelection(){
+    for(const cell of list.children){const yes=cell.dataset.lootIndex!==undefined&&Number(cell.dataset.lootIndex)===selected;cell.classList.toggle('selected',yes);if(cell.dataset.lootIndex!==undefined)cell.setAttribute('aria-pressed',String(yes));}
+    refreshAvailability();
+  }
+  function refreshAvailability(){
+    const empty=!activeLoot?.some(Boolean);takeButton.disabled=empty;droneButton.disabled=empty||!V014Robots.near();
+  }
+  function take(where){
+    if(!activeLootObject||!activeLoot?.some(Boolean))return false;
+    const drone=where==='drone';if(drone&&!V014Robots.near()){message('Дрон должен быть рядом');return false;}
+    const destination=drone?V014Robots.state.cargo:bag,max=drone?V014Robots.capacity():BAG_SLOTS;
+    const indices=selected>=0?[selected]:activeLoot.map((_,i)=>i);let moved=0,left=0;
+    for(const i of indices){const s=activeLoot[i];if(!s)continue;
+      if(drone&&ITEM[s.type]?.robot){left+=s.qty;continue;}
+      // Shared slot insertion and fish helpers preserve IDs, weights and weapon
+      // metadata. Remove exactly the accepted quantity from the source stack.
+      const count=s.qty,part=s.type==='fish'?V014Fish.portion(s,count):JSON.parse(JSON.stringify(s));
+      const remain=addToSlots(destination,s.type,count,max,part),n=count-remain;
+      if(n){if(s.type==='fish')V014Fish.remove(s,n);s.qty-=n;if(!s.qty)activeLoot[i]=null;moved+=n;}left+=remain;
+    }
+    activeLoot=activeLoot.filter(Boolean);activeLootObject.loot=activeLoot;selected=-1;
+    render();renderBag();updateAmmoHud();V014Robots.changed();queueGameSave();
+    if(left)message(drone?'Недостаточно места в дроне':'Рюкзак заполнен');
+    return moved>0;
+  }
+  renderLoot=render;
+  V014Robots.dispatchLoot=()=>take('drone');
+  return{take,render,refresh(){if(el('lootOverlay').classList.contains('open'))refreshAvailability();},get selected(){return selected;}};
+})();
+
+window.V0163Vitals=(()=>{
+  const health=el('healthText'),oldBox=health.closest('.hudBox'),bar=document.createElement('div');
+  bar.id='v163Vitals';bar.innerHTML='<div class="v163Health" role="meter" aria-label="Здоровье"><span class="v163HealthFill"></span></div><span class="v163Hunger" title="Сытость">🍖 <span id="v163HungerValue">100</span></span>';
+  bar.querySelector('.v163Health').append(health);document.body.append(bar);oldBox?.remove();
+  let signature='';
+  function refresh(){
+    // Hunger was 100 in the existing HUD. Read the current value if present;
+    // this release does not introduce a new hunger mechanic.
+    const hp=Math.max(0,Math.round(player.health)),max=Math.max(1,Math.round(player.maxHealth)),hunger=Math.round(player.hunger??100),key=[hp,max,hunger].join('/');
+    if(key===signature)return;signature=key;
+    health.textContent='❤️ '+hp+' / '+max;const meter=bar.querySelector('.v163Health');
+    meter.setAttribute('aria-valuemin','0');meter.setAttribute('aria-valuemax',String(max));meter.setAttribute('aria-valuenow',String(hp));
+    bar.style.setProperty('--hp',Math.min(100,hp/max*100)+'%');bar.classList.toggle('low',hp/max<.3);el('v163HungerValue').textContent=hunger;
+  }
+  const old=update;update=function(...args){const out=old(...args);refresh();return out;};
+  v09Style(`
+    #v163Vitals{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(266px,64vw);height:24px;display:flex;gap:6px;align-items:center;z-index:115;pointer-events:none;color:#d7e3d9;font-size:10px;font-variant-numeric:tabular-nums}
+    .v163Health{position:relative;flex:1;height:20px;overflow:hidden;border:1px solid #acc3b65c;border-radius:6px;background:#132522d9;box-shadow:0 2px 6px #0003}
+    .v163HealthFill{position:absolute;inset:0 auto 0 0;width:var(--hp,100%);background:linear-gradient(90deg,#38594c,#658967);transition:width .18s ease}
+    #v163Vitals.low .v163HealthFill{background:linear-gradient(90deg,#6f463c,#ac7054)}
+    #v163Vitals #healthText{position:relative;display:block;line-height:20px;text-align:center;font-size:10px;font-weight:500;text-shadow:0 1px 2px #102a22}
+    .v163Hunger{white-space:nowrap;background:#132522ba;border:1px solid #acc3b62c;border-radius:6px;padding:3px 5px}
+    #heldItemName{bottom:calc(94px + env(safe-area-inset-bottom,0px))!important;font-size:10px!important}
+    #v014RouteStop{bottom:calc(114px + env(safe-area-inset-bottom,0px))}
+    #lootOverlay .panel{width:min(350px,calc(100vw - 36px));max-height:76dvh;padding:12px;box-sizing:border-box}
+    #lootOverlay h2{font-size:16px;margin:0 0 10px}
+    .v163LootGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;max-height:48dvh;overflow-y:auto;touch-action:pan-y}
+    #lootList .v163LootCell{height:62px;min-height:62px;min-width:0;position:relative;box-sizing:border-box;touch-action:pan-y}
+    #lootList .ico{height:54px;display:flex;align-items:center;justify-content:center}#lootList .itemIcon{width:49px;height:49px}
+    #lootList .qty{position:absolute;right:5px;bottom:3px;font-size:11px;color:#dde7db}
+    #lootList .selected{border-color:#ceba7b;background:#75634538;box-shadow:inset 0 0 0 1px #ceba7b88}
+    .v163LootActions{display:grid;grid-template-columns:1fr 1.45fr 1fr;gap:5px;margin-top:10px}
+    .v163LootActions button{min-width:0!important;min-height:36px!important;font-size:11px!important;padding:6px 5px!important;margin:0!important;border-radius:8px!important}
+  `);
+  refresh();return{refresh};
 })();
 
 loadGameProgress();gameSaveReady=true;
