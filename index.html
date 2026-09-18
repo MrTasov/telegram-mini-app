@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>0.15.2 · Survival Base</title>
+<title>0.16.0 · Survival Base</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.15.2</div>
+<div id="versionBadge">VERSION 0.16.0</div>
 
 <div id="game">
 
@@ -576,7 +576,7 @@ html,body{
 <div id="hud">
   <div class="hudBox">
     <strong id="locationName">БАЗА</strong><br>
-    ДЕНЬ 1 · 14:32
+    <span id="v016WorldClock">ДЕНЬ 1 · 08:00</span>
   </div>
 
   <div class="hudBox">
@@ -628,7 +628,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.15.2 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
+    <div class="subtitle">Survival Base 0.16.0 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
@@ -1668,6 +1668,8 @@ function lineClear(x1,y1,x2,y2,r=0,which=scene,ignoreId=null){
 }
 function inFortress(x,y){const o=surface.outer;return x>o.left&&x<o.right&&y>o.top&&y<o.bottom;}
 function toggleGate(){
+  const drone=window.V014Robots?.state;
+  if(gateOpen&&drone&&!drone.packed&&drone.scene==='surface'&&rectHit(drone.x,drone.y,15,gateRect)){message('Дрон занимает проход');return;}
   if(gateOpen){
     const occupants=[player,...zombies.filter(z=>z.alive)];
     if(occupants.some(p=>rectHit(p.x,p.y,p.radius+3,gateRect))){message('Отойдите от проёма, чтобы закрыть ворота');return;}
@@ -6775,6 +6777,8 @@ const V09Craft = (() => {
     return oldCanInteract(target,x,y);
   };
   function toggleInnerGate(){
+    const drone=window.V014Robots?.state;
+    if(innerGateOpen&&drone&&!drone.packed&&drone.scene==='surface'&&rectHit(drone.x,drone.y,15,innerGate)){message('Дрон занимает проход');return;}
     if(innerGateOpen){
       const occupants=[...(scene==='surface'&&!isElevated()?[player]:[]),...zombies.filter(z=>z.alive)];
       if(occupants.some(p=>rectHit(p.x,p.y,(p.radius||17)+3,innerGate))){message('Отойдите от внешнего проёма');return;}
@@ -6812,7 +6816,15 @@ const V09Craft = (() => {
   updatePlayer=function(){
     if(transition){
       if(menuOpen||playerDead||document.hidden)return;
-      const t=transition;t.elapsed=Math.min(t.duration,t.elapsed+16.667*frameScale);
+      const t=transition;
+      if(t.toUpper&&elevatedCollision(t.target.x,t.target.y,player.radius)){
+        const safe=window.V015Base?.freePoint(t.source.x,t.source.y,player.radius)||t.source;
+        transition=null;groundAfter=null;wallRequest=null;cancelNavigation();
+        player.wallLevel=false;player.x=safe.x;player.y=safe.y;player.moving=false;
+        moveX=moveY=movePower=0;stairsCooldown=performance.now()+300;
+        queueGameSave();message('Лестница повреждена — подъём отменён');return;
+      }
+      t.elapsed=Math.min(t.duration,t.elapsed+16.667*frameScale);
       const p=t.elapsed/t.duration,s=p*p*(3-2*p);
       player.x=t.source.x+(t.target.x-t.source.x)*s;player.y=t.source.y+(t.target.y-t.source.y)*s;player.moving=true;player.walkAnimation+=.21*frameScale;
       if(p>=1){stairsCooldown=performance.now()+300;player.wallLevel=t.toUpper;transition=null;player.moving=false;if(leftPointerId===null)movePower=moveX=moveY=0;queueGameSave();if(t.after)t.after();}
@@ -6846,7 +6858,7 @@ const V09Craft = (() => {
 
   // Floor slabs must not intercept a muzzle or light already on their upper side.
   function upperObstacles(rails=false){
-    const obstacles=[...surfaceWalls().filter(o=>!o.id?.startsWith('v091wall')&&o.id!=='gate'),...solidObjects('surface').filter(o=>!o.id?.startsWith('v091tower'))];
+    const obstacles=[...surfaceWalls().filter(o=>!o.id?.startsWith('v091wall')&&o.id!=='gate'&&o.id!=='v015northGate'),...solidObjects('surface').filter(o=>!o.id?.startsWith('v091tower'))];
     if(rails&&!window.V015Base)obstacles.push({x:170,y:130,w:1260,h:6},{x:170,y:130,w:6,h:940},{x:1424,y:130,w:6,h:940},{x:170,y:1064,w:1260,h:6});
     return obstacles;
   }
@@ -7533,7 +7545,7 @@ decodeGameProgress=function(raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.0))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -7718,7 +7730,7 @@ function v09NewGame(){
   try{
     const id=v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
-    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.15.2';data.v010={schema:1,modules:clone(V010.initialModules)};
+    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.16.0';data.v010={schema:1,modules:clone(V010.initialModules)};
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
     const raw=v09WriteNewSlot(id,data);
@@ -7743,7 +7755,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.15.2-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.16.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -7834,7 +7846,7 @@ window.V010Inventory=(()=>{
   const copy=x=>JSON.parse(JSON.stringify(x));
   const selectedUid={};
   let preset={ammo:90,ammo556:90,meds:2,water:5},drag=null,suppressClick=0,batchDepth=0;
-  const stackMax=type=>(ITEM[type]?.robot||ITEM[type]?.equip||ITEM[type]?.hand)?1:['ammo','ammo556'].includes(type)?600:type==='fish'?20:STACK_MAX;
+  const stackMax=type=>(ITEM[type]?.deployable||ITEM[type]?.robot||ITEM[type]?.equip||ITEM[type]?.hand)?1:['ammo','ammo556'].includes(type)?600:type==='fish'?20:STACK_MAX;
   const list=where=>where==='bag'?bag:Number.isInteger(where)&&storageChests[where]?storageChests[where].items:null;
   const capacity=where=>where==='bag'?BAG_SLOTS:60;
   const occupied=slots=>slots.filter(Boolean).length;
@@ -8298,7 +8310,7 @@ window.V010Combat=(() => {
     const note=document.createElement('p');note.className='v010UpgradeNote';note.textContent='Без случайных провалов. Материалы берутся из рюкзака и складов базы. Улучшение HP не восстанавливает здоровье.';body.append(note);
   }
   function openWorkshop(){if(!inWorkshop()){message('Улучшения доступны в мастерской');return false;}renderWorkshop();openOverlay(upgradeOverlay);return true;}
-  function validateItem(item){if(!item)return true;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==item.type||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,5))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,item.modules?.magazine?45:30)))return false;return true;}
+  function validateItem(item){if(!item)return true;if(item.type==='hmg016'&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==item.type||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,5))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,item.modules?.magazine?45:30)))return false;return true;}
   function capture(){migrateItems(null);return {schema:1,nextUid};}
   function validate(d){if(!d||d.schema!==1||!Number.isInteger(d.nextUid)||d.nextUid<1||d.nextUid>100000000)throw Error('Некорректные данные экипировки');return true;}
   function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;lastHud='';const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();updateAmmoHud();}
@@ -8476,7 +8488,7 @@ const V010World = (()=>{
   function openCache(c){
     if(window.V010Inventory?.openExternalChest){V010Inventory.openExternalChest(c);return;}
     const body=panel(c.name);const p=document.createElement('p');p.textContent='Укрытие · 60 ячеек. Нажмите предмет, чтобы перенести стопку.';body.append(p);
-    for(const [title,from,to,max] of [['В укрытии',c.items,bag,BAG_SLOTS],['В рюкзаке',bag,c.items,60]]){const h=document.createElement('h3');h.textContent=title;body.append(h);const grid=document.createElement('div');grid.className='v010CacheGrid';body.append(grid);from.forEach((s,i)=>{if(!s)return;const b=v09Button('',()=>{const count=s.qty,left=addToSlots(to,s.type,count,max),moved=count-left;if(moved){if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)from[i]=null;renderBag();queueGameSave();openCache(c);}else message('Нет свободного места');});b.innerHTML=itemIconHTML(s.type)+'<small>'+s.qty+'</small>';grid.append(b);});}
+    for(const [title,from,to,max] of [['В укрытии',c.items,bag,BAG_SLOTS],['В рюкзаке',bag,c.items,60]]){const h=document.createElement('h3');h.textContent=title;body.append(h);const grid=document.createElement('div');grid.className='v010CacheGrid';body.append(grid);from.forEach((s,i)=>{if(!s)return;const b=v09Button('',()=>{const count=s.qty,left=addToSlots(to,s.type,count,max,s),moved=count-left;if(moved){if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)from[i]=null;renderBag();queueGameSave();openCache(c);}else message('Нет свободного места');});b.innerHTML=itemIconHTML(s.type)+'<small>'+s.qty+'</small>';grid.append(b);});}
     openOverlay(overlay);
   }
   // Walk/run noise is distinct from a shot or pickaxe strike. Crouching never silences a gun.
@@ -9133,7 +9145,7 @@ const V010Camera=(()=>{
     if(o.zone==='fuel'){ctx.fillStyle='#bd9470';ctx.fillRect(o.x+25,o.y-height+25,55,42);ctx.fillStyle='#344d50';ctx.fillRect(o.x+32,o.y-height+32,40,18);}
     ctx.fillStyle='#e0dfc8';ctx.font='11px Arial';ctx.textAlign='center';if(o.name)ctx.fillText(o.name,o.x+o.w/2,o.y+o.h*.6-height);ctx.restore();
   }
-  const oldDraw=draw;draw=function(){const density=canvas.width/Math.max(1,screenWidth);ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,screenWidth,screenHeight);ctx.save();try{ctx.scale(zoom,zoom);ctx.translate(-camera.x,-camera.y);if(scene==='surface'){ctx.fillStyle='#27372d';const v=view();ctx.fillRect(camera.x,camera.y,v.w,v.h);drawSurface();if(tilt!==1)for(const o of scavenges)building(o);}else drawBunker();drawFlashlight();drawNavigationTarget();drawBullets();if(scene==='surface'&&window.V0141Trees)V0141Trees.drawActors();else{drawPlayer();if(scene==='surface')for(const z of zombies)drawZombie(z);}if(scene==='surface')window.V011World?.drawRoofs();if(scene==='surface'&&tilt!==1)for(const o of scavenges)building(o,true);}catch(error){canvas.width=canvas.width;throw error;}finally{ctx.restore();ctx.setTransform(density,0,0,density,0,0);}clock+=16.667*frameScale;if(clock>=160){clock=0;if(!menuOpen)reveal();}if(!menuOpen)mapDraw(mc,mini.width,mini.height,true);else if(overlay.classList.contains('open'))drawFull();mini.style.display=menuOpen?'none':'block';};
+  const oldDraw=draw;draw=function(){const density=canvas.width/Math.max(1,screenWidth);ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,screenWidth,screenHeight);ctx.save();try{ctx.scale(zoom,zoom);ctx.translate(-camera.x,-camera.y);if(scene==='surface'){ctx.fillStyle='#27372d';const v=view();ctx.fillRect(camera.x,camera.y,v.w,v.h);drawSurface();if(tilt!==1)for(const o of scavenges)building(o);}else drawBunker();drawNavigationTarget();drawBullets();if(scene==='surface'&&window.V0141Trees)V0141Trees.drawActors();else{drawPlayer();if(scene==='surface')for(const z of zombies)drawZombie(z);}if(scene==='surface')window.V011World?.drawRoofs();if(scene==='surface'&&tilt!==1)for(const o of scavenges)building(o,true);drawFlashlight();}catch(error){canvas.width=canvas.width;throw error;}finally{ctx.restore();ctx.setTransform(density,0,0,density,0,0);}clock+=16.667*frameScale;if(clock>=160){clock=0;if(!menuOpen)reveal();}if(!menuOpen)mapDraw(mc,mini.width,mini.height,true);else if(overlay.classList.contains('open'))drawFull();mini.style.display=menuOpen?'none':'block';};
   // Reproject the dark mask in screen pixels so far zoom never allocates a world-sized canvas.
   let mask=null,maskContext=null;
   V091Light.illuminate=function(){const beam=V091Light.cone();if(scene==='bunker'){
@@ -9160,7 +9172,7 @@ function viewHeight(){return V010Camera.view().h;}
   const snapshot=()=>Object.fromEntries(order.filter(k=>V010.modules[k]).map(k=>[k,V010.modules[k].capture()]));
   V010.initialModules=clone(snapshot());
   const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.15.2';d.v010={schema:1,modules:snapshot()};return d;};
+  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.16.0';d.v010={schema:1,modules:snapshot()};return d;};
   decodeGameProgress=function(raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -9169,7 +9181,7 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.15.2';return d;
+    d.gameVersion='0.16.0';return d;
   };
   restoreGameProgress=function(d){
     const was=v09SaveTransaction;v09SaveTransaction=true;
@@ -9178,8 +9190,8 @@ function viewHeight(){return V010Camera.view().h;}
   };
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(text);};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.15.2 · Большой мир и свободное развитие';
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.15.2';
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.16.0 · Большой мир и свободное развитие';
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.16.0';
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
@@ -9387,7 +9399,7 @@ window.V0105=(()=>{
     renderQuickSlots();updateAmmoHud();
   };
   const history=[
-    ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
+    ['0.16.0',{'Новое':['Сутки за 20 минут активной игры: плавный рассвет, вечер и ночь; время сохраняется.','Съёмный тяжёлый пулемёт: урон 65, поворот 360°, изготовление и размещение на стенах.'],'Улучшения':['Мягкое локальное освещение бункера, усиленный фонарик и свет дрона.','Лампы на стенах и восемь наружных прожекторов по углам базы.','Открытый двор без машин и лишних перегородок; более тёмный бетон.'],'Исправления':['Перенос прежних сохранений сохраняет прочность внешних и внутренних укреплений.','Проходы и лестницы остаются свободными при установленном пулемёте.','Ворота не закрываются на дроне; разрушение стены во время подъёма не портит положение персонажа.','Северный мост больше не перекрывает верхнюю линию выстрела и света.']}], ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
  'Новое':['Мини-инвентарь готовой продукции каждого станка: выбор стопки и выдача всего.','Общий бачок полива: 100 л, 10 секунд полива после 45 секунд паузы.','Отдых на кровати восстанавливает здоровье; душ смывает загрязнение после боя.','Дом и автосервис с открывающимися дверями, скрываемой крышей и добычей внутри.','Новые изображения оборудования и животных, механическая анимация станков и открывания ящиков.'],
  'Улучшения':['Единый компактный стиль карточек и производства: материалы → результат.','Прибавки улучшений после итоговых характеристик; четыре строки параметров персонажа.','Настройки слоёв обеих карт и отдельная кнопка снятия цели.','Новые покрытия комнат, двери, лампы, мягкий свет и тени.','Отдельные кормушки и общая поилка, движения и поведение животных.','Метки АК и M4 на патронах; компактная заправка по 10 или до максимума.'],
  'Баланс':['Полный сбалансированный комплект +5 даёт около 300 максимального HP.','Новый урожай — 50 единиц с грядки; старые остатки урожая сохраняются.','Без воды культуры растут со скоростью 35% и не погибают.','Тела зомби плавно исчезают через 75–90 секунд.'],
@@ -9402,7 +9414,7 @@ window.V0105=(()=>{
     const o=v09Overlay('v105Changes','Обновления'),body=o.querySelector('.v09Body');body.replaceChildren();
     history.forEach(([version,groups],i)=>{const d=document.createElement('details');d.open=i===0;const s=document.createElement('summary');s.textContent=version+(i===0?' — текущее':'');d.append(s);for(const [title,items] of Object.entries(groups)){const h=document.createElement('h3');h.textContent=title;const ul=document.createElement('ul');for(const text of items){const li=document.createElement('li');li.textContent=text;ul.append(li);}d.append(h,ul);}body.append(d);});openOverlay(o);
   }
-  const changes=v09Button('Что нового? · Version 0.15.2',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
+  const changes=v09Button('Что нового? · Version 0.16.0',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
   v09Style('#v105Changes .panel{width:min(480px,94vw);padding:14px;font-size:12px;max-height:85dvh}#v105Changes details{border-bottom:1px solid #405452;padding:8px 0}#v105Changes summary{font-size:14px;cursor:pointer;color:#e2c58d}#v105Changes h3{font-size:12px;margin:12px 0 4px;color:#97cab5}#v105Changes ul{padding-left:18px;margin:4px 0;line-height:1.5}#v105Changes li{margin:5px 0}');
   return {tapWorld,equip,markers,drawMapMarkers,showHistory,history,get target(){return liveTarget();},get contextHand(){return contextHand;}};
 })();
@@ -9459,7 +9471,7 @@ window.V011UI=(()=>{
     }
     if(def.hand&&where==='bag')button('В быстрый слот',()=>{inv.selectUid(item.type,item.uid);closeOverlay(overlay);openHandAssignment(item.type);});
     if(where!=='equipment'){
-      button(item.locked?'Открепить':'Закрепить',()=>{item.locked=!item.locked;inv.render();details(where,index);},false,true);
+      button(item.locked?'Открепить':'Закрепить',()=>{item.locked=!item.locked;inv.render();window.V011UI.details(where,index);},false,true);
       if(activeStorage!==null&&el('storageOverlay').classList.contains('open'))button(where==='bag'?'В ящик':'В рюкзак',()=>{inv.transfer(where,index,where==='bag'?activeStorage:'bag');closeOverlay(overlay);},false,true);
       if(item.qty>1){const input=document.createElement('input');input.type='number';input.min='1';input.max=item.qty-1;input.value=Math.floor(item.qty/2);input.setAttribute('aria-label','Количество для разделения');actions.append(input);button('Разделить',()=>{if(inv.split(where,index,Math.floor(Number(input.value))))closeOverlay(overlay);else message('Нужна свободная ячейка');},false,true);}
       button('Уничтожить',()=>{if(confirm('Уничтожить «'+def.name+'»'+(item.level?' +'+item.level:'')+'? Предмет будет потерян.')){locationItems(where)[index]=null;inv.render();closeOverlay(overlay);}},false,true);
@@ -11548,7 +11560,7 @@ window.V014Robots=(()=>{
   function drawDrone(){
     if(state.packed||state.scene!==scene)return;const t=performance.now()/1000,flying=state.task!=='docked'&&state.hp>0&&state.battery>0,bob=flying?Math.sin(t*3)*2:0;
     ctx.save();ctx.fillStyle='#061c2033';ctx.beginPath();ctx.ellipse(state.x+6,state.y+8,23,15,angle,0,Math.PI*2);ctx.fill();
-    if(state.light&&flying&&!(state.economy&&state.battery<20)){const g=ctx.createRadialGradient(state.x,state.y,4,state.x,state.y,150);g.addColorStop(0,'#e2fff248');g.addColorStop(.35,'#c9f6dd22');g.addColorStop(1,'#b5ead900');ctx.fillStyle=g;ctx.fillRect(state.x-150,state.y-150,300,300);}
+    if(!window.V016Lighting&&state.light&&flying&&!(state.economy&&state.battery<20)){const g=ctx.createRadialGradient(state.x,state.y,4,state.x,state.y,150);g.addColorStop(0,'#e2fff248');g.addColorStop(.35,'#c9f6dd22');g.addColorStop(1,'#b5ead900');ctx.fillStyle=g;ctx.fillRect(state.x-150,state.y-150,300,300);}
     ctx.translate(state.x,state.y-10+bob);ctx.rotate(angle);ctx.strokeStyle='#536d6d';ctx.lineWidth=7;for(const x of [-17,17])for(const y of [-17,17]){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(x,y);ctx.stroke();disk(x,y,11,'#233b3f','#abc0b0');if(flying){ctx.save();ctx.translate(x,y);ctx.rotate(t*45);ctx.fillStyle='#b8d8c88a';ctx.fillRect(-10,-2,20,4);ctx.fillRect(-2,-10,4,20);ctx.restore();}}
     ctx.fillStyle='#698885';ctx.strokeStyle='#aac0b0';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(-15,-12,30,24,7);ctx.fill();ctx.stroke();ctx.fillStyle='#294548';ctx.fillRect(7,-4,21,8);disk(-4,0,4,state.hp<=0?'#c45949':state.battery<20?'#ddb663':'#a4e7ce');if(flash>0)disk(30,0,5,'#ffdfa1');ctx.restore();
     if(flash>0&&tracer){ctx.save();ctx.strokeStyle='#f8d99199';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(state.x,state.y);ctx.lineTo(tracer.x,tracer.y);ctx.stroke();ctx.restore();}
@@ -11985,17 +11997,18 @@ v09Style(`
   @media(max-height:550px){#v010Minimap{width:112px;height:112px}}
 `);
 
-/* 0.15: surface fortress. Stable section IDs own both HP and collision. */
+/* Surface fortress: stable structural IDs, migrated decorative partitions. */
 window.V015Base=(()=>{
   const sections=[],byId=new Map(),OUTER_HP=6000,INNER_HP=3000,ROOM_HP=1800;
   let northOpen=false,commandNorthOpen=false,commandSouthOpen=true,validating=false,revision=0;
-  const rooms=[
+  const legacyRooms=[
     {id:'storage',name:'СКЛАД',x:285,y:263,w:280,h:132,entry:'S'},
     {id:'fuel',name:'ТОПЛИВО',x:1035,y:263,w:280,h:132,entry:'S'},
     {id:'workshop',name:'МАСТЕРСКАЯ',x:285,y:453,w:280,h:308,entry:'E'},
     {id:'power',name:'ЭНЕРГОБЛОК',x:285,y:830,w:340,h:125,entry:'E'},
     {id:'medbay',name:'МЕДПУНКТ',x:1035,y:830,w:280,h:125,entry:'W'}
   ];
+  const rooms=[],retiredSections=new Map();
   function add(id,x,y,w,h,hp,group,side,gate=null){const o={id,x,y,w,h,maxHp:hp,hp,group,side,gate,hitAt:-1e6};sections.push(o);byId.set(id,o);return o;}
   function span(id,x,y,w,h,count,hp,group,side){for(let i=0;i<count;i++)add(id+'_'+i,x+(w>h?w*i/count:0),y+(h>=w?h*i/count:0),w>h?w/count:w,h>=w?h/count:h,hp,group,side);}
   // Eight panels on each outer side. No overlapping invisible wall remains.
@@ -12018,27 +12031,20 @@ window.V015Base=(()=>{
   }
   span('v015commandW',610,452,32,276,3,INNER_HP,'inner','W');
   span('v015commandE',958,452,32,276,3,INNER_HP,'inner','E');
-  // Keep the original section IDs for existing saves. Surface bays are scenery;
-  // all production/storage interfaces remain in the underground base.
-  for(const r of rooms){
-    for(const side of ['N','S','W','E']){
-      const horizontal=side==='N'||side==='S',x=side==='E'?r.x+r.w-12:r.x,y=side==='S'?r.y+r.h-12:r.y+(horizontal?0:12);
-      const length=horizontal?r.w:r.h-24;
-      if(side===r.entry){const n=(length-80)/2;span('v015room_'+r.id+side+'a',x,y,horizontal?n:12,horizontal?12:n,1,ROOM_HP,'room',side);span('v015room_'+r.id+side+'b',x+(horizontal?n+80:0),y+(horizontal?0:n+80),horizontal?n:12,horizontal?12:n,1,ROOM_HP,'room',side);}
-      else span('v015room_'+r.id+side,x,y,horizontal?length:12,horizontal?12:length,3,ROOM_HP,'room',side);
-    }
+  // The five small surface enclosures are removed. Recognize their exact old
+  // IDs only when importing 0.15 saves; never keep invisible retired colliders.
+  for(const r of legacyRooms)for(const side of ['N','S','W','E']){
+    if(side===r.entry)for(const part of ['a','b'])retiredSections.set('v015room_'+r.id+side+part+'_0',ROOM_HP);
+    else for(let i=0;i<3;i++)retiredSections.set('v015room_'+r.id+side+'_'+i,ROOM_HP);
   }
   const props=[];
   function prop(id,x,y,w,h,art,variant=0){const p={id:'v015prop_'+id,kind:'baseDecor015',x,y,w,h,art,variant};props.push(p);return p;}
-  prop('coveredPallet',313,288,92,64,'tarp',0);prop('cases',473,286,62,43,'cases',1);
-  prop('pipeRack',1063,291,156,57,'pipes');prop('barrels',1252,283,38,78,'barrels');
-  prop('utilityVan',325,484,96,163,'car013_van',1);prop('spares',488,482,47,58,'cases',2);
-  prop('pallet',312,683,77,46,'pallet');prop('cableReel',485,683,43,43,'reel');
-  prop('parkedSUV',327,850,183,78,'car013_suv');
-  prop('coveredTrailer',1100,848,87,42,'tarp',1);prop('cart',1225,852,52,65,'cart');
-  prop('caseInner',682,478,62,37,'cases',0);prop('palletInner',859,480,65,38,'pallet');
-  prop('eastCar',1070,499,191,82,'car013_estate');
-  for(const r of rooms)r.name='';
+  prop('coveredPallet',333,266,92,64,'tarp',0);prop('cases',445,275,62,43,'cases',1);
+  prop('pipeRack',1085,262,156,57,'pipes');prop('barrels',1270,258,38,78,'barrels');
+  prop('spares',325,400,47,58,'cases',2);
+  prop('pallet',318,850,77,46,'pallet');prop('cableReel',422,875,43,43,'reel');
+  prop('coveredTrailer',1110,870,87,42,'tarp',1);prop('cart',1230,866,52,65,'cart');
+  prop('caseInner',666,478,62,37,'cases',0);prop('palletInner',873,480,65,38,'pallet');
   Object.assign(V09World.well,{x:690,y:901});
   // The former courtyard car overlaps the southeast bay. Retain its ID,
   // loot and renewal state, and park it immediately east of the fortress.
@@ -12119,9 +12125,11 @@ window.V015Base=(()=>{
   executeInteraction=function(o){if(o?.kind==='baseGate015'){if(canInteract(o,player.x,player.y))toggle(byId.get(o.ref));return;}
     if(o?.id?.startsWith('v015prop_'))return;
     return oldExecute(o);};
-  function capture(){return{schema:1,northOpen,commandNorthOpen,commandSouthOpen,sections:sections.map(o=>({id:o.id,hp:o.hp}))};}
-  function validate(d){if(!d)return true;if(d.schema!==1||!['northOpen','commandNorthOpen','commandSouthOpen'].every(k=>typeof d[k]==='boolean')||!Array.isArray(d.sections)||d.sections.length!==sections.length)throw Error('Некорректное состояние укреплений');
-    const seen=new Set();for(const p of d.sections){const o=byId.get(p?.id);if(!o||seen.has(p.id)||!Number.isFinite(p.hp)||p.hp<0||p.hp>o.maxHp)throw Error('Некорректная прочность секции');seen.add(p.id);}return true;}
+  function capture(){return{schema:2,northOpen,commandNorthOpen,commandSouthOpen,sections:sections.map(o=>({id:o.id,hp:o.hp}))};}
+  function validate(d){if(!d)return true;
+    const legacy=d.schema===1,expected=sections.length+(legacy?retiredSections.size:0);
+    if((!legacy&&d.schema!==2)||!['northOpen','commandNorthOpen','commandSouthOpen'].every(k=>typeof d[k]==='boolean')||!Array.isArray(d.sections)||d.sections.length!==expected)throw Error('Некорректное состояние укреплений');
+    const seen=new Set();for(const p of d.sections){const maxHp=byId.get(p?.id)?.maxHp??(legacy?retiredSections.get(p?.id):undefined);if(maxHp===undefined||seen.has(p.id)||!Number.isFinite(p.hp)||p.hp<0||p.hp>maxHp)throw Error('Некорректная прочность секции');seen.add(p.id);}return true;}
   function restore(d){validate(d);const values=new Map(d?.sections.map(o=>[o.id,o.hp]));for(const o of sections){o.hp=values.has(o.id)?values.get(o.id):o.maxHp;o.hitAt=-1e6;}northOpen=d?.northOpen??false;commandNorthOpen=d?.commandNorthOpen??false;commandSouthOpen=d?.commandSouthOpen??true;revision++;invalidateGeometry();}
   const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.base015=capture();return d;};
   const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);validate(probe.base015);validating=true;let d;try{d=decodeOld(raw);}finally{validating=false;}
@@ -12159,7 +12167,7 @@ window.V015Base=(()=>{
   function material(kind){
     if(materials.has(kind))return materials.get(kind);
     const v=canvasOf(256,256),c=v.getContext('2d'),im=c.createImageData(256,256);
-    const base=kind==='concrete'?[130,133,125]:kind==='slab'?[103,110,104]:[75,83,80];let seed=104729;
+    const base=kind==='concrete'?[107,112,109]:kind==='slab'?[80,87,87]:[59,67,68];let seed=104729;
     for(let y=0;y<256;y++)for(let x=0;x<256;x++){
       seed=(Math.imul(seed,1664525)+1013904223)>>>0;
       const grain=((seed>>>16)/65535-.5)*(kind==='concrete'?13:10)+Math.sin(x*.06+y*.013)*1.5+Math.cos(y*.11-x*.018);
@@ -12182,7 +12190,7 @@ window.V015Base=(()=>{
   function floorCache(){
     if(groundCache)return groundCache;const c=canvasOf(1340,1100),p=c.getContext('2d');p.translate(-130,-90);
     rect(p,156,116,1288,968,'#243330',null,5);gridFloor(p,170,130,1260,940,182);
-    // Cast concrete access lanes, inset drains and low-contrast parking marks.
+    // Quiet cast-concrete access lanes and inset perimeter drains.
     for(const [x,y,w,h]of [[730,202,140,218],[730,760,140,410]]){
       rect(p,x,y,w,h,p.createPattern(material('slab'),'repeat'));
       for(let yy=y+126;yy<y+h;yy+=126){line(p,[[x,yy],[x+w,yy]],'#22322e52',1);line(p,[[x,yy+1],[x+w,yy+1]],'#d7decc26');}
@@ -12200,10 +12208,8 @@ window.V015Base=(()=>{
     for(let y=565;y<620;y+=9){line(p,[[775,y],[825,y]],'#4e5f5b',3);line(p,[[775,y-1],[825,y-1]],'#a8aa8255');}
     for(const [x,y] of [[755,545],[833,545],[755,623],[833,623]]){rect(p,x,y,12,12,'#8e8a66','#1b2e30');disk(p,x+6,y+6,2,'#223637');}
     label(p,'Б У Н К Е Р',800,651,9,'#bbc2b3');
-    for(const [x,y,w,h]of [[1045,466,250,146],[316,837,215,101]]){
-      p.strokeStyle='#d2d3b565';p.lineWidth=2;p.strokeRect(x,y,w,h);
-      for(const a of [x+16,x+w-16])line(p,[[a,y+h-14],[a,y+h]],'#d2d3b575',3);
-    }
+    // Recessed service covers sit flush with the open yard; no parking cages.
+    for(const [x,y]of [[438,590],[1148,436]]){rect(p,x,y,57,44,'#354247','#66767277',2);for(let i=7;i<53;i+=8)line(p,[[x+i,y+7],[x+i,y+37]],'#17272e99',2);bolts(p,x,y,57,44);}
     for(const y of [225,975])for(let x=301;x<1300;x+=22){rect(p,x,y,18,7,'#20302ed9');line(p,[[x,y],[x+18,y]],'#a7b4a450');for(let j=3;j<17;j+=4)line(p,[[x+j,y+2],[x+j,y+6]],'#6e7f7180');}
     for(const [x,y] of [[676,793],[918,790],[657,229],[920,236]]){metal(p,x,y,25,31,true);for(let j=0;j<5;j++)line(p,[[x+5,y+6+j*4],[x+20,y+6+j*4]],'#899a8155');}
     groundCache=c;return c;
@@ -12334,7 +12340,7 @@ window.V015Base=(()=>{
     for(let i=0;i<=18;i++){const a=s.angle-.69+i*1.38/18,dx=Math.cos(a),dy=Math.sin(a);let d=3;for(;d<s.range;d+=8)if(worldCollision(s.x+dx*d,s.y+dy*d,1,'surface',s.wall.id))break;points.push([s.x+dx*Math.min(s.range,d),s.y+dy*Math.min(s.range,d)]);}
     lightShapes.set(key,points);return points;
   }
-  function drawLights(hardware){for(const s of fixtures()){if(s.wall.hp<=0||!visibleOnScreen(s.x,s.y,s.range+20))continue;const on=devicePowered(s.device);
+  function drawLights(hardware){if(window.V016Lighting)return V016Lighting.drawFixtures(hardware);for(const s of fixtures()){if(s.wall.hp<=0||!visibleOnScreen(s.x,s.y,s.range+20))continue;const on=devicePowered(s.device);
     if(!hardware&&on){ctx.save();ctx.beginPath();ctx.moveTo(s.x,s.y);for(const [x,y] of lightPolygon(s))ctx.lineTo(x,y);ctx.closePath();ctx.clip();const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.range);g.addColorStop(0,'#ffe7a961');g.addColorStop(.35,'#ffe5a126');g.addColorStop(1,'#ffe7ad00');rect(ctx,s.x-s.range,s.y-s.range,s.range*2,s.range*2,g);ctx.restore();}
     if(hardware){ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.angle-Math.PI/2);rect(ctx,-8,-9,16,13,'#233b40','#8faaa2',2);rect(ctx,-6,1,12,3,on?'#ffe4a7':'#688781',null,1);if(on){const g=ctx.createRadialGradient(0,4,0,0,4,12);g.addColorStop(0,'#ffe3a950');g.addColorStop(1,'#ffe3a900');rect(ctx,-12,-8,24,24,g);}ctx.restore();}}
   }
@@ -12415,6 +12421,317 @@ window.V0151Station=(()=>{
     #v0151Station .stationActions .menuButton{width:100%;min-height:38px;font-size:11px;padding:7px 8px;margin:0}#station_manage{grid-column:1/-1}
   `);
   return {open,refresh,mapMarker,drawMap};
+})();
+
+/* 0.16: one bounded darkness mask; existing power circuits and light geometry. */
+window.V016Lighting=(()=>{
+  const dayMs=20*60*1000,TAU=Math.PI*2;
+  let day=1,minute=480,saveElapsed=0,lastHud='',mask=null,maskContext=null;
+  let fixturesCache=null,shadowRevision='',droneKey='',droneShape=null;
+  const shadowShapes=new Map(),roomMasks=new Map(),sprites=new Map();
+  const smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t);};
+  function daylight(){return smooth((minute-300)/180)*(1-smooth((minute-1020)/180));}
+  function capture(){return{schema:1,day,minute};}
+  function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isInteger(d.day)||d.day<1||d.day>1000000||!Number.isFinite(d.minute)||d.minute<0||d.minute>=1440)throw Error('Некорректное время суток');return true;}
+  function hud(){const hours=Math.floor(minute/60),mins=Math.floor(minute%60),text='ДЕНЬ '+day+' · '+String(hours).padStart(2,'0')+':'+String(mins).padStart(2,'0');if(text!==lastHud){const node=el('v016WorldClock');if(node)node.textContent=text;lastHud=text;}}
+  function restore(d){validate(d);day=d?.day??1;minute=d?.minute??480;saveElapsed=0;lastHud='';shadowShapes.clear();droneKey='';hud();}
+  function tick(ms){if(document.hidden||playerDead||!Number.isFinite(ms)||ms<=0)return;const dt=Math.min(ms,1000);minute+=dt/dayMs*1440;if(minute>=1440){const days=Math.floor(minute/1440);day=Math.min(1000000,day+days);minute%=1440;}saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
+  // Existing left/right yard circuits retain their save IDs, priority, battery
+  // fallback and switches. Each supplies ten wall lamps and four floods.
+  for(const id of ['spot_left','spot_right']){const d=V09Power.devices[id];if(d){d.watts=.95;d.name=id==='spot_left'?'Освещение периметра · левая линия':'Освещение периметра · правая линия';d.active=()=>daylight()<.995;}}
+  const supplied=()=>V09Power.allocation().served;
+  function active(s,served=supplied()){return !!(s.wall?.hp>0&&served.has(s.device)&&daylight()<.995);}
+  function fixtures(){
+    if(fixturesCache)return fixturesCache;const a=[],base=window.V015Base;if(!base)return a;
+    for(const o of base.sections)if(o.group==='outer'&&Number(o.id.split('_').at(-1))%2===1){
+      const nx=o.side==='W'?1:o.side==='E'?-1:0,ny=o.side==='N'?1:o.side==='S'?-1:0;
+      a.push({id:'lamp016_'+o.id,kind:'wall',wall:o,x:o.x+o.w/2+nx*(o.w/2+4),y:o.y+o.h/2+ny*(o.h/2+4),angle:Math.atan2(ny,nx),range:205,device:o.x+o.w/2<800?'spot_left':'spot_right'});
+    }
+    for(const [id,x,y,angle]of [['v015commandNL',680,456,Math.PI/2],['v015commandNR',920,456,Math.PI/2],['v015commandSL',680,724,-Math.PI/2],['v015commandSR',920,724,-Math.PI/2]])a.push({id:'lamp016_'+id,kind:'wall',wall:base.byId.get(id),x,y,angle,range:230,device:x<800?'spot_left':'spot_right'});
+    const corners=[['NW',194,126,-Math.PI/2,'v091wall015_NL_0'],['NW',166,154,Math.PI,'v091wall015_NL_0'],['NE',1406,126,-Math.PI/2,'v091wall015_NR_3'],['NE',1434,154,0,'v091wall015_NR_3'],['SW',194,1074,Math.PI/2,'v091wall015_SL_0'],['SW',166,1046,Math.PI,'v091wall015_SL_0'],['SE',1406,1074,Math.PI/2,'v091wall015_SR_3'],['SE',1434,1046,0,'v091wall015_SR_3']];
+    for(let i=0;i<corners.length;i++){const [corner,x,y,angle,id]=corners[i];a.push({id:'flood016_'+corner+'_'+i%2,kind:'flood',corner,wall:base.byId.get(id),x,y,angle,range:520,device:x<800?'spot_left':'spot_right'});}
+    fixturesCache=a;return a;
+  }
+  function canvasOf(w,h){const v=typeof OffscreenCanvas==='function'?new OffscreenCanvas(w,h):document.createElement('canvas');v.width=w;v.height=h;return v;}
+  function buffer(){const w=Math.max(1,Math.ceil(screenWidth)),h=Math.max(1,Math.ceil(screenHeight));if(!mask){mask=canvasOf(w,h);maskContext=mask.getContext('2d');}if(mask.width!==w)mask.width=w;if(mask.height!==h)mask.height=h;return maskContext;}
+  function sprite(kind){
+    if(sprites.has(kind))return sprites.get(kind);const v=canvasOf(256,256),c=v.getContext('2d'),g=c.createRadialGradient(128,128,0,128,128,128);
+    const stops=kind==='flashlight'?[[0,'#ffffffff'],[.32,'#ffffffff'],[.68,'#fffffffc'],[.88,'#ffffff94'],[1,'#ffffff00']]:kind==='warm'?[[0,'#ffe7b544'],[.2,'#ffe7b525'],[.65,'#ffe7b510'],[1,'#ffe7b500']]:kind==='drone'?[[0,'#ffffffff'],[.18,'#fffffff7'],[.48,'#ffffffac'],[.78,'#ffffff32'],[1,'#ffffff00']]:[[0,'#fffffffc'],[.15,'#fffffff0'],[.45,'#ffffffad'],[.76,'#ffffff42'],[1,'#ffffff00']];
+    for(const [at,color]of stops)g.addColorStop(at,color);c.fillStyle=g;c.fillRect(0,0,256,256);sprites.set(kind,v);return v;
+  }
+  function nearSolids(x,y,range,which=scene){const g=geometryFor(which);let all=which==='surface'?[...g.walls,...g.objects]:[...g.objects,...V091Navigation.walls,...v09Doors.flatMap(v09DoorPanels)];
+    return all.filter(o=>o.r!==undefined?Math.hypot(o.x-x,o.y-y)<range+o.r:o.x<x+range&&o.x+o.w>x-range&&o.y<y+range&&o.y+o.h>y-range);
+  }
+  function shape(s,dynamic=false){
+    const revision=[scene,geometryRevision,gateOpen,V091Fortress.innerGateOpen,...v09Doors.map(d=>Math.round(d.open*20))].join('|');
+    if(revision!==shadowRevision){shadowShapes.clear();shadowRevision=revision;droneKey='';}
+    const key=dynamic?[revision,Math.round(s.x/2),Math.round(s.y/2),s.range].join(':'):s.id;
+    if(dynamic&&key===droneKey)return droneShape;if(!dynamic&&shadowShapes.has(key))return shadowShapes.get(key);
+    const solids=nearSolids(s.x,s.y,s.range),points=[],half=s.kind==='flood'?.85:Math.PI,n=s.kind==='flood'?40:64;
+    for(let i=0;i<=n;i++){const angle=s.angle-half+2*half*i/n;points.push(V091Light.cast(s.x,s.y,angle,s.range,solids));}
+    const result={x:s.x,y:s.y,points};if(dynamic){droneKey=key;droneShape=result;}else shadowShapes.set(key,result);return result;
+  }
+  function clipShape(c,s,dynamic=false){const p=shape(s,dynamic);c.beginPath();c.moveTo(p.x,p.y);for(const v of p.points)c.lineTo(v.x,v.y);c.closePath();c.clip();}
+  function paintFixture(c,s,kind='white'){c.save();clipShape(c,s);if(s.kind==='flood'){
+      // Both ovals fit wholly inside the cast sector: the broad wash has a
+      // tangent half-angle of .819 < .85 and ends before the cast range.
+      // Thus angular clipping cannot cut across a bright part of the wash.
+      // Cardinal fixtures need no bitmap rotation. Project each oval into
+      // pixels after the world-space clip; this also avoids runtimes that
+      // crop a rotated image at negative local coordinates before mapping it.
+      const nx=Math.round(Math.cos(s.angle)),ny=Math.round(Math.sin(s.angle)),m=c.getTransform();
+      function oval(start,length,halfWidth){const cx=s.x+nx*(start+length/2)*s.range,cy=s.y+ny*(start+length/2)*s.range,w=(nx?length:halfWidth*2)*s.range,h=(nx?halfWidth*2:length)*s.range;c.save();c.setTransform(1,0,0,1,0,0);c.drawImage(sprite(kind),(cx-w/2)*m.a+m.e,(cy-h/2)*m.d+m.f,w*m.a,h*m.d);c.restore();}
+      oval(.08,.91,.30);oval(.012,.054,.018);
+    }else c.drawImage(sprite(kind),s.x-s.range,s.y-s.range,s.range*2,s.range*2);c.restore();}
+  function drawFixtures(hardware){if(scene!=='surface')return;const served=supplied(),night=1-daylight();for(const s of fixtures()){
+    if(s.wall?.hp<=0||!visibleOnScreen(s.x,s.y,s.range+35))continue;const on=active(s,served);
+    if(!hardware){if(on){ctx.save();ctx.globalAlpha=night*.85;paintFixture(ctx,s,'warm');ctx.restore();}continue;}
+    ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.angle);const big=s.kind==='flood';ctx.fillStyle='#101e2670';ctx.fillRect(-10,3,big?30:18,big?25:13);
+    ctx.strokeStyle='#53676b';ctx.lineWidth=big?4:3;ctx.beginPath();ctx.moveTo(-10,0);ctx.lineTo(big?5:0,0);ctx.stroke();ctx.fillStyle='#34474e';ctx.strokeStyle='#97a7a6';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(big?-3:-7,big?-15:-9,big?24:14,big?30:18,3);ctx.fill();ctx.stroke();
+    ctx.fillStyle=on?'#ffe7b0':'#86928a';ctx.fillRect(big?14:3,big?-11:-6,big?5:3,big?22:12);if(big){ctx.strokeStyle='#1b2b35';ctx.lineWidth=1;for(const y of [-7,0,7]){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(11,y);ctx.stroke();}}
+    ctx.restore();
+  }}
+  function roomMask(room,r,on){const key=room+':'+Number(on);if(roomMasks.has(key))return roomMasks.get(key);
+    const scale=.5,w=Math.max(1,Math.ceil((r.right-r.left-18)*scale)),h=Math.max(1,Math.ceil((r.bottom-r.top-18)*scale)),v=canvasOf(w,h),c=v.getContext('2d');c.fillStyle=on?'rgba(3,10,18,.58)':'rgba(2,7,15,.79)';c.fillRect(0,0,w,h);
+    if(on){c.globalCompositeOperation='destination-out';const radius=(room==='farm'?385:room==='corridor'?225:300)*scale;for(const p of V011Rooms.lights(room)){const x=(p.x-r.left-9)*scale,y=(p.y-r.top-9)*scale,g=c.createRadialGradient(x,y,0,x,y,radius);for(const [at,a]of [[0,.99],[.14,.92],[.4,.52],[.72,.14],[1,0]])g.addColorStop(at,'rgba(255,255,255,'+a+')');c.fillStyle=g;c.fillRect(x-radius,y-radius,radius*2,radius*2);}}
+    roomMasks.set(key,v);return v;
+  }
+  function bunkerMask(c,served){c.fillStyle='rgba(2,5,12,.63)';const view=V010Camera.view();c.fillRect(camera.x,camera.y,view.w,view.h);for(const room of Object.keys(V09Power.rooms)){const r=bunker[room];if(!r||!visibleOnScreen((r.left+r.right)/2,(r.top+r.bottom)/2,Math.hypot(r.right-r.left,r.bottom-r.top)/2))continue;c.clearRect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.drawImage(roomMask(room,r,served.has('light_'+room)),r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);}
+    if(V09Craft.visualState('furnace').working){c.save();const r=bunker.workshop;c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.globalCompositeOperation='destination-out';c.globalAlpha=.9;c.drawImage(sprite('white'),49,708,340,340);c.restore();}}
+  function droneActive(){const s=window.V014Robots?.state;return !!(s&&s.scene===scene&&!s.packed&&s.task!=='docked'&&s.hp>0&&s.battery>0&&s.light&&!(s.economy&&s.battery<20));}
+  function flashlight(c,beam){if(!beam)return;c.save();c.globalCompositeOperation='destination-out';let previous=0;const half=(beam.points.length-1)/2;
+    for(let inset=0;inset<half;inset+=3){const desired=.997*Math.sin(Math.min(1,(inset+3)/half)*Math.PI/2)**2,strength=(desired-previous)/Math.max(.00001,1-previous);previous=desired;c.save();c.globalAlpha=strength;c.beginPath();c.moveTo(beam.ox,beam.oy);for(let i=inset;i<beam.points.length-inset;i++)c.lineTo(beam.points[i].x,beam.points[i].y);c.closePath();c.clip();c.drawImage(sprite('flashlight'),beam.ox-beam.range,beam.oy-beam.range,beam.range*2,beam.range*2);c.restore();}c.restore();}
+  function illuminate(){
+    const c=buffer(),zoom=V010Camera.zoom,view=V010Camera.view(),served=supplied();c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,mask.width,mask.height);c.setTransform(zoom,0,0,zoom,-camera.x*zoom,-camera.y*zoom);
+    if(scene==='bunker')bunkerMask(c,served);else{const dark=(1-daylight())*.64;c.fillStyle='rgba(6,15,31,'+dark+')';c.fillRect(camera.x,camera.y,view.w,view.h);if(dark>.001){c.save();c.globalCompositeOperation='destination-out';for(const s of fixtures())if(active(s,served)&&visibleOnScreen(s.x,s.y,s.range+20))paintFixture(c,s);c.restore();}}
+    flashlight(c,V091Light.cone());if(droneActive()){const d=V014Robots.state,s={x:d.x,y:d.y,range:255,angle:0,kind:'drone'};c.save();c.globalCompositeOperation='destination-out';clipShape(c,s,true);c.drawImage(sprite('drone'),s.x-s.range,s.y-s.range,s.range*2,s.range*2);c.restore();}
+    c.setTransform(1,0,0,1,0,0);ctx.save();try{ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.drawImage(mask,camera.x,camera.y,view.w,view.h);}finally{ctx.restore();}
+  }
+  V091Light.illuminate=illuminate;
+  const oldUpdate=update;update=function(...args){const result=oldUpdate(...args);tick(16.667*frameScale);return result;};
+  const oldCapture=captureGameProgress;captureGameProgress=function(){const d=oldCapture();d.lighting016=capture();return d;};
+  const oldDecode=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);};
+  const oldRestore=restoreGameProgress;restoreGameProgress=function(d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);};
+  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,maskImage:()=>mask,cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:4,droneShapes:droneShape?1:0,droneLimit:1,width:mask?.width||0,height:mask?.height||0})};
+})();
+
+/* 0.16: passable wall-mounted heavy machine guns; one persistent item per gun. */
+window.V016Turret=(()=>{
+  'use strict';
+  const TYPE='hmg016',combat=Object.freeze({damage:65,range:850,capacity:600,ammoType:'ammo',intervalMs:190,turnRate:3.8});
+  const copy=x=>JSON.parse(JSON.stringify(x)),guns=[],runtime=new Map();
+  let nextId=2,placement=null,selected=null,obstacleRevision=-1,obstacles=[],clock=0;
+  ITEM[TYPE]={name:'Тяжёлый пулемёт',icon:'▰',deployable:true,description:'Автоматический пулемёт на стене. Урон 65 · дальность 850 · круговой обстрел. Патроны 5,45 × 39: до 600. Заберите в рюкзак, чтобы переставить.'};
+  V09Craft.recipes[TYPE]={station:'craft_bench',category:'Оборона базы',name:'Тяжёлый пулемёт',input:{iron:45,copper:18,parts:12},output:TYPE,qty:1,ms:90000};
+  const starter=()=>({id:'hmg016_1',ammo:150,angle:-Math.PI*3/4,enabled:true,x:1410,y:1050,wallId:'v091wall015_SR_3',fallen:false});
+  guns.push(starter());
+  const gunData=t=>({id:t.id,ammo:t.ammo,angle:t.angle,enabled:t.enabled});
+  function validData(t){return !!t&&/^hmg016_[1-9]\d{0,7}$/.test(t.id)&&Number.isInteger(t.ammo)&&t.ammo>=0&&t.ammo<=combat.capacity&&Number.isFinite(t.angle)&&Math.abs(t.angle)<=Math.PI+1e-8&&typeof t.enabled==='boolean';}
+  function validItem(s){return !!s&&s.type===TYPE&&s.qty===1&&validData(s.turretData);}
+  function newData(){return {id:'hmg016_'+nextId++,ammo:0,angle:-Math.PI/2,enabled:true};}
+  const addSlotsOld=addToSlots;
+  addToSlots=function(slots,type,qty,max=60,metadata){
+    if(type!==TYPE)return addSlotsOld(slots,type,qty,max,metadata);
+    if(!Number.isInteger(qty)||qty<1)return qty;
+    if(metadata?.turretData){if(qty!==1||!validData(metadata.turretData))return qty;return addSlotsOld(slots,type,1,max,metadata);}
+    let left=qty;
+    // Allocate IDs only for objects actually collected; a full bag consumes none.
+    for(let i=0;i<max&&left;i++)if(!slots[i]){slots[i]={type:TYPE,qty:1,turretData:newData()};left--;}
+    return left;
+  };
+  function changed(){queueGameSave();renderBag();refresh();}
+  function eligible(w){return !!w&&w.hp>0&&!w.gate&&['outer','inner'].includes(w.group);}
+  function fits(p,w){return !!w&&[p.x,p.y].every(Number.isFinite)&&p.x>=w.x+Math.min(12,w.w/2)&&p.x<=w.x+w.w-Math.min(12,w.w/2)&&p.y>=w.y+Math.min(12,w.h/2)&&p.y<=w.y+w.h-Math.min(12,w.h/2);}
+  function support(t){return !t.fallen&&eligible(V015Base.byId.get(t.wallId))&&fits(t,V015Base.byId.get(t.wallId));}
+  function snapshotObstacles(){
+    if(obstacleRevision===geometryRevision)return obstacles;
+    // Match the fortress upper floor: perimeter slabs/bridges are below the
+    // muzzle. The central enclosure and tall world objects still stop bullets.
+    obstacles=[...surfaceWalls().filter(o=>o.group!=='outer'&&!(o.group==='gate'&&['north','south'].includes(o.gate))),...solidObjects('surface')];
+    obstacleRevision=geometryRevision;return obstacles;
+  }
+  function ray(a,b,o,pad=1){
+    if(o.r!==undefined){const dx=b.x-a.x,dy=b.y-a.y,d=dx*dx+dy*dy;if(!d)return null;const px=a.x-o.x,py=a.y-o.y,r=o.r+pad,B=2*(px*dx+py*dy),C=px*px+py*py-r*r,disc=B*B-4*d*C;if(disc<0)return null;const t=(-B-Math.sqrt(disc))/(2*d);return t>=0&&t<=1?t:C<=0?0:null;}
+    return V015Base.rayEntry(a,b,o,pad);
+  }
+  function clear(t,z){
+    const minX=Math.min(t.x,z.x)-2,maxX=Math.max(t.x,z.x)+2,minY=Math.min(t.y,z.y)-2,maxY=Math.max(t.y,z.y)+2;
+    for(const o of snapshotObstacles()){
+      if(o.id===t.wallId)continue;
+      const x=o.r!==undefined?o.x-o.r:o.x,y=o.r!==undefined?o.y-o.r:o.y,w=o.r!==undefined?o.r*2:o.w,h=o.r!==undefined?o.r*2:o.h;
+      if(x>maxX||x+w<minX||y>maxY||y+h<minY)continue;
+      const hit=ray(t,z,o,1);if(hit!==null&&hit<.9999)return false;
+    }return true;
+  }
+  function reachable(t){
+    if(scene!=='surface'||playerDead||distance(player.x,player.y,t.x,t.y)>132)return false;
+    // Wall controls are reachable from the adjacent ground or deck. Only the
+    // supporting corner slabs are exempt; intervening walls/objects still block.
+    for(const o of [...surfaceWalls(),...solidObjects('surface')]){
+      if(o.id===t.wallId)continue;
+      if(o.group==='outer'&&distance(t.x,t.y,clamp(t.x,o.x,o.x+o.w),clamp(t.y,o.y,o.y+o.h))<35)continue;
+      const hit=ray(player,t,o,0);if(hit!==null&&hit<.98)return false;
+    }return true;
+  }
+  function candidate(x,y){
+    let best=null,bestD=Infinity;
+    for(const w of V015Base.sections){if(!eligible(w))continue;
+      const px=Math.min(12,w.w/2),py=Math.min(12,w.h/2),p={x:clamp(x,w.x+px,w.x+w.w-px),y:clamp(y,w.y+py,w.y+w.h-py),wallId:w.id};
+      const d=distance(x,y,p.x,p.y);if(d<bestD&&d<=76){best=p;bestD=d;}
+    }return best;
+  }
+  function placementProblem(p){
+    if(scene!=='surface')return 'Установка доступна на поверхности';
+    if(!p||!eligible(V015Base.byId.get(p.wallId))||!fits(p,V015Base.byId.get(p.wallId)))return 'Выберите целую внешнюю или внутреннюю стену';
+    if(!reachable(p))return 'Подойдите к выбранному месту на стене';
+    if(guns.some(t=>!t.fallen&&distance(t.x,t.y,p.x,p.y)<64))return 'Рядом уже установлен пулемёт';
+    return '';
+  }
+  function selectPoint(x,y){if(!placement)return false;placement.point=candidate(x,y);updatePlacement();return true;}
+  function startPlacement(item){
+    if(!validItem(item)||!bag.includes(item)||item.locked){message(item?.locked?'Сначала открепите пулемёт':'Пулемёт должен быть в рюкзаке');return false;}
+    if(scene!=='surface'){message('Поднимитесь на поверхность, чтобы установить пулемёт');return false;}
+    if(playerDead)return false;
+    for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);
+    stopControls(true);cancelNavigation();placement={item,point:candidate(player.x,player.y)};selected=null;updatePlacement();return true;
+  }
+  function cancelPlacement(){placement=null;bar.style.display='none';return true;}
+  function place(){
+    if(!placement)return false;
+    const {item,point}=placement,index=bag.indexOf(item),problem=placementProblem(point);
+    if(index<0||!validItem(item)||item.locked){cancelPlacement();return false;}
+    if(problem){message(problem);return false;}
+    if(guns.some(t=>t.id===item.turretData.id))return false;
+    guns.push({...copy(item.turretData),...point,fallen:false});bag[index]=null;cancelPlacement();changed();message('Пулемёт установлен · '+guns.at(-1).ammo+' патронов');return true;
+  }
+  function pack(t){
+    if(!guns.includes(t)||!reachable(t))return false;
+    if(addItem(TYPE,1,{turretData:gunData(t)})){message('Нужна свободная ячейка в рюкзаке');return false;}
+    guns.splice(guns.indexOf(t),1);runtime.delete(t.id);selected=null;const panel=el('v016TurretPanel');if(panel)closeOverlay(panel);changed();return true;
+  }
+  function ammoAvailable(){return bag.reduce((n,s)=>n+(s?.type===combat.ammoType&&!s.locked?s.qty:0),0);}
+  function reload(t,amount=combat.capacity){
+    if(!guns.includes(t)||!reachable(t))return 0;
+    let need=Math.min(Math.max(0,Math.floor(amount)),combat.capacity-t.ammo),used=0;
+    for(let i=0;i<bag.length&&need;i++){const s=bag[i];if(s?.type!==combat.ammoType||s.locked)continue;const n=Math.min(s.qty,need);s.qty-=n;need-=n;used+=n;if(!s.qty)bag[i]=null;}
+    t.ammo+=used;if(used)changed();else message('В рюкзаке нет свободных патронов 5,45');return used;
+  }
+  function unload(t){if(!guns.includes(t)||!reachable(t)||!t.ammo)return 0;const left=addItem(combat.ammoType,t.ammo),moved=t.ammo-left;t.ammo=left;if(moved)changed();else message('Нет места для патронов');return moved;}
+  function setEnabled(t,on){if(!guns.includes(t)||!reachable(t))return false;t.enabled=!!on;changed();return true;}
+  function settleUnsupported(){for(const t of guns)if(!t.fallen&&!support(t)){
+    const a=Math.atan2(600-t.y,800-t.x),p=V015Base.freePoint(t.x+Math.cos(a)*72,t.y+Math.sin(a)*72,10);
+    if(p)Object.assign(t,p);t.fallen=true;t.wallId=null;runtime.delete(t.id);queueGameSave();
+  }}
+  function stateFor(t){if(!runtime.has(t.id))runtime.set(t.id,{target:null,search:0,cursor:0,shot:0,flash:0,tracer:null});return runtime.get(t.id);}
+  const wrapAngle=a=>Math.atan2(Math.sin(a),Math.cos(a));
+  function acquire(t){
+    const s=stateFor(t),prior=s.target;
+    if(prior?.alive&&prior.health>0&&distance(t.x,t.y,prior.x,prior.y)<=combat.range&&clear(t,prior))return prior;
+    const candidates=[];for(const z of zombies)if(z.alive&&z.health>0){const d=(z.x-t.x)**2+(z.y-t.y)**2;if(d<=combat.range**2)candidates.push({z,d});}
+    candidates.sort((a,b)=>a.d-b.d);
+    // Rotate the bounded scan so a crowd behind cover cannot starve a farther
+    // visible enemy. Keep an acquired target while its actual line stays clear.
+    const count=candidates.length,start=count?s.cursor%count:0;
+    for(let i=0;i<Math.min(8,count);i++){const at=(start+i)%count;s.cursor=(at+1)%count;const z=candidates[at].z;if(clear(t,z))return z;}return null;
+  }
+  function shootAt(t,z){
+    const s=stateFor(t);if(!t.enabled||!support(t)||t.ammo<=0||!z?.alive||z.health<=0||distance(t.x,t.y,z.x,z.y)>combat.range||!clear(t,z))return false;
+    let first=z,at=1;for(const q of zombies)if(q.alive&&q.health>0){const n=ray(t,z,{x:q.x,y:q.y,r:q.radius||16},1);if(n!==null&&n<at){at=n;first=q;}}
+    t.ammo--;s.shot+=combat.intervalMs/1000;s.flash=.08;s.tracer={x:t.x+(z.x-t.x)*at,y:t.y+(z.y-t.y)*at};
+    hitZombie(first,combat.damage,{fixedDamage:true});createNoise(t.x,t.y,600);queueGameSave();return true;
+  }
+  function tick(ms){
+    settleUnsupported();
+    if(placement&&(!bag.includes(placement.item)||scene!=='surface'||playerDead))cancelPlacement();
+    if(scene!=='surface'||document.hidden||playerDead||menuOpen)return;
+    const dt=clamp(Number(ms)||0,0,100)/1000;clock+=dt;
+    for(const t of guns){const s=stateFor(t);s.flash=Math.max(0,s.flash-dt);s.shot=Math.max(-dt,s.shot-dt);s.search-=dt;
+      if(t.fallen||!t.enabled||!t.ammo){s.target=null;s.shot=0;continue;}
+      if(s.search<=0){s.search=.2;s.target=acquire(t);}
+      const z=s.target;if(!z?.alive||z.health<=0){s.target=null;s.shot=0;continue;}
+      const aim=Math.atan2(z.y-t.y,z.x-t.x),delta=wrapAngle(aim-t.angle);t.angle=wrapAngle(t.angle+clamp(delta,-combat.turnRate*dt,combat.turnRate*dt));
+      if(Math.abs(wrapAngle(aim-t.angle))<.055&&s.shot<=1e-9)shootAt(t,z);
+      s.shot=Math.max(0,s.shot);
+    }
+    if(clock>=.25){clock=0;if(placement)updatePlacement();refresh();}
+  }
+  function status(t){return t.fallen?'Опора разрушена · заберите в рюкзак':!t.enabled?'Автоогонь выключен':!t.ammo?'Нет патронов 5,45':'Автоогонь · поворот 360°';}
+  function open(t){if(!guns.includes(t)||!reachable(t)){message('Подойдите к пулемёту');return false;}selected=t;cancelNavigation();stopControls(true);
+    const o=v09Overlay('v016TurretPanel','Тяжёлый пулемёт'),body=o.querySelector('.v09Body');body.replaceChildren();
+    const hero=document.createElement('div');hero.className='v016GunHero';hero.innerHTML=itemIconHTML(TYPE)+'<div><b>65 урона · 850 дальность</b><small>Патроны 5,45 × 39 · ёмкость 600</small></div>';body.append(hero);
+    const stats=document.createElement('p');stats.id='v016GunStatus';body.append(stats);
+    const actions=document.createElement('div');actions.className='v016GunActions';
+    const defs=[['load','Загрузить 100',()=>reload(t,100)],['max','Загрузить максимум',()=>reload(t)],['unload','Выгрузить патроны',()=>unload(t)],['power','Автоогонь',()=>setEnabled(t,!t.enabled)],['range','Показать радиус',()=>{closeOverlay(o);previewUntil=performance.now()+6000;}],['pack','Забрать в рюкзак',()=>pack(t)]];
+    for(const [id,label,fn] of defs){const b=v09Button(label,fn);b.dataset.turretAction=id;actions.append(b);}body.append(actions);
+    const note=document.createElement('p');note.className='v016GunNote';note.textContent='Установка в рюкзаке → выбрать стену → сдвинуть → установить. Пулемёт не перекрывает проход.';body.append(note);openOverlay(o);refresh();return true;
+  }
+  function refresh(){const o=el('v016TurretPanel');if(!o?.classList.contains('open')||!selected)return;const t=selected,near=reachable(t);el('v016GunStatus').textContent=status(t)+' · '+t.ammo+' / 600';
+    for(const b of o.querySelectorAll('[data-turret-action]')){const k=b.dataset.turretAction;b.disabled=!near||(k==='unload'&&!t.ammo)||(['load','max'].includes(k)&&(!ammoAvailable()||t.ammo===combat.capacity));if(k==='power')b.textContent=t.enabled?'Автоогонь: вкл.':'Автоогонь: выкл.';}
+  }
+  const bar=document.createElement('div');bar.id='v016Placement';bar.style.display='none';
+  const tip=document.createElement('div');bar.append(tip);const controls=document.createElement('div');controls.className='v016PlacementActions';bar.append(controls);
+  for(const [label,dx,dy] of [['←',-8,0],['↑',0,-8],['↓',0,8],['→',8,0]]){const b=v09Button(label,()=>{const p=placement?.point;if(p)selectPoint(p.x+dx,p.y+dy);});b.setAttribute('aria-label','Сдвинуть пулемёт '+label);controls.append(b);}
+  const confirm=v09Button('Установить',place);confirm.id='v016PlaceConfirm';controls.append(confirm,v09Button('Отмена',cancelPlacement));document.body.append(bar);
+  function updatePlacement(){if(!placement){bar.style.display='none';return;}bar.style.display='block';const problem=placementProblem(placement.point);tip.textContent=problem||'Место подходит · касание стены / стрелки для сдвига';confirm.disabled=!!problem;}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&placement){e.preventDefault();cancelPlacement();}});
+  const detailsOld=V011UI.details;V011UI.details=function(where,i){detailsOld(where,i);const s=where==='bag'?bag[i]:Number.isInteger(where)?storageChests[where]?.items[i]:null;if(s?.type!==TYPE)return;
+    const body=el('v010ItemDetails').querySelector('.v09Body'),p=document.createElement('p');p.textContent='В ленте: '+(s.turretData?.ammo||0)+' / 600 · урон 65 · радиус 850';body.append(p);
+    const b=v09Button('Установить на стену',()=>{if(where==='bag')startPlacement(s);else message('Сначала переложите пулемёт в рюкзак');});body.prepend(b);
+  };
+  const interactionsOld=interactionObjects;interactionObjects=function(which=scene){const a=interactionsOld(which);if(which==='surface')return [...a.filter(o=>o.kind==='v091stairs'),...guns.map(t=>({id:t.id,kind:TYPE,name:t.fallen?'Подобрать пулемёт':'Тяжёлый пулемёт',x:t.x,y:t.y,r:22,range:100})),...a.filter(o=>o.kind!=='v091stairs')];return a;};
+  const canOld=canInteract;canInteract=function(o,x,y){return o?.kind===TYPE?reachable(guns.find(t=>t.id===o.id)||{x:Infinity,y:Infinity}):canOld(o,x,y);};
+  const executeOld=executeInteraction;executeInteraction=function(o,...a){if(o?.kind===TYPE){if(!menuOpen&&!playerDead)open(guns.find(t=>t.id===o.id));return;}return executeOld(o,...a);};
+  const approachOld=approachObject;approachObject=function(o,...a){if(o?.kind===TYPE){const t=guns.find(t=>t.id===o.id);if(t&&reachable(t))open(t);else if(t){message('Подойдите к пулемёту у стены');if(player.wallLevel)approachPoint(t.x,t.y);}return;}return approachOld(o,...a);};
+  const tapOld=V0105.tapWorld;V0105.tapWorld=function(x,y){if(placement)return selectPoint(x,y);if(scene==='surface'&&V091Fortress.corners.some(c=>{const p=player.wallLevel?c:c.foot;return distance(x,y,p.x,p.y)<=13;}))return false;const t=scene==='surface'&&guns.find(t=>distance(x,y,t.x,t.y)<28);if(t){approachObject({id:t.id,kind:TYPE});return true;}return tapOld(x,y);};
+  const updateOld=update;update=function(...a){const r=updateOld(...a);tick(16.667*frameScale);return r;};
+  let previewUntil=0;
+  function disk(c,x,y,r,color,stroke){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=color;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1.2;c.stroke();}}
+  function metal(c,x,y,w,h,fill,stroke='#182124'){c.fillStyle=fill;c.fillRect(x,y,w,h);if(stroke){c.strokeStyle=stroke;c.lineWidth=1.1;c.strokeRect(x,y,w,h);}}
+  function paint(c,x,y,angle,flash=0,ghost=false){
+    c.save();c.translate(x,y);if(ghost)c.globalAlpha=.72;
+    c.fillStyle='#07111465';c.beginPath();c.ellipse(7,10,32,24,0,0,Math.PI*2);c.fill();
+    c.strokeStyle='#18282a';c.lineWidth=8;for(const a of [-.4,1.7,3.8]){c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a)*25,Math.sin(a)*25);c.stroke();disk(c,Math.cos(a)*25,Math.sin(a)*25,4,'#899283','#253436');}
+    disk(c,0,0,18,'#2a3639','#b2bba8');disk(c,0,0,12,'#59665e','#132327');
+    c.rotate(angle);const recoil=flash>0?2:0;c.translate(-recoil,0);
+    metal(c,-23,-13,39,26,'#333f42');metal(c,-17,-10,30,20,'#66736a');metal(c,-12,-7,23,14,'#3e4b4c');
+    metal(c,-13,13,23,15,'#59604b');metal(c,-10,15,17,9,'#404832');
+    c.strokeStyle='#c7af69';c.lineWidth=5;c.beginPath();c.moveTo(-5,14);c.lineTo(9,13);c.lineTo(14,5);c.stroke();
+    c.strokeStyle='#534a2c';c.lineWidth=1.2;for(let i=0;i<6;i++){c.beginPath();c.moveTo(-6+i*3,11);c.lineTo(-6+i*3,16);c.stroke();}
+    metal(c,12,-7,29,14,'#273438');metal(c,17,-5,23,3,'#84928b');
+    for(let x=17;x<38;x+=5)metal(c,x,-7,2,14,'#141f23',null);
+    metal(c,39,-4,20,8,'#566665');metal(c,56,-6,10,12,'#263238');metal(c,62,-4,5,8,'#111d22');
+    metal(c,-31,-9,9,18,'#454c43');metal(c,-35,-13,6,9,'#1f2c30');metal(c,-35,4,6,9,'#1f2c30');
+    metal(c,3,-13,6,5,'#101e23');disk(c,6,-11,1.6,'#b6533f');
+    for(const [xx,yy] of [[-18,-9],[-18,9],[10,-9],[10,9]])disk(c,xx,yy,1.7,'#b4baaa');
+    if(flash>0){c.fillStyle='#ffe3a8';c.beginPath();c.moveTo(66,-4);c.lineTo(82,-9);c.lineTo(77,0);c.lineTo(86,6);c.lineTo(66,4);c.closePath();c.fill();}
+    c.restore();
+  }
+  // Inventory uses the same drawn machinery, with no external sprite dependency.
+  const icon=document.createElement('canvas');icon.width=128;icon.height=100;const ic=icon.getContext('2d');ic.translate(43,50);ic.scale(1.13,1.13);paint(ic,0,0,-.35);
+  const iconURL=icon.toDataURL('image/png'),iconOld=itemIconHTML;
+  itemIconHTML=function(type){return type===TYPE?'<img class="itemIcon" src="'+iconURL+'" alt="Тяжёлый пулемёт" draggable="false">':iconOld(type);};
+  function range(p,color='#d4d497'){ctx.save();ctx.strokeStyle=color;ctx.fillStyle='#cad89109';ctx.lineWidth=1.3/(V010Camera.zoom||1);ctx.setLineDash([10,9]);ctx.beginPath();ctx.arc(p.x,p.y,combat.range,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=color;ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText('850 · ОБСТРЕЛ 360°',p.x,p.y-48);ctx.restore();}
+  function draw(){if(scene!=='surface')return;
+    if(placement){for(const w of V015Base.sections)if(eligible(w)&&visibleOnScreen(w.x+w.w/2,w.y+w.h/2,Math.max(w.w,w.h))){ctx.save();ctx.strokeStyle='#d9d88b9c';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.strokeRect(w.x+7,w.y+7,Math.max(1,w.w-14),Math.max(1,w.h-14));ctx.restore();}if(placement.point){range(placement.point,placementProblem(placement.point)?'#e29378':'#c4df9e');paint(ctx,placement.point.x,placement.point.y,placement.item.turretData.angle,0,true);}}
+    else if(selected&&performance.now()<previewUntil)range(selected);
+    for(const t of guns){if(!visibleOnScreen(t.x,t.y,100))continue;const s=stateFor(t);paint(ctx,t.x,t.y,t.angle,s.flash);if(t.fallen){ctx.save();ctx.fillStyle='#e8b68b';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText('ПОДОБРАТЬ',t.x,t.y+40);ctx.restore();}if(s.flash>0&&s.tracer){ctx.save();ctx.strokeStyle='#f9dda29c';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(t.x+Math.cos(t.angle)*65,t.y+Math.sin(t.angle)*65);ctx.lineTo(s.tracer.x,s.tracer.y);ctx.stroke();ctx.restore();}}
+  }
+  const playerDrawOld=drawPlayer;drawPlayer=function(...a){draw();return playerDrawOld(...a);};
+  function capture(){settleUnsupported();return{schema:1,nextId,guns:guns.map(t=>({...gunData(t),x:t.x,y:t.y,wallId:t.wallId,fallen:t.fallen}))};}
+  function validate(d,whole){
+    if(!d)return true;
+    if(d.schema!==1||!Number.isInteger(d.nextId)||d.nextId<2||d.nextId>99999999||!Array.isArray(d.guns)||d.guns.length>128)throw Error('Некорректные пулемёты');
+    const records=[];function visit(v){if(!v||typeof v!=='object')return;if(v.type===TYPE){if(!validItem(v))throw Error('Некорректный переносной пулемёт');records.push(v.turretData);return;}for(const q of Object.values(v))visit(q);}
+    if(whole)visit(whole);const ids=new Set();
+    for(const t of d.guns){if(!validData(t)||![t.x,t.y].every(Number.isFinite)||Math.abs(t.x)>25000||Math.abs(t.y)>25000||typeof t.fallen!=='boolean'||(t.fallen?t.wallId!==null:!fits(t,V015Base.byId.get(t.wallId))||!['outer','inner'].includes(V015Base.byId.get(t.wallId)?.group)||V015Base.byId.get(t.wallId)?.gate))throw Error('Некорректная позиция пулемёта');records.push(t);}
+    for(const t of records){if(ids.has(t.id)||Number(t.id.slice(7))>=d.nextId)throw Error('Повтор пулемёта');ids.add(t.id);}
+    return true;
+  }
+  const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.turret016=capture();return d;};
+  const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const d=decodeOld(raw);validate(d.turret016,d);if(!d.turret016){const tokens=[];const walk=v=>{if(!v||typeof v!=='object')return;if(v.type===TYPE)tokens.push(v);else for(const q of Object.values(v))walk(q);};walk(d);if(tokens.length)throw Error('Отсутствует состояние пулемётов');}return d;};
+  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){validate(d.turret016,d);restoreOld(d);guns.splice(0,guns.length,...copy(d.turret016?.guns||[starter()]));nextId=d.turret016?.nextId||2;runtime.clear();selected=null;cancelPlacement();obstacleRevision=-1;settleUnsupported();};
+  v09Style('#v016TurretPanel .v09Panel{width:min(410px,94vw);padding:14px;border-radius:13px}#v016TurretPanel p{font-size:12px;line-height:1.5;margin:10px 0}.v016GunHero{display:flex;align-items:center;gap:10px}.v016GunHero>.itemIcon{width:105px;height:82px;object-fit:contain}.v016GunHero b{font-size:12px}.v016GunHero small{display:block;font-size:10px;color:#9caf9f;margin-top:5px}.v016GunActions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.v016GunActions .menuButton{font-size:11px;min-height:40px;margin:0;padding:7px}.v016GunNote{color:#9fb1a4}#v016Placement{position:fixed;z-index:9500;left:50%;top:calc(var(--v011-hud-top,10px) + 42px);transform:translateX(-50%);width:min(460px,calc(100vw - 24px));box-sizing:border-box;background:#182a2af2;border:1px solid #9ba784;border-radius:10px;padding:9px;text-align:center;color:#e0e7cc;font:11px Arial}.v016PlacementActions{display:flex;justify-content:center;gap:4px;margin-top:7px}.v016PlacementActions .menuButton{margin:0;font-size:11px;padding:5px 8px;min-height:36px;width:auto;min-width:32px}#v016PlaceConfirm{background:#476344}');
+  return {combat,guns,validItem,capture,validate,candidate,placementProblem,startPlacement,selectPoint,place,cancelPlacement,pack,reload,unload,setEnabled,reachable,clear,support,settleUnsupported,tick,shootAt,open,draw,paint,get placement(){return placement;},get nextId(){return nextId;}};
 })();
 
 loadGameProgress();gameSaveReady=true;
