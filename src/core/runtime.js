@@ -1,0 +1,547 @@
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function el(id){
+  return document.getElementById(id);
+}
+
+function clone(obj){
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function clamp(value,min,max){
+  return Math.max(min,Math.min(max,value));
+}
+
+function distance(x1,y1,x2,y2){
+  return Math.hypot(x1-x2,y1-y2);
+}
+
+/* =====================================================
+   TELEGRAM
+===================================================== */
+
+const tg =
+  window.Telegram &&
+  window.Telegram.WebApp
+  ? window.Telegram.WebApp
+  : null;
+
+if(tg){
+
+  try{
+    tg.ready();
+  }catch(e){}
+
+  try{
+    tg.expand();
+  }catch(e){}
+
+  try{
+
+    if(typeof tg.disableVerticalSwipes === "function"){
+      tg.disableVerticalSwipes();
+    }
+
+  }catch(e){}
+
+}
+
+function fullscreen(){
+
+  if(!tg){
+    return;
+  }
+
+  try{
+    tg.expand();
+  }catch(e){}
+
+  try{
+
+    if(typeof tg.requestFullscreen === "function"){
+      tg.requestFullscreen();
+    }
+
+  }catch(e){}
+
+}
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+/*
+  Эти пять файлов должны лежать рядом с index.html:
+
+  gunshot.mp3
+  zombie.mp3
+  hit.mp3
+  player_hit.mp3
+  footsteps.mp3
+  chicken.mp3
+  cow.mp3
+*/
+
+let masterVolume = 0.70;
+
+function createSound(file){
+  const audio = new Audio(file);
+  audio.preload = "auto";
+  return audio;
+}
+
+const sounds = {
+  gunshot:createSound("gunshot.mp3"),
+  zombie:createSound("zombie.mp3"),
+  hit:createSound("hit.mp3"),
+  playerHit:createSound("player_hit.mp3"),
+  footsteps:createSound("footsteps.mp3"),
+  chicken:createSound("chicken.mp3"),
+  cow:createSound("cow.mp3")
+};
+
+/* =====================================================
+   MOBILE AUDIO ENGINE 0.4.5
+===================================================== */
+let audioCtx=null;
+const audioBuffers={};
+let audioLoadStarted=false;
+let footstepsSource=null;
+let footstepsGain=null;
+let lastZombieBufferAt=0;
+
+const AUDIO_FILES={
+  gunshot:"gunshot.mp3",
+  zombie:"zombie.mp3",
+  hit:"hit.mp3",
+  playerHit:"player_hit.mp3",
+  footsteps:"footsteps.mp3",
+  chicken:"chicken.mp3",
+  cow:"cow.mp3"
+};
+
+function ensureAudioContext(){
+  if(audioCtx) return audioCtx;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC) return null;
+  try{audioCtx=new AC();}catch(e){audioCtx=null;}
+  return audioCtx;
+}
+
+async function preloadGameAudio(){
+  if(audioLoadStarted) return;
+  audioLoadStarted=true;
+  const ctx=ensureAudioContext();
+  if(!ctx) return;
+
+  await Promise.all(
+    Object.entries(AUDIO_FILES).map(async function([name,url]){
+      try{
+        const r=await fetch(url,{cache:"force-cache"});
+        const data=await r.arrayBuffer();
+        audioBuffers[name]=await ctx.decodeAudioData(data);
+      }catch(e){}
+    })
+  );
+}
+
+function unlockGameAudio(){
+  const ctx=ensureAudioContext();
+  if(ctx && ctx.state==="suspended"){
+    ctx.resume().catch(function(){});
+  }
+  preloadGameAudio().catch(function(){});
+}
+
+window.addEventListener("pointerdown",unlockGameAudio,{once:true,passive:true});
+window.addEventListener("touchstart",unlockGameAudio,{once:true,passive:true});
+
+function playBuffer(name,volume=1){
+  // 0.4.11: only short decoded WebAudio effects are allowed.
+  if(name!=="gunshot" && name!=="hit" && name!=="footsteps" && name!=="zombie" && name!=="playerHit") return;
+  if(masterVolume<=0) return;
+
+  const ctx=ensureAudioContext();
+  const buffer=audioBuffers[name];
+
+  if(!ctx || !buffer || ctx.state!=="running") return;
+
+  try{
+    const source=ctx.createBufferSource();
+    const gain=ctx.createGain();
+
+    source.buffer=buffer;
+    gain.gain.value=clamp(volume*masterVolume,0,1);
+
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start(0);
+
+    source.onended=function(){
+      try{
+        source.disconnect();
+        gain.disconnect();
+      }catch(e){}
+    };
+  }catch(e){}
+}
+
+function stopFootsteps(){
+  if(footstepsSource){
+    const source=footstepsSource;
+    const gain=footstepsGain;
+
+    footstepsSource=null;
+    footstepsGain=null;
+
+    try{ source.stop(0); }catch(e){}
+    try{ source.disconnect(); }catch(e){}
+    try{ if(gain) gain.disconnect(); }catch(e){}
+  }
+}
+
+function startFootsteps(){
+  // 0.4.13 uses scheduled one-shot footsteps instead of MP3 looping.
+  return;
+}
+
+function updateFootstepsAudio(){
+  if(playerDead || menuOpen || movePower<=JOY_DEAD){
+    stopFootsteps();
+    return;
+  }
+
+  const ctx=ensureAudioContext();
+  const buffer=audioBuffers.footsteps;
+  if(!ctx || !buffer || ctx.state!=="running") return;
+
+  const running=movePower>=RUN_THRESHOLD;
+
+  // Never create a second footsteps source while one is already playing.
+  if(!footstepsSource){
+    try{
+      const source=ctx.createBufferSource();
+      const gain=ctx.createGain();
+
+      source.buffer=buffer;
+      source.loop=true;
+      source.playbackRate.value=running?1.08:.94;
+
+      // Footsteps are intentionally much louder than before.
+      gain.gain.value=clamp(masterVolume*(running?.48:.42),0,1);
+
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(0);
+
+      footstepsSource=source;
+      footstepsGain=gain;
+
+      source.onended=function(){
+        if(footstepsSource===source){
+          footstepsSource=null;
+          footstepsGain=null;
+        }
+        try{
+          source.disconnect();
+          gain.disconnect();
+        }catch(e){}
+      };
+    }catch(e){}
+  }else{
+    try{
+      footstepsGain.gain.setValueAtTime(
+        clamp(masterVolume*(running?.48:.42),0,1),
+        ctx.currentTime
+      );
+      footstepsSource.playbackRate.setValueAtTime(
+        running?1.08:.94,
+        ctx.currentTime
+      );
+    }catch(e){}
+  }
+}
+
+const ZOMBIE_AUDIO_RADIUS=285;
+const activeZombieAudio=new Map();
+let lastZombieAudioAt=0;
+
+function zombieDistanceVolume(zombie){
+  if(!zombie || !zombie.alive || scene!=="surface") return 0;
+  if(!visibleOnScreen(zombie.x,zombie.y,35)) return 0;
+  const d=Math.hypot(zombie.x-player.x,zombie.y-player.y);
+  if(d>=ZOMBIE_AUDIO_RADIUS) return 0;
+  const n=1-d/ZOMBIE_AUDIO_RADIUS;
+  return .30*n*n; // same fast positional falloff idea as the chickens
+}
+
+function stopZombieAudio(zombie){
+  const node=activeZombieAudio.get(zombie);
+  if(!node)return;
+  try{node.source.stop();}catch(e){}
+  try{node.source.disconnect();node.gain.disconnect();}catch(e){}
+  activeZombieAudio.delete(zombie);
+}
+
+function stopInvalidZombieAudio(){
+  for(const [z,node] of activeZombieAudio){
+    const v=zombieDistanceVolume(z);
+    if(v<=0.001){
+      stopZombieAudio(z);
+    }else if(audioCtx){
+      node.gain.gain.setTargetAtTime(v*masterVolume,audioCtx.currentTime,.04);
+    }
+  }
+}
+
+function playZombieBuffer(zombie){
+  if(!zombie || !zombie.alive || masterVolume<=0 || !audioCtx || !audioBuffers.zombie) return;
+  const volume=zombieDistanceVolume(zombie);
+  if(volume<=0.001)return;
+
+  const now=performance.now();
+  if(now-lastZombieAudioAt<1800)return;
+  lastZombieAudioAt=now;
+
+  // One track belongs to the zombie that produced it, so killing/leaving it
+  // can stop that exact growl immediately.
+  stopZombieAudio(zombie);
+  const source=audioCtx.createBufferSource();
+  const gain=audioCtx.createGain();
+  source.buffer=audioBuffers.zombie;
+  gain.gain.value=volume*masterVolume;
+  source.connect(gain);
+  gain.connect(audioCtx.destination);
+  activeZombieAudio.set(zombie,{source,gain});
+  source.onended=()=>{
+    const cur=activeZombieAudio.get(zombie);
+    if(cur && cur.source===source)activeZombieAudio.delete(zombie);
+    try{source.disconnect();gain.disconnect();}catch(e){}
+  };
+  source.start(0);
+}
+
+
+
+function playSound(sound,volume){
+  // HTMLAudio playback stays disabled during audio diagnostics.
+  return;
+}
+
+/*
+  Для выстрелов создаём отдельный экземпляр,
+  чтобы быстрые выстрелы не обрывали друг друга.
+*/
+
+const gunshotPool = [
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3"),
+  createSound("gunshot.mp3")
+];
+
+let gunshotPoolIndex = 0;
+
+function playGunshot(){
+  playBuffer("gunshot",.30);
+}
+
+
+/* =====================================================
+   CONTROL LAYOUTS
+===================================================== */
+
+const defaults = {
+
+  portrait:{
+    move:{x:.18,y:.82},
+    aim:{x:.82,y:.82},
+    action:{x:.72,y:.68}
+  },
+
+  landscape:{
+    move:{x:.14,y:.78},
+    aim:{x:.86,y:.78},
+    action:{x:.76,y:.62}
+  }
+
+};
+
+function validPoint(point,fallback){
+
+  if(
+    !point ||
+    typeof point.x !== "number" ||
+    typeof point.y !== "number"
+  ){
+    return clone(fallback);
+  }
+
+  return {
+    x:clamp(point.x,.05,.95),
+    y:clamp(point.y,.08,.94)
+  };
+
+}
+
+function sanitizeLayouts(saved){
+
+  const result =
+    clone(defaults);
+
+  for(const mode of ["portrait","landscape"]){
+
+    if(!saved || !saved[mode]){
+      continue;
+    }
+
+    for(const key of ["move","aim","action"]){
+
+      result[mode][key] =
+        validPoint(
+          saved[mode][key],
+          defaults[mode][key]
+        );
+
+    }
+
+  }
+
+  return result;
+}
+
+function loadLayouts(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        "base_controls_068"
+      );
+
+    if(!saved){
+      return clone(defaults);
+    }
+
+    return sanitizeLayouts(
+      JSON.parse(saved)
+    );
+
+  }catch(e){
+
+    return clone(defaults);
+
+  }
+
+}
+
+let layouts =
+  loadLayouts();
+
+function saveLayouts(){
+
+  try{
+
+    localStorage.setItem(
+      "base_controls_068",
+      JSON.stringify(layouts)
+    );
+
+  }catch(e){}
+
+}
+
+function orientation(){
+
+  return window.innerWidth >
+         window.innerHeight
+         ? "landscape"
+         : "portrait";
+
+}
+
+function positionControl(element,data){
+
+  if(!element || !data){
+    return;
+  }
+
+  element.style.left =
+    (data.x * 100) + "%";
+
+  element.style.top =
+    (data.y * 100) + "%";
+
+}
+
+function applyControls(){
+
+  const mode = orientation();
+  const layout = layouts[mode] || defaults[mode];
+
+  if(typeof positionFixedControls==="function"){
+    positionFixedControls();
+  }
+
+}
+
+/* =====================================================
+   CANVAS
+===================================================== */
+
+const canvas =
+  el("canvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+let screenWidth = 1;
+let screenHeight = 1;
+
+function resizeCanvas(){
+
+  screenWidth =
+    Math.max(
+      1,
+      window.innerWidth
+    );
+
+  screenHeight =
+    Math.max(
+      1,
+      window.innerHeight
+    );
+
+  const ratio = Math.max(1,Math.min(window.devicePixelRatio||1,3,Math.sqrt(8000000/(screenWidth*screenHeight))));
+
+  canvas.width =
+    Math.floor(
+      screenWidth * ratio
+    );
+
+  canvas.height =
+    Math.floor(
+      screenHeight * ratio
+    );
+
+  canvas.style.width =
+    screenWidth + "px";
+
+  canvas.style.height =
+    screenHeight + "px";
+
+  ctx.setTransform(
+    ratio,
+    0,
+    0,
+    ratio,
+    0,
+    0
+  );
+
+}
+
