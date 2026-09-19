@@ -1,3 +1,135 @@
+/* Stage 2: one directory of state owners, never a second copy of game state.
+   Legacy domain modules retain their mutable objects and their own commands.
+   Live getters also cover containers replaced during restore/transfer. */
+const GameState=(()=>{
+  const owners=new Map();
+  let sealed=false;
+  const session={ready:false,blocked:false,timer:null,lastVerified:null,
+    activeSlot:null,name:'',transaction:false};
+  owners.set('session',Object.freeze({id:'session',source:'state/owners.js',saved:Object.freeze([]),
+    transient:Object.freeze(['ready','blocked','timer','lastVerified','activeSlot','name','transaction'])}));
+  const api={session,
+    register(id,view,contract){
+      if(sealed||owners.has(id)||Object.hasOwn(api,id))throw Error('Duplicate or late state owner: '+id);
+      if(!/^[a-z][a-zA-Z]*$/.test(id)||!view||!contract?.source)throw Error('Invalid state owner');
+      const record=Object.freeze({id,source:contract.source,
+        saved:Object.freeze([...(contract.saved||[])]),transient:Object.freeze([...(contract.transient||[])])});
+      owners.set(id,record);
+      Object.defineProperty(api,id,{value:Object.freeze(view),enumerable:true});
+      return view;
+    },
+    describe(){return [...owners.values()].map(v=>({...v,saved:[...v.saved],transient:[...v.transient]}));},
+    seal(){sealed=true;Object.seal(session);Object.freeze(api);}
+  };
+  return api;
+})();
+window.GameState=GameState;
+
+// Compatibility for existing diagnostic scripts. Production code uses the
+// session owner directly; these aliases never keep separate state.
+for(const [legacy,key] of Object.entries({gameSaveReady:'ready',gameSaveBlocked:'blocked',
+  gameSaveTimer:'timer',lastVerifiedGameSave:'lastVerified',v09ActiveSlot:'activeSlot',
+  v091SaveName:'name',v09SaveTransaction:'transaction'})){
+  Object.defineProperty(window,legacy,{get:()=>GameState.session[key],
+    set:value=>{GameState.session[key]=value;},configurable:false});
+}
+/* Storage keys and the existing schema:2 payload deliberately stay unchanged.
+   saveVersion describes the envelope, independently of a release number and
+   of per-owner schemas. All historical migrations still run in their order. */
+const SaveFormat=(()=>{
+  const VERSION=1,MAX_BYTES=2*1024*1024;
+  const migrations=[{from:0,to:1,id:'explicit-envelope-version',apply(d){d.saveVersion=1;return d;}}];
+  function prepare(raw){
+    if(typeof raw!=='string'||raw.length>MAX_BYTES)throw Error('Save file is too large');
+    let data=JSON.parse(raw);
+    if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Invalid save');
+    let version=Object.hasOwn(data,'saveVersion')?data.saveVersion:0;
+    if(!Number.isInteger(version)||version<0||version>VERSION)throw Error('Unsupported save format version');
+    while(version<VERSION){
+      const migration=migrations.find(m=>m.from===version);
+      if(!migration)throw Error('Missing save migration');
+      data=migration.apply(data);version=migration.to;
+    }
+    return JSON.stringify(data);
+  }
+  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.22.0';return data;}
+  return Object.freeze({version:VERSION,prepare,stamp,
+    migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});
+})();
+
+/* Ordered save adapters. next() preserves each existing pre/post operation,
+   including finally blocks and the historical migration order. Gameplay tick
+   and draw chains are intentionally outside the scope of this migration. */
+const GameSave=(()=>{
+  const phases={capture:[],decode:[],restore:[]};
+  const roots={},chains={};
+  const modules={};
+  const moduleOrder=Object.freeze(['world','inventory','craft','combat','energy','progression','camera']);
+  const validated=new WeakMap();
+  let sealed=false,restoring=false,newGameTemplate=null;
+  function setBase(phase,fn){
+    if(sealed||!phases[phase]||roots[phase]||typeof fn!=='function')throw Error('Invalid save root: '+phase);
+    roots[phase]=chains[phase]=fn;
+  }
+  function extend(phase,id,fn){
+    const steps=phases[phase];
+    if(sealed||!steps||!chains[phase]||steps.some(s=>s.id===id)||typeof fn!=='function')throw Error('Duplicate or late save adapter: '+phase+'/'+id);
+    const previous=chains[phase];
+    steps.push({id,fn});
+    chains[phase]=(...args)=>fn(previous,...args);
+  }
+  function capture(){return SaveFormat.stamp(chains.capture());}
+  function decode(raw){
+    const data=SaveFormat.stamp(chains.decode(SaveFormat.prepare(raw)));
+    validated.set(data,JSON.stringify(data));return data;
+  }
+  function registerModule(id,system){
+    if(sealed||!moduleOrder.includes(id)||Object.hasOwn(modules,id)||
+      !['capture','validate','restore'].every(k=>typeof system?.[k]==='function'))throw Error('Invalid save subsystem: '+id);
+    modules[id]=system;return system;
+  }
+  function snapshotModules(){return Object.fromEntries(moduleOrder.filter(id=>modules[id]).map(id=>[id,modules[id].capture()]));}
+  function newGameData(){
+    if(!newGameTemplate)throw Error('New-game template is not ready');
+    const data=JSON.parse(JSON.stringify(newGameTemplate));
+    data.savedAt=Date.now();data.saveName='';return data;
+  }
+  function restore(data){
+    if(restoring)throw Error('Reentrant game restore');
+    // Validate a private copy before any restorer changes the live world. The
+    // caller's object is never a mutable backing store for the loaded game.
+    const raw=JSON.stringify(data);
+    // decode -> restore is the common path. Reuse validation only for the
+    // identical object with identical serialized contents; any edit revalidates.
+    // Weak keys do not retain slot previews or imports after callers release them.
+    const prepared=validated.get(data)===raw?JSON.parse(raw):decode(raw);
+    const was=GameState.session.transaction;
+    restoring=true;GameState.session.transaction=true;
+    try{return chains.restore(prepared);}
+    finally{GameState.session.transaction=was;restoring=false;}
+  }
+  function describe(){return Object.fromEntries(Object.entries(phases).map(([phase,steps])=>[phase,steps.map(s=>s.id)]));}
+  function seal(expected){
+    if(sealed)throw Error('Save registry is already sealed');
+    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');
+    if(!moduleOrder.every(id=>Object.hasOwn(modules,id)))throw Error('Missing save subsystem');
+    // Capture once, after all owners/devices exist and before loading any slot.
+    // The old partial template remains solely for historical migrations.
+    newGameTemplate=JSON.parse(JSON.stringify(capture()));
+    sealed=true;
+    for(const steps of Object.values(phases))Object.freeze(steps);
+    Object.freeze(modules);
+    Object.freeze(api);
+  }
+  const api={setBase,extend,capture,decode,restore,describe,seal,modules,moduleOrder,registerModule,snapshotModules,newGameData,get restoring(){return restoring;}};
+  return api;
+})();
+window.GameSave=GameSave;
+
+// Stable compatibility entry points for existing UI and gameplay callers.
+function captureGameProgress(){return GameSave.capture();}
+function decodeGameProgress(raw){return GameSave.decode(raw);}
+function restoreGameProgress(data){return GameSave.restore(data);}
 
 
 /* =====================================================
@@ -4221,6 +4353,76 @@ function gameLoop(timestamp=performance.now()){
 
 }
 
+/* State ownership map, not a new simulation. Getters are intentionally live:
+   bag, storage, enemies, farm beds and several subsystem states can be replaced
+   by an existing restore or inventory transaction. No snapshot is retained. */
+GameState.register('player',{
+  get entity(){return player;},get dead(){return playerDead;},
+  get scene(){return scene;}
+},{source:'core/world-inventory.js',saved:['player'],transient:['movement','aim input','last damage/step clocks']});
+
+GameState.register('inventory',{
+  get bag(){return bag;},get equipment(){return equipment;},get storage(){return storageChests;},
+  get capacity(){return BAG_SLOTS;},get quick(){return window.V013Inventory?.items;},
+  get activeSlot(){return activeHandSlot;},get upgrade(){return window.V0161Upgrade?.slots;},
+  get system(){return window.V010Inventory;}
+},{source:'inventory/registry-slots.js',saved:['bag','equipment','storage','handSlots','activeHandSlot','starterPending','quick013','upgrade0161','v010.modules.inventory'],transient:['drag','selection','UI scroll']});
+
+GameState.register('combat',{
+  get projectiles(){return bullets;},get system(){return window.V010Combat;},
+  get magazine(){return magazine;},get magazineMax(){return magazineMax;}
+},{source:'combat/weapons-crafting.js',saved:['magazine','flashlightOn','v010.modules.combat'],transient:['projectiles','reload','muzzle flash','practice']});
+
+GameState.register('enemies',{
+  get actors(){return zombies;},get system(){return window.V017Monsters;}
+},{source:'combat/monsters.js',saved:['zombies','monsters017'],transient:['AI routes','nearby grid','attack/jump/fuse timers','audio']});
+
+GameState.register('world',{
+  get scene(){return scene;},get trees(){return worldTrees;},get ores(){return window.V09World?.ores;},
+  get loot(){return scavenges;},get system(){return window.V010World;},get city(){return window.V013City;}
+},{source:'world/districts.js',saved:['trees','loot','v09.world','v010.modules.world','world011','expansion012','city013','gathering'],transient:['navigation','fishing cast','geometry cache','resource animation']});
+
+GameState.register('base',{
+  get sections(){return window.V015Base?.sections;},get doors(){return v09Doors;},
+  get system(){return window.V015Base;},get construction(){return window.V018Build;},
+  get fortress(){return window.V091Fortress;}
+},{source:'base/structures.js',saved:['gateOpen','v091','base015','building018','living011'],transient:['geometry revision','door interpolation','room patterns','rest/shower action']});
+
+GameState.register('drones',{
+  get companion(){return window.V014Robots?.state;},get system(){return window.V014Robots;}
+},{source:'drones/companion.js',saved:['robots014'],transient:['route','motion','return progress','UI selection','combat clocks']});
+
+GameState.register('turrets',{
+  get guns(){return window.V016Turret?.guns;},get system(){return window.V016Turret;}
+},{source:'base/turrets.js',saved:['turret016'],transient:['placement','target','obstacle cache','muzzle flash']});
+
+GameState.register('power',{
+  get generator(){return V09Power;},get battery(){return window.V010Energy?.battery;},
+  get system(){return window.V010Energy;}
+},{source:'base/battery.js',saved:['v09.power','v010.modules.energy'],transient:['allocation','flow','UI timers']});
+
+GameState.register('crafting',{
+  get system(){return V09Craft;},get queue(){return window.V010?.modules.craft;}
+},{source:'crafting/manufacturing.js',saved:['feedCraft','v09.crafting','v010.modules.craft'],transient:['selected recipe','quantity controls','render signature']});
+
+GameState.register('farm',{
+  get beds(){return window.farmState;},get water(){return window.V011Farm?.state;},
+  get animals(){return livestockAnimals;},get system(){return window.V0141Farm;}
+},{source:'farm/growth.js',saved:['farmClock','farm','livestock','v09.chickenBreedMs','farmV011','farm014','farmRecovery0141','farmPlantingStock0141'],transient:['animal poses','visual watering','UI selection']});
+
+GameState.register('progression',{
+  get system(){return window.V010Progression;}
+},{source:'ui/progression.js',saved:['v010.modules.progression'],transient:['seen log','render signature','evaluation clock']});
+
+GameState.register('render',{
+  get camera(){return camera;},get map(){return window.V010Camera;},get lighting(){return window.V016Lighting;}
+},{source:'render/lighting.js',saved:['v010.modules.camera','lighting016'],transient:['light masks','image caches','viewport','frameScale']});
+
+GameState.register('ui',{
+  get menuOpen(){return menuOpen;},get storage(){return activeStorage;},
+  get loot(){return activeLootObject;},get interaction(){return interactionTarget;}
+},{source:'ui/modal-dragging.js',saved:[],transient:['open windows','pointer gesture','click dismissal','selected object','DOM nodes']});
+
 /* =====================================================
    0.7.1 — LOCAL GAME PROGRESS
    Elapsed durations are stored instead of offline deadlines.
@@ -4228,16 +4430,16 @@ function gameLoop(timestamp=performance.now()){
 const GAME_SAVE_KEY="survival_base_progress_v1";
 const GAME_SAVE_BACKUP_KEY="survival_base_progress_backup_v1";
 const MAX_SAVE_ELAPSED=7*24*60*60*1000;
-let gameSaveReady=false;
-let gameSaveBlocked=false;
-let gameSaveTimer=null;
-let lastVerifiedGameSave=null;
+// Save bookkeeping is owned by GameState.session.
+// Save bookkeeping is owned by GameState.session.
+// Save bookkeeping is owned by GameState.session.
+// Save bookkeeping is owned by GameState.session.
 
 function saveElapsed(now,then){
   return clamp(now-then,0,MAX_SAVE_ELAPSED);
 }
 
-function captureGameProgress(){
+function captureGameProgressBase(){
   reconcileHands();
   const now=Date.now();
   return {
@@ -4246,16 +4448,16 @@ function captureGameProgress(){
     trees:worldTrees.map(t=>({id:t.id,felled:t.felled,wood:t.wood,regrowMs:t.regrowMs})),
     player:{scene,x:player.x,y:player.y,health:player.health,
       aimX:player.aimX,aimY:player.aimY,dead:playerDead},
-    magazine,bag:clone(bag),equipment:clone(equipment),
-    storage:clone(storageChests),
+    magazine,bag:clone(GameState.inventory.bag),equipment:clone(GameState.inventory.equipment),
+    storage:clone(GameState.inventory.storage),
     farmClock:1,
-    farm:window.farmState.map(st=>({
+    farm:GameState.farm.beds.map(st=>({
       crop:st.crop,
       elapsedMs:st.crop===null?0:saveElapsed(now,st.plantedAt),
       harvestLeft:st.harvestLeft??null
     })),
     loot:scavenges.map(o=>({id:o.id,searched:o.searched,loot:clone(o.loot||[])})),
-    zombies:zombies.map(z=>({x:z.x,y:z.y,health:z.health,alive:z.alive,state:z.state})),
+    zombies:GameState.enemies.actors.map(z=>({x:z.x,y:z.y,health:z.health,alive:z.alive,state:z.state})),
     livestock:{
       animals:clone(livestockAnimals),alive:livestockAlive,
       warned:livestockWarned,
@@ -4287,7 +4489,7 @@ function upgradeGameProgress(d){
 }
 
 
-function decodeGameProgress(raw){
+function decodeGameProgressBase(raw){
   const d=JSON.parse(raw);
   const number=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
   const integer=(n,min,max)=>Number.isInteger(n)&&number(n,min,max);
@@ -4352,7 +4554,7 @@ function decodeGameProgress(raw){
   return d;
 }
 
-function restoreGameProgress(d){
+function restoreGameProgressBase(d){
   const now=Date.now();
   bag=clone(d.bag);
   for(const slot of Object.keys(equipment)){
@@ -4431,7 +4633,7 @@ function loadGameProgress(){
     try{
       const data=decodeGameProgress(raw);
       restoreGameProgress(data);
-      lastVerifiedGameSave=raw;
+      GameState.session.lastVerified=raw;
       updateSaveStatus(i===0?"💾 Прогресс восстановлен. Автосохранение включено.":
         "💾 Прогресс восстановлен из резервного сохранения.");
       return true;
@@ -4441,7 +4643,7 @@ function loadGameProgress(){
   }
   if(candidates.some(raw=>raw!==null)){
     // Never overwrite an unreadable save with a fresh game's empty state.
-    gameSaveBlocked=true;
+    GameState.session.blocked=true;
     updateSaveStatus("Сохранение не удалось прочитать. Оно сохранено без изменений; автосохранение приостановлено.");
   }else{
     updateSaveStatus("💾 Автосохранение каждые 5 секунд и после действий.");
@@ -4450,18 +4652,18 @@ function loadGameProgress(){
 }
 
 function saveGameProgress(manual=false){
-  if(!gameSaveReady||gameSaveBlocked){
+  if(!GameState.session.ready||GameState.session.blocked){
     if(manual)message("Сохранение недоступно: прежний прогресс не перезаписан.");
     return false;
   }
   try{
     const raw=JSON.stringify(captureGameProgress());
     decodeGameProgress(raw);
-    if(lastVerifiedGameSave){
-      try{localStorage.setItem(GAME_SAVE_BACKUP_KEY,lastVerifiedGameSave);}catch(error){}
+    if(GameState.session.lastVerified){
+      try{localStorage.setItem(GAME_SAVE_BACKUP_KEY,GameState.session.lastVerified);}catch(error){}
     }
     localStorage.setItem(GAME_SAVE_KEY,raw);
-    lastVerifiedGameSave=raw;
+    GameState.session.lastVerified=raw;
     const now=new Date();
     updateSaveStatus(`💾 Сохранено в ${now.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})}`);
     if(manual)message("💾 Игра сохранена");
@@ -4475,18 +4677,22 @@ function saveGameProgress(manual=false){
 }
 
 function queueGameSave(){
-  if(!gameSaveReady||gameSaveBlocked||gameSaveTimer!==null)return;
-  gameSaveTimer=setTimeout(()=>{
-    gameSaveTimer=null;
+  if(!GameState.session.ready||GameState.session.blocked||GameState.session.timer!==null)return;
+  GameState.session.timer=setTimeout(()=>{
+    GameState.session.timer=null;
     saveGameProgress();
   },100);
 }
 
 function flushGameSave(){
-  if(gameSaveTimer!==null){clearTimeout(gameSaveTimer);gameSaveTimer=null;}
+  if(GameState.session.timer!==null){clearTimeout(GameState.session.timer);GameState.session.timer=null;}
   saveGameProgress();
 }
 
+
+GameSave.setBase('capture',captureGameProgressBase);
+GameSave.setBase('decode',decodeGameProgressBase);
+GameSave.setBase('restore',restoreGameProgressBase);
 // 0.9 shared UI and item definitions. Loaded before progress restoration.
 Object.assign(ITEM, {
   iron:{name:'Железо',icon:'🔩'}, copper:{name:'Медь',icon:'🟠'},
@@ -6652,8 +6858,8 @@ const V09_ACTIVE_KEY='survival_base_v09_active_slot';
 const V09_SLOT_COUNT=5;
 const V09_CHICKEN_MAX=50;
 const V09_CHICKEN_BREED_MS=300000;
-let v09ActiveSlot=null;
-let v091SaveName='';
+// Save bookkeeping is owned by GameState.session.
+// Save bookkeeping is owned by GameState.session.
 const V091_SAVE_NAME_MAX=48;
 function v091CleanSaveName(value){
   if(value===undefined)return '';
@@ -6661,12 +6867,12 @@ function v091CleanSaveName(value){
   return value.replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,V091_SAVE_NAME_MAX);
 }
 function v091DefaultName(id){return 'Сохранение '+(id||1);}
-let v09SaveTransaction=false;
+// Save bookkeeping is owned by GameState.session.
 let v09ChickenBreedMs=0;
 let v09ChickenClock=performance.now();
-const v09OriginalCapture=captureGameProgress;
-const v09OriginalDecode=decodeGameProgress;
-const v09OriginalRestore=restoreGameProgress;
+
+
+
 
 function v09ChickenCount(){return livestockAnimals.filter(a=>a.kind==='chicken').length;}
 function v09AddChicken(){
@@ -6727,10 +6933,10 @@ const v09ChickenSlaughter=v09Button('🍗 Зарезать курицу · 5 м�
 v09ChickenSlaughter.id='v09ChickenSlaughter';
 el('cowSlaughterBtn').after(v09ChickenSlaughter);
 
-captureGameProgress=function(){
+GameSave.extend('capture','save.slots',function(v09OriginalCapture){
   const d=v09OriginalCapture();
   d.gameVersion='0.9.2';
-  d.saveName=v091SaveName;
+  d.saveName=GameState.session.name;
   d.v09={schema:1,power:V09Power.snapshot(),world:V09World.capture(),
     crafting:V09Craft.capture(),chickenBreedMs:v09ChickenBreedMs};
   d.v091={schema:1,
@@ -6740,8 +6946,9 @@ captureGameProgress=function(){
     const p=V091Fortress.canonicalPosition();if(p){d.player.x=p.x;d.player.y=p.y;}
   }
   return d;
-};
-// Capture before the first load, so New Game can never clone an old base.
+});
+// Historical migration defaults. Complete New Game defaults are captured by
+// GameSave only after all systems are initialized, before the first slot load.
 const v09NewGameTemplate=clone(captureGameProgress());
 
 function v09MigrateItems(d){
@@ -6764,7 +6971,7 @@ function v09MergeLegacyEntries(entries,all,required,make){
   const byId=new Map(entries.map(o=>[o.id,o]));
   return all.map(o=>byId.has(o.id)?byId.get(o.id):make(o));
 }
-decodeGameProgress=function(raw){
+GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   if(typeof raw!=='string'||raw.length>2*1024*1024)throw new Error('Save file is too large');
   let d=JSON.parse(raw);
   if(!d||typeof d!=='object'||Array.isArray(d))throw new Error('Invalid save');
@@ -6772,7 +6979,7 @@ decodeGameProgress=function(raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0)))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0)))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -6822,13 +7029,13 @@ decodeGameProgress=function(raw){
   if(window.V091Loot&&V091Loot.validate(d.v091.loot)===false)throw new Error('Invalid loot clocks');
   d.gameVersion='0.9.2';
   return d;
-};
+});
 function v09CancelPendingSave(){
-  if(gameSaveTimer!==null){clearTimeout(gameSaveTimer);gameSaveTimer=null;}
+  if(GameState.session.timer!==null){clearTimeout(GameState.session.timer);GameState.session.timer=null;}
 }
-restoreGameProgress=function(d){
-  const wasTransaction=v09SaveTransaction;
-  v09SaveTransaction=true;v09CancelPendingSave();
+GameSave.extend('restore','save.slots',function(v09OriginalRestore,d){
+  const wasTransaction=GameState.session.transaction;
+  GameState.session.transaction=true;v09CancelPendingSave();
   try{
     document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
     v09OriginalRestore(d);
@@ -6836,12 +7043,12 @@ restoreGameProgress=function(d){
     // Fortress restore supplies its saved upper-level coordinates after the legacy ground collision check.
     if(window.V091Fortress)V091Fortress.restore(d.v091.fortress);
     if(window.V091Loot)V091Loot.restore(d.v091.loot);
-    v091SaveName=v091CleanSaveName(d.saveName);
+    GameState.session.name=v091CleanSaveName(d.saveName);
     v09ChickenBreedMs=d.v09.chickenBreedMs;v09ChickenClock=performance.now();
     activeStorage=null;assigningHandType=null;
     grantStarterItems();renderQuickSlots();updateAmmoHud();
-  }finally{v09SaveTransaction=wasTransaction;}
-};
+  }finally{GameState.session.transaction=wasTransaction;}
+});
 function v09SlotKey(id){return V09_SAVE_PREFIX+id;}
 function v09BackupKey(id){return v09SlotKey(id)+'_backup';}
 function v09OccupiedSlots(){
@@ -6880,8 +7087,8 @@ loadGameProgress=function(){
     for(const id of order){
       const entry=v09ReadSlot(id);if(!entry||entry.invalid)continue;
       localStorage.setItem(V09_ACTIVE_KEY,String(id));
-      restoreGameProgress(entry.data);v09ActiveSlot=id;gameSaveBlocked=false;
-      lastVerifiedGameSave=JSON.stringify(entry.data);
+      restoreGameProgress(entry.data);GameState.session.activeSlot=id;GameState.session.blocked=false;
+      GameState.session.lastVerified=JSON.stringify(entry.data);
       updateSaveStatus(`💾 Слот ${id}: ${entry.recovered?'восстановлен из резервной копии':'прогресс восстановлен'}.`);
       return true;
     }
@@ -6890,51 +7097,51 @@ loadGameProgress=function(){
       if(raw===null)continue;
       let data;try{data=decodeGameProgress(raw);}catch(error){continue;}
       const id=v09FreeSlot();
-      if(!id){gameSaveBlocked=true;updateSaveStatus('Все слоты заняты. Откройте «Сохранения».');return false;}
+      if(!id){GameState.session.blocked=true;updateSaveStatus('Все слоты заняты. Откройте «Сохранения».');return false;}
       const migratedRaw=v09WriteNewSlot(id,data);
-      restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=migratedRaw;
+      restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=migratedRaw;
       updateSaveStatus(`💾 Прогресс перенесён в слот ${id}. Исходное сохранение сохранено отдельно.`);
       return true;
     }
     if(occupied.length||legacy.some(raw=>raw!==null)){
-      gameSaveBlocked=true;
+      GameState.session.blocked=true;
       updateSaveStatus('Сохранение не удалось прочитать. Оно не изменено. Доступны импорт и новая игра в свободном слоте.');
       return false;
     }
     const id=v09FreeSlot();const raw=v09WriteNewSlot(id,captureGameProgress());
-    v091SaveName=JSON.parse(raw).saveName;
-    v09ActiveSlot=id;lastVerifiedGameSave=raw;gameSaveBlocked=false;
+    GameState.session.name=JSON.parse(raw).saveName;
+    GameState.session.activeSlot=id;GameState.session.lastVerified=raw;GameState.session.blocked=false;
     updateSaveStatus(`💾 Слот ${id} · автосохранение каждые 5 секунд.`);
     return false;
-  }catch(error){gameSaveBlocked=true;v09ReportStorageFailure();return false;}
+  }catch(error){GameState.session.blocked=true;v09ReportStorageFailure();return false;}
 };
 saveGameProgress=function(manual=false){
-  if(v09SaveTransaction)return false;
-  if(!gameSaveReady||gameSaveBlocked||!v09ActiveSlot){
+  if(GameState.session.transaction)return false;
+  if(!GameState.session.ready||GameState.session.blocked||!GameState.session.activeSlot){
     if(manual)message('Откройте «Сохранения»: выберите игру или создайте свободный слот.');return false;
   }
   try{
     const raw=JSON.stringify(captureGameProgress());decodeGameProgress(raw);
-    if(lastVerifiedGameSave){
-      decodeGameProgress(lastVerifiedGameSave);
-      localStorage.setItem(v09BackupKey(v09ActiveSlot),lastVerifiedGameSave);
+    if(GameState.session.lastVerified){
+      decodeGameProgress(GameState.session.lastVerified);
+      localStorage.setItem(v09BackupKey(GameState.session.activeSlot),GameState.session.lastVerified);
     }
-    localStorage.setItem(v09SlotKey(v09ActiveSlot),raw);
-    lastVerifiedGameSave=raw;
-    updateSaveStatus(`💾 ${v091SaveName||v091DefaultName(v09ActiveSlot)} · сохранено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
-    if(manual)message(`💾 Сохранено: ${v091SaveName||v091DefaultName(v09ActiveSlot)}.`);
+    localStorage.setItem(v09SlotKey(GameState.session.activeSlot),raw);
+    GameState.session.lastVerified=raw;
+    updateSaveStatus(`💾 ${GameState.session.name||v091DefaultName(GameState.session.activeSlot)} · сохранено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
+    if(manual)message(`💾 Сохранено: ${GameState.session.name||v091DefaultName(GameState.session.activeSlot)}.`);
     return true;
   }catch(error){v09ReportStorageFailure(manual);return false;}
 };
 queueGameSave=function(){
-  if(!gameSaveReady||gameSaveBlocked||v09SaveTransaction||gameSaveTimer!==null)return;
-  const slot=v09ActiveSlot;
-  gameSaveTimer=setTimeout(()=>{gameSaveTimer=null;if(slot===v09ActiveSlot)saveGameProgress();},100);
+  if(!GameState.session.ready||GameState.session.blocked||GameState.session.transaction||GameState.session.timer!==null)return;
+  const slot=GameState.session.activeSlot;
+  GameState.session.timer=setTimeout(()=>{GameState.session.timer=null;if(slot===GameState.session.activeSlot)saveGameProgress();},100);
 };
 flushGameSave=function(){v09CancelPendingSave();return saveGameProgress();};
 function v09BeforeSwitch(){
   v09CancelPendingSave();
-  if(v09ActiveSlot&&!gameSaveBlocked&&!saveGameProgress()){
+  if(GameState.session.activeSlot&&!GameState.session.blocked&&!saveGameProgress()){
     message('Не удалось сохранить текущую игру. Скачайте копию перед переключением.');return false;
   }
   return true;
@@ -6945,11 +7152,11 @@ function v09ChooseSlot(id){
     if(!entry||entry.invalid){message('Сохранение повреждено. Текущая игра не изменена.');return false;}
     if(!v09BeforeSwitch())return false;
     // Refresh if selecting the current slot: the flush just saved the latest progress.
-    const next=id===v09ActiveSlot?v09ReadSlot(id):entry;
+    const next=id===GameState.session.activeSlot?v09ReadSlot(id):entry;
     if(!next||next.invalid)throw new Error('Save not available');
     localStorage.setItem(V09_ACTIVE_KEY,String(id));
     restoreGameProgress(next.data);
-    v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=JSON.stringify(next.data);
+    GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=JSON.stringify(next.data);
     updateSaveStatus(`💾 Слот ${id} · игра загружена.`);message(`Продолжаем игру из слота ${id}.`);return true;
   }catch(error){message('Не удалось загрузить игру. Сохранения не удалены.');return false;}
 }
@@ -6957,11 +7164,11 @@ function v09NewGame(){
   try{
     const id=v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
-    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.21.0';data.v010={schema:1,modules:clone(V010.initialModules)};
+    let data=GameSave.newGameData();
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
     const raw=v09WriteNewSlot(id,data);
-    restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=raw;
+    restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=raw;
     updateSaveStatus(`💾 Новая игра · слот ${id}.`);message(`Новая игра в слоте ${id}. Другие сохранения остались на месте.`);return true;
   }catch(error){v09ReportStorageFailure(true);return false;}
 }
@@ -6972,7 +7179,7 @@ function v09ImportSave(raw){
     const id=v09FreeSlot();if(!id){message('Нет свободного слота для импорта. Сохранения не изменены.');return false;}
     if(!v09BeforeSwitch())return false;
     const importedRaw=v09WriteNewSlot(id,data);
-    restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=importedRaw;
+    restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=importedRaw;
     updateSaveStatus(`💾 Импортировано в слот ${id}.`);message(`Сохранение загружено в отдельный слот ${id}.`);return true;
   }catch(error){v09ReportStorageFailure(true);return false;}
 }
@@ -6981,8 +7188,8 @@ function v09DownloadSave(){
     const raw=JSON.stringify(captureGameProgress(),null,2);decodeGameProgress(raw);
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
-    const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.21.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
+    a.download=`survival-base-0.22.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -6990,9 +7197,9 @@ function v09DownloadSave(){
 function v091RenameSave(id,value){
   if(!Number.isInteger(id)||id<1||id>V09_SLOT_COUNT)return false;
   let next;try{next=v091CleanSaveName(value)||v091DefaultName(id);}catch(error){return false;}
-  if(id===v09ActiveSlot){
-    const previous=v091SaveName;v091SaveName=next;
-    if(!saveGameProgress()){v091SaveName=previous;return false;}
+  if(id===GameState.session.activeSlot){
+    const previous=GameState.session.name;GameState.session.name=next;
+    if(!saveGameProgress()){GameState.session.name=previous;return false;}
   }else{
     try{
       const entry=v09ReadSlot(id);if(!entry||entry.invalid)return false;
@@ -7027,11 +7234,11 @@ function v09RenderSaveSlots(){
       name.textContent=entry&&!entry.invalid?entry.data.saveName:`Слот ${id}`;label.append(name);
       const meta=document.createElement('div');meta.className='subtitle';meta.style.margin='4px 0 0';
       meta.textContent=!entry?'Свободен':entry.invalid?'Не удалось прочитать. Данные сохранены.':
-        `Слот ${id}${id===v09ActiveSlot?' · текущий':''} · ${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`;
+        `Слот ${id}${id===GameState.session.activeSlot?' · текущий':''} · ${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`;
       label.append(meta);row.append(label);
       if(entry&&!entry.invalid){
         const actions=document.createElement('div');actions.className='v091SaveActions';
-        actions.append(v09Button(id===v09ActiveSlot?'Продолжить':'Загрузить',()=>v09ChooseSlot(id)),
+        actions.append(v09Button(id===GameState.session.activeSlot?'Продолжить':'Загрузить',()=>v09ChooseSlot(id)),
           v09Button('Переименовать',()=>v091EditSaveName(id,row,entry.data.saveName)));row.append(actions);
       }
       if(entry){const del=v09Button('Удалить',()=>V0104.requestDelete(id));del.classList.add('v104Delete');row.append(del);}
@@ -7053,17 +7260,17 @@ el('saveGameButton').after(v09Button('📂 Продолжить / загрузи
 v09Style('.v09SaveRow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #ffffff20;flex-wrap:wrap}.v09SaveRow>div{min-width:0}.v09SaveRow b{overflow-wrap:anywhere}.v09SaveRow .menuButton{width:auto;flex-shrink:0;margin:0;padding:10px 12px;font-size:12px}.v09SaveRow .subtitle{line-height:1.45}.v091SaveActions{display:flex;gap:6px;flex-wrap:wrap}.v091SaveNameLabel{display:block;flex:1;min-width:180px;color:#a9bebf;font-size:12px}.v091SaveNameInput{display:block;box-sizing:border-box;width:100%;margin-top:6px;padding:10px;border:1px solid #8ca88e;border-radius:7px;background:#101b1f;color:#fff;font:inherit;font-size:16px}.v091SaveNameInput:focus{outline:2px solid #b9d699;outline-offset:2px}');
 window.V09Saves={open(){v09RenderSaveSlots();openOverlay(v09SaveOverlay);},newGame:v09NewGame,
   load:v09ChooseSlot,importRaw:v09ImportSave,download:v09DownloadSave,rename:v091RenameSave,
-  get name(){return v091SaveName;},
-  get activeSlot(){return v09ActiveSlot;},get chickenBreedMs(){return v09ChickenBreedMs;}};
+  get name(){return GameState.session.name;},
+  get activeSlot(){return GameState.session.activeSlot;},get chickenBreedMs(){return v09ChickenBreedMs;}};
 
 
 v09Style(".itemIcon{width:44px;height:44px;object-fit:contain;vertical-align:middle;pointer-events:none}.slotArt .itemIcon{width:100%;height:100%}.equipIcon .itemIcon{width:37px;height:37px}.inventoryGrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}.invSlot{box-sizing:border-box;min-height:66px;height:66px;padding:3px;position:relative;overflow:hidden}.invSlot .ico{height:37px;line-height:37px}.invSlot .ico .itemIcon{width:38px;height:38px}.invSlot>div:nth-child(2){font-size:9px;line-height:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.invSlot .qty{font-size:10px;line-height:12px;margin:0}.invSlot>div:only-child{font-size:9px}.v092CraftLayout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;min-height:0;flex:1;margin-top:10px}.v092RecipeList{overflow-y:auto;border-right:1px solid #ffffff16;padding-right:10px}.v092Category{font-size:11px;letter-spacing:.5px;color:#afc1bc;margin:10px 0}.v092Recipe{display:flex;align-items:center;gap:6px;width:100%;padding:7px 4px;margin:4px 0;border:1px solid transparent;border-radius:8px;background:#1c2a30;color:#e3ece8;text-align:left;cursor:pointer;min-height:58px}.v092Recipe.selected{border-color:#c9ac70;background:#34413f}.v092Recipe span{font-size:12px}.v092Recipe small{display:block;color:#a5b7b3;font-size:10px;margin-top:4px}.v092Recipe .itemIcon{width:42px;height:42px;flex-shrink:0}.v092RecipeHero{display:flex;align-items:center;gap:14px;min-height:90px}.v092RecipeHero>.itemIcon{width:85px;height:85px}.v092Materials{display:grid;grid-template-columns:1fr 1fr;gap:6px;min-height:112px;align-content:start}.v092Ingredient{display:flex;align-items:center;gap:6px;background:#1b2b30;border:1px solid #3b5054;border-radius:7px;color:#dce9e4;padding:5px;text-align:left;cursor:pointer;font-size:11px}.v092Ingredient strong{display:block;margin-top:4px}.v092Ingredient .itemIcon{width:34px;height:34px}.v092MaterialHelp{font-size:11px;line-height:1.4;min-height:46px;color:#afc1b9;padding:8px 0}.v092Production{font-size:12px}.v092Production>span{float:right;color:#b3d5be}.v092Production .v09CraftProgress{margin:8px 0}.v092ProductionCounts{margin-top:5px}.v091CraftActions{min-height:160px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-end}.v091CraftActions .v09CraftNote{margin:6px 0}#v09CraftOverlay .v09Panel{width:min(820px,calc(100vw - 20px));height:min(710px,94dvh)}.v091QuantityCount{font-size:13px}.v09CraftQuantity{gap:5px}.v09CraftQuantity button{font-size:12px}.v09CraftShort{color:#efa496}.v09GunStats{min-height:58px}\n@media(max-width:540px){.v092CraftLayout{grid-template-columns:116px minmax(0,1fr);gap:8px}.v092Recipe{flex-direction:column;align-items:flex-start}.v092Recipe .itemIcon{width:38px;height:38px}.v092RecipeList{padding-right:5px}.v092RecipeHero{gap:5px}.v092RecipeHero>.itemIcon{width:48px;height:48px}.v092RecipeHero b{font-size:13px}.v092Materials{grid-template-columns:1fr;min-height:112px}.v092Ingredient{min-height:38px}.v092Production>span{float:none;display:block}.invSlot{height:62px;min-height:62px}.inventoryGrid{gap:3px}.v091CraftActions{min-height:160px}#v09CraftOverlay .v09Panel{padding:10px}.v09CraftQuantity{grid-template-columns:1fr 1fr}}\n@media(max-height:500px){.v091CraftActions{min-height:100px}.v092Production .v09CraftNote{display:none}#v09CraftOverlay .v09Panel{height:96dvh}}\n");
 /* Shared, synchronous event and save registry. Gameplay modules are initialized before loading a slot. */
 const V010=(()=>{
-  const listeners=new Map(),modules={},recent=new Map();
+  const listeners=new Map(),modules=GameSave.modules,recent=new Map();
   const api={modules,on(name,fn){if(!listeners.has(name))listeners.set(name,[]);listeners.get(name).push(fn);return fn;},
     emit(name,data){for(const fn of listeners.get(name)||[])fn(data);},
-    register(name,mod){modules[name]=mod;return mod;},
+    register(name,mod){return GameSave.registerModule(name,mod);},
     log(text,kind='base'){text=String(text?.text??text).slice(0,300);const now=Date.now();if(now-(recent.get(text)||0)<2000)return;recent.set(text,now);if(recent.size>150)recent.delete(recent.keys().next().value);api.emit('log',{text,kind,at:now});}
   };window.V010=api;return api;
 })();
@@ -7330,9 +7537,8 @@ window.V010Inventory=(()=>{
   function capture(){return {schema:1,preset:copy(preset),selectedUid:copy(selectedUid)};}
   function restore(data){preset={ammo:90,ammo556:90,meds:2,water:5};for(const key of Object.keys(selectedUid))delete selectedUid[key];if(data&&validate(data)){preset=copy(data.preset);Object.assign(selectedUid,data.selectedUid||{});}drag=null;}
   const api={cell,startPointer,list,capacity,clickSuppressed:()=>performance.now()<suppressClick,capture,restore,validate,openExternalChest:cache=>{if(!cache||!Array.isArray(cache.items)||cache.items.length>60)return false;storageChests[-1]=cache;openStorage(-1);return true;},move,transfer,split,sort,equip,unequip,selectedItem,selectUid,materialCount,consumeMaterials,putMaterials:(input,batches=1)=>putMaterials(input,batches),putMaterialsAtomic:(input,batches=1)=>putMaterials(input,batches,true),insertItem:item=>insert(bag,item,BAG_SLOTS),render:notifyChange,details,bulk,refill,setPreset:p=>{if(validate({schema:1,preset:p})){preset=copy(p);queueGameSave();return true;}return false;}};
-  if(window.V010)V010.modules.inventory=api;return api;
+  if(window.V010)V010.register('inventory',api);return api;
 })();
-
 /* 0.10 — persistent equipment, weapon upgrades and timed reloading. */
 window.V010Combat=(() => {
   'use strict';
@@ -7521,7 +7727,7 @@ window.V010Combat=(() => {
   function validate(d){if(!d||d.schema!==1||!Number.isInteger(d.nextUid)||d.nextUid<1||d.nextUid>100000000)throw Error('Некорректные данные экипировки');return true;}
   function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;lastHud='';const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();updateAmmoHud();}
   const api={capture,restore,validate,validateItem,getItemStats,gunSpec,refreshStats,ensure,rollFoundItem,currentWeapon,tick,cancelReload,upgrade,costs,install,detach,openWorkshop,renderWorkshop,practiceTarget,setPractice,practiceAllowed,modules:MODULES,get reloading(){return reloading?copy(reloading):null;},get practice(){return practice;}};
-  if(window.V010?.modules)V010.modules.combat=api;
+  if(window.V010?.modules)V010.register('combat',api);
   restore(null);return api;
 })();
 
@@ -7529,7 +7735,7 @@ window.V010Combat=(() => {
 const V010Craft=(()=>{
   'use strict';
   const api=V09Craft.craftQueue;
-  V010.modules.craft={capture:api.capture,restore:api.restore,validate:api.validate};
+  V010.register('craft',{capture:api.capture,restore:api.restore,validate:api.validate});
   v09Style(`
     #v09CraftOverlay .v09Panel{width:min(760px,calc(100vw - 18px));height:min(660px,94dvh);padding:12px}
     #v09CraftOverlay .v09Header{margin-bottom:5px;padding-bottom:6px}#v09CraftOverlay .v09Title{font-size:17px}
@@ -7574,7 +7780,6 @@ const V010Craft=(()=>{
   const oldUpdate=update;update=function(){oldUpdate();pinClock+=16.667*frameScale;if(pinClock>=250){pinClock=0;refreshPin();}};
   api.refreshPin=refreshPin;return api;
 })();
-
 /* 0.10 — persistent outer districts, voluntary events, shortcuts and bounded local AI. */
 const V010World = (()=>{
   'use strict';
@@ -7833,10 +8038,9 @@ const V010World = (()=>{
   function restore(d){if(d)validate(d);Object.assign(settings,d?d.settings:defaults);for(const k of Object.keys(events))events[k]=d?d.events[k]:false;shortcuts.forEach((s,i)=>s.open=d?d.shortcuts[i].open:false);caches.forEach((c,i)=>{c.items=clone(d?d.caches[i].items:[]);if(d){c.name=d.caches[i].name;c.icon=d.caches[i].icon;}});zombies.forEach((z,i)=>configureZombie(z,i,d?.types[i]||typeAt(i)));if(!d)adjustPopulation();shortcutWork=null;setSneaking(false);invalidateGeometry();}
   v09Style('.v010CacheGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}.v010CacheGrid .menuButton{padding:4px;min-width:0;margin:0}.v010CacheGrid .itemIcon{width:34px;height:34px}.v010CacheGrid small{display:block;font-weight:400}.v010Difficulty{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:14px 0;font-size:14px}.v010Difficulty select{padding:8px;border:1px solid #71897e;border-radius:7px;background:#1a2e30;color:#e2e9df;font-size:15px}#v010SneakButton{position:fixed;z-index:31;left:calc(env(safe-area-inset-left,0px) + 22px);bottom:calc(env(safe-area-inset-bottom,0px) + 205px);border:1px solid #a8c0ae66;background:#192c2bba;color:#c7d2c7;border-radius:8px;padding:8px 11px;font:11px Arial;touch-action:manipulation}#v010SneakButton.active{background:#648465;color:white;border-color:#b9c9a5}@media(max-height:500px){#v010SneakButton{bottom:calc(env(safe-area-inset-bottom,0px) + 165px);left:calc(env(safe-area-inset-left,0px) + 17px)}}');
   const api={regions,places,cars,caches,shortcuts,newOres,newTrees,settings,TYPES,registerSpawns(points){allSpawns.push(...points);adjustPopulation();},spawnAt,targetCount,migrateData,capture,restore,validate,setSetting,showDifficulty,zombieDamage,openCache,lootFor,get noise(){return {...noiseEvent,at:noiseEvent.time};},get sneaking(){return sneaking;},setSneaking};
-  if(window.V010?.modules)V010.modules.world={capture,restore,validate};
+  if(window.V010?.modules)V010.register('world',{capture,restore,validate});
   window.V010World=api;invalidateGeometry();return api;
 })();
-
 /* 0.10 — reserve battery, automatic priority allocation and quiet base alerts. */
 const V010Energy=(()=>{
   const battery={charge:0,capacity:1.5,enabled:true,maxCharge:3,maxDischarge:6};
@@ -8016,10 +8220,9 @@ const V010Energy=(()=>{
   }
   const api={battery,allocation,capture,snapshot:capture,restore,validate,setRoomPriority,setDevicePriority,roomPriority:roomRank,devicePriority:deviceRank,open:openBattery,remainingTime,get flow(){return {...lastFlow};}};
   window.V010Energy=api;
-  if(typeof V010!=='undefined'&&V010.modules)V010.modules.energy=api;
+  if(typeof V010!=='undefined'&&V010.modules)V010.register('energy',api);
   return api;
 })();
-
 /* 0.10 — optional goals, verifiable lifetime statistics, research and base journal. */
 window.V010Progression=(()=>{
   const KEYS=['kills','mined','harvested','produced','discovered'];
@@ -8373,12 +8576,12 @@ function viewHeight(){return V010Camera.view().h;}
 
 /* One atomic save envelope for all 0.10 systems. Invalid imports never mutate the live game. */
 (()=>{
-  const order=['world','inventory','craft','combat','energy','progression','camera'];
-  const snapshot=()=>Object.fromEntries(order.filter(k=>V010.modules[k]).map(k=>[k,V010.modules[k].capture()]));
+  const order=GameSave.moduleOrder;
+  const snapshot=()=>GameSave.snapshotModules();
   V010.initialModules=clone(snapshot());
-  const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.21.0';d.v010={schema:1,modules:snapshot()};return d;};
-  decodeGameProgress=function(raw){
+  
+  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.22.0';d.v010={schema:1,modules:snapshot()};return d;});
+  GameSave.extend('decode','save.envelope',function(oldDecode,raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
       if(!d.v010||d.v010.schema!==1||!d.v010.modules||Array.isArray(d.v010.modules))throw Error('Некорректные данные обновления');
@@ -8386,22 +8589,21 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.21.0';return d;
-  };
-  restoreGameProgress=function(d){
-    const was=v09SaveTransaction;v09SaveTransaction=true;
+    d.gameVersion='0.22.0';return d;
+  });
+  GameSave.extend('restore','save.envelope',function(oldRestore,d){
+    const was=GameState.session.transaction;GameState.session.transaction=true;
     try{oldRestore(d);for(const name of order)V010.modules[name]?.restore(d.v010?.modules?.[name]??null);if(window.V010Inventory)V010Inventory.render();V091Light.invalidate();}
-    finally{v09SaveTransaction=was;}
-  };
+    finally{GameState.session.transaction=was;}
+  });
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(text);};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.21.0 · Большой мир и свободное развитие';
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.21.0';
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.22.0 · Большой мир и свободное развитие';
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.22.0';
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
 })();
-
 /* 0.10.5 — top-down usability, farm irrigation and save management. */
 const V0104=(()=>{
   // Keep small world labels legible at distant zoom without scaling the HUD.
@@ -8452,10 +8654,10 @@ const V0104=(()=>{
     if(!Number.isInteger(id)||id<1||id>V09_SLOT_COUNT)return false;
     try{
       if(!v09OccupiedSlots().includes(id))return false;
-      if(id===v09ActiveSlot){v09CancelPendingSave();v09ActiveSlot=null;gameSaveBlocked=true;lastVerifiedGameSave=null;localStorage.removeItem(V09_ACTIVE_KEY);stopControls();}
+      if(id===GameState.session.activeSlot){v09CancelPendingSave();GameState.session.activeSlot=null;GameState.session.blocked=true;GameState.session.lastVerified=null;localStorage.removeItem(V09_ACTIVE_KEY);stopControls();}
       localStorage.setItem('survival_base_slots_deleted','1');
       localStorage.removeItem(v09SlotKey(id));localStorage.removeItem(v09BackupKey(id));
-      updateSaveStatus(v09ActiveSlot?'Слот '+id+' удалён.':'Выберите сохранение или создайте новую игру.');v09RenderSaveSlots();return true;
+      updateSaveStatus(GameState.session.activeSlot?'Слот '+id+' удалён.':'Выберите сохранение или создайте новую игру.');v09RenderSaveSlots();return true;
     }catch(error){message('Не удалось удалить сохранение');return false;}
   }
   function requestDelete(id){
@@ -8586,9 +8788,9 @@ window.V0105=(()=>{
     }
   }
 
-  const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){V09World.tickMining();updateChop();const d=oldCapture();d.gathering={schema:1,chop:chopState?{...chopState}:null,mining:V09World.miningState(),hand:contextHand};return d;};
-  decodeGameProgress=function(raw){
+  
+  GameSave.extend('capture','ui.context-map',function(oldCapture){V09World.tickMining();updateChop();const d=oldCapture();d.gathering={schema:1,chop:chopState?{...chopState}:null,mining:V09World.miningState(),hand:contextHand};return d;});
+  GameSave.extend('decode','ui.context-map',function(oldDecode,raw){
     const d=oldDecode(raw),g=d.gathering;
     if(g!==undefined){
       const time=t=>Number.isFinite(t)&&t>0&&t<=Date.now()+60000;
@@ -8597,13 +8799,14 @@ window.V0105=(()=>{
       if(g.mining&&(!V09World.ores.some(o=>o.id===g.mining.id)||g.mining.duration!==1800||!time(g.mining.at)||!Number.isFinite(g.mining.elapsed)||g.mining.elapsed<0||g.mining.elapsed>=1800))throw Error('Некорректная добыча');
     }
     return d;
-  };
-  restoreGameProgress=function(d){
+  });
+  GameSave.extend('restore','ui.context-map',function(oldRestore,d){
     target=null;contextHand=null;cancelChop();oldRestore(d);
     const g=d.gathering;if(g){contextHand=g.hand&&bagCount(g.hand)>0?g.hand:null;chopState=g.chop?{...g.chop}:null;V09World.resumeMining(g.mining);V09World.tickMining();updateChop();}
     renderQuickSlots();updateAmmoHud();
-  };
+  });
   const history=[
+    ['0.22.0',{'Улучшения':['Этап 2: явные владельцы состояния и упорядоченная цепочка сохранения.','Совместимость старых saves и проверка формата до загрузки. Игровой баланс сохранён.'],'Исправления':['Новая игра получает полный начальный шаблон после создания всех систем базы.']}],
     ['0.21.0',{'Исправления':['Открывающий клик больше не закрывает окно объекта.','Дрон выбирается по видимому корпусу, в том числе на станции.','Движущаяся цель взаимодействия проверяется по актуальной позиции.'],'Улучшения':['Этап 1: исходники разделены по областям игры с сохранением порядка запуска. Баланс и формат сохранений сохранены.']}],
     ['0.20.0',{'Новое':['Периметр: 4 угла, 11 стен и одни южные ворота.','16 лестниц с плавным подъёмом. Со стены можно спрыгнуть только во двор.','Пять обликов укреплений и три стадии трещин.'],'Улучшения':['Пулемёт устанавливается в любой точке стены, включая стыки.','Сохранены уровни укреплений, повреждения и установленные пулемёты из предыдущей версии.']}], ['0.19.1',{'Улучшения':['Круг выбранной цели масштабируется под размер монстра.','Тела сразу полупрозрачны: 60% видимости, плавное исчезновение через 75–90 секунд.']}], ['0.19.0',{'Новое':['Три отдельные позы смерти каждого из пяти монстров.','День X каждые десять игровых дней: усиление на 50% и осада с четырёх сторон.'],'Баланс':['В обычные дни меньше монстров: спокойное блуждание, атака только при обнаружении игрока.','Стены и двери атакуются монстрами только в день X; ночь сама по себе больше не запускает осаду.'],'Исправления':['Отряды удерживают свою сторону базы, не сбегаясь в один пролом.','Усиление и состояние тел корректно сохраняются без повторного умножения характеристик.']}], ['0.18.0',{'Новое':['Молот для ремонта стен, ворот и дверей.','Камень добывается киркой; бетон изготавливается в печи.','Пять уровней укреплений: 10, 20, 40, 60 и 100 тысяч HP.'],'Улучшения':['Восстановление проломов с проверкой свободного места.','Ремонт 1000 HP/сек.; остаток ремонтной смеси сохраняется.']}], ['0.17.0',{'Новое':['Пять типов монстров: громила, заражённый, ловчий, прыгун и взрывник.','Ночные атаки базы, распределение противников по стенам, постоянные полоски здоровья.'],'Улучшения':['Отдельные анимированные изображения движения и атак.','Тонкая шкала здоровья и шкала сытости над ней.'],'Баланс':['Больше противников ночью; прыжки с дистанции и опасный ближний взрыв.']}], ['0.16.3',{'Улучшения':['Маршрут начинается с безопасного участка сразу; дальнейший путь рассчитывается по кадрам.','Мягкая полупрозрачная линия маршрута; здоровье и сытость над быстрыми слотами.','Рюкзак и хранилище: непрозрачность 100%, 70% или 40%.','Добыча: три действия, выбор одной стопки или выдача всего в рюкзак либо дрон.'],'Исправления':['Пустые быстрые слоты открывают выбор предмета и при касании пальцем.','Нажатие за окном закрывает только верхнюю карточку и не проходит под неё.','Открытие интерфейса сохраняет автопуть и добычу; получение урона останавливает добычу.','Убран отдельный индикатор заряда дрона поверх игрового мира.']}], ['0.16.2',{'Улучшения':['Пять быстрых слотов уменьшены на 30%; компактный выбор из всего рюкзака.','Недоступные для быстрого слота предметы приглушены и подсвечиваются красным при нажатии.'],'Новое':['Съёмные магазины АК и M4 на 30 и 60 патронов.','Без магазина оружие не стреляет; снятие возвращает пустой магазин и весь боезапас в рюкзак.'],'Исправления':['Атомарные операции с магазинами, заполнение стаков до 600 и сохранение точного боезапаса.']}], ['0.16.1',{'Новое':['Физический станок усиления в углу мастерской: оружие, экипировка, пулемёт и модули дрона до +5.','Новые иконки шлема, увеличенного магазина, дрона и станка.','Перенос предметов удержанием между быстрыми слотами, рюкзаком, ящиками и дроном.'],'Улучшения':['Мини-карта немного меньше и сохраняет правильное положение до и после масштабирования.','Окна сразу скрывают игровые кнопки и мини-карту, закрываются крестиком и нажатием на фон.','Поднятые лампы освещают двор поверх низких декораций; вещи расположены ближе к стенам.','Единая прозрачность игровых кнопок и новая иконка тихого шага.'],'Баланс':['Ёмкость батареи дрона увеличена в 2,5 раза.','Добыча руды: 10 за цикл; переплавка железа и меди: 2 секунды за слиток.','Удалены прицел, рукоятка, глушитель и положение на колене.'],'Исправления':['Улучшенные предметы сохраняются на станке без дублирования.','Старые сохранения переносятся с сохранением прогресса плавки; материалы незавершённых удалённых рецептов возвращаются.','Все лестницы остаются доступны после перестановки декораций.']}], ['0.16.0',{'Новое':['Сутки за 20 минут активной игры: плавный рассвет, вечер и ночь; время сохраняется.','Съёмный тяжёлый пулемёт: урон 65, поворот 360°, изготовление и размещение на стенах.'],'Улучшения':['Мягкое локальное освещение бункера, усиленный фонарик и свет дрона.','Лампы на стенах и восемь наружных прожекторов по углам базы.','Открытый двор без машин и лишних перегородок; более тёмный бетон.'],'Исправления':['Перенос прежних сохранений сохраняет прочность внешних и внутренних укреплений.','Проходы и лестницы остаются свободными при установленном пулемёте.','Ворота не закрываются на дроне; разрушение стены во время подъёма не портит положение персонажа.','Северный мост больше не перекрывает верхнюю линию выстрела и света.']}], ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
  'Новое':['Мини-инвентарь готовой продукции каждого станка: выбор стопки и выдача всего.','Общий бачок полива: 100 л, 10 секунд полива после 45 секунд паузы.','Отдых на кровати восстанавливает здоровье; душ смывает загрязнение после боя.','Дом и автосервис с открывающимися дверями, скрываемой крышей и добычей внутри.','Новые изображения оборудования и животных, механическая анимация станков и открывания ящиков.'],
@@ -8624,7 +8827,6 @@ window.V0105=(()=>{
   v09Style('#v105Changes .panel{width:min(480px,94vw);padding:14px;font-size:12px;max-height:85dvh}#v105Changes details{border-bottom:1px solid #405452;padding:8px 0}#v105Changes summary{font-size:14px;cursor:pointer;color:#e2c58d}#v105Changes h3{font-size:12px;margin:12px 0 4px;color:#97cab5}#v105Changes ul{padding-left:18px;margin:4px 0;line-height:1.5}#v105Changes li{margin:5px 0}');
   return {tapWorld,equip,markers,drawMapMarkers,showHistory,history,get target(){return liveTarget();},get contextHand(){return contextHand;}};
 })();
-
 window.V011Art=(()=>{const sources={"bed": "assets/v0190/bed_576bac1724fa.webp", "car": "assets/v0190/car_73f5cbc33901.webp", "car013_estate": "assets/v0190/car013_estate_6995f6f74a7c.webp", "car013_estate_damaged": "assets/v0190/car013_estate_damaged_65822643a73c.webp", "car013_minibus": "assets/v0190/car013_minibus_95dd90222e42.webp", "car013_minibus_damaged": "assets/v0190/car013_minibus_damaged_8edd13db1125.webp", "car013_sedan": "assets/v0190/car013_sedan_e7647e74c20e.webp", "car013_sedan_damaged": "assets/v0190/car013_sedan_damaged_cef962a7d881.webp", "car013_suv": "assets/v0190/car013_suv_385b2377d103.webp", "car013_suv_damaged": "assets/v0190/car013_suv_damaged_5b1939517d0b.webp", "car013_van": "assets/v0190/car013_van_afa38ecb549c.webp", "car013_van_damaged": "assets/v0190/car013_van_damaged_03187da7a458.webp", "chest": "assets/v0190/chest_11946dbf77ba.webp", "chicken": "assets/v0190/chicken_ccefd5a2358b.webp", "concrete018": "assets/v0190/concrete018_0d1655df37b7.webp", "corpse_bloater019": "assets/v0190/corpse_bloater019_62b20bec2e6c.webp", "corpse_brute019": "assets/v0190/corpse_brute019_db8dbea52a69.webp", "corpse_leaper019": "assets/v0190/corpse_leaper019_f3d877178c3d.webp", "corpse_runner019": "assets/v0190/corpse_runner019_e301cadf0f7a.webp", "corpse_walker019": "assets/v0190/corpse_walker019_c367a8299187.webp", "cow": "assets/v0190/cow_a468c7ba360f.webp", "crop_berries": "assets/v0190/crop_berries_7df58fa592d9.webp", "crop_carrot": "assets/v0190/crop_carrot_4f011a37c7ab.webp", "crop_grain": "assets/v0190/crop_grain_b47aa2138868.webp", "crop_potato": "assets/v0190/crop_potato_025274746275.webp", "crop_tomato": "assets/v0190/crop_tomato_d6e63e402c6d.webp", "desk": "assets/v0190/desk_edf2842135b6.webp", "drone014": "assets/v0190/drone014_be061e6fd3b8.png", "fish": "assets/v0190/fish_c34133c382ee.webp", "fishing_boat": "assets/v0190/fishing_boat_fff0e54c45ab.webp", "fishing_rod": "assets/v0190/fishing_rod_6ef3f6cd26e9.webp", "furnace": "assets/v0190/furnace_2bb29c13b073.webp", "generator": "assets/v0190/generator_0db68ba58de0.webp", "hammer018": "assets/v0190/hammer018_9a63cffc2c34.webp", "helmet0161": "assets/v0190/helmet0161_57b665b62255.png", "lamp": "assets/v0190/lamp_f5be86ae0338.webp", "magazine0161": "assets/v0190/magazine0161_ca6f3702c831.png", "monster_bloater017": "assets/v0190/monster_bloater017_11480e06ad7e.webp", "monster_brute017": "assets/v0190/monster_brute017_04c2bff3cc31.webp", "monster_leaper017": "assets/v0190/monster_leaper017_251e9b6f3449.webp", "monster_runner017": "assets/v0190/monster_runner017_29ef90adfe0d.webp", "monster_walker017": "assets/v0190/monster_walker017_48ff631fdd77.webp", "shower": "assets/v0190/shower_6ca1fe058ac4.webp", "stone018": "assets/v0190/stone018_26eeac026ace.webp", "tank": "assets/v0190/tank_fc8ed5aea9b6.webp", "toilet": "assets/v0190/toilet_2ff49cfd9314.webp", "upgrade_station0161": "assets/v0190/upgrade_station0161_f2984df87b95.png", "wardrobe": "assets/v0190/wardrobe_4592d88cb6cd.webp", "workbench": "assets/v0190/workbench_735fafb49c1a.webp"};const sourceBounds={"bed": {"x": 54, "y": 26, "w": 229, "h": 458}, "car": {"x": 47, "y": 9, "w": 162, "h": 313}, "car013_estate": {"x": 47, "y": 20, "w": 162, "h": 344}, "car013_estate_damaged": {"x": 46, "y": 12, "w": 164, "h": 358}, "car013_minibus": {"x": 45, "y": 8, "w": 165, "h": 365}, "car013_minibus_damaged": {"x": 44, "y": 7, "w": 166, "h": 369}, "car013_sedan": {"x": 35, "y": 6, "w": 186, "h": 371}, "car013_sedan_damaged": {"x": 40, "y": 14, "w": 176, "h": 355}, "car013_suv": {"x": 40, "y": 10, "w": 176, "h": 359}, "car013_suv_damaged": {"x": 38, "y": 9, "w": 180, "h": 367}, "car013_van": {"x": 42, "y": 10, "w": 172, "h": 359}, "car013_van_damaged": {"x": 38, "y": 5, "w": 178, "h": 374}, "chest": {"x": 15, "y": 22, "w": 482, "h": 294}, "chicken": {"x": 18, "y": 12, "w": 147, "h": 232}, "concrete018": {"x": 45, "y": 170, "w": 1169, "h": 1004}, "corpse_bloater019": {"x": 61, "y": 63, "w": 2060, "h": 607}, "corpse_brute019": {"x": 59, "y": 89, "w": 2048, "h": 556}, "corpse_leaper019": {"x": 72, "y": 58, "w": 2042, "h": 606}, "corpse_runner019": {"x": 102, "y": 109, "w": 1977, "h": 533}, "corpse_walker019": {"x": 106, "y": 32, "w": 1994, "h": 666}, "cow": {"x": 80, "y": 9, "w": 181, "h": 489}, "crop_berries": {"x": 16, "y": 15, "w": 230, "h": 225}, "crop_carrot": {"x": 10, "y": 6, "w": 236, "h": 244}, "crop_grain": {"x": 17, "y": 8, "w": 229, "h": 234}, "crop_potato": {"x": 10, "y": 12, "w": 236, "h": 234}, "crop_tomato": {"x": 9, "y": 15, "w": 235, "h": 223}, "desk": {"x": 14, "y": 84, "w": 459, "h": 332}, "drone014": {"x": 41, "y": 74, "w": 1172, "h": 1081}, "fish": {"x": 5, "y": 13, "w": 184, "h": 98}, "fishing_boat": {"x": 77, "y": 5, "w": 231, "h": 561}, "fishing_rod": {"x": 4, "y": 2, "w": 186, "h": 186}, "furnace": {"x": 19, "y": 35, "w": 304, "h": 441}, "generator": {"x": 27, "y": 8, "w": 287, "h": 493}, "hammer018": {"x": 69, "y": 57, "w": 1123, "h": 1141}, "helmet0161": {"x": 35, "y": 20, "w": 1184, "h": 1203}, "lamp": {"x": 10, "y": 24, "w": 236, "h": 164}, "magazine0161": {"x": 272, "y": 17, "w": 655, "h": 1236}, "monster_bloater017": {"x": 39, "y": 44, "w": 1460, "h": 937}, "monster_brute017": {"x": 44, "y": 19, "w": 1459, "h": 983}, "monster_leaper017": {"x": 65, "y": 44, "w": 1413, "h": 921}, "monster_runner017": {"x": 56, "y": 11, "w": 1423, "h": 986}, "monster_walker017": {"x": 35, "y": 43, "w": 1466, "h": 935}, "shower": {"x": 58, "y": 27, "w": 386, "h": 431}, "stone018": {"x": 40, "y": 46, "w": 1179, "h": 1164}, "tank": {"x": 47, "y": 23, "w": 247, "h": 465}, "toilet": {"x": 59, "y": 36, "w": 222, "h": 441}, "upgrade_station0161": {"x": 70, "y": 243, "w": 1115, "h": 764}, "wardrobe": {"x": 71, "y": 11, "w": 200, "h": 484}, "workbench": {"x": 3, "y": 49, "w": 506, "h": 233}};const sourceFrames={"corpse_bloater019": [{"x": 61, "y": 105, "w": 601, "h": 483}, {"x": 776, "y": 106, "w": 639, "h": 510}, {"x": 1521, "y": 63, "w": 600, "h": 607}], "corpse_brute019": [{"x": 59, "y": 116, "w": 651, "h": 527}, {"x": 749, "y": 112, "w": 686, "h": 529}, {"x": 1541, "y": 89, "w": 566, "h": 556}], "corpse_leaper019": [{"x": 72, "y": 148, "w": 619, "h": 516}, {"x": 796, "y": 128, "w": 605, "h": 497}, {"x": 1573, "y": 58, "w": 541, "h": 596}], "corpse_runner019": [{"x": 102, "y": 140, "w": 533, "h": 419}, {"x": 794, "y": 145, "w": 577, "h": 450}, {"x": 1526, "y": 109, "w": 553, "h": 533}], "corpse_walker019": [{"x": 106, "y": 109, "w": 537, "h": 518}, {"x": 827, "y": 109, "w": 513, "h": 561}, {"x": 1584, "y": 32, "w": 516, "h": 666}]};const images={};const aliases={crate:'chest',cabinet:'wardrobe',craft_bench:'workbench'};const keyOf=k=>aliases[k]||k;for(const [key,src]of Object.entries(sources)){const im=new Image();im.src=src;images[key]=im;}function ready(key){const im=images[keyOf(key)];return !!(im&&im.complete&&im.naturalWidth);}function bounds(key){return sourceBounds[keyOf(key)]||{x:0,y:0,w:1,h:1};}function fit(key,x,y,w,h){const b=bounds(key),scale=Math.min(w/b.w,h/b.h),dw=b.w*scale,dh=b.h*scale;return {x:x+(w-dw)/2,y:y+(h-dh)/2,w:dw,h:dh};}return{sources,ready,bounds,fit,frames:key=>sourceFrames[keyOf(key)]||null,image:key=>images[keyOf(key)],draw(key,x,y,w,h){if(!ready(key))return false;const im=images[keyOf(key)],b=bounds(key),d=fit(key,x,y,w,h);ctx.drawImage(im,b.x,b.y,b.w,b.h,d.x,d.y,d.w,d.h);return true;},drawStretch(key,x,y,w,h){if(!ready(key))return false;ctx.drawImage(images[keyOf(key)],x,y,w,h);return true;}};})();
 /* 0.11 — quiet UI, readable equipment, native inventory scrolling and Telegram-safe HUD. */
 window.V011UI=(()=>{
@@ -9020,20 +9222,20 @@ window.V011Farm=(()=>{
   executeInteraction=function(target){if(target?.kind==='garden_water'){if(!menuOpen&&!playerDead&&canInteract(target,player.x,player.y))openWater();return;}oldExecute(target);};
   const oldUpdate=update;update=function(){settle();oldUpdate();};
   const oldUse=useFarmBed;useFarmBed=function(i){settle();return oldUse(i);};
-  const oldCapture=captureGameProgress,oldRestore=restoreGameProgress,oldDecode=decodeGameProgress;
+  
   function validateSave(d){
     const a=d.farmV011;if(a===undefined)return;
     if(!a||a.schema!==1||!valid(a.water,0,100)||!valid(a.at,0,Date.now()+60000)||!Array.isArray(a.grown)||a.grown.length!==5||a.grown.some((v,i)=>!valid(v,0,d.farm[i].crop===null?0:farmGrowMs(d.farm[i].crop))))throw Error('Некорректные данные полива');
   }
-  captureGameProgress=function(){settle();const d=oldCapture();d.farmV011={schema:1,water:state.water,at:state.at,grown:window.farmState.map(st=>st.crop===null?0:growth(st))};d.farm014={schema:1,next:state.next,end:state.end,beds:window.farmState.map(st=>st.crop===null?null:JSON.parse(JSON.stringify(plants(st))))};return d;};
+  GameSave.extend('capture','farm.growth',function(oldCapture){settle();const d=oldCapture();d.farmV011={schema:1,water:state.water,at:state.at,grown:window.farmState.map(st=>st.crop===null?0:growth(st))};d.farm014={schema:1,next:state.next,end:state.end,beds:window.farmState.map(st=>st.crop===null?null:JSON.parse(JSON.stringify(plants(st))))};return d;});
   function validate014(d){const x=d.farm014;if(!x)return;if(x.schema!==1||!valid(x.next,0,Number.MAX_SAFE_INTEGER)||!valid(x.end,0,Number.MAX_SAFE_INTEGER)||!Array.isArray(x.beds)||x.beds.length!==5)throw Error('Некорректные грядки');x.beds.forEach((a,i)=>{if(a===null){if(d.farm[i].crop!==null)throw Error('Пропущена грядка');return;}if(d.farm[i].crop===null||!Array.isArray(a)||a.length!==50||a.some(p=>!p||typeof p.planted!=='boolean'||typeof p.harvested!=='boolean'||!valid(p.elapsed,0,p.duration)||!valid(p.duration,0,farmGrowMs(d.farm[i].crop)*1.101)||!Number.isInteger(p.qty)||p.qty<1||p.qty>160||p.planted&&p.duration<farmGrowMs(d.farm[i].crop)*.899))throw Error('Некорректные растения');});}
-  decodeGameProgress=function(raw){const d=oldDecode(raw);validateSave(d);validate014(d);return d;};
-  restoreGameProgress=function(d){
+  GameSave.extend('decode','farm.growth',function(oldDecode,raw){const d=oldDecode(raw);validateSave(d);validate014(d);return d;});
+  GameSave.extend('restore','farm.growth',function(oldRestore,d){
     validateSave(d);validate014(d);oldRestore(d);const saved=d.farmV011;
     state.water=saved?saved.water:100;state.at=saved?saved.at:Date.now();state.next=d.farm014?.next||0;state.end=d.farm014?.end||0;
     window.farmState.forEach((st,i)=>{st[grownKey]=st.crop===null?0:saved?saved.grown[i]:clamp(Date.now()-st.plantedAt,0,cropTotal(st));if(d.farm014?.beds[i])st.plants014=JSON.parse(JSON.stringify(d.farm014.beds[i]));});
     settle();lastAnimalAt=performance.now();renderWater();invalidateGeometry();
-  };
+  });
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)settle();});
   // Animals keep existing nutrition/production/breeding mechanics. Only their physical
   // presentation and autonomous, frame-rate independent movement are replaced.
@@ -9398,10 +9600,10 @@ window.V011World=(()=>{
     if(!Array.isArray(d.containers)||d.containers.length>expected.size||new Set(d.containers.map(v=>v?.id)).size!==d.containers.length||d.containers.some(v=>!v||!expected.has(v.id)||typeof v.searched!=='boolean'||!Array.isArray(v.loot)||v.loot.length>12||!v.searched&&v.loot.length||v.loot.some(s=>!s||!Object.hasOwn(ITEM,s.type)||!Number.isInteger(s.qty)||s.qty<1||s.qty>STACK_MAX||window.V010Combat&&V010Combat.validateItem(s)===false)||v.searchedAt!==null&&(!Number.isFinite(v.searchedAt)||v.searchedAt<0||v.searchedAt>Number.MAX_SAFE_INTEGER)))throw Error('Некорректный лут комнат');
     if(!Array.isArray(d.corpses)||d.corpses.length>144||new Set(d.corpses.map(c=>c.i)).size!==d.corpses.length||d.corpses.some(c=>!Number.isInteger(c.i)||c.i<0||c.i>=144||!Number.isFinite(c.at)||c.at<0||c.at>Number.MAX_SAFE_INTEGER))throw Error('Некорректное время тел');return true;
   }
-  const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.world011=capture();return d;};
-  decodeGameProgress=function(raw){const d=oldDecode(raw);if(d.world011!==undefined)validate(d.world011);return d;};
-  restoreGameProgress=function(data){
+  
+  GameSave.extend('capture','world.interiors',function(oldCapture){const d=oldCapture();d.world011=capture();return d;});
+  GameSave.extend('decode','world.interiors',function(oldDecode,raw){const d=oldDecode(raw);if(d.world011!==undefined)validate(d.world011);return d;});
+  GameSave.extend('restore','world.interiors',function(oldRestore,data){
     const d=data.world011;if(d)validate(d);Object.assign(filters,d?.filters||defaults);
     const doors=new Map((d?.doors||[]).map(v=>[v.id,v]));buildings.forEach(b=>{b.doorOpen=doors.get(b.id)?.open??false;b.doorProgress=b.doorOpen?1:0;b.roof=1;b.enterPending=false;});invalidateGeometry();
     // Enlarged footprints must not trap a character saved beside an older, smaller facade.
@@ -9414,7 +9616,7 @@ window.V011World=(()=>{
     const times=new Map((d?.corpses||[]).map(c=>[c.i,c.at]));zombies.forEach((z,i)=>{z.corpseAt011=z.alive?null:times.get(i)??Date.now()-90000;});
     for(const b of buildings)if(scene==='surface'&&inside(b,player.x,player.y,0))b.roof=0;
     updateLegend();invalidateGeometry();
-  };
+  });
   return {filters,setFilter,mapEnabled,buildings,containers,inside,doorRect,walls,toggleDoor,tick,drawRoofs,corpseAlpha,capture,validate,registerBuilding,obsoleteFence};
 })();
 
@@ -9560,10 +9762,10 @@ window.V011Rooms=(()=>{
     V091Light.invalidate();
     // Fortress snapshots derive their canonical coordinates from player; no stale copy remains.
   }
-  const oldRestore=restoreGameProgress;restoreGameProgress=function(data){
+  GameSave.extend('restore','base.rooms',function(oldRestore,data){
     const source=data?.player?.scene==='bunker'?{x:data.player.x,y:data.player.y}:null;
     lidState.clear();frameAt=performance.now();const result=oldRestore(data);safeRestoredPosition(source);return result;
-  };
+  });
   return{floor,walls,corridorWalls,wall,shadow,storage,chest,energy,workshop,paintDarkness,lights,fan,lidState,safeRestoredPosition,animation:()=>({generator:generatorPhase,furnace:furnacePhase,bench:benchPhase}),cacheSize:()=>patterns.size};
 })();
 
@@ -9649,10 +9851,10 @@ window.V011Living=(()=>{
   const oldUpdate=update;update=function(){oldUpdate();tick(16.667*frameScale);};
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
   window.addEventListener('pagehide',stop);window.addEventListener('blur',stop);
-  const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.living011={schema:1,dirt};return d;};
-  decodeGameProgress=function(raw){const d=oldDecode(raw),l=d.living011;if(l!==undefined&&(!l||l.schema!==1||!Number.isFinite(l.dirt)||l.dirt<0||l.dirt>1))throw Error('Некорректное состояние жилой комнаты');return d;};
-  restoreGameProgress=function(d){mode=null;anchor=null;elapsed=0;dirt=clamp(d.living011?.dirt??0,0,1);oldRestore(d);refresh();};
+  
+  GameSave.extend('capture','player.living',function(oldCapture){const d=oldCapture();d.living011={schema:1,dirt};return d;});
+  GameSave.extend('decode','player.living',function(oldDecode,raw){const d=oldDecode(raw),l=d.living011;if(l!==undefined&&(!l||l.schema!==1||!Number.isFinite(l.dirt)||l.dirt<0||l.dirt>1))throw Error('Некорректное состояние жилой комнаты');return d;});
+  GameSave.extend('restore','player.living',function(oldRestore,d){mode=null;anchor=null;elapsed=0;dirt=clamp(d.living011?.dirt??0,0,1);oldRestore(d);refresh();});
   const oldRespawn=respawn;respawn=function(...args){stop();dirt=0;return oldRespawn(...args);};
   function box(x,y,w,h,color,r=4,stroke){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.4;ctx.stroke();}}
   function line(points,color,width=2){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke();}
@@ -9821,8 +10023,8 @@ window.V012Expansion=(()=>{
   for(const [x,y] of [[-500,-650],[2350,-650],[-1700,7000],[1600,7400],[3650,7150],[550,9100]])if(!worldCollision(x,y,25,'surface'))spawnPoints.push({x,y});
   const originalSpawnCount=V010World.targetCount();
   V010World.registerSpawns(spawnPoints);
-  const oldCapture=captureGameProgress,oldDecode=decodeGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.expansion012={schema:1};return d;};
+  
+  GameSave.extend('capture','world.expansion',function(oldCapture){const d=oldCapture();d.expansion012={schema:1};return d;});
   function migrateData(d){
     if(d.expansion012!==undefined){if(!d.expansion012||d.expansion012.schema!==1)throw Error('Некорректные данные расширенного мира');return d;}
     // Existing enemies retain their positions, kills and health. Only the newly
@@ -9837,7 +10039,7 @@ window.V012Expansion=(()=>{
     }
     d.expansion012={schema:1};return d;
   }
-  decodeGameProgress=function(raw){if(typeof raw!=='string'||raw.length>2*1024*1024)return oldDecode(raw);return oldDecode(JSON.stringify(migrateData(JSON.parse(raw))));};
+  GameSave.extend('decode','world.expansion',function(oldDecode,raw){if(typeof raw!=='string'||raw.length>2*1024*1024)return oldDecode(raw);return oldDecode(JSON.stringify(migrateData(JSON.parse(raw))));});
   function line(points,color,width){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();}
   function clipNew(){ctx.beginPath();ctx.rect(bounds.x,bounds.y,bounds.w,bounds.h);ctx.rect(previous.x,previous.y,previous.w,previous.h);ctx.clip('evenodd');}
   function drawRoad(r){const v=V010Camera.view(),xs=r.points.map(p=>p[0]),ys=r.points.map(p=>p[1]),pad=r.width/2+30;if(Math.max(...xs)<camera.x-pad||Math.min(...xs)>camera.x+v.w+pad||Math.max(...ys)<camera.y-pad||Math.min(...ys)>camera.y+v.h+pad)return;const main=r.width>50;line(r.points,main?'#6f786c':'#56644c',r.width+(main?18:8));line(r.points,main?'#444f4f':'#898878',r.width);if(main){ctx.setLineDash([25,31]);line(r.points,'#d2cbae88',2);ctx.setLineDash([]);}}
@@ -10201,7 +10403,7 @@ window.V012Fishing=(()=>{
   const surfaceOld=drawSurface;drawSurface=function(...args){const out=surfaceOld(...args);drawWater();return out;};
   const drawOld=drawPlayer;drawPlayer=function(...args){drawLine();return drawOld(...args);};
   const actionOld=updateAction;updateAction=function(...args){const out=actionOld(...args);if(scene==='surface'&&heldItem()==='fishing_rod'){const shore=state?.spot||shoreTarget();if(shore){interactionTarget=shore;currentActionObject=shore;currentAction='fishing0121';actionButton.classList.add('available');actionButton.classList.remove('inactive');}}if(currentAction==='fishing0121'){actionButton.textContent=state?'■':'🎣';actionButton.setAttribute('aria-label',state?'Остановить рыбалку':'Ловить рыбу');}return out;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(...args){stop();return restoreOld(...args);};
+  GameSave.extend('restore','world.fishing',function(restoreOld,...args){stop();return restoreOld(...args);});
   return {spots,boats,start,stop,tick,phase,drawHeld,drawWater,delay,shoreTarget,get state(){return state?{...state,spot:{...state.spot}}:null;}};
 })();
 
@@ -10272,10 +10474,10 @@ window.V013Inventory=(()=>{
       if(scene!=='bunker'){const note=document.createElement('small');note.textContent='Приготовление доступно на базе';panel.append(note);}
     }body.append(panel);
   }};
-  const cap=captureGameProgress;captureGameProgress=function(){const d=cap();d.quick013={schema:1,items:copy(items),fishReserve:reserve};return d;};
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){const d=JSON.parse(raw);V014Fish.validateSave(d);if(d.handSlots?.length===4)d.handSlots.push(null);const q=d.quick013;if(q){if(q.schema!==1||!Array.isArray(q.items)||q.items.length!==5||!q.items.every(s=>s===null||s&&HAND_TYPES.includes(s.type)&&s.qty===1&&V010Combat.validateItem(s)!==false)||!Number.isInteger(q.fishReserve)||q.fishReserve<0||q.fishReserve>=500)throw Error('Неверные быстрые слоты');if(new Set(q.items.filter(Boolean).map(s=>s.type)).size!==q.items.filter(Boolean).length)throw Error('Повтор предмета');d.handSlots=q.items.map(s=>s?.type||null);}
-    return decode(JSON.stringify(d));};
-  const restore=restoreGameProgress;restoreGameProgress=function(d){d=V014Fish.migrate(copy(d));items.fill(null);if(d.quick013)items.splice(0,5,...copy(d.quick013.items));restore(d);if(!d.quick013){for(let i=0;i<5;i++){const t=d.handSlots[i],j=bag.findIndex(s=>s?.type===t);if(t&&j>=0){items[i]=bag[j];bag[j]=null;}}}reserve=d.quick013?.fishReserve||0;for(const a of [bag,...storageChests.map(c=>c.items)])for(const s of a)if(s?.type==='fish')V014Fish.normalize(s);activeHandSlot=d.activeHandSlot;sync();};
+  GameSave.extend('capture','inventory.physical-slots',function(cap){const d=cap();d.quick013={schema:1,items:copy(items),fishReserve:reserve};return d;});
+  GameSave.extend('decode','inventory.physical-slots',function(decode,raw){const d=JSON.parse(raw);V014Fish.validateSave(d);if(d.handSlots?.length===4)d.handSlots.push(null);const q=d.quick013;if(q){if(q.schema!==1||!Array.isArray(q.items)||q.items.length!==5||!q.items.every(s=>s===null||s&&HAND_TYPES.includes(s.type)&&s.qty===1&&V010Combat.validateItem(s)!==false)||!Number.isInteger(q.fishReserve)||q.fishReserve<0||q.fishReserve>=500)throw Error('Неверные быстрые слоты');if(new Set(q.items.filter(Boolean).map(s=>s.type)).size!==q.items.filter(Boolean).length)throw Error('Повтор предмета');d.handSlots=q.items.map(s=>s?.type||null);}
+    return decode(JSON.stringify(d));});
+  GameSave.extend('restore','inventory.physical-slots',function(restore,d){d=V014Fish.migrate(copy(d));items.fill(null);if(d.quick013)items.splice(0,5,...copy(d.quick013.items));restore(d);if(!d.quick013){for(let i=0;i<5;i++){const t=d.handSlots[i],j=bag.findIndex(s=>s?.type===t);if(t&&j>=0){items[i]=bag[j];bag[j]=null;}}}reserve=d.quick013?.fishReserve||0;for(const a of [bag,...storageChests.map(c=>c.items)])for(const s of a)if(s?.type==='fish')V014Fish.normalize(s);activeHandSlot=d.activeHandSlot;sync();});
   // Move the initial starting hands exactly once before the first save is created.
   for(let i=0;i<5;i++){const j=bag.findIndex(s=>s?.type===handSlots[i]);if(j>=0){items[i]=bag[j];bag[j]=null;}}handSlots=items.map(s=>s?.type||null);
   document.addEventListener('keydown',e=>{if(e.key==='5'&&!menuOpen&&!playerDead)selectHandSlot(4);});
@@ -10407,9 +10609,9 @@ window.V013City=(()=>{
  }
  const draw=drawSurface;drawSurface=function(...args){const out=draw(...args);drawPlaces();return out;};
  const oldUpdate=update;update=function(...args){const out=oldUpdate(...args);tick();return out;};
- const capture=captureGameProgress;captureGameProgress=function(){const d=capture();d.city013={schema:1,clock,floor,cars:cars.map(c=>({id:c.id,due:c.due013||null}))};return d;};
- const decode=decodeGameProgress;decodeGameProgress=function(raw){const d=decode(raw),c=d.city013;if(c&&(!c||c.schema!==1||!Number.isFinite(c.clock)||c.clock<0||![0,1].includes(c.floor)||!Array.isArray(c.cars)||c.cars.length!==cars.length||c.cars.some((v,i)=>v.id!==cars[i].id||v.due!==null&&(!Number.isFinite(v.due)||v.due<0))))throw Error('Неверное состояние города');return d;};
- const restore=restoreGameProgress;restoreGameProgress=function(d){setFloor(d.city013?.floor||0);restore(d);clock=d.city013?.clock||0;cars.forEach((c,i)=>{c.due013=d.city013?.cars[i]?.due||null;c.open013=c.searched?1:0;});last=performance.now();};
+ GameSave.extend('capture','world.lake-city',function(capture){const d=capture();d.city013={schema:1,clock,floor,cars:cars.map(c=>({id:c.id,due:c.due013||null}))};return d;});
+ GameSave.extend('decode','world.lake-city',function(decode,raw){const d=decode(raw),c=d.city013;if(c&&(!c||c.schema!==1||!Number.isFinite(c.clock)||c.clock<0||![0,1].includes(c.floor)||!Array.isArray(c.cars)||c.cars.length!==cars.length||c.cars.some((v,i)=>v.id!==cars[i].id||v.due!==null&&(!Number.isFinite(v.due)||v.due<0))))throw Error('Неверное состояние города');return d;});
+ GameSave.extend('restore','world.lake-city',function(restore,d){setFloor(d.city013?.floor||0);restore(d);clock=d.city013?.clock||0;cars.forEach((c,i)=>{c.due013=d.city013?.cars[i]?.due||null;c.open013=c.searched?1:0;});last=performance.now();});
  for(const o of [...worldTrees,...V09World.ores])if([...gas.map(g=>g.b),mall].some(b=>rectHit(o.x,o.y,80,b))){o.x=-2650;o.y=300+Math.abs(o.y)%8500;}
  invalidateGeometry();
  return {cars,gas,mall,floors,stair,roads,drawCar,drawRoads,tick,setFloor,get floor(){return floor;},get clock(){return clock;},dayMs:DAY};
@@ -10786,16 +10988,16 @@ window.V014Robots=(()=>{
     if(records.some(s=>s.qty!==1||s.robotId!=='drone014')||records.length>1||records.length!==(d.robots014?.packed?1:0))throw Error('Повтор или потеря переносного дрона');
     if(d.robots014&&d.robots014.packed!==(d.robots014.task==='packed'))throw Error('Некорректное размещение дрона');
   }
-  const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.robots014=copy(state);return d;};
-  const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const preliminary=JSON.parse(raw);if(preliminary.v09?.power?.deviceEnabled){for(const id of ['robot_drone_charge'])if(preliminary.v09.power.deviceEnabled[id]===undefined)preliminary.v09.power.deviceEnabled[id]=true;}const d=decodeOld(JSON.stringify(preliminary));if(d.robots014)validate(d.robots014);tokenCheck(d);return d;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){
+  GameSave.extend('capture','drones.companion',function(captureOld){const d=captureOld();d.robots014=copy(state);return d;});
+  GameSave.extend('decode','drones.companion',function(decodeOld,raw){const preliminary=JSON.parse(raw);if(preliminary.v09?.power?.deviceEnabled){for(const id of ['robot_drone_charge'])if(preliminary.v09.power.deviceEnabled[id]===undefined)preliminary.v09.power.deviceEnabled[id]=true;}const d=decodeOld(JSON.stringify(preliminary));if(d.robots014)validate(d.robots014);tokenCheck(d);return d;});
+  GameSave.extend('restore','drones.companion',function(restoreOld,d){
     if(d.robots014)validate(d.robots014);restoreOld(d);Object.assign(state,defaults(),d.robots014?copy(d.robots014):{});
     if(!d.robots014?.combatMode)state.combatMode=state.mode==='attack'?'attack':'defense';
     clearRoute();resetReturn();undocking=false;shot=hurt=saveClock=0;observedTarget=selectedTarget();
     state.targetIndex=state.task==='attack'&&zombies[state.targetIndex]?.alive?state.targetIndex:null;
     if(state.task==='attack'&&(state.targetIndex===null||!combatEnabled()))finishAttack();
     if(state.task==='docked'&&!state.packed)Object.assign(state,dockPosition());updateHUD();
-  };
+  });
   v09Style('.v014DroneHUD{position:fixed;right:12px;top:calc(220px + env(safe-area-inset-top,0px));z-index:38;width:auto;min-height:28px!important;padding:5px 8px!important;border-radius:9px!important;font:11px Arial!important;background:#172c2cd9!important;color:#b7d5c8!important}.v014RobotActions{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.v014RobotActions .menuButton,#v014DronePanel details .menuButton{width:auto;min-height:30px!important;padding:6px 8px!important;font-size:11px!important;margin:0}.v014RobotActions .selected{background:#376351!important}.v014RobotGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.v014RobotGrid .menuButton{position:relative;min-height:45px;padding:4px;margin:0}.v014RobotGrid img{max-height:34px;max-width:100%}.v014RobotGrid small{position:absolute;bottom:2px;right:4px;font-size:10px}.v014DroneHeader{display:flex;align-items:center;gap:10px;padding:6px 0 9px;border-bottom:1px solid #58716a55}.v014DroneHeader img{width:64px;height:48px;object-fit:contain;border-radius:8px;background:#1a3436}.v014DroneStats{font-size:11px;line-height:1.55;color:#c7ddd3}.v014DroneStats b{color:#f0d892;font-size:12px}#v014DronePanel .panel{width:min(500px,94vw);max-height:83dvh;overflow-y:auto;padding:12px;min-height:420px}#v014DronePanel p{font-size:11px;line-height:1.5;margin:9px 0}#v014DronePanel input,#v014DronePanel select{max-width:100%;background:#203b3c;color:#deece5;border:1px solid #648178;border-radius:7px;padding:7px}#v014DroneLoot{font-size:11px;min-height:28px;padding:6px 10px}@media(max-height:520px){.v014DroneHUD{top:calc(110px + env(safe-area-inset-top,0px));right:65px}}');
   invalidateGeometry();
   return {state,stationInfo,install,stationNear,returnProgress:()=>({...home}),setAutoReturn(on){state.autoReturn=!!on;changed();},combat,combatEnabled,setCombat,availableAmmo,dockPosition,station:DOCK,status:()=>({...state,maxHp:maxHp(),capacity:capacity(),atDock:atDock()}),capacity,maxHp,near,atDock,open,openStation,follow,recall,returnToDock,attack,guard,mode,pack,deploy,store,take,reload,upgrade,repair,cost,transfer,validate,tick,doorNear,doorOccupies,planningKey:motion.key,motion,statusText,changed,draw:drawDrone,setLootSelection:i=>{lootSelection=i;},dispatchLoot};
@@ -10950,7 +11152,7 @@ window.V014Controls=(()=>{
     const hp=el('healthText');if(hp)hp.textContent='❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth);
     return out;
   };
-  const restore=restoreGameProgress;restoreGameProgress=function(d){route=pending=null;lockedPress=null;restore(d);layout();};
+  GameSave.extend('restore','player.controls',function(restore,d){route=pending=null;lockedPress=null;restore(d);layout();});
   v09Style(`
     #versionBadge,.versionBadge,#versionLabel{display:none!important}
     #v010Minimap{top:calc(var(--v011-game-top) + 70px)!important;transition:opacity .15s ease}
@@ -11163,9 +11365,9 @@ window.V0141Farm=(()=>{
     if(d.v010?.modules?.energy?.devicePriority)delete d.v010.modules.energy.devicePriority.robot_tractor_charge;
     provideStock(d);if(d.farmRecovery0141)validateRecovery(d.farmRecovery0141);return d;
   }
-  const capture=captureGameProgress;captureGameProgress=function(){const d=capture();d.farmRecovery0141=copy(recovery);d.farmPlantingStock0141=plantingStock;return d;};
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};
-  const restore=restoreGameProgress;restoreGameProgress=function(data){const d=migrate(copy(data));restore(d);recovery=copy(d.farmRecovery0141||[]);plantingStock=true;deliverRecovery();};
+  GameSave.extend('capture','farm.manual',function(capture){const d=capture();d.farmRecovery0141=copy(recovery);d.farmPlantingStock0141=plantingStock;return d;});
+  GameSave.extend('decode','farm.manual',function(decode,raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));});
+  GameSave.extend('restore','farm.manual',function(restore,data){const d=migrate(copy(data));restore(d);recovery=copy(d.farmRecovery0141||[]);plantingStock=true;deliverRecovery();});
   v09Style('#farmOverlay .panel{width:min(430px,94vw);max-height:80dvh}#farmOverlay .farmPlantGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}#farmOverlay .farmCropBtn{display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0!important;min-height:68px!important;font-size:11px!important;padding:6px!important}#farmOverlay .farmCropBtn .itemIcon{width:36px!important;height:36px!important}#farmOverlay .farmCropBtn.selected{border-color:#c7ae6d;background:#344c43}#farmPlantInfo{font-size:11px;color:#abc0b5;line-height:1.5;grid-column:1/-1;margin:8px 0}#farmPlantConfirm,#farmRecovery{grid-column:1/-1;font-size:12px;min-height:34px;padding:7px}');
   v09Style('#farmPlantInfo{white-space:pre-line}#farmOverlay .farmCropBtn small{font-size:10px;color:#aac5b2;line-height:1.3}#farmOverlay .farmCropBtn.noPlantingMaterial small{color:#c9b58c}#farmSeedTake{font-size:11px;min-height:34px;padding:6px 9px;margin:4px 0}#farmSeedTake[hidden]{display:none}');
   return {plant,harvest,use,bindMenu,migrate,recover,stock,seedType,takeSeed,get recovery(){return recovery;}};
@@ -11416,8 +11618,8 @@ window.V015Base=(()=>{
     for(const o of sections){const p=values.get(o.id);o.level=p?.level||1;o.maxHp=HP_LEVELS[o.level];o.hp=p?p.hp:o.maxHp;o.hitAt=-1e6;}
     northOpen=false;commandNorthOpen=d?.commandNorthOpen??false;commandSouthOpen=d?.commandSouthOpen??true;revision++;invalidateGeometry();
   }
-  const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.base015=capture();return d;};
-  const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const probe=migrateGame(JSON.parse(raw));validate(probe.base015);validating=true;let d;try{d=decodeOld(JSON.stringify(probe));}finally{validating=false;}
+  GameSave.extend('capture','base.structures',function(captureOld){const d=captureOld();d.base015=capture();return d;});
+  GameSave.extend('decode','base.structures',function(decodeOld,raw){const probe=migrateGame(JSON.parse(raw));validate(probe.base015);validating=true;let d;try{d=decodeOld(JSON.stringify(probe));}finally{validating=false;}
     if(d.v091?.fortress?.wallLevel){const f=d.v091.fortress,hp=new Map((d.base015?.sections||sections).map(o=>[o.id,d.base015?o.hp:o.maxHp]));
       const fits=(p,contains)=>{for(let i=-1;i<24;i++){const r=i<0?0:player.radius+3,a=i*Math.PI/12;if(!contains(p.x+Math.cos(a)*r,p.y+Math.sin(a)*r))return false;}return true;};
       if(!fits(f,(x,y)=>deckPresent(x,y,hp))){
@@ -11429,10 +11631,10 @@ window.V015Base=(()=>{
         f.x=tower.x;f.y=tower.y;d.player.x=f.x;d.player.y=f.y;
       }
     }
-    return d;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){d=migrateGame(d);restore(d.base015);restoreOld(d);
+    return d;});
+  GameSave.extend('restore','base.structures',function(restoreOld,d){d=migrateGame(d);restore(d.base015);restoreOld(d);
     if(scene==='surface'&&!player.wallLevel)settle(player);const drone=window.V014Robots?.state;if(drone&&!drone.packed&&drone.scene==='surface')settle(drone,12);
-    for(const z of zombies){delete z._baseRoute;delete z._baseUntil;if(z.alive)settle(z,z.radius);}invalidateGeometry();};
+    for(const z of zombies){delete z._baseRoute;delete z._baseUntil;if(z.alive)settle(z,z.radius);}invalidateGeometry();});
   invalidateGeometry();
   // Rendering is supplied below; geometry and damage do not depend on images.
   const wallSprites=new Map(),lightShapes=new Map(),materials=new Map();let groundCache=null;
@@ -11791,9 +11993,9 @@ window.V016Lighting=(()=>{
   }
   V091Light.illuminate=illuminate;
   const oldUpdate=update;update=function(...args){const result=oldUpdate(...args);tick(16.667*frameScale);return result;};
-  const oldCapture=captureGameProgress;captureGameProgress=function(){const d=oldCapture();d.lighting016=capture();return d;};
-  const oldDecode=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);};
-  const oldRestore=restoreGameProgress;restoreGameProgress=function(d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);};
+  GameSave.extend('capture','render.lighting',function(oldCapture){const d=oldCapture();d.lighting016=capture();return d;});
+  GameSave.extend('decode','render.lighting',function(oldDecode,raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);});
+  GameSave.extend('restore','render.lighting',function(oldRestore,d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);});
   hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,get day(){return day;},maskImage:()=>mask,cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:4,droneShapes:droneShape?1:0,droneLimit:1,width:mask?.width||0,height:mask?.height||0})};
 })();
 
@@ -12014,9 +12216,9 @@ window.V016Turret=(()=>{
     for(const t of records){if(ids.has(t.id)||Number(t.id.slice(7))>=d.nextId)throw Error('Повтор пулемёта');ids.add(t.id);}
     return true;
   }
-  const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.turret016=capture();return d;};
-  const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const d=decodeOld(raw);validate(d.turret016,d);if(!d.turret016){const tokens=[];const walk=v=>{if(!v||typeof v!=='object')return;if(v.type===TYPE)tokens.push(v);else for(const q of Object.values(v))walk(q);};walk(d);if(tokens.length)throw Error('Отсутствует состояние пулемётов');}return d;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){d=V015Base.migrateGame(d);validate(d.turret016,d);restoreOld(d);guns.splice(0,guns.length,...copy(d.turret016?.guns||[starter()]));nextId=d.turret016?.nextId||2;runtime.clear();selected=null;cancelPlacement();obstacleRevision=-1;settleUnsupported();};
+  GameSave.extend('capture','base.turrets',function(captureOld){const d=captureOld();d.turret016=capture();return d;});
+  GameSave.extend('decode','base.turrets',function(decodeOld,raw){const d=decodeOld(raw);validate(d.turret016,d);if(!d.turret016){const tokens=[];const walk=v=>{if(!v||typeof v!=='object')return;if(v.type===TYPE)tokens.push(v);else for(const q of Object.values(v))walk(q);};walk(d);if(tokens.length)throw Error('Отсутствует состояние пулемётов');}return d;});
+  GameSave.extend('restore','base.turrets',function(restoreOld,d){d=V015Base.migrateGame(d);validate(d.turret016,d);restoreOld(d);guns.splice(0,guns.length,...copy(d.turret016?.guns||[starter()]));nextId=d.turret016?.nextId||2;runtime.clear();selected=null;cancelPlacement();obstacleRevision=-1;settleUnsupported();});
   v09Style('#v016TurretPanel .v09Panel{width:min(410px,94vw);padding:14px;border-radius:13px}#v016TurretPanel p{font-size:12px;line-height:1.5;margin:10px 0}.v016GunHero{display:flex;align-items:center;gap:10px}.v016GunHero>.itemIcon{width:105px;height:82px;object-fit:contain}.v016GunHero b{font-size:12px}.v016GunHero small{display:block;font-size:10px;color:#9caf9f;margin-top:5px}.v016GunActions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.v016GunActions .menuButton{font-size:11px;min-height:40px;margin:0;padding:7px}.v016GunNote{color:#9fb1a4}#v016Placement{position:fixed;z-index:9500;left:50%;top:calc(var(--v011-hud-top,10px) + 42px);transform:translateX(-50%);width:min(460px,calc(100vw - 24px));box-sizing:border-box;background:#182a2af2;border:1px solid #9ba784;border-radius:10px;padding:9px;text-align:center;color:#e0e7cc;font:11px Arial}.v016PlacementActions{display:flex;justify-content:center;gap:4px;margin-top:7px}.v016PlacementActions .menuButton{margin:0;font-size:11px;padding:5px 8px;min-height:36px;width:auto;min-width:32px}#v016PlaceConfirm{background:#476344}');
   return {damage,combat,guns,validItem,capture,validate,candidate,placementProblem,startPlacement,selectPoint,place,cancelPlacement,pack,reload,unload,setEnabled,reachable,clear,support,settleUnsupported,tick,shootAt,open,draw,paint,get placement(){return placement;},get nextId(){return nextId;}};
 })();
@@ -12138,7 +12340,7 @@ window.V0161Migration=(()=>{
     const prog=d.v010?.modules?.progression;if(prog){for(const k of ['unlocks','announced'])if(Array.isArray(prog[k]))prog[k]=prog[k].filter(x=>x!=='sight_advanced');if(prog.pin==='sight_advanced')prog.pin=null;}
     return d;
   }
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};
+  GameSave.extend('decode','ui.modal-dragging',function(decode,raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));});
   return{migrate,removed};
 })();
 
@@ -12212,14 +12414,14 @@ window.V0161Upgrade=(()=>{
   const objects=interactionObjects;interactionObjects=function(which=scene){const a=objects(which);return which==='bunker'?[...a,{...station}]:a;};
   const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind===station.kind)return open();return execute(o,...args);};
   const drawB=drawBunker;drawBunker=function(...a){const r=drawB(...a);ctx.save();V011Rooms.shadow(station.x,station.y,station.w,station.h,11,'workshop');V011Art.draw('upgrade_station0161',station.x,station.y,station.w,station.h);if(performance.now()<pulseUntil){const y=station.y+35+(performance.now()%850)/850*45;ctx.strokeStyle='#85e7caaa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(station.x+34,y);ctx.lineTo(station.x+108,y);ctx.stroke();}ctx.fillStyle='#bbd5c2';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText('УСИЛЕНИЕ',station.x+station.w/2,station.y+station.h+14);ctx.restore();return r;};
-  const cap=captureGameProgress;captureGameProgress=function(){const d=cap();d.upgrade0161={schema:1,item:copy(slots[0])};return d;};
+  GameSave.extend('capture','inventory.upgrades',function(cap){const d=cap();d.upgrade0161={schema:1,item:copy(slots[0])};return d;});
   function validate(d){const u=d.upgrade0161;if(u===undefined)return true;if(!u||u.schema!==1||!Object.hasOwn(u,'item'))throw Error('Некорректный станок усиления');const s=u.item;if(s===null)return true;
     if(!s||s.qty!==1||!ITEM[s.type]||!(eligibleGear(s)||s.type==='hmg016'||s.type==='drone014')||combat.validateItem(s)===false)throw Error('Некорректный предмет на станке');
     if(s.type==='drone014'&&(!d.robots014?.packed||s.robotId!=='drone014'))throw Error('Некорректный дрон на станке');
     if(s.uid){let count=0;function visit(v){if(!v||typeof v!=='object')return;if(v.type&&v.uid===s.uid)count++;for(const x of Object.values(v))visit(x);}visit(d);if(count!==1)throw Error('Повтор предмета на станке');}return true;
   }
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);if(probe.v09?.power?.deviceEnabled&&probe.v09.power.deviceEnabled.upgrade0161===undefined)probe.v09.power.deviceEnabled.upgrade0161=true;const d=decode(JSON.stringify(probe));validate(d);return d;};
-  const restore=restoreGameProgress;restoreGameProgress=function(d){validate(d);slots[0]=copy(d.upgrade0161?.item||null);restore(d);lastSignature='';pulseUntil=0;refresh(true);};
+  GameSave.extend('decode','inventory.upgrades',function(decode,raw){const probe=JSON.parse(raw);if(probe.v09?.power?.deviceEnabled&&probe.v09.power.deviceEnabled.upgrade0161===undefined)probe.v09.power.deviceEnabled.upgrade0161=true;const d=decode(JSON.stringify(probe));validate(d);return d;});
+  GameSave.extend('restore','inventory.upgrades',function(restore,d){validate(d);slots[0]=copy(d.upgrade0161?.item||null);restore(d);lastSignature='';pulseUntil=0;refresh(true);});
   v09Style(`
     #v0161UpgradePanel .panel{width:min(480px,94vw);max-height:82dvh;overflow-y:auto;padding:13px}
     .v161StationHero{display:flex;align-items:center;gap:12px;padding-bottom:9px;border-bottom:1px solid #69867a44}.v161StationHero img{width:86px;height:72px;object-fit:contain}.v161StationHero b{font-size:13px}.v161StationHero p{font-size:10px;color:#acc1b7;margin:5px 0}.v161StationHero small{font-size:10px;color:#a5ccac}
@@ -12376,8 +12578,8 @@ window.V0162Magazines=(()=>{
       for(const x of Object.values(v))if(x&&typeof x==='object')visit(x);
     }visit(d);return d;
   }
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};
-  const restore=restoreGameProgress;restoreGameProgress=function(d){return restore(migrate(copy(d)));};
+  GameSave.extend('decode','inventory.picker-magazines',function(decode,raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));});
+  GameSave.extend('restore','inventory.picker-magazines',function(restore,d){return restore(migrate(copy(d)));});
   v09Style(`
     .v162Magazine{width:100%;box-sizing:border-box;border:1px solid #91ac9b38;border-radius:9px;padding:9px;margin-top:10px;background:#172d2b66}
     .v162MagazineLabel{font-size:11px;color:#a9bfb4;margin-bottom:6px}.v162MagazineRow{display:flex;gap:10px;align-items:center}
@@ -12743,18 +12945,18 @@ window.V017Monsters=(()=>{
   const drawActors=V0141Trees.drawActors;V0141Trees.drawActors=function(){drawActors();if(scene!=='surface'||V013City.floor)return;drawTarget();for(const z of zombies)healthBar(z);
     for(const e of effects){const boost=e.boost||1;if(!visibleOnScreen(e.x,e.y,100*boost))continue;const t=clamp((performance.now()-e.at)/700,0,1);ctx.save();ctx.globalAlpha=(1-t)*.65;ctx.strokeStyle='#b2a274';ctx.lineWidth=8*(1-t)+1;ctx.beginPath();ctx.arc(e.x,e.y,(12+t*62)*boost,0,Math.PI*2);ctx.stroke();for(let i=0;i<9;i++){const a=i*2.4+e.seed;ctx.fillStyle='#7e8061';ctx.beginPath();ctx.arc(e.x+Math.cos(a)*t*60*boost,e.y+Math.sin(a)*t*60*boost,(3+8*(1-t))*boost,0,Math.PI*2);ctx.fill();}ctx.restore();}
   };
-  const capture=captureGameProgress;captureGameProgress=function(){
+  GameSave.extend('capture','combat.monsters',function(capture){
     const now=performance.now();zombies.forEach(z=>prepare(z));const d=capture();
     d.monsters017={schema:2,types:zombies.map(z=>z.type),actors:zombies.map(z=>{const r=prepare(z);return{raid:z.raid019,side:r.side,variant:r.variant,deathAngle:r.deathAngle,corpseMs:z.alive?0:clamp(now-r.deadAt,0,CORPSE_MS),retired:r.retired};})};return d;
-  };
+  });
   function validate(d){
     if(!d)return;const m=d.monsters017;if(!m)return;
     if(![1,2].includes(m.schema)||!Array.isArray(d.zombies)||!Array.isArray(m.types)||m.types.length!==d.zombies.length||m.types.length>144)throw Error('Неверные данные монстров');
     if(m.schema===2&&(!Array.isArray(m.actors)||m.actors.length!==m.types.length||m.actors.some((p,i)=>!p||typeof p.raid!=='boolean'||!SIDES.includes(p.side)||!Number.isInteger(p.variant)||p.variant<0||p.variant>2||!Number.isFinite(p.deathAngle)||p.deathAngle<0||p.deathAngle>=Math.PI*2||!Number.isFinite(p.corpseMs)||p.corpseMs<0||p.corpseMs>CORPSE_MS||typeof p.retired!=='boolean'||p.retired&&d.zombies[i].alive||d.zombies[i].alive&&p.corpseMs!==0)))throw Error('Неверное состояние монстров');
     if(m.types.some((t,i)=>!specs[t]||d.zombies[i].health>specs[t].hp*(m.schema===2&&m.actors[i].raid?1.5:1)||d.v010?.modules?.world?.types?.[i]!==t))throw Error('Неверные данные монстров');
   }
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){validate(JSON.parse(raw));return decode(raw);};
-  const restore=restoreGameProgress;restoreGameProgress=function(d){
+  GameSave.extend('decode','combat.monsters',function(decode,raw){validate(JSON.parse(raw));return decode(raw);});
+  GameSave.extend('restore','combat.monsters',function(restore,d){
     validate(d);restore(d);runtime=new WeakMap();effects=[];lastPopulation=performance.now();lastRaid=isDayX();
     zombies.forEach((z,i)=>{
       const saved=d.monsters017?.schema===2?d.monsters017.actors[i]:null;
@@ -12765,7 +12967,7 @@ window.V017Monsters=(()=>{
       else if(!z.alive)r.deadAt=performance.now()-clamp(Date.now()-(z.corpseAt011??Date.now()-CORPSE_MS),0,CORPSE_MS);
       if(!d.monsters017&&worldCollision(z.x,z.y,z.radius,'surface')){const p=V015Base.freePoint(z.x,z.y,z.radius);if(p){z.x=p.x;z.y=p.y;}}
     });
-  };
+  });
   const reset=resetZombies;resetZombies=function(){reset();runtime=new WeakMap();effects=[];zombies.forEach((z,i)=>{z.type=kinds[i%5];z.monster017=false;z.health=100;z.maxHealth=100;prepare(z);});};
   zombies.forEach((z,i)=>{z.type=kinds[i%5];prepare(z);});
   return{specs,stats,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
@@ -12936,9 +13138,9 @@ window.V018Build=(()=>{
   function capture(){return {schema:1,credit,doors:doorRecords.map(r=>({id:r.id,hp:r.object.hp,level:r.object.level}))};}
   function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isFinite(d.credit)||d.credit<0||d.credit>1000||!Array.isArray(d.doors)||d.doors.length!==doorRecords.length)throw Error('Некорректные данные строительства');const seen=new Set();for(const p of d.doors){if(!doorRecords.some(r=>r.id===p.id)||seen.has(p.id)||!Number.isInteger(p.level)||p.level<1||p.level>5||!Number.isFinite(p.hp)||p.hp<0||p.hp>LEVELS[p.level])throw Error('Некорректная прочность двери');seen.add(p.id);}return true;}
   function restore(data){validate(data);job=null;credit=data?.credit||0;selected=null;const map=new Map((data?.doors||[]).map(o=>[o.id,o]));for(const r of doorRecords){const p=map.get(r.id),o=r.object;o.level=p?.level||1;o.maxHp=LEVELS[o.level];o.hp=p?p.hp:o.maxHp;if(!o.hp){if(r.kind==='automatic')o.open=1;if(r.owner){r.owner.doorOpen=true;r.owner.doorProgress=1;}}}invalidateGeometry();refresh();}
-  const oldCapture=captureGameProgress;captureGameProgress=function(){const d=oldCapture();d.building018=capture();return d;};
-  const oldDecode=decodeGameProgress;decodeGameProgress=function(raw){const d=JSON.parse(raw);validate(d.building018);return oldDecode(raw);};
-  const oldRestore=restoreGameProgress;restoreGameProgress=function(d){validate(d.building018);restore(d.building018);oldRestore(d);restore(d.building018);};
+  GameSave.extend('capture','base.construction',function(oldCapture){const d=oldCapture();d.building018=capture();return d;});
+  GameSave.extend('decode','base.construction',function(oldDecode,raw){const d=JSON.parse(raw);validate(d.building018);return oldDecode(raw);});
+  GameSave.extend('restore','base.construction',function(oldRestore,d){validate(d.building018);restore(d.building018);oldRestore(d);restore(d.building018);});
   v09Style(`
     #v018Structure .v09Panel{width:min(340px,92vw);padding:14px;max-height:75dvh}#v018Structure .v09Body{font-size:11px}
     .v018BuildHero{display:flex;align-items:center;gap:12px}.v018BuildHero>.itemIcon{width:70px;height:70px}.v018BuildHero b,.v018BuildHero span{display:block;line-height:1.7}.v018BuildHero b{font-size:13px}.v018BuildHero span{font-size:12px;color:#bdcec1;font-variant-numeric:tabular-nums}
@@ -12952,7 +13154,73 @@ window.V018Build=(()=>{
   return{LEVELS,COSTS,structures,stoneNodes,doorRecords,record,isBroken,closedDoors,damage,start,stop,repairStep,upgrade,open,near,occupied,consume,count,capture,restore,validate,drawHeld,drawStone,enemyDoorStep,refresh,get job(){return job;},get credit(){return credit;}};
 })();
 
-loadGameProgress();gameSaveReady=true;
+// Fail early if an adapter is missing, duplicated or reordered.
+GameSave.seal({
+  "capture": [
+    "save.slots",
+    "save.envelope",
+    "ui.context-map",
+    "farm.growth",
+    "world.interiors",
+    "player.living",
+    "world.expansion",
+    "inventory.physical-slots",
+    "world.lake-city",
+    "drones.companion",
+    "farm.manual",
+    "base.structures",
+    "render.lighting",
+    "base.turrets",
+    "inventory.upgrades",
+    "combat.monsters",
+    "base.construction"
+  ],
+  "decode": [
+    "save.slots",
+    "save.envelope",
+    "ui.context-map",
+    "farm.growth",
+    "world.interiors",
+    "player.living",
+    "world.expansion",
+    "inventory.physical-slots",
+    "world.lake-city",
+    "drones.companion",
+    "farm.manual",
+    "base.structures",
+    "render.lighting",
+    "base.turrets",
+    "ui.modal-dragging",
+    "inventory.upgrades",
+    "inventory.picker-magazines",
+    "combat.monsters",
+    "base.construction"
+  ],
+  "restore": [
+    "save.slots",
+    "save.envelope",
+    "ui.context-map",
+    "farm.growth",
+    "world.interiors",
+    "base.rooms",
+    "player.living",
+    "world.fishing",
+    "inventory.physical-slots",
+    "world.lake-city",
+    "drones.companion",
+    "player.controls",
+    "farm.manual",
+    "base.structures",
+    "render.lighting",
+    "base.turrets",
+    "inventory.upgrades",
+    "inventory.picker-magazines",
+    "combat.monsters",
+    "base.construction"
+  ]
+});
+GameState.seal();
+loadGameProgress();GameState.session.ready=true;
 grantStarterItems();
 renderQuickSlots();
 if(starterPending.length)message('Освободите место в рюкзаке: предметы обновления ждут выдачи');

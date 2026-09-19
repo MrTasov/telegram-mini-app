@@ -1,9 +1,24 @@
 {
-  "version": "0.21.0",
+  "version": "0.22.0",
   "format": "classic-script-concatenation",
-  "bodySha256": "25a3cf9421319b7091a50de774ffa5a3eda5b3f5dd7eca14b01ef42a0d95662e",
-  "bundleSha256": "8f9559eec9b01def5b49594d66cc63e08dace9c64993475f58416c70c819427d",
+  "bodySha256": "0c01e4da95a1c604d6ce508686e4aa860aa6ae3871a484bffdf754652e5a7a7a",
+  "bundleSha256": "ded0315451a457dece143bdb74cbd3960dda7c277251be06d283cb32c21c6403",
   "files": [
+    {
+      "file": "src/state/owners.js",
+      "bytes": 1953,
+      "sha256": "7f4c2efdc7d8c6bbaefca6c8dae6b7818d62c580d3e7312abeb0d9fc199ccda0"
+    },
+    {
+      "file": "src/save/format.js",
+      "bytes": 1280,
+      "sha256": "791ad79fed31a9b36149c2ab33858612c676778f99a72b0566feb4128c4610b4"
+    },
+    {
+      "file": "src/save/pipeline.js",
+      "bytes": 4008,
+      "sha256": "2e2e8c9775457558b102948d488f07e57d51289f27ed48fc868e76b2a38c6a48"
+    },
     {
       "file": "src/core/runtime.js",
       "bytes": 10974,
@@ -40,9 +55,14 @@
       "sha256": "dc691a3012f379c6be8ec954864ab2d0d6a9c112a14825a4ca2fe8ae7811a78f"
     },
     {
+      "file": "src/state/bindings.js",
+      "bytes": 4801,
+      "sha256": "d7fa74b46438611b924eac6c65bb6c53948d2a13cf7f9fa1bec6fe210c0b7a58"
+    },
+    {
       "file": "src/save/legacy-progress.js",
-      "bytes": 12137,
-      "sha256": "11922989d3f0960e503ecdbe9a19a27b5fefd8ef573ba652341d0180c0dc0b15"
+      "bytes": 12628,
+      "sha256": "7f760c79e8455b98d9e6d0753642c6985abf533dbd064f881821d0568d9ad7b7"
     },
     {
       "file": "src/ui/shared.js",
@@ -81,28 +101,28 @@
     },
     {
       "file": "src/save/slots.js",
-      "bytes": 28443,
-      "sha256": "2ee552b392af9a18677d1c9920474779b7ffa1f6bb8469547f1a189182d93f9e"
+      "bytes": 29237,
+      "sha256": "12ddad686056c181ee14f1dfd7c3dbb866b0fb6ac1f976bd7d9bb996b63f71ca"
     },
     {
       "file": "src/inventory/registry-slots.js",
-      "bytes": 28634,
-      "sha256": "dfaf758ea9ef821b18010dd32bb62ea5b473a6d1d46e643dd1f7d149ef36c5f7"
+      "bytes": 28663,
+      "sha256": "529a1236592ec56744daf2ef6c914c26182dc191e97920a945d09fcfc1668e10"
     },
     {
       "file": "src/combat/weapons-crafting.js",
-      "bytes": 31658,
-      "sha256": "4102fbcf50bc720836aa52858afa0b54df547f699223dd6650ee951ec26ff212"
+      "bytes": 31665,
+      "sha256": "fbe152be57557a359de27ae83231664b9a40a4ec344a113c9beaf8c1c6f4bc3b"
     },
     {
       "file": "src/world/districts.js",
-      "bytes": 33152,
-      "sha256": "bd8cc8157900717ca5a9d7f690ed6a130612b6cf40dac0661e12de93354b43ce"
+      "bytes": 33155,
+      "sha256": "c5ffd56358f8048d8e4facb32ac92b9a85b1e7e3aa96d16d9ed37791db66268e"
     },
     {
       "file": "src/base/battery.js",
-      "bytes": 22117,
-      "sha256": "5b3533d533a98e094f63b82e899955aba61b900cbd98e34d6a8e53d35bd8b063"
+      "bytes": 22120,
+      "sha256": "af6ed266bcffe96624af7a67e3d9c53c726250811baafcc0cc88acd40fa72852"
     },
     {
       "file": "src/ui/progression.js",
@@ -116,13 +136,13 @@
     },
     {
       "file": "src/save/envelope.js",
-      "bytes": 2919,
-      "sha256": "cb8054944f5f42ebbb4b8bde52be1af9360c34432fac4297ef3d434004562ae7"
+      "bytes": 2840,
+      "sha256": "0266eb14fc3efec68f76f59432e346ded5bd58848d631feb8a1f7fe9db1dc62d"
     },
     {
       "file": "src/ui/context-map.js",
-      "bytes": 41476,
-      "sha256": "4ffe2ba6b6be71bf7840c876644ac0e11a6a630ea35ce236cd5219959ac663f2"
+      "bytes": 42040,
+      "sha256": "17b6653f122eac74f14c5eb2af6cd007f639c45a3bfa105951c3311e81d6c5ed"
     },
     {
       "file": "src/assets/catalog.js",
@@ -136,23 +156,23 @@
     },
     {
       "file": "src/farm/growth.js",
-      "bytes": 29179,
-      "sha256": "c7ae497f819610e74e11ad32221842e77dfdbab3c485ff3946471c95301b3f13"
+      "bytes": 29176,
+      "sha256": "30f077ce24809687db7063dcc599921053bca1f39ff122fa52a8deb2bb404850"
     },
     {
       "file": "src/world/interiors.js",
-      "bytes": 20277,
-      "sha256": "e0b4b908a097f93d9bd61336344a94f42712434126903676c97ac75eaabfc2df"
+      "bytes": 20286,
+      "sha256": "9c895dce1a6dcd4c2a1ac7feded43a331019b1e4ff6b35e1d02a15bd07392baa"
     },
     {
       "file": "src/base/rooms.js",
-      "bytes": 35782,
-      "sha256": "aee8369dafcbe22d0412c7f861f0156faf08540d194bc749776cbbabf44dc646"
+      "bytes": 35779,
+      "sha256": "c6f4657c316224545cb93ac7c35c860cf110603087f99deb0e2c13dc8a63f688"
     },
     {
       "file": "src/world/expansion.js",
-      "bytes": 10125,
-      "sha256": "e2b1a84e14760f6aa24d242686f03c89c6928ce6057965ea3acf525b03bbea32"
+      "bytes": 10129,
+      "sha256": "3c64c0c562f5426303567743e363c11921acdeac13a9ecab746dd7aa99252d68"
     },
     {
       "file": "src/ui/maps-windows.js",
@@ -161,18 +181,18 @@
     },
     {
       "file": "src/world/fishing.js",
-      "bytes": 13246,
-      "sha256": "bf61e10c26987fd05e79819b36989c93a1d7bc116241b04adc9eb37ad4eb602d"
+      "bytes": 13243,
+      "sha256": "7d3c0c15338bca1932ded71e4e5678f90ed5745ffff0adc8f3da49d89d1e8c88"
     },
     {
       "file": "src/inventory/physical-slots.js",
-      "bytes": 8643,
-      "sha256": "3a27c3f45afaa87d899cae83e2c77ca8a2d1211f7fa5552931f69bfdbb1570a1"
+      "bytes": 8667,
+      "sha256": "73d03a1df4526370ec8b23808e5dbdf9fac800a82ffd5f5b3e570269e696203c"
     },
     {
       "file": "src/world/lake-city.js",
-      "bytes": 19444,
-      "sha256": "0169878a983ae3d04099f28d42f63935e3be29de756059f821a764bb3f45c76e"
+      "bytes": 19441,
+      "sha256": "59b0fb2fd8bfa5dc49a5966fc77ddcbb8c652b37e336d6e2f508f3774a6d0f58"
     },
     {
       "file": "src/drones/navigation.js",
@@ -182,12 +202,12 @@
     {
       "file": "src/drones/companion.js",
       "bytes": 32293,
-      "sha256": "74d156febf066d870d7afd9d7b2d4171b3a4ddaf64efe59e195e40b7a595d6d9"
+      "sha256": "eb463046c13534c875323af86c78e8890bd177ffd94d670b412ead531415b4c8"
     },
     {
       "file": "src/player/controls.js",
-      "bytes": 12779,
-      "sha256": "387f3475aac70825605de986e02b76b4f46139cb25786be20c7b2b3fd3c7a89f"
+      "bytes": 12778,
+      "sha256": "7d8b041973245e0056f0a40ce1547a08f593ba613513bc482cc865a1c120313d"
     },
     {
       "file": "src/drones/interface-power.js",
@@ -196,8 +216,8 @@
     },
     {
       "file": "src/farm/manual.js",
-      "bytes": 10258,
-      "sha256": "4d96f1693d5223117ec7a066ff23e7c8962e00efdade3e9c92f391ed10721db8"
+      "bytes": 10243,
+      "sha256": "2cdf599a9a4581bd2ec609ca2c07effdf85560f5e42333f1e99958eec25913da"
     },
     {
       "file": "src/world/trees-minimap.js",
@@ -206,8 +226,8 @@
     },
     {
       "file": "src/base/structures.js",
-      "bytes": 33779,
-      "sha256": "a8eb5321c709a1511d98c49f93e95e6aa12aca495a7ba261b360cef386067a25"
+      "bytes": 33776,
+      "sha256": "8e9dbaa50dad138ce6880ad96daf3a61fb858bbad5341a45f40017e4d88bdc18"
     },
     {
       "file": "src/drones/station.js",
@@ -216,28 +236,28 @@
     },
     {
       "file": "src/render/lighting.js",
-      "bytes": 13141,
-      "sha256": "2de17dccf47f3942e7944ac5b7578abf9c76361bb50d78d8dc08afcb15ba466b"
+      "bytes": 13138,
+      "sha256": "16c2f184335abda71a5ad217fc88f7e8789fa4c5ed4dae125a0b15dc40f6fd0e"
     },
     {
       "file": "src/base/turrets.js",
-      "bytes": 24335,
-      "sha256": "7cdec60b6059dbdbd41a974e48df9a82a199ca37bfe5ce313e4c9eb3985141b1"
+      "bytes": 24323,
+      "sha256": "813d01a3f62ddc4be5f6619aee07b52c786294fe9d0179561fa559db7c1bf075"
     },
     {
       "file": "src/ui/modal-dragging.js",
-      "bytes": 11220,
-      "sha256": "3ef36d1b9c888fc32e9ddc0cced7a59705ca5535a62160f0201d8df7d6e16b96"
+      "bytes": 11222,
+      "sha256": "120509451542f9aee94bf90b60224de08c72e8190c09af33c113b1be71eba908"
     },
     {
       "file": "src/inventory/upgrades.js",
-      "bytes": 16097,
-      "sha256": "228798e3ffcbc9388f3387c1693f74f80069eaf965a2707f9a886a78cd7cbf97"
+      "bytes": 16103,
+      "sha256": "9fe3e307c1d93d12121eba0d5b3ccbb22aa9a98fd746943ede37596c9e04685f"
     },
     {
       "file": "src/inventory/picker-magazines.js",
-      "bytes": 11860,
-      "sha256": "fe41613cec2c296154f6a860fcffb69334899b6509fd78d7d436c9986c81a924"
+      "bytes": 11881,
+      "sha256": "c250173340aa0b92b5e760b8e0a495a1b2f92b878d8d6e00eca5e25dabde99a5"
     },
     {
       "file": "src/ui/loot-vitals.js",
@@ -246,18 +266,23 @@
     },
     {
       "file": "src/combat/monsters.js",
-      "bytes": 22565,
-      "sha256": "f55095c93a1e53284e4344f55d42d24d63773081173bd7a726952adca445196f"
+      "bytes": 22562,
+      "sha256": "a3c4a9c1c5578e779887c1eca224c86c67c83ff97bf0f6e57b2e07125ebb54a3"
     },
     {
       "file": "src/base/construction.js",
-      "bytes": 20416,
-      "sha256": "7263526d9f28e91094db4d4b6e8b32d97938e49dc3587839f82586939467989c"
+      "bytes": 20419,
+      "sha256": "22ff9b8c7798d2a26a9c22e41fa02c1a5cd1a6d671bd746fc6bb9ec289805385"
+    },
+    {
+      "file": "src/save/finalize.js",
+      "bytes": 1445,
+      "sha256": "306b578bacee5ad4b704cc8ea1bd0ae27cdf73f06c9618f321ea69931e30c4fe"
     },
     {
       "file": "src/bootstrap.js",
-      "bytes": 1687,
-      "sha256": "b949e71e9cb38ab871b9e16108923037ffadedaf293a5e7a1491fd8b3e796689"
+      "bytes": 1697,
+      "sha256": "1056fb88fc233106487c8b0b5a51acc4bfdc0a6d7ebb434396456d5db2b41893"
     }
   ]
 }
