@@ -1,0 +1,97 @@
+--- 0.20.0/index.html
++++ interaction-fixed/index.html
+@@ -2253,7 +2253,12 @@
+     if(menuOpen||playerDead)return;
+     if(tap.following){approachPoint(...Object.values(screenToWorld(e.clientX,e.clientY)),true);return;}
+     if(uiTouch(e.target))return;
+-    if(tap.target)approachObject(tap.target);else approachPoint(tap.point.x,tap.point.y);
++    if(tap.target){
++      // Moving objects may have changed position since pointerdown. Keep the
++      // selected identity, but use its current interaction geometry on release.
++      const target=interactionObjects().find(o=>o.id===tap.target.id&&o.kind===tap.target.kind);
++      if(target)approachObject(target);
++    }else approachPoint(tap.point.x,tap.point.y);
+   }
+ },{passive:false});
+ window.addEventListener('pointercancel',e=>{
+@@ -2894,7 +2899,16 @@
+   return distance(x,y,p.x,p.y)<=o.range&&lineClear(x,y,p.x,p.y,0,scene,o.id);
+ }
+ function hitInteraction(x,y){
+-  return interactionObjects().find(o=>o.r!==undefined?distance(x,y,o.x,o.y)<=o.r+10:rectHit(x,y,7,o))||null;
++  let selected=null;
++  for(const o of interactionObjects()){
++    const b=o.pickBounds||o;let px=x,py=y;
++    if(b.rotation){const cx=b.x+b.w/2,cy=b.y+b.h/2,dx=x-cx,dy=y-cy,c=Math.cos(b.rotation),s=Math.sin(b.rotation);px=cx+dx*c+dy*s;py=cy-dx*s+dy*c;}
++    const hit=b.r!==undefined?distance(px,py,b.x,b.y)<=b.r+10:rectHit(px,py,7,b);
++    // Preserve existing order for equal layers; foreground actors can be
++    // selected over their dock without changing collision/reach geometry.
++    if(hit&&(!selected||(o.pickPriority||0)>(selected.pickPriority||0)))selected=o;
++  }
++  return selected;
+ }
+ function executeInteraction(target){
+   if(!target||menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+@@ -11607,7 +11621,8 @@
+   const renderOld=renderLoot;renderLoot=function(...a){const r=renderOld(...a);let b=el('v014DroneLoot');if(!b){b=v09Button('Забрать дроном',dispatchLoot);b.id='v014DroneLoot';el('lootList').after(b);}b.disabled=!near()||!activeLoot?.length;return r;};
+   const detailsOld=V011UI.details;V011UI.details=function(where,i){detailsOld(where,i);const s=where==='bag'?bag[i]:Number.isInteger(where)?storageChests[where]?.items[i]:null;if(!s)return;const body=el('v010ItemDetails').querySelector('.v09Body');if(s.type==='drone014'){body.append(v09Button('Запустить',()=>{if(where!=='bag'){message('Сначала переложите робота в рюкзак');return;}const ok=deploy(s);if(ok)closeOverlay(el('v010ItemDetails'));}));}else if(where==='bag')body.append(v09Button('В дрона',()=>{store(i);closeOverlay(el('v010ItemDetails'));}));};
+   const remoteOld=v09OpenPowerRemote;v09OpenPowerRemote=function(...a){const r=remoteOld(...a);el('v09PowerOverlay').querySelector('.v09Body').append(v09Button('Дрон',openStation));return r;};
+-  const objectsOld=interactionObjects;interactionObjects=function(which=scene){const a=objectsOld(which);if(which==='bunker')a.push({...DOCK});if(!state.packed&&state.scene===which)a.push({id:'drone014',kind:'drone014',name:state.hp<=0||!state.battery?'Подобрать дрона':'Дрон',x:state.x,y:state.y,r:20,range:60});return a;};
++  function dronePose(){const flying=state.task!=='docked'&&state.hp>0&&state.battery>0;return {x:state.x,y:state.y-10+(flying?Math.sin(performance.now()/1000*3)*2:0),rotation:angle+Math.PI/2,flying};}
++  const objectsOld=interactionObjects;interactionObjects=function(which=scene){const a=objectsOld(which);if(which==='bunker')a.push({...DOCK});if(!state.packed&&state.scene===which){const p=dronePose();a.push({id:'drone014',kind:'drone014',name:state.hp<=0||!state.battery?'Подобрать дрона':'Дрон',x:state.x,y:state.y,r:20,range:60,pickPriority:1,pickBounds:{x:p.x-35,y:p.y-35,w:70,h:70,rotation:p.rotation}});}return a;};
+   const executeOld=executeInteraction;executeInteraction=function(o,...args){if(['robots014_dock','drone014'].includes(o?.kind)){if(!menuOpen&&!playerDead&&canInteract(o,player.x,player.y)){if(o.kind==='robots014_dock')openStation();else open();}return;}return executeOld(o,...args);};
+   function disk(x,y,r,fill,stroke){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.3;ctx.stroke();}}
+   function drawDock(){
+@@ -11625,10 +11640,10 @@
+     for(const a of [[x+4,y+4],[x+w-4,y+4],[x+4,y+h-4],[x+w-4,y+h-4]])disk(a[0],a[1],1.5,'#a8b8a8');ctx.restore();
+   }
+   function drawDrone(){
+-    if(state.packed||state.scene!==scene)return;const t=performance.now()/1000,flying=state.task!=='docked'&&state.hp>0&&state.battery>0,bob=flying?Math.sin(t*3)*2:0;
++    if(state.packed||state.scene!==scene)return;const t=performance.now()/1000,pose=dronePose(),flying=pose.flying;
+     ctx.save();ctx.fillStyle='#061c2033';ctx.beginPath();ctx.ellipse(state.x+6,state.y+8,23,15,angle,0,Math.PI*2);ctx.fill();
+     if(!window.V016Lighting&&state.light&&flying&&!(state.economy&&state.battery<20)){const g=ctx.createRadialGradient(state.x,state.y,4,state.x,state.y,150);g.addColorStop(0,'#e2fff248');g.addColorStop(.35,'#c9f6dd22');g.addColorStop(1,'#b5ead900');ctx.fillStyle=g;ctx.fillRect(state.x-150,state.y-150,300,300);}
+-    ctx.translate(state.x,state.y-10+bob);ctx.rotate(angle+Math.PI/2);
++    ctx.translate(pose.x,pose.y);ctx.rotate(pose.rotation);
+     const sprite=window.V011Art?.draw('drone014',-35,-35,70,70);
+     if(!sprite){ctx.strokeStyle='#536d6d';ctx.lineWidth=7;for(const x of [-20,20])for(const y of [-20,20]){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(x,y);ctx.stroke();disk(x,y,11,'#233b3f','#abc0b0');}ctx.fillStyle='#698885';ctx.fillRect(-10,-15,20,30);}
+     if(flying){for(const x of [-22,22])for(const y of [-20,20]){ctx.save();ctx.translate(x,y);ctx.rotate(t*45+(x+y));ctx.globalAlpha=.32;ctx.fillStyle='#bad8ca';ctx.fillRect(-9,-1.2,18,2.4);ctx.fillRect(-1.2,-9,2.4,18);ctx.restore();}}
+@@ -12888,9 +12903,10 @@
+ window.V0161UI=(()=>{
+   const inv=V010Inventory,robot=V014Robots,quick=V013Inventory;
+   const controls=['v010Minimap','moveControl','aimControl','actionButton','bagButton','settingsButton','hotbar','v010SneakButton','v010ReloadButton','v014DroneHUD','v091JumpInward','v014RouteStop','v010PracticeStop','v010PinnedRecipe','v010PinnedGoal','searchBarWrap','v016Placement','v163Vitals','heldItemName'];
+-  let serial=15000,dismissGesture=null;
++  let serial=15000,dismissGesture=null,pointerGesture=null;
+   function sync(){const open=!!document.querySelector('.overlay.open');menuOpen=open||playerDead;if(document.body.classList.contains('v0161Modal')!==menuOpen)document.body.classList.toggle('v0161Modal',menuOpen);}
+   function opened(o){
++    if(pointerGesture)pointerGesture.opened=true;
+     o.style.zIndex=String(++serial);const panel=o.querySelector('.panel');
+     if(panel&&!o.querySelector('.v09Close,.v012InventoryClose,.v0161Close,#v010MapClose,#closeLoot')){
+       const b=v09Button('×',()=>closeOverlay(o),'v0161Close');b.title='Закрыть';b.setAttribute('aria-label','Закрыть');panel.prepend(b);
+@@ -12906,18 +12922,27 @@
+   window.addEventListener('pointerdown',e=>{
+     if(dismissGesture&&!dismissGesture.released){dismissGesture.ids.add(e.pointerId);consume(e);return;}
+     dismissGesture=null;
++    pointerGesture={id:e.pointerId,opened:false};
+     const o=topOverlay();if(!o||inside(o,e.target))return;
+     dismissGesture={ids:new Set([e.pointerId]),released:false};consume(e);closeOverlay(o);
+   },true);
+   for(const type of ['pointermove','pointerup','pointercancel'])window.addEventListener(type,e=>{
++    if(type==='pointercancel'&&pointerGesture?.id===e.pointerId)pointerGesture=null;
+     if(!dismissGesture?.ids.has(e.pointerId))return;consume(e);
+     if(type!=='pointermove'){dismissGesture.ids.delete(e.pointerId);dismissGesture.released=!dismissGesture.ids.size;}
+   },true);
+   window.addEventListener('click',e=>{
++    // A panel opened during this pointer gesture owns its compatibility click.
++    // It must not be treated as a second, outside-panel dismissal or reach UI
++    // underneath. A fresh pointerdown always starts a new gesture (no timeout).
++    const openedByPointer=pointerGesture?.opened&&e.detail!==0&&(e.pointerId===undefined||e.pointerId===pointerGesture.id);
++    pointerGesture=null;
++    if(openedByPointer){consume(e);return;}
+     if(dismissGesture){consume(e);if(dismissGesture.released)dismissGesture=null;return;}
+     const o=topOverlay();if(o&&!inside(o,e.target)){consume(e);closeOverlay(o);}
+   },true);
+   window.addEventListener('contextmenu',e=>{if(dismissGesture)consume(e);},true);
++  window.addEventListener('blur',()=>{pointerGesture=null;dismissGesture=null;});
+   document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const a=[...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||0)-Number(a.style.zIndex||0));if(a[0]){e.preventDefault();closeOverlay(a[0]);}});
+   // Covers legacy direct class changes (death, load, layout editor). :has below
+   // hides controls in the same style update, before the observer callback.
