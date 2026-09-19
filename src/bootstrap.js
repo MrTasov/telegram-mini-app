@@ -1,4 +1,4 @@
-loadGameProgress();gameSaveReady=true;
+loadGameProgress();GameState.session.ready=true;
 grantStarterItems();
 renderQuickSlots();
 if(starterPending.length)message('Освободите место в рюкзаке: предметы обновления ждут выдачи');

@@ -120,7 +120,7 @@ window.V012Fishing=(()=>{
   const surfaceOld=drawSurface;drawSurface=function(...args){const out=surfaceOld(...args);drawWater();return out;};
   const drawOld=drawPlayer;drawPlayer=function(...args){drawLine();return drawOld(...args);};
   const actionOld=updateAction;updateAction=function(...args){const out=actionOld(...args);if(scene==='surface'&&heldItem()==='fishing_rod'){const shore=state?.spot||shoreTarget();if(shore){interactionTarget=shore;currentActionObject=shore;currentAction='fishing0121';actionButton.classList.add('available');actionButton.classList.remove('inactive');}}if(currentAction==='fishing0121'){actionButton.textContent=state?'■':'🎣';actionButton.setAttribute('aria-label',state?'Остановить рыбалку':'Ловить рыбу');}return out;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(...args){stop();return restoreOld(...args);};
+  GameSave.extend('restore','world.fishing',function(restoreOld,...args){stop();return restoreOld(...args);});
   return {spots,boats,start,stop,tick,phase,drawHeld,drawWater,delay,shoreTarget,get state(){return state?{...state,spot:{...state.spot}}:null;}};
 })();
 

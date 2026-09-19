@@ -177,7 +177,6 @@ const V010Energy=(()=>{
   }
   const api={battery,allocation,capture,snapshot:capture,restore,validate,setRoomPriority,setDevicePriority,roomPriority:roomRank,devicePriority:deviceRank,open:openBattery,remainingTime,get flow(){return {...lastFlow};}};
   window.V010Energy=api;
-  if(typeof V010!=='undefined'&&V010.modules)V010.modules.energy=api;
+  if(typeof V010!=='undefined'&&V010.modules)V010.register('energy',api);
   return api;
 })();
-

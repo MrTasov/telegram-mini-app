@@ -4,8 +4,8 @@ const V09_ACTIVE_KEY='survival_base_v09_active_slot';
 const V09_SLOT_COUNT=5;
 const V09_CHICKEN_MAX=50;
 const V09_CHICKEN_BREED_MS=300000;
-let v09ActiveSlot=null;
-let v091SaveName='';
+// Save bookkeeping is owned by GameState.session.
+// Save bookkeeping is owned by GameState.session.
 const V091_SAVE_NAME_MAX=48;
 function v091CleanSaveName(value){
   if(value===undefined)return '';
@@ -13,12 +13,12 @@ function v091CleanSaveName(value){
   return value.replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,V091_SAVE_NAME_MAX);
 }
 function v091DefaultName(id){return 'Сохранение '+(id||1);}
-let v09SaveTransaction=false;
+// Save bookkeeping is owned by GameState.session.
 let v09ChickenBreedMs=0;
 let v09ChickenClock=performance.now();
-const v09OriginalCapture=captureGameProgress;
-const v09OriginalDecode=decodeGameProgress;
-const v09OriginalRestore=restoreGameProgress;
+
+
+
 
 function v09ChickenCount(){return livestockAnimals.filter(a=>a.kind==='chicken').length;}
 function v09AddChicken(){
@@ -79,10 +79,10 @@ const v09ChickenSlaughter=v09Button('🍗 Зарезать курицу · 5 м�
 v09ChickenSlaughter.id='v09ChickenSlaughter';
 el('cowSlaughterBtn').after(v09ChickenSlaughter);
 
-captureGameProgress=function(){
+GameSave.extend('capture','save.slots',function(v09OriginalCapture){
   const d=v09OriginalCapture();
   d.gameVersion='0.9.2';
-  d.saveName=v091SaveName;
+  d.saveName=GameState.session.name;
   d.v09={schema:1,power:V09Power.snapshot(),world:V09World.capture(),
     crafting:V09Craft.capture(),chickenBreedMs:v09ChickenBreedMs};
   d.v091={schema:1,
@@ -92,8 +92,9 @@ captureGameProgress=function(){
     const p=V091Fortress.canonicalPosition();if(p){d.player.x=p.x;d.player.y=p.y;}
   }
   return d;
-};
-// Capture before the first load, so New Game can never clone an old base.
+});
+// Historical migration defaults. Complete New Game defaults are captured by
+// GameSave only after all systems are initialized, before the first slot load.
 const v09NewGameTemplate=clone(captureGameProgress());
 
 function v09MigrateItems(d){
@@ -116,7 +117,7 @@ function v09MergeLegacyEntries(entries,all,required,make){
   const byId=new Map(entries.map(o=>[o.id,o]));
   return all.map(o=>byId.has(o.id)?byId.get(o.id):make(o));
 }
-decodeGameProgress=function(raw){
+GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   if(typeof raw!=='string'||raw.length>2*1024*1024)throw new Error('Save file is too large');
   let d=JSON.parse(raw);
   if(!d||typeof d!=='object'||Array.isArray(d))throw new Error('Invalid save');
@@ -124,7 +125,7 @@ decodeGameProgress=function(raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0)))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0)))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -174,13 +175,13 @@ decodeGameProgress=function(raw){
   if(window.V091Loot&&V091Loot.validate(d.v091.loot)===false)throw new Error('Invalid loot clocks');
   d.gameVersion='0.9.2';
   return d;
-};
+});
 function v09CancelPendingSave(){
-  if(gameSaveTimer!==null){clearTimeout(gameSaveTimer);gameSaveTimer=null;}
+  if(GameState.session.timer!==null){clearTimeout(GameState.session.timer);GameState.session.timer=null;}
 }
-restoreGameProgress=function(d){
-  const wasTransaction=v09SaveTransaction;
-  v09SaveTransaction=true;v09CancelPendingSave();
+GameSave.extend('restore','save.slots',function(v09OriginalRestore,d){
+  const wasTransaction=GameState.session.transaction;
+  GameState.session.transaction=true;v09CancelPendingSave();
   try{
     document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
     v09OriginalRestore(d);
@@ -188,12 +189,12 @@ restoreGameProgress=function(d){
     // Fortress restore supplies its saved upper-level coordinates after the legacy ground collision check.
     if(window.V091Fortress)V091Fortress.restore(d.v091.fortress);
     if(window.V091Loot)V091Loot.restore(d.v091.loot);
-    v091SaveName=v091CleanSaveName(d.saveName);
+    GameState.session.name=v091CleanSaveName(d.saveName);
     v09ChickenBreedMs=d.v09.chickenBreedMs;v09ChickenClock=performance.now();
     activeStorage=null;assigningHandType=null;
     grantStarterItems();renderQuickSlots();updateAmmoHud();
-  }finally{v09SaveTransaction=wasTransaction;}
-};
+  }finally{GameState.session.transaction=wasTransaction;}
+});
 function v09SlotKey(id){return V09_SAVE_PREFIX+id;}
 function v09BackupKey(id){return v09SlotKey(id)+'_backup';}
 function v09OccupiedSlots(){
@@ -232,8 +233,8 @@ loadGameProgress=function(){
     for(const id of order){
       const entry=v09ReadSlot(id);if(!entry||entry.invalid)continue;
       localStorage.setItem(V09_ACTIVE_KEY,String(id));
-      restoreGameProgress(entry.data);v09ActiveSlot=id;gameSaveBlocked=false;
-      lastVerifiedGameSave=JSON.stringify(entry.data);
+      restoreGameProgress(entry.data);GameState.session.activeSlot=id;GameState.session.blocked=false;
+      GameState.session.lastVerified=JSON.stringify(entry.data);
       updateSaveStatus(`💾 Слот ${id}: ${entry.recovered?'восстановлен из резервной копии':'прогресс восстановлен'}.`);
       return true;
     }
@@ -242,51 +243,51 @@ loadGameProgress=function(){
       if(raw===null)continue;
       let data;try{data=decodeGameProgress(raw);}catch(error){continue;}
       const id=v09FreeSlot();
-      if(!id){gameSaveBlocked=true;updateSaveStatus('Все слоты заняты. Откройте «Сохранения».');return false;}
+      if(!id){GameState.session.blocked=true;updateSaveStatus('Все слоты заняты. Откройте «Сохранения».');return false;}
       const migratedRaw=v09WriteNewSlot(id,data);
-      restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=migratedRaw;
+      restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=migratedRaw;
       updateSaveStatus(`💾 Прогресс перенесён в слот ${id}. Исходное сохранение сохранено отдельно.`);
       return true;
     }
     if(occupied.length||legacy.some(raw=>raw!==null)){
-      gameSaveBlocked=true;
+      GameState.session.blocked=true;
       updateSaveStatus('Сохранение не удалось прочитать. Оно не изменено. Доступны импорт и новая игра в свободном слоте.');
       return false;
     }
     const id=v09FreeSlot();const raw=v09WriteNewSlot(id,captureGameProgress());
-    v091SaveName=JSON.parse(raw).saveName;
-    v09ActiveSlot=id;lastVerifiedGameSave=raw;gameSaveBlocked=false;
+    GameState.session.name=JSON.parse(raw).saveName;
+    GameState.session.activeSlot=id;GameState.session.lastVerified=raw;GameState.session.blocked=false;
     updateSaveStatus(`💾 Слот ${id} · автосохранение каждые 5 секунд.`);
     return false;
-  }catch(error){gameSaveBlocked=true;v09ReportStorageFailure();return false;}
+  }catch(error){GameState.session.blocked=true;v09ReportStorageFailure();return false;}
 };
 saveGameProgress=function(manual=false){
-  if(v09SaveTransaction)return false;
-  if(!gameSaveReady||gameSaveBlocked||!v09ActiveSlot){
+  if(GameState.session.transaction)return false;
+  if(!GameState.session.ready||GameState.session.blocked||!GameState.session.activeSlot){
     if(manual)message('Откройте «Сохранения»: выберите игру или создайте свободный слот.');return false;
   }
   try{
     const raw=JSON.stringify(captureGameProgress());decodeGameProgress(raw);
-    if(lastVerifiedGameSave){
-      decodeGameProgress(lastVerifiedGameSave);
-      localStorage.setItem(v09BackupKey(v09ActiveSlot),lastVerifiedGameSave);
+    if(GameState.session.lastVerified){
+      decodeGameProgress(GameState.session.lastVerified);
+      localStorage.setItem(v09BackupKey(GameState.session.activeSlot),GameState.session.lastVerified);
     }
-    localStorage.setItem(v09SlotKey(v09ActiveSlot),raw);
-    lastVerifiedGameSave=raw;
-    updateSaveStatus(`💾 ${v091SaveName||v091DefaultName(v09ActiveSlot)} · сохранено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
-    if(manual)message(`💾 Сохранено: ${v091SaveName||v091DefaultName(v09ActiveSlot)}.`);
+    localStorage.setItem(v09SlotKey(GameState.session.activeSlot),raw);
+    GameState.session.lastVerified=raw;
+    updateSaveStatus(`💾 ${GameState.session.name||v091DefaultName(GameState.session.activeSlot)} · сохранено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
+    if(manual)message(`💾 Сохранено: ${GameState.session.name||v091DefaultName(GameState.session.activeSlot)}.`);
     return true;
   }catch(error){v09ReportStorageFailure(manual);return false;}
 };
 queueGameSave=function(){
-  if(!gameSaveReady||gameSaveBlocked||v09SaveTransaction||gameSaveTimer!==null)return;
-  const slot=v09ActiveSlot;
-  gameSaveTimer=setTimeout(()=>{gameSaveTimer=null;if(slot===v09ActiveSlot)saveGameProgress();},100);
+  if(!GameState.session.ready||GameState.session.blocked||GameState.session.transaction||GameState.session.timer!==null)return;
+  const slot=GameState.session.activeSlot;
+  GameState.session.timer=setTimeout(()=>{GameState.session.timer=null;if(slot===GameState.session.activeSlot)saveGameProgress();},100);
 };
 flushGameSave=function(){v09CancelPendingSave();return saveGameProgress();};
 function v09BeforeSwitch(){
   v09CancelPendingSave();
-  if(v09ActiveSlot&&!gameSaveBlocked&&!saveGameProgress()){
+  if(GameState.session.activeSlot&&!GameState.session.blocked&&!saveGameProgress()){
     message('Не удалось сохранить текущую игру. Скачайте копию перед переключением.');return false;
   }
   return true;
@@ -297,11 +298,11 @@ function v09ChooseSlot(id){
     if(!entry||entry.invalid){message('Сохранение повреждено. Текущая игра не изменена.');return false;}
     if(!v09BeforeSwitch())return false;
     // Refresh if selecting the current slot: the flush just saved the latest progress.
-    const next=id===v09ActiveSlot?v09ReadSlot(id):entry;
+    const next=id===GameState.session.activeSlot?v09ReadSlot(id):entry;
     if(!next||next.invalid)throw new Error('Save not available');
     localStorage.setItem(V09_ACTIVE_KEY,String(id));
     restoreGameProgress(next.data);
-    v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=JSON.stringify(next.data);
+    GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=JSON.stringify(next.data);
     updateSaveStatus(`💾 Слот ${id} · игра загружена.`);message(`Продолжаем игру из слота ${id}.`);return true;
   }catch(error){message('Не удалось загрузить игру. Сохранения не удалены.');return false;}
 }
@@ -309,11 +310,11 @@ function v09NewGame(){
   try{
     const id=v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
-    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.21.0';data.v010={schema:1,modules:clone(V010.initialModules)};
+    let data=GameSave.newGameData();
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
     const raw=v09WriteNewSlot(id,data);
-    restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=raw;
+    restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=raw;
     updateSaveStatus(`💾 Новая игра · слот ${id}.`);message(`Новая игра в слоте ${id}. Другие сохранения остались на месте.`);return true;
   }catch(error){v09ReportStorageFailure(true);return false;}
 }
@@ -324,7 +325,7 @@ function v09ImportSave(raw){
     const id=v09FreeSlot();if(!id){message('Нет свободного слота для импорта. Сохранения не изменены.');return false;}
     if(!v09BeforeSwitch())return false;
     const importedRaw=v09WriteNewSlot(id,data);
-    restoreGameProgress(data);v09ActiveSlot=id;gameSaveBlocked=false;lastVerifiedGameSave=importedRaw;
+    restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=importedRaw;
     updateSaveStatus(`💾 Импортировано в слот ${id}.`);message(`Сохранение загружено в отдельный слот ${id}.`);return true;
   }catch(error){v09ReportStorageFailure(true);return false;}
 }
@@ -333,8 +334,8 @@ function v09DownloadSave(){
     const raw=JSON.stringify(captureGameProgress(),null,2);decodeGameProgress(raw);
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
-    const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.21.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
+    a.download=`survival-base-0.22.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -342,9 +343,9 @@ function v09DownloadSave(){
 function v091RenameSave(id,value){
   if(!Number.isInteger(id)||id<1||id>V09_SLOT_COUNT)return false;
   let next;try{next=v091CleanSaveName(value)||v091DefaultName(id);}catch(error){return false;}
-  if(id===v09ActiveSlot){
-    const previous=v091SaveName;v091SaveName=next;
-    if(!saveGameProgress()){v091SaveName=previous;return false;}
+  if(id===GameState.session.activeSlot){
+    const previous=GameState.session.name;GameState.session.name=next;
+    if(!saveGameProgress()){GameState.session.name=previous;return false;}
   }else{
     try{
       const entry=v09ReadSlot(id);if(!entry||entry.invalid)return false;
@@ -379,11 +380,11 @@ function v09RenderSaveSlots(){
       name.textContent=entry&&!entry.invalid?entry.data.saveName:`Слот ${id}`;label.append(name);
       const meta=document.createElement('div');meta.className='subtitle';meta.style.margin='4px 0 0';
       meta.textContent=!entry?'Свободен':entry.invalid?'Не удалось прочитать. Данные сохранены.':
-        `Слот ${id}${id===v09ActiveSlot?' · текущий':''} · ${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`;
+        `Слот ${id}${id===GameState.session.activeSlot?' · текущий':''} · ${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`;
       label.append(meta);row.append(label);
       if(entry&&!entry.invalid){
         const actions=document.createElement('div');actions.className='v091SaveActions';
-        actions.append(v09Button(id===v09ActiveSlot?'Продолжить':'Загрузить',()=>v09ChooseSlot(id)),
+        actions.append(v09Button(id===GameState.session.activeSlot?'Продолжить':'Загрузить',()=>v09ChooseSlot(id)),
           v09Button('Переименовать',()=>v091EditSaveName(id,row,entry.data.saveName)));row.append(actions);
       }
       if(entry){const del=v09Button('Удалить',()=>V0104.requestDelete(id));del.classList.add('v104Delete');row.append(del);}
@@ -405,8 +406,8 @@ el('saveGameButton').after(v09Button('📂 Продолжить / загрузи
 v09Style('.v09SaveRow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #ffffff20;flex-wrap:wrap}.v09SaveRow>div{min-width:0}.v09SaveRow b{overflow-wrap:anywhere}.v09SaveRow .menuButton{width:auto;flex-shrink:0;margin:0;padding:10px 12px;font-size:12px}.v09SaveRow .subtitle{line-height:1.45}.v091SaveActions{display:flex;gap:6px;flex-wrap:wrap}.v091SaveNameLabel{display:block;flex:1;min-width:180px;color:#a9bebf;font-size:12px}.v091SaveNameInput{display:block;box-sizing:border-box;width:100%;margin-top:6px;padding:10px;border:1px solid #8ca88e;border-radius:7px;background:#101b1f;color:#fff;font:inherit;font-size:16px}.v091SaveNameInput:focus{outline:2px solid #b9d699;outline-offset:2px}');
 window.V09Saves={open(){v09RenderSaveSlots();openOverlay(v09SaveOverlay);},newGame:v09NewGame,
   load:v09ChooseSlot,importRaw:v09ImportSave,download:v09DownloadSave,rename:v091RenameSave,
-  get name(){return v091SaveName;},
-  get activeSlot(){return v09ActiveSlot;},get chickenBreedMs(){return v09ChickenBreedMs;}};
+  get name(){return GameState.session.name;},
+  get activeSlot(){return GameState.session.activeSlot;},get chickenBreedMs(){return v09ChickenBreedMs;}};
 
 
 v09Style(".itemIcon{width:44px;height:44px;object-fit:contain;vertical-align:middle;pointer-events:none}.slotArt .itemIcon{width:100%;height:100%}.equipIcon .itemIcon{width:37px;height:37px}.inventoryGrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}.invSlot{box-sizing:border-box;min-height:66px;height:66px;padding:3px;position:relative;overflow:hidden}.invSlot .ico{height:37px;line-height:37px}.invSlot .ico .itemIcon{width:38px;height:38px}.invSlot>div:nth-child(2){font-size:9px;line-height:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.invSlot .qty{font-size:10px;line-height:12px;margin:0}.invSlot>div:only-child{font-size:9px}.v092CraftLayout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;min-height:0;flex:1;margin-top:10px}.v092RecipeList{overflow-y:auto;border-right:1px solid #ffffff16;padding-right:10px}.v092Category{font-size:11px;letter-spacing:.5px;color:#afc1bc;margin:10px 0}.v092Recipe{display:flex;align-items:center;gap:6px;width:100%;padding:7px 4px;margin:4px 0;border:1px solid transparent;border-radius:8px;background:#1c2a30;color:#e3ece8;text-align:left;cursor:pointer;min-height:58px}.v092Recipe.selected{border-color:#c9ac70;background:#34413f}.v092Recipe span{font-size:12px}.v092Recipe small{display:block;color:#a5b7b3;font-size:10px;margin-top:4px}.v092Recipe .itemIcon{width:42px;height:42px;flex-shrink:0}.v092RecipeHero{display:flex;align-items:center;gap:14px;min-height:90px}.v092RecipeHero>.itemIcon{width:85px;height:85px}.v092Materials{display:grid;grid-template-columns:1fr 1fr;gap:6px;min-height:112px;align-content:start}.v092Ingredient{display:flex;align-items:center;gap:6px;background:#1b2b30;border:1px solid #3b5054;border-radius:7px;color:#dce9e4;padding:5px;text-align:left;cursor:pointer;font-size:11px}.v092Ingredient strong{display:block;margin-top:4px}.v092Ingredient .itemIcon{width:34px;height:34px}.v092MaterialHelp{font-size:11px;line-height:1.4;min-height:46px;color:#afc1b9;padding:8px 0}.v092Production{font-size:12px}.v092Production>span{float:right;color:#b3d5be}.v092Production .v09CraftProgress{margin:8px 0}.v092ProductionCounts{margin-top:5px}.v091CraftActions{min-height:160px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-end}.v091CraftActions .v09CraftNote{margin:6px 0}#v09CraftOverlay .v09Panel{width:min(820px,calc(100vw - 20px));height:min(710px,94dvh)}.v091QuantityCount{font-size:13px}.v09CraftQuantity{gap:5px}.v09CraftQuantity button{font-size:12px}.v09CraftShort{color:#efa496}.v09GunStats{min-height:58px}\n@media(max-width:540px){.v092CraftLayout{grid-template-columns:116px minmax(0,1fr);gap:8px}.v092Recipe{flex-direction:column;align-items:flex-start}.v092Recipe .itemIcon{width:38px;height:38px}.v092RecipeList{padding-right:5px}.v092RecipeHero{gap:5px}.v092RecipeHero>.itemIcon{width:48px;height:48px}.v092RecipeHero b{font-size:13px}.v092Materials{grid-template-columns:1fr;min-height:112px}.v092Ingredient{min-height:38px}.v092Production>span{float:none;display:block}.invSlot{height:62px;min-height:62px}.inventoryGrid{gap:3px}.v091CraftActions{min-height:160px}#v09CraftOverlay .v09Panel{padding:10px}.v09CraftQuantity{grid-template-columns:1fr 1fr}}\n@media(max-height:500px){.v091CraftActions{min-height:100px}.v092Production .v09CraftNote{display:none}#v09CraftOverlay .v09Panel{height:96dvh}}\n");

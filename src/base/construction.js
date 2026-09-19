@@ -163,9 +163,9 @@ window.V018Build=(()=>{
   function capture(){return {schema:1,credit,doors:doorRecords.map(r=>({id:r.id,hp:r.object.hp,level:r.object.level}))};}
   function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isFinite(d.credit)||d.credit<0||d.credit>1000||!Array.isArray(d.doors)||d.doors.length!==doorRecords.length)throw Error('Некорректные данные строительства');const seen=new Set();for(const p of d.doors){if(!doorRecords.some(r=>r.id===p.id)||seen.has(p.id)||!Number.isInteger(p.level)||p.level<1||p.level>5||!Number.isFinite(p.hp)||p.hp<0||p.hp>LEVELS[p.level])throw Error('Некорректная прочность двери');seen.add(p.id);}return true;}
   function restore(data){validate(data);job=null;credit=data?.credit||0;selected=null;const map=new Map((data?.doors||[]).map(o=>[o.id,o]));for(const r of doorRecords){const p=map.get(r.id),o=r.object;o.level=p?.level||1;o.maxHp=LEVELS[o.level];o.hp=p?p.hp:o.maxHp;if(!o.hp){if(r.kind==='automatic')o.open=1;if(r.owner){r.owner.doorOpen=true;r.owner.doorProgress=1;}}}invalidateGeometry();refresh();}
-  const oldCapture=captureGameProgress;captureGameProgress=function(){const d=oldCapture();d.building018=capture();return d;};
-  const oldDecode=decodeGameProgress;decodeGameProgress=function(raw){const d=JSON.parse(raw);validate(d.building018);return oldDecode(raw);};
-  const oldRestore=restoreGameProgress;restoreGameProgress=function(d){validate(d.building018);restore(d.building018);oldRestore(d);restore(d.building018);};
+  GameSave.extend('capture','base.construction',function(oldCapture){const d=oldCapture();d.building018=capture();return d;});
+  GameSave.extend('decode','base.construction',function(oldDecode,raw){const d=JSON.parse(raw);validate(d.building018);return oldDecode(raw);});
+  GameSave.extend('restore','base.construction',function(oldRestore,d){validate(d.building018);restore(d.building018);oldRestore(d);restore(d.building018);});
   v09Style(`
     #v018Structure .v09Panel{width:min(340px,92vw);padding:14px;max-height:75dvh}#v018Structure .v09Body{font-size:11px}
     .v018BuildHero{display:flex;align-items:center;gap:12px}.v018BuildHero>.itemIcon{width:70px;height:70px}.v018BuildHero b,.v018BuildHero span{display:block;line-height:1.7}.v018BuildHero b{font-size:13px}.v018BuildHero span{font-size:12px;color:#bdcec1;font-variant-numeric:tabular-nums}

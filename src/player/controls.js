@@ -147,7 +147,7 @@ window.V014Controls=(()=>{
     const hp=el('healthText');if(hp)hp.textContent='❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth);
     return out;
   };
-  const restore=restoreGameProgress;restoreGameProgress=function(d){route=pending=null;lockedPress=null;restore(d);layout();};
+  GameSave.extend('restore','player.controls',function(restore,d){route=pending=null;lockedPress=null;restore(d);layout();});
   v09Style(`
     #versionBadge,.versionBadge,#versionLabel{display:none!important}
     #v010Minimap{top:calc(var(--v011-game-top) + 70px)!important;transition:opacity .15s ease}

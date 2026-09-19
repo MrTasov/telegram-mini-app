@@ -131,8 +131,8 @@ window.V0162Magazines=(()=>{
       for(const x of Object.values(v))if(x&&typeof x==='object')visit(x);
     }visit(d);return d;
   }
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};
-  const restore=restoreGameProgress;restoreGameProgress=function(d){return restore(migrate(copy(d)));};
+  GameSave.extend('decode','inventory.picker-magazines',function(decode,raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));});
+  GameSave.extend('restore','inventory.picker-magazines',function(restore,d){return restore(migrate(copy(d)));});
   v09Style(`
     .v162Magazine{width:100%;box-sizing:border-box;border:1px solid #91ac9b38;border-radius:9px;padding:9px;margin-top:10px;background:#172d2b66}
     .v162MagazineLabel{font-size:11px;color:#a9bfb4;margin-bottom:6px}.v162MagazineRow{display:flex;gap:10px;align-items:center}

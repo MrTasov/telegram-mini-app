@@ -115,7 +115,7 @@ window.V0161Migration=(()=>{
     const prog=d.v010?.modules?.progression;if(prog){for(const k of ['unlocks','announced'])if(Array.isArray(prog[k]))prog[k]=prog[k].filter(x=>x!=='sight_advanced');if(prog.pin==='sight_advanced')prog.pin=null;}
     return d;
   }
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};
+  GameSave.extend('decode','ui.modal-dragging',function(decode,raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));});
   return{migrate,removed};
 })();
 

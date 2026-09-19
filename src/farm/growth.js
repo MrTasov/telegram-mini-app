@@ -123,20 +123,20 @@ window.V011Farm=(()=>{
   executeInteraction=function(target){if(target?.kind==='garden_water'){if(!menuOpen&&!playerDead&&canInteract(target,player.x,player.y))openWater();return;}oldExecute(target);};
   const oldUpdate=update;update=function(){settle();oldUpdate();};
   const oldUse=useFarmBed;useFarmBed=function(i){settle();return oldUse(i);};
-  const oldCapture=captureGameProgress,oldRestore=restoreGameProgress,oldDecode=decodeGameProgress;
+  
   function validateSave(d){
     const a=d.farmV011;if(a===undefined)return;
     if(!a||a.schema!==1||!valid(a.water,0,100)||!valid(a.at,0,Date.now()+60000)||!Array.isArray(a.grown)||a.grown.length!==5||a.grown.some((v,i)=>!valid(v,0,d.farm[i].crop===null?0:farmGrowMs(d.farm[i].crop))))throw Error('Некорректные данные полива');
   }
-  captureGameProgress=function(){settle();const d=oldCapture();d.farmV011={schema:1,water:state.water,at:state.at,grown:window.farmState.map(st=>st.crop===null?0:growth(st))};d.farm014={schema:1,next:state.next,end:state.end,beds:window.farmState.map(st=>st.crop===null?null:JSON.parse(JSON.stringify(plants(st))))};return d;};
+  GameSave.extend('capture','farm.growth',function(oldCapture){settle();const d=oldCapture();d.farmV011={schema:1,water:state.water,at:state.at,grown:window.farmState.map(st=>st.crop===null?0:growth(st))};d.farm014={schema:1,next:state.next,end:state.end,beds:window.farmState.map(st=>st.crop===null?null:JSON.parse(JSON.stringify(plants(st))))};return d;});
   function validate014(d){const x=d.farm014;if(!x)return;if(x.schema!==1||!valid(x.next,0,Number.MAX_SAFE_INTEGER)||!valid(x.end,0,Number.MAX_SAFE_INTEGER)||!Array.isArray(x.beds)||x.beds.length!==5)throw Error('Некорректные грядки');x.beds.forEach((a,i)=>{if(a===null){if(d.farm[i].crop!==null)throw Error('Пропущена грядка');return;}if(d.farm[i].crop===null||!Array.isArray(a)||a.length!==50||a.some(p=>!p||typeof p.planted!=='boolean'||typeof p.harvested!=='boolean'||!valid(p.elapsed,0,p.duration)||!valid(p.duration,0,farmGrowMs(d.farm[i].crop)*1.101)||!Number.isInteger(p.qty)||p.qty<1||p.qty>160||p.planted&&p.duration<farmGrowMs(d.farm[i].crop)*.899))throw Error('Некорректные растения');});}
-  decodeGameProgress=function(raw){const d=oldDecode(raw);validateSave(d);validate014(d);return d;};
-  restoreGameProgress=function(d){
+  GameSave.extend('decode','farm.growth',function(oldDecode,raw){const d=oldDecode(raw);validateSave(d);validate014(d);return d;});
+  GameSave.extend('restore','farm.growth',function(oldRestore,d){
     validateSave(d);validate014(d);oldRestore(d);const saved=d.farmV011;
     state.water=saved?saved.water:100;state.at=saved?saved.at:Date.now();state.next=d.farm014?.next||0;state.end=d.farm014?.end||0;
     window.farmState.forEach((st,i)=>{st[grownKey]=st.crop===null?0:saved?saved.grown[i]:clamp(Date.now()-st.plantedAt,0,cropTotal(st));if(d.farm014?.beds[i])st.plants014=JSON.parse(JSON.stringify(d.farm014.beds[i]));});
     settle();lastAnimalAt=performance.now();renderWater();invalidateGeometry();
-  };
+  });
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)settle();});
   // Animals keep existing nutrition/production/breeding mechanics. Only their physical
   // presentation and autonomous, frame-rate independent movement are replaced.

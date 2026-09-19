@@ -140,10 +140,10 @@ window.V011Rooms=(()=>{
     V091Light.invalidate();
     // Fortress snapshots derive their canonical coordinates from player; no stale copy remains.
   }
-  const oldRestore=restoreGameProgress;restoreGameProgress=function(data){
+  GameSave.extend('restore','base.rooms',function(oldRestore,data){
     const source=data?.player?.scene==='bunker'?{x:data.player.x,y:data.player.y}:null;
     lidState.clear();frameAt=performance.now();const result=oldRestore(data);safeRestoredPosition(source);return result;
-  };
+  });
   return{floor,walls,corridorWalls,wall,shadow,storage,chest,energy,workshop,paintDarkness,lights,fan,lidState,safeRestoredPosition,animation:()=>({generator:generatorPhase,furnace:furnacePhase,bench:benchPhase}),cacheSize:()=>patterns.size};
 })();
 
@@ -229,10 +229,10 @@ window.V011Living=(()=>{
   const oldUpdate=update;update=function(){oldUpdate();tick(16.667*frameScale);};
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
   window.addEventListener('pagehide',stop);window.addEventListener('blur',stop);
-  const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.living011={schema:1,dirt};return d;};
-  decodeGameProgress=function(raw){const d=oldDecode(raw),l=d.living011;if(l!==undefined&&(!l||l.schema!==1||!Number.isFinite(l.dirt)||l.dirt<0||l.dirt>1))throw Error('Некорректное состояние жилой комнаты');return d;};
-  restoreGameProgress=function(d){mode=null;anchor=null;elapsed=0;dirt=clamp(d.living011?.dirt??0,0,1);oldRestore(d);refresh();};
+  
+  GameSave.extend('capture','player.living',function(oldCapture){const d=oldCapture();d.living011={schema:1,dirt};return d;});
+  GameSave.extend('decode','player.living',function(oldDecode,raw){const d=oldDecode(raw),l=d.living011;if(l!==undefined&&(!l||l.schema!==1||!Number.isFinite(l.dirt)||l.dirt<0||l.dirt>1))throw Error('Некорректное состояние жилой комнаты');return d;});
+  GameSave.extend('restore','player.living',function(oldRestore,d){mode=null;anchor=null;elapsed=0;dirt=clamp(d.living011?.dirt??0,0,1);oldRestore(d);refresh();});
   const oldRespawn=respawn;respawn=function(...args){stop();dirt=0;return oldRespawn(...args);};
   function box(x,y,w,h,color,r=4,stroke){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.4;ctx.stroke();}}
   function line(points,color,width=2){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke();}

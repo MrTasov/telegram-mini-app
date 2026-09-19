@@ -196,10 +196,10 @@ window.V011World=(()=>{
     if(!Array.isArray(d.containers)||d.containers.length>expected.size||new Set(d.containers.map(v=>v?.id)).size!==d.containers.length||d.containers.some(v=>!v||!expected.has(v.id)||typeof v.searched!=='boolean'||!Array.isArray(v.loot)||v.loot.length>12||!v.searched&&v.loot.length||v.loot.some(s=>!s||!Object.hasOwn(ITEM,s.type)||!Number.isInteger(s.qty)||s.qty<1||s.qty>STACK_MAX||window.V010Combat&&V010Combat.validateItem(s)===false)||v.searchedAt!==null&&(!Number.isFinite(v.searchedAt)||v.searchedAt<0||v.searchedAt>Number.MAX_SAFE_INTEGER)))throw Error('Некорректный лут комнат');
     if(!Array.isArray(d.corpses)||d.corpses.length>144||new Set(d.corpses.map(c=>c.i)).size!==d.corpses.length||d.corpses.some(c=>!Number.isInteger(c.i)||c.i<0||c.i>=144||!Number.isFinite(c.at)||c.at<0||c.at>Number.MAX_SAFE_INTEGER))throw Error('Некорректное время тел');return true;
   }
-  const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.world011=capture();return d;};
-  decodeGameProgress=function(raw){const d=oldDecode(raw);if(d.world011!==undefined)validate(d.world011);return d;};
-  restoreGameProgress=function(data){
+  
+  GameSave.extend('capture','world.interiors',function(oldCapture){const d=oldCapture();d.world011=capture();return d;});
+  GameSave.extend('decode','world.interiors',function(oldDecode,raw){const d=oldDecode(raw);if(d.world011!==undefined)validate(d.world011);return d;});
+  GameSave.extend('restore','world.interiors',function(oldRestore,data){
     const d=data.world011;if(d)validate(d);Object.assign(filters,d?.filters||defaults);
     const doors=new Map((d?.doors||[]).map(v=>[v.id,v]));buildings.forEach(b=>{b.doorOpen=doors.get(b.id)?.open??false;b.doorProgress=b.doorOpen?1:0;b.roof=1;b.enterPending=false;});invalidateGeometry();
     // Enlarged footprints must not trap a character saved beside an older, smaller facade.
@@ -212,7 +212,7 @@ window.V011World=(()=>{
     const times=new Map((d?.corpses||[]).map(c=>[c.i,c.at]));zombies.forEach((z,i)=>{z.corpseAt011=z.alive?null:times.get(i)??Date.now()-90000;});
     for(const b of buildings)if(scene==='surface'&&inside(b,player.x,player.y,0))b.roof=0;
     updateLegend();invalidateGeometry();
-  };
+  });
   return {filters,setFilter,mapEnabled,buildings,containers,inside,doorRect,walls,toggleDoor,tick,drawRoofs,corpseAlpha,capture,validate,registerBuilding,obsoleteFence};
 })();
 

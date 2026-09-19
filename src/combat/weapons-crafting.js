@@ -186,7 +186,7 @@ window.V010Combat=(() => {
   function validate(d){if(!d||d.schema!==1||!Number.isInteger(d.nextUid)||d.nextUid<1||d.nextUid>100000000)throw Error('Некорректные данные экипировки');return true;}
   function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;lastHud='';const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();updateAmmoHud();}
   const api={capture,restore,validate,validateItem,getItemStats,gunSpec,refreshStats,ensure,rollFoundItem,currentWeapon,tick,cancelReload,upgrade,costs,install,detach,openWorkshop,renderWorkshop,practiceTarget,setPractice,practiceAllowed,modules:MODULES,get reloading(){return reloading?copy(reloading):null;},get practice(){return practice;}};
-  if(window.V010?.modules)V010.modules.combat=api;
+  if(window.V010?.modules)V010.register('combat',api);
   restore(null);return api;
 })();
 
@@ -194,7 +194,7 @@ window.V010Combat=(() => {
 const V010Craft=(()=>{
   'use strict';
   const api=V09Craft.craftQueue;
-  V010.modules.craft={capture:api.capture,restore:api.restore,validate:api.validate};
+  V010.register('craft',{capture:api.capture,restore:api.restore,validate:api.validate});
   v09Style(`
     #v09CraftOverlay .v09Panel{width:min(760px,calc(100vw - 18px));height:min(660px,94dvh);padding:12px}
     #v09CraftOverlay .v09Header{margin-bottom:5px;padding-bottom:6px}#v09CraftOverlay .v09Title{font-size:17px}
@@ -239,4 +239,3 @@ const V010Craft=(()=>{
   const oldUpdate=update;update=function(){oldUpdate();pinClock+=16.667*frameScale;if(pinClock>=250){pinClock=0;refreshPin();}};
   api.refreshPin=refreshPin;return api;
 })();
-

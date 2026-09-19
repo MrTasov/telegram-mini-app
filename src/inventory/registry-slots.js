@@ -1,9 +1,9 @@
 /* Shared, synchronous event and save registry. Gameplay modules are initialized before loading a slot. */
 const V010=(()=>{
-  const listeners=new Map(),modules={},recent=new Map();
+  const listeners=new Map(),modules=GameSave.modules,recent=new Map();
   const api={modules,on(name,fn){if(!listeners.has(name))listeners.set(name,[]);listeners.get(name).push(fn);return fn;},
     emit(name,data){for(const fn of listeners.get(name)||[])fn(data);},
-    register(name,mod){modules[name]=mod;return mod;},
+    register(name,mod){return GameSave.registerModule(name,mod);},
     log(text,kind='base'){text=String(text?.text??text).slice(0,300);const now=Date.now();if(now-(recent.get(text)||0)<2000)return;recent.set(text,now);if(recent.size>150)recent.delete(recent.keys().next().value);api.emit('log',{text,kind,at:now});}
   };window.V010=api;return api;
 })();
@@ -270,6 +270,5 @@ window.V010Inventory=(()=>{
   function capture(){return {schema:1,preset:copy(preset),selectedUid:copy(selectedUid)};}
   function restore(data){preset={ammo:90,ammo556:90,meds:2,water:5};for(const key of Object.keys(selectedUid))delete selectedUid[key];if(data&&validate(data)){preset=copy(data.preset);Object.assign(selectedUid,data.selectedUid||{});}drag=null;}
   const api={cell,startPointer,list,capacity,clickSuppressed:()=>performance.now()<suppressClick,capture,restore,validate,openExternalChest:cache=>{if(!cache||!Array.isArray(cache.items)||cache.items.length>60)return false;storageChests[-1]=cache;openStorage(-1);return true;},move,transfer,split,sort,equip,unequip,selectedItem,selectUid,materialCount,consumeMaterials,putMaterials:(input,batches=1)=>putMaterials(input,batches),putMaterialsAtomic:(input,batches=1)=>putMaterials(input,batches,true),insertItem:item=>insert(bag,item,BAG_SLOTS),render:notifyChange,details,bulk,refill,setPreset:p=>{if(validate({schema:1,preset:p})){preset=copy(p);queueGameSave();return true;}return false;}};
-  if(window.V010)V010.modules.inventory=api;return api;
+  if(window.V010)V010.register('inventory',api);return api;
 })();
-

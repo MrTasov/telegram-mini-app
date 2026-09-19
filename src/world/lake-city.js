@@ -122,9 +122,9 @@ window.V013City=(()=>{
  }
  const draw=drawSurface;drawSurface=function(...args){const out=draw(...args);drawPlaces();return out;};
  const oldUpdate=update;update=function(...args){const out=oldUpdate(...args);tick();return out;};
- const capture=captureGameProgress;captureGameProgress=function(){const d=capture();d.city013={schema:1,clock,floor,cars:cars.map(c=>({id:c.id,due:c.due013||null}))};return d;};
- const decode=decodeGameProgress;decodeGameProgress=function(raw){const d=decode(raw),c=d.city013;if(c&&(!c||c.schema!==1||!Number.isFinite(c.clock)||c.clock<0||![0,1].includes(c.floor)||!Array.isArray(c.cars)||c.cars.length!==cars.length||c.cars.some((v,i)=>v.id!==cars[i].id||v.due!==null&&(!Number.isFinite(v.due)||v.due<0))))throw Error('Неверное состояние города');return d;};
- const restore=restoreGameProgress;restoreGameProgress=function(d){setFloor(d.city013?.floor||0);restore(d);clock=d.city013?.clock||0;cars.forEach((c,i)=>{c.due013=d.city013?.cars[i]?.due||null;c.open013=c.searched?1:0;});last=performance.now();};
+ GameSave.extend('capture','world.lake-city',function(capture){const d=capture();d.city013={schema:1,clock,floor,cars:cars.map(c=>({id:c.id,due:c.due013||null}))};return d;});
+ GameSave.extend('decode','world.lake-city',function(decode,raw){const d=decode(raw),c=d.city013;if(c&&(!c||c.schema!==1||!Number.isFinite(c.clock)||c.clock<0||![0,1].includes(c.floor)||!Array.isArray(c.cars)||c.cars.length!==cars.length||c.cars.some((v,i)=>v.id!==cars[i].id||v.due!==null&&(!Number.isFinite(v.due)||v.due<0))))throw Error('Неверное состояние города');return d;});
+ GameSave.extend('restore','world.lake-city',function(restore,d){setFloor(d.city013?.floor||0);restore(d);clock=d.city013?.clock||0;cars.forEach((c,i)=>{c.due013=d.city013?.cars[i]?.due||null;c.open013=c.searched?1:0;});last=performance.now();});
  for(const o of [...worldTrees,...V09World.ores])if([...gas.map(g=>g.b),mall].some(b=>rectHit(o.x,o.y,80,b))){o.x=-2650;o.y=300+Math.abs(o.y)%8500;}
  invalidateGeometry();
  return {cars,gas,mall,floors,stair,roads,drawCar,drawRoads,tick,setFloor,get floor(){return floor;},get clock(){return clock;},dayMs:DAY};

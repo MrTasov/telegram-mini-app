@@ -240,18 +240,18 @@ window.V017Monsters=(()=>{
   const drawActors=V0141Trees.drawActors;V0141Trees.drawActors=function(){drawActors();if(scene!=='surface'||V013City.floor)return;drawTarget();for(const z of zombies)healthBar(z);
     for(const e of effects){const boost=e.boost||1;if(!visibleOnScreen(e.x,e.y,100*boost))continue;const t=clamp((performance.now()-e.at)/700,0,1);ctx.save();ctx.globalAlpha=(1-t)*.65;ctx.strokeStyle='#b2a274';ctx.lineWidth=8*(1-t)+1;ctx.beginPath();ctx.arc(e.x,e.y,(12+t*62)*boost,0,Math.PI*2);ctx.stroke();for(let i=0;i<9;i++){const a=i*2.4+e.seed;ctx.fillStyle='#7e8061';ctx.beginPath();ctx.arc(e.x+Math.cos(a)*t*60*boost,e.y+Math.sin(a)*t*60*boost,(3+8*(1-t))*boost,0,Math.PI*2);ctx.fill();}ctx.restore();}
   };
-  const capture=captureGameProgress;captureGameProgress=function(){
+  GameSave.extend('capture','combat.monsters',function(capture){
     const now=performance.now();zombies.forEach(z=>prepare(z));const d=capture();
     d.monsters017={schema:2,types:zombies.map(z=>z.type),actors:zombies.map(z=>{const r=prepare(z);return{raid:z.raid019,side:r.side,variant:r.variant,deathAngle:r.deathAngle,corpseMs:z.alive?0:clamp(now-r.deadAt,0,CORPSE_MS),retired:r.retired};})};return d;
-  };
+  });
   function validate(d){
     if(!d)return;const m=d.monsters017;if(!m)return;
     if(![1,2].includes(m.schema)||!Array.isArray(d.zombies)||!Array.isArray(m.types)||m.types.length!==d.zombies.length||m.types.length>144)throw Error('Неверные данные монстров');
     if(m.schema===2&&(!Array.isArray(m.actors)||m.actors.length!==m.types.length||m.actors.some((p,i)=>!p||typeof p.raid!=='boolean'||!SIDES.includes(p.side)||!Number.isInteger(p.variant)||p.variant<0||p.variant>2||!Number.isFinite(p.deathAngle)||p.deathAngle<0||p.deathAngle>=Math.PI*2||!Number.isFinite(p.corpseMs)||p.corpseMs<0||p.corpseMs>CORPSE_MS||typeof p.retired!=='boolean'||p.retired&&d.zombies[i].alive||d.zombies[i].alive&&p.corpseMs!==0)))throw Error('Неверное состояние монстров');
     if(m.types.some((t,i)=>!specs[t]||d.zombies[i].health>specs[t].hp*(m.schema===2&&m.actors[i].raid?1.5:1)||d.v010?.modules?.world?.types?.[i]!==t))throw Error('Неверные данные монстров');
   }
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){validate(JSON.parse(raw));return decode(raw);};
-  const restore=restoreGameProgress;restoreGameProgress=function(d){
+  GameSave.extend('decode','combat.monsters',function(decode,raw){validate(JSON.parse(raw));return decode(raw);});
+  GameSave.extend('restore','combat.monsters',function(restore,d){
     validate(d);restore(d);runtime=new WeakMap();effects=[];lastPopulation=performance.now();lastRaid=isDayX();
     zombies.forEach((z,i)=>{
       const saved=d.monsters017?.schema===2?d.monsters017.actors[i]:null;
@@ -262,7 +262,7 @@ window.V017Monsters=(()=>{
       else if(!z.alive)r.deadAt=performance.now()-clamp(Date.now()-(z.corpseAt011??Date.now()-CORPSE_MS),0,CORPSE_MS);
       if(!d.monsters017&&worldCollision(z.x,z.y,z.radius,'surface')){const p=V015Base.freePoint(z.x,z.y,z.radius);if(p){z.x=p.x;z.y=p.y;}}
     });
-  };
+  });
   const reset=resetZombies;resetZombies=function(){reset();runtime=new WeakMap();effects=[];zombies.forEach((z,i)=>{z.type=kinds[i%5];z.monster017=false;z.health=100;z.maxHealth=100;prepare(z);});};
   zombies.forEach((z,i)=>{z.type=kinds[i%5];prepare(z);});
   return{specs,stats,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};

@@ -166,8 +166,8 @@ window.V015Base=(()=>{
     for(const o of sections){const p=values.get(o.id);o.level=p?.level||1;o.maxHp=HP_LEVELS[o.level];o.hp=p?p.hp:o.maxHp;o.hitAt=-1e6;}
     northOpen=false;commandNorthOpen=d?.commandNorthOpen??false;commandSouthOpen=d?.commandSouthOpen??true;revision++;invalidateGeometry();
   }
-  const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.base015=capture();return d;};
-  const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const probe=migrateGame(JSON.parse(raw));validate(probe.base015);validating=true;let d;try{d=decodeOld(JSON.stringify(probe));}finally{validating=false;}
+  GameSave.extend('capture','base.structures',function(captureOld){const d=captureOld();d.base015=capture();return d;});
+  GameSave.extend('decode','base.structures',function(decodeOld,raw){const probe=migrateGame(JSON.parse(raw));validate(probe.base015);validating=true;let d;try{d=decodeOld(JSON.stringify(probe));}finally{validating=false;}
     if(d.v091?.fortress?.wallLevel){const f=d.v091.fortress,hp=new Map((d.base015?.sections||sections).map(o=>[o.id,d.base015?o.hp:o.maxHp]));
       const fits=(p,contains)=>{for(let i=-1;i<24;i++){const r=i<0?0:player.radius+3,a=i*Math.PI/12;if(!contains(p.x+Math.cos(a)*r,p.y+Math.sin(a)*r))return false;}return true;};
       if(!fits(f,(x,y)=>deckPresent(x,y,hp))){
@@ -179,10 +179,10 @@ window.V015Base=(()=>{
         f.x=tower.x;f.y=tower.y;d.player.x=f.x;d.player.y=f.y;
       }
     }
-    return d;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){d=migrateGame(d);restore(d.base015);restoreOld(d);
+    return d;});
+  GameSave.extend('restore','base.structures',function(restoreOld,d){d=migrateGame(d);restore(d.base015);restoreOld(d);
     if(scene==='surface'&&!player.wallLevel)settle(player);const drone=window.V014Robots?.state;if(drone&&!drone.packed&&drone.scene==='surface')settle(drone,12);
-    for(const z of zombies){delete z._baseRoute;delete z._baseUntil;if(z.alive)settle(z,z.radius);}invalidateGeometry();};
+    for(const z of zombies){delete z._baseRoute;delete z._baseUntil;if(z.alive)settle(z,z.radius);}invalidateGeometry();});
   invalidateGeometry();
   // Rendering is supplied below; geometry and damage do not depend on images.
   const wallSprites=new Map(),lightShapes=new Map(),materials=new Map();let groundCache=null;

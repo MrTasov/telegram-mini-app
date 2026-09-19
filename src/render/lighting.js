@@ -90,9 +90,9 @@ window.V016Lighting=(()=>{
   }
   V091Light.illuminate=illuminate;
   const oldUpdate=update;update=function(...args){const result=oldUpdate(...args);tick(16.667*frameScale);return result;};
-  const oldCapture=captureGameProgress;captureGameProgress=function(){const d=oldCapture();d.lighting016=capture();return d;};
-  const oldDecode=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);};
-  const oldRestore=restoreGameProgress;restoreGameProgress=function(d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);};
+  GameSave.extend('capture','render.lighting',function(oldCapture){const d=oldCapture();d.lighting016=capture();return d;});
+  GameSave.extend('decode','render.lighting',function(oldDecode,raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);});
+  GameSave.extend('restore','render.lighting',function(oldRestore,d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);});
   hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,get day(){return day;},maskImage:()=>mask,cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:4,droneShapes:droneShape?1:0,droneLimit:1,width:mask?.width||0,height:mask?.height||0})};
 })();
 

@@ -81,9 +81,9 @@ window.V0141Farm=(()=>{
     if(d.v010?.modules?.energy?.devicePriority)delete d.v010.modules.energy.devicePriority.robot_tractor_charge;
     provideStock(d);if(d.farmRecovery0141)validateRecovery(d.farmRecovery0141);return d;
   }
-  const capture=captureGameProgress;captureGameProgress=function(){const d=capture();d.farmRecovery0141=copy(recovery);d.farmPlantingStock0141=plantingStock;return d;};
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};
-  const restore=restoreGameProgress;restoreGameProgress=function(data){const d=migrate(copy(data));restore(d);recovery=copy(d.farmRecovery0141||[]);plantingStock=true;deliverRecovery();};
+  GameSave.extend('capture','farm.manual',function(capture){const d=capture();d.farmRecovery0141=copy(recovery);d.farmPlantingStock0141=plantingStock;return d;});
+  GameSave.extend('decode','farm.manual',function(decode,raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));});
+  GameSave.extend('restore','farm.manual',function(restore,data){const d=migrate(copy(data));restore(d);recovery=copy(d.farmRecovery0141||[]);plantingStock=true;deliverRecovery();});
   v09Style('#farmOverlay .panel{width:min(430px,94vw);max-height:80dvh}#farmOverlay .farmPlantGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}#farmOverlay .farmCropBtn{display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0!important;min-height:68px!important;font-size:11px!important;padding:6px!important}#farmOverlay .farmCropBtn .itemIcon{width:36px!important;height:36px!important}#farmOverlay .farmCropBtn.selected{border-color:#c7ae6d;background:#344c43}#farmPlantInfo{font-size:11px;color:#abc0b5;line-height:1.5;grid-column:1/-1;margin:8px 0}#farmPlantConfirm,#farmRecovery{grid-column:1/-1;font-size:12px;min-height:34px;padding:7px}');
   v09Style('#farmPlantInfo{white-space:pre-line}#farmOverlay .farmCropBtn small{font-size:10px;color:#aac5b2;line-height:1.3}#farmOverlay .farmCropBtn.noPlantingMaterial small{color:#c9b58c}#farmSeedTake{font-size:11px;min-height:34px;padding:6px 9px;margin:4px 0}#farmSeedTake[hidden]{display:none}');
   return {plant,harvest,use,bindMenu,migrate,recover,stock,seedType,takeSeed,get recovery(){return recovery;}};

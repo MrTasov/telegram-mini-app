@@ -68,14 +68,14 @@ window.V0161Upgrade=(()=>{
   const objects=interactionObjects;interactionObjects=function(which=scene){const a=objects(which);return which==='bunker'?[...a,{...station}]:a;};
   const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind===station.kind)return open();return execute(o,...args);};
   const drawB=drawBunker;drawBunker=function(...a){const r=drawB(...a);ctx.save();V011Rooms.shadow(station.x,station.y,station.w,station.h,11,'workshop');V011Art.draw('upgrade_station0161',station.x,station.y,station.w,station.h);if(performance.now()<pulseUntil){const y=station.y+35+(performance.now()%850)/850*45;ctx.strokeStyle='#85e7caaa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(station.x+34,y);ctx.lineTo(station.x+108,y);ctx.stroke();}ctx.fillStyle='#bbd5c2';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText('УСИЛЕНИЕ',station.x+station.w/2,station.y+station.h+14);ctx.restore();return r;};
-  const cap=captureGameProgress;captureGameProgress=function(){const d=cap();d.upgrade0161={schema:1,item:copy(slots[0])};return d;};
+  GameSave.extend('capture','inventory.upgrades',function(cap){const d=cap();d.upgrade0161={schema:1,item:copy(slots[0])};return d;});
   function validate(d){const u=d.upgrade0161;if(u===undefined)return true;if(!u||u.schema!==1||!Object.hasOwn(u,'item'))throw Error('Некорректный станок усиления');const s=u.item;if(s===null)return true;
     if(!s||s.qty!==1||!ITEM[s.type]||!(eligibleGear(s)||s.type==='hmg016'||s.type==='drone014')||combat.validateItem(s)===false)throw Error('Некорректный предмет на станке');
     if(s.type==='drone014'&&(!d.robots014?.packed||s.robotId!=='drone014'))throw Error('Некорректный дрон на станке');
     if(s.uid){let count=0;function visit(v){if(!v||typeof v!=='object')return;if(v.type&&v.uid===s.uid)count++;for(const x of Object.values(v))visit(x);}visit(d);if(count!==1)throw Error('Повтор предмета на станке');}return true;
   }
-  const decode=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);if(probe.v09?.power?.deviceEnabled&&probe.v09.power.deviceEnabled.upgrade0161===undefined)probe.v09.power.deviceEnabled.upgrade0161=true;const d=decode(JSON.stringify(probe));validate(d);return d;};
-  const restore=restoreGameProgress;restoreGameProgress=function(d){validate(d);slots[0]=copy(d.upgrade0161?.item||null);restore(d);lastSignature='';pulseUntil=0;refresh(true);};
+  GameSave.extend('decode','inventory.upgrades',function(decode,raw){const probe=JSON.parse(raw);if(probe.v09?.power?.deviceEnabled&&probe.v09.power.deviceEnabled.upgrade0161===undefined)probe.v09.power.deviceEnabled.upgrade0161=true;const d=decode(JSON.stringify(probe));validate(d);return d;});
+  GameSave.extend('restore','inventory.upgrades',function(restore,d){validate(d);slots[0]=copy(d.upgrade0161?.item||null);restore(d);lastSignature='';pulseUntil=0;refresh(true);});
   v09Style(`
     #v0161UpgradePanel .panel{width:min(480px,94vw);max-height:82dvh;overflow-y:auto;padding:13px}
     .v161StationHero{display:flex;align-items:center;gap:12px;padding-bottom:9px;border-bottom:1px solid #69867a44}.v161StationHero img{width:86px;height:72px;object-fit:contain}.v161StationHero b{font-size:13px}.v161StationHero p{font-size:10px;color:#acc1b7;margin:5px 0}.v161StationHero small{font-size:10px;color:#a5ccac}

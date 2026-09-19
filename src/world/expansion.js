@@ -65,8 +65,8 @@ window.V012Expansion=(()=>{
   for(const [x,y] of [[-500,-650],[2350,-650],[-1700,7000],[1600,7400],[3650,7150],[550,9100]])if(!worldCollision(x,y,25,'surface'))spawnPoints.push({x,y});
   const originalSpawnCount=V010World.targetCount();
   V010World.registerSpawns(spawnPoints);
-  const oldCapture=captureGameProgress,oldDecode=decodeGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.expansion012={schema:1};return d;};
+  
+  GameSave.extend('capture','world.expansion',function(oldCapture){const d=oldCapture();d.expansion012={schema:1};return d;});
   function migrateData(d){
     if(d.expansion012!==undefined){if(!d.expansion012||d.expansion012.schema!==1)throw Error('Некорректные данные расширенного мира');return d;}
     // Existing enemies retain their positions, kills and health. Only the newly
@@ -81,7 +81,7 @@ window.V012Expansion=(()=>{
     }
     d.expansion012={schema:1};return d;
   }
-  decodeGameProgress=function(raw){if(typeof raw!=='string'||raw.length>2*1024*1024)return oldDecode(raw);return oldDecode(JSON.stringify(migrateData(JSON.parse(raw))));};
+  GameSave.extend('decode','world.expansion',function(oldDecode,raw){if(typeof raw!=='string'||raw.length>2*1024*1024)return oldDecode(raw);return oldDecode(JSON.stringify(migrateData(JSON.parse(raw))));});
   function line(points,color,width){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();}
   function clipNew(){ctx.beginPath();ctx.rect(bounds.x,bounds.y,bounds.w,bounds.h);ctx.rect(previous.x,previous.y,previous.w,previous.h);ctx.clip('evenodd');}
   function drawRoad(r){const v=V010Camera.view(),xs=r.points.map(p=>p[0]),ys=r.points.map(p=>p[1]),pad=r.width/2+30;if(Math.max(...xs)<camera.x-pad||Math.min(...xs)>camera.x+v.w+pad||Math.max(...ys)<camera.y-pad||Math.min(...ys)>camera.y+v.h+pad)return;const main=r.width>50;line(r.points,main?'#6f786c':'#56644c',r.width+(main?18:8));line(r.points,main?'#444f4f':'#898878',r.width);if(main){ctx.setLineDash([25,31]);line(r.points,'#d2cbae88',2);ctx.setLineDash([]);}}

@@ -5,16 +5,16 @@
 const GAME_SAVE_KEY="survival_base_progress_v1";
 const GAME_SAVE_BACKUP_KEY="survival_base_progress_backup_v1";
 const MAX_SAVE_ELAPSED=7*24*60*60*1000;
-let gameSaveReady=false;
-let gameSaveBlocked=false;
-let gameSaveTimer=null;
-let lastVerifiedGameSave=null;
+// Save bookkeeping is owned by GameState.session.
+// Save bookkeeping is owned by GameState.session.
+// Save bookkeeping is owned by GameState.session.
+// Save bookkeeping is owned by GameState.session.
 
 function saveElapsed(now,then){
   return clamp(now-then,0,MAX_SAVE_ELAPSED);
 }
 
-function captureGameProgress(){
+function captureGameProgressBase(){
   reconcileHands();
   const now=Date.now();
   return {
@@ -23,16 +23,16 @@ function captureGameProgress(){
     trees:worldTrees.map(t=>({id:t.id,felled:t.felled,wood:t.wood,regrowMs:t.regrowMs})),
     player:{scene,x:player.x,y:player.y,health:player.health,
       aimX:player.aimX,aimY:player.aimY,dead:playerDead},
-    magazine,bag:clone(bag),equipment:clone(equipment),
-    storage:clone(storageChests),
+    magazine,bag:clone(GameState.inventory.bag),equipment:clone(GameState.inventory.equipment),
+    storage:clone(GameState.inventory.storage),
     farmClock:1,
-    farm:window.farmState.map(st=>({
+    farm:GameState.farm.beds.map(st=>({
       crop:st.crop,
       elapsedMs:st.crop===null?0:saveElapsed(now,st.plantedAt),
       harvestLeft:st.harvestLeft??null
     })),
     loot:scavenges.map(o=>({id:o.id,searched:o.searched,loot:clone(o.loot||[])})),
-    zombies:zombies.map(z=>({x:z.x,y:z.y,health:z.health,alive:z.alive,state:z.state})),
+    zombies:GameState.enemies.actors.map(z=>({x:z.x,y:z.y,health:z.health,alive:z.alive,state:z.state})),
     livestock:{
       animals:clone(livestockAnimals),alive:livestockAlive,
       warned:livestockWarned,
@@ -64,7 +64,7 @@ function upgradeGameProgress(d){
 }
 
 
-function decodeGameProgress(raw){
+function decodeGameProgressBase(raw){
   const d=JSON.parse(raw);
   const number=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
   const integer=(n,min,max)=>Number.isInteger(n)&&number(n,min,max);
@@ -129,7 +129,7 @@ function decodeGameProgress(raw){
   return d;
 }
 
-function restoreGameProgress(d){
+function restoreGameProgressBase(d){
   const now=Date.now();
   bag=clone(d.bag);
   for(const slot of Object.keys(equipment)){
@@ -208,7 +208,7 @@ function loadGameProgress(){
     try{
       const data=decodeGameProgress(raw);
       restoreGameProgress(data);
-      lastVerifiedGameSave=raw;
+      GameState.session.lastVerified=raw;
       updateSaveStatus(i===0?"💾 Прогресс восстановлен. Автосохранение включено.":
         "💾 Прогресс восстановлен из резервного сохранения.");
       return true;
@@ -218,7 +218,7 @@ function loadGameProgress(){
   }
   if(candidates.some(raw=>raw!==null)){
     // Never overwrite an unreadable save with a fresh game's empty state.
-    gameSaveBlocked=true;
+    GameState.session.blocked=true;
     updateSaveStatus("Сохранение не удалось прочитать. Оно сохранено без изменений; автосохранение приостановлено.");
   }else{
     updateSaveStatus("💾 Автосохранение каждые 5 секунд и после действий.");
@@ -227,18 +227,18 @@ function loadGameProgress(){
 }
 
 function saveGameProgress(manual=false){
-  if(!gameSaveReady||gameSaveBlocked){
+  if(!GameState.session.ready||GameState.session.blocked){
     if(manual)message("Сохранение недоступно: прежний прогресс не перезаписан.");
     return false;
   }
   try{
     const raw=JSON.stringify(captureGameProgress());
     decodeGameProgress(raw);
-    if(lastVerifiedGameSave){
-      try{localStorage.setItem(GAME_SAVE_BACKUP_KEY,lastVerifiedGameSave);}catch(error){}
+    if(GameState.session.lastVerified){
+      try{localStorage.setItem(GAME_SAVE_BACKUP_KEY,GameState.session.lastVerified);}catch(error){}
     }
     localStorage.setItem(GAME_SAVE_KEY,raw);
-    lastVerifiedGameSave=raw;
+    GameState.session.lastVerified=raw;
     const now=new Date();
     updateSaveStatus(`💾 Сохранено в ${now.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})}`);
     if(manual)message("💾 Игра сохранена");
@@ -252,15 +252,19 @@ function saveGameProgress(manual=false){
 }
 
 function queueGameSave(){
-  if(!gameSaveReady||gameSaveBlocked||gameSaveTimer!==null)return;
-  gameSaveTimer=setTimeout(()=>{
-    gameSaveTimer=null;
+  if(!GameState.session.ready||GameState.session.blocked||GameState.session.timer!==null)return;
+  GameState.session.timer=setTimeout(()=>{
+    GameState.session.timer=null;
     saveGameProgress();
   },100);
 }
 
 function flushGameSave(){
-  if(gameSaveTimer!==null){clearTimeout(gameSaveTimer);gameSaveTimer=null;}
+  if(GameState.session.timer!==null){clearTimeout(GameState.session.timer);GameState.session.timer=null;}
   saveGameProgress();
 }
 
+
+GameSave.setBase('capture',captureGameProgressBase);
+GameSave.setBase('decode',decodeGameProgressBase);
+GameSave.setBase('restore',restoreGameProgressBase);
