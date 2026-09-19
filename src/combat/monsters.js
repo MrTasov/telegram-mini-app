@@ -1,23 +1,34 @@
 /* 0.19.0: quiet days, ten-day raids and persistent corpse poses.
    Keep existing damage, walls, navigation collision and inventory APIs. */
 window.V017Monsters=(()=>{
-  const specs={
-    normal:{name:'Заражённый',hp:120,radius:18,speed:.38,chaseSpeed:1.65,damage:12,cooldown:1050,art:'walker',size:76,color:'#937963'},
-    heavy:{name:'Громила',hp:420,radius:28,speed:.27,chaseSpeed:1.15,damage:34,cooldown:1450,art:'brute',size:116,color:'#826c5e'},
-    fast:{name:'Ловчий',hp:65,radius:16,speed:.58,chaseSpeed:2.65,damage:7,cooldown:850,art:'runner',size:85,color:'#8b8074'},
-    leaper:{name:'Прыгун',hp:75,radius:17,speed:.44,chaseSpeed:1.9,damage:8,cooldown:1200,art:'leaper',size:86,color:'#9d9c77'},
-    bloater:{name:'Взрывник',hp:240,radius:26,speed:.24,chaseSpeed:1.05,damage:0,cooldown:1800,art:'bloater',size:100,color:'#96925c'}
-  };
-  Object.assign(V010World.TYPES,specs);
-  const kinds=['normal','heavy','fast','leaper','bloater'];
+  const specs=V010World.TYPES;
+  Object.assign(specs,{
+    normal:{name:'Заражённый',hp:120,radius:18,speed:.38,chaseSpeed:1.65,damage:12,cooldown:1050,art:'walker',size:76,color:'#937963',spawnOrder:0,behavior:'melee',healthColor:'#a6544d'},
+    heavy:{name:'Громила',hp:420,radius:28,speed:.27,chaseSpeed:1.15,damage:34,cooldown:1450,art:'brute',size:116,color:'#826c5e',spawnOrder:1,behavior:'melee',healthColor:'#b57555'},
+    fast:{name:'Ловчий',hp:65,radius:16,speed:.58,chaseSpeed:2.65,damage:7,cooldown:850,art:'runner',size:85,color:'#8b8074',spawnOrder:2,behavior:'melee',healthColor:'#a6544d'},
+    leaper:{name:'Прыгун',hp:75,radius:17,speed:.44,chaseSpeed:1.9,damage:8,cooldown:1200,art:'leaper',size:86,color:'#9d9c77',spawnOrder:3,behavior:'leap',healthColor:'#a6544d',leap:{minRange:85,maxRange:195,cooldown:2700,speed:4,windup:255}},
+    bloater:{name:'Взрывник',hp:240,radius:26,speed:.24,chaseSpeed:1.05,damage:0,cooldown:1800,art:'bloater',size:100,color:'#96925c',spawnOrder:4,behavior:'explosive',healthColor:'#aaa05e',blast:{playerRange:72,playerFraction:.15,playerVariation:.05,wallRange:78,wallDamage:320,triggerRange:58,fuseMs:650,wallFuseMs:850}}
+  });
+  const kinds=()=>Object.keys(specs).sort((a,b)=>(specs[a].spawnOrder??Infinity)-(specs[b].spawnOrder??Infinity));
+  const typeAt=index=>{const ids=kinds();return ids[index%ids.length];};
   const SIDES=['N','E','S','W'],CORPSE_MS=90000;
-  const raidSpecs=Object.fromEntries(Object.entries(specs).map(([k,s])=>[k,{...s,hp:s.hp*1.5,speed:s.speed*1.5,chaseSpeed:s.chaseSpeed*1.5,damage:s.damage*1.5,cooldown:s.cooldown/1.5}]));
+  // Preserve the ACTUAL Day X contract, including cooldown and special attacks.
+  const dayX=Object.freeze({intervalDays:10,hp:1.5,damage:1.5,speed:1.5,chaseSpeed:1.5,cooldownRate:1.5,mechanics:1.5,population:96,ordinaryPopulation:48,maxPopulation:144});
+  const raidCache=new WeakMap();
+  function stats(z,raid=isDayX()){
+    const s=specs[typeof z==='string'?z:z.type]||specs.normal;if(!raid)return s;
+    let entry=raidCache.get(s);
+    if(!entry||['hp','speed','chaseSpeed','damage','cooldown'].some(key=>entry.source[key]!==s[key])){
+      entry={source:{hp:s.hp,speed:s.speed,chaseSpeed:s.chaseSpeed,damage:s.damage,cooldown:s.cooldown},value:{...s,hp:s.hp*dayX.hp,speed:s.speed*dayX.speed,chaseSpeed:s.chaseSpeed*dayX.chaseSpeed,damage:s.damage*dayX.damage,cooldown:s.cooldown/dayX.cooldownRate}};
+      raidCache.set(s,entry);
+    }
+    return entry.value;
+  }
   let runtime=new WeakMap(),serial=0,lastPopulation=0,effects=[],neighbors=new Map(),lastRaid=null;
   const night=()=>V016Lighting.daylight()<.28;
-  const isDayX=(day=V016Lighting.day)=>Number.isInteger(day)&&day>0&&day%10===0;
-  const stats=(z,raid=isDayX())=>(raid?raidSpecs:specs)[typeof z==='string'?z:z.type]||(raid?raidSpecs:specs).normal;
-  const factor=()=>isDayX()?1.5:1;
-  const targetCount=()=>Math.min(144,Math.round((isDayX()?96:48)*V010World.settings.enemyCount));
+  const isDayX=(day=V016Lighting.day)=>Number.isInteger(day)&&day>0&&day%dayX.intervalDays===0;
+  const factor=()=>isDayX()?dayX.mechanics:1;
+  const targetCount=()=>Math.min(dayX.maxPopulation,Math.round((isDayX()?dayX.population:dayX.ordinaryPopulation)*V010World.settings.enemyCount));
   const hash=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
   const angleOf=a=>((a%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
   const insideOuter=z=>z.x>242&&z.x<1358&&z.y>202&&z.y<998;
@@ -27,7 +38,7 @@ window.V017Monsters=(()=>{
     if(!specs[z.type])z.type='normal';const raid=isDayX(),s=stats(z,raid);
     const changed=z.raid019!==raid;
     if(!z.monster017){z.health=z.alive?Math.max(.001,clamp(z.health/(z.maxHealth||100),0,1)*s.hp):0;z.monster017=true;}
-    else if(changed){const previous=specs[z.type].hp*(z.raid019===true?1.5:1);z.health=z.alive?clamp(z.health/previous,0,1)*s.hp:0;}
+    else if(changed){const previous=stats(z,z.raid019===true).hp;z.health=z.alive?clamp(z.health/previous,0,1)*s.hp:0;}
     z.raid019=raid;
     z.maxHealth=s.hp;z.radius=s.radius;z.speed=s.speed;z.chaseSpeed=s.chaseSpeed;
     if(!runtime.has(z)){const id=++serial;runtime.set(z,{id,angle:z.wanderAngle||0,walk:0,nextSense:0,sees:false,target:null,retarget:0,attack:0,jump:null,fuse:0,exploded:false,deadAt:z.alive?0:performance.now(),stuck:0,side:nearestSide(z),variant:Math.floor(hash(id*23)*3),deathAngle:angleOf(z.wanderAngle||0),retired:false,pauseUntil:0});}
@@ -90,26 +101,26 @@ window.V017Monsters=(()=>{
   function canHurt(z,range){return sameLevel()&&!playerDead&&!V091Fortress.isElevated()&&dist(z,player)<=range&&lineClear(z.x,z.y,player.x,player.y,0,'surface');}
   function armFuse(r,now,ms){r.fuse=now+ms;r.fuseAt=now;r.fuseDuration=ms;}
   function explode(z){
-    const r=prepare(z),boost=factor();if(r.exploded)return false;r.exploded=true;r.fuse=0;
+    const r=prepare(z),boost=factor(),blast=stats(z,false).blast||specs.bloater.blast;if(r.exploded)return false;r.exploded=true;r.fuse=0;
     effects.push({x:z.x,y:z.y,at:performance.now(),seed:r.id,boost});if(effects.length>24)effects.shift();
     // A distant kill is harmless; a point-blank kill has the same contact blast.
-    if(canHurt(z,72*boost)){
-      const hp=Math.max(1,player.maxHealth||100),amount=hp*(.15+hash(r.id)*.05)*boost;
+    if(canHurt(z,blast.playerRange*boost)){
+      const hp=Math.max(1,player.maxHealth||100),amount=hp*(blast.playerFraction+hash(r.id)*blast.playerVariation)*boost;
       // Compensate existing armor so the specified blast removes 15–20% max HP.
       damagePlayer(amount/Math.max(.01,1-equippedArmor()/100));
     }
     for(const o of isDayX()?[...V015Base.walls(),...(window.V018Build?.closedDoors()||[])]:[]){
-      const p=point(z,o);if(dist(z,p)>78*boost)continue;
+      const p=point(z,o);if(dist(z,p)>blast.wallRange*boost)continue;
       const blocker=V015Base.blocker(z,{x:o.x+o.w/2,y:o.y+o.h/2});
-      if((!blocker||blocker.wall?.id===o.id)&&lineClear(z.x,z.y,p.x,p.y,0,'surface',o.id)){if(window.V018Build)V018Build.damage(o,320*boost);else V015Base.damage(o,320*boost);}
+      if((!blocker||blocker.wall?.id===o.id)&&lineClear(z.x,z.y,p.x,p.y,0,'surface',o.id)){if(window.V018Build)V018Build.damage(o,blast.wallDamage*boost);else V015Base.damage(o,blast.wallDamage*boost);}
     }
     return true;
   }
-  const oldHit=hitZombie;hitZombie=function(z,...args){if(z)prepare(z);const alive=z?.alive,out=oldHit(z,...args);if(alive&&!z.alive){const r=prepare(z);r.deadAt=performance.now();r.deathAngle=angleOf(r.angle-Math.PI/2);r.jump=null;r.target=null;if(z.type==='bloater')explode(z);}return out;};
+  const oldHit=hitZombie;hitZombie=function(z,...args){if(z)prepare(z);const alive=z?.alive,out=oldHit(z,...args);if(alive&&!z.alive){const r=prepare(z);r.deadAt=performance.now();r.deathAngle=angleOf(r.angle-Math.PI/2);r.jump=null;r.target=null;if(stats(z,false).behavior==='explosive')explode(z);}return out;};
   function detonate(z){explode(z);if(z.alive)hitZombie(z,z.health+1,{fixedDamage:true});}
   function sideCounts(){const out={N:0,E:0,S:0,W:0};for(const z of zombies)if(z.alive)out[prepare(z).side]++;return out;}
   function spawn(index,near=isDayX()||index%2===0,side=null){
-    const type=kinds[index%5],s=stats(type);let p=null;
+    const type=typeAt(index),s=stats(type);let p=null;
     if(isDayX()&&!side){const counts=sideCounts();side=[...SIDES].sort((a,b)=>counts[a]-counts[b])[0];}
     for(let a=0;a<64&&!p;a++){
       let x,y;
@@ -142,7 +153,7 @@ window.V017Monsters=(()=>{
     const raid=isDayX();
     if(lastRaid!==raid){if(lastRaid!==null)message(raid?'День X · монстры усилены на 50%':'День X закончился');lastRaid=raid;lastPopulation=-Infinity;for(const z of zombies)prepare(z);}
     if(menuOpen||playerDead||document.hidden)return;
-    const now=performance.now(),boost=raid?1.5:1,dt=Math.min(2,Math.max(0,frameScale));population(now);
+    const now=performance.now(),boost=raid?dayX.mechanics:1,dt=Math.min(2,Math.max(0,frameScale));population(now);
     neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,[]);neighbors.get(key).push(z);}
     for(const z of zombies){
       const r=prepare(z);if(!z.alive)continue;const s=stats(z,raid),d=dist(z,player);
@@ -162,9 +173,9 @@ window.V017Monsters=(()=>{
       // the player becomes visible through a distant opening on another side.
       const holdFront=raid&&!insideOuter(z)&&(scene==='bunker'||sameLevel()&&insideOuter(player));
       if(r.sees&&!holdFront){z.state='chase';target=player;r.target=null;
-        if(z.type==='bloater'&&canHurt(z,58*boost)){armFuse(r,now,650/boost);continue;}
-        if(z.type==='leaper'&&d>85&&d<195*boost&&now-z.lastAttack>2700/boost){const speed=4*boost,windup=255/boost;r.jump={start:now,windup,duration:windup+Math.max(1,d-z.radius-player.radius)/speed/60*1000,speed,angle:Math.atan2(player.y-z.y,player.x-z.x)};z.lastAttack=now;continue;}
-        if(z.type!=='bloater'&&canHurt(z,z.radius+player.radius+9)&&now-z.lastAttack>s.cooldown){
+        if(s.behavior==='explosive'&&canHurt(z,s.blast.triggerRange*boost)){armFuse(r,now,s.blast.fuseMs/boost);continue;}
+        if(s.behavior==='leap'&&d>s.leap.minRange&&d<s.leap.maxRange*boost&&now-z.lastAttack>s.leap.cooldown/boost){const speed=s.leap.speed*boost,windup=s.leap.windup/boost;r.jump={start:now,windup,duration:windup+Math.max(1,d-z.radius-player.radius)/speed/60*1000,speed,angle:Math.atan2(player.y-z.y,player.x-z.x)};z.lastAttack=now;continue;}
+        if(s.behavior!=='explosive'&&canHurt(z,z.radius+player.radius+9)&&now-z.lastAttack>s.cooldown){
           z.lastAttack=now;r.attack=now+400;damagePlayer(s.damage*V010World.settings.enemyStrength);
         }
       }else if(raid){
@@ -177,7 +188,7 @@ window.V017Monsters=(()=>{
         const obstruction=V015Base.blocker(z,target,z.radius+2);
         if(obstruction&&obstruction.wall!==wall){wall=obstruction.wall;target=wallApproach(z,wall);}
         if(wall&&dist(z,point(z,wall))<z.radius+13){
-          if(z.type==='bloater'){armFuse(r,now,850/boost);continue;}
+          if(s.behavior==='explosive'){armFuse(r,now,s.blast.wallFuseMs/boost);continue;}
           if(now-z.lastAttack>s.cooldown){V015Base.damage(wall,s.damage*2*V010World.settings.enemyStrength);z.lastAttack=now;r.attack=now+400;}
           r.angle=Math.atan2(wall.y+wall.h/2-z.y,wall.x+wall.w/2-z.x);continue;
         }
@@ -199,7 +210,7 @@ window.V017Monsters=(()=>{
   function healthBar(z){
     if(!z.alive||!visibleOnScreen(z.x,z.y,100))return;
     const s=specs[z.type]||specs.normal,w=s.radius*1.5+10,y=z.y-s.size*.5-5;
-    ctx.save();ctx.fillStyle='#0a1415dd';ctx.fillRect(z.x-w/2-1,y-1,w+2,5);ctx.fillStyle=z.type==='heavy'?'#b57555':z.type==='bloater'?'#aaa05e':'#a6544d';ctx.fillRect(z.x-w/2,y,w*clamp(z.health/z.maxHealth,0,1),3);ctx.restore();
+    ctx.save();ctx.fillStyle='#0a1415dd';ctx.fillRect(z.x-w/2-1,y-1,w+2,5);ctx.fillStyle=s.healthColor||'#a6544d';ctx.fillRect(z.x-w/2,y,w*clamp(z.health/z.maxHealth,0,1),3);ctx.restore();
   }
   // Common presentation for every registered monster, not a list of types.
   function selectionRadius(z){
@@ -248,7 +259,7 @@ window.V017Monsters=(()=>{
     if(!d)return;const m=d.monsters017;if(!m)return;
     if(![1,2].includes(m.schema)||!Array.isArray(d.zombies)||!Array.isArray(m.types)||m.types.length!==d.zombies.length||m.types.length>144)throw Error('Неверные данные монстров');
     if(m.schema===2&&(!Array.isArray(m.actors)||m.actors.length!==m.types.length||m.actors.some((p,i)=>!p||typeof p.raid!=='boolean'||!SIDES.includes(p.side)||!Number.isInteger(p.variant)||p.variant<0||p.variant>2||!Number.isFinite(p.deathAngle)||p.deathAngle<0||p.deathAngle>=Math.PI*2||!Number.isFinite(p.corpseMs)||p.corpseMs<0||p.corpseMs>CORPSE_MS||typeof p.retired!=='boolean'||p.retired&&d.zombies[i].alive||d.zombies[i].alive&&p.corpseMs!==0)))throw Error('Неверное состояние монстров');
-    if(m.types.some((t,i)=>!specs[t]||d.zombies[i].health>specs[t].hp*(m.schema===2&&m.actors[i].raid?1.5:1)||d.v010?.modules?.world?.types?.[i]!==t))throw Error('Неверные данные монстров');
+    if(m.types.some((t,i)=>!specs[t]||d.zombies[i].health>stats(t,m.schema===2&&m.actors[i].raid).hp||d.v010?.modules?.world?.types?.[i]!==t))throw Error('Неверные данные монстров');
   }
   GameSave.extend('decode','combat.monsters',function(decode,raw){validate(JSON.parse(raw));return decode(raw);});
   GameSave.extend('restore','combat.monsters',function(restore,d){
@@ -263,8 +274,8 @@ window.V017Monsters=(()=>{
       if(!d.monsters017&&worldCollision(z.x,z.y,z.radius,'surface')){const p=V015Base.freePoint(z.x,z.y,z.radius);if(p){z.x=p.x;z.y=p.y;}}
     });
   });
-  const reset=resetZombies;resetZombies=function(){reset();runtime=new WeakMap();effects=[];zombies.forEach((z,i)=>{z.type=kinds[i%5];z.monster017=false;z.health=100;z.maxHealth=100;prepare(z);});};
-  zombies.forEach((z,i)=>{z.type=kinds[i%5];prepare(z);});
-  return{specs,stats,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
+  const reset=resetZombies;resetZombies=function(){reset();runtime=new WeakMap();effects=[];zombies.forEach((z,i)=>{z.type=typeAt(i);z.monster017=false;z.health=100;z.maxHealth=100;prepare(z);});};
+  zombies.forEach((z,i)=>{z.type=typeAt(i);prepare(z);});
+  return{specs,stats,dayX,typeAt,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
 })();
 

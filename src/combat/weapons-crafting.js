@@ -5,6 +5,26 @@ window.V010Combat=(() => {
   const copy=o=>JSON.parse(JSON.stringify(o));
   const BASE_SPEED={walk:3.15,run:5.25};
   const GUNS=V09Craft.weapons;
+  // One rule per existing enhancement family. Definitions may override a rule;
+  // all released limits and costs remain the original Level 0..5 values.
+  const upgradeRules={
+    weapon:{maxLevel:5,cost:{iron:32,copper:16,parts:10},rarePerLevel:3,stats:{damagePerLevel:.05,sturdyDamage:.02,minSpread:.006}},
+    equipment:{maxLevel:5,cost:{iron:25,copper:12,parts:8},rarePerLevel:2},
+    drone:{maxLevel:5,cost:{iron:30,copper:18,parts:12},rarePerLevel:4},
+    turret:{maxLevel:5,cost:{iron:50,copper:25,parts:15},rarePerLevel:5}
+  };
+  function upgradeProfile(item){const d=ITEM[item?.type];return GUNS[item?.type]?.upgrades||d?.turret?.upgrades||d?.drone?.upgrades||d?.upgrades||(GUNS[item?.type]?upgradeRules.weapon:upgradeRules.equipment);}
+  const maxUpgradeLevel=item=>upgradeProfile(item).maxLevel;
+  const equipmentStats={
+    body:{armor:{from:'armor',perLevel:2,variants:{sturdy:2},cap:80},hp:{base:15,perLevel:12,specializations:{vitality:2}}},
+    feet:{hp:{base:5,perLevel:6,specializations:{vitality:2}},speed:{base:.02,perLevel:.02,variants:{light:.01},specializations:{speed:.01},cap:.2}},
+    legs:{hp:{base:10,perLevel:9,variants:{sturdy:3},specializations:{vitality:2}}},
+    head:{hp:{base:5,perLevel:6,specializations:{vitality:2}},accuracy:{base:.03,perLevel:.02,variants:{light:.01},cap:.18}}
+  };
+  function gearStat(rule,item,definition,level){
+    const value=(rule.from?(definition[rule.from]||0):(rule.base||0))+level*(rule.perLevel||0)+(rule.variants?.[item.variant]||0)+level*(rule.specializations?.[item.specialization]||0);
+    return rule.cap===undefined?value:Math.min(rule.cap,value);
+  }
   const MODULES={magazine:{type:'magazine_module',label:'Магазин',unlock:null}};
   Object.assign(ITEM,{
     helmet1:{name:'Тактический шлем',icon:'🪖',equip:'head',level:1},
@@ -27,7 +47,7 @@ window.V010Combat=(() => {
       if(!Number.isInteger(item.level))item.level=0;
       if(!item.variant)item.variant='balanced';
       if(!item.specialization)item.specialization='balanced';
-      if(GUNS[item.type]){item.modules??={};if(!Object.hasOwn(item,'magazineType'))item.magazineType=item.modules.magazine?'magazine_module':'magazine_standard';delete item.modules.magazine;if(!Number.isInteger(item.rounds))item.rounds=0;}
+      if(GUNS[item.type]){item.modules??={};if(GUNS[item.type].magazineTypes&&!Object.hasOwn(item,'magazineType'))item.magazineType=item.modules.magazine?GUNS[item.type].extendedMagazine:GUNS[item.type].defaultMagazine;delete item.modules.magazine;if(!Number.isInteger(item.rounds))item.rounds=0;}
     }
     return item;
   }
@@ -38,7 +58,7 @@ window.V010Combat=(() => {
       if(item.uid){const n=/^gear-(\d+)$/.exec(item.uid);if(n)largest=Math.max(largest,Number(n[1])+1);}
     }nextUid=largest;
     for(const item of allItems()){
-      if(GUNS[item.type]){if(!Number.isInteger(item.rounds)&&legacy&&!seen.has(item.type))item.rounds=Math.min(30,Math.max(0,legacy[item.type]||0));seen.add(item.type);}
+      if(GUNS[item.type]){if(!Number.isInteger(item.rounds)&&legacy&&!seen.has(item.type))item.rounds=Math.min(GUNS[item.type].mag,Math.max(0,legacy[item.type]||0));seen.add(item.type);}
       ensure(item);
     }
   }
@@ -49,20 +69,17 @@ window.V010Combat=(() => {
   function currentWeapon(){const type=heldItem();if(!GUNS[type])return null;return ensure(window.V010Inventory?.selectedItem?.(type)||bag.find(s=>s?.type===type));}
   function getItemStats(item){
     if(!item)return null;const d=ITEM[item.type];if(!d)return null;
-    const level=clamp(Number(item.level)||0,0,5),sturdy=item.variant==='sturdy',light=item.variant==='light',vital=item.specialization==='vitality';
+    const level=clamp(Number(item.level)||0,0,maxUpgradeLevel(item));
     const stats={level,name:d.name,variant:item.variant||'balanced',specialization:item.specialization||'balanced'};
     if(GUNS[item.type])return {...stats,...gunSpec(item)};
-    if(d.equip==='body')Object.assign(stats,{armor:Math.min(80,(d.armor||0)+level*2+(sturdy?2:0)),hp:15+level*12+(vital?level*2:0)});
-    if(d.equip==='feet')Object.assign(stats,{hp:5+level*6+(vital?level*2:0),speed:Math.min(.2,.02+level*.02+(light?.01:0)+(item.specialization==='speed'?level*.01:0))});
-    if(d.equip==='legs')Object.assign(stats,{hp:10+level*9+(sturdy?3:0)+(vital?level*2:0)});
-    if(d.equip==='head')Object.assign(stats,{hp:5+level*6+(vital?level*2:0),accuracy:Math.min(.18,.03+level*.02+(light?.01:0))});
+    for(const [key,rule] of Object.entries(d.stats||equipmentStats[d.equip]||{}))stats[key]=gearStat(rule,item,d,level);
     if(d.equip==='backpack')stats.capacity=d.capacity;
     return stats;
   }
   function gunSpec(item){
     if(typeof item==='string')item=bag.find(s=>s?.type===item)||{type:item};
-    const g=GUNS[item?.type];if(!g)return null;const m=item.modules||{},level=clamp(Number(item.level)||0,0,5),head=equipment.head?getItemStats(equipment.head).accuracy||0:0;
-    return {...g,damage:Math.round(g.damage*(1+level*.05+(item.variant==='sturdy'?.02:0))),mag:Object.hasOwn(item,'magazineType')?(item.magazineType==='magazine_module'?60:item.magazineType==='magazine_standard'?30:0):(m.magazine?60:30),reloadMs:(item.type==='rifle_m4'?1800:2000),spread:Math.max(.006,g.spread*(1-head)),recoil:g.recoil,noise:550,modules:copy(m)};
+    const g=GUNS[item?.type];if(!g)return null;const m=item.modules||{},level=clamp(Number(item.level)||0,0,maxUpgradeLevel(item)),rules=upgradeProfile(item).stats||upgradeRules.weapon.stats,head=equipment.head?getItemStats(equipment.head).accuracy||0:0;
+    return {...g,damage:Math.round(g.damage*(1+level*rules.damagePerLevel+(item.variant==='sturdy'?rules.sturdyDamage:0))),mag:V09Craft.magazineCapacity(item),reloadMs:g.reloadMs,spread:Math.max(rules.minSpread,g.spread*(1-head)),recoil:g.recoil,noise:g.noise,modules:copy(m)};
   }
   function refreshStats(){
     let hp=100,armor=0,speed=0,accuracy=0;
@@ -163,7 +180,7 @@ window.V010Combat=(() => {
   function owns(item){return (window.V0161Upgrade?.slots||[]).includes(item)||(window.V013Inventory?.items||[]).includes(item)||bag.includes(item)||Object.values(equipment).includes(item);}
   function upgrade(item){return window.V0161Upgrade?.upgrade(item)||false;}
   function insertItem(item){if(window.V010Inventory?.insertItem)return V010Inventory.insertItem(item);const at=bag.findIndex(x=>!x);if(at>=0){bag[at]=copy(item);return 0;}if(bag.length>=BAG_SLOTS)return item.qty;bag.push(copy(item));return 0;}
-  function install(item,key){return key==='magazine'&&!!window.V0162Magazines?.installFirst(item,'magazine_module');}
+  function install(item,key){return key==='magazine'&&!!window.V0162Magazines?.installFirst(item,GUNS[item?.type]?.extendedMagazine);}
   function detach(item,key){return key==='magazine'&&!!window.V0162Magazines?.remove(item);}
   const upgradeOverlay=v09Overlay('v010UpgradeOverlay','Улучшения и модули');
   function textStats(s){if(s.damage)return `Урон ${s.damage} · магазин ${s.mag} · перезарядка ${(s.reloadMs/1000).toFixed(1)} с<br>Разброс ${(s.spread*180/Math.PI).toFixed(2)}° · отдача ${(s.recoil*180/Math.PI).toFixed(2)}°`;return [s.armor?'Защита '+s.armor+'%':'',s.hp?'HP +'+Math.round(s.hp):'',s.speed?'Скорость +'+Math.round(s.speed*100)+'%':'',s.accuracy?'Точность +'+Math.round(s.accuracy*100)+'%':''].filter(Boolean).join(' · ');}
@@ -174,18 +191,18 @@ window.V010Combat=(() => {
     for(const item of items){const b=v09Button('',()=>{selectedUid=item.uid;renderWorkshop();});b.className='v010UpgradeItem'+(item===selected?' selected':'');b.innerHTML=itemIconHTML(item.type)+'<span>'+ITEM[item.type].name+' +'+item.level+'</span>';list.append(b);}
     if(!selected){const note=document.createElement('p');note.textContent='Принесите оружие или экипировку для улучшения.';body.append(note);return;}
     const detail=document.createElement('div');detail.className='v010UpgradeDetail';detail.innerHTML=window.V011UI?V011UI.cardHTML(selected):'<b>'+ITEM[selected.type].name+' +'+selected.level+'</b><br>'+textStats(getItemStats(selected));body.append(detail);
-    const cost=document.createElement('div');cost.className='v010Cost';cost.textContent=Object.entries(costs(selected)).map(([t,n])=>ITEM[t].name+': '+available(t)+'/'+n).join(' · ');if(selected.level<5)body.append(cost);
-    const b=v09Button(selected.level>=5?'Максимум +5':'Улучшить до +'+(selected.level+1),()=>{upgrade(selected);renderWorkshop();},'primary');b.disabled=selected.level>=5||!devicePowered('craft_bench')||!Object.entries(costs(selected)).every(([t,n])=>available(t)>=n);body.append(b);
+    const cost=document.createElement('div');cost.className='v010Cost';cost.textContent=Object.entries(costs(selected)).map(([t,n])=>ITEM[t].name+': '+available(t)+'/'+n).join(' · ');if(selected.level<maxUpgradeLevel(selected))body.append(cost);
+    const b=v09Button(selected.level>=maxUpgradeLevel(selected)?'Максимум +'+maxUpgradeLevel(selected):'Улучшить до +'+(selected.level+1),()=>{upgrade(selected);renderWorkshop();},'primary');b.disabled=selected.level>=maxUpgradeLevel(selected)||!devicePowered('craft_bench')||!Object.entries(costs(selected)).every(([t,n])=>available(t)>=n);body.append(b);
     if(!GUNS[selected.type]){const variants=document.createElement('div');variants.className='v010Modules';for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[selected.type].equip==='feet'?[['speed','Скорость']]:[])]){const x=v09Button((selected.specialization===key?'✓ ':'')+label,()=>{selected.specialization=key;refreshStats();renderBag();queueGameSave();renderWorkshop();});variants.append(x);}body.append(variants);}
     else{const mods=document.createElement('div');mods.className='v010Modules';for(const [key,def]of Object.entries(MODULES)){const equipped=selected.modules[key],x=v09Button((equipped?'Снять: ':'Установить: ')+def.label+(!unlocked(def.unlock)?' · закрыто':''),()=>{const ok=equipped?detach(selected,key):install(selected,key);if(!ok)message('Проверьте чертёж, наличие модуля, питание и место в рюкзаке');renderWorkshop();});x.disabled=!equipped&&(!unlocked(def.unlock)||available(def.type)<1);mods.append(x);}body.append(mods);}
     const note=document.createElement('p');note.className='v010UpgradeNote';note.textContent='Без случайных провалов. Материалы берутся из рюкзака и складов базы. Улучшение HP не восстанавливает здоровье.';body.append(note);
   }
   function openWorkshop(){if(window.V0161Upgrade)return V0161Upgrade.open();if(!inWorkshop()){message('Улучшения доступны в мастерской');return false;}renderWorkshop();openOverlay(upgradeOverlay);return true;}
-  function validateItem(item){if(!item)return true;if(item.type==='hmg016'&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==item.type||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,5))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.magazineType!==undefined&&(!GUNS[item.type]||![null,'magazine_standard','magazine_module'].includes(item.magazineType)))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,gunSpec(item).mag)))return false;return true;}
+  function validateItem(item){if(!item)return true;if(ITEM[item.type]?.turret&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==ITEM[item.type].drone?.instanceId||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,maxUpgradeLevel(item)))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.magazineType!==undefined&&(!GUNS[item.type]?.magazineTypes||(item.magazineType!==null&&!V09Craft.acceptsMagazine(item.type,item.magazineType))))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,gunSpec(item).mag)))return false;return true;}
   function capture(){migrateItems(null);return {schema:1,nextUid};}
   function validate(d){if(!d||d.schema!==1||!Number.isInteger(d.nextUid)||d.nextUid<1||d.nextUid>100000000)throw Error('Некорректные данные экипировки');return true;}
   function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;lastHud='';const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();updateAmmoHud();}
-  const api={capture,restore,validate,validateItem,getItemStats,gunSpec,refreshStats,ensure,rollFoundItem,currentWeapon,tick,cancelReload,upgrade,costs,install,detach,openWorkshop,renderWorkshop,practiceTarget,setPractice,practiceAllowed,modules:MODULES,get reloading(){return reloading?copy(reloading):null;},get practice(){return practice;}};
+  const api={upgradeRules,upgradeProfile,maxUpgradeLevel,equipmentStats,capture,restore,validate,validateItem,getItemStats,gunSpec,refreshStats,ensure,rollFoundItem,currentWeapon,tick,cancelReload,upgrade,costs,install,detach,openWorkshop,renderWorkshop,practiceTarget,setPractice,practiceAllowed,modules:MODULES,get reloading(){return reloading?copy(reloading):null;},get practice(){return practice;}};
   if(window.V010?.modules)V010.register('combat',api);
   restore(null);return api;
 })();

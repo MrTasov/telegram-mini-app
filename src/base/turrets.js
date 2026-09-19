@@ -2,25 +2,31 @@
 window.V016Turret=(()=>{
   'use strict';
   const TYPE='hmg016',combat=Object.freeze({damage:65,range:850,capacity:600,ammoType:'ammo',intervalMs:190,turnRate:3.8});
+  const definition={idPrefix:'hmg016_',upgrades:V010Combat.upgradeRules.turret,damagePerLevel:.1,combat};
+  const isType=type=>!!ITEM[type]?.turret,typeOf=t=>t?.type||TYPE;
+  const definitionFor=t=>ITEM[typeOf(t)]?.turret,combatFor=t=>definitionFor(t).combat;
   const copy=x=>JSON.parse(JSON.stringify(x)),guns=[],runtime=new Map();
   let nextId=2,placement=null,selected=null,obstacleRevision=-1,obstacles=[],clock=0;
-  ITEM[TYPE]={name:'Тяжёлый пулемёт',icon:'▰',deployable:true,description:'Автоматический пулемёт на стене. Урон 65 · дальность 850 · круговой обстрел. Патроны 5,45 × 39: до 600. Заберите в рюкзак, чтобы переставить.'};
+  ITEM[TYPE]={name:'Тяжёлый пулемёт',icon:'▰',deployable:true,turret:definition,description:'Автоматический пулемёт на стене. Урон 65 · дальность 850 · круговой обстрел. Патроны 5,45 × 39: до 600. Заберите в рюкзак, чтобы переставить.'};
   V09Craft.recipes[TYPE]={station:'craft_bench',category:'Оборона базы',name:'Тяжёлый пулемёт',input:{iron:45,copper:18,parts:12},output:TYPE,qty:1,ms:90000};
   const starter=()=>({id:'hmg016_1',ammo:150,angle:-Math.PI*3/4,enabled:true,x:1410,y:1050,wallId:'v091wall020_corner_SE',fallen:false});
   guns.push(starter());
-  const gunData=t=>({id:t.id,ammo:t.ammo,angle:t.angle,enabled:t.enabled,level:t.level||0});
-  const damage=t=>Math.round(combat.damage*(1+.1*(t?.level||0)));
-  function validData(t){return !!t&&/^hmg016_[1-9]\d{0,7}$/.test(t.id)&&Number.isInteger(t.ammo)&&t.ammo>=0&&t.ammo<=combat.capacity&&Number.isFinite(t.angle)&&Math.abs(t.angle)<=Math.PI+1e-8&&typeof t.enabled==='boolean'&&(t.level===undefined||Number.isInteger(t.level)&&t.level>=0&&t.level<=5);}
-  function validItem(s){return !!s&&s.type===TYPE&&s.qty===1&&validData(s.turretData);}
-  function newData(){return {id:'hmg016_'+nextId++,ammo:0,angle:-Math.PI/2,enabled:true};}
+  const gunData=t=>({...typeTag(typeOf(t)),id:t.id,ammo:t.ammo,angle:t.angle,enabled:t.enabled,level:t.level||0});
+  // Old payloads keep their implicit hmg type byte-for-byte. A different type
+  // carries its explicit content ID independently of its instance ID.
+  const typeTag=type=>type===TYPE?{}:{type};
+  const damage=t=>Math.round(combatFor(t).damage*(1+definitionFor(t).damagePerLevel*(t?.level||0)));
+  function validData(t,expectedType=typeOf(t)){const def=definitionFor(t);return !!t&&!!def&&typeOf(t)===expectedType&&typeof t.id==='string'&&t.id.startsWith(def.idPrefix)&&/^[1-9]\d{0,7}$/.test(t.id.slice(def.idPrefix.length))&&Number.isInteger(t.ammo)&&t.ammo>=0&&t.ammo<=def.combat.capacity&&Number.isFinite(t.angle)&&Math.abs(t.angle)<=Math.PI+1e-8&&typeof t.enabled==='boolean'&&(t.level===undefined||Number.isInteger(t.level)&&t.level>=0&&t.level<=def.upgrades.maxLevel);}
+  function validItem(s){return !!s&&isType(s.type)&&s.qty===1&&validData(s.turretData,s.type);}
+  function newData(type=TYPE){return {...typeTag(type),id:ITEM[type].turret.idPrefix+nextId++,ammo:0,angle:-Math.PI/2,enabled:true};}
   const addSlotsOld=addToSlots;
   addToSlots=function(slots,type,qty,max=60,metadata){
-    if(type!==TYPE)return addSlotsOld(slots,type,qty,max,metadata);
+    if(!isType(type))return addSlotsOld(slots,type,qty,max,metadata);
     if(!Number.isInteger(qty)||qty<1)return qty;
-    if(metadata?.turretData){if(qty!==1||!validData(metadata.turretData))return qty;return addSlotsOld(slots,type,1,max,metadata);}
+    if(metadata?.turretData){if(qty!==1||!validData(metadata.turretData,type))return qty;return addSlotsOld(slots,type,1,max,metadata);}
     let left=qty;
     // Allocate IDs only for objects actually collected; a full bag consumes none.
-    for(let i=0;i<max&&left;i++)if(!slots[i]){slots[i]={type:TYPE,qty:1,turretData:newData()};left--;}
+    for(let i=0;i<max&&left;i++)if(!slots[i]){slots[i]={type,qty:1,turretData:newData(type)};left--;}
     return left;
   };
   function changed(){queueGameSave();renderBag();refresh();}
@@ -94,17 +100,17 @@ window.V016Turret=(()=>{
   }
   function pack(t){
     if(!guns.includes(t)||!reachable(t))return false;
-    if(addItem(TYPE,1,{turretData:gunData(t)})){message('Нужна свободная ячейка в рюкзаке');return false;}
+    if(addItem(typeOf(t),1,{turretData:gunData(t)})){message('Нужна свободная ячейка в рюкзаке');return false;}
     guns.splice(guns.indexOf(t),1);runtime.delete(t.id);selected=null;const panel=el('v016TurretPanel');if(panel)closeOverlay(panel);changed();return true;
   }
-  function ammoAvailable(){return bag.reduce((n,s)=>n+(s?.type===combat.ammoType&&!s.locked?s.qty:0),0);}
-  function reload(t,amount=combat.capacity){
+  function ammoAvailable(t){return bag.reduce((n,s)=>n+(s?.type===combatFor(t).ammoType&&!s.locked?s.qty:0),0);}
+  function reload(t,amount=combatFor(t).capacity){
     if(!guns.includes(t)||!reachable(t))return 0;
-    let need=Math.min(Math.max(0,Math.floor(amount)),combat.capacity-t.ammo),used=0;
-    for(let i=0;i<bag.length&&need;i++){const s=bag[i];if(s?.type!==combat.ammoType||s.locked)continue;const n=Math.min(s.qty,need);s.qty-=n;need-=n;used+=n;if(!s.qty)bag[i]=null;}
+    let need=Math.min(Math.max(0,Math.floor(amount)),combatFor(t).capacity-t.ammo),used=0;
+    for(let i=0;i<bag.length&&need;i++){const s=bag[i];if(s?.type!==combatFor(t).ammoType||s.locked)continue;const n=Math.min(s.qty,need);s.qty-=n;need-=n;used+=n;if(!s.qty)bag[i]=null;}
     t.ammo+=used;if(used)changed();else message('В рюкзаке нет свободных патронов 5,45');return used;
   }
-  function unload(t){if(!guns.includes(t)||!reachable(t)||!t.ammo)return 0;const left=addItem(combat.ammoType,t.ammo),moved=t.ammo-left;t.ammo=left;if(moved)changed();else message('Нет места для патронов');return moved;}
+  function unload(t){if(!guns.includes(t)||!reachable(t)||!t.ammo)return 0;const left=addItem(combatFor(t).ammoType,t.ammo),moved=t.ammo-left;t.ammo=left;if(moved)changed();else message('Нет места для патронов');return moved;}
   function setEnabled(t,on){if(!guns.includes(t)||!reachable(t))return false;t.enabled=!!on;changed();return true;}
   function settleUnsupported(){for(const t of guns)if(!t.fallen&&!support(t)){
     const a=Math.atan2(600-t.y,800-t.x),p=V015Base.freePoint(t.x+Math.cos(a)*72,t.y+Math.sin(a)*72,10);
@@ -114,8 +120,8 @@ window.V016Turret=(()=>{
   const wrapAngle=a=>Math.atan2(Math.sin(a),Math.cos(a));
   function acquire(t){
     const s=stateFor(t),prior=s.target;
-    if(prior?.alive&&prior.health>0&&distance(t.x,t.y,prior.x,prior.y)<=combat.range&&clear(t,prior))return prior;
-    const candidates=[];for(const z of zombies)if(z.alive&&z.health>0){const d=(z.x-t.x)**2+(z.y-t.y)**2;if(d<=combat.range**2)candidates.push({z,d});}
+    if(prior?.alive&&prior.health>0&&distance(t.x,t.y,prior.x,prior.y)<=combatFor(t).range&&clear(t,prior))return prior;
+    const candidates=[];for(const z of zombies)if(z.alive&&z.health>0){const d=(z.x-t.x)**2+(z.y-t.y)**2;if(d<=combatFor(t).range**2)candidates.push({z,d});}
     candidates.sort((a,b)=>a.d-b.d);
     // Rotate the bounded scan so a crowd behind cover cannot starve a farther
     // visible enemy. Keep an acquired target while its actual line stays clear.
@@ -123,9 +129,9 @@ window.V016Turret=(()=>{
     for(let i=0;i<Math.min(8,count);i++){const at=(start+i)%count;s.cursor=(at+1)%count;const z=candidates[at].z;if(clear(t,z))return z;}return null;
   }
   function shootAt(t,z){
-    const s=stateFor(t);if(!t.enabled||!support(t)||t.ammo<=0||!z?.alive||z.health<=0||distance(t.x,t.y,z.x,z.y)>combat.range||!clear(t,z))return false;
+    const s=stateFor(t);if(!t.enabled||!support(t)||t.ammo<=0||!z?.alive||z.health<=0||distance(t.x,t.y,z.x,z.y)>combatFor(t).range||!clear(t,z))return false;
     let first=z,at=1;for(const q of zombies)if(q.alive&&q.health>0){const n=ray(t,z,{x:q.x,y:q.y,r:q.radius||16},1);if(n!==null&&n<at){at=n;first=q;}}
-    t.ammo--;s.shot+=combat.intervalMs/1000;s.flash=.08;s.tracer={x:t.x+(z.x-t.x)*at,y:t.y+(z.y-t.y)*at};
+    t.ammo--;s.shot+=combatFor(t).intervalMs/1000;s.flash=.08;s.tracer={x:t.x+(z.x-t.x)*at,y:t.y+(z.y-t.y)*at};
     hitZombie(first,damage(t),{fixedDamage:true});createNoise(t.x,t.y,600);queueGameSave();return true;
   }
   function tick(ms){
@@ -137,7 +143,7 @@ window.V016Turret=(()=>{
       if(t.fallen||!t.enabled||!t.ammo){s.target=null;s.shot=0;continue;}
       if(s.search<=0){s.search=.2;s.target=acquire(t);}
       const z=s.target;if(!z?.alive||z.health<=0){s.target=null;s.shot=0;continue;}
-      const aim=Math.atan2(z.y-t.y,z.x-t.x),delta=wrapAngle(aim-t.angle);t.angle=wrapAngle(t.angle+clamp(delta,-combat.turnRate*dt,combat.turnRate*dt));
+      const aim=Math.atan2(z.y-t.y,z.x-t.x),delta=wrapAngle(aim-t.angle);t.angle=wrapAngle(t.angle+clamp(delta,-combatFor(t).turnRate*dt,combatFor(t).turnRate*dt));
       if(Math.abs(wrapAngle(aim-t.angle))<.055&&s.shot<=1e-9)shootAt(t,z);
       s.shot=Math.max(0,s.shot);
     }
@@ -146,15 +152,15 @@ window.V016Turret=(()=>{
   function status(t){return t.fallen?'Опора разрушена · заберите в рюкзак':!t.enabled?'Автоогонь выключен':!t.ammo?'Нет патронов 5,45':'Автоогонь · поворот 360°';}
   function open(t){if(!guns.includes(t)||!reachable(t)){message('Подойдите к пулемёту');return false;}selected=t;cancelNavigation();stopControls(true);
     const o=v09Overlay('v016TurretPanel','Тяжёлый пулемёт'),body=o.querySelector('.v09Body');body.replaceChildren();
-    const hero=document.createElement('div');hero.className='v016GunHero';hero.innerHTML=itemIconHTML(TYPE)+'<div><b>'+damage(t)+' урона · +'+(t.level||0)+' · 850 дальность</b><small>Патроны 5,45 × 39 · ёмкость 600</small></div>';body.append(hero);
+    const hero=document.createElement('div');hero.className='v016GunHero';hero.innerHTML=itemIconHTML(typeOf(t))+'<div><b>'+damage(t)+' урона · +'+(t.level||0)+' · '+combatFor(t).range+' дальность</b><small>Патроны '+(V09Craft.weaponsForAmmo(combatFor(t).ammoType).map(id=>V09Craft.weapons[id].caliber)[0]||ITEM[combatFor(t).ammoType].caliber)+' · ёмкость '+combatFor(t).capacity+'</small></div>';body.append(hero);
     const stats=document.createElement('p');stats.id='v016GunStatus';body.append(stats);
     const actions=document.createElement('div');actions.className='v016GunActions';
     const defs=[['load','Загрузить 100',()=>reload(t,100)],['max','Загрузить максимум',()=>reload(t)],['unload','Выгрузить патроны',()=>unload(t)],['power','Автоогонь',()=>setEnabled(t,!t.enabled)],['range','Показать радиус',()=>{closeOverlay(o);previewUntil=performance.now()+6000;}],['pack','Забрать в рюкзак',()=>pack(t)]];
     for(const [id,label,fn] of defs){const b=v09Button(label,fn);b.dataset.turretAction=id;actions.append(b);}body.append(actions);
     const note=document.createElement('p');note.className='v016GunNote';note.textContent='Установка в рюкзаке → выбрать стену → сдвинуть → установить. Пулемёт не перекрывает проход.';body.append(note);openOverlay(o);refresh();return true;
   }
-  function refresh(){const o=el('v016TurretPanel');if(!o?.classList.contains('open')||!selected)return;const t=selected,near=reachable(t);el('v016GunStatus').textContent=status(t)+' · '+t.ammo+' / 600';
-    for(const b of o.querySelectorAll('[data-turret-action]')){const k=b.dataset.turretAction;b.disabled=!near||(k==='unload'&&!t.ammo)||(['load','max'].includes(k)&&(!ammoAvailable()||t.ammo===combat.capacity));if(k==='power')b.textContent=t.enabled?'Автоогонь: вкл.':'Автоогонь: выкл.';}
+  function refresh(){const o=el('v016TurretPanel');if(!o?.classList.contains('open')||!selected)return;const t=selected,near=reachable(t);el('v016GunStatus').textContent=status(t)+' · '+t.ammo+' / '+combatFor(t).capacity;
+    for(const b of o.querySelectorAll('[data-turret-action]')){const k=b.dataset.turretAction;b.disabled=!near||(k==='unload'&&!t.ammo)||(['load','max'].includes(k)&&(!ammoAvailable(t)||t.ammo===combatFor(t).capacity));if(k==='power')b.textContent=t.enabled?'Автоогонь: вкл.':'Автоогонь: выкл.';}
   }
   const bar=document.createElement('div');bar.id='v016Placement';bar.style.display='none';
   const tip=document.createElement('div');bar.append(tip);const controls=document.createElement('div');controls.className='v016PlacementActions';bar.append(controls);
@@ -162,8 +168,8 @@ window.V016Turret=(()=>{
   const confirm=v09Button('Установить',place);confirm.id='v016PlaceConfirm';controls.append(confirm,v09Button('Отмена',cancelPlacement));document.body.append(bar);
   function updatePlacement(){if(!placement){bar.style.display='none';return;}bar.style.display='block';const problem=placementProblem(placement.point);tip.textContent=problem||'Место подходит · касание стены / стрелки для сдвига';confirm.disabled=!!problem;}
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&placement){e.preventDefault();cancelPlacement();}});
-  const detailsOld=V011UI.details;V011UI.details=function(where,i){detailsOld(where,i);const s=where==='bag'?bag[i]:Number.isInteger(where)?storageChests[where]?.items[i]:null;if(s?.type!==TYPE)return;
-    const body=el('v010ItemDetails').querySelector('.v09Body'),p=document.createElement('p');p.textContent='В ленте: '+(s.turretData?.ammo||0)+' / 600 · урон '+damage(s.turretData)+' · улучшение +'+(s.turretData?.level||0)+' · радиус 850';body.append(p);
+  const detailsOld=V011UI.details;V011UI.details=function(where,i){detailsOld(where,i);const s=where==='bag'?bag[i]:Number.isInteger(where)?storageChests[where]?.items[i]:null;if(!isType(s?.type))return;
+    const body=el('v010ItemDetails').querySelector('.v09Body'),p=document.createElement('p');p.textContent='В ленте: '+(s.turretData?.ammo||0)+' / '+combatFor(s.turretData).capacity+' · урон '+damage(s.turretData)+' · улучшение +'+(s.turretData?.level||0)+' · радиус '+combatFor(s.turretData).range;body.append(p);
     const b=v09Button('Установить на стену',()=>{if(where==='bag')startPlacement(s);else message('Сначала переложите пулемёт в рюкзак');});body.prepend(b);
   };
   const interactionsOld=interactionObjects;interactionObjects=function(which=scene){const a=interactionsOld(which);if(which==='surface')return [...a.filter(o=>o.kind==='v091stairs'),...guns.map(t=>({id:t.id,kind:TYPE,name:t.fallen?'Подобрать пулемёт':'Тяжёлый пулемёт',x:t.x,y:t.y,r:22,range:100})),...a.filter(o=>o.kind!=='v091stairs')];return a;};
@@ -198,7 +204,7 @@ window.V016Turret=(()=>{
   const icon=document.createElement('canvas');icon.width=128;icon.height=100;const ic=icon.getContext('2d');ic.translate(43,50);ic.scale(1.13,1.13);paint(ic,0,0,-.35);
   const iconURL=icon.toDataURL('image/png'),iconOld=itemIconHTML;
   itemIconHTML=function(type){return type===TYPE?'<img class="itemIcon" src="'+iconURL+'" alt="Тяжёлый пулемёт" draggable="false">':iconOld(type);};
-  function range(p,color='#d4d497'){ctx.save();ctx.strokeStyle=color;ctx.fillStyle='#cad89109';ctx.lineWidth=1.3/(V010Camera.zoom||1);ctx.setLineDash([10,9]);ctx.beginPath();ctx.arc(p.x,p.y,combat.range,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=color;ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText('850 · ОБСТРЕЛ 360°',p.x,p.y-48);ctx.restore();}
+  function range(p,color='#d4d497'){const spec=combatFor(placement?placement.item.turretData:p);ctx.save();ctx.strokeStyle=color;ctx.fillStyle='#cad89109';ctx.lineWidth=1.3/(V010Camera.zoom||1);ctx.setLineDash([10,9]);ctx.beginPath();ctx.arc(p.x,p.y,spec.range,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=color;ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(spec.range+' · ОБСТРЕЛ 360°',p.x,p.y-48);ctx.restore();}
   function draw(){if(scene!=='surface')return;
     if(placement){for(const w of V015Base.sections)if(eligible(w)&&visibleOnScreen(w.x+w.w/2,w.y+w.h/2,Math.max(w.w,w.h))){ctx.save();ctx.strokeStyle='#d9d88b9c';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.strokeRect(w.x+7,w.y+7,Math.max(1,w.w-14),Math.max(1,w.h-14));ctx.restore();}if(placement.point){range(placement.point,placementProblem(placement.point)?'#e29378':'#c4df9e');paint(ctx,placement.point.x,placement.point.y,placement.item.turretData.angle,0,true);}}
     else if(selected&&performance.now()<previewUntil)range(selected);
@@ -209,16 +215,16 @@ window.V016Turret=(()=>{
   function validate(d,whole){
     if(!d)return true;
     if(d.schema!==1||!Number.isInteger(d.nextId)||d.nextId<2||d.nextId>99999999||!Array.isArray(d.guns)||d.guns.length>128)throw Error('Некорректные пулемёты');
-    const records=[];function visit(v){if(!v||typeof v!=='object')return;if(v.type===TYPE){if(!validItem(v))throw Error('Некорректный переносной пулемёт');records.push(v.turretData);return;}for(const q of Object.values(v))visit(q);}
+    const records=[];function visit(v){if(!v||typeof v!=='object')return;if(isType(v.type)&&Object.hasOwn(v,'qty')){if(!validItem(v))throw Error('Некорректный переносной пулемёт');records.push(v.turretData);return;}for(const q of Object.values(v))visit(q);}
     if(whole)visit(whole);const ids=new Set();
     for(const t of d.guns){if(!validData(t)||![t.x,t.y].every(Number.isFinite)||Math.abs(t.x)>25000||Math.abs(t.y)>25000||typeof t.fallen!=='boolean'||(t.fallen?t.wallId!==null:!fits(t,V015Base.byId.get(t.wallId))||!['outer','inner'].includes(V015Base.byId.get(t.wallId)?.group)||V015Base.byId.get(t.wallId)?.gate))throw Error('Некорректная позиция пулемёта');records.push(t);}
-    for(const t of records){if(ids.has(t.id)||Number(t.id.slice(7))>=d.nextId)throw Error('Повтор пулемёта');ids.add(t.id);}
+    for(const t of records){if(ids.has(t.id)||Number(t.id.slice(definitionFor(t).idPrefix.length))>=d.nextId)throw Error('Повтор пулемёта');ids.add(t.id);}
     return true;
   }
   GameSave.extend('capture','base.turrets',function(captureOld){const d=captureOld();d.turret016=capture();return d;});
-  GameSave.extend('decode','base.turrets',function(decodeOld,raw){const d=decodeOld(raw);validate(d.turret016,d);if(!d.turret016){const tokens=[];const walk=v=>{if(!v||typeof v!=='object')return;if(v.type===TYPE)tokens.push(v);else for(const q of Object.values(v))walk(q);};walk(d);if(tokens.length)throw Error('Отсутствует состояние пулемётов');}return d;});
+  GameSave.extend('decode','base.turrets',function(decodeOld,raw){const d=decodeOld(raw);validate(d.turret016,d);if(!d.turret016){const tokens=[];const walk=v=>{if(!v||typeof v!=='object')return;if(isType(v.type)&&Object.hasOwn(v,'qty'))tokens.push(v);else for(const q of Object.values(v))walk(q);};walk(d);if(tokens.length)throw Error('Отсутствует состояние пулемётов');}return d;});
   GameSave.extend('restore','base.turrets',function(restoreOld,d){d=V015Base.migrateGame(d);validate(d.turret016,d);restoreOld(d);guns.splice(0,guns.length,...copy(d.turret016?.guns||[starter()]));nextId=d.turret016?.nextId||2;runtime.clear();selected=null;cancelPlacement();obstacleRevision=-1;settleUnsupported();});
   v09Style('#v016TurretPanel .v09Panel{width:min(410px,94vw);padding:14px;border-radius:13px}#v016TurretPanel p{font-size:12px;line-height:1.5;margin:10px 0}.v016GunHero{display:flex;align-items:center;gap:10px}.v016GunHero>.itemIcon{width:105px;height:82px;object-fit:contain}.v016GunHero b{font-size:12px}.v016GunHero small{display:block;font-size:10px;color:#9caf9f;margin-top:5px}.v016GunActions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.v016GunActions .menuButton{font-size:11px;min-height:40px;margin:0;padding:7px}.v016GunNote{color:#9fb1a4}#v016Placement{position:fixed;z-index:9500;left:50%;top:calc(var(--v011-hud-top,10px) + 42px);transform:translateX(-50%);width:min(460px,calc(100vw - 24px));box-sizing:border-box;background:#182a2af2;border:1px solid #9ba784;border-radius:10px;padding:9px;text-align:center;color:#e0e7cc;font:11px Arial}.v016PlacementActions{display:flex;justify-content:center;gap:4px;margin-top:7px}.v016PlacementActions .menuButton{margin:0;font-size:11px;padding:5px 8px;min-height:36px;width:auto;min-width:32px}#v016PlaceConfirm{background:#476344}');
-  return {damage,combat,guns,validItem,capture,validate,candidate,placementProblem,startPlacement,selectPoint,place,cancelPlacement,pack,reload,unload,setEnabled,reachable,clear,support,settleUnsupported,tick,shootAt,open,draw,paint,get placement(){return placement;},get nextId(){return nextId;}};
+  return {type:TYPE,definition,isType,typeOf,definitionFor,combatFor,damage,combat,guns,validItem,capture,validate,candidate,placementProblem,startPlacement,selectPoint,place,cancelPlacement,pack,reload,unload,setEnabled,reachable,clear,support,settleUnsupported,tick,shootAt,open,draw,paint,get placement(){return placement;},get nextId(){return nextId;}};
 })();
 

@@ -44,5 +44,5 @@ check('transactions.magazineRemovalAndReload',()=>{
  restore(fixture('rifle_ak74_37_60'));both('V0162Magazines.remove(V013Inventory.items.find(s=>s?.type==="rifle_ak74"))');compare();
 });
 check('console.noErrors',()=>{assert.deepEqual(a.errors,[]);assert.deepEqual(b.errors,[]);});
-const result={reference:'0.21.0 manually accepted on desktop and phone',candidate:'0.22.0',ignoredFields:['gameVersion (release metadata)','saveVersion (new envelope version)'],passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status!=='PASS').length,checks};
+const result={reference:'0.21.0 manually accepted on desktop and phone',candidate:require('../package.json').version,ignoredFields:['gameVersion (release metadata)','saveVersion (new envelope version)'],passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status!=='PASS').length,checks};
 fs.writeFileSync(path.join(__dirname,'results/differential.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({passed:result.passed,failed:result.failed,failures:checks.filter(c=>c.status!=='PASS')}));if(result.failed)process.exitCode=1;

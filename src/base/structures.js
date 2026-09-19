@@ -1,6 +1,22 @@
 /* Surface fortress: stable structural IDs, migrated decorative partitions. */
 window.V015Base=(()=>{
   const sections=[],byId=new Map(),OUTER_HP=6000,INNER_HP=3000,ROOM_HP=1800;
+  const health=(()=>{
+    const levels=Object.freeze([0,10000,20000,40000,60000,100000]);
+    const costs=Object.freeze({2:{concrete:20,iron:5},3:{concrete:40,iron:10},4:{concrete:60,iron:15},5:{concrete:100,iron:25}});
+    const repair=Object.freeze({material:'concrete',hpPerUnit:1000,hpPerMs:1,maxTickMs:100});
+    const profile={levels,costs,repair,armor:0,resistances:{},stages:[0,.2,.5,.9]};
+    const types={wall:profile,gate:profile,automatic:profile,house:profile,bath:profile};
+    const definition=type=>types[type];
+    function stage(o,type='wall'){const thresholds=definition(type).stages,p=o.hp/o.maxHp;for(let i=0;i<thresholds.length;i++)if(p<=thresholds[i])return thresholds.length-i;return 0;}
+    function damage(o,amount,type='wall',damageType='physical'){
+      const def=definition(type);if(!o||!def||!Number.isFinite(amount)||amount<=0||o.hp<=0)return false;
+      const received=Math.max(0,amount-def.armor)*(1-clamp(def.resistances[damageType]||0,0,1));
+      if(!received)return false;o.hp=Math.max(0,o.hp-received);o.hitAt=performance.now();return true;
+    }
+    function restoreHP(o,amount){if(!o||!Number.isFinite(amount)||amount<=0)return 0;const n=Math.max(0,Math.min(amount,o.maxHp-o.hp));o.hp+=n;return n;}
+    return {levels,costs,repair,types,definition,stage,damage,restoreHP};
+  })();
   let northOpen=false,commandNorthOpen=false,commandSouthOpen=true,validating=false,revision=0;
   const legacyRooms=[
     {id:'storage',name:'СКЛАД',x:285,y:263,w:280,h:132,entry:'S'},
@@ -40,7 +56,7 @@ window.V015Base=(()=>{
   Object.assign(V09World.well,{x:690,y:901});
   // The former courtyard car overlaps the southeast bay. Retain its ID,
   // loot and renewal state, and park it immediately east of the fortress.
-  for(const o of sections){o.legacyMaxHp=o.maxHp;o.level=1;o.maxHp=10000;o.hp=10000;}
+  for(const o of sections){o.legacyMaxHp=o.maxHp;o.level=1;o.maxHp=health.levels[1];o.hp=o.maxHp;}
   const yardCar=scavenges.find(o=>o.id==='yard_car');if(yardCar)Object.assign(yardCar,{x:1510,y:910});
   // Keep every resource ID/quantity intact, moving the handful of courtyard
   // trees onto the northern verge instead of leaving trees through new rooms.
@@ -51,15 +67,15 @@ window.V015Base=(()=>{
   surfaceWalls=walls;
   const previousSolids=solidObjects;
   solidObjects=function(which){const a=previousSolids(which);return which==='surface'?[...a.filter(o=>o.id!=='yard_generator'&&!o.id?.startsWith('v091tower')&&!/^tower\d+$/.test(o.id||'')),...props]:a;};
-  function stage(o){const p=o.hp/o.maxHp;return p<=0?4:p<=.2?3:p<=.5?2:p<=.9?1:0;}
+  function stage(o){return health.stage(o,o.gate?'gate':'wall');}
   function deckPresent(x,y,snapshot){
     const hp=o=>snapshot?snapshot.get(o.id):o.hp;
     return sections.some(o=>V020Walls.perimeter(o)&&hp(o)>0&&x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h);
   }
   function changed(){revision++;invalidateGeometry();queueGameSave();}
-  function damage(id,amount){
+  function damage(id,amount,damageType='physical'){
     const o=typeof id==='string'?byId.get(id):id;if(!o||!byId.has(o.id)||!Number.isFinite(amount)||amount<=0||o.hp<=0||isOpen(o))return false;
-    o.hp=Math.max(0,o.hp-amount);o.hitAt=performance.now();
+    if(!health.damage(o,amount,o.gate?'gate':'wall',damageType))return false;
     if(o.hp===0){changed();if(scene==='surface'&&player.wallLevel&&!V091Fortress.transitioning&&V091Fortress.elevatedCollision(player.x,player.y,player.radius)){player.wallLevel=false;V091Fortress.cancelRoute();const landing=V020Walls.inwardSafePoint(player.x,player.y,player.radius);if(landing)Object.assign(player,landing);else settle(player);}
       if(scene==='surface'&&distance(player.x,player.y,o.x+o.w/2,o.y+o.h/2)<800)message('Пролом в '+(o.group==='outer'?'периметре':o.group==='room'?'стене помещения':'укреплении'));
     }else queueGameSave();return true;
@@ -117,7 +133,7 @@ window.V015Base=(()=>{
   executeInteraction=function(o){if(o?.kind==='baseGate015'){if(canInteract(o,player.x,player.y))toggle(byId.get(o.ref));return;}
     if(o?.id?.startsWith('v015prop_'))return;
     return oldExecute(o);};
-  const HP_LEVELS=[0,10000,20000,40000,60000,100000];
+  const HP_LEVELS=health.levels;
   function capture(){return{schema:4,northOpen:false,commandNorthOpen,commandSouthOpen,sections:sections.map(o=>({id:o.id,hp:o.hp,level:o.level}))};}
   function validate(d){
     if(d===undefined||d===null)return true;
@@ -125,7 +141,7 @@ window.V015Base=(()=>{
     const layout=current?byId:legacyLayout,expected=layout.size+(legacy?retiredSections.size:0);
     if(![1,2,3,4].includes(d.schema)||!['northOpen','commandNorthOpen','commandSouthOpen'].every(k=>typeof d[k]==='boolean')||!Array.isArray(d.sections)||d.sections.length!==expected)throw Error('Некорректное состояние укреплений');
     const seen=new Set();for(const p of d.sections){
-      const section=layout.get(p?.id),maxHp=d.schema>=3?(section&&Number.isInteger(p.level)&&p.level>=1&&p.level<=5?HP_LEVELS[p.level]:undefined):(section?.legacyMaxHp??(legacy?retiredSections.get(p?.id):undefined));
+      const section=layout.get(p?.id),maxHp=d.schema>=3?(section&&Number.isInteger(p.level)&&p.level>=1&&p.level<HP_LEVELS.length?HP_LEVELS[p.level]:undefined):(section?.legacyMaxHp??(legacy?retiredSections.get(p?.id):undefined));
       if(maxHp===undefined||seen.has(p.id)||!Number.isFinite(p.hp)||p.hp<0||p.hp>maxHp)throw Error('Некорректная прочность секции');seen.add(p.id);
     }return true;
   }
@@ -186,7 +202,7 @@ window.V015Base=(()=>{
   invalidateGeometry();
   // Rendering is supplied below; geometry and damage do not depend on images.
   const wallSprites=new Map(),lightShapes=new Map(),materials=new Map();let groundCache=null;
-  const api={sections,rooms,props,byId,walls,isOpen,stage,damage,changed,toggle,deckPresent,rayEntry,blocker,siege,capture,validate,restore,migrateGame,normalizeSave,legacyLayout,freePoint,drawGround,drawFortifications,drawMap,inWorkshop:()=>false,get revision(){return revision;},get validating(){return validating;}};
+  const api={health,sections,rooms,props,byId,walls,isOpen,stage,damage,changed,toggle,deckPresent,rayEntry,blocker,siege,capture,validate,restore,migrateGame,normalizeSave,legacyLayout,freePoint,drawGround,drawFortifications,drawMap,inWorkshop:()=>false,get revision(){return revision;},get validating(){return validating;}};
   return api;
 
   function drawGround(){drawBaseFloor();drawProps();}

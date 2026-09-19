@@ -30,7 +30,7 @@ check('registry.moduleRestoreOrder',()=>assert.deepEqual(copy(E('GameSave.module
 check('registry.rejectDuplicateOrLateHooks',()=>assert.throws(()=>E(`GameSave.extend('capture','save.slots',next=>next())`)));
 check('registry.rejectDuplicateOrLateModules',()=>assert.throws(()=>E(`V010.register('inventory',V010Inventory)`)));
 check('format.explicitVersion',()=>assert.equal(snap().saveVersion,1));
-check('format.versionSeparatedFromPayloadSchemas',()=>{const d=snap();assert.equal(d.schema,2);assert.equal(d.base015.schema,4);assert.equal(d.gameVersion,'0.22.0');});
+check('format.versionSeparatedFromPayloadSchemas',()=>{const d=snap();assert.equal(d.schema,2);assert.equal(d.base015.schema,4);assert.equal(d.gameVersion,require('../package.json').version);});
 check('format.legacyMigratesWithoutChangingInput',()=>{const before=JSON.stringify(fixture);restore(fixture);assert.equal(JSON.stringify(fixture),before);assert.equal(snap().saveVersion,1);});
 check('format.migrationIsIdempotent',()=>{
  const once=E(`decodeGameProgress(${JSON.stringify(frozen)})`),twice=E(`decodeGameProgress(${JSON.stringify(JSON.stringify(once))})`);assert.deepEqual(copy(twice),copy(once));

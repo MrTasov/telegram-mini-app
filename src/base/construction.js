@@ -1,14 +1,14 @@
 /* 0.18.0 — construction on top of existing wall, inventory, mining and craft APIs. */
 window.V018Build=(()=>{
-  const LEVELS=Object.freeze([0,10000,20000,40000,60000,100000]);
-  const COSTS=Object.freeze({2:{concrete:20,iron:5},3:{concrete:40,iron:10},4:{concrete:60,iron:15},5:{concrete:100,iron:25}});
+  const health=V015Base.health,LEVELS=health.levels,COSTS=health.costs;
+  const definition=r=>health.definition(r.kind),maxLevel=r=>definition(r).levels.length-1;
   const structures=new Map(),doorRecords=[],stoneNodes=[];
   let job=null,credit=0,selected=null,refs=null,uiElapsed=0;
   const iconKeys={hammer:'hammer018',stone:'stone018',concrete:'concrete018'};
   for(const [type,key] of Object.entries(iconKeys))V092_ICONS[type]=V011Art.sources[key];
   for(const o of V015Base.sections)structures.set(o.id,{id:o.id,scene:'surface',kind:o.gate?'gate':'wall',object:o});
   function addDoor(object,which,kind,owner=null){
-    object.level=1;object.maxHp=10000;object.hp=10000;
+    object.level=1;object.maxHp=health.definition(kind).levels[1];object.hp=object.maxHp;
     const r={id:object.id,scene:which,kind,object,owner};structures.set(r.id,r);doorRecords.push(r);
   }
   for(const d of v09Doors)addDoor(d,'bunker','automatic');
@@ -37,11 +37,11 @@ window.V018Build=(()=>{
     if(geometry){if(V015Base.byId.has(r.id))V015Base.changed();else invalidateGeometry();}
     queueGameSave();
   }
-  function damage(value,amount){
+  function damage(value,amount,damageType='physical'){
     const r=record(value);if(!r||!Number.isFinite(amount)||amount<=0)return false;
-    if(V015Base.byId.has(r.id))return V015Base.damage(r.id,amount);
+    if(V015Base.byId.has(r.id))return V015Base.damage(r.id,amount,damageType);
     const o=r.object;if(o.hp<=0)return false;
-    o.hp=Math.max(0,o.hp-amount);o.hitAt=performance.now();
+    if(!health.damage(o,amount,r.kind,damageType))return false;
     if(!o.hp){if(r.kind==='automatic'){o.open=1;o.away=0;}if(r.owner){r.owner.doorOpen=true;r.owner.doorProgress=1;}}
     changed(r,!o.hp);return true;
   }
@@ -52,7 +52,7 @@ window.V018Build=(()=>{
     if(r.object.hp>=r.object.maxHp){open(r.id);return false;}
     if(job?.id===r.id)return true;
     if(!r.object.hp&&occupied(r)){message('Освободите место для восстановления');return false;}
-    if(credit<=0&&count('concrete')<1){message('Нужен бетон в рюкзаке · 2 камня → 1 бетон в печи');return false;}
+    if(credit<=0&&count(definition(r).repair.material)<1){message('Нужен бетон в рюкзаке · 2 камня → 1 бетон в печи');return false;}
     V014Controls.stopRoute();cancelNavigation();cancelChop();cancelSearch();V012Fishing.stop();firing=false;
     job={id:r.id,x:player.x,y:player.y,scene,ms:0};
     if(el('v018Structure')?.classList.contains('open'))closeOverlay(el('v018Structure'));
@@ -65,23 +65,23 @@ window.V018Build=(()=>{
     if(r.object.hp>=r.object.maxHp){stop('Ремонт завершён');return;}
     if(!r.object.hp&&occupied(r)){stop('Проход занят · ремонт остановлен');return;}
     const p=contactPoint(r.object,player.x,player.y),dx=p.x-player.x,dy=p.y-player.y,n=Math.hypot(dx,dy)||1;player.aimX=dx/n;player.aimY=dy/n;
-    job.ms+=Math.max(0,Math.min(100,Number(ms)||0));let amount=Math.floor(job.ms);job.ms-=amount;
+    const repair=definition(r).repair;job.ms+=Math.max(0,Math.min(repair.maxTickMs,Number(ms)||0))*repair.hpPerMs;let amount=Math.floor(job.ms);job.ms-=amount;
     while(amount>0&&job){
-      if(credit===0){if(!consume({concrete:1})){stop('Бетон закончился · выполненный ремонт сохранён');break;}credit=1000;}
-      const o=r.object,wasBroken=o.hp===0,n=Math.min(amount,credit,o.maxHp-o.hp);o.hp+=n;credit-=n;amount-=n;changed(r,wasBroken);
+      if(credit===0){if(!consume({[repair.material]:1})){stop('Бетон закончился · выполненный ремонт сохранён');break;}credit=repair.hpPerUnit;}
+      const o=r.object,wasBroken=o.hp===0,n=health.restoreHP(o,Math.min(amount,credit));credit-=n;amount-=n;changed(r,wasBroken);
       if(o.hp>=o.maxHp){stop('Ремонт завершён');break;}
     }
   }
   function upgrade(value){
     const r=record(value);if(!near(r)||!held())return false;const o=r.object;
     if(o.hp<o.maxHp){message('Сначала полностью отремонтируйте секцию');return false;}
-    if(o.level>=5)return false;
-    const input=COSTS[o.level+1];
+    if(o.level>=maxLevel(r))return false;
+    const input=definition(r).costs[o.level+1];
     if(!consume(input)){
       for(const cell of el('v018Structure')?.querySelectorAll('[data-build-material]')||[])if(count(cell.dataset.buildMaterial)<input[cell.dataset.buildMaterial])V0162Quick.flash(cell);
       message('Не хватает бетона или железа в рюкзаке');return false;
     }
-    o.level++;o.maxHp=LEVELS[o.level];o.hp=o.maxHp;changed(r,true);refresh(true);message(title(r)+' · уровень '+o.level);return true;
+    o.level++;o.maxHp=definition(r).levels[o.level];o.hp=o.maxHp;changed(r,true);refresh(true);message(title(r)+' · уровень '+o.level);return true;
   }
   const hud=document.createElement('div');hud.id='v018RepairHUD';const hudText=document.createElement('span'),hudStop=v09Button('Стоп',()=>stop());hud.append(hudText,hudStop);document.body.append(hud);
   function open(value){
@@ -99,12 +99,12 @@ window.V018Build=(()=>{
     if(job){const o=record(job.id)?.object;if(o)hudText.textContent='Ремонт · '+Math.floor(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU');}
     if(!refs?.overlay.classList.contains('open'))return;
     const r=record(selected);if(!r)return;const o=r.object,full=o.hp>=o.maxHp,key=[o.level,full,count('concrete'),count('iron'),credit,near(r),held()].join('/');
-    refs.level.textContent=title(r)+' · '+o.level+' / 5';refs.hp.textContent=Math.ceil(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU')+' HP';refs.fill.style.width=100*o.hp/o.maxHp+'%';
+    refs.level.textContent=title(r)+' · '+o.level+' / '+maxLevel(r);refs.hp.textContent=Math.ceil(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU')+' HP';refs.fill.style.width=100*o.hp/o.maxHp+'%';
     if(!force&&key===refs.signature)return;refs.signature=key;refs.costs.replaceChildren();
-    const inputs=!full?{concrete:Math.ceil(Math.max(0,o.maxHp-o.hp-credit)/1000)}:COSTS[o.level+1]||{};
+    const inputs=!full?{[definition(r).repair.material]:Math.ceil(Math.max(0,o.maxHp-o.hp-credit)/definition(r).repair.hpPerUnit)}:definition(r).costs[o.level+1]||{};
     for(const [t,n] of Object.entries(inputs)){const cell=document.createElement('div');cell.className='v018BuildMaterial'+(count(t)<n?' missing':'');cell.dataset.buildMaterial=t;cell.innerHTML=itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+count(t)+' / '+n+'</small></span>';refs.costs.append(cell);}
-    refs.button.textContent=!full?'Ремонтировать':o.level>=5?'Максимальный уровень':'Улучшить до '+(o.level+1)+' · '+LEVELS[o.level+1].toLocaleString('ru-RU')+' HP';refs.button.disabled=!near(r)||!held()||(full&&o.level>=5);
-    refs.note.textContent=!full?'1000 HP/сек. · 1 бетон = 1000 HP. Остаток смеси сохраняется.':o.level>=5?'Укрепление полностью улучшено.':'Материалы из рюкзака. После улучшения прочность будет полной.';
+    refs.button.textContent=!full?'Ремонтировать':o.level>=maxLevel(r)?'Максимальный уровень':'Улучшить до '+(o.level+1)+' · '+definition(r).levels[o.level+1].toLocaleString('ru-RU')+' HP';refs.button.disabled=!near(r)||!held()||(full&&o.level>=maxLevel(r));
+    refs.note.textContent=!full?'1000 HP/сек. · 1 бетон = 1000 HP. Остаток смеси сохраняется.':o.level>=maxLevel(r)?'Укрепление полностью улучшено.':'Материалы из рюкзака. После улучшения прочность будет полной.';
   }
   const interactions=interactionObjects;interactionObjects=function(which=scene){const out=interactions(which);if(!held()||(which==='surface'&&V013City.floor))return out;const available=[...structures.values()].filter(r=>r.scene===which);const ids=new Set(available.map(r=>r.id));return [...out.filter(o=>!ids.has(o.id)),...available.map(target)];};
   const hit=hitInteraction;hitInteraction=function(x,y){if(held()&&(scene!=='surface'||!V013City.floor)){const r=[...structures.values()].find(r=>r.scene===scene&&rectHit(x,y,7,r.object));if(r)return target(r);}return hit(x,y);};
@@ -156,13 +156,13 @@ window.V018Build=(()=>{
     for(const o of closedDoors()){const t=V015Base.rayEntry(z,r.lastSeen,o);if(t!==null&&t<best&&lineClear(z.x,z.y,r.lastSeen.x,r.lastSeen.y,0,'surface',o.id)){target=o;best=t;}}
     if(!target)return false;
     const p=contactPoint(target,z.x,z.y),d=Math.hypot(p.x-z.x,p.y-z.y);r.angle=Math.atan2(p.y-z.y,p.x-z.x);z.state='chase';
-    if(d<=z.radius+12){if(z.type==='bloater'){V017Monsters.armFuse(r,now,850/V017Monsters.factor());return true;}if(now-z.lastAttack>s.cooldown*(dark?.8:1)){damage(target,s.damage*2*V010World.settings.enemyStrength);z.lastAttack=now;r.attack=now+400;}return true;}
+    if(d<=z.radius+12){if(s.behavior==='explosive'){V017Monsters.armFuse(r,now,s.blast.wallFuseMs/V017Monsters.factor());return true;}if(now-z.lastAttack>s.cooldown*(dark?.8:1)){damage(target,s.damage*2*V010World.settings.enemyStrength);z.lastAttack=now;r.attack=now+400;}return true;}
     V017Monsters.move(z,r.angle,s.chaseSpeed*.5*dt);return true;
   }
   const updateOld=update;update=function(...args){const out=updateOld(...args);repairStep(16.667*frameScale);uiElapsed+=16.667*frameScale;if(uiElapsed>=150){uiElapsed=0;refresh();}return out;};
   function capture(){return {schema:1,credit,doors:doorRecords.map(r=>({id:r.id,hp:r.object.hp,level:r.object.level}))};}
-  function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isFinite(d.credit)||d.credit<0||d.credit>1000||!Array.isArray(d.doors)||d.doors.length!==doorRecords.length)throw Error('Некорректные данные строительства');const seen=new Set();for(const p of d.doors){if(!doorRecords.some(r=>r.id===p.id)||seen.has(p.id)||!Number.isInteger(p.level)||p.level<1||p.level>5||!Number.isFinite(p.hp)||p.hp<0||p.hp>LEVELS[p.level])throw Error('Некорректная прочность двери');seen.add(p.id);}return true;}
-  function restore(data){validate(data);job=null;credit=data?.credit||0;selected=null;const map=new Map((data?.doors||[]).map(o=>[o.id,o]));for(const r of doorRecords){const p=map.get(r.id),o=r.object;o.level=p?.level||1;o.maxHp=LEVELS[o.level];o.hp=p?p.hp:o.maxHp;if(!o.hp){if(r.kind==='automatic')o.open=1;if(r.owner){r.owner.doorOpen=true;r.owner.doorProgress=1;}}}invalidateGeometry();refresh();}
+  function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isFinite(d.credit)||d.credit<0||d.credit>health.repair.hpPerUnit||!Array.isArray(d.doors)||d.doors.length!==doorRecords.length)throw Error('Некорректные данные строительства');const seen=new Set();for(const p of d.doors){if(!doorRecords.some(r=>r.id===p.id)||seen.has(p.id)||!Number.isInteger(p.level)||p.level<1||p.level>maxLevel(record(p.id))||!Number.isFinite(p.hp)||p.hp<0||p.hp>definition(record(p.id)).levels[p.level])throw Error('Некорректная прочность двери');seen.add(p.id);}return true;}
+  function restore(data){validate(data);job=null;credit=data?.credit||0;selected=null;const map=new Map((data?.doors||[]).map(o=>[o.id,o]));for(const r of doorRecords){const p=map.get(r.id),o=r.object;o.level=p?.level||1;o.maxHp=definition(r).levels[o.level];o.hp=p?p.hp:o.maxHp;if(!o.hp){if(r.kind==='automatic')o.open=1;if(r.owner){r.owner.doorOpen=true;r.owner.doorProgress=1;}}}invalidateGeometry();refresh();}
   GameSave.extend('capture','base.construction',function(oldCapture){const d=oldCapture();d.building018=capture();return d;});
   GameSave.extend('decode','base.construction',function(oldDecode,raw){const d=JSON.parse(raw);validate(d.building018);return oldDecode(raw);});
   GameSave.extend('restore','base.construction',function(oldRestore,d){validate(d.building018);restore(d.building018);oldRestore(d);restore(d.building018);});
@@ -176,6 +176,6 @@ window.V018Build=(()=>{
     #v018RepairHUD button{pointer-events:auto;min-height:24px;min-width:35px;padding:3px 7px;font-size:10px;margin:0;width:auto}#actionButton .itemIcon{width:28px;height:28px}
   `);
   invalidateGeometry();renderQuickSlots();renderBag();
-  return{LEVELS,COSTS,structures,stoneNodes,doorRecords,record,isBroken,closedDoors,damage,start,stop,repairStep,upgrade,open,near,occupied,consume,count,capture,restore,validate,drawHeld,drawStone,enemyDoorStep,refresh,get job(){return job;},get credit(){return credit;}};
+  return{health,definition,maxLevel,LEVELS,COSTS,structures,stoneNodes,doorRecords,record,isBroken,closedDoors,damage,start,stop,repairStep,upgrade,open,near,occupied,consume,count,capture,restore,validate,drawHeld,drawStone,enemyDoorStep,refresh,get job(){return job;},get credit(){return credit;}};
 })();
 

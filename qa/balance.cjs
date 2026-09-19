@@ -21,7 +21,13 @@ const version=actual.version;actual.version=expected.version; // Release metadat
 assert.equal(actual.save.topKeys.filter(k=>k==='saveVersion').length,1);
 assert.equal(E('captureGameProgress().saveVersion'),1);
 actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='saveVersion');
+const definitionFields={items:['ammo','stackMax','caliber','drone','turret'],weapons:['category','reloadMs','noise','heldStyle','visualRecoil','recoilLabel','magazineTypes','defaultMagazine','extendedMagazine']};
+for(const [group,keys] of Object.entries(definitionFields))for(const [id,def] of Object.entries(actual[group]))for(const key of keys)if(!Object.hasOwn(expected[group][id]||{},key))delete def[key];
+for(const [id,levels] of Object.entries(actual.effectiveWeapons))for(const [i,def] of levels.entries())for(const key of definitionFields.weapons)if(!Object.hasOwn(expected.effectiveWeapons[id][i],key))delete def[key];
+for(const group of ['enemies','dayXEnemies'])for(const def of Object.values(actual[group]))for(const key of ['spawnOrder','behavior','healthColor','leap','blast'])delete def[key];
+const addedAPIs={};
+for(const [id,keys] of Object.entries(actual.exposedAPIs)){addedAPIs[id]=keys.filter(k=>!expected.exposedAPIs[id]?.includes(k));actual.exposedAPIs[id]=keys.filter(k=>expected.exposedAPIs[id]?.includes(k));}
 let error=null;try{assert.deepEqual(actual,expected);}catch(e){error=e.message;}
 fs.writeFileSync(path.join(__dirname,'results/configurations.json'),JSON.stringify(configs,null,2)+'\n');
-const report={version,passed:error?0:1,failed:error?1:0,scope:'All Stage 0 item/weapon/enemy/upgrade/drone/power/wall/farm configuration samples; only gameVersion and the new saveVersion metadata normalized.',error,consoleErrors:r.errors};
+const report={version,passed:error?0:1,failed:error?1:0,scope:'Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.',addedDefinitionFields:definitionFields,addedEnemyFields:['spawnOrder','behavior','healthColor','leap','blast'],addedAPIs,error,consoleErrors:r.errors};
 fs.writeFileSync(path.join(__dirname,'results/balance.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({passed:report.passed,failed:report.failed,error:error?.slice(0,1200)}));if(error||r.errors.length)process.exitCode=1;

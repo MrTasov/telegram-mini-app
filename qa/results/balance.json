@@ -1,8 +1,114 @@
 {
-  "version": "0.22.0",
+  "version": "0.23.0",
   "passed": 1,
   "failed": 0,
-  "scope": "All Stage 0 item/weapon/enemy/upgrade/drone/power/wall/farm configuration samples; only gameVersion and the new saveVersion metadata normalized.",
+  "scope": "Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.",
+  "addedDefinitionFields": {
+    "items": [
+      "ammo",
+      "stackMax",
+      "caliber",
+      "drone",
+      "turret"
+    ],
+    "weapons": [
+      "category",
+      "reloadMs",
+      "noise",
+      "heldStyle",
+      "visualRecoil",
+      "recoilLabel",
+      "magazineTypes",
+      "defaultMagazine",
+      "extendedMagazine"
+    ]
+  },
+  "addedEnemyFields": [
+    "spawnOrder",
+    "behavior",
+    "healthColor",
+    "leap",
+    "blast"
+  ],
+  "addedAPIs": {
+    "V09World": [],
+    "V020Walls": [],
+    "V091Fortress": [],
+    "V091Loot": [],
+    "V091Equipment": [],
+    "V09Saves": [],
+    "V010": [],
+    "V010Inventory": [],
+    "V010Combat": [
+      "upgradeRules",
+      "upgradeProfile",
+      "maxUpgradeLevel",
+      "equipmentStats"
+    ],
+    "V010World": [],
+    "V010Energy": [],
+    "V010Progression": [],
+    "V010Camera": [],
+    "V0105": [],
+    "V011Art": [],
+    "V011UI": [],
+    "V011CraftUI": [],
+    "V011Farm": [],
+    "V011World": [],
+    "V011Rooms": [],
+    "V011Living": [],
+    "V012Expansion": [],
+    "V012Map": [],
+    "V012Windows": [],
+    "V012Effects": [],
+    "V012Fishing": [],
+    "V014Fish": [],
+    "V013Inventory": [],
+    "V013Lake": [],
+    "V013City": [],
+    "V0141DroneMotion": [],
+    "V014Robots": [
+      "type",
+      "instanceId",
+      "definition",
+      "ownsToken"
+    ],
+    "V014Controls": [],
+    "V014Energy": [],
+    "V0141DroneUI": [],
+    "V0141Farm": [],
+    "V0141Map": [],
+    "V0141Trees": [],
+    "V015Base": [
+      "health"
+    ],
+    "V0151Station": [],
+    "V016Lighting": [],
+    "V016Turret": [
+      "type",
+      "definition",
+      "isType",
+      "typeOf",
+      "definitionFor",
+      "combatFor"
+    ],
+    "V0161UI": [],
+    "V0161Migration": [],
+    "V0161Upgrade": [],
+    "V0162Quick": [],
+    "V0162Magazines": [],
+    "V0163Loot": [],
+    "V0163Vitals": [],
+    "V017Monsters": [
+      "dayX",
+      "typeAt"
+    ],
+    "V018Build": [
+      "health",
+      "definition",
+      "maxLevel"
+    ]
+  },
   "error": null,
   "consoleErrors": []
 }

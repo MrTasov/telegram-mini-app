@@ -35,7 +35,7 @@ window.V0141DroneUI=(()=>{
     const cargoFooter=node('div','droneInventoryActions');refs.selection=node('span','droneTransferHint','Выберите предмет');cargoFooter.append(refs.selection);command(cargoFooter,'transfer','Переложить',transferSelected);inv.append(cargoFooter);
     const bagDetails=node('details','dronePlayerBag');bagDetails.open=true;const summary=node('summary');refs.bagTitle=node('span','','Мой рюкзак');summary.append(refs.bagTitle);bagDetails.append(summary);grids.bag=node('div','droneItemGrid');bagDetails.append(grids.bag);body.append(bagDetails);
     refs.range=node('p','droneTransferHint');body.append(refs.range);
-    const rescue=node('div','droneRescue');command(rescue,'pack','Забрать дрон',()=>robot.pack());command(rescue,'launch','Запустить',()=>robot.deploy(bag.find(s=>s?.type==='drone014')));body.append(rescue);
+    const rescue=node('div','droneRescue');command(rescue,'pack','Забрать дрон',()=>robot.pack());command(rescue,'launch','Запустить',()=>robot.deploy(bag.find(robot.ownsToken)));body.append(rescue);
     const more=node('details','droneMore');more.append(node('summary','','Обслуживание'));more.append(node('p','droneTransferHint','Усиление модулей — на станке усиления в мастерской. Заберите дрон в рюкзак.'));
     const rename=node('div','droneRename'),name=node('input');name.type='text';name.maxLength=24;name.value=state.name;name.setAttribute('aria-label','Имя дрона');refs.name=name;rename.append(name);command(rename,'rename','Сохранить имя',()=>{state.name=name.value.trim().slice(0,24)||'Спутник';robot.changed();});more.append(rename);
     for(const [key,label]of [['autoCollect','Собирать открытые предметы рядом'],['economy','Экономить заряд']]){const row=node('label','droneToggle',label),input=node('input');input.type='checkbox';refs[key]=input;input.addEventListener('change',()=>{state[key]=input.checked;robot.changed();});row.append(input);more.append(row);}
@@ -76,7 +76,7 @@ window.V0141DroneUI=(()=>{
     for(const id of ['follow','guard','dock'])buttons[id].disabled=!active;
     for(const id of ['defense','attack'])buttons[id].disabled=!active||!robot.combatEnabled();
     buttons.follow.classList.toggle('selected',state.task==='follow');buttons.guard.classList.toggle('selected',state.task==='guard');buttons.dock.classList.toggle('selected',['return','docked'].includes(state.task));buttons.defense.classList.toggle('selected',state.mode==='defense');buttons.attack.classList.toggle('selected',state.mode==='attack');
-    buttons.reload.disabled=!robot.near()||state.ammo>=robot.combat.capacity||robot.availableAmmo()<1;buttons.pack.disabled=state.packed;buttons.launch.disabled=!state.packed||!bag.some(s=>s?.type==='drone014');
+    buttons.reload.disabled=!robot.near()||state.ammo>=robot.combat.capacity||robot.availableAmmo()<1;buttons.pack.disabled=state.packed;buttons.launch.disabled=!state.packed||!bag.some(robot.ownsToken);
     set(refs.cargoTitle,'Инвентарь дрона · '+state.cargo.filter(Boolean).length+' / '+robot.capacity());set(refs.bagTitle,'Мой рюкзак · '+bag.filter(Boolean).length+' / '+BAG_SLOTS);
     refreshGrid('drone');refreshGrid('bag');const s=selected&&slots(selected.side)[selected.i];set(refs.selection,s?ITEM[s.type].name+' × '+s.qty:'Выберите предмет');set(buttons.transfer,selected?.side==='bag'?'В дрона':'В рюкзак');buttons.transfer.disabled=!s||s.locked||ITEM[s.type]?.robot||!robot.near();
     set(refs.range,robot.near()?'Нажмите предмет или удерживайте для переноса.':'Для переноса предметов дрон должен быть рядом. Команды доступны удалённо.');

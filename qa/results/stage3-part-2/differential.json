@@ -1,0 +1,656 @@
+{
+  "reference": "0.21.0 manually accepted on desktop and phone",
+  "candidate": "0.22.0",
+  "ignoredFields": [
+    "gameVersion (release metadata)",
+    "saveVersion (new envelope version)"
+  ],
+  "passed": 161,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "freshGame.fullPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.craft_in_progress.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.craft_in_progress.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.craft_in_progress.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_0.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_0.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_0.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_2.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_2.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_2.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_3.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_3.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_3.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_4.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_4.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_4.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_5.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_5.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_5.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_6.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_6.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_6.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_7.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_7.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_7.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_8.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_8.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_8.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_9.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_9.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_9.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.damaged_base_turret.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.damaged_base_turret.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.damaged_base_turret.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.day_x.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.day_x.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.day_x.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_charging.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_charging.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_charging.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_empty_far.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_empty_far.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_empty_far.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_packed.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_packed.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_packed.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.equipment_storage.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.equipment_storage.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.equipment_storage.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fish_instances.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fish_instances.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fish_instances.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fresh_game.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fresh_game.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fresh_game.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.full_backpack.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.full_backpack.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.full_backpack.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.legacy_0.19.1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.legacy_0.19.1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.legacy_0.19.1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.craft_in_progress.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.craft_in_progress.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.craft_in_progress.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_0.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_0.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_0.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_2.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_2.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_2.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_3.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_3.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_3.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_4.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_4.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_4.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_5.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_5.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_5.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_6.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_6.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_6.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_7.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_7.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_7.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_8.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_8.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_8.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_9.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_9.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_9.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.damaged_base_turret.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.damaged_base_turret.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.damaged_base_turret.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.day_x.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.day_x.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.day_x.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_charging.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_charging.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_charging.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_empty_far.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_empty_far.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_empty_far.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_packed.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_packed.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_packed.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.equipment_storage.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.equipment_storage.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.equipment_storage.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fish_instances.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fish_instances.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fish_instances.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fresh_game.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fresh_game.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fresh_game.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.full_backpack.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.full_backpack.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.full_backpack.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.legacy_0.19.1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.legacy_0.19.1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.legacy_0.19.1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.surfaceMovement",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.craftingProgress",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.droneCharging",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.emptyDrone",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.droneFollowing",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.dayX",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.growingCrop",
+      "status": "PASS"
+    },
+    {
+      "id": "transactions.inventoryTransferAndQuickSlots",
+      "status": "PASS"
+    },
+    {
+      "id": "transactions.magazineRemovalAndReload",
+      "status": "PASS"
+    },
+    {
+      "id": "console.noErrors",
+      "status": "PASS"
+    }
+  ]
+}

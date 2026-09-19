@@ -3,7 +3,7 @@ Object.assign(ITEM, {
   iron:{name:'Железо',icon:'🔩'}, copper:{name:'Медь',icon:'🟠'},
   iron_ore:{name:'Железная руда',icon:'🪨'}, copper_ore:{name:'Медная руда',icon:'🟤'},
   pickaxe:{name:'Кирка',icon:'⛏️',hand:true}, remote:{name:'Пульт базы',icon:'📟',hand:true},
-  rifle_m4:{name:'M4',icon:'🔫',hand:true}, ammo556:{name:'Патроны 5,56',icon:'▰'},
+  rifle_m4:{name:'M4',icon:'🔫',hand:true}, ammo556:{name:'Патроны 5,56',icon:'▰',ammo:true,stackMax:600,caliber:'5.56 × 45'},
   chicken_meat:{name:'Куриное мясо',icon:'🍗'}
 });
 ITEM.metal.name='Железо'; ITEM.ammo.name='Патроны 5,45';

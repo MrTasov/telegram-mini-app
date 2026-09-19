@@ -1,6 +1,6 @@
 /* Local companion movement adapter. Paths yield between small work batches. */
-window.V0141DroneMotion={create(state){
-  const R=10;
+window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.movement){
+  const R=movement.radius;
   let path=null,search=null,goal=null,retry=0,searchAge=0,speed=0,heading=0,planning=false,planningDoors=null,navKey='',blockedTime=0;
   let followGoal=null,chooseIn=0,delay=0,chasing=false,lastPlayer={x:player.x,y:player.y,scene},dir={x:0,y:1},playerSpeed=0;
   const metrics={searches:0,failed:0,maxSliceMs:0};
@@ -11,7 +11,7 @@ window.V0141DroneMotion={create(state){
   // movement still uses the current physical door panels, never this snapshot.
   function doorPowered(room){return !!planningDoors?.has('door_'+room);}
   function key(){return planning?navKey:'';}
-  function brake(dt){speed=Math.max(0,speed-900*dt);}
+  function brake(dt){speed=Math.max(0,speed-movement.brake*dt);}
   function pathBounds(to){
     if(state.scene==='bunker')return {x:-150,y:-940,w:1510,h:2200};
     const b={x:surface.minX??0,y:surface.minY??0,w:surface.width,h:surface.height},pad=300;
@@ -48,11 +48,11 @@ window.V0141DroneMotion={create(state){
     if(!waypoint){brake(dt);return false;}
     const dx=waypoint.x-state.x,dy=waypoint.y-state.y,dist=Math.hypot(dx,dy),nextHeading=Math.atan2(dy,dx);
     const gap=state.scene===scene?distance(state.x,state.y,player.x,player.y):300;
-    const top=state.task==='follow'?Math.min(490+state.modules.engine*18,Math.max(235,playerSpeed*1.13)+Math.max(0,gap-90)*1.4):290+state.modules.engine*18;
-    const turn=Math.abs(Math.atan2(Math.sin(nextHeading-heading),Math.cos(nextHeading-heading))),acceleration=850;
+    const top=state.task==='follow'?Math.min(movement.followSpeed+state.modules.engine*movement.perLevel,Math.max(movement.minFollowSpeed,playerSpeed*movement.playerFactor)+Math.max(0,gap-movement.catchupDistance)*movement.catchupFactor):movement.travelSpeed+state.modules.engine*movement.perLevel;
+    const turn=Math.abs(Math.atan2(Math.sin(nextHeading-heading),Math.cos(nextHeading-heading))),acceleration=movement.acceleration;
     const lead=state.task==='follow'?Math.min(65,playerSpeed*.28):0;
     const desired=Math.min(top,Math.sqrt(2*acceleration*Math.max(1,(path?.length>1?dist+20:dist)+lead)))*(turn>1.3?.6:1);
-    speed+=clamp(desired-speed,-1000*dt,acceleration*dt);
+    speed+=clamp(desired-speed,-movement.deceleration*dt,acceleration*dt);
     const n=Math.min(dist,speed*dt),x=state.x+dx/(dist||1)*n,y=state.y+dy/(dist||1)*n;
     if(lineClear(state.x,state.y,x,y,R,state.scene)){state.x=x;state.y=y;heading+=Math.atan2(Math.sin(nextHeading-heading),Math.cos(nextHeading-heading))*Math.min(1,dt*10);blockedTime=0;}
     else{brake(dt);blockedTime+=dt;

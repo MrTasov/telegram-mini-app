@@ -57,11 +57,11 @@ window.V0162Quick=(()=>{
 
 window.V0162Magazines=(()=>{
   const inv=V010Inventory,combat=V010Combat,copy=x=>JSON.parse(JSON.stringify(x));
-  const TYPES={magazine_standard:30,magazine_module:60};
+  const TYPES=V09Craft.magazineTypes;
   ITEM.magazine_standard={name:'Обычный магазин',icon:'▥',description:'Съёмный магазин АК / M4 · 30 патронов. В рюкзаке хранится пустым.'};
   ITEM.magazine_module.description='Съёмный магазин АК / M4 · 60 патронов. После установки зарядите подходящими патронами.';
   const oldIcon=itemIconHTML;itemIconHTML=function(type){return type==='magazine_standard'?oldIcon('magazine_module').replace('alt="Увеличенный магазин"','alt="Обычный магазин"'):oldIcon(type);};
-  const rifle=s=>!!s&&['rifle_ak74','rifle_m4'].includes(s.type);
+  const rifle=s=>!!V09Craft.weapons[s?.type]?.magazineTypes;
   function owner(s){
     if(bag.includes(s)||V013Inventory.items.includes(s))return true;
     if(V0161Upgrade.slots.includes(s))return V0161Upgrade.near();
@@ -71,7 +71,7 @@ window.V0162Magazines=(()=>{
   function change(s,index=null,expected=null){
     if(!rifle(s)||!owner(s))return false;combat.ensure(s);
     const incoming=index===null?null:bag[index];
-    if(index!==null&&(!Number.isInteger(index)||!incoming||!Object.hasOwn(TYPES,incoming.type)||!Number.isInteger(incoming.qty)||incoming.qty<1||incoming.locked||(expected&&incoming!==expected)))return false;
+    if(index!==null&&(!Number.isInteger(index)||!incoming||!V09Craft.acceptsMagazine(s.type,incoming.type)||!Number.isInteger(incoming.qty)||incoming.qty<1||incoming.locked||(expected&&incoming!==expected)))return false;
     if(!s.magazineType&&!incoming)return false;
     if(combat.validateItem(s)===false)return false;
     const next=copy(bag),weaponIndex=bag.indexOf(s),newType=incoming?.type||null;
@@ -94,7 +94,7 @@ window.V0162Magazines=(()=>{
     if(!rifle(s)||!owner(s))return false;
     const o=v09Overlay('v0162MagazinePicker','Магазин · Рюкзак'),body=o.querySelector('.v09Body');body.replaceChildren();
     const grid=document.createElement('div');grid.className='v162PickGrid';body.append(grid);
-    bag.forEach((m,i)=>{if(!m||!Object.hasOwn(TYPES,m.type))return;
+    bag.forEach((m,i)=>{if(!m||!V09Craft.acceptsMagazine(s.type,m.type))return;
       const b=v09Button('',()=>{if(m.locked){V0162Quick.flash(b);return;}if(install(s,i,m)){closeOverlay(o);after?.();}else if(bag[i]!==m)choose(s,after);});
       b.className='v162PickCell'+(m.locked?' v162Unavailable':'');b.setAttribute('aria-disabled',String(!!m.locked));b.dataset.magazineIndex=i;
       b.innerHTML='<span class="v162PickArt">'+itemIconHTML(m.type)+'</span><span class="v162PickName">'+TYPES[m.type]+' патронов</span><small>Пустой · ×'+m.qty+'</small>';grid.append(b);
@@ -125,7 +125,7 @@ window.V0162Magazines=(()=>{
   function migrate(d){
     function visit(v){if(!v||typeof v!=='object')return;
       if(rifle(v)){
-        if(!Object.hasOwn(v,'magazineType'))v.magazineType=v.modules?.magazine?'magazine_module':'magazine_standard';
+        if(!Object.hasOwn(v,'magazineType'))v.magazineType=v.modules?.magazine?V09Craft.weapons[v.type].extendedMagazine:V09Craft.weapons[v.type].defaultMagazine;
         if(v.modules)delete v.modules.magazine;
       }
       for(const x of Object.values(v))if(x&&typeof x==='object')visit(x);

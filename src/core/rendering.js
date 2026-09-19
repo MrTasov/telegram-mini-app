@@ -401,7 +401,7 @@ function drawBunker(){
 function drawPlayer(){
   const angle=Math.atan2(player.aimY,player.aimX),item=heldItem();
   const bob=player.moving?Math.sin(player.walkAnimation)*3:0;
-  const recoil=canFire()&&performance.now()-muzzleFlash.time<95?(item==='rifle_m4'?-1.3:-2.4):0;
+  const recoil=canFire()&&performance.now()-muzzleFlash.time<95?(typeof V09Craft!=='undefined'?(V09Craft.weapons[item]?.visualRecoil??-2.4):-2.4):0;
   ctx.save();ctx.translate(player.x,player.y);ctx.rotate(angle);
   ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.ellipse(-2,3,20,17,0,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='#222c2c';ctx.lineWidth=8;ctx.lineCap='round';
@@ -410,7 +410,7 @@ function drawPlayer(){
   ctx.fillStyle='#303d31';ctx.fillRect(-17,-9,8,18);
   ctx.strokeStyle='#8a9277';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-7,-11);ctx.lineTo(-7,11);ctx.stroke();
   ctx.strokeStyle='#c9a47f';ctx.lineWidth=5;
-  if(item==='rifle_ak74'){
+  if(item==='rifle_ak74'||typeof V09Craft!=='undefined'&&V09Craft.weapons[item]?.heldStyle==='ak'){
     ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(25+recoil,-1);ctx.moveTo(3,11);ctx.lineTo(13+recoil,3);ctx.stroke();
     ctx.save();ctx.translate(recoil,0);
     ctx.fillStyle='#b47b4b';ctx.beginPath();ctx.moveTo(-3,-4);ctx.lineTo(10,-3);ctx.lineTo(10,4);ctx.lineTo(-4,8);ctx.closePath();ctx.fill();
@@ -419,7 +419,7 @@ function drawPlayer(){
     ctx.strokeStyle='#242f30';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(21,4);ctx.quadraticCurveTo(19,13,28,16);ctx.stroke();
     ctx.fillStyle='#526064';ctx.fillRect(33,-2,11,3);ctx.fillStyle='#1c2425';ctx.fillRect(40,-5,3,4);
     ctx.strokeStyle='#8b9896';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(10,-3);ctx.lineTo(29,-3);ctx.stroke();ctx.restore();
-  }else if(item==='rifle_m4'){
+  }else if(item==='rifle_m4'||typeof V09Craft!=='undefined'&&V09Craft.weapons[item]?.heldStyle==='m4'){
     V09Craft.drawM4Held(recoil);
   }else if(item==='axe'){
     const swing=chopState?Math.sin((performance.now()-chopState.startedAt)/110)*.75:-.22;

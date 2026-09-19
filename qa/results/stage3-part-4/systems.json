@@ -1,0 +1,263 @@
+{
+  "phase": 4,
+  "passed": 64,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "items.originalStackLimits",
+      "status": "PASS"
+    },
+    {
+      "id": "magazines.sharedDefinitionIdentity",
+      "status": "PASS"
+    },
+    {
+      "id": "weapons.compatibilityFromDefinitions",
+      "status": "PASS"
+    },
+    {
+      "id": "weapons.sharedAmmo",
+      "status": "PASS"
+    },
+    {
+      "id": "items.arbitraryAmmoStack",
+      "status": "PASS"
+    },
+    {
+      "id": "magazines.incompatibleComponentRejected",
+      "status": "PASS"
+    },
+    {
+      "id": "magazines.definitionCapacity",
+      "status": "PASS"
+    },
+    {
+      "id": "magazines.definitionValidation",
+      "status": "PASS"
+    },
+    {
+      "id": "magazines.removalReturnsOwnAmmo",
+      "status": "PASS"
+    },
+    {
+      "id": "magazines.reinstallEmptyComponent",
+      "status": "PASS"
+    },
+    {
+      "id": "weapons.twoInstancesDifferentUID",
+      "status": "PASS"
+    },
+    {
+      "id": "weapons.reloadActualSelectedInstance",
+      "status": "PASS"
+    },
+    {
+      "id": "weapons.fireArbitraryDefinition",
+      "status": "PASS"
+    },
+    {
+      "id": "magazines.fullBagAtomic",
+      "status": "PASS"
+    },
+    {
+      "id": "magazines.migrationUsesDefinition",
+      "status": "PASS"
+    },
+    {
+      "id": "inventory.instanceSurvivesStorage",
+      "status": "PASS"
+    },
+    {
+      "id": "enemies.singleExistingRegistry",
+      "status": "PASS"
+    },
+    {
+      "id": "enemies.originalSpawnOrder",
+      "status": "PASS"
+    },
+    {
+      "id": "dayX.normal",
+      "status": "PASS"
+    },
+    {
+      "id": "dayX.heavy",
+      "status": "PASS"
+    },
+    {
+      "id": "dayX.fast",
+      "status": "PASS"
+    },
+    {
+      "id": "dayX.leaper",
+      "status": "PASS"
+    },
+    {
+      "id": "dayX.bloater",
+      "status": "PASS"
+    },
+    {
+      "id": "enemies.newTypeSharedWithSaveValidator",
+      "status": "PASS"
+    },
+    {
+      "id": "enemies.changedDefinitionInvalidatesRaidStats",
+      "status": "PASS"
+    },
+    {
+      "id": "enemies.typeIsNotInstanceIdentity",
+      "status": "PASS"
+    },
+    {
+      "id": "enemies.behaviorInheritedWithoutIDBranch",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.definitionIsOwnedByItem",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.tokenUsesInstanceID",
+      "status": "PASS"
+    },
+    {
+      "id": "items.robotTypeMayDifferFromInstanceID",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.originalStatsLevel0",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.originalStatsLevel1",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.originalStatsLevel2",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.originalStatsLevel3",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.originalStatsLevel4",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.originalStatsLevel5",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.ammoFromDefinition",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.independentFireInterval",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.newTypeUsesExistingEngine",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.typeAndInstanceAreSeparate",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.mismatchedTypeRejected",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.definitionDamageAndCapacity",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.packExistingPhysicalInstance",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.placeNewType",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.reloadOwnAmmoOnly",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.roundtripNewTypeAndID",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.duplicateInstanceRejected",
+      "status": "PASS"
+    },
+    {
+      "id": "turrets.unloadAndRepackIdentity",
+      "status": "PASS"
+    },
+    {
+      "id": "destructibles.oneHealthDefinition",
+      "status": "PASS"
+    },
+    {
+      "id": "destructibles.originalDamageStages",
+      "status": "PASS"
+    },
+    {
+      "id": "destructibles.openGateStillImmune",
+      "status": "PASS"
+    },
+    {
+      "id": "destructibles.dataDrivenArmorAndResistance",
+      "status": "PASS"
+    },
+    {
+      "id": "destructibles.destroyAndRepairSameObject",
+      "status": "PASS"
+    },
+    {
+      "id": "destructibles.invalidDamageIsAtomic",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.sharedExistingRules",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.originalCap.rifle_ak74",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.originalCap.rifle_m4",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.originalCap.helmet1",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.originalCap.vest5",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.originalCap.boots1",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.originalCap.pants1",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.customDefinitionLevelAndCost",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrades.realCradleUsesDefinition",
+      "status": "PASS"
+    },
+    {
+      "id": "console.noErrors",
+      "status": "PASS"
+    }
+  ]
+}

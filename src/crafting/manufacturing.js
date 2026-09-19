@@ -13,9 +13,19 @@ const V09Craft = (() => {
     rifle_m4: {station:'craft_bench',category:'Оружие',name:'M4',input:{iron:18,copper:12,parts:4,wood:4},output:'rifle_m4',qty:1,ms:60000}
   };
   const GUNS = {
-    rifle_ak74:{name:'АК-74',ammo:'ammo',caliber:'5,45 × 39',damage:35,delay:155,spread:.045,recoil:.019,range:660,mag:30},
-    rifle_m4:{name:'M4',ammo:'ammo556',caliber:'5.56 × 45',damage:28,delay:115,spread:.021,recoil:.011,range:720,mag:30}
+    rifle_ak74:{name:'АК-74',ammo:'ammo',caliber:'5,45 × 39',damage:35,delay:155,spread:.045,recoil:.019,range:660,mag:30,category:'assault',reloadMs:2000,noise:550,heldStyle:'ak',visualRecoil:-2.4,recoilLabel:'выше',magazineTypes:['magazine_standard','magazine_module'],defaultMagazine:'magazine_standard',extendedMagazine:'magazine_module'},
+    rifle_m4:{name:'M4',ammo:'ammo556',caliber:'5.56 × 45',damage:28,delay:115,spread:.021,recoil:.011,range:720,mag:30,category:'assault',reloadMs:1800,noise:550,heldStyle:'m4',visualRecoil:-1.3,recoilLabel:'ниже',magazineTypes:['magazine_standard','magazine_module'],defaultMagazine:'magazine_standard',extendedMagazine:'magazine_module'}
   };
+  // Physical empty components, shared by combat, validation and the picker.
+  const magazineTypes={magazine_standard:30,magazine_module:60};
+  const weaponsForAmmo=type=>Object.keys(GUNS).filter(id=>GUNS[id].ammo===type);
+  const acceptsMagazine=(weaponType,componentType)=>!!GUNS[weaponType]?.magazineTypes?.includes(componentType)&&Object.hasOwn(magazineTypes,componentType);
+  function magazineCapacity(item){
+    const g=GUNS[item?.type];if(!g)return 0;
+    if(!g.magazineTypes)return g.mag;
+    const type=Object.hasOwn(item,'magazineType')?item.magazineType:item.modules?.magazine?g.extendedMagazine:g.defaultMagazine;
+    return acceptsMagazine(item.type,type)?magazineTypes[type]:0;
+  }
   const STATIONS=['furnace','craft_bench','feed_craft'],MAX_BATCHES=6000;
   let jobs={furnace:null,craft_bench:null};
   let magazines={rifle_ak74:magazine,rifle_m4:0};
@@ -37,7 +47,7 @@ const V09Craft = (() => {
   registerPowerDevice('furnace','workshop',6,()=>active('furnace'),'Плавильная печь');
   registerPowerDevice('craft_bench','workshop',2,()=>active('craft_bench'),'Универсальный станок');
   registerPowerDevice('feed_craft','farm',1,()=>active('feed_craft'),'Кормодробилка');
-  if(!HAND_TYPES.includes('rifle_m4'))HAND_TYPES.push('rifle_m4');
+  for(const type of Object.keys(GUNS))if(!HAND_TYPES.includes(type))HAND_TYPES.push(type);
   handSvg.rifle_m4='<path fill="#465152" d="M3 25h21v13H4z"/><path fill="#1c292c" d="M22 21h48v18H22z"/><path fill="#657477" d="M48 23h27v11H48z"/><path stroke="#172528" stroke-width="4" d="M72 26h24m-23 6h23"/><path fill="#2c393d" d="M38 36h10l5 21-11 3zM25 37h9l-2 15h-8z"/><path stroke="#a0ada9" stroke-width="2" d="M25 20h46"/><path fill="#263333" d="M40 15h17v7H40zM84 17h5v10h-5z"/>';
 
 
@@ -68,7 +78,7 @@ const V09Craft = (() => {
   `);
   const overlay=v09Overlay('v09CraftOverlay','Мастерская');
   const body=overlay.querySelector('.v09Body');
-  function gunStats(type){const g=GUNS[type];if(!g)return '';return `<div class="v09GunStats">Урон <b>${g.damage}</b> · ${Math.round(60000/g.delay)} выстр./мин · магазин ${g.mag}<br>Разброс ${(g.spread*180/Math.PI).toFixed(1)}° · дальность ${g.range} · отдача ${type==='rifle_ak74'?'выше':'ниже'}<br>Патроны: ${g.caliber}</div>`;}
+  function gunStats(type){const g=GUNS[type];if(!g)return '';return `<div class="v09GunStats">Урон <b>${g.damage}</b> · ${Math.round(60000/g.delay)} выстр./мин · магазин ${g.mag}<br>Разброс ${(g.spread*180/Math.PI).toFixed(1)}° · дальность ${g.range} · отдача ${g.recoilLabel}<br>Патроны: ${g.caliber}</div>`;}
   function maximum(r){return Math.max(0,Math.min(MAX_BATCHES,...Object.entries(r.input).map(([type,n])=>Math.floor(materialCount(type)/n))));}
   const selectedBatches=id=>quantity[id];
   const maxSelection=id=>maximum(RECIPES[selected[id]]);
@@ -250,7 +260,7 @@ const V09Craft = (() => {
     const meta=document.createElement('div');meta.className='v011RecipeMeta';meta.textContent=duration(r.ms*Math.max(1,count)/(craftUpgrades.workshop?1.2:1))+' · '+watts+' кВт';info.append(meta);
     const gun=GUNS[r.output];
     if(gun){const detail=document.createElement('small');detail.className='v011RecipeWeapon';detail.textContent='Урон '+gun.damage+' · Магазин '+gun.mag+' · '+gun.caliber;info.append(detail);}
-    if(r.output==='ammo'||r.output==='ammo556'){const compatible=document.createElement('small');compatible.className='v011RecipeWeapon';compatible.textContent=r.output==='ammo'?'Для АК-74 · 5.45 × 39':'Для M4 · 5.56 × 45';info.append(compatible);}
+    if(ITEM[r.output]?.ammo){const compatible=document.createElement('small');compatible.className='v011RecipeWeapon';compatible.textContent='Для '+weaponsForAmmo(r.output).map(type=>GUNS[type].name).join(' / ')+' · '+ITEM[r.output].caliber;info.append(compatible);}
     info.append(help);
     const controls=document.createElement('div');controls.className='v011BatchControls';scroll.append(controls);
     const amount=document.createElement('div');amount.className='v091QuantityCount';amount.textContent=`Количество: ${r.qty*count}`;controls.append(amount);
@@ -463,7 +473,7 @@ const V09Craft = (() => {
     get queues(){return queueExtra;},get ready(){return readyExtra;},get refunds(){return refundExtra;},get paused(){return pauseExtra;},get pin(){return pinnedRecipe;},get upgrades(){return craftUpgrades;},
     setPin(recipe,batches=1){pinnedRecipe=recipe&&RECIPES[recipe]?{recipe,batches:Math.max(1,Math.min(MAX_BATCHES,Math.floor(batches)))}:null;queueGameSave();},render, getJob};
 
-  return {visualState:id=>({working:active(id)&&powered(id),powered:powered(id),status:state(id),progress:getJob(id)?1-getJob(id).remainingMs/getJob(id).totalMs:0}),craftQueue,materialCount,capture,restore,validate,normalizeSave,open,start,collect,tick,startFeed,collectFeed,drawWorkshop,drawM4Held,recipes:RECIPES,weapons:GUNS,fixtures,gunStats,maximum};
+  return {visualState:id=>({working:active(id)&&powered(id),powered:powered(id),status:state(id),progress:getJob(id)?1-getJob(id).remainingMs/getJob(id).totalMs:0}),craftQueue,materialCount,capture,restore,validate,normalizeSave,open,start,collect,tick,startFeed,collectFeed,drawWorkshop,drawM4Held,recipes:RECIPES,weapons:GUNS,magazineTypes,weaponsForAmmo,acceptsMagazine,magazineCapacity,fixtures,gunStats,maximum};
 })();
 
 

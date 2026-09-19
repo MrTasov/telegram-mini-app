@@ -1,5 +1,5 @@
 {
-  "version": "0.22.0",
+  "version": "0.23.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -24,7 +24,8 @@
     },
     "fish": {
       "name": "Свежая рыба",
-      "icon": "🐟"
+      "icon": "🐟",
+      "stackMax": 20
     },
     "rifle_ak74": {
       "name": "АК-74",
@@ -177,7 +178,10 @@
     },
     "ammo": {
       "name": "Патроны 5,45",
-      "icon": "🔫"
+      "icon": "🔫",
+      "ammo": true,
+      "stackMax": 600,
+      "caliber": "5.45 × 39"
     },
     "eggs": {
       "name": "Яйца",
@@ -232,7 +236,10 @@
     },
     "ammo556": {
       "name": "Патроны 5,56",
-      "icon": "▰"
+      "icon": "▰",
+      "ammo": true,
+      "stackMax": 600,
+      "caliber": "5.56 × 45"
     },
     "chicken_meat": {
       "name": "Куриное мясо",
@@ -262,12 +269,92 @@
       "name": "Дрон-компаньон",
       "icon": "🛸",
       "robot": true,
-      "description": "Заряд, улучшения и весь груз сохраняются внутри. Можно запустить рядом с собой."
+      "description": "Заряд, улучшения и весь груз сохраняются внутри. Можно запустить рядом с собой.",
+      "drone": {
+        "instanceId": "drone014",
+        "upgrades": {
+          "maxLevel": 5,
+          "cost": {
+            "iron": 30,
+            "copper": 18,
+            "parts": 12
+          },
+          "rarePerLevel": 4
+        },
+        "modules": {
+          "body": "Корпус",
+          "battery": "Аккумулятор",
+          "cargo": "Контейнер",
+          "weapon": "Оружие",
+          "engine": "Двигатель"
+        },
+        "combat": {
+          "ammoType": "ammo",
+          "capacity": 600,
+          "damage": 20,
+          "damagePerLevel": 0.2,
+          "intervalMs": 155,
+          "range": 270
+        },
+        "body": {
+          "hp": 100,
+          "hpPerLevel": 25,
+          "armorPerLevel": 6
+        },
+        "cargo": {
+          "base": 12,
+          "levelStride": 2,
+          "perStride": 6
+        },
+        "battery": {
+          "factor": 2.5,
+          "perLevel": 0.3,
+          "chargeSeconds": 180,
+          "shotCost": 0.025,
+          "idleDrain": 0.08,
+          "lightDrain": 0.018,
+          "blockedDrain": 0.003
+        },
+        "movement": {
+          "radius": 10,
+          "followSpeed": 490,
+          "travelSpeed": 290,
+          "perLevel": 18,
+          "minFollowSpeed": 235,
+          "playerFactor": 1.13,
+          "catchupDistance": 90,
+          "catchupFactor": 1.4,
+          "acceleration": 850,
+          "brake": 900,
+          "deceleration": 1000
+        }
+      }
     },
     "hmg016": {
       "name": "Тяжёлый пулемёт",
       "icon": "▰",
       "deployable": true,
+      "turret": {
+        "idPrefix": "hmg016_",
+        "upgrades": {
+          "maxLevel": 5,
+          "cost": {
+            "iron": 50,
+            "copper": 25,
+            "parts": 15
+          },
+          "rarePerLevel": 5
+        },
+        "damagePerLevel": 0.1,
+        "combat": {
+          "damage": 65,
+          "range": 850,
+          "capacity": 600,
+          "ammoType": "ammo",
+          "intervalMs": 190,
+          "turnRate": 3.8
+        }
+      },
       "description": "Автоматический пулемёт на стене. Урон 65 · дальность 850 · круговой обстрел. Патроны 5,45 × 39: до 600. Заберите в рюкзак, чтобы переставить."
     },
     "magazine_standard": {
@@ -448,7 +535,19 @@
       "spread": 0.045,
       "recoil": 0.019,
       "range": 660,
-      "mag": 30
+      "mag": 30,
+      "category": "assault",
+      "reloadMs": 2000,
+      "noise": 550,
+      "heldStyle": "ak",
+      "visualRecoil": -2.4,
+      "recoilLabel": "выше",
+      "magazineTypes": [
+        "magazine_standard",
+        "magazine_module"
+      ],
+      "defaultMagazine": "magazine_standard",
+      "extendedMagazine": "magazine_module"
     },
     "rifle_m4": {
       "name": "M4",
@@ -459,7 +558,19 @@
       "spread": 0.021,
       "recoil": 0.011,
       "range": 720,
-      "mag": 30
+      "mag": 30,
+      "category": "assault",
+      "reloadMs": 1800,
+      "noise": 550,
+      "heldStyle": "m4",
+      "visualRecoil": -1.3,
+      "recoilLabel": "ниже",
+      "magazineTypes": [
+        "magazine_standard",
+        "magazine_module"
+      ],
+      "defaultMagazine": "magazine_standard",
+      "extendedMagazine": "magazine_module"
     }
   },
   "effectiveWeapons": {
@@ -474,8 +585,18 @@
         "recoil": 0.019,
         "range": 660,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 2000,
         "noise": 550,
+        "heldStyle": "ak",
+        "visualRecoil": -2.4,
+        "recoilLabel": "выше",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -488,8 +609,18 @@
         "recoil": 0.019,
         "range": 660,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 2000,
         "noise": 550,
+        "heldStyle": "ak",
+        "visualRecoil": -2.4,
+        "recoilLabel": "выше",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -502,8 +633,18 @@
         "recoil": 0.019,
         "range": 660,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 2000,
         "noise": 550,
+        "heldStyle": "ak",
+        "visualRecoil": -2.4,
+        "recoilLabel": "выше",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -516,8 +657,18 @@
         "recoil": 0.019,
         "range": 660,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 2000,
         "noise": 550,
+        "heldStyle": "ak",
+        "visualRecoil": -2.4,
+        "recoilLabel": "выше",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -530,8 +681,18 @@
         "recoil": 0.019,
         "range": 660,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 2000,
         "noise": 550,
+        "heldStyle": "ak",
+        "visualRecoil": -2.4,
+        "recoilLabel": "выше",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -544,8 +705,18 @@
         "recoil": 0.019,
         "range": 660,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 2000,
         "noise": 550,
+        "heldStyle": "ak",
+        "visualRecoil": -2.4,
+        "recoilLabel": "выше",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       }
     ],
@@ -560,8 +731,18 @@
         "recoil": 0.011,
         "range": 720,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 1800,
         "noise": 550,
+        "heldStyle": "m4",
+        "visualRecoil": -1.3,
+        "recoilLabel": "ниже",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -574,8 +755,18 @@
         "recoil": 0.011,
         "range": 720,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 1800,
         "noise": 550,
+        "heldStyle": "m4",
+        "visualRecoil": -1.3,
+        "recoilLabel": "ниже",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -588,8 +779,18 @@
         "recoil": 0.011,
         "range": 720,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 1800,
         "noise": 550,
+        "heldStyle": "m4",
+        "visualRecoil": -1.3,
+        "recoilLabel": "ниже",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -602,8 +803,18 @@
         "recoil": 0.011,
         "range": 720,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 1800,
         "noise": 550,
+        "heldStyle": "m4",
+        "visualRecoil": -1.3,
+        "recoilLabel": "ниже",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -616,8 +827,18 @@
         "recoil": 0.011,
         "range": 720,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 1800,
         "noise": 550,
+        "heldStyle": "m4",
+        "visualRecoil": -1.3,
+        "recoilLabel": "ниже",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       },
       {
@@ -630,8 +851,18 @@
         "recoil": 0.011,
         "range": 720,
         "mag": 30,
+        "category": "assault",
         "reloadMs": 1800,
         "noise": 550,
+        "heldStyle": "m4",
+        "visualRecoil": -1.3,
+        "recoilLabel": "ниже",
+        "magazineTypes": [
+          "magazine_standard",
+          "magazine_module"
+        ],
+        "defaultMagazine": "magazine_standard",
+        "extendedMagazine": "magazine_module",
         "modules": {}
       }
     ]
@@ -651,19 +882,10 @@
       "cooldown": 1050,
       "art": "walker",
       "size": 76,
-      "color": "#937963"
-    },
-    "heavy": {
-      "name": "Громила",
-      "hp": 420,
-      "radius": 28,
-      "speed": 0.27,
-      "chaseSpeed": 1.15,
-      "damage": 34,
-      "cooldown": 1450,
-      "art": "brute",
-      "size": 116,
-      "color": "#826c5e"
+      "color": "#937963",
+      "spawnOrder": 0,
+      "behavior": "melee",
+      "healthColor": "#a6544d"
     },
     "fast": {
       "name": "Ловчий",
@@ -675,7 +897,25 @@
       "cooldown": 850,
       "art": "runner",
       "size": 85,
-      "color": "#8b8074"
+      "color": "#8b8074",
+      "spawnOrder": 2,
+      "behavior": "melee",
+      "healthColor": "#a6544d"
+    },
+    "heavy": {
+      "name": "Громила",
+      "hp": 420,
+      "radius": 28,
+      "speed": 0.27,
+      "chaseSpeed": 1.15,
+      "damage": 34,
+      "cooldown": 1450,
+      "art": "brute",
+      "size": 116,
+      "color": "#826c5e",
+      "spawnOrder": 1,
+      "behavior": "melee",
+      "healthColor": "#b57555"
     },
     "leaper": {
       "name": "Прыгун",
@@ -687,7 +927,17 @@
       "cooldown": 1200,
       "art": "leaper",
       "size": 86,
-      "color": "#9d9c77"
+      "color": "#9d9c77",
+      "spawnOrder": 3,
+      "behavior": "leap",
+      "healthColor": "#a6544d",
+      "leap": {
+        "minRange": 85,
+        "maxRange": 195,
+        "cooldown": 2700,
+        "speed": 4,
+        "windup": 255
+      }
     },
     "bloater": {
       "name": "Взрывник",
@@ -699,7 +949,20 @@
       "cooldown": 1800,
       "art": "bloater",
       "size": 100,
-      "color": "#96925c"
+      "color": "#96925c",
+      "spawnOrder": 4,
+      "behavior": "explosive",
+      "healthColor": "#aaa05e",
+      "blast": {
+        "playerRange": 72,
+        "playerFraction": 0.15,
+        "playerVariation": 0.05,
+        "wallRange": 78,
+        "wallDamage": 320,
+        "triggerRange": 58,
+        "fuseMs": 650,
+        "wallFuseMs": 850
+      }
     }
   },
   "dayXEnemies": {
@@ -713,19 +976,10 @@
       "cooldown": 700,
       "art": "walker",
       "size": 76,
-      "color": "#937963"
-    },
-    "heavy": {
-      "name": "Громила",
-      "hp": 630,
-      "radius": 28,
-      "speed": 0.405,
-      "chaseSpeed": 1.7249999999999999,
-      "damage": 51,
-      "cooldown": 966.6666666666666,
-      "art": "brute",
-      "size": 116,
-      "color": "#826c5e"
+      "color": "#937963",
+      "spawnOrder": 0,
+      "behavior": "melee",
+      "healthColor": "#a6544d"
     },
     "fast": {
       "name": "Ловчий",
@@ -737,7 +991,25 @@
       "cooldown": 566.6666666666666,
       "art": "runner",
       "size": 85,
-      "color": "#8b8074"
+      "color": "#8b8074",
+      "spawnOrder": 2,
+      "behavior": "melee",
+      "healthColor": "#a6544d"
+    },
+    "heavy": {
+      "name": "Громила",
+      "hp": 630,
+      "radius": 28,
+      "speed": 0.405,
+      "chaseSpeed": 1.7249999999999999,
+      "damage": 51,
+      "cooldown": 966.6666666666666,
+      "art": "brute",
+      "size": 116,
+      "color": "#826c5e",
+      "spawnOrder": 1,
+      "behavior": "melee",
+      "healthColor": "#b57555"
     },
     "leaper": {
       "name": "Прыгун",
@@ -749,7 +1021,17 @@
       "cooldown": 800,
       "art": "leaper",
       "size": 86,
-      "color": "#9d9c77"
+      "color": "#9d9c77",
+      "spawnOrder": 3,
+      "behavior": "leap",
+      "healthColor": "#a6544d",
+      "leap": {
+        "minRange": 85,
+        "maxRange": 195,
+        "cooldown": 2700,
+        "speed": 4,
+        "windup": 255
+      }
     },
     "bloater": {
       "name": "Взрывник",
@@ -761,7 +1043,20 @@
       "cooldown": 1200,
       "art": "bloater",
       "size": 100,
-      "color": "#96925c"
+      "color": "#96925c",
+      "spawnOrder": 4,
+      "behavior": "explosive",
+      "healthColor": "#aaa05e",
+      "blast": {
+        "playerRange": 72,
+        "playerFraction": 0.15,
+        "playerVariation": 0.05,
+        "wallRange": 78,
+        "wallDamage": 320,
+        "triggerRange": 58,
+        "fuseMs": 650,
+        "wallFuseMs": 850
+      }
     }
   },
   "equipment": {
@@ -2368,6 +2663,10 @@
       "setPreset"
     ],
     "V010Combat": [
+      "upgradeRules",
+      "upgradeProfile",
+      "maxUpgradeLevel",
+      "equipmentStats",
       "capture",
       "restore",
       "validate",
@@ -2672,6 +2971,10 @@
       "create"
     ],
     "V014Robots": [
+      "type",
+      "instanceId",
+      "definition",
+      "ownsToken",
       "state",
       "stationInfo",
       "install",
@@ -2770,6 +3073,7 @@
       "registerActors"
     ],
     "V015Base": [
+      "health",
       "sections",
       "rooms",
       "props",
@@ -2821,6 +3125,12 @@
       "cacheInfo"
     ],
     "V016Turret": [
+      "type",
+      "definition",
+      "isType",
+      "typeOf",
+      "definitionFor",
+      "combatFor",
       "damage",
       "combat",
       "guns",
@@ -2906,6 +3216,8 @@
     "V017Monsters": [
       "specs",
       "stats",
+      "dayX",
+      "typeAt",
       "prepare",
       "night",
       "isDayX",
@@ -2932,6 +3244,9 @@
       "state"
     ],
     "V018Build": [
+      "health",
+      "definition",
+      "maxLevel",
       "LEVELS",
       "COSTS",
       "structures",

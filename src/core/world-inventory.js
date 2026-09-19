@@ -259,7 +259,7 @@ const ITEM={
  stone:{name:'Камень',icon:'🪨',description:'Добывается киркой. В печи: 2 камня → 1 бетон.'},
  concrete:{name:'Бетон',icon:'▰',description:'Строительный блок. Ремонт: 1 бетон → 1000 HP. Нужен для улучшения стен и дверей.'},
  fishing_rod:{name:'Удочка',icon:'🎣',hand:true},
- fish:{name:'Свежая рыба',icon:'🐟'},
+ fish:{name:'Свежая рыба',icon:'🐟',stackMax:20},
   rifle_ak74:{name:'АК-74',icon:'🔫',hand:true},
   axe:{name:'Топор',icon:'🪓',hand:true},
   flashlight:{name:'Фонарик',icon:'🔦',hand:true},
@@ -291,7 +291,7 @@ const ITEM={
   boots1:{name:"Обувь I",icon:"👢",equip:"feet",level:1},
   meds:{name:"Медикаменты",icon:"💊"},
   fuel:{name:"Топливо",icon:"⛽"},
-  ammo:{name:"Патроны",icon:"🔫"},
+  ammo:{name:"Патроны",icon:"🔫",ammo:true,stackMax:600,caliber:"5.45 × 39"},
   eggs:{name:"Яйца",icon:"🥚"},
   milk:{name:"Молоко",icon:"🥛"},
   animal_feed:{name:"Корм для животных",icon:"🌾"},
@@ -299,6 +299,13 @@ const ITEM={
   beef:{name:"Говядина",icon:"🥩"}
 };
 const STACK_MAX=100;
+// Definition keys/item.type identify content; uid/robotId/turretData.id identify
+// a physical instance. Legacy save envelopes intentionally allow wider stacks.
+function itemStackLimit(type,legacy=false){
+  const def=ITEM[type];
+  if(legacy)return def?.ammo?(def.stackMax||600):STACK_MAX;
+  return def?.deployable||def?.robot||def?.equip||def?.hand?1:def?.stackMax||STACK_MAX;
+}
 let BAG_SLOTS=24;
 const equipment={
   head:null,

@@ -106,7 +106,7 @@ window.V0161Migration=(()=>{
     function visit(v,key=''){
       if(!v||typeof v!=='object')return v;
       if(removed.has(v.type))return undefined;
-      if(v.modules&&v.type&&['rifle_ak74','rifle_m4'].includes(v.type))for(const t of ['scope','grip','suppressor'])delete v.modules[t];
+      if(v.modules&&v.type&&V09Craft.weapons[v.type])for(const t of ['scope','grip','suppressor'])delete v.modules[t];
       if(['iron','copper'].includes(v.recipe)&&Number.isInteger(v.batches)&&v.totalMs===4000*v.batches&&Number.isFinite(v.remainingMs)){v.totalMs/=2;v.remainingMs/=2;}
       if(Array.isArray(v)){const out=v.map(x=>visit(x,key));return ['bag','storage','items','cargo'].includes(key)?out.map(x=>x===undefined?null:x):out.filter(x=>x!==undefined);}
       for(const k of Object.keys(v)){if(removed.has(k)){delete v[k];continue;}const x=visit(v[k],k);if(x===undefined)delete v[k];else v[k]=x;}return v;

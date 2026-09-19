@@ -71,7 +71,7 @@ function decodeGameProgressBase(raw){
   const duration=n=>number(n,0,MAX_SAVE_ELAPSED);
   const position=o=>o&&number(o.x,-2800,4400)&&number(o.y,-2400,9600);
   const slots=(a,max)=>Array.isArray(a)&&a.length<=max&&a.every(s=>
-    s===null||(s&&Object.hasOwn(ITEM,s.type)&&integer(s.qty,1,['ammo','ammo556'].includes(s.type)?600:STACK_MAX)));
+    s===null||(s&&Object.hasOwn(ITEM,s.type)&&integer(s.qty,1,itemStackLimit(s.type,true))));
   const fail=()=>{throw new Error("Invalid or unsupported game save");};
   if(!d||![1,2].includes(d.schema)||!number(d.savedAt,0,Number.MAX_SAFE_INTEGER))fail();
   const p=d.player;

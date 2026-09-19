@@ -13,7 +13,7 @@ window.V010Inventory=(()=>{
   const copy=x=>JSON.parse(JSON.stringify(x));
   const selectedUid={};
   let preset={ammo:90,ammo556:90,meds:2,water:5},drag=null,suppressClick=0,batchDepth=0;
-  const stackMax=type=>(ITEM[type]?.deployable||ITEM[type]?.robot||ITEM[type]?.equip||ITEM[type]?.hand)?1:['ammo','ammo556'].includes(type)?600:type==='fish'?20:STACK_MAX;
+  const stackMax=itemStackLimit;
   const list=where=>where==='bag'?bag:where==='quick'?window.V013Inventory?.items:where==='drone'?window.V014Robots?.state.cargo:where==='upgrade'?window.V0161Upgrade?.slots:Number.isInteger(where)&&storageChests[where]?storageChests[where].items:null;
   const capacity=where=>where==='bag'?BAG_SLOTS:where==='quick'?5:where==='drone'?V014Robots.capacity():where==='upgrade'?1:60;
   const occupied=slots=>slots.filter(Boolean).length;
@@ -169,7 +169,7 @@ window.V010Inventory=(()=>{
   function showPreset(){
     const o=v09Overlay('v010Preset','Комплект для вылазки'),body=o.querySelector('.v09Body');body.replaceChildren();
     const desc=document.createElement('p');desc.textContent='На базе пополняются только недостающие запасы. Закреплённые предметы из ящиков остаются на месте.';body.append(desc);
-    const inputs={};for(const type of ['ammo','ammo556','meds','water','food','fuel']){
+    const inputs={};for(const type of [...Object.keys(ITEM).filter(type=>ITEM[type].ammo),'meds','water','food','fuel']){
       const row=document.createElement('label');row.className='v010PresetRow';const text=document.createElement('span');text.textContent=ITEM[type].name;
       const input=document.createElement('input');input.type='number';input.min='0';input.max='500';input.value=preset[type]||0;inputs[type]=input;row.append(text,input);body.append(row);
     }

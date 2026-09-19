@@ -31,7 +31,7 @@ window.V011UI=(()=>{
   }
   function cardHTML(item){
     const def=ITEM[item.type],gear=!!(def.equip&&def.equip!=='backpack'||V09Craft.weapons[item.type]);
-    return '<div class="v011ItemHero"><div class="v011ItemArt">'+itemIconHTML(item.type)+'</div><div class="v011ItemInfo"><div class="v011ItemKicker">'+esc(def.equip?EQUIP_LABELS[def.equip]:def.hand?'Снаряжение':'Предмет')+'</div><b class="v011ItemName">'+esc(def.name)+'</b><div class="v011ItemMeta">'+(gear?'Улучшение <strong>+'+(item.level||0)+' / 5</strong>':'Количество <strong>'+(item.qty||1)+'</strong>')+'</div><p class="v011ItemDescription">'+esc(def.description||purposes[item.type]||(def.equip==='backpack'?'Расширяет место для предметов и запасов.':'Материал для производства и развития базы.'))+'</p></div></div>'+statsHTML(item);
+    return '<div class="v011ItemHero"><div class="v011ItemArt">'+itemIconHTML(item.type)+'</div><div class="v011ItemInfo"><div class="v011ItemKicker">'+esc(def.equip?EQUIP_LABELS[def.equip]:def.hand?'Снаряжение':'Предмет')+'</div><b class="v011ItemName">'+esc(def.name)+'</b><div class="v011ItemMeta">'+(gear?'Улучшение <strong>+'+(item.level||0)+' / '+V010Combat.maxUpgradeLevel(item)+'</strong>':'Количество <strong>'+(item.qty||1)+'</strong>')+'</div><p class="v011ItemDescription">'+esc(def.description||purposes[item.type]||(def.equip==='backpack'?'Расширяет место для предметов и запасов.':'Материал для производства и развития базы.'))+'</p></div></div>'+statsHTML(item);
   }
   const locationItems=where=>inv.list(where);
   function details(where,index){
@@ -130,10 +130,9 @@ window.V011UI=(()=>{
 /* 0.11.0: common manufacturing layout, ammunition compatibility and fuel controls. */
 window.V011CraftUI=(()=>{
   const baseIcon=itemIconHTML;
-  const ammunition={ammo:'rifle_ak74',ammo556:'rifle_m4'};
   itemIconHTML=function(type){
-    const weapon=ammunition[type];if(!weapon)return baseIcon(type);
-    return `<i class="itemIcon v011AmmoIcon" title="${weapon==='rifle_ak74'?'Для АК-74':'Для M4'}"><img class="v011AmmoBase" src="${V092_ICONS[type]}" alt="" draggable="false"><img class="v011AmmoGun" src="${V092_ICONS[weapon]}" alt="${weapon==='rifle_ak74'?'АК-74':'M4'}" draggable="false"></i>`;
+    const compatible=V09Craft.weaponsForAmmo(type),weapon=compatible[0];if(!weapon||!V092_ICONS[type]||!V092_ICONS[weapon])return baseIcon(type);
+    return `<i class="itemIcon v011AmmoIcon" title="${'Для '+compatible.map(id=>V09Craft.weapons[id].name).join(' / ')}"><img class="v011AmmoBase" src="${V092_ICONS[type]}" alt="" draggable="false"><img class="v011AmmoGun" src="${V092_ICONS[weapon]}" alt="${V09Craft.weapons[weapon].name}" draggable="false"></i>`;
   };
   v09Style(`
     .itemIcon.v011AmmoIcon{position:relative;display:inline-block;vertical-align:middle;font-style:normal;overflow:visible;flex-shrink:0;line-height:1}
@@ -264,6 +263,6 @@ window.V011CraftUI=(()=>{
     const toggle=o.querySelector('[data-power="generatorToggle"]');if(toggle){toggle.textContent=V09Power.running?'Остановить':'Включить';toggle.setAttribute('aria-checked',String(V09Power.running));toggle.classList.toggle('on',V09Power.running);}
     for(const b of o.querySelectorAll('[data-refuel]'))b.disabled=bagCount('fuel')<=0||Math.floor(V09Power.capacity-V09Power.fuel)<=0;
   };
-  return {ammunition};
+  return {get ammunition(){return Object.fromEntries(Object.keys(ITEM).filter(type=>ITEM[type].ammo).map(type=>[type,V09Craft.weaponsForAmmo(type)[0]]));}};
 })();
 

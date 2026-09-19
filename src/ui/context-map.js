@@ -114,12 +114,12 @@ const V0104=(()=>{
 /* 0.10.5: shared map markers, contextual hands, target lock and resumable work. */
 window.V0105=(()=>{
   let target=null,contextHand=null,lastGun='rifle_ak74';
-  const guns=['rifle_ak74','rifle_m4'];
+  const guns=()=>Object.keys(V09Craft.weapons),isGun=type=>Object.hasOwn(V09Craft.weapons,type);
   const oldHeld=heldItem,oldSelect=selectHandSlot,oldReconcile=reconcileHands,oldRender=renderQuickSlots;
   heldItem=function(){if(contextHand&&bagCount(contextHand)>0)return contextHand;contextHand=null;return oldHeld();};
   reconcileHands=function(){const shooting=firing;oldReconcile();if(contextHand&&bagCount(contextHand)>0)firing=shooting;else contextHand=null;};
   renderQuickSlots=function(){oldRender();if(contextHand){for(const id of ['hotbar','quickSlots'])for(const b of el(id).children){b.classList.remove('selected');b.setAttribute('aria-pressed','false');}el('heldItemName').textContent=ITEM[contextHand].name+' · авто';}};
-  selectHandSlot=function(i){contextHand=null;const result=oldSelect(i);if(guns.includes(heldItem()))lastGun=heldItem();else target=null;return result;};
+  selectHandSlot=function(i){contextHand=null;const result=oldSelect(i);if(isGun(heldItem()))lastGun=heldItem();else target=null;return result;};
   const oldAssign=assignHandSlot;assignHandSlot=function(i){contextHand=null;target=null;return oldAssign(i);};
   function equip(type){
     if(window.V013Inventory)return V013Inventory.equip(type);
@@ -127,15 +127,15 @@ window.V0105=(()=>{
     if(heldItem()===type)return true;
     const i=handSlots.indexOf(type);contextHand=null;
     if(i>=0)oldSelect(i);else {contextHand=type;firing=false;renderQuickSlots();updateAmmoHud();queueGameSave();}
-    if(guns.includes(type))lastGun=type;return true;
+    if(isGun(type))lastGun=type;return true;
   }
   function liveTarget(){if(target&&(scene!=='surface'||playerDead||!target.alive||!zombies.includes(target)))target=null;return target;}
-  function aim(){const z=liveTarget();if(!z||!guns.includes(heldItem()))return;const dx=z.x-player.x,dy=z.y-player.y,n=Math.hypot(dx,dy)||1;player.aimX=dx/n;player.aimY=dy/n;}
+  function aim(){const z=liveTarget();if(!z||!isGun(heldItem()))return;const dx=z.x-player.x,dy=z.y-player.y,n=Math.hypot(dx,dy)||1;player.aimX=dx/n;player.aimY=dy/n;}
   function tapWorld(x,y){
     const zoom=V010Camera.zoom||1;
     const z=scene==='surface'?zombies.filter(z=>z.alive&&Math.hypot(z.x-x,z.y-y)<=Math.max(z.radius+8,18/zoom)).sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y))[0]:null;
     if(!z){target=null;return false;}
-    const gun=[heldItem(),lastGun,...guns].find(t=>guns.includes(t)&&bagCount(t)>0);
+    const gun=[heldItem(),lastGun,...guns()].find(t=>isGun(t)&&bagCount(t)>0);
     if(!gun){message('В рюкзаке нет оружия');return true;}
     if(!window.V014Controls?.route)cancelNavigation();cancelSearch();if(!equip(gun))return true;target=z;aim();return true;
   }

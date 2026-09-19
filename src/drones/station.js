@@ -33,7 +33,7 @@ window.V0151Station=(()=>{
     refs.fill.style.width=s.battery+'%';refs.meter.setAttribute('aria-label','Заряд '+Math.round(s.battery)+'%');
     refs.auto.setAttribute('aria-checked',String(s.autoReturn));set(refs.autoValue,s.autoReturn?'ВКЛ':'ВЫКЛ');
     set(refs.hint,info.status==='NO_POWER'?'Зарядка продолжится, когда база сможет подать 1 кВт.':info.blocked?'Откройте проход или заберите дрон в рюкзак.':s.hp<=0?'После зарядки отремонтируйте корпус в управлении дроном.':'Разряженный дрон можно принести в рюкзаке и поставить на площадку.');
-    buttons.install.disabled=!s.packed||!robot.stationNear()||!bag.some(q=>q?.type==='drone014');
+    buttons.install.disabled=!s.packed||!robot.stationNear()||!bag.some(robot.ownsToken);
     buttons.return.disabled=s.packed||s.hp<=0||s.battery<=0||['return','docked','docking'].includes(s.task);
     buttons.follow.disabled=s.packed||s.hp<=0||s.battery<=0||info.docked&&s.autoReturn&&s.battery<=info.threshold;
     buttons.pack.disabled=s.packed;

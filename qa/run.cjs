@@ -9,7 +9,9 @@ const jobs=[
  ['saves','qa/saves.cjs',[]],
  ['balance','qa/balance.cjs',[]],
  ['state-saves','qa/state-saves.cjs',[]],
- ['differential','qa/differential.cjs',[]]
+ ['differential','qa/differential.cjs',[]],
+ ['systems','qa/systems.cjs',['4']],
+ ['stage3-differential','qa/stage3-differential.cjs',[]]
 ],runs=[];
 for(const [id,file,args]of jobs){
  console.log('Running '+id+'…');const start=Date.now();
@@ -18,6 +20,6 @@ for(const [id,file,args]of jobs){
  runs.push({id,exitCode:r.status,elapsedMs:Date.now()-start,error:r.error?.message});
 }
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
-const reports=[read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json')];
-const summary={version:require('../package.json').version,stage:2,stage3Started:false,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),originalBaselineAssertions:477,runs,limitations:['VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.','Seven missing audio assets were already absent in Stage 0.']};
+const reports=[read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json')];
+const summary={version:require('../package.json').version,stage:3,stage4Started:false,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),originalBaselineAssertions:477,runs,limitations:['VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.','Seven missing audio assets were already absent in Stage 0.']};
 fs.writeFileSync(path.join(out,'summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));if(!summary.passed)process.exitCode=1;
