@@ -1,0 +1,1549 @@
+{
+  "method": "Conservative text references within successive top-level module starts; boundaries may include intervening patches. Not a complete semantic graph. Export locations additionally include modules built inside anonymous patches, e.g. V091Fortress and V09World.",
+  "modules": [
+    {
+      "name": "V09Craft",
+      "line": 6096,
+      "scanEndLine": 6564,
+      "references": [
+        "V010",
+        "V010Combat",
+        "V010Inventory",
+        "V010Progression",
+        "V09Power"
+      ],
+      "writes": [
+        "executeInteraction",
+        "shoot"
+      ]
+    },
+    {
+      "name": "V020Walls",
+      "line": 6565,
+      "scanEndLine": 7079,
+      "references": [
+        "V015Base",
+        "V091Fortress",
+        "V091Navigation"
+      ],
+      "writes": [
+        "solidObjects",
+        "executeInteraction",
+        "shoot",
+        "damagePlayer"
+      ]
+    },
+    {
+      "name": "V091Navigation",
+      "line": 7080,
+      "scanEndLine": 7251,
+      "references": [
+        "V014Controls",
+        "V091Fortress",
+        "V09Power"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V091Loot",
+      "line": 7252,
+      "scanEndLine": 7290,
+      "references": [],
+      "writes": [
+        "update"
+      ]
+    },
+    {
+      "name": "V091Light",
+      "line": 7291,
+      "scanEndLine": 7926,
+      "references": [
+        "V010",
+        "V0104",
+        "V010Inventory",
+        "V010World",
+        "V091Equipment",
+        "V091Fortress",
+        "V091Loot",
+        "V091Navigation",
+        "V091_EQUIP_SHAPES",
+        "V091_SAVE_NAME_MAX",
+        "V09Craft",
+        "V09Power",
+        "V09Saves",
+        "V09World",
+        "V09_ACTIVE_KEY",
+        "V09_CHICKEN_BREED_MS",
+        "V09_CHICKEN_MAX",
+        "V09_SAVE_PREFIX",
+        "V09_SLOT_COUNT"
+      ],
+      "writes": [
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V010",
+      "line": 7927,
+      "scanEndLine": 7936,
+      "references": [],
+      "writes": []
+    },
+    {
+      "name": "V010Inventory",
+      "line": 7937,
+      "scanEndLine": 8201,
+      "references": [
+        "V010",
+        "V010Combat",
+        "V011UI",
+        "V013Inventory",
+        "V0141DroneUI",
+        "V014Fish",
+        "V014Robots",
+        "V0161UI",
+        "V0161Upgrade",
+        "V091Equipment"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V010Combat",
+      "line": 8202,
+      "scanEndLine": 8393,
+      "references": [
+        "V010",
+        "V010Inventory",
+        "V010Progression",
+        "V010World",
+        "V011UI",
+        "V013Inventory",
+        "V014Controls",
+        "V014Fish",
+        "V0161Upgrade",
+        "V0162Magazines",
+        "V016Turret",
+        "V091Fortress",
+        "V09Craft"
+      ],
+      "writes": [
+        "shoot",
+        "update",
+        "executeInteraction"
+      ]
+    },
+    {
+      "name": "V010Craft",
+      "line": 8394,
+      "scanEndLine": 8443,
+      "references": [
+        "V010",
+        "V09Craft"
+      ],
+      "writes": [
+        "update"
+      ]
+    },
+    {
+      "name": "V010World",
+      "line": 8444,
+      "scanEndLine": 8705,
+      "references": [
+        "V010",
+        "V010Camera",
+        "V010Combat",
+        "V010Inventory",
+        "V010Progression",
+        "V013City",
+        "V014Fish",
+        "V015Base",
+        "V017Monsters",
+        "V091Fortress",
+        "V09World"
+      ],
+      "writes": [
+        "solidObjects",
+        "worldCollision",
+        "executeInteraction",
+        "update"
+      ]
+    },
+    {
+      "name": "V010Energy",
+      "line": 8706,
+      "scanEndLine": 8888,
+      "references": [
+        "V010",
+        "V010World",
+        "V014Robots",
+        "V09Power"
+      ],
+      "writes": [
+        "executeInteraction"
+      ]
+    },
+    {
+      "name": "V010Progression",
+      "line": 8889,
+      "scanEndLine": 9086,
+      "references": [
+        "V010",
+        "V010Energy",
+        "V09Power"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V010Camera",
+      "line": 9087,
+      "scanEndLine": 9270,
+      "references": [
+        "V010",
+        "V0105",
+        "V010Combat",
+        "V010Inventory",
+        "V010World",
+        "V011Rooms",
+        "V011World",
+        "V012Map",
+        "V0141Map",
+        "V0141Trees",
+        "V014Controls",
+        "V0151Station",
+        "V015Base",
+        "V091Light",
+        "V09Power",
+        "V09World"
+      ],
+      "writes": [
+        "draw",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress",
+        "update"
+      ]
+    },
+    {
+      "name": "V0104",
+      "line": 9271,
+      "scanEndLine": 9383,
+      "references": [
+        "V014Fish",
+        "V09Saves",
+        "V09_ACTIVE_KEY",
+        "V09_SLOT_COUNT"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V0105",
+      "line": 9384,
+      "scanEndLine": 9491,
+      "references": [
+        "V010Camera",
+        "V011World",
+        "V013Inventory",
+        "V0141Map",
+        "V014Controls",
+        "V09World"
+      ],
+      "writes": [
+        "shoot",
+        "executeInteraction",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V011Art",
+      "line": 9492,
+      "scanEndLine": 9493,
+      "references": [],
+      "writes": []
+    },
+    {
+      "name": "V011UI",
+      "line": 9494,
+      "scanEndLine": 9622,
+      "references": [
+        "V010Combat",
+        "V010Inventory",
+        "V09Craft"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V011CraftUI",
+      "line": 9623,
+      "scanEndLine": 9762,
+      "references": [
+        "V011Art",
+        "V092_ICONS",
+        "V09Power"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V011Farm",
+      "line": 9763,
+      "scanEndLine": 10067,
+      "references": [
+        "V011Art",
+        "V011Rooms",
+        "V0141Farm"
+      ],
+      "writes": [
+        "solidObjects",
+        "executeInteraction",
+        "update",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V011World",
+      "line": 10068,
+      "scanEndLine": 10285,
+      "references": [
+        "V010Camera",
+        "V010Combat",
+        "V011Art",
+        "V018Build",
+        "V09World"
+      ],
+      "writes": [
+        "solidObjects",
+        "executeInteraction",
+        "update",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V011Rooms",
+      "line": 10286,
+      "scanEndLine": 10434,
+      "references": [
+        "V010Camera",
+        "V010Energy",
+        "V011Art",
+        "V091Light",
+        "V09Craft",
+        "V09Power"
+      ],
+      "writes": [
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V011Living",
+      "line": 10435,
+      "scanEndLine": 10621,
+      "references": [
+        "V011Art",
+        "V011Rooms",
+        "V018Build"
+      ],
+      "writes": [
+        "solidObjects",
+        "executeInteraction",
+        "shoot",
+        "damagePlayer",
+        "update",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V012Expansion",
+      "line": 10622,
+      "scanEndLine": 10728,
+      "references": [
+        "V010Camera",
+        "V010World",
+        "V011World",
+        "V013City",
+        "V09World"
+      ],
+      "writes": [
+        "captureGameProgress",
+        "decodeGameProgress"
+      ]
+    },
+    {
+      "name": "V012Map",
+      "line": 10729,
+      "scanEndLine": 10798,
+      "references": [
+        "V010Camera",
+        "V012Expansion"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V012Windows",
+      "line": 10799,
+      "scanEndLine": 10907,
+      "references": [],
+      "writes": []
+    },
+    {
+      "name": "V012Effects",
+      "line": 10908,
+      "scanEndLine": 10946,
+      "references": [
+        "V011Art",
+        "V09World"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V012Fishing",
+      "line": 10947,
+      "scanEndLine": 11072,
+      "references": [
+        "V0105",
+        "V010Inventory",
+        "V011Art",
+        "V013Lake",
+        "V092_ICONS",
+        "V09World"
+      ],
+      "writes": [
+        "executeInteraction",
+        "update",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V014Fish",
+      "line": 11073,
+      "scanEndLine": 11090,
+      "references": [],
+      "writes": []
+    },
+    {
+      "name": "V013Inventory",
+      "line": 11091,
+      "scanEndLine": 11149,
+      "references": [
+        "V010Combat",
+        "V010Inventory",
+        "V011Art",
+        "V011UI",
+        "V014Fish",
+        "V0162Quick",
+        "V092_ICONS"
+      ],
+      "writes": [
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V013Lake",
+      "line": 11150,
+      "scanEndLine": 11177,
+      "references": [
+        "V012Fishing",
+        "V09World"
+      ],
+      "writes": [
+        "update"
+      ]
+    },
+    {
+      "name": "V013City",
+      "line": 11178,
+      "scanEndLine": 11387,
+      "references": [
+        "V010Camera",
+        "V010World",
+        "V011Art",
+        "V011World",
+        "V012Expansion",
+        "V012Fishing",
+        "V0141DroneMotion",
+        "V09Power",
+        "V09World"
+      ],
+      "writes": [
+        "executeInteraction",
+        "solidObjects",
+        "update",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V014Robots",
+      "line": 11388,
+      "scanEndLine": 11667,
+      "references": [
+        "V0105",
+        "V010Combat",
+        "V010Inventory",
+        "V011Art",
+        "V011UI",
+        "V0141DroneMotion",
+        "V0141DroneUI",
+        "V014Controls",
+        "V014Fish",
+        "V014LooseLoot",
+        "V0151Station",
+        "V0161Upgrade",
+        "V0163Loot",
+        "V016Lighting",
+        "V09Craft",
+        "V09Power"
+      ],
+      "writes": [
+        "solidObjects",
+        "executeInteraction",
+        "update",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V014Controls",
+      "line": 11668,
+      "scanEndLine": 11833,
+      "references": [
+        "V0105",
+        "V010Camera",
+        "V012Fishing",
+        "V0141Map",
+        "V014Robots",
+        "V091Fortress",
+        "V09Power",
+        "V09World"
+      ],
+      "writes": [
+        "update",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V014Energy",
+      "line": 11834,
+      "scanEndLine": 11845,
+      "references": [
+        "V010Energy",
+        "V010World",
+        "V011Farm",
+        "V09Power"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V0141DroneUI",
+      "line": 11846,
+      "scanEndLine": 11946,
+      "references": [
+        "V0105",
+        "V010Inventory",
+        "V011Art",
+        "V014Controls",
+        "V014Robots",
+        "V0161UI"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V0141Farm",
+      "line": 11947,
+      "scanEndLine": 12037,
+      "references": [
+        "V010",
+        "V011Farm"
+      ],
+      "writes": [
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V0141Map",
+      "line": 12038,
+      "scanEndLine": 12050,
+      "references": [],
+      "writes": []
+    },
+    {
+      "name": "V0141Trees",
+      "line": 12051,
+      "scanEndLine": 12114,
+      "references": [
+        "V014Robots"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V015Base",
+      "line": 12115,
+      "scanEndLine": 12488,
+      "references": [
+        "V010World",
+        "V011Art",
+        "V014Robots",
+        "V016Lighting",
+        "V017Monsters",
+        "V020Walls",
+        "V091Fortress",
+        "V09World"
+      ],
+      "writes": [
+        "solidObjects",
+        "executeInteraction",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V0151Station",
+      "line": 12489,
+      "scanEndLine": 12565,
+      "references": [
+        "V011Art",
+        "V014Robots"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V016Lighting",
+      "line": 12566,
+      "scanEndLine": 12663,
+      "references": [
+        "V010Camera",
+        "V011Rooms",
+        "V014Robots",
+        "V015Base",
+        "V020Walls",
+        "V091Fortress",
+        "V091Light",
+        "V091Navigation",
+        "V09Craft",
+        "V09Power"
+      ],
+      "writes": [
+        "update",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V016Turret",
+      "line": 12664,
+      "scanEndLine": 12887,
+      "references": [
+        "V0105",
+        "V010Camera",
+        "V011UI",
+        "V015Base",
+        "V020Walls",
+        "V091Fortress",
+        "V09Craft"
+      ],
+      "writes": [
+        "executeInteraction",
+        "update",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V0161UI",
+      "line": 12888,
+      "scanEndLine": 12972,
+      "references": [
+        "V010Camera",
+        "V010Inventory",
+        "V011UI",
+        "V013Inventory",
+        "V014Robots",
+        "V0161Upgrade"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V0161Migration",
+      "line": 12973,
+      "scanEndLine": 12998,
+      "references": [],
+      "writes": [
+        "decodeGameProgress"
+      ]
+    },
+    {
+      "name": "V0161Upgrade",
+      "line": 12999,
+      "scanEndLine": 13099,
+      "references": [
+        "V010",
+        "V010Combat",
+        "V010Inventory",
+        "V011Art",
+        "V011Rooms",
+        "V011UI",
+        "V013Inventory",
+        "V014Robots",
+        "V0161UI",
+        "V0162Magazines",
+        "V016Turret",
+        "V092_ICONS",
+        "V09Craft"
+      ],
+      "writes": [
+        "update",
+        "solidObjects",
+        "executeInteraction",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V0162Quick",
+      "line": 13100,
+      "scanEndLine": 13155,
+      "references": [
+        "V010Combat",
+        "V010Inventory",
+        "V011UI",
+        "V013Inventory"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V0162Magazines",
+      "line": 13156,
+      "scanEndLine": 13262,
+      "references": [
+        "V010Combat",
+        "V010Inventory",
+        "V011UI",
+        "V013Inventory",
+        "V014Controls",
+        "V014Robots",
+        "V0161Upgrade",
+        "V0162Quick",
+        "V09Craft",
+        "V09World"
+      ],
+      "writes": [
+        "decodeGameProgress",
+        "restoreGameProgress",
+        "executeInteraction"
+      ]
+    },
+    {
+      "name": "V0163Loot",
+      "line": 13263,
+      "scanEndLine": 13319,
+      "references": [
+        "V014Fish",
+        "V014Robots"
+      ],
+      "writes": []
+    },
+    {
+      "name": "V0163Vitals",
+      "line": 13320,
+      "scanEndLine": 13358,
+      "references": [],
+      "writes": [
+        "update"
+      ]
+    },
+    {
+      "name": "V017Monsters",
+      "line": 13359,
+      "scanEndLine": 13627,
+      "references": [
+        "V0105",
+        "V010Camera",
+        "V010World",
+        "V011Art",
+        "V013City",
+        "V0141Trees",
+        "V014Robots",
+        "V015Base",
+        "V016Lighting",
+        "V018Build",
+        "V091Fortress"
+      ],
+      "writes": [
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    },
+    {
+      "name": "V018Build",
+      "line": 13628,
+      "scanEndLine": 13870,
+      "references": [
+        "V010World",
+        "V011Art",
+        "V011Living",
+        "V011World",
+        "V012Effects",
+        "V012Fishing",
+        "V013City",
+        "V0141Farm",
+        "V014Controls",
+        "V014Robots",
+        "V015Base",
+        "V0162Quick",
+        "V017Monsters",
+        "V091Fortress",
+        "V092_ICONS",
+        "V09World"
+      ],
+      "writes": [
+        "executeInteraction",
+        "damagePlayer",
+        "solidObjects",
+        "update",
+        "captureGameProgress",
+        "decodeGameProgress",
+        "restoreGameProgress"
+      ]
+    }
+  ],
+  "exports": [
+    {
+      "name": "V09World",
+      "line": 5763
+    },
+    {
+      "name": "V020Walls",
+      "line": 6565
+    },
+    {
+      "name": "V091Fortress",
+      "line": 7073
+    },
+    {
+      "name": "V091Loot",
+      "line": 7286
+    },
+    {
+      "name": "V091Equipment",
+      "line": 7511
+    },
+    {
+      "name": "V09Saves",
+      "line": 7919
+    },
+    {
+      "name": "V010",
+      "line": 7933
+    },
+    {
+      "name": "V010Inventory",
+      "line": 7937
+    },
+    {
+      "name": "V010Combat",
+      "line": 8202
+    },
+    {
+      "name": "V010World",
+      "line": 8702
+    },
+    {
+      "name": "V010Energy",
+      "line": 8883
+    },
+    {
+      "name": "V010Progression",
+      "line": 8889
+    },
+    {
+      "name": "V010Camera",
+      "line": 9233
+    },
+    {
+      "name": "V0105",
+      "line": 9384
+    },
+    {
+      "name": "V011Art",
+      "line": 9492
+    },
+    {
+      "name": "V011UI",
+      "line": 9494
+    },
+    {
+      "name": "V011CraftUI",
+      "line": 9623
+    },
+    {
+      "name": "V011Farm",
+      "line": 9763
+    },
+    {
+      "name": "V011World",
+      "line": 10068
+    },
+    {
+      "name": "V011Rooms",
+      "line": 10286
+    },
+    {
+      "name": "V011Living",
+      "line": 10435
+    },
+    {
+      "name": "V012Expansion",
+      "line": 10622
+    },
+    {
+      "name": "V012Map",
+      "line": 10729
+    },
+    {
+      "name": "V012Windows",
+      "line": 10799
+    },
+    {
+      "name": "V012Effects",
+      "line": 10908
+    },
+    {
+      "name": "V012Fishing",
+      "line": 10947
+    },
+    {
+      "name": "V014Fish",
+      "line": 11073
+    },
+    {
+      "name": "V013Inventory",
+      "line": 11091
+    },
+    {
+      "name": "V013Lake",
+      "line": 11150
+    },
+    {
+      "name": "V013City",
+      "line": 11178
+    },
+    {
+      "name": "V0141DroneMotion",
+      "line": 11283
+    },
+    {
+      "name": "V014Robots",
+      "line": 11388
+    },
+    {
+      "name": "V014Controls",
+      "line": 11668
+    },
+    {
+      "name": "V014Energy",
+      "line": 11842
+    },
+    {
+      "name": "V0141DroneUI",
+      "line": 11846
+    },
+    {
+      "name": "V0141Farm",
+      "line": 11947
+    },
+    {
+      "name": "V0141Map",
+      "line": 12038
+    },
+    {
+      "name": "V0141Trees",
+      "line": 12051
+    },
+    {
+      "name": "V015Base",
+      "line": 12115
+    },
+    {
+      "name": "V0151Station",
+      "line": 12489
+    },
+    {
+      "name": "V016Lighting",
+      "line": 12566
+    },
+    {
+      "name": "V016Turret",
+      "line": 12664
+    },
+    {
+      "name": "V0161UI",
+      "line": 12888
+    },
+    {
+      "name": "V0161Migration",
+      "line": 12973
+    },
+    {
+      "name": "V0161Upgrade",
+      "line": 12999
+    },
+    {
+      "name": "V0162Quick",
+      "line": 13100
+    },
+    {
+      "name": "V0162Magazines",
+      "line": 13156
+    },
+    {
+      "name": "V0163Loot",
+      "line": 13263
+    },
+    {
+      "name": "V0163Vitals",
+      "line": 13320
+    },
+    {
+      "name": "V017Monsters",
+      "line": 13359
+    },
+    {
+      "name": "V018Build",
+      "line": 13628
+    }
+  ],
+  "hookInstallOrder": {
+    "solidObjects": [
+      {
+        "line": 5477,
+        "excerpt": "solidObjects=function(which){"
+      },
+      {
+        "line": 6707,
+        "excerpt": "solidObjects=function(which){"
+      },
+      {
+        "line": 8496,
+        "excerpt": "solidObjects=function(which){const out=oldSolids(which);return which==='surface'?[...out,...barriers,...shortcuts.filter(s=>!s.open&&s.kind!=='bridge'),...caches.map(c=>({id:c.id,x:c.x-25,y:c.y-18,w:50,h:36}))]:out;};"
+      },
+      {
+        "line": 9882,
+        "excerpt": "solidObjects=function(which){const objects=oldSolids(which);return which==='bunker'?objects.filter(o=>o.id!=='chest12'&&o.id!=='chest13').concat({...tankRect(),id:'garden_tank'},...Object.entries(troughs()).map(([key,r])=>({...r,id:'animal_'+key}))):objects;};"
+      },
+      {
+        "line": 10154,
+        "excerpt": "solidObjects=function(which){const out=oldSolids(which);return which==='surface'?[...out.filter(o=>!byId.has(o.id)&&!obsoleteFence(o)),...buildings.flatMap(b=>[...walls(b),...b.furniture.map(f=>({id:f.id,x:f.x,y:f.y,w:f.w,h:f.h}))])]:out;};"
+      },
+      {
+        "line": 10489,
+        "excerpt": "solidObjects=function(which){"
+      },
+      {
+        "line": 11203,
+        "excerpt": "const solids=solidObjects;solidObjects=function(which){const out=solids(which);if(which==='surface')out.push(...partitions(),...(floor?[{...V011World.doorRect(mall),id:'mall013_upwall'}]:[]));return out;};"
+      },
+      {
+        "line": 11403,
+        "excerpt": "const solids=solidObjects;solidObjects=function(which=scene){const a=solids(which);return which==='bunker'?[...a,{id:DOCK.id+'_body',x:DOCK.x+7,y:DOCK.y+7,w:26,h:DOCK.h-14}]:a;};"
+      },
+      {
+        "line": 12166,
+        "excerpt": "solidObjects=function(which){const a=previousSolids(which);return which==='surface'?[...a.filter(o=>o.id!=='yard_generator'&&!o.id?.startsWith('v091tower')&&!/^tower\\d+$/.test(o.id||'')),...props]:a;};"
+      },
+      {
+        "line": 13064,
+        "excerpt": "const solids=solidObjects;solidObjects=function(which=scene){const a=solids(which);return which==='bunker'?[...a,{...station}]:a;};"
+      },
+      {
+        "line": 13742,
+        "excerpt": "const solids=solidObjects;solidObjects=function(which=scene){return solids(which).filter(o=>!isBroken(o.id));};"
+      }
+    ],
+    "worldCollision": [
+      {
+        "line": 5494,
+        "excerpt": "worldCollision=function(x,y,r=15,which=scene,ignoreId=null){"
+      },
+      {
+        "line": 5903,
+        "excerpt": "worldCollision=function(x,y,r=15,which=scene,ignoreId=null){"
+      },
+      {
+        "line": 8498,
+        "excerpt": "worldCollision=function(x,y,r=15,which=scene,ignoreId=null){"
+      }
+    ],
+    "executeInteraction": [
+      {
+        "line": 5547,
+        "excerpt": "executeInteraction=function(target){"
+      },
+      {
+        "line": 5922,
+        "excerpt": "executeInteraction=function(target){"
+      },
+      {
+        "line": 6390,
+        "excerpt": "executeInteraction=function(target){"
+      },
+      {
+        "line": 6881,
+        "excerpt": "executeInteraction=function(target){"
+      },
+      {
+        "line": 8345,
+        "excerpt": "executeInteraction=function(o){if(o?.kind==='v010practice'){if(canInteract(o,player.x,player.y)){setPractice(!practice);message(practice?'Тренировка: прицельтесь в мишень. Боевые патроны не расходуются.':'Тренировка завершена');}return;}return oldExecute(o);};"
+      },
+      {
+        "line": 8535,
+        "excerpt": "executeInteraction=function(target){"
+      },
+      {
+        "line": 8827,
+        "excerpt": "executeInteraction=function(target){if(target?.kind!=='v09battery')return originalExecute(target);if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;cancelNavigation();stopControls(true);openBattery();};"
+      },
+      {
+        "line": 9417,
+        "excerpt": "const oldExecute=executeInteraction;executeInteraction=function(o,...args){if(!contextTool(o))return;return oldExecute(o,...args);};"
+      },
+      {
+        "line": 9884,
+        "excerpt": "executeInteraction=function(target){if(target?.kind==='garden_water'){if(!menuOpen&&!playerDead&&canInteract(target,player.x,player.y))openWater();return;}oldExecute(target);};"
+      },
+      {
+        "line": 10189,
+        "excerpt": "executeInteraction=function(t,...args){"
+      },
+      {
+        "line": 10498,
+        "excerpt": "executeInteraction=function(target){"
+      },
+      {
+        "line": 11059,
+        "excerpt": "const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind==='fishing0121')return start(o);if(o&&!menuOpen)stop();return execute(o,...args);};"
+      },
+      {
+        "line": 11202,
+        "excerpt": "const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind==='stairs013')return stairs();return execute(o,...args);};"
+      },
+      {
+        "line": 11611,
+        "excerpt": "const executeOld=executeInteraction;executeInteraction=function(o,...args){if(['robots014_dock','drone014'].includes(o?.kind)){if(!menuOpen&&!playerDead&&canInteract(o,player.x,player.y)){if(o.kind==='robots014_dock')openStation();else open();}return;}return e"
+      },
+      {
+        "line": 12230,
+        "excerpt": "executeInteraction=function(o){if(o?.kind==='baseGate015'){if(canInteract(o,player.x,player.y))toggle(byId.get(o.ref));return;}"
+      },
+      {
+        "line": 12833,
+        "excerpt": "const executeOld=executeInteraction;executeInteraction=function(o,...a){if(o?.kind===TYPE){if(!menuOpen&&!playerDead)open(guns.find(t=>t.id===o.id));return;}return executeOld(o,...a);};"
+      },
+      {
+        "line": 13066,
+        "excerpt": "const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind===station.kind)return open();return execute(o,...args);};"
+      },
+      {
+        "line": 13251,
+        "excerpt": "executeInteraction=function(...args){"
+      },
+      {
+        "line": 13737,
+        "excerpt": "const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind==='repair018'){const r=record(o.ref);if(!r)return;if(r.object.hp<r.object.maxHp)start(r.id);else open(r.id);return;}"
+      }
+    ],
+    "update": [
+      {
+        "line": 5557,
+        "excerpt": "update=function(){"
+      },
+      {
+        "line": 5901,
+        "excerpt": "update=function(){powerTick(frameScale/60);v09PowerOldUpdate();};"
+      },
+      {
+        "line": 7278,
+        "excerpt": "update=function(){oldUpdate();elapsed+=frameScale/60;if(elapsed>=1){elapsed=0;refresh();}};"
+      },
+      {
+        "line": 8337,
+        "excerpt": "update=function(){tick(Math.max(0,frameScale)*1000/60);oldUpdate();};"
+      },
+      {
+        "line": 8439,
+        "excerpt": "const oldUpdate=update;update=function(){oldUpdate();pinClock+=16.667*frameScale;if(pinClock>=250){pinClock=0;refreshPin();}};"
+      },
+      {
+        "line": 8676,
+        "excerpt": "update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)updateShortcut(16.667*frameScale);else if(shortcutWork){shortcutWork=null;el('searchBarWrap').style.display='none';}elapsed+=frameScale;if(elapsed>=20){elapsed=0;sneakButton.style.displa"
+      },
+      {
+        "line": 9261,
+        "excerpt": "const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};"
+      },
+      {
+        "line": 9885,
+        "excerpt": "const oldUpdate=update;update=function(){settle();oldUpdate();};"
+      },
+      {
+        "line": 10217,
+        "excerpt": "const oldUpdate=update;update=function(...args){const r=oldUpdate(...args);if(!document.hidden)tick();return r;};"
+      },
+      {
+        "line": 10513,
+        "excerpt": "const oldUpdate=update;update=function(){oldUpdate();tick(16.667*frameScale);};"
+      },
+      {
+        "line": 11064,
+        "excerpt": "const updateOld=update;update=function(...args){const out=updateOld(...args);tick();return out;};"
+      },
+      {
+        "line": 11174,
+        "excerpt": "const updateOld=update;update=function(...args){tick();return updateOld(...args);};"
+      },
+      {
+        "line": 11273,
+        "excerpt": "const oldUpdate=update;update=function(...args){const out=oldUpdate(...args);tick();return out;};"
+      },
+      {
+        "line": 11639,
+        "excerpt": "const updateOld=update;update=function(...a){const r=updateOld(...a);tick(16.667*frameScale);return r;};"
+      },
+      {
+        "line": 11807,
+        "excerpt": "const oldUpdate=update;update=function(...args){"
+      },
+      {
+        "line": 12656,
+        "excerpt": "const oldUpdate=update;update=function(...args){const result=oldUpdate(...args);tick(16.667*frameScale);return result;};"
+      },
+      {
+        "line": 12836,
+        "excerpt": "const updateOld=update;update=function(...a){const r=updateOld(...a);tick(16.667*frameScale);return r;};"
+      },
+      {
+        "line": 13063,
+        "excerpt": "let lastRefresh=0;const updateBefore=update;update=function(...args){const r=updateBefore(...args);if(overlay?.classList.contains('open')&&performance.now()-lastRefresh>=250){lastRefresh=performance.now();refresh();}return r;};"
+      },
+      {
+        "line": 13334,
+        "excerpt": "const old=update;update=function(...args){const out=old(...args);refresh();return out;};"
+      },
+      {
+        "line": 13788,
+        "excerpt": "const updateOld=update;update=function(...args){const out=updateOld(...args);repairStep(16.667*frameScale);uiElapsed+=16.667*frameScale;if(uiElapsed>=150){uiElapsed=0;refresh();}return out;};"
+      }
+    ],
+    "shoot": [
+      {
+        "line": 6461,
+        "excerpt": "shoot=function(){"
+      },
+      {
+        "line": 6967,
+        "excerpt": "shoot=function(){"
+      },
+      {
+        "line": 8315,
+        "excerpt": "shoot=function(){"
+      },
+      {
+        "line": 9411,
+        "excerpt": "const oldShoot=shoot;shoot=function(...args){aim();return oldShoot(...args);};"
+      },
+      {
+        "line": 10508,
+        "excerpt": "const oldShoot=shoot;shoot=function(...args){if(mode)stop();return oldShoot(...args);};"
+      }
+    ],
+    "damagePlayer": [
+      {
+        "line": 6993,
+        "excerpt": "damagePlayer=function(){};findWalkPath=function(ax,ay,target,...rest){return target?.id==='player'?null:path(ax,ay,target,...rest);};"
+      },
+      {
+        "line": 10509,
+        "excerpt": "const oldDamage=damagePlayer;damagePlayer=function(...args){"
+      },
+      {
+        "line": 13741,
+        "excerpt": "const hurt=damagePlayer;damagePlayer=function(...args){const hp=player.health,out=hurt(...args);if(player.health<hp)stop();return out;};"
+      }
+    ],
+    "captureGameProgress": [
+      {
+        "line": 7595,
+        "excerpt": "captureGameProgress=function(){"
+      },
+      {
+        "line": 9245,
+        "excerpt": "captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.20.0';d.v010={schema:1,modules:snapshot()};return d;};"
+      },
+      {
+        "line": 9455,
+        "excerpt": "captureGameProgress=function(){V09World.tickMining();updateChop();const d=oldCapture();d.gathering={schema:1,chop:chopState?{...chopState}:null,mining:V09World.miningState(),hand:contextHand};return d;};"
+      },
+      {
+        "line": 9892,
+        "excerpt": "captureGameProgress=function(){settle();const d=oldCapture();d.farmV011={schema:1,water:state.water,at:state.at,grown:window.farmState.map(st=>st.crop===null?0:growth(st))};d.farm014={schema:1,next:state.next,end:state.end,beds:window.farmState.map(st=>st.crop"
+      },
+      {
+        "line": 10266,
+        "excerpt": "captureGameProgress=function(){const d=oldCapture();d.world011=capture();return d;};"
+      },
+      {
+        "line": 10517,
+        "excerpt": "captureGameProgress=function(){const d=oldCapture();d.living011={schema:1,dirt};return d;};"
+      },
+      {
+        "line": 10689,
+        "excerpt": "captureGameProgress=function(){const d=oldCapture();d.expansion012={schema:1};return d;};"
+      },
+      {
+        "line": 11139,
+        "excerpt": "const cap=captureGameProgress;captureGameProgress=function(){const d=cap();d.quick013={schema:1,items:copy(items),fishReserve:reserve};return d;};"
+      },
+      {
+        "line": 11274,
+        "excerpt": "const capture=captureGameProgress;captureGameProgress=function(){const d=capture();d.city013={schema:1,clock,floor,cars:cars.map(c=>({id:c.id,due:c.due013||null}))};return d;};"
+      },
+      {
+        "line": 11652,
+        "excerpt": "const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.robots014=copy(state);return d;};"
+      },
+      {
+        "line": 12029,
+        "excerpt": "const capture=captureGameProgress;captureGameProgress=function(){const d=capture();d.farmRecovery0141=copy(recovery);d.farmPlantingStock0141=plantingStock;return d;};"
+      },
+      {
+        "line": 12282,
+        "excerpt": "const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.base015=capture();return d;};"
+      },
+      {
+        "line": 12657,
+        "excerpt": "const oldCapture=captureGameProgress;captureGameProgress=function(){const d=oldCapture();d.lighting016=capture();return d;};"
+      },
+      {
+        "line": 12880,
+        "excerpt": "const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.turret016=capture();return d;};"
+      },
+      {
+        "line": 13068,
+        "excerpt": "const cap=captureGameProgress;captureGameProgress=function(){const d=cap();d.upgrade0161={schema:1,item:copy(slots[0])};return d;};"
+      },
+      {
+        "line": 13599,
+        "excerpt": "const capture=captureGameProgress;captureGameProgress=function(){"
+      },
+      {
+        "line": 13792,
+        "excerpt": "const oldCapture=captureGameProgress;captureGameProgress=function(){const d=oldCapture();d.building018=capture();return d;};"
+      }
+    ],
+    "decodeGameProgress": [
+      {
+        "line": 7632,
+        "excerpt": "decodeGameProgress=function(raw){"
+      },
+      {
+        "line": 9246,
+        "excerpt": "decodeGameProgress=function(raw){"
+      },
+      {
+        "line": 9456,
+        "excerpt": "decodeGameProgress=function(raw){"
+      },
+      {
+        "line": 9894,
+        "excerpt": "decodeGameProgress=function(raw){const d=oldDecode(raw);validateSave(d);validate014(d);return d;};"
+      },
+      {
+        "line": 10267,
+        "excerpt": "decodeGameProgress=function(raw){const d=oldDecode(raw);if(d.world011!==undefined)validate(d.world011);return d;};"
+      },
+      {
+        "line": 10518,
+        "excerpt": "decodeGameProgress=function(raw){const d=oldDecode(raw),l=d.living011;if(l!==undefined&&(!l||l.schema!==1||!Number.isFinite(l.dirt)||l.dirt<0||l.dirt>1))throw Error('Некорректное состояние жилой комнаты');return d;};"
+      },
+      {
+        "line": 10704,
+        "excerpt": "decodeGameProgress=function(raw){if(typeof raw!=='string'||raw.length>2*1024*1024)return oldDecode(raw);return oldDecode(JSON.stringify(migrateData(JSON.parse(raw))));};"
+      },
+      {
+        "line": 11140,
+        "excerpt": "const decode=decodeGameProgress;decodeGameProgress=function(raw){const d=JSON.parse(raw);V014Fish.validateSave(d);if(d.handSlots?.length===4)d.handSlots.push(null);const q=d.quick013;if(q){if(q.schema!==1||!Array.isArray(q.items)||q.items.length!==5||!q.items."
+      },
+      {
+        "line": 11275,
+        "excerpt": "const decode=decodeGameProgress;decodeGameProgress=function(raw){const d=decode(raw),c=d.city013;if(c&&(!c||c.schema!==1||!Number.isFinite(c.clock)||c.clock<0||![0,1].includes(c.floor)||!Array.isArray(c.cars)||c.cars.length!==cars.length||c.cars.some((v,i)=>v."
+      },
+      {
+        "line": 11653,
+        "excerpt": "const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const preliminary=JSON.parse(raw);if(preliminary.v09?.power?.deviceEnabled){for(const id of ['robot_drone_charge'])if(preliminary.v09.power.deviceEnabled[id]===undefined)preliminary.v09.power."
+      },
+      {
+        "line": 12030,
+        "excerpt": "const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};"
+      },
+      {
+        "line": 12283,
+        "excerpt": "const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const probe=migrateGame(JSON.parse(raw));validate(probe.base015);validating=true;let d;try{d=decodeOld(JSON.stringify(probe));}finally{validating=false;}"
+      },
+      {
+        "line": 12658,
+        "excerpt": "const oldDecode=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);};"
+      },
+      {
+        "line": 12881,
+        "excerpt": "const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const d=decodeOld(raw);validate(d.turret016,d);if(!d.turret016){const tokens=[];const walk=v=>{if(!v||typeof v!=='object')return;if(v.type===TYPE)tokens.push(v);else for(const q of Object.valu"
+      },
+      {
+        "line": 12994,
+        "excerpt": "const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};"
+      },
+      {
+        "line": 13074,
+        "excerpt": "const decode=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);if(probe.v09?.power?.deviceEnabled&&probe.v09.power.deviceEnabled.upgrade0161===undefined)probe.v09.power.deviceEnabled.upgrade0161=true;const d=decode(JSON.stringify("
+      },
+      {
+        "line": 13232,
+        "excerpt": "const decode=decodeGameProgress;decodeGameProgress=function(raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));};"
+      },
+      {
+        "line": 13609,
+        "excerpt": "const decode=decodeGameProgress;decodeGameProgress=function(raw){validate(JSON.parse(raw));return decode(raw);};"
+      },
+      {
+        "line": 13793,
+        "excerpt": "const oldDecode=decodeGameProgress;decodeGameProgress=function(raw){const d=JSON.parse(raw);validate(d.building018);return oldDecode(raw);};"
+      }
+    ],
+    "restoreGameProgress": [
+      {
+        "line": 7694,
+        "excerpt": "restoreGameProgress=function(d){"
+      },
+      {
+        "line": 9256,
+        "excerpt": "restoreGameProgress=function(d){"
+      },
+      {
+        "line": 9466,
+        "excerpt": "restoreGameProgress=function(d){"
+      },
+      {
+        "line": 9895,
+        "excerpt": "restoreGameProgress=function(d){"
+      },
+      {
+        "line": 10268,
+        "excerpt": "restoreGameProgress=function(data){"
+      },
+      {
+        "line": 10427,
+        "excerpt": "const oldRestore=restoreGameProgress;restoreGameProgress=function(data){"
+      },
+      {
+        "line": 10519,
+        "excerpt": "restoreGameProgress=function(d){mode=null;anchor=null;elapsed=0;dirt=clamp(d.living011?.dirt??0,0,1);oldRestore(d);refresh();};"
+      },
+      {
+        "line": 11068,
+        "excerpt": "const restoreOld=restoreGameProgress;restoreGameProgress=function(...args){stop();return restoreOld(...args);};"
+      },
+      {
+        "line": 11142,
+        "excerpt": "const restore=restoreGameProgress;restoreGameProgress=function(d){d=V014Fish.migrate(copy(d));items.fill(null);if(d.quick013)items.splice(0,5,...copy(d.quick013.items));restore(d);if(!d.quick013){for(let i=0;i<5;i++){const t=d.handSlots[i],j=bag.findIndex(s=>s"
+      },
+      {
+        "line": 11276,
+        "excerpt": "const restore=restoreGameProgress;restoreGameProgress=function(d){setFloor(d.city013?.floor||0);restore(d);clock=d.city013?.clock||0;cars.forEach((c,i)=>{c.due013=d.city013?.cars[i]?.due||null;c.open013=c.searched?1:0;});last=performance.now();};"
+      },
+      {
+        "line": 11654,
+        "excerpt": "const restoreOld=restoreGameProgress;restoreGameProgress=function(d){"
+      },
+      {
+        "line": 11816,
+        "excerpt": "const restore=restoreGameProgress;restoreGameProgress=function(d){route=pending=null;lockedPress=null;restore(d);layout();};"
+      },
+      {
+        "line": 12031,
+        "excerpt": "const restore=restoreGameProgress;restoreGameProgress=function(data){const d=migrate(copy(data));restore(d);recovery=copy(d.farmRecovery0141||[]);plantingStock=true;deliverRecovery();};"
+      },
+      {
+        "line": 12296,
+        "excerpt": "const restoreOld=restoreGameProgress;restoreGameProgress=function(d){d=migrateGame(d);restore(d.base015);restoreOld(d);"
+      },
+      {
+        "line": 12659,
+        "excerpt": "const oldRestore=restoreGameProgress;restoreGameProgress=function(d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);};"
+      },
+      {
+        "line": 12882,
+        "excerpt": "const restoreOld=restoreGameProgress;restoreGameProgress=function(d){d=V015Base.migrateGame(d);validate(d.turret016,d);restoreOld(d);guns.splice(0,guns.length,...copy(d.turret016?.guns||[starter()]));nextId=d.turret016?.nextId||2;runtime.clear();selected=null;"
+      },
+      {
+        "line": 13075,
+        "excerpt": "const restore=restoreGameProgress;restoreGameProgress=function(d){validate(d);slots[0]=copy(d.upgrade0161?.item||null);restore(d);lastSignature='';pulseUntil=0;refresh(true);};"
+      },
+      {
+        "line": 13233,
+        "excerpt": "const restore=restoreGameProgress;restoreGameProgress=function(d){return restore(migrate(copy(d)));};"
+      },
+      {
+        "line": 13610,
+        "excerpt": "const restore=restoreGameProgress;restoreGameProgress=function(d){"
+      },
+      {
+        "line": 13794,
+        "excerpt": "const oldRestore=restoreGameProgress;restoreGameProgress=function(d){validate(d.building018);restore(d.building018);oldRestore(d);restore(d.building018);};"
+      }
+    ],
+    "draw": [
+      {
+        "line": 9218,
+        "excerpt": "const oldDraw=draw;draw=function(){const density=canvas.width/Math.max(1,screenWidth);ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,screenWidth,screenHeight);ctx.save();try{ctx.scale(zo"
+      }
+    ]
+  },
+  "bootstrap": [
+    {
+      "line": 13808,
+      "text": "loadGameProgress();gameSaveReady=true;"
+    },
+    {
+      "line": 13832,
+      "text": "resizeCanvas();"
+    },
+    {
+      "line": 13834,
+      "text": "applyControls();"
+    },
+    {
+      "line": 13840,
+      "text": "gameLoop();"
+    }
+  ],
+  "externalScripts": [
+    "https://telegram.org/js/telegram-web-app.js"
+  ]
+}
