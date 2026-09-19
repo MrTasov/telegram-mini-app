@@ -1,15 +1,29 @@
 {
-  "from": "0.20.0 Stage 0",
-  "to": "0.21.0 Stage 1",
-  "interactionChanges": [
-    "An opening pointer gesture owns its generated click; outside dismissal starts on a new gesture.",
-    "Drone visual picking uses rendered pose and foreground priority, without changing physical collision or interaction reach.",
-    "A selected moving interaction is resolved by stable existing ID at pointer release."
+  "from": "0.21.0 Stage 1, manually accepted by user on desktop and phone",
+  "to": "0.22.0 Stage 2",
+  "stage3Started": false,
+  "state": [
+    "One live state-owner directory; no copied game model.",
+    "Seven persistence bookkeeping values moved to GameState.session with compatibility aliases.",
+    "One sealed save-subsystem registry and explicit historical order of 56 adapters."
   ],
+  "saveCompatibility": [
+    "Existing storage keys, schema:2 and subsystem schemas retained.",
+    "Existing stable IDs, item UIDs, fish IDs and inventory quantities are not renumbered or rewritten.",
+    "New saveVersion:1; legacy missing version migrates from 0; unsupported future formats reject before restore.",
+    "Direct restore validates a private copy before applying any subsystem. Save scheduling is suspended for the entire restore."
+  ],
+  "intentionalBugFix": {
+    "id": "complete-new-game-template",
+    "baseline": "0.21.0 also fails to create a new game: missing power circuits in an early partial template.",
+    "change": "Capture complete initial defaults after all registrations and before the first slot load. Never build defaults from an already loaded game.",
+    "balance": "Initial balance and configuration values unchanged."
+  },
   "releaseMetadata": [
-    "Version 0.21.0 and changelog.",
-    "Existing save-version allowlist additionally accepts 0.21.0; schemas and IDs unchanged."
+    "Version 0.22.0, changelog and existing version allowlist extended."
   ],
-  "migration": "Exact ordered source extraction and classic-script concatenation; static CSS extracted verbatim.",
-  "stage2Started": false
+  "notInStage2": [
+    "Gameplay tick/draw and input chains unchanged.",
+    "Indexed enemy/bed relationships and legacy payload field names retained; no multiplayer/networking or data-driven system rewrite."
+  ]
 }
