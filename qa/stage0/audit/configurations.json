@@ -1,0 +1,2969 @@
+{
+  "version": "0.20.0",
+  "items": {
+    "hammer": {
+      "name": "Молот",
+      "icon": "🔨",
+      "hand": true,
+      "description": "Ремонт стен и дверей бетоном: 1000 HP/сек. Целые секции можно улучшить до уровня 5."
+    },
+    "stone": {
+      "name": "Камень",
+      "icon": "🪨",
+      "description": "Добывается киркой. В печи: 2 камня → 1 бетон."
+    },
+    "concrete": {
+      "name": "Бетон",
+      "icon": "▰",
+      "description": "Строительный блок. Ремонт: 1 бетон → 1000 HP. Нужен для улучшения стен и дверей."
+    },
+    "fishing_rod": {
+      "name": "Удочка",
+      "icon": "🎣",
+      "hand": true
+    },
+    "fish": {
+      "name": "Свежая рыба",
+      "icon": "🐟"
+    },
+    "rifle_ak74": {
+      "name": "АК-74",
+      "icon": "🔫",
+      "hand": true
+    },
+    "axe": {
+      "name": "Топор",
+      "icon": "🪓",
+      "hand": true
+    },
+    "flashlight": {
+      "name": "Фонарик",
+      "icon": "🔦",
+      "hand": true
+    },
+    "wood": {
+      "name": "Дерево",
+      "icon": "🪵"
+    },
+    "metal": {
+      "name": "Железо",
+      "icon": "🔩"
+    },
+    "parts": {
+      "name": "Детали",
+      "icon": "⚙️"
+    },
+    "food": {
+      "name": "Еда",
+      "icon": "🥫"
+    },
+    "potato": {
+      "name": "Картофель",
+      "icon": "🥔"
+    },
+    "carrot": {
+      "name": "Морковь",
+      "icon": "🥕"
+    },
+    "tomato": {
+      "name": "Помидоры",
+      "icon": "🍅"
+    },
+    "corn": {
+      "name": "Кукуруза",
+      "icon": "🌽"
+    },
+    "grain": {
+      "name": "Зерно",
+      "icon": "🌾"
+    },
+    "beans": {
+      "name": "Фасоль",
+      "icon": "🫘"
+    },
+    "onion": {
+      "name": "Лук",
+      "icon": "🧅"
+    },
+    "berries": {
+      "name": "Ягоды",
+      "icon": "🍓"
+    },
+    "medicinal_herbs": {
+      "name": "Лекарственные растения",
+      "icon": "🌿"
+    },
+    "technical_crop": {
+      "name": "Техническая культура",
+      "icon": "🌻"
+    },
+    "backpack1": {
+      "name": "Рюкзак I",
+      "icon": "🎒",
+      "equip": "backpack",
+      "capacity": 24
+    },
+    "backpack2": {
+      "name": "Рюкзак II",
+      "icon": "🎒",
+      "equip": "backpack",
+      "capacity": 36
+    },
+    "backpack3": {
+      "name": "Рюкзак III",
+      "icon": "🎒",
+      "equip": "backpack",
+      "capacity": 48
+    },
+    "backpack4": {
+      "name": "Рюкзак IV",
+      "icon": "🎒",
+      "equip": "backpack",
+      "capacity": 60
+    },
+    "vest1": {
+      "name": "Бронежилет I",
+      "icon": "🦺",
+      "equip": "body",
+      "armor": 15
+    },
+    "vest2": {
+      "name": "Бронежилет II",
+      "icon": "🦺",
+      "equip": "body",
+      "armor": 25
+    },
+    "vest3": {
+      "name": "Бронежилет III",
+      "icon": "🦺",
+      "equip": "body",
+      "armor": 40
+    },
+    "vest4": {
+      "name": "Бронежилет IV",
+      "icon": "🛡️",
+      "equip": "body",
+      "armor": 55
+    },
+    "vest5": {
+      "name": "Бронежилет V",
+      "icon": "🛡️",
+      "equip": "body",
+      "armor": 70
+    },
+    "gloves1": {
+      "name": "Перчатки I",
+      "icon": "🧤"
+    },
+    "pants1": {
+      "name": "Штаны I",
+      "icon": "👖",
+      "equip": "legs",
+      "level": 1
+    },
+    "boots1": {
+      "name": "Обувь I",
+      "icon": "👢",
+      "equip": "feet",
+      "level": 1
+    },
+    "meds": {
+      "name": "Медикаменты",
+      "icon": "💊"
+    },
+    "fuel": {
+      "name": "Топливо",
+      "icon": "⛽"
+    },
+    "ammo": {
+      "name": "Патроны 5,45",
+      "icon": "🔫"
+    },
+    "eggs": {
+      "name": "Яйца",
+      "icon": "🥚"
+    },
+    "milk": {
+      "name": "Молоко",
+      "icon": "🥛"
+    },
+    "animal_feed": {
+      "name": "Корм для животных",
+      "icon": "🌾"
+    },
+    "water": {
+      "name": "Вода",
+      "icon": "💧"
+    },
+    "beef": {
+      "name": "Говядина",
+      "icon": "🥩"
+    },
+    "iron": {
+      "name": "Железо",
+      "icon": "🔩"
+    },
+    "copper": {
+      "name": "Медь",
+      "icon": "🟠"
+    },
+    "iron_ore": {
+      "name": "Железная руда",
+      "icon": "🪨"
+    },
+    "copper_ore": {
+      "name": "Медная руда",
+      "icon": "🟤"
+    },
+    "pickaxe": {
+      "name": "Кирка",
+      "icon": "⛏️",
+      "hand": true
+    },
+    "remote": {
+      "name": "Пульт базы",
+      "icon": "📟",
+      "hand": true
+    },
+    "rifle_m4": {
+      "name": "M4",
+      "icon": "🔫",
+      "hand": true
+    },
+    "ammo556": {
+      "name": "Патроны 5,56",
+      "icon": "▰"
+    },
+    "chicken_meat": {
+      "name": "Куриное мясо",
+      "icon": "🍗"
+    },
+    "helmet1": {
+      "name": "Тактический шлем",
+      "icon": "🪖",
+      "equip": "head",
+      "level": 1
+    },
+    "advanced_parts": {
+      "name": "Редкие компоненты",
+      "icon": "🔧"
+    },
+    "magazine_module": {
+      "name": "Увеличенный магазин",
+      "icon": "▥",
+      "description": "Съёмный магазин АК / M4 · 60 патронов. После установки зарядите подходящими патронами."
+    },
+    "cooked_fish": {
+      "name": "Жареная рыба",
+      "icon": "🍽️",
+      "description": "Порция из 0,5 кг рыбы."
+    },
+    "drone014": {
+      "name": "Дрон-компаньон",
+      "icon": "🛸",
+      "robot": true,
+      "description": "Заряд, улучшения и весь груз сохраняются внутри. Можно запустить рядом с собой."
+    },
+    "hmg016": {
+      "name": "Тяжёлый пулемёт",
+      "icon": "▰",
+      "deployable": true,
+      "description": "Автоматический пулемёт на стене. Урон 65 · дальность 850 · круговой обстрел. Патроны 5,45 × 39: до 600. Заберите в рюкзак, чтобы переставить."
+    },
+    "magazine_standard": {
+      "name": "Обычный магазин",
+      "icon": "▥",
+      "description": "Съёмный магазин АК / M4 · 30 патронов. В рюкзаке хранится пустым."
+    }
+  },
+  "recipes": {
+    "hammer": {
+      "station": "craft_bench",
+      "category": "Инструменты",
+      "name": "Молот",
+      "input": {
+        "iron": 8,
+        "wood": 6,
+        "parts": 2
+      },
+      "output": "hammer",
+      "qty": 1,
+      "ms": 15000
+    },
+    "concrete": {
+      "station": "furnace",
+      "category": "Строительство",
+      "name": "Бетон",
+      "input": {
+        "stone": 2
+      },
+      "output": "concrete",
+      "qty": 1,
+      "ms": 2000
+    },
+    "fishing_rod": {
+      "station": "craft_bench",
+      "category": "Инструменты",
+      "name": "Удочка",
+      "input": {
+        "wood": 10,
+        "parts": 2
+      },
+      "output": "fishing_rod",
+      "qty": 1,
+      "ms": 4000
+    },
+    "feed": {
+      "station": "feed_craft",
+      "category": "Корм",
+      "name": "Корм для животных",
+      "input": {
+        "grain": 10
+      },
+      "output": "animal_feed",
+      "qty": 20,
+      "ms": 2500
+    },
+    "iron": {
+      "station": "furnace",
+      "category": "Металлы",
+      "name": "Железо",
+      "input": {
+        "iron_ore": 1
+      },
+      "output": "iron",
+      "qty": 1,
+      "ms": 2000
+    },
+    "copper": {
+      "station": "furnace",
+      "category": "Металлы",
+      "name": "Медь",
+      "input": {
+        "copper_ore": 1
+      },
+      "output": "copper",
+      "qty": 1,
+      "ms": 2000
+    },
+    "ammo": {
+      "station": "craft_bench",
+      "category": "Патроны",
+      "name": "Патроны 5,45 × 39",
+      "input": {
+        "iron": 2,
+        "copper": 1
+      },
+      "output": "ammo",
+      "qty": 30,
+      "ms": 10000
+    },
+    "ammo556": {
+      "station": "craft_bench",
+      "category": "Патроны",
+      "name": "Патроны 5.56 × 45",
+      "input": {
+        "iron": 2,
+        "copper": 1
+      },
+      "output": "ammo556",
+      "qty": 30,
+      "ms": 10000
+    },
+    "rifle_ak74": {
+      "station": "craft_bench",
+      "category": "Оружие",
+      "name": "АК-74",
+      "input": {
+        "iron": 20,
+        "copper": 10,
+        "parts": 4,
+        "wood": 4
+      },
+      "output": "rifle_ak74",
+      "qty": 1,
+      "ms": 60000
+    },
+    "rifle_m4": {
+      "station": "craft_bench",
+      "category": "Оружие",
+      "name": "M4",
+      "input": {
+        "iron": 18,
+        "copper": 12,
+        "parts": 4,
+        "wood": 4
+      },
+      "output": "rifle_m4",
+      "qty": 1,
+      "ms": 60000
+    },
+    "helmet1": {
+      "station": "craft_bench",
+      "category": "Экипировка",
+      "name": "Тактический шлем",
+      "input": {
+        "iron": 12,
+        "copper": 4,
+        "parts": 2
+      },
+      "output": "helmet1",
+      "qty": 1,
+      "ms": 22000
+    },
+    "magazine_module": {
+      "station": "craft_bench",
+      "category": "Модули",
+      "name": "Увеличенный магазин",
+      "input": {
+        "iron": 6,
+        "copper": 2,
+        "parts": 1
+      },
+      "output": "magazine_module",
+      "qty": 1,
+      "ms": 15000
+    },
+    "hmg016": {
+      "station": "craft_bench",
+      "category": "Оборона базы",
+      "name": "Тяжёлый пулемёт",
+      "input": {
+        "iron": 45,
+        "copper": 18,
+        "parts": 12
+      },
+      "output": "hmg016",
+      "qty": 1,
+      "ms": 90000
+    }
+  },
+  "weapons": {
+    "rifle_ak74": {
+      "name": "АК-74",
+      "ammo": "ammo",
+      "caliber": "5,45 × 39",
+      "damage": 35,
+      "delay": 155,
+      "spread": 0.045,
+      "recoil": 0.019,
+      "range": 660,
+      "mag": 30
+    },
+    "rifle_m4": {
+      "name": "M4",
+      "ammo": "ammo556",
+      "caliber": "5.56 × 45",
+      "damage": 28,
+      "delay": 115,
+      "spread": 0.021,
+      "recoil": 0.011,
+      "range": 720,
+      "mag": 30
+    }
+  },
+  "effectiveWeapons": {
+    "rifle_ak74": [
+      {
+        "name": "АК-74",
+        "ammo": "ammo",
+        "caliber": "5,45 × 39",
+        "damage": 35,
+        "delay": 155,
+        "spread": 0.045,
+        "recoil": 0.019,
+        "range": 660,
+        "mag": 30,
+        "reloadMs": 2000,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "АК-74",
+        "ammo": "ammo",
+        "caliber": "5,45 × 39",
+        "damage": 37,
+        "delay": 155,
+        "spread": 0.045,
+        "recoil": 0.019,
+        "range": 660,
+        "mag": 30,
+        "reloadMs": 2000,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "АК-74",
+        "ammo": "ammo",
+        "caliber": "5,45 × 39",
+        "damage": 39,
+        "delay": 155,
+        "spread": 0.045,
+        "recoil": 0.019,
+        "range": 660,
+        "mag": 30,
+        "reloadMs": 2000,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "АК-74",
+        "ammo": "ammo",
+        "caliber": "5,45 × 39",
+        "damage": 40,
+        "delay": 155,
+        "spread": 0.045,
+        "recoil": 0.019,
+        "range": 660,
+        "mag": 30,
+        "reloadMs": 2000,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "АК-74",
+        "ammo": "ammo",
+        "caliber": "5,45 × 39",
+        "damage": 42,
+        "delay": 155,
+        "spread": 0.045,
+        "recoil": 0.019,
+        "range": 660,
+        "mag": 30,
+        "reloadMs": 2000,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "АК-74",
+        "ammo": "ammo",
+        "caliber": "5,45 × 39",
+        "damage": 44,
+        "delay": 155,
+        "spread": 0.045,
+        "recoil": 0.019,
+        "range": 660,
+        "mag": 30,
+        "reloadMs": 2000,
+        "noise": 550,
+        "modules": {}
+      }
+    ],
+    "rifle_m4": [
+      {
+        "name": "M4",
+        "ammo": "ammo556",
+        "caliber": "5.56 × 45",
+        "damage": 28,
+        "delay": 115,
+        "spread": 0.021,
+        "recoil": 0.011,
+        "range": 720,
+        "mag": 30,
+        "reloadMs": 1800,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "M4",
+        "ammo": "ammo556",
+        "caliber": "5.56 × 45",
+        "damage": 29,
+        "delay": 115,
+        "spread": 0.021,
+        "recoil": 0.011,
+        "range": 720,
+        "mag": 30,
+        "reloadMs": 1800,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "M4",
+        "ammo": "ammo556",
+        "caliber": "5.56 × 45",
+        "damage": 31,
+        "delay": 115,
+        "spread": 0.021,
+        "recoil": 0.011,
+        "range": 720,
+        "mag": 30,
+        "reloadMs": 1800,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "M4",
+        "ammo": "ammo556",
+        "caliber": "5.56 × 45",
+        "damage": 32,
+        "delay": 115,
+        "spread": 0.021,
+        "recoil": 0.011,
+        "range": 720,
+        "mag": 30,
+        "reloadMs": 1800,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "M4",
+        "ammo": "ammo556",
+        "caliber": "5.56 × 45",
+        "damage": 34,
+        "delay": 115,
+        "spread": 0.021,
+        "recoil": 0.011,
+        "range": 720,
+        "mag": 30,
+        "reloadMs": 1800,
+        "noise": 550,
+        "modules": {}
+      },
+      {
+        "name": "M4",
+        "ammo": "ammo556",
+        "caliber": "5.56 × 45",
+        "damage": 35,
+        "delay": 115,
+        "spread": 0.021,
+        "recoil": 0.011,
+        "range": 720,
+        "mag": 30,
+        "reloadMs": 1800,
+        "noise": 550,
+        "modules": {}
+      }
+    ]
+  },
+  "magazines": {
+    "magazine_standard": 30,
+    "magazine_module": 60
+  },
+  "enemies": {
+    "normal": {
+      "name": "Заражённый",
+      "hp": 120,
+      "radius": 18,
+      "speed": 0.38,
+      "chaseSpeed": 1.65,
+      "damage": 12,
+      "cooldown": 1050,
+      "art": "walker",
+      "size": 76,
+      "color": "#937963"
+    },
+    "heavy": {
+      "name": "Громила",
+      "hp": 420,
+      "radius": 28,
+      "speed": 0.27,
+      "chaseSpeed": 1.15,
+      "damage": 34,
+      "cooldown": 1450,
+      "art": "brute",
+      "size": 116,
+      "color": "#826c5e"
+    },
+    "fast": {
+      "name": "Ловчий",
+      "hp": 65,
+      "radius": 16,
+      "speed": 0.58,
+      "chaseSpeed": 2.65,
+      "damage": 7,
+      "cooldown": 850,
+      "art": "runner",
+      "size": 85,
+      "color": "#8b8074"
+    },
+    "leaper": {
+      "name": "Прыгун",
+      "hp": 75,
+      "radius": 17,
+      "speed": 0.44,
+      "chaseSpeed": 1.9,
+      "damage": 8,
+      "cooldown": 1200,
+      "art": "leaper",
+      "size": 86,
+      "color": "#9d9c77"
+    },
+    "bloater": {
+      "name": "Взрывник",
+      "hp": 240,
+      "radius": 26,
+      "speed": 0.24,
+      "chaseSpeed": 1.05,
+      "damage": 0,
+      "cooldown": 1800,
+      "art": "bloater",
+      "size": 100,
+      "color": "#96925c"
+    }
+  },
+  "dayXEnemies": {
+    "normal": {
+      "name": "Заражённый",
+      "hp": 180,
+      "radius": 18,
+      "speed": 0.5700000000000001,
+      "chaseSpeed": 2.4749999999999996,
+      "damage": 18,
+      "cooldown": 700,
+      "art": "walker",
+      "size": 76,
+      "color": "#937963"
+    },
+    "heavy": {
+      "name": "Громила",
+      "hp": 630,
+      "radius": 28,
+      "speed": 0.405,
+      "chaseSpeed": 1.7249999999999999,
+      "damage": 51,
+      "cooldown": 966.6666666666666,
+      "art": "brute",
+      "size": 116,
+      "color": "#826c5e"
+    },
+    "fast": {
+      "name": "Ловчий",
+      "hp": 97.5,
+      "radius": 16,
+      "speed": 0.8699999999999999,
+      "chaseSpeed": 3.9749999999999996,
+      "damage": 10.5,
+      "cooldown": 566.6666666666666,
+      "art": "runner",
+      "size": 85,
+      "color": "#8b8074"
+    },
+    "leaper": {
+      "name": "Прыгун",
+      "hp": 112.5,
+      "radius": 17,
+      "speed": 0.66,
+      "chaseSpeed": 2.8499999999999996,
+      "damage": 12,
+      "cooldown": 800,
+      "art": "leaper",
+      "size": 86,
+      "color": "#9d9c77"
+    },
+    "bloater": {
+      "name": "Взрывник",
+      "hp": 360,
+      "radius": 26,
+      "speed": 0.36,
+      "chaseSpeed": 1.5750000000000002,
+      "damage": 0,
+      "cooldown": 1200,
+      "art": "bloater",
+      "size": 100,
+      "color": "#96925c"
+    }
+  },
+  "equipment": {
+    "backpack1": [
+      {
+        "level": 0,
+        "name": "Рюкзак I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 24
+      },
+      {
+        "level": 1,
+        "name": "Рюкзак I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 24
+      },
+      {
+        "level": 2,
+        "name": "Рюкзак I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 24
+      },
+      {
+        "level": 3,
+        "name": "Рюкзак I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 24
+      },
+      {
+        "level": 4,
+        "name": "Рюкзак I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 24
+      },
+      {
+        "level": 5,
+        "name": "Рюкзак I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 24
+      }
+    ],
+    "backpack2": [
+      {
+        "level": 0,
+        "name": "Рюкзак II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 36
+      },
+      {
+        "level": 1,
+        "name": "Рюкзак II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 36
+      },
+      {
+        "level": 2,
+        "name": "Рюкзак II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 36
+      },
+      {
+        "level": 3,
+        "name": "Рюкзак II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 36
+      },
+      {
+        "level": 4,
+        "name": "Рюкзак II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 36
+      },
+      {
+        "level": 5,
+        "name": "Рюкзак II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 36
+      }
+    ],
+    "backpack3": [
+      {
+        "level": 0,
+        "name": "Рюкзак III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 48
+      },
+      {
+        "level": 1,
+        "name": "Рюкзак III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 48
+      },
+      {
+        "level": 2,
+        "name": "Рюкзак III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 48
+      },
+      {
+        "level": 3,
+        "name": "Рюкзак III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 48
+      },
+      {
+        "level": 4,
+        "name": "Рюкзак III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 48
+      },
+      {
+        "level": 5,
+        "name": "Рюкзак III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 48
+      }
+    ],
+    "backpack4": [
+      {
+        "level": 0,
+        "name": "Рюкзак IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 60
+      },
+      {
+        "level": 1,
+        "name": "Рюкзак IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 60
+      },
+      {
+        "level": 2,
+        "name": "Рюкзак IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 60
+      },
+      {
+        "level": 3,
+        "name": "Рюкзак IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 60
+      },
+      {
+        "level": 4,
+        "name": "Рюкзак IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 60
+      },
+      {
+        "level": 5,
+        "name": "Рюкзак IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "capacity": 60
+      }
+    ],
+    "vest1": [
+      {
+        "level": 0,
+        "name": "Бронежилет I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 15,
+        "hp": 15
+      },
+      {
+        "level": 1,
+        "name": "Бронежилет I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 17,
+        "hp": 27
+      },
+      {
+        "level": 2,
+        "name": "Бронежилет I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 19,
+        "hp": 39
+      },
+      {
+        "level": 3,
+        "name": "Бронежилет I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 21,
+        "hp": 51
+      },
+      {
+        "level": 4,
+        "name": "Бронежилет I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 23,
+        "hp": 63
+      },
+      {
+        "level": 5,
+        "name": "Бронежилет I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 25,
+        "hp": 75
+      }
+    ],
+    "vest2": [
+      {
+        "level": 0,
+        "name": "Бронежилет II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 25,
+        "hp": 15
+      },
+      {
+        "level": 1,
+        "name": "Бронежилет II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 27,
+        "hp": 27
+      },
+      {
+        "level": 2,
+        "name": "Бронежилет II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 29,
+        "hp": 39
+      },
+      {
+        "level": 3,
+        "name": "Бронежилет II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 31,
+        "hp": 51
+      },
+      {
+        "level": 4,
+        "name": "Бронежилет II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 33,
+        "hp": 63
+      },
+      {
+        "level": 5,
+        "name": "Бронежилет II",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 35,
+        "hp": 75
+      }
+    ],
+    "vest3": [
+      {
+        "level": 0,
+        "name": "Бронежилет III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 40,
+        "hp": 15
+      },
+      {
+        "level": 1,
+        "name": "Бронежилет III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 42,
+        "hp": 27
+      },
+      {
+        "level": 2,
+        "name": "Бронежилет III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 44,
+        "hp": 39
+      },
+      {
+        "level": 3,
+        "name": "Бронежилет III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 46,
+        "hp": 51
+      },
+      {
+        "level": 4,
+        "name": "Бронежилет III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 48,
+        "hp": 63
+      },
+      {
+        "level": 5,
+        "name": "Бронежилет III",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 50,
+        "hp": 75
+      }
+    ],
+    "vest4": [
+      {
+        "level": 0,
+        "name": "Бронежилет IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 55,
+        "hp": 15
+      },
+      {
+        "level": 1,
+        "name": "Бронежилет IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 57,
+        "hp": 27
+      },
+      {
+        "level": 2,
+        "name": "Бронежилет IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 59,
+        "hp": 39
+      },
+      {
+        "level": 3,
+        "name": "Бронежилет IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 61,
+        "hp": 51
+      },
+      {
+        "level": 4,
+        "name": "Бронежилет IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 63,
+        "hp": 63
+      },
+      {
+        "level": 5,
+        "name": "Бронежилет IV",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 65,
+        "hp": 75
+      }
+    ],
+    "vest5": [
+      {
+        "level": 0,
+        "name": "Бронежилет V",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 70,
+        "hp": 15
+      },
+      {
+        "level": 1,
+        "name": "Бронежилет V",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 72,
+        "hp": 27
+      },
+      {
+        "level": 2,
+        "name": "Бронежилет V",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 74,
+        "hp": 39
+      },
+      {
+        "level": 3,
+        "name": "Бронежилет V",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 76,
+        "hp": 51
+      },
+      {
+        "level": 4,
+        "name": "Бронежилет V",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 78,
+        "hp": 63
+      },
+      {
+        "level": 5,
+        "name": "Бронежилет V",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "armor": 80,
+        "hp": 75
+      }
+    ],
+    "pants1": [
+      {
+        "level": 0,
+        "name": "Штаны I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 10
+      },
+      {
+        "level": 1,
+        "name": "Штаны I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 19
+      },
+      {
+        "level": 2,
+        "name": "Штаны I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 28
+      },
+      {
+        "level": 3,
+        "name": "Штаны I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 37
+      },
+      {
+        "level": 4,
+        "name": "Штаны I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 46
+      },
+      {
+        "level": 5,
+        "name": "Штаны I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 55
+      }
+    ],
+    "boots1": [
+      {
+        "level": 0,
+        "name": "Обувь I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 5,
+        "speed": 0.02
+      },
+      {
+        "level": 1,
+        "name": "Обувь I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 11,
+        "speed": 0.04
+      },
+      {
+        "level": 2,
+        "name": "Обувь I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 17,
+        "speed": 0.06
+      },
+      {
+        "level": 3,
+        "name": "Обувь I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 23,
+        "speed": 0.08
+      },
+      {
+        "level": 4,
+        "name": "Обувь I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 29,
+        "speed": 0.1
+      },
+      {
+        "level": 5,
+        "name": "Обувь I",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 35,
+        "speed": 0.12000000000000001
+      }
+    ],
+    "helmet1": [
+      {
+        "level": 0,
+        "name": "Тактический шлем",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 5,
+        "accuracy": 0.03
+      },
+      {
+        "level": 1,
+        "name": "Тактический шлем",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 11,
+        "accuracy": 0.05
+      },
+      {
+        "level": 2,
+        "name": "Тактический шлем",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 17,
+        "accuracy": 0.07
+      },
+      {
+        "level": 3,
+        "name": "Тактический шлем",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 23,
+        "accuracy": 0.09
+      },
+      {
+        "level": 4,
+        "name": "Тактический шлем",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 29,
+        "accuracy": 0.11
+      },
+      {
+        "level": 5,
+        "name": "Тактический шлем",
+        "variant": "balanced",
+        "specialization": "balanced",
+        "hp": 35,
+        "accuracy": 0.13
+      }
+    ]
+  },
+  "upgradeCosts": {
+    "rifle_ak74": [
+      {
+        "iron": 32,
+        "copper": 16,
+        "parts": 10
+      },
+      {
+        "iron": 64,
+        "copper": 32,
+        "parts": 20
+      },
+      {
+        "iron": 96,
+        "copper": 48,
+        "parts": 30
+      },
+      {
+        "iron": 128,
+        "copper": 64,
+        "parts": 40,
+        "advanced_parts": 3
+      },
+      {
+        "iron": 160,
+        "copper": 80,
+        "parts": 50,
+        "advanced_parts": 6
+      }
+    ],
+    "rifle_m4": [
+      {
+        "iron": 32,
+        "copper": 16,
+        "parts": 10
+      },
+      {
+        "iron": 64,
+        "copper": 32,
+        "parts": 20
+      },
+      {
+        "iron": 96,
+        "copper": 48,
+        "parts": 30
+      },
+      {
+        "iron": 128,
+        "copper": 64,
+        "parts": 40,
+        "advanced_parts": 3
+      },
+      {
+        "iron": 160,
+        "copper": 80,
+        "parts": 50,
+        "advanced_parts": 6
+      }
+    ],
+    "vest5": [
+      {
+        "iron": 25,
+        "copper": 12,
+        "parts": 8
+      },
+      {
+        "iron": 50,
+        "copper": 24,
+        "parts": 16
+      },
+      {
+        "iron": 75,
+        "copper": 36,
+        "parts": 24
+      },
+      {
+        "iron": 100,
+        "copper": 48,
+        "parts": 32,
+        "advanced_parts": 2
+      },
+      {
+        "iron": 125,
+        "copper": 60,
+        "parts": 40,
+        "advanced_parts": 4
+      }
+    ],
+    "drone014": [
+      {
+        "iron": 30,
+        "copper": 18,
+        "parts": 12
+      },
+      {
+        "iron": 60,
+        "copper": 36,
+        "parts": 24
+      },
+      {
+        "iron": 90,
+        "copper": 54,
+        "parts": 36
+      },
+      {
+        "iron": 120,
+        "copper": 72,
+        "parts": 48,
+        "advanced_parts": 4
+      },
+      {
+        "iron": 150,
+        "copper": 90,
+        "parts": 60,
+        "advanced_parts": 8
+      }
+    ],
+    "hmg016": [
+      {
+        "iron": 50,
+        "copper": 25,
+        "parts": 15
+      },
+      {
+        "iron": 100,
+        "copper": 50,
+        "parts": 30
+      },
+      {
+        "iron": 150,
+        "copper": 75,
+        "parts": 45
+      },
+      {
+        "iron": 200,
+        "copper": 100,
+        "parts": 60,
+        "advanced_parts": 5
+      },
+      {
+        "iron": 250,
+        "copper": 125,
+        "parts": 75,
+        "advanced_parts": 10
+      }
+    ]
+  },
+  "drone": {
+    "defaults": {
+      "schema": 1,
+      "id": "drone014",
+      "name": "Спутник",
+      "x": 1264,
+      "y": 695,
+      "scene": "bunker",
+      "battery": 100,
+      "hp": 100,
+      "ammo": 30,
+      "packed": false,
+      "mode": "defense",
+      "combatMode": "defense",
+      "resumeTask": null,
+      "task": "docked",
+      "modules": {
+        "body": 0,
+        "battery": 0,
+        "cargo": 0,
+        "weapon": 0,
+        "engine": 0
+      },
+      "cargo": [],
+      "light": false,
+      "autoCollect": true,
+      "economy": true,
+      "guard": null,
+      "targetIndex": null,
+      "lowWarn": false,
+      "autoReturn": true
+    },
+    "station": {
+      "id": "robots014_dock",
+      "kind": "robots014_dock",
+      "name": "Станция дрона",
+      "x": 1190,
+      "y": 650,
+      "w": 148,
+      "h": 86,
+      "range": 65,
+      "detectionRadius": 52,
+      "watts": 1,
+      "returnThreshold": 15
+    },
+    "combat": {
+      "ammoType": "ammo",
+      "capacity": 600,
+      "damage": 20,
+      "intervalMs": 155,
+      "range": 270
+    },
+    "maxHP": 100,
+    "cargoCapacity": 12
+  },
+  "turret": {
+    "damage": 65,
+    "range": 850,
+    "capacity": 600,
+    "ammoType": "ammo",
+    "intervalMs": 190,
+    "turnRate": 3.8
+  },
+  "power": {
+    "supply": 10,
+    "capacity": 100,
+    "rooms": {
+      "workshop": "Мастерская",
+      "storage": "Склад",
+      "room4": "Медблок",
+      "room5": "Энергоблок",
+      "room6": "Кухня",
+      "room7": "Жилая комната",
+      "farm": "Ферма",
+      "corridor": "Коридор",
+      "yard": "Двор"
+    },
+    "devices": [
+      {
+        "id": "light_workshop",
+        "room": "workshop",
+        "watts": 0.12,
+        "enabled": true
+      },
+      {
+        "id": "light_storage",
+        "room": "storage",
+        "watts": 0.12,
+        "enabled": true
+      },
+      {
+        "id": "light_room4",
+        "room": "room4",
+        "watts": 0.12,
+        "enabled": true
+      },
+      {
+        "id": "light_room5",
+        "room": "room5",
+        "watts": 0.12,
+        "enabled": true
+      },
+      {
+        "id": "light_room6",
+        "room": "room6",
+        "watts": 0.12,
+        "enabled": true
+      },
+      {
+        "id": "light_room7",
+        "room": "room7",
+        "watts": 0.12,
+        "enabled": true
+      },
+      {
+        "id": "light_farm",
+        "room": "farm",
+        "watts": 0.24,
+        "enabled": true
+      },
+      {
+        "id": "light_corridor",
+        "room": "corridor",
+        "watts": 0.18,
+        "enabled": true
+      },
+      {
+        "id": "door_workshop",
+        "room": "workshop",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
+        "id": "door_storage",
+        "room": "storage",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
+        "id": "door_room4",
+        "room": "room4",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
+        "id": "door_room5",
+        "room": "room5",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
+        "id": "door_room6",
+        "room": "room6",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
+        "id": "door_room7",
+        "room": "room7",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
+        "id": "door_farm",
+        "room": "farm",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
+        "id": "spot_left",
+        "room": "yard",
+        "watts": 0.95,
+        "enabled": true
+      },
+      {
+        "id": "spot_right",
+        "room": "yard",
+        "watts": 0.95,
+        "enabled": true
+      },
+      {
+        "id": "furnace",
+        "room": "workshop",
+        "watts": 6,
+        "enabled": true
+      },
+      {
+        "id": "craft_bench",
+        "room": "workshop",
+        "watts": 2,
+        "enabled": true
+      },
+      {
+        "id": "feed_craft",
+        "room": "farm",
+        "watts": 1,
+        "enabled": true
+      },
+      {
+        "id": "robot_drone_charge",
+        "room": "room5",
+        "watts": 1,
+        "enabled": true
+      },
+      {
+        "id": "irrigation014",
+        "room": "farm",
+        "watts": 0.5,
+        "enabled": true
+      },
+      {
+        "id": "upgrade0161",
+        "room": "workshop",
+        "watts": 2,
+        "enabled": true
+      }
+    ],
+    "battery": {
+      "charge": 0,
+      "capacity": 1.5,
+      "enabled": true,
+      "maxCharge": 3,
+      "maxDischarge": 6
+    }
+  },
+  "wallHP": [
+    0,
+    10000,
+    20000,
+    40000,
+    60000,
+    100000
+  ],
+  "wallCosts": {
+    "2": {
+      "concrete": 20,
+      "iron": 5
+    },
+    "3": {
+      "concrete": 40,
+      "iron": 10
+    },
+    "4": {
+      "concrete": 60,
+      "iron": 15
+    },
+    "5": {
+      "concrete": 100,
+      "iron": 25
+    }
+  },
+  "wallLayout": [
+    {
+      "id": "v091wall020_corner_NW",
+      "x": 138,
+      "y": 98,
+      "w": 160,
+      "h": 160,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_corner_NE",
+      "x": 1302,
+      "y": 98,
+      "w": 160,
+      "h": 160,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_corner_SE",
+      "x": 1302,
+      "y": 942,
+      "w": 160,
+      "h": 160,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_corner_SW",
+      "x": 138,
+      "y": 942,
+      "w": 160,
+      "h": 160,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_N_0",
+      "x": 298,
+      "y": 98,
+      "w": 334.6666666666667,
+      "h": 104,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_N_1",
+      "x": 632.6666666666667,
+      "y": 98,
+      "w": 334.6666666666667,
+      "h": 104,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_N_2",
+      "x": 967.3333333333334,
+      "y": 98,
+      "w": 334.6666666666667,
+      "h": 104,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_S_0",
+      "x": 298,
+      "y": 998,
+      "w": 334.6666666666667,
+      "h": 104,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "gate",
+      "x": 632.6666666666667,
+      "y": 998,
+      "w": 334.6666666666667,
+      "h": 104,
+      "group": "gate",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_S_2",
+      "x": 967.3333333333334,
+      "y": 998,
+      "w": 334.6666666666667,
+      "h": 104,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_W_0",
+      "x": 138,
+      "y": 258,
+      "w": 104,
+      "h": 228,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_W_1",
+      "x": 138,
+      "y": 486,
+      "w": 104,
+      "h": 228,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_W_2",
+      "x": 138,
+      "y": 714,
+      "w": 104,
+      "h": 228,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_E_0",
+      "x": 1358,
+      "y": 258,
+      "w": 104,
+      "h": 228,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_E_1",
+      "x": 1358,
+      "y": 486,
+      "w": 104,
+      "h": 228,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v091wall020_E_2",
+      "x": 1358,
+      "y": 714,
+      "w": 104,
+      "h": 228,
+      "group": "outer",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandNL",
+      "x": 610,
+      "y": 420,
+      "w": 140,
+      "h": 32,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandNR",
+      "x": 850,
+      "y": 420,
+      "w": 140,
+      "h": 32,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandGateN",
+      "x": 750,
+      "y": 420,
+      "w": 100,
+      "h": 32,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandSL",
+      "x": 610,
+      "y": 728,
+      "w": 140,
+      "h": 32,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandSR",
+      "x": 850,
+      "y": 728,
+      "w": 140,
+      "h": 32,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandGateS",
+      "x": 750,
+      "y": 728,
+      "w": 100,
+      "h": 32,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandW_0",
+      "x": 610,
+      "y": 452,
+      "w": 32,
+      "h": 92,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandW_1",
+      "x": 610,
+      "y": 544,
+      "w": 32,
+      "h": 92,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandW_2",
+      "x": 610,
+      "y": 636,
+      "w": 32,
+      "h": 92,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandE_0",
+      "x": 958,
+      "y": 452,
+      "w": 32,
+      "h": 92,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandE_1",
+      "x": 958,
+      "y": 544,
+      "w": 32,
+      "h": 92,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    },
+    {
+      "id": "v015commandE_2",
+      "x": 958,
+      "y": 636,
+      "w": 32,
+      "h": 92,
+      "group": "inner",
+      "level": 1,
+      "hp": 10000,
+      "maxHp": 10000
+    }
+  ],
+  "player": {
+    "x": 800,
+    "y": 860,
+    "radius": 10,
+    "health": 100,
+    "maxHealth": 100,
+    "walkSpeed": 3.15,
+    "runSpeed": 5.25,
+    "aimX": 0,
+    "aimY": -1,
+    "moving": false,
+    "running": false,
+    "lastFootstep": 0,
+    "lastDamage": 0,
+    "walkAnimation": 0,
+    "wallLevel": false
+  },
+  "farm": [
+    {
+      "name": "Картофель",
+      "icon": "🥔",
+      "itemType": "potato",
+      "index": 0,
+      "growMs": 1080000
+    },
+    {
+      "name": "Морковь",
+      "icon": "🥕",
+      "itemType": "carrot",
+      "index": 1,
+      "growMs": 780000
+    },
+    {
+      "name": "Помидоры",
+      "icon": "🍅",
+      "itemType": "tomato",
+      "index": 2,
+      "growMs": 960000
+    },
+    {
+      "name": "Кукуруза",
+      "icon": "🌽",
+      "itemType": "corn",
+      "index": 3,
+      "growMs": 900000
+    },
+    {
+      "name": "Зерно",
+      "icon": "🌾",
+      "itemType": "grain",
+      "index": 4,
+      "growMs": 1140000
+    },
+    {
+      "name": "Фасоль",
+      "icon": "🫘",
+      "itemType": "beans",
+      "index": 5,
+      "growMs": 600000
+    },
+    {
+      "name": "Лук",
+      "icon": "🧅",
+      "itemType": "onion",
+      "index": 6,
+      "growMs": 1020000
+    },
+    {
+      "name": "Ягоды",
+      "icon": "🍓",
+      "itemType": "berries",
+      "index": 7,
+      "growMs": 750000
+    },
+    {
+      "name": "Лекарственные",
+      "icon": "🌿",
+      "itemType": "medicinal_herbs",
+      "index": 8,
+      "growMs": 570000
+    },
+    {
+      "name": "Технические",
+      "icon": "🌻",
+      "itemType": "technical_crop",
+      "index": 9,
+      "growMs": 1200000
+    }
+  ],
+  "farmBeds": [
+    {
+      "x": 165,
+      "y": -885,
+      "w": 205,
+      "h": 535
+    },
+    {
+      "x": 395,
+      "y": -885,
+      "w": 205,
+      "h": 535
+    },
+    {
+      "x": 625,
+      "y": -885,
+      "w": 205,
+      "h": 535
+    },
+    {
+      "x": 855,
+      "y": -885,
+      "w": 205,
+      "h": 535
+    },
+    {
+      "x": 1085,
+      "y": -885,
+      "w": 205,
+      "h": 535
+    }
+  ],
+  "save": {
+    "topKeys": [
+      "schema",
+      "gameVersion",
+      "savedAt",
+      "gateOpen",
+      "handSlots",
+      "activeHandSlot",
+      "flashlightOn",
+      "starterPending",
+      "trees",
+      "player",
+      "magazine",
+      "bag",
+      "equipment",
+      "storage",
+      "farmClock",
+      "farm",
+      "loot",
+      "zombies",
+      "livestock",
+      "feedCraft",
+      "saveName",
+      "v09",
+      "v091",
+      "v010",
+      "gathering",
+      "farmV011",
+      "farm014",
+      "world011",
+      "living011",
+      "expansion012",
+      "quick013",
+      "city013",
+      "robots014",
+      "farmRecovery0141",
+      "farmPlantingStock0141",
+      "base015",
+      "lighting016",
+      "turret016",
+      "upgrade0161",
+      "monsters017",
+      "building018"
+    ],
+    "schemas": {
+      "v09": 1,
+      "v091": 1,
+      "v010": 1,
+      "gathering": 1,
+      "farmV011": 1,
+      "farm014": 1,
+      "world011": 2,
+      "living011": 1,
+      "expansion012": 1,
+      "quick013": 1,
+      "city013": 1,
+      "robots014": 1,
+      "base015": 4,
+      "lighting016": 1,
+      "turret016": 1,
+      "upgrade0161": 1,
+      "monsters017": 2,
+      "building018": 1
+    },
+    "registeredModules": [
+      "inventory",
+      "combat",
+      "craft",
+      "world",
+      "energy",
+      "progression",
+      "camera"
+    ]
+  },
+  "exposedAPIs": {
+    "V09World": [
+      "ores",
+      "well",
+      "lake",
+      "drawOre",
+      "tickMining",
+      "stopMining",
+      "miningState",
+      "resumeMining",
+      "capture",
+      "validate",
+      "restore",
+      "isMining"
+    ],
+    "V020Walls": [
+      "bounds",
+      "courtyard",
+      "cornerSize",
+      "gate",
+      "corners",
+      "stairs",
+      "create",
+      "perimeter",
+      "inside",
+      "supportAt",
+      "usable",
+      "overlap",
+      "oldLayout",
+      "atlas",
+      "image",
+      "ready",
+      "stage",
+      "cracks",
+      "drawWall",
+      "drawStairs",
+      "inwardSafePoint"
+    ],
+    "V091Fortress": [
+      "corners",
+      "stairs",
+      "decks",
+      "innerGate",
+      "vestibule",
+      "cancelGroundRequest",
+      "isElevated",
+      "elevatedCollision",
+      "elevatedClear",
+      "findPath",
+      "handlePoint",
+      "handleObject",
+      "handleAutoWalk",
+      "cancelRoute",
+      "lightCollision",
+      "lightObstacles",
+      "upperObstacleCollision",
+      "canonicalPosition",
+      "capture",
+      "validate",
+      "restore",
+      "jumpInward",
+      "inwardLanding",
+      "toggleInnerGate",
+      "landingFor",
+      "transitioning",
+      "innerGateOpen"
+    ],
+    "V091Loot": [
+      "dayMs",
+      "refresh",
+      "validate",
+      "capture",
+      "restore"
+    ],
+    "V091Equipment": [
+      "unequip",
+      "render"
+    ],
+    "V09Saves": [
+      "open",
+      "newGame",
+      "load",
+      "importRaw",
+      "download",
+      "rename",
+      "name",
+      "activeSlot",
+      "chickenBreedMs",
+      "deleteSlot"
+    ],
+    "V010": [
+      "modules",
+      "on",
+      "emit",
+      "register",
+      "log",
+      "initialModules"
+    ],
+    "V010Inventory": [
+      "cell",
+      "startPointer",
+      "list",
+      "capacity",
+      "clickSuppressed",
+      "capture",
+      "restore",
+      "validate",
+      "openExternalChest",
+      "move",
+      "transfer",
+      "split",
+      "sort",
+      "equip",
+      "unequip",
+      "selectedItem",
+      "selectUid",
+      "materialCount",
+      "consumeMaterials",
+      "putMaterials",
+      "putMaterialsAtomic",
+      "insertItem",
+      "render",
+      "details",
+      "bulk",
+      "refill",
+      "setPreset"
+    ],
+    "V010Combat": [
+      "capture",
+      "restore",
+      "validate",
+      "validateItem",
+      "getItemStats",
+      "gunSpec",
+      "refreshStats",
+      "ensure",
+      "rollFoundItem",
+      "currentWeapon",
+      "tick",
+      "cancelReload",
+      "upgrade",
+      "costs",
+      "install",
+      "detach",
+      "openWorkshop",
+      "renderWorkshop",
+      "practiceTarget",
+      "setPractice",
+      "practiceAllowed",
+      "modules",
+      "reloading",
+      "practice"
+    ],
+    "V010World": [
+      "regions",
+      "places",
+      "cars",
+      "caches",
+      "shortcuts",
+      "newOres",
+      "newTrees",
+      "settings",
+      "TYPES",
+      "registerSpawns",
+      "spawnAt",
+      "targetCount",
+      "migrateData",
+      "capture",
+      "restore",
+      "validate",
+      "setSetting",
+      "showDifficulty",
+      "zombieDamage",
+      "openCache",
+      "lootFor",
+      "noise",
+      "sneaking",
+      "setSneaking"
+    ],
+    "V010Energy": [
+      "battery",
+      "allocation",
+      "capture",
+      "snapshot",
+      "restore",
+      "validate",
+      "setRoomPriority",
+      "setDevicePriority",
+      "roomPriority",
+      "devicePriority",
+      "open",
+      "remainingTime",
+      "flow"
+    ],
+    "V010Progression": [
+      "TECH",
+      "ACH",
+      "ORDERS",
+      "GOALS",
+      "record",
+      "discover",
+      "isUnlocked",
+      "unlock",
+      "claim",
+      "collectPending",
+      "startOrder",
+      "pin",
+      "show",
+      "log",
+      "tick",
+      "capture",
+      "restore",
+      "validate",
+      "state"
+    ],
+    "V010Camera": [
+      "point",
+      "inverse",
+      "view",
+      "setZoom",
+      "capture",
+      "restore",
+      "validate",
+      "showMap",
+      "mapDraw",
+      "drawFull",
+      "closeMap",
+      "clearGoal",
+      "goal",
+      "selected",
+      "setSelected",
+      "setGoal",
+      "mapBounds",
+      "mapViewport",
+      "zoom",
+      "targetZoom",
+      "tilt",
+      "reveal",
+      "seen"
+    ],
+    "V0105": [
+      "tapWorld",
+      "equip",
+      "markers",
+      "drawMapMarkers",
+      "showHistory",
+      "history",
+      "target",
+      "contextHand"
+    ],
+    "V011Art": [
+      "sources",
+      "ready",
+      "bounds",
+      "fit",
+      "frames",
+      "image",
+      "draw",
+      "drawStretch"
+    ],
+    "V011UI": [
+      "details",
+      "cardHTML",
+      "statsHTML",
+      "safeArea"
+    ],
+    "V011CraftUI": [
+      "ammunition"
+    ],
+    "V011Farm": [
+      "state",
+      "settle",
+      "plant",
+      "beginBed",
+      "plantOne",
+      "harvestOne",
+      "plants",
+      "ready",
+      "pumpDemand",
+      "setPowered",
+      "progress",
+      "spraying",
+      "refill",
+      "openWater",
+      "draw",
+      "floor",
+      "drawAnimal",
+      "tankRect",
+      "troughs",
+      "cowStalls",
+      "wetBetween",
+      "validateSave",
+      "constants"
+    ],
+    "V011World": [
+      "filters",
+      "setFilter",
+      "mapEnabled",
+      "buildings",
+      "containers",
+      "inside",
+      "doorRect",
+      "walls",
+      "toggleDoor",
+      "tick",
+      "drawRoofs",
+      "corpseAlpha",
+      "capture",
+      "validate",
+      "registerBuilding",
+      "obsoleteFence"
+    ],
+    "V011Rooms": [
+      "floor",
+      "walls",
+      "corridorWalls",
+      "wall",
+      "shadow",
+      "storage",
+      "chest",
+      "energy",
+      "workshop",
+      "paintDarkness",
+      "lights",
+      "fan",
+      "lidState",
+      "safeRestoredPosition",
+      "animation",
+      "cacheSize"
+    ],
+    "V011Living": [
+      "drawRoom",
+      "start",
+      "stop",
+      "tick",
+      "state",
+      "bed",
+      "shower",
+      "fixtures",
+      "bathDoor"
+    ],
+    "V012Expansion": [
+      "bounds",
+      "previous",
+      "roads",
+      "regions",
+      "places",
+      "cars",
+      "trees",
+      "ores",
+      "spawnPoints",
+      "migrateData",
+      "roadDistance"
+    ],
+    "V012Map": [
+      "setOptions",
+      "inputs",
+      "drawRoads"
+    ],
+    "V012Windows": [
+      "setOpacity",
+      "cycle",
+      "opacity",
+      "storageKey",
+      "levels"
+    ],
+    "V012Effects": [
+      "pickaxeSwing",
+      "oreImpactTransform",
+      "drawOreImpact",
+      "drawCar"
+    ],
+    "V012Fishing": [
+      "spots",
+      "boats",
+      "start",
+      "stop",
+      "tick",
+      "phase",
+      "drawHeld",
+      "drawWater",
+      "delay",
+      "shoreTarget",
+      "state"
+    ],
+    "V014Fish": [
+      "normalize",
+      "portion",
+      "append",
+      "remove",
+      "walk",
+      "validateSave",
+      "migrate",
+      "weight"
+    ],
+    "V013Inventory": [
+      "items",
+      "sync",
+      "returnItem",
+      "cook",
+      "fishWeight",
+      "equip"
+    ],
+    "V013Lake": [
+      "fish",
+      "choose",
+      "release",
+      "caught",
+      "tick",
+      "draw",
+      "wet",
+      "chosen"
+    ],
+    "V013City": [
+      "cars",
+      "gas",
+      "mall",
+      "floors",
+      "stair",
+      "roads",
+      "drawCar",
+      "drawRoads",
+      "tick",
+      "setFloor",
+      "floor",
+      "clock",
+      "dayMs"
+    ],
+    "V0141DroneMotion": [
+      "create"
+    ],
+    "V014Robots": [
+      "state",
+      "stationInfo",
+      "install",
+      "stationNear",
+      "returnProgress",
+      "setAutoReturn",
+      "combat",
+      "combatEnabled",
+      "setCombat",
+      "availableAmmo",
+      "dockPosition",
+      "station",
+      "status",
+      "capacity",
+      "maxHp",
+      "near",
+      "atDock",
+      "open",
+      "openStation",
+      "follow",
+      "recall",
+      "returnToDock",
+      "attack",
+      "guard",
+      "mode",
+      "pack",
+      "deploy",
+      "store",
+      "take",
+      "reload",
+      "upgrade",
+      "repair",
+      "cost",
+      "transfer",
+      "validate",
+      "tick",
+      "doorNear",
+      "doorOccupies",
+      "planningKey",
+      "motion",
+      "statusText",
+      "changed",
+      "draw",
+      "setLootSelection",
+      "dispatchLoot"
+    ],
+    "V014Controls": [
+      "target",
+      "contactTarget",
+      "beginStick",
+      "moveStick",
+      "goTo",
+      "stopRoute",
+      "tickPath",
+      "advanceRoute",
+      "drawRoute",
+      "mapSelectedTarget",
+      "layout",
+      "route",
+      "planning"
+    ],
+    "V014Energy": [
+      "output",
+      "fuelRate"
+    ],
+    "V0141DroneUI": [
+      "open",
+      "refresh",
+      "moveCell",
+      "transferSelected"
+    ],
+    "V0141Farm": [
+      "plant",
+      "harvest",
+      "use",
+      "bindMenu",
+      "migrate",
+      "recover",
+      "stock",
+      "seedType",
+      "takeSeed",
+      "recovery"
+    ],
+    "V0141Map": [
+      "radius",
+      "visible",
+      "drawRange"
+    ],
+    "V0141Trees": [
+      "ground",
+      "drawActors",
+      "actors",
+      "size",
+      "baseY",
+      "variant",
+      "registerActors"
+    ],
+    "V015Base": [
+      "sections",
+      "rooms",
+      "props",
+      "byId",
+      "walls",
+      "isOpen",
+      "stage",
+      "damage",
+      "changed",
+      "toggle",
+      "deckPresent",
+      "rayEntry",
+      "blocker",
+      "siege",
+      "capture",
+      "validate",
+      "restore",
+      "migrateGame",
+      "normalizeSave",
+      "legacyLayout",
+      "freePoint",
+      "drawGround",
+      "drawFortifications",
+      "drawMap",
+      "inWorkshop",
+      "revision",
+      "validating"
+    ],
+    "V0151Station": [
+      "open",
+      "refresh",
+      "mapMarker",
+      "drawMap"
+    ],
+    "V016Lighting": [
+      "dayMs",
+      "capture",
+      "validate",
+      "restore",
+      "tick",
+      "daylight",
+      "fixtures",
+      "active",
+      "droneActive",
+      "drawFixtures",
+      "illuminate",
+      "day",
+      "maskImage",
+      "cacheInfo"
+    ],
+    "V016Turret": [
+      "damage",
+      "combat",
+      "guns",
+      "validItem",
+      "capture",
+      "validate",
+      "candidate",
+      "placementProblem",
+      "startPlacement",
+      "selectPoint",
+      "place",
+      "cancelPlacement",
+      "pack",
+      "reload",
+      "unload",
+      "setEnabled",
+      "reachable",
+      "clear",
+      "support",
+      "settleUnsupported",
+      "tick",
+      "shootAt",
+      "open",
+      "draw",
+      "paint",
+      "placement",
+      "nextId"
+    ],
+    "V0161UI": [
+      "sync",
+      "opened",
+      "closed",
+      "allowMove",
+      "refreshQuick",
+      "controls"
+    ],
+    "V0161Migration": [
+      "migrate",
+      "removed"
+    ],
+    "V0161Upgrade": [
+      "slots",
+      "station",
+      "near",
+      "level",
+      "accepts",
+      "cost",
+      "droneCost",
+      "deposit",
+      "depositEquipment",
+      "take",
+      "upgrade",
+      "upgradeDrone",
+      "chooseModule",
+      "open",
+      "refresh",
+      "validate"
+    ],
+    "V0162Quick": [
+      "open",
+      "assign",
+      "allowed",
+      "flash"
+    ],
+    "V0162Magazines": [
+      "TYPES",
+      "install",
+      "installFirst",
+      "remove",
+      "choose",
+      "render",
+      "migrate"
+    ],
+    "V0163Loot": [
+      "take",
+      "render",
+      "refresh",
+      "selected"
+    ],
+    "V0163Vitals": [
+      "refresh"
+    ],
+    "V017Monsters": [
+      "specs",
+      "stats",
+      "prepare",
+      "night",
+      "isDayX",
+      "factor",
+      "targetCount",
+      "spawn",
+      "population",
+      "sideCounts",
+      "move",
+      "chooseWall",
+      "passage",
+      "canHurt",
+      "explode",
+      "armFuse",
+      "update",
+      "healthBar",
+      "drawCorpse",
+      "selectionRadius",
+      "drawTarget",
+      "corpseOpacity",
+      "validate",
+      "corpseMs",
+      "effects",
+      "state"
+    ],
+    "V018Build": [
+      "LEVELS",
+      "COSTS",
+      "structures",
+      "stoneNodes",
+      "doorRecords",
+      "record",
+      "isBroken",
+      "closedDoors",
+      "damage",
+      "start",
+      "stop",
+      "repairStep",
+      "upgrade",
+      "open",
+      "near",
+      "occupied",
+      "consume",
+      "count",
+      "capture",
+      "restore",
+      "validate",
+      "drawHeld",
+      "drawStone",
+      "enemyDoorStep",
+      "refresh",
+      "job",
+      "credit"
+    ]
+  },
+  "environmentAssumptions": {
+    "equipment": "starter gear; balanced variant and specialization",
+    "drone": "base modules unless explicit level sample",
+    "time": "seeded fixture clock, no offline interval",
+    "source": "actual runtime APIs, no reimplemented balance formulas"
+  }
+}

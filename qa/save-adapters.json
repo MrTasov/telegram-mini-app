@@ -1,0 +1,463 @@
+{
+  "stage": 2,
+  "oldVersion": "0.21.0",
+  "version": "0.22.0",
+  "audit": [
+    {
+      "source": "src/save/slots.js",
+      "phase": "capture",
+      "id": "save.slots",
+      "predecessor": "v09OriginalCapture",
+      "bodySha256": "a68caf4a8c1ef02506eb24c64255bd46fe2ea51c6c20d4d494e0930c5a875f11"
+    },
+    {
+      "source": "src/save/slots.js",
+      "phase": "decode",
+      "id": "save.slots",
+      "predecessor": "v09OriginalDecode",
+      "bodySha256": "d807216c79b343f4f0a22ce34cdda7b74be09376d1baec84023a75020408debb"
+    },
+    {
+      "source": "src/save/slots.js",
+      "phase": "restore",
+      "id": "save.slots",
+      "predecessor": "v09OriginalRestore",
+      "bodySha256": "4bc40cf3ac964b0ba1eee7ebd89497a8b5a27b84b486c1ba41660686ab18b314"
+    },
+    {
+      "source": "src/save/envelope.js",
+      "phase": "capture",
+      "id": "save.envelope",
+      "predecessor": "oldCapture",
+      "bodySha256": "bed6131477e6f8323c8c8d9b4d9d8f832282b8fc80325852fb1d9df6abbeb27e"
+    },
+    {
+      "source": "src/save/envelope.js",
+      "phase": "decode",
+      "id": "save.envelope",
+      "predecessor": "oldDecode",
+      "bodySha256": "b5c53fce1a6de8fef39851d2b02681471c8060f3b1a737224f3fe237e8915afa"
+    },
+    {
+      "source": "src/save/envelope.js",
+      "phase": "restore",
+      "id": "save.envelope",
+      "predecessor": "oldRestore",
+      "bodySha256": "1d9d778cfa27cd322209339d5baf6248bc3e48627e69d58c00ee2c99705182bc"
+    },
+    {
+      "source": "src/ui/context-map.js",
+      "phase": "capture",
+      "id": "ui.context-map",
+      "predecessor": "oldCapture",
+      "bodySha256": "ba63feec3c4c1ec6ee150b7138c248b33967258677f548fbc4834c46c781c42c"
+    },
+    {
+      "source": "src/ui/context-map.js",
+      "phase": "decode",
+      "id": "ui.context-map",
+      "predecessor": "oldDecode",
+      "bodySha256": "31205e3db48271195faa716aca03620535cdec9a7d1e5c064e79d6d590c85107"
+    },
+    {
+      "source": "src/ui/context-map.js",
+      "phase": "restore",
+      "id": "ui.context-map",
+      "predecessor": "oldRestore",
+      "bodySha256": "2aba4d6e4ce3d4fa2faccb7904afbee3016da79eb00c0c3db73aa581df20ab0a"
+    },
+    {
+      "source": "src/farm/growth.js",
+      "phase": "capture",
+      "id": "farm.growth",
+      "predecessor": "oldCapture",
+      "bodySha256": "47673de32dfbe58b4b82c65b94d64eb9d9b4790540011d319863f212d87aa8b4"
+    },
+    {
+      "source": "src/farm/growth.js",
+      "phase": "decode",
+      "id": "farm.growth",
+      "predecessor": "oldDecode",
+      "bodySha256": "e17f1235f27c25f1a0a085ba392abd0d4aa1b9eaf156705201a3aec0062f0155"
+    },
+    {
+      "source": "src/farm/growth.js",
+      "phase": "restore",
+      "id": "farm.growth",
+      "predecessor": "oldRestore",
+      "bodySha256": "3b4cc6da99b34e6406602afa34438a0d59df2640678bdba5236f226b185c51f3"
+    },
+    {
+      "source": "src/world/interiors.js",
+      "phase": "capture",
+      "id": "world.interiors",
+      "predecessor": "oldCapture",
+      "bodySha256": "d853f5f48ba1691106597728b84a8e96f6290a7715c72abef6440d9737b57ba4"
+    },
+    {
+      "source": "src/world/interiors.js",
+      "phase": "decode",
+      "id": "world.interiors",
+      "predecessor": "oldDecode",
+      "bodySha256": "b531a5424d5d814dcf01bbab2704722d1abdca048ad06c5f98abdb648dd6eee3"
+    },
+    {
+      "source": "src/world/interiors.js",
+      "phase": "restore",
+      "id": "world.interiors",
+      "predecessor": "oldRestore",
+      "bodySha256": "9f5cdd5513f80450612f9eef1f88d069273bd3a22519a9c17efe5d38c90305ef"
+    },
+    {
+      "source": "src/base/rooms.js",
+      "phase": "restore",
+      "id": "base.rooms",
+      "predecessor": "oldRestore",
+      "bodySha256": "be17990b65f2206780208a131315819e63cc07cd74b4d75cde50ea8fbf8ef913"
+    },
+    {
+      "source": "src/base/rooms.js",
+      "phase": "capture",
+      "id": "player.living",
+      "predecessor": "oldCapture",
+      "bodySha256": "469f8bd1de70edc10e122c200e21787fa576ba932e17e8b1fce8bd9a596ddbb7"
+    },
+    {
+      "source": "src/base/rooms.js",
+      "phase": "decode",
+      "id": "player.living",
+      "predecessor": "oldDecode",
+      "bodySha256": "f75f79bd873ddc70e19a58e8131f8b4234b2983398ab11ddb5c367188a1d188d"
+    },
+    {
+      "source": "src/base/rooms.js",
+      "phase": "restore",
+      "id": "player.living",
+      "predecessor": "oldRestore",
+      "bodySha256": "42c14ed61d096fff6c507c5c86f5db59c6045c6654ca980fa9b8d462e38c0caa"
+    },
+    {
+      "source": "src/world/expansion.js",
+      "phase": "capture",
+      "id": "world.expansion",
+      "predecessor": "oldCapture",
+      "bodySha256": "27a873f4ef3e6cc771ae703a05588950904492575f56f58fc97d786fbeb33e02"
+    },
+    {
+      "source": "src/world/expansion.js",
+      "phase": "decode",
+      "id": "world.expansion",
+      "predecessor": "oldDecode",
+      "bodySha256": "2283a37c199a8e49828a15d66812dea94173e56647b0c64a1bc4ff107d1a70ac"
+    },
+    {
+      "source": "src/world/fishing.js",
+      "phase": "restore",
+      "id": "world.fishing",
+      "predecessor": "restoreOld",
+      "bodySha256": "f2e09cff00d1750291ec64bf585d3e3f7196e4b22d35d7f0aeefbe9e2bde4edb"
+    },
+    {
+      "source": "src/inventory/physical-slots.js",
+      "phase": "capture",
+      "id": "inventory.physical-slots",
+      "predecessor": "cap",
+      "bodySha256": "7c0266c22e6edc4b3914e103ca41efcfdf08f3bba8d416efbcba6682e3796f95"
+    },
+    {
+      "source": "src/inventory/physical-slots.js",
+      "phase": "decode",
+      "id": "inventory.physical-slots",
+      "predecessor": "decode",
+      "bodySha256": "65fd63251c164bac0b046278aa563a7ce01fa765bd5a0641267bbb7df2d85407"
+    },
+    {
+      "source": "src/inventory/physical-slots.js",
+      "phase": "restore",
+      "id": "inventory.physical-slots",
+      "predecessor": "restore",
+      "bodySha256": "9572d75e6542a0f77aa27e9b202d745ca2489075c322f786905e4cb7fb11cb2b"
+    },
+    {
+      "source": "src/world/lake-city.js",
+      "phase": "capture",
+      "id": "world.lake-city",
+      "predecessor": "capture",
+      "bodySha256": "25ccdb0424c45c4fddd1a2162df393819e98ac98dbaf8d13bde27170119c4dee"
+    },
+    {
+      "source": "src/world/lake-city.js",
+      "phase": "decode",
+      "id": "world.lake-city",
+      "predecessor": "decode",
+      "bodySha256": "c085d76684d9eacb5113cf0fbd2fa678f6fa33b35bf51868968d57fb07dfbcbc"
+    },
+    {
+      "source": "src/world/lake-city.js",
+      "phase": "restore",
+      "id": "world.lake-city",
+      "predecessor": "restore",
+      "bodySha256": "dea0997fae0480bc1efafa8a93e6b8e8a0c528c035ec3ec0ea56af4e08001070"
+    },
+    {
+      "source": "src/drones/companion.js",
+      "phase": "capture",
+      "id": "drones.companion",
+      "predecessor": "captureOld",
+      "bodySha256": "0c255597b7803f86a8ba4e066fd2308c3ffc09fa91e1b6dd351b6a5d968eb53f"
+    },
+    {
+      "source": "src/drones/companion.js",
+      "phase": "decode",
+      "id": "drones.companion",
+      "predecessor": "decodeOld",
+      "bodySha256": "06a879a3295a8fd2bb5e3c1b05327c5c4fb9b224cf39376596b49cf4fb1dcb42"
+    },
+    {
+      "source": "src/drones/companion.js",
+      "phase": "restore",
+      "id": "drones.companion",
+      "predecessor": "restoreOld",
+      "bodySha256": "9f4aa127f90bf359f28c6a6b3fc23c4cadc8b4e21689a97198284068d92bc951"
+    },
+    {
+      "source": "src/player/controls.js",
+      "phase": "restore",
+      "id": "player.controls",
+      "predecessor": "restore",
+      "bodySha256": "b13345e34c1772f8332286464e05b22534aa42d6b4685d1872561efcacb2f6cc"
+    },
+    {
+      "source": "src/farm/manual.js",
+      "phase": "capture",
+      "id": "farm.manual",
+      "predecessor": "capture",
+      "bodySha256": "9e6147d28d96150b18b39260ac23586a613a4f14d0f2f47d89df04dc77b11e23"
+    },
+    {
+      "source": "src/farm/manual.js",
+      "phase": "decode",
+      "id": "farm.manual",
+      "predecessor": "decode",
+      "bodySha256": "00828e63e7d8281880b6689253248df66c786b870a09ce3a1bfb28abefb06f59"
+    },
+    {
+      "source": "src/farm/manual.js",
+      "phase": "restore",
+      "id": "farm.manual",
+      "predecessor": "restore",
+      "bodySha256": "0058ef2563b59410733ff49f3cc21b2e19c75fcd540b43fe784fe6fdddbce5f6"
+    },
+    {
+      "source": "src/base/structures.js",
+      "phase": "capture",
+      "id": "base.structures",
+      "predecessor": "captureOld",
+      "bodySha256": "020ccd8c25887c6a6b7d40a5791582ac526710034dbf11a858244172a9bd73d6"
+    },
+    {
+      "source": "src/base/structures.js",
+      "phase": "decode",
+      "id": "base.structures",
+      "predecessor": "decodeOld",
+      "bodySha256": "586845d34280d693bafee2b88165d0674c47e4f6a6ca87e0c319ff67c37c2049"
+    },
+    {
+      "source": "src/base/structures.js",
+      "phase": "restore",
+      "id": "base.structures",
+      "predecessor": "restoreOld",
+      "bodySha256": "8965a45dd2e98bc1dbfb8dd9fba9d67fed593805c3f5e28d87ddaa155c956f85"
+    },
+    {
+      "source": "src/render/lighting.js",
+      "phase": "capture",
+      "id": "render.lighting",
+      "predecessor": "oldCapture",
+      "bodySha256": "8418d399eaffd036c3d2f09b1f6abaffd73ff30fd44efd11b53e119add175a10"
+    },
+    {
+      "source": "src/render/lighting.js",
+      "phase": "decode",
+      "id": "render.lighting",
+      "predecessor": "oldDecode",
+      "bodySha256": "790664ed3388ee48e2b1ef16dc31c8a68b8724c4c9c6d622b2988038caa5bc8e"
+    },
+    {
+      "source": "src/render/lighting.js",
+      "phase": "restore",
+      "id": "render.lighting",
+      "predecessor": "oldRestore",
+      "bodySha256": "7bc7c176a48ce3d36830f4a254d97241d349e0fd5efb8e9d385d98c47e99b102"
+    },
+    {
+      "source": "src/base/turrets.js",
+      "phase": "capture",
+      "id": "base.turrets",
+      "predecessor": "captureOld",
+      "bodySha256": "ffe72dce967f72a8f3f0c3392feed58d6a089e80faa7189ad95f42fe0c0574e8"
+    },
+    {
+      "source": "src/base/turrets.js",
+      "phase": "decode",
+      "id": "base.turrets",
+      "predecessor": "decodeOld",
+      "bodySha256": "69d31954ab9cff525ae12a08ce992f1758f139c40091b6a9236517578eba13c5"
+    },
+    {
+      "source": "src/base/turrets.js",
+      "phase": "restore",
+      "id": "base.turrets",
+      "predecessor": "restoreOld",
+      "bodySha256": "79805dbeac7a9fb5becff533e71d63cbca8b6ec7349c7bd09b12dccbdd068dc1"
+    },
+    {
+      "source": "src/ui/modal-dragging.js",
+      "phase": "decode",
+      "id": "ui.modal-dragging",
+      "predecessor": "decode",
+      "bodySha256": "00828e63e7d8281880b6689253248df66c786b870a09ce3a1bfb28abefb06f59"
+    },
+    {
+      "source": "src/inventory/upgrades.js",
+      "phase": "capture",
+      "id": "inventory.upgrades",
+      "predecessor": "cap",
+      "bodySha256": "1909ad7b82383b4b8c7defb1ea02cd7857ac4cdf36d867d61f4c6beef71cf384"
+    },
+    {
+      "source": "src/inventory/upgrades.js",
+      "phase": "decode",
+      "id": "inventory.upgrades",
+      "predecessor": "decode",
+      "bodySha256": "335569f4710743baec159257891470543a9610aa9d33b26090c3f4fac8dec86a"
+    },
+    {
+      "source": "src/inventory/upgrades.js",
+      "phase": "restore",
+      "id": "inventory.upgrades",
+      "predecessor": "restore",
+      "bodySha256": "2345c98e83f76ce418abe72e1a2c3b360c54215f71edb92d618b5ded94217523"
+    },
+    {
+      "source": "src/inventory/picker-magazines.js",
+      "phase": "decode",
+      "id": "inventory.picker-magazines",
+      "predecessor": "decode",
+      "bodySha256": "00828e63e7d8281880b6689253248df66c786b870a09ce3a1bfb28abefb06f59"
+    },
+    {
+      "source": "src/inventory/picker-magazines.js",
+      "phase": "restore",
+      "id": "inventory.picker-magazines",
+      "predecessor": "restore",
+      "bodySha256": "d88ceccd0684279e4f668869dd030967948506c8193c5c780e6b62d7b544edf1"
+    },
+    {
+      "source": "src/combat/monsters.js",
+      "phase": "capture",
+      "id": "combat.monsters",
+      "predecessor": "capture",
+      "bodySha256": "e28c1c7796e0120291c2cda93c21fc03da56465212f8407558fed689144dd315"
+    },
+    {
+      "source": "src/combat/monsters.js",
+      "phase": "decode",
+      "id": "combat.monsters",
+      "predecessor": "decode",
+      "bodySha256": "da313e55f80fc08a763cabb73c4694beb379e5c2053bc71e45daf4a81480da7a"
+    },
+    {
+      "source": "src/combat/monsters.js",
+      "phase": "restore",
+      "id": "combat.monsters",
+      "predecessor": "restore",
+      "bodySha256": "e238af332fd2010e623ab53c4cd4f5f4d4da28f0678c3225a4a540cfd634df12"
+    },
+    {
+      "source": "src/base/construction.js",
+      "phase": "capture",
+      "id": "base.construction",
+      "predecessor": "oldCapture",
+      "bodySha256": "f19e810cf27708c050fcefaee0eb1c3240c1b51a94c6f1be2a8a58bdd7ab383a"
+    },
+    {
+      "source": "src/base/construction.js",
+      "phase": "decode",
+      "id": "base.construction",
+      "predecessor": "oldDecode",
+      "bodySha256": "49c02d11da59704ba7fb35989abe6356cac0f9b8588d3d923450b60f33dc5b52"
+    },
+    {
+      "source": "src/base/construction.js",
+      "phase": "restore",
+      "id": "base.construction",
+      "predecessor": "oldRestore",
+      "bodySha256": "3159d77fd7028aa8c0539bd4d2072b534fcc22613869658ab49704a10983a94f"
+    }
+  ],
+  "order": {
+    "capture": [
+      "save.slots",
+      "save.envelope",
+      "ui.context-map",
+      "farm.growth",
+      "world.interiors",
+      "player.living",
+      "world.expansion",
+      "inventory.physical-slots",
+      "world.lake-city",
+      "drones.companion",
+      "farm.manual",
+      "base.structures",
+      "render.lighting",
+      "base.turrets",
+      "inventory.upgrades",
+      "combat.monsters",
+      "base.construction"
+    ],
+    "decode": [
+      "save.slots",
+      "save.envelope",
+      "ui.context-map",
+      "farm.growth",
+      "world.interiors",
+      "player.living",
+      "world.expansion",
+      "inventory.physical-slots",
+      "world.lake-city",
+      "drones.companion",
+      "farm.manual",
+      "base.structures",
+      "render.lighting",
+      "base.turrets",
+      "ui.modal-dragging",
+      "inventory.upgrades",
+      "inventory.picker-magazines",
+      "combat.monsters",
+      "base.construction"
+    ],
+    "restore": [
+      "save.slots",
+      "save.envelope",
+      "ui.context-map",
+      "farm.growth",
+      "world.interiors",
+      "base.rooms",
+      "player.living",
+      "world.fishing",
+      "inventory.physical-slots",
+      "world.lake-city",
+      "drones.companion",
+      "player.controls",
+      "farm.manual",
+      "base.structures",
+      "render.lighting",
+      "base.turrets",
+      "inventory.upgrades",
+      "inventory.picker-magazines",
+      "combat.monsters",
+      "base.construction"
+    ]
+  }
+}
