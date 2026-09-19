@@ -33,19 +33,31 @@ class Elem{
  requestFullscreen(){return Promise.resolve()}
 }
 function parse(html,parent){const stack=[parent];for(const token of html.match(/<!--[\s\S]*?-->|<![^>]*>|<[^>]+>|[^<]+/g)||[]){if(token.startsWith('<!'))continue;if(token.startsWith('</')){const name=token.slice(2).match(/^[\w-]+/)?.[0].toUpperCase();while(stack.length>1){if(stack.pop().tagName===name)break;}continue;}if(token[0]==='<'){const name=token.slice(1).match(/^[\w-]+/)?.[0];if(!name)continue;const n=new Elem(name);for(const a of token.slice(name.length+1).matchAll(/([\w:-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g))n.setAttribute(a[1],a[2]??a[3]??a[4]??'');stack.at(-1).append(n);if(!['meta','link','img','input','br','hr','source','path'].includes(name)&&!token.endsWith('/>'))stack.push(n);}else stack.at(-1)._text+=token;}}
-function setup(file,initialStorage={}){
+function setup(file,initialStorage={},options={}){
  const html=fs.readFileSync(file,'utf8');const doc=new Elem('document');parse(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/g,''),doc);
  doc.body=doc.querySelector('body');doc.head=doc.querySelector('head');doc.documentElement=doc.querySelector('html');doc.createElement=t=>new Elem(t);doc.createElementNS=(_,t)=>new Elem(t);doc.getElementById=id=>doc.querySelector('#'+id);doc.hidden=false;doc.visibilityState='visible';
  canvas.width=1280;canvas.height=800;canvasContract.reset(canvas.getContext('2d'));
  const mainCanvas=doc.getElementById('canvas');
  for(const key of ['width','height'])Object.defineProperty(mainCanvas,key,{get:()=>canvas[key],set:value=>{canvas[key]=value;canvasContract.reset(canvas.getContext('2d'));},configurable:true});
  const storage=new Map(Object.entries(initialStorage)),timers=new Map();let counter=0,clock=10000;
+ const epoch=options.epoch??Date.UTC(2026,8,19,12),math=Object.create(Math);let seed=options.seed??20260919;
+ math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+ class ClockDate extends Date{constructor(...a){super(...(a.length?a:[epoch+clock-10000]));}static now(){return epoch+clock-10000;}}
  const storageAPI={getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,String(v)),removeItem:k=>storage.delete(k),clear:()=>storage.clear(),key:n=>[...storage.keys()][n],get length(){return storage.size}};
  class Audio{constructor(src){this.src=src;this.volume=1;this.paused=true;}play(){this.paused=false;return Promise.resolve()}pause(){this.paused=true}addEventListener(){}load(){}cloneNode(){return new Audio(this.src)}}
  const windowListeners={},windowCapture={};const errors=[];const sandbox={document:doc,localStorage:storageAPI,console:{log(){},warn:(...x)=>errors.push(x.join(' ')),error:(...x)=>errors.push(x.join(' '))},navigator:{userAgent:'test',maxTouchPoints:0},innerWidth:1280,innerHeight:800,devicePixelRatio:1,screen:{orientation:{addEventListener(){}}},performance:{now:()=>clock},Audio,Image:require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES?process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/@napi-rs/canvas':'@napi-rs/canvas').Image,OffscreenCanvas:class{constructor(w,h){return createCanvas(w,h)}},URL,Blob,Math,Date,JSON,Object,Array,Set,Map,Number,String,Boolean,Uint8Array,Float32Array,Float64Array,Int32Array,Promise,
  setTimeout:(f,ms)=>{const n=++counter;timers.set(n,{f,ms});return n},clearTimeout:n=>timers.delete(n),setInterval:()=>++counter,clearInterval(){},requestAnimationFrame:()=>0,cancelAnimationFrame(){},addEventListener(k,f,opts){((opts===true||opts?.capture?windowCapture:windowListeners)[k]??=[]).push(f)},removeEventListener(){},matchMedia:()=>({matches:false,addEventListener(){}}),getComputedStyle:e=>({getPropertyValue:()=>'',...e.style}),fetch:()=>Promise.reject(Error('test audio disabled')),location:{href:'http://test.local/game',protocol:'http:'},alert(){},confirm:()=>true,atob:s=>Buffer.from(s,'base64').toString('binary'),btoa:s=>Buffer.from(s,'binary').toString('base64')};
+ sandbox.Math=math;sandbox.Date=ClockDate;
+ sandbox.setTimeout=(f,ms=0)=>{const id=++counter;timers.set(id,{f,ms,at:clock+ms});return id;};
  sandbox.window=sandbox;sandbox.self=sandbox;const context=vm.createContext(sandbox);
- const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n');vm.runInContext(scripts,context,{filename:file,timeout:20000});
+ const path=require('node:path'),loadedScripts=[];
+ for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){
+   const src=m[1].match(/\bsrc=["']([^"']+)["']/)?.[1];
+   if(src&&/^https?:\/\//.test(src))continue; // Telegram SDK stays mocked, as in Stage 0.
+   const scriptFile=src?path.resolve(path.dirname(file),src.split(/[?#]/)[0]):file;
+   const code=src?fs.readFileSync(scriptFile,'utf8'):m[2];
+   vm.runInContext(code,context,{filename:scriptFile,timeout:20000});loadedScripts.push(scriptFile);
+ }
  function emit(type,target,props={}){
    const e={type,target,button:0,pointerId:1,pointerType:'touch',clientX:50,clientY:50,...props,defaultPrevented:false,cancelBubble:false,immediate:false,
      preventDefault(){this.defaultPrevented=true},stopPropagation(){this.cancelBubble=true},stopImmediatePropagation(){this.cancelBubble=true;this.immediate=true}};
@@ -56,7 +68,8 @@ function setup(file,initialStorage={}){
    for(const n of path){if(e.cancelBubble)break;call(n,n.listeners[type]);if(!e.immediate&&n['on'+type])n['on'+type](e);}
    if(!e.cancelBubble)call(sandbox,windowListeners[type]);return e;
  }
- return {emit,dispatch(type,e={}){e.type=type;e.target??=doc.querySelector('#canvas');e.preventDefault??=()=>{};e.stopPropagation??=()=>{};for(const f of windowListeners[type]||[])f(e);},eval:(s)=>vm.runInContext(s,context,{timeout:30000}),doc,storage,context,errors,canvas,advance(ms){clock+=ms},timers};
+ return {emit,dispatch(type,e={}){e.type=type;e.target??=doc.querySelector('#canvas');e.preventDefault??=()=>{};e.stopPropagation??=()=>{};for(const f of windowListeners[type]||[])f(e);},eval:(s)=>vm.runInContext(s,context,{timeout:30000}),doc,storage,context,errors,canvas,advance(ms){clock+=ms},flushTimers(ms){const end=clock+ms;let count=0;for(;;){const next=[...timers.entries()].filter(([id,t])=>t.at<=end).sort((a,b)=>a[1].at-b[1].at)[0];if(!next)break;if(++count>1000)throw Error('Timer loop in harness');clock=Math.max(clock,next[1].at);timers.delete(next[0]);next[1].f();}clock=end;},timers};
 }
-module.exports={setup,canvas};
-if(require.main===module){const r=setup(process.argv[2]);console.log(JSON.stringify({errors:r.errors,state:r.eval('({scene,handSlots,bag,gameSaveBlocked,gameSaveReady})')}));fs.writeFileSync('/workspace/scratch/f0e7ca27947d/v09/initial.png',canvas.toBuffer('image/png'));}
+function source(file){const path=require('node:path'),html=fs.readFileSync(file,'utf8');return [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].map(m=>{const src=m[1].match(/\bsrc=["']([^"']+)["']/)?.[1];return src?(/^https?:/.test(src)?'':fs.readFileSync(path.resolve(path.dirname(file),src.split(/[?#]/)[0]),'utf8')):m[2];}).join('\n');}
+module.exports={setup,canvas,source};
+if(require.main===module){const r=setup(process.argv[2]);console.log(JSON.stringify({errors:r.errors,state:r.eval('({scene,handSlots,bag,gameSaveBlocked,gameSaveReady})')}));}
