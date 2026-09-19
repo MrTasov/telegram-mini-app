@@ -1,0 +1,199 @@
+{
+  "reference": "0.21.0 accepted Stage 1",
+  "candidate": "0.22.0 Stage 2",
+  "method": "Same real Canvas + modeled DOM runner. Two unchanged control runs bracket the first candidate measurement; final candidate follows a validation-cache improvement. No benchmark ran alongside a regression suite.",
+  "scenes": [
+    {
+      "scene": "surface_day",
+      "scenarioMatches": true,
+      "values": {
+        "stage0": {
+          "p50Ms": 40.02988100000039,
+          "p95Ms": 53.67174100000011
+        },
+        "stage1": {
+          "p50Ms": 37.397359999999935,
+          "p95Ms": 45.29747300000054
+        },
+        "controlBefore": {
+          "p50Ms": 38.4704270000002,
+          "p95Ms": 52.79417199999989
+        },
+        "controlAfter": {
+          "p50Ms": 40.04298599999947,
+          "p95Ms": 54.111863000000085
+        },
+        "stage2": {
+          "p50Ms": 39.945474000000104,
+          "p95Ms": 49.24367900000016
+        }
+      },
+      "changeVsNearestControlPercent": {
+        "p50Ms": -0.24351830305404665,
+        "p95Ms": -8.996518933380504
+      }
+    },
+    {
+      "scene": "surface_night_day_x",
+      "scenarioMatches": true,
+      "values": {
+        "stage0": {
+          "p50Ms": 142.8419470000008,
+          "p95Ms": 197.621871000003
+        },
+        "stage1": {
+          "p50Ms": 81.51508100000137,
+          "p95Ms": 98.88292700000238
+        },
+        "controlBefore": {
+          "p50Ms": 83.91179999999804,
+          "p95Ms": 98.05519699999786
+        },
+        "controlAfter": {
+          "p50Ms": 112.06035200000042,
+          "p95Ms": 246.3040000000001
+        },
+        "stage2": {
+          "p50Ms": 88.5841709999986,
+          "p95Ms": 113.30053899999984
+        }
+      },
+      "changeVsNearestControlPercent": {
+        "p50Ms": -20.949587058232446,
+        "p95Ms": -53.99971620436541
+      }
+    },
+    {
+      "scene": "bunker_power_drone",
+      "scenarioMatches": true,
+      "values": {
+        "stage0": {
+          "p50Ms": 62.462963999998465,
+          "p95Ms": 126.01243300000351
+        },
+        "stage1": {
+          "p50Ms": 54.44398899999942,
+          "p95Ms": 61.48330200000055
+        },
+        "controlBefore": {
+          "p50Ms": 55.71282000000065,
+          "p95Ms": 63.90583499999775
+        },
+        "controlAfter": {
+          "p50Ms": 59.992043999998714,
+          "p95Ms": 70.8531989999974
+        },
+        "stage2": {
+          "p50Ms": 59.37909299999592,
+          "p95Ms": 80.7593360000028
+        }
+      },
+      "changeVsNearestControlPercent": {
+        "p50Ms": -1.0217204801403423,
+        "p95Ms": 13.981213466460085
+      }
+    },
+    {
+      "scene": "inventory_open",
+      "scenarioMatches": true,
+      "values": {
+        "stage0": {
+          "p50Ms": 46.00794199999655,
+          "p95Ms": 60.537022999997134
+        },
+        "stage1": {
+          "p50Ms": 44.03283399999782,
+          "p95Ms": 49.878741000000446
+        },
+        "controlBefore": {
+          "p50Ms": 44.95081100000243,
+          "p95Ms": 51.793118000001414
+        },
+        "controlAfter": {
+          "p50Ms": 49.57953099999577,
+          "p95Ms": 59.802146999994875
+        },
+        "stage2": {
+          "p50Ms": 48.38849100000516,
+          "p95Ms": 65.77133999999933
+        }
+      },
+      "changeVsNearestControlPercent": {
+        "p50Ms": -2.402281699660913,
+        "p95Ms": 9.98156972525579
+      }
+    },
+    {
+      "scene": "surface_zoom_out",
+      "scenarioMatches": true,
+      "values": {
+        "stage0": {
+          "p50Ms": 48.167714999988675,
+          "p95Ms": 65.59364900000219
+        },
+        "stage1": {
+          "p50Ms": 46.05608199999551,
+          "p95Ms": 52.09422199999972
+        },
+        "controlBefore": {
+          "p50Ms": 48.517274999998335,
+          "p95Ms": 59.909714000008535
+        },
+        "controlAfter": {
+          "p50Ms": 50.183178999999654,
+          "p95Ms": 66.02100399999472
+        },
+        "stage2": {
+          "p50Ms": 54.92409499999485,
+          "p95Ms": 87.08230100000219
+        }
+      },
+      "changeVsNearestControlPercent": {
+        "p50Ms": 9.447221348801405,
+        "p95Ms": 31.900903839646478
+      }
+    }
+  ],
+  "metrics": {
+    "stage0": {
+      "startupMs": 756.1544510000001,
+      "saveP50Ms": 1.904993000003742,
+      "loadP50Ms": 80.76984900000389,
+      "finalRSSBytes": 514953216,
+      "errors": []
+    },
+    "stage1": {
+      "startupMs": 567.009258,
+      "saveP50Ms": 1.8488950000028126,
+      "loadP50Ms": 78.07306000000972,
+      "finalRSSBytes": 527839232,
+      "errors": []
+    },
+    "controlBefore": {
+      "startupMs": 608.691024,
+      "saveP50Ms": 2.045930000007502,
+      "loadP50Ms": 81.93480099999579,
+      "finalRSSBytes": 523882496,
+      "errors": []
+    },
+    "controlAfter": {
+      "startupMs": 676.575571,
+      "saveP50Ms": 2.338248999993084,
+      "loadP50Ms": 88.91636099999596,
+      "finalRSSBytes": 526094336,
+      "errors": []
+    },
+    "stage2": {
+      "startupMs": 616.4656679999998,
+      "saveP50Ms": 1.994169999990845,
+      "loadP50Ms": 85.92213099999935,
+      "finalRSSBytes": 524627968,
+      "errors": []
+    }
+  },
+  "limitations": [
+    "Shared-host timings vary substantially even for unchanged 0.21.0, especially p95.",
+    "These are not browser or phone FPS; a persistent performance difference cannot be isolated confidently from these runs.",
+    "Final zoom-out measurement is slower than the nearest control; confirm zoom-out and UI responsiveness on the real phone."
+  ]
+}
