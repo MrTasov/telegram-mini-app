@@ -1,20 +1,18 @@
 {
-  "version": "0.20.0",
-  "basedOn": "0.19.1",
-  "checksPassed": 282,
-  "environment": "Local JavaScript game runtime and Canvas2D; no physical Telegram device.",
-  "changedRuntimeFiles": [
-    "index.html",
-    "assets/v0200/fortification_level_1.webp",
-    "assets/v0200/fortification_level_2.webp",
-    "assets/v0200/fortification_level_3.webp",
-    "assets/v0200/fortification_level_4.webp",
-    "assets/v0200/fortification_level_5.webp"
-  ],
+  "version": "0.21.0",
+  "stage": 1,
+  "stage2Started": false,
+  "baseline": "0.20.0 Stage 0",
+  "baselineHtmlSha256": "49d2f7d1faf42546abcd4f2ca843845a8f54636c89de74004357ca8ff527ddec",
+  "automatedAssertions": 1543,
   "files": {
-    "index.html": {
-      "bytes": 1025795,
-      "sha256": "49d2f7d1faf42546abcd4f2ca843845a8f54636c89de74004357ca8ff527ddec"
+    ".gitignore": {
+      "bytes": 30,
+      "sha256": "8ffe9de56bd30c1a95cd945262d6e3ac355ada4111551dde41f67851b9f1fc55"
+    },
+    "README_RU.md": {
+      "bytes": 5031,
+      "sha256": "6539d453eef028956474e6685c8691a221c91e7e989251e25e07af4f028925e2"
     },
     "assets/v0190/bed_576bac1724fa.webp": {
       "bytes": 19550,
@@ -411,6 +409,534 @@
     "assets/v0200/fortification_level_5.webp": {
       "bytes": 1078300,
       "sha256": "8bd3db28b4533a976581f9d38385795bcaf9841556006d5b44a45941ca298df8"
+    },
+    "docs/REPORT_RU.md": {
+      "bytes": 10012,
+      "sha256": "0dc83d45f69fe918a62107e1031c627baa301e87886d2be615468b6882e4bf4d"
+    },
+    "docs/STAGE1_RU.md": {
+      "bytes": 9400,
+      "sha256": "1e5ed5b0fd4bca2ff05a424c78a43e0d3c03d54068e016638a5cdcecff371d4d"
+    },
+    "docs/intentional-changes.json": {
+      "bytes": 711,
+      "sha256": "ed33b490509c128d314660eb1a031efeea34a56034239fca4b86a1e1f239fed1"
+    },
+    "docs/interaction-fixes.patch": {
+      "bytes": 9106,
+      "sha256": "43bbe35203f9432980fbcc24ffc43e18ff7fd436b7a4d28d1c9fd8a96805d5cb"
+    },
+    "index.html": {
+      "bytes": 13763,
+      "sha256": "af2ad96f451aaa0b18a4e5b223edaf21c907216fbc55b7c0c062df6c2083fce5"
+    },
+    "js/build-info.json": {
+      "bytes": 8366,
+      "sha256": "c4a513088130d3c2f0bd9da11750cd3b0f08e6ccf2cdc182402bf44fe6671568"
+    },
+    "js/game.js": {
+      "bytes": 1001451,
+      "sha256": "8f9559eec9b01def5b49594d66cc63e08dace9c64993475f58416c70c819427d"
+    },
+    "js/game.js.map": {
+      "bytes": 1084454,
+      "sha256": "ed34c469ea578e45fe976fdb74ff4ea81c42360896ccfcc0ba1be2b19e150a4b"
+    },
+    "package.json": {
+      "bytes": 435,
+      "sha256": "473fa34aa018006a17a0923890e0afe5a8d5b3fa8a351529a01cd58f1d0cf3da"
+    },
+    "qa/balance.cjs": {
+      "bytes": 3795,
+      "sha256": "17e3f750d6277f8131b1bb5dc4f05afb9ef99dbb90ad1d0ea0b63b602fa7b9b5"
+    },
+    "qa/canvas-contract.cjs": {
+      "bytes": 1278,
+      "sha256": "0e0f376293eb38c03d46abefdb267eb26501252bb9f0e57f34d250bec8dd4e42"
+    },
+    "qa/interactions.cjs": {
+      "bytes": 10020,
+      "sha256": "21b359b129f5fbf48eb41b1ad9dd1f1b7fc6e42a30188b1e7af9cc1bc73dfaed"
+    },
+    "qa/performance.cjs": {
+      "bytes": 5425,
+      "sha256": "64ef285ba3493520417f6856a44043c5e2fe0030cd123ab84f89d17978193803"
+    },
+    "qa/results/balance.json": {
+      "bytes": 222,
+      "sha256": "4358dd71567c72c164141799fc2701b1f5f7f3f64188f8d37c395823fc11b4ea"
+    },
+    "qa/results/balance.log": {
+      "bytes": 25,
+      "sha256": "b23eab60653e2784377f368613cbd1bf22d8f2a9d0dd5940f2493c55e1260015"
+    },
+    "qa/results/build.log": {
+      "bytes": 56,
+      "sha256": "51139ba19e257efc60d1557cab4639e8908e824fd9af964f90f90138cdbe95ad"
+    },
+    "qa/results/configurations.json": {
+      "bytes": 59023,
+      "sha256": "7a96642703288c980d5d88a84240ae9b9b5d1077480ca3008a6096cdbbecb741"
+    },
+    "qa/results/interactions.json": {
+      "bytes": 66841,
+      "sha256": "9717480db558f21d65bbdf5b111a72dd7ca2b4cde96de877b70e191229f1ae6a"
+    },
+    "qa/results/interactions.log": {
+      "bytes": 41,
+      "sha256": "1b292baa4d9ee625f319445c380cacc62b0c7a27c1f8f231d88245e2edfecc8a"
+    },
+    "qa/results/performance-comparison.json": {
+      "bytes": 2759,
+      "sha256": "f2392b72199480967c9414b271885c118d8da44ff95c38524b86e8fea6c0af81"
+    },
+    "qa/results/performance.json": {
+      "bytes": 89639,
+      "sha256": "7815ce70cb2bc79c3117c9b82179867ac8558f73bbad83f91f9aae137926b511"
+    },
+    "qa/results/regression/characterization.json": {
+      "bytes": 23453,
+      "sha256": "508b56618408a40508940deb4fc9d02bc9aaacd343aba32e9383d8fcd6e7952f"
+    },
+    "qa/results/regression/characterization.log": {
+      "bytes": 62,
+      "sha256": "7075d2defd08e3b7c29a5edd0ebf9c7ca8cc7879554371b95cf2444ec28fc389"
+    },
+    "qa/results/regression/perimeter.json": {
+      "bytes": 6029,
+      "sha256": "88f0dff9774fa51d34180cb44919957e5eabacf09bcdfa7daf5e5bb8dc1f305e"
+    },
+    "qa/results/regression/perimeter.log": {
+      "bytes": 5965,
+      "sha256": "c9002f380993088ebb6a348ca5a9b1513d23f7a55391d0e14462a08f809825c4"
+    },
+    "qa/results/regression/summary.json": {
+      "bytes": 590,
+      "sha256": "a6ba3c407ddd1097b34f0dcb348ad2c89f89b0e3b3d6e9de3b59c87cdb3f49a5"
+    },
+    "qa/results/regression/targets.json": {
+      "bytes": 3424,
+      "sha256": "4d6ff00743173bf65a58c77f8edd2471c2386efd41af20bc79c81776da14e9db"
+    },
+    "qa/results/regression/targets.log": {
+      "bytes": 3360,
+      "sha256": "3bf2006f1d26e3409293cf3a60fe7844f04d1b7c93a2ee890c32258c820c32d9"
+    },
+    "qa/results/regression/wall_behaviors.json": {
+      "bytes": 3446,
+      "sha256": "226cf56f9e76dd34b2f83c15538d5db8abee9b91c25ca09ab1f2a84457c8212d"
+    },
+    "qa/results/regression/wall_behaviors.log": {
+      "bytes": 3382,
+      "sha256": "92726b8f9370b0c4e9952b4c149612d58f8fed576219ff2070d55572da32f906"
+    },
+    "qa/results/regressions.log": {
+      "bytes": 261,
+      "sha256": "8baa56a7292aeaf041d4841d7d548bbe2153666c346b1d1205680c8508feaa0b"
+    },
+    "qa/results/saves.json": {
+      "bytes": 6334,
+      "sha256": "32ff87a625f4d64632add224674c6e54ee1e2c894f15b133dc3ebe595bd1ff3d"
+    },
+    "qa/results/saves.log": {
+      "bytes": 40,
+      "sha256": "0e505777efb7df11584df7afdc19f1b2e5932fdb03fa231d6b0135aa7322016c"
+    },
+    "qa/results/stage0-remeasured.json": {
+      "bytes": 89675,
+      "sha256": "ddf2bbb16f0a4e190f9ac69124267490bd7e9396aaec2da51b7ec95c3ff58717"
+    },
+    "qa/results/summary.json": {
+      "bytes": 850,
+      "sha256": "ce582479343b26e59784cf0964cea66b04fffbac882f512b181b9b36e1531423"
+    },
+    "qa/results/verification.json": {
+      "bytes": 15501,
+      "sha256": "5b566a6baba8a72858451c60eae3708571ef22b57423527c4575ec09ba5a7712"
+    },
+    "qa/results/verification.log": {
+      "bytes": 143,
+      "sha256": "639ba55155a02e5de0119791e3cb5648de2812c60877f338fb84f7982dc8254c"
+    },
+    "qa/run-regressions.cjs": {
+      "bytes": 4270,
+      "sha256": "be4b0a5f579b1639545a857f17749130c67a8ac14d66995e84fcc4e2da32b530"
+    },
+    "qa/run.cjs": {
+      "bytes": 2124,
+      "sha256": "02daf458a88997fba58a4e86c694ffc0904bcfbf47dddc6a6f2dd4ed1d02195e"
+    },
+    "qa/runtime.cjs": {
+      "bytes": 11489,
+      "sha256": "9339852e6a71700019c2f5e69262944caa6ce984de78ad74052deca710a2c54a"
+    },
+    "qa/saves.cjs": {
+      "bytes": 3086,
+      "sha256": "bfbe4dc87fdef40ceb251ebeaaded4af8b691ea88287e858b7bef4bbd568fb10"
+    },
+    "qa/stage0/audit/assets.json": {
+      "bytes": 9827,
+      "sha256": "f5db4c25d6c0d59a0bc428aeb34949527c6975a756b291d0700006bbedf0fd50"
+    },
+    "qa/stage0/audit/configurations.json": {
+      "bytes": 59023,
+      "sha256": "0abc0458ebabf39f89e6a87675be48fb21d22fc01d13937a9017c28cc524c069"
+    },
+    "qa/stage0/audit/source_fingerprint.json": {
+      "bytes": 23579,
+      "sha256": "8a9c48ec1ae8ef48288edb92400ab1b437941430380788502650cb9e4cd32156"
+    },
+    "qa/stage0/baseline_0.20.0/qa/perimeter020.cjs": {
+      "bytes": 11637,
+      "sha256": "92b7d591a8027ce5d77de65dc9dd14e23417cc000fe0a663fb2111a07ce36cce"
+    },
+    "qa/stage0/baseline_0.20.0/qa/target0191.cjs": {
+      "bytes": 6079,
+      "sha256": "ba9f7bb6fbdac0b7b5d2503e89f51a91d553bbfec3e7a788f6d82312bf5883e4"
+    },
+    "qa/stage0/baseline_0.20.0/qa/wall_behaviors020.cjs": {
+      "bytes": 7285,
+      "sha256": "1ed9de293152e7a066db3dd2700e92504e440211c74cbb768f108a1b1e7c40d7"
+    },
+    "qa/stage0/baseline_0.20.0/source/baseline_0.19.1.html": {
+      "bytes": 1016168,
+      "sha256": "0d4186042b80ec7f88470bd20ddad3dfbbaf7e444a57153aeba7e0cb52615455"
+    },
+    "qa/stage0/fixtures/craft_in_progress.json": {
+      "bytes": 109995,
+      "sha256": "7cc84960b84d52008f7d5265998cd74b441278a83a75506de908be7a5846fe14"
+    },
+    "qa/stage0/fixtures/crop_0.json": {
+      "bytes": 117246,
+      "sha256": "71338dd85063dd0b0de9b7f42a7ece2a2232bb5edd525f1b7d0fbf350012ac07"
+    },
+    "qa/stage0/fixtures/crop_1.json": {
+      "bytes": 117198,
+      "sha256": "4dd3462e83c1c8a1ebed003a3d16c94fa02d2ae5a6deab100f4097363bda51c1"
+    },
+    "qa/stage0/fixtures/crop_2.json": {
+      "bytes": 117218,
+      "sha256": "3a4c4db995fa4783562d75a133bbcf6cab2723db6e47c346b37d7f3998fe41f5"
+    },
+    "qa/stage0/fixtures/crop_3.json": {
+      "bytes": 117198,
+      "sha256": "0476bc287d216a909be8ca894b053d479927514088ce1a2bd33d9fcb2097154e"
+    },
+    "qa/stage0/fixtures/crop_4.json": {
+      "bytes": 117243,
+      "sha256": "631339603778b820dfee6a34a0f4e23243cd2d6f0969324711c0208f4ecd6d26"
+    },
+    "qa/stage0/fixtures/crop_5.json": {
+      "bytes": 117195,
+      "sha256": "38128c42cdc01e6de0da52c21920cb902c03f924fb0831f0c1e50076b0c3e931"
+    },
+    "qa/stage0/fixtures/crop_6.json": {
+      "bytes": 117218,
+      "sha256": "35fa170f840485175167b6c51318bad9d5cdce67a98cf12c2ac524e00fe2543b"
+    },
+    "qa/stage0/fixtures/crop_7.json": {
+      "bytes": 117195,
+      "sha256": "fcfc2d61149915ae6f056c021ba983ecc369f2997a31845b6737f9a38dd85ce5"
+    },
+    "qa/stage0/fixtures/crop_8.json": {
+      "bytes": 117219,
+      "sha256": "9450986adc2537db8b8cde4ca904176b5a492b26661a5ec3013999604cc4bb6f"
+    },
+    "qa/stage0/fixtures/crop_9.json": {
+      "bytes": 117264,
+      "sha256": "9159bb5590797eed13459885c8e0e90019d197603f45f8de61aee8605a0c0ff3"
+    },
+    "qa/stage0/fixtures/damaged_base_turret.json": {
+      "bytes": 110022,
+      "sha256": "87943f7a42a7fb254eb0577cc3b2c5e4a9f1f7924d45b0087fcb871c7829529b"
+    },
+    "qa/stage0/fixtures/day_x.json": {
+      "bytes": 110013,
+      "sha256": "be1636a79c8b2d123a7524368ec060383a30df0e15bdeddb15ec74b48ee5b361"
+    },
+    "qa/stage0/fixtures/drone_charging.json": {
+      "bytes": 109525,
+      "sha256": "992804cac9079629a464baf1d5c7a8c0324aa7899b332c4c594268eb0a1bcfdd"
+    },
+    "qa/stage0/fixtures/drone_empty_far.json": {
+      "bytes": 109500,
+      "sha256": "3f233e6dd2bcec4272dc7d35a20975788b37942d64798a277d7b5c1a33b8a989"
+    },
+    "qa/stage0/fixtures/drone_packed.json": {
+      "bytes": 109570,
+      "sha256": "f261b9e97ccc4f62b3ed06b52d4852d0bd8c8700bd93b2b25e0a5c78d528f8aa"
+    },
+    "qa/stage0/fixtures/equipment_storage.json": {
+      "bytes": 109892,
+      "sha256": "028e4e6e7f4c04b6b148dd0ed923ddb1b1b7601c939f41e1f15efffe3a792d08"
+    },
+    "qa/stage0/fixtures/fish_instances.json": {
+      "bytes": 109966,
+      "sha256": "e9ba99d9d5189a629e356de0c252f77d78ea84f608301743162e1cf3da41899c"
+    },
+    "qa/stage0/fixtures/fresh_game.json": {
+      "bytes": 109582,
+      "sha256": "9dffb3976399d5b3c3ca3607d4473f6bd843d4f1564754621196b432e16c024a"
+    },
+    "qa/stage0/fixtures/full_backpack.json": {
+      "bytes": 111018,
+      "sha256": "f13fe7984657c0d29d55a8ffc38964dce3c6799a17a481aa5f020c1303352e0f"
+    },
+    "qa/stage0/fixtures/index.json": {
+      "bytes": 521647,
+      "sha256": "65654b49260bb4d69f9fa826c37ec9c2867bd9e97bfc6920f86ed9244b7cb086"
+    },
+    "qa/stage0/fixtures/legacy_0.19.1.json": {
+      "bytes": 111810,
+      "sha256": "39d2c1bee0ef1bf76af403d0fc28e0d72bfc4e3b2a2b40a8165ee5af5e9ac513"
+    },
+    "qa/stage0/fixtures/rifle_ak74_37_60.json": {
+      "bytes": 109801,
+      "sha256": "7e8560fff8acc3be5f5d8c466e8facf3cdab03157b95b26ed212c7f65196d8ab"
+    },
+    "qa/stage0/fixtures/rifle_ak74_no_magazine.json": {
+      "bytes": 109802,
+      "sha256": "c64a4ea7415e842c138a0210503c6028389c8edcc58fa996b1b598f0264a5ed7"
+    },
+    "qa/stage0/fixtures/rifle_m4_37_60.json": {
+      "bytes": 109800,
+      "sha256": "e06721d570d4c4f21d8d8b4cfae15300ea4f7053da72dcdc9a5441d27de7aafa"
+    },
+    "qa/stage0/fixtures/rifle_m4_no_magazine.json": {
+      "bytes": 109801,
+      "sha256": "278a7fa4ee2865cee0d729b011b482d6994fae109af50d65ee40c922a29a16f0"
+    },
+    "qa/stage0/reports/performance.json": {
+      "bytes": 89960,
+      "sha256": "889f564fda002bcb2995163f06007412f28b1161c8797eabbf8bc62eb7f8b43c"
+    },
+    "qa/stage0/tools/behavior.cjs": {
+      "bytes": 15654,
+      "sha256": "38d8ab20529bd4aef532ebab8200979841e51b7dd27bd1ba2d64594604e53304"
+    },
+    "qa/stage1-reference.json": {
+      "bytes": 10828,
+      "sha256": "ff958044d320e982d83f090a8c4c4b1194764f27d7ae4214c22df77fa4ea3269"
+    },
+    "qa/verify.cjs": {
+      "bytes": 2964,
+      "sha256": "0375771ca21290cebd129dd6ef582bf5054def9d3599f9d05b36de288122dc74"
+    },
+    "src/assets/catalog.js": {
+      "bytes": 7485,
+      "sha256": "244154b310666db3b818b3a69c90333b3cd970b313b0c66c1b1649a7a7c477cc"
+    },
+    "src/base/battery.js": {
+      "bytes": 22117,
+      "sha256": "5b3533d533a98e094f63b82e899955aba61b900cbd98e34d6a8e53d35bd8b063"
+    },
+    "src/base/construction.js": {
+      "bytes": 20416,
+      "sha256": "7263526d9f28e91094db4d4b6e8b32d97938e49dc3587839f82586939467989c"
+    },
+    "src/base/fortress-navigation.js": {
+      "bytes": 37049,
+      "sha256": "c373d5959c51d56a574150193353aa3b8acf836613f519cd50628d6534a5c47b"
+    },
+    "src/base/power.js": {
+      "bytes": 33112,
+      "sha256": "3f79a8034ee202426a6f814ba27720d8f9fe6c0a08a73957f9095cceebf24a95"
+    },
+    "src/base/rooms.js": {
+      "bytes": 35782,
+      "sha256": "aee8369dafcbe22d0412c7f861f0156faf08540d194bc749776cbbabf44dc646"
+    },
+    "src/base/structures.js": {
+      "bytes": 33779,
+      "sha256": "a8eb5321c709a1511d98c49f93e95e6aa12aca495a7ba261b360cef386067a25"
+    },
+    "src/base/turrets.js": {
+      "bytes": 24335,
+      "sha256": "7cdec60b6059dbdbd41a974e48df9a82a199ca37bfe5ce313e4c9eb3985141b1"
+    },
+    "src/base/wall-art.js": {
+      "bytes": 8624,
+      "sha256": "734aa9afc82dc524db89523d822b9f4dfa712abb3a881f75cce06d5b72fc957b"
+    },
+    "src/bootstrap.js": {
+      "bytes": 1687,
+      "sha256": "b949e71e9cb38ab871b9e16108923037ffadedaf293a5e7a1491fd8b3e796689"
+    },
+    "src/combat/monsters.js": {
+      "bytes": 22565,
+      "sha256": "f55095c93a1e53284e4344f55d42d24d63773081173bd7a726952adca445196f"
+    },
+    "src/combat/weapons-crafting.js": {
+      "bytes": 31658,
+      "sha256": "4102fbcf50bc720836aa52858afa0b54df547f699223dd6650ee951ec26ff212"
+    },
+    "src/core/input-combat.js": {
+      "bytes": 24001,
+      "sha256": "52b4e37267880cf99d9ddcd3ba5c18134a3dbae8712966f4a080a69e7cbd1928"
+    },
+    "src/core/interactions-farm-storage.js": {
+      "bytes": 28000,
+      "sha256": "544f2de0be9f6d8ac9ba5fd314788b1f97587ea890f70925fcce0ac6144a9a37"
+    },
+    "src/core/loop-viewport.js": {
+      "bytes": 3340,
+      "sha256": "dc691a3012f379c6be8ec954864ab2d0d6a9c112a14825a4ca2fe8ae7811a78f"
+    },
+    "src/core/loot-light-equipment.js": {
+      "bytes": 16885,
+      "sha256": "9b8c58daa0e51a93310aea7be31f8b45fb968c4da567ae20b21961330e90cd1d"
+    },
+    "src/core/rendering.js": {
+      "bytes": 23290,
+      "sha256": "4b647c5f8830a39e72e6bc7127a02b580dd7a17df6e8eb38231bc965f16a0eeb"
+    },
+    "src/core/runtime.js": {
+      "bytes": 10974,
+      "sha256": "b8a44c9bd0705fa8357e5d8df0a8c50748efef67e9d10701100804b28063214d"
+    },
+    "src/core/world-inventory.js": {
+      "bytes": 28043,
+      "sha256": "3699bf720e1b7a62f4cf6f50dbc24283dedb551a7e28c6f09a718300fee03130"
+    },
+    "src/crafting/manufacturing.js": {
+      "bytes": 46561,
+      "sha256": "d1dfb701d272b55b8378101a9dbc4a7c4b84de81abb3b8dba46054ea1e9551e5"
+    },
+    "src/drones/companion.js": {
+      "bytes": 32293,
+      "sha256": "74d156febf066d870d7afd9d7b2d4171b3a4ddaf64efe59e195e40b7a595d6d9"
+    },
+    "src/drones/interface-power.js": {
+      "bytes": 18690,
+      "sha256": "b4ccb74315cf22092369ed6ba6a7ba14e62b486fbef4cfbcde6ffbcab25eb9c6"
+    },
+    "src/drones/navigation.js": {
+      "bytes": 8016,
+      "sha256": "e7c6594e76b1935658150d495c7e780ef4cd853924137504ac3b968a5a880c48"
+    },
+    "src/drones/station.js": {
+      "bytes": 7770,
+      "sha256": "729c5a067a5a914327501654cf19755e0268a0e5ff1cd44949896eef41a52b05"
+    },
+    "src/farm/growth.js": {
+      "bytes": 29179,
+      "sha256": "c7ae497f819610e74e11ad32221842e77dfdbab3c485ff3946471c95301b3f13"
+    },
+    "src/farm/manual.js": {
+      "bytes": 10258,
+      "sha256": "4d96f1693d5223117ec7a066ff23e7c8962e00efdade3e9c92f391ed10721db8"
+    },
+    "src/inventory/physical-slots.js": {
+      "bytes": 8643,
+      "sha256": "3a27c3f45afaa87d899cae83e2c77ca8a2d1211f7fa5552931f69bfdbb1570a1"
+    },
+    "src/inventory/picker-magazines.js": {
+      "bytes": 11860,
+      "sha256": "fe41613cec2c296154f6a860fcffb69334899b6509fd78d7d436c9986c81a924"
+    },
+    "src/inventory/registry-slots.js": {
+      "bytes": 28634,
+      "sha256": "dfaf758ea9ef821b18010dd32bb62ea5b473a6d1d46e643dd1f7d149ef36c5f7"
+    },
+    "src/inventory/upgrades.js": {
+      "bytes": 16097,
+      "sha256": "228798e3ffcbc9388f3387c1693f74f80069eaf965a2707f9a886a78cd7cbf97"
+    },
+    "src/manifest.json": {
+      "bytes": 1488,
+      "sha256": "d4a4735bfb864551ce8de7781441ccc7c1cbb093ff95029f857c4f5f1246ab7e"
+    },
+    "src/player/controls.js": {
+      "bytes": 12779,
+      "sha256": "387f3475aac70825605de986e02b76b4f46139cb25786be20c7b2b3fd3c7a89f"
+    },
+    "src/render/lighting.js": {
+      "bytes": 13141,
+      "sha256": "2de17dccf47f3942e7944ac5b7578abf9c76361bb50d78d8dc08afcb15ba466b"
+    },
+    "src/save/envelope.js": {
+      "bytes": 2919,
+      "sha256": "cb8054944f5f42ebbb4b8bde52be1af9360c34432fac4297ef3d434004562ae7"
+    },
+    "src/save/legacy-progress.js": {
+      "bytes": 12137,
+      "sha256": "11922989d3f0960e503ecdbe9a19a27b5fefd8ef573ba652341d0180c0dc0b15"
+    },
+    "src/save/slots.js": {
+      "bytes": 28443,
+      "sha256": "2ee552b392af9a18677d1c9920474779b7ffa1f6bb8469547f1a189182d93f9e"
+    },
+    "src/ui/context-map.js": {
+      "bytes": 41476,
+      "sha256": "4ffe2ba6b6be71bf7840c876644ac0e11a6a630ea35ce236cd5219959ac663f2"
+    },
+    "src/ui/inventory-crafting.js": {
+      "bytes": 32536,
+      "sha256": "152dc5fefa0f6fcb794d59101a32e89f053068d1f4fd0f76d3b8db794c7f77d1"
+    },
+    "src/ui/legacy-panels.js": {
+      "bytes": 12182,
+      "sha256": "28c36fadb894124b90c265a033c900ff0af7cdc7efc62441fa354507891e2838"
+    },
+    "src/ui/loot-vitals.js": {
+      "bytes": 8684,
+      "sha256": "d1de65ac7e1e332b0f2e1c0aaaf5ff8d1f19ac19b3d2785d09e24ec66d73218f"
+    },
+    "src/ui/maps-windows.js": {
+      "bytes": 17668,
+      "sha256": "9e7defebdd46135c7b669a29bd78d0c92373974c4638d7d9e362da9c5a1efb34"
+    },
+    "src/ui/modal-dragging.js": {
+      "bytes": 11220,
+      "sha256": "3ef36d1b9c888fc32e9ddc0cced7a59705ca5535a62160f0201d8df7d6e16b96"
+    },
+    "src/ui/progression.js": {
+      "bytes": 21543,
+      "sha256": "ddbf71c6a30ceadc9f11f209316880b4ef18bbbde0b1df1cfcac40297ca6d656"
+    },
+    "src/ui/shared.js": {
+      "bytes": 5095,
+      "sha256": "751a7033e7a56a5808915eef19961ca94be024337bd963aae3483c804431a460"
+    },
+    "src/world/camera.js": {
+      "bytes": 25970,
+      "sha256": "ac3dbcb724213f987a26a263749f9c51d92ba8211bc84681d2f7d3ede0e2d4d2"
+    },
+    "src/world/districts.js": {
+      "bytes": 33152,
+      "sha256": "bd8cc8157900717ca5a9d7f690ed6a130612b6cf40dac0661e12de93354b43ce"
+    },
+    "src/world/expansion.js": {
+      "bytes": 10125,
+      "sha256": "e2b1a84e14760f6aa24d242686f03c89c6928ce6057965ea3acf525b03bbea32"
+    },
+    "src/world/fishing.js": {
+      "bytes": 13246,
+      "sha256": "bf61e10c26987fd05e79819b36989c93a1d7bc116241b04adc9eb37ad4eb602d"
+    },
+    "src/world/interiors.js": {
+      "bytes": 20277,
+      "sha256": "e0b4b908a097f93d9bd61336344a94f42712434126903676c97ac75eaabfc2df"
+    },
+    "src/world/lake-city.js": {
+      "bytes": 19444,
+      "sha256": "0169878a983ae3d04099f28d42f63935e3be29de756059f821a764bb3f45c76e"
+    },
+    "src/world/resources.js": {
+      "bytes": 22092,
+      "sha256": "27faf41573264a739e50e12f57665cc35aade62442ae7117c42a175377887fc2"
+    },
+    "src/world/trees-minimap.js": {
+      "bytes": 6145,
+      "sha256": "5c824c09e0a215d66109c147f915e41b09427fbc3ddc51a72d012aff5172e95f"
+    },
+    "styles/base.css": {
+      "bytes": 13012,
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    "tools/build.cjs": {
+      "bytes": 2579,
+      "sha256": "bd87e20bc867e5eeedebc59656be03a662c4ac9f8829de4c8a8c87c45e823fa5"
     }
   }
 }
