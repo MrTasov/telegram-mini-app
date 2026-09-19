@@ -1,14 +1,18 @@
 {
   "name": "last-base",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "private": true,
-  "description": "Last Base Stage 1: preserved classic runtime with organized sources.",
+  "description": "Last Base Stage 2: explicit state owners and compatible saves.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
     "test": "node qa/run.cjs",
     "bench": "node qa/performance.cjs"
   },
-  "devDependencies": {"@napi-rs/canvas": "0.1.100"},
-  "engines": {"node": ">=20"}
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }
