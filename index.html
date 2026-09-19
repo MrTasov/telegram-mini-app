@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>0.19.1 · Survival Base</title>
+<title>0.20.0 · Survival Base</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -567,7 +567,7 @@ html,body{
 </head>
 
 <body>
-<div id="versionBadge">VERSION 0.19.1</div>
+<div id="versionBadge">VERSION 0.20.0</div>
 
 <div id="game">
 
@@ -628,7 +628,7 @@ html,body{
   <div class="panel">
 
     <h2>⚙️ Настройки</h2>
-    <div class="subtitle">Survival Base 0.19.1 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
+    <div class="subtitle">Survival Base 0.20.0 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
 
     <div class="settingBox">
       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
@@ -6561,28 +6561,129 @@ const V09Craft = (() => {
 })();
 
 
+/* 0.20.0: perimeter geometry and cached art. Existing repair/combat own HP. */
+window.V020Walls=(()=>{
+  'use strict';
+  const bounds=Object.freeze({left:138,top:98,right:1462,bottom:1102,thickness:104});
+  const courtyard=Object.freeze({left:242,top:202,right:1358,bottom:998});
+  const cornerSize=160;
+  const gate={x:298+1004/3,y:998,w:1004/3,h:104};
+  const corners=[
+    {id:'nw',corner:'NW',side:'N',sides:['N','W'],x:218,y:178},
+    {id:'ne',corner:'NE',side:'N',sides:['N','E'],x:1382,y:178},
+    {id:'se',corner:'SE',side:'S',sides:['S','E'],x:1382,y:1022},
+    {id:'sw',corner:'SW',side:'S',sides:['S','W'],x:218,y:1022}
+  ];
+  const stairs=[];
+  for(const side of ['N','E','S','W'])for(let i=0;i<4;i++){
+    const along=(side==='N'?[340,680,930,1270]:side==='S'?[340,640,960,1270]:[300,560,740,900])[i];
+    const x=side==='W'?210:side==='E'?1390:along,y=side==='N'?170:side==='S'?1030:along;
+    const nx=side==='W'?1:side==='E'?-1:0,ny=side==='N'?1:side==='S'?-1:0;
+    stairs.push({id:side.toLowerCase()+'_'+i,side,name:'Лестница',x,y,foot:{x:x+nx*110,y:y+ny*110},angle:Math.atan2(ny,nx)-Math.PI/2});
+  }
+  function create(add){
+    for(const c of corners)Object.assign(add('v091wall020_corner_'+c.corner,c.x-80,c.y-80,160,160,6000,'outer',c.side),{corner:c.corner,sides:c.sides});
+    for(const side of ['N','S'])for(let i=0;i<3;i++){
+      const x=298+i*1004/3,y=side==='N'?98:998;
+      if(side==='S'&&i===1)add('gate',x,y,1004/3,104,6000,'gate','S','south');
+      else add('v091wall020_'+side+'_'+i,x,y,1004/3,104,6000,'outer',side);
+    }
+    for(const side of ['W','E'])for(let i=0;i<3;i++)add('v091wall020_'+side+'_'+i,side==='W'?138:1358,258+i*228,104,228,6000,'outer',side);
+  }
+  const perimeter=o=>o?.group==='outer'||o?.gate==='south';
+  const inside=(x,y,pad=0)=>x>courtyard.left+pad&&x<courtyard.right-pad&&y>courtyard.top+pad&&y<courtyard.bottom-pad;
+  function supportAt(x,y){return window.V015Base?.sections.find(o=>perimeter(o)&&o.hp>0&&x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h)||null;}
+  const usable=t=>!!supportAt(t.x,t.y);
+  function overlap(a,b){return Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));}
+  function oldLayout(){
+    const a=[];const add=(id,x,y,w,h,hp)=>a.push({id,x,y,w,h,legacyMaxHp:hp});
+    for(const side of ['N','S'])for(const [part,start]of [['L',170],['R',870]])for(let i=0;i<4;i++)add('v091wall015_'+side+part+'_'+i,start+140*i,side==='N'?130:998,140,72,6000);
+    for(const side of ['W','E'])for(let i=0;i<8;i++)add('v091wall015_'+side+'_'+i,side==='W'?170:1358,202+99.5*i,72,99.5,6000);
+    add('gate',730,1025,140,45,6000);add('v015northGate',730,130,140,72,6000);add('v091innerGate',730,1170,140,20,3000);
+    for(const side of ['W','E'])for(let i=0;i<3;i++)add('v015airlock'+side+'_'+i,side==='W'?714:870,1070+i*100/3,16,100/3,3000);
+    return a;
+  }
+  // Atlas frames are generated art; positions are physical footprints, not images.
+  const atlas={"1":{"file":"assets/v0200/fortification_level_1.webp","frames":{"wall":[47,88,1442,305],"corner":[293,524,370,402],"stairs":[1001,530,170,393]}},"2":{"file":"assets/v0200/fortification_level_2.webp","frames":{"wall":[47,82,1443,313],"corner":[289,516,376,413],"stairs":[997,519,179,410]}},"3":{"file":"assets/v0200/fortification_level_3.webp","frames":{"wall":[44,79,1449,319],"corner":[275,506,395,425],"stairs":[985,520,208,411]}},"4":{"file":"assets/v0200/fortification_level_4.webp","frames":{"wall":[46,78,1444,316],"corner":[287,511,380,419],"stairs":[991,512,186,419]}},"5":{"file":"assets/v0200/fortification_level_5.webp","frames":{"wall":[40,62,1457,335],"corner":[260,480,408,464],"stairs":[976,508,221,435]}}};
+  const images=new Map(),cache=new Map();
+  function image(level){level=clamp(level||1,1,5);if(!images.has(level)){const im=new Image();im.src=atlas[level].file;images.set(level,im);}return images.get(level);}
+  image(1); // Higher upgrade atlases are requested only when first visible.
+  const frame=(level,part)=>atlas[clamp(level||1,1,5)].frames[part];
+  const ready=level=>{const im=image(level);return im.complete&&im.naturalWidth>0;};
+  const stage=o=>o.hp<=0?4:o.hp/o.maxHp<=.2?3:o.hp/o.maxHp<=.5?2:o.hp/o.maxHp<=.9?1:0;
+  function drawFrame(c,level,part,x,y,w,h){
+    if(!ready(level))return false;let [sx,sy,sw,sh]=frame(level,part);
+    // Cut the flush wall ends to its required length instead of stretching detail.
+    if(part==='wall'){const wanted=sh*w/h;if(wanted<sw){sx+=(sw-wanted)/2;sw=wanted;}}
+    c.drawImage(image(level),sx,sy,sw,sh,x,y,w,h);return true;
+  }
+  function cracks(c,w,h,s,seed=0){
+    if(s<1||s>3)return;
+    c.save();c.beginPath();c.rect(1,1,w-2,h-2);c.clip();
+    const count=s===1?2:s===2?4:6;
+    for(let i=0;i<count;i++){
+      const x=[.23,.71,.46,.89,.09,.59][i]*w,points=[];
+      // Fixed paths grow longer and branch as damage worsens; old cracks never move.
+      for(let j=0;j<(s===1?6:s===2?9:12);j++)points.push([x+Math.sin(seed*1.7+i*5+j*2.3)*(4+j*.6)+Math.sin(j+i)*3,1+j*h/11]);
+      const stroke=(dx,dy,color,width)=>{c.beginPath();for(let j=0;j<points.length;j++){const [px,py]=points[j];j?c.lineTo(px+dx,py+dy):c.moveTo(px+dx,py+dy);}c.strokeStyle=color;c.lineWidth=width;c.stroke();};
+      stroke(.7,.7,'#b7b39785',s*.6+.8);stroke(0,0,'#111b1ee0',s*.6+.25);
+      for(let branch=2;branch<points.length-1;branch+=3){const [px,py]=points[branch],sign=(branch+i)%2?1:-1;c.beginPath();c.moveTo(px,py);c.lineTo(px+sign*7,py-6);c.lineTo(px+sign*13,py-9);if(s>1)c.lineTo(px+sign*18,py-8);c.strokeStyle='#1a2625c7';c.lineWidth=.4+s*.25;c.stroke();}
+    }
+    if(s===3)for(let i=0;i<9;i++){const x=7+(i*61+seed*17)%(w-16),y=5+(i*29)%(h-10);c.fillStyle=i%2?'#adb09a':'#162428';c.beginPath();c.moveTo(x,y);c.lineTo(x+9,y+1);c.lineTo(x+5,y+7);c.closePath();c.fill();}
+    c.restore();
+  }
+  function rubble(c,w,h){
+    for(let i=0;i<Math.max(7,Math.ceil(w/20));i++){
+      const x=4+(i*53)%(w-16),y=4+(i*31)%(h-14),r=3+i%5;
+      c.fillStyle=i%3?'#626d66b8':'#9c9d8988';c.beginPath();c.moveTo(x,y);c.lineTo(x+r+5,y-2);c.lineTo(x+r+7,y+5);c.lineTo(x+2,y+r);c.closePath();c.fill();
+    }
+  }
+  function wallSprite(o){
+    const w=Math.max(o.w,o.h),h=Math.min(o.w,o.h),level=o.level||1,s=stage(o),loaded=ready(level);
+    const key=[w.toFixed(3),h,o.corner?'corner':'wall',level,s,loaded].join(':');if(cache.has(key))return cache.get(key);
+    const v=typeof OffscreenCanvas==='function'?new OffscreenCanvas(Math.ceil(w)+12,Math.ceil(h)+12):document.createElement('canvas');v.width=Math.ceil(w)+12;v.height=Math.ceil(h)+12;const c=v.getContext('2d');
+    if(s===4)rubble(c,w,h);else{
+      c.fillStyle='#07131832';c.fillRect(5,7,w,h);
+      if(!drawFrame(c,level,o.corner?'corner':'wall',0,0,w,h)){c.fillStyle='#5e6862';c.fillRect(0,0,w,h);c.fillStyle='#929689';c.fillRect(0,0,w,22);if(o.corner)c.fillRect(0,0,22,h);c.fillStyle='#313e3b';c.fillRect(o.corner?23:1,23,w-(o.corner?24:2),h-28);}
+      cracks(c,w,h,s,level);
+    }
+    if(cache.size>128)cache.clear();cache.set(key,v);return v;
+  }
+  function drawWall(o){
+    const a=o.corner?{NW:0,NE:Math.PI/2,SE:Math.PI,SW:-Math.PI/2}[o.corner]:{N:0,E:Math.PI/2,S:Math.PI,W:-Math.PI/2}[o.side];
+    const w=Math.max(o.w,o.h),h=Math.min(o.w,o.h);
+    ctx.save();ctx.translate(o.x+o.w/2,o.y+o.h/2);ctx.rotate(a||0);ctx.drawImage(wallSprite(o),-w/2,-h/2);ctx.restore();
+  }
+  function drawStairs(t){
+    const wall=supportAt(t.x,t.y);if(!wall)return;
+    if(!visibleOnScreen((t.x+t.foot.x)/2,(t.y+t.foot.y)/2,110))return;
+    ctx.save();ctx.translate(t.x,t.y);ctx.rotate(t.angle);
+    if(!drawFrame(ctx,wall.level,'stairs',-19,7,38,103)){ctx.fillStyle='#283a3a';ctx.fillRect(-19,7,38,103);for(let y=10;y<106;y+=12){ctx.fillStyle='#9ca89b';ctx.fillRect(-16,y,32,3);}ctx.strokeStyle='#a8b7ab';ctx.lineWidth=2;ctx.strokeRect(-19,7,38,103);}
+    if(distance(player.x,player.y,t.foot.x,t.foot.y)<90&&!player.wallLevel){ctx.fillStyle='#bbceb67a';ctx.beginPath();ctx.moveTo(0,116);ctx.lineTo(-4,122);ctx.lineTo(4,122);ctx.closePath();ctx.fill();}
+    ctx.restore();
+  }
+  function inwardSafePoint(x,y,r=17){
+    const p={x:clamp(x,courtyard.left+r+6,courtyard.right-r-6),y:clamp(y,courtyard.top+r+6,courtyard.bottom-r-6)};
+    for(let d=0;d<=320;d+=12)for(let i=0;i<(d?24:1);i++){const a=i*Math.PI/12,q={x:p.x+Math.cos(a)*d,y:p.y+Math.sin(a)*d};if(inside(q.x,q.y,r+2)&&!worldCollision(q.x,q.y,r,'surface'))return q;}
+    return null;
+  }
+  return {bounds,courtyard,cornerSize,gate,corners,stairs,create,perimeter,inside,supportAt,usable,overlap,oldLayout,atlas,image,ready,stage,cracks,drawWall,drawStairs,inwardSafePoint};
+})();
+
 /* 0.9.2: four watchtowers, a continuous protected wall walk and two metal gates. */
 (() => {
   'use strict';
   const outer=surface.outer;
-  outer.thickness=72;
-  const innerGate={id:'v091innerGate',x:730,y:1170,w:140,h:20};
-  const vestibule=[
-    {id:'v091vestibuleW',x:714,y:1070,w:16,h:120},
-    {id:'v091vestibuleE',x:870,y:1070,w:16,h:120}
-  ];
-  const corners=[
-    {id:'nw',name:'Северо-западная',x:206,y:166,foot:{x:287,y:247}},
-    {id:'ne',name:'Северо-восточная',x:1394,y:166,foot:{x:1313,y:247}},
-    {id:'se',name:'Юго-восточная',x:1394,y:1034,foot:{x:1313,y:977}},
-    {id:'sw',name:'Юго-западная',x:206,y:1034,foot:{x:287,y:977}}
-  ];
-  const towerSolids=corners.map(t=>({id:'v091tower_'+t.id,x:t.x-64,y:t.y-64,w:128,h:128}));
-  const decks=[
-    {x:170,y:130,w:1260,h:72},{x:170,y:130,w:72,h:940},
-    {x:1358,y:130,w:72,h:940},{x:170,y:998,w:1260,h:72},...towerSolids
-  ];
-  let innerGateOpen=false,transition=null,stairsCooldown=0,groundAfter=null,wallRequest=null;
+  Object.assign(outer,V020Walls.bounds);
+  Object.assign(gateRect,V020Walls.gate);
+  const innerGate={id:'v091innerGate',x:730,y:1170,w:140,h:20}; // save compatibility only
+  const vestibule=[];
+  const corners=V020Walls.corners;
+  const stairs=V020Walls.stairs;
+  const towerSolids=corners.map(t=>({id:'v091tower_'+t.id,x:t.x-80,y:t.y-80,w:160,h:160}));
+  const decks=[{x:138,y:98,w:1324,h:104},{x:138,y:98,w:104,h:1004},
+    {x:1358,y:98,w:104,h:1004},{x:138,y:998,w:1324,h:104},...towerSolids];
+  let innerGateOpen=true,transition=null,stairsCooldown=0,groundAfter=null,wallRequest=null;
   player.wallLevel=false;
 
   const oldWalls=surfaceWalls;
@@ -6654,6 +6755,7 @@ const V09Craft = (() => {
     return true;
   }
   function landingFor(t){
+    if(!t||!V020Walls.usable(t))return null;
     const candidates=[t.foot];
     for(let radius=12;radius<=48;radius+=12)for(let a=0;a<8;a++)candidates.push({x:t.foot.x+Math.cos(a*Math.PI/4)*radius,y:t.foot.y+Math.sin(a*Math.PI/4)*radius});
     return candidates.find(p=>p.x>242+player.radius&&p.x<1358-player.radius&&p.y>202+player.radius&&p.y<998-player.radius&&!worldCollision(p.x,p.y,player.radius,'surface'))||null;
@@ -6665,12 +6767,12 @@ const V09Craft = (() => {
     const heldPointer=objectPointer?.following?objectPointer:null;
     const heldStick=leftPointerId!==null?{id:leftPointerId,x:moveX,y:moveY,power:movePower}:null;
     stopControls();if(heldPointer)objectPointer=heldPointer;if(heldStick){leftPointerId=heldStick.id;moveX=heldStick.x;moveY=heldStick.y;movePower=heldStick.power;}cancelSearch();cancelChop();
-    transition={source,target:{...point},toUpper,elapsed:0,duration:kind==='jump'?360:480,kind,after};
+    transition={source,target:{...point},toUpper,elapsed:0,duration:kind==='jump'?360:720,kind,after};
     return true;
   }
-  function descend(t,after=null){const point=landingFor(t);if(!point){message('Лестница занята — выберите другую башню');return false;}return beginTransition(point,false,'stairs',after);}
+  function descend(t,after=null){const point=landingFor(t);if(!point){message('Лестница занята — выберите другую');return false;}return beginTransition(point,false,'stairs',after);}
   function nearestStair(destination){
-    return corners.map(t=>({t,path:findPath(player.x,player.y,t),landing:landingFor(t)}))
+    return stairs.filter(V020Walls.usable).map(t=>({t,path:findPath(player.x,player.y,t),landing:landingFor(t)}))
       .filter(a=>a.path&&a.landing).sort((a,b)=>routeLength(a.path)+distance(a.landing.x,a.landing.y,destination.x,destination.y)-routeLength(b.path)-distance(b.landing.x,b.landing.y,destination.x,destination.y))[0]?.t;
   }
   function cancelGroundRequest(){if(wallRequest?.stairId&&navigation?.targetId===wallRequest.stairId)cancelNavigation();wallRequest=null;groundAfter=null;}
@@ -6680,12 +6782,6 @@ const V09Craft = (() => {
     if(transition)return true;
     if(!isElevated()){
       if(scene!=='surface'||elevatedCollision(x,y))return false;
-      const inside=player.x>242&&player.x<1358&&player.y>202&&player.y<998;
-      const inEntry=player.x>730&&player.x<870&&player.y>=998&&player.y<1170;
-      if(!inside&&(!gateOpen||(!innerGateOpen&&!inEntry))){
-        if(following)return false;
-        message('Сначала откройте вход в крепость, чтобы пройти к лестнице.');return true;
-      }
       // A held pointer may hit the wall many times. Keep one incremental search,
       // update only its final deck destination, and never run A* in the input event.
       const n=V091Navigation;
@@ -6696,7 +6792,7 @@ const V09Craft = (() => {
       }
       cancelNavigation();cancelSearch();cancelChop();groundAfter=null;
       const request={x,y,scene,revision:geometryRevision,fromX:player.x,fromY:player.y,index:0,
-        candidates:[...corners].sort((a,b)=>distance(player.x,player.y,a.foot.x,a.foot.y)-distance(player.x,player.y,b.foot.x,b.foot.y))};
+        candidates:stairs.filter(V020Walls.usable).sort((a,b)=>distance(player.x,player.y,a.foot.x,a.foot.y)-distance(player.x,player.y,b.foot.x,b.foot.y))};
       wallRequest=request;
       function nextStair(){
         if(wallRequest!==request)return;
@@ -6714,7 +6810,7 @@ const V09Craft = (() => {
       nextStair();return true;
     }
     if(x>242&&x<1358&&y>202&&y<998){const p=inwardLanding();if(p){beginTransition(p,false,'jump',()=>approachPoint(x,y,following));return true;}}
-    if(x<170||x>1430||y<130||y>1070){if(!following)message('Спрыгнуть можно только внутрь двора');return true;}
+    if(x<138||x>1462||y<98||y>1102){if(!following)message('Спрыгнуть можно только внутрь двора');return true;}
     if(!elevatedCollision(x,y)){routeTo(x,y);return true;}
     if(following){
       // A dragged pointer outside the wall follows its nearest safe deck point;
@@ -6726,13 +6822,13 @@ const V09Craft = (() => {
     const stair=nearestStair({x,y});if(!stair){message('Нет свободной лестницы для спуска');return true;}
     routeTo(stair.x,stair.y,()=>descend(stair,()=>approachPoint(x,y)));return true;
   }
-  function towerFor(target){return corners.find(t=>t.id===target?.tower);}
+  function towerFor(target){return stairs.find(t=>t.id===target?.tower);}
   function handleObject(target){
     if(transition)return true;if(scene!=='surface'||!target)return false;
     if(target.kind==='v091tower'){
       const t=towerFor(target);if(!t)return true;
       if(isElevated()){routeTo(t.x,t.y,()=>descend(t));return true;}
-      const foot={id:'v091stairs_'+t.id,kind:'v091stairs',name:'Подняться на башню',tower:t.id,...t.foot,r:12,range:21};
+      const foot={id:'v091stairs_'+t.id,kind:'v091stairs',name:'Подняться на стену',tower:t.id,...t.foot,r:12,range:21};
       if(canInteract(foot,player.x,player.y)){executeInteraction(foot);return true;}
       // Dispatch to the normal ground navigator with the actual stair foot.
       approachObject(foot);return true;
@@ -6763,18 +6859,16 @@ const V09Craft = (() => {
   const oldInteractions=interactionObjects;
   interactionObjects=function(which=scene){
     const base=oldInteractions(which);if(which!=='surface')return base;
-    return [...base,{...innerGate,kind:'v091innerGate',name:innerGateOpen?'Закрыть внешнюю дверь':'Открыть внешнюю дверь',range:48},
-      ...corners.flatMap(t=>[
-        {...towerSolids.find(o=>o.id==='v091tower_'+t.id),kind:'v091tower',tower:t.id,name:t.name+' башня',range:26},
-        {id:'v091stairs_'+t.id,kind:'v091stairs',tower:t.id,name:isElevated()?'Спуститься во двор':'Подняться на башню',...(isElevated()?{x:t.x,y:t.y}:t.foot),r:12,range:21}
-      ])];
+    return [...base.filter(o=>o.id!=='v091innerGate'&&o.kind!=='v091tower'&&o.kind!=='v091stairs'),
+      ...stairs.filter(V020Walls.usable).map(t=>({id:'v091stairs_'+t.id,kind:'v091stairs',tower:t.id,
+        name:isElevated()?'Спуститься во двор':'Подняться на стену',...(isElevated()?{x:t.x,y:t.y}:t.foot),r:15,range:21}))];
   };
   const oldCanInteract=canInteract;
   canInteract=function(target,x,y){
     if(scene==='surface'){
       if(target?.kind==='v091tower')return false; // Tower body clicks route to stairs.
       if(target?.kind==='v091stairs'){
-        const t=towerFor(target);if(!t)return false;const point=isElevated()?t:t.foot;
+        const t=towerFor(target);if(!t||!V020Walls.usable(t))return false;const point=isElevated()?t:t.foot;
         return distance(x,y,point.x,point.y)<=28&&(isElevated()?elevatedClear(x,y,point.x,point.y):lineClear(x,y,point.x,point.y,0,'surface'));
       }
       if(isElevated()&&target?.kind!=='ground')return false;
@@ -6782,16 +6876,7 @@ const V09Craft = (() => {
     }
     return oldCanInteract(target,x,y);
   };
-  function toggleInnerGate(){
-    const drone=window.V014Robots?.state;
-    if(innerGateOpen&&drone&&!drone.packed&&drone.scene==='surface'&&rectHit(drone.x,drone.y,15,innerGate)){message('Дрон занимает проход');return;}
-    if(innerGateOpen){
-      const occupants=[...(scene==='surface'&&!isElevated()?[player]:[]),...zombies.filter(z=>z.alive)];
-      if(occupants.some(p=>rectHit(p.x,p.y,(p.radius||17)+3,innerGate))){message('Отойдите от внешнего проёма');return;}
-    }
-    innerGateOpen=!innerGateOpen;invalidateGeometry();queueGameSave();
-    message(innerGateOpen?'Внешняя металлическая дверь открыта':'Внешняя металлическая дверь закрыта');
-  }
+  function toggleInnerGate(){return false;} // the retired airlock is not physical
   const oldExecute=executeInteraction;
   executeInteraction=function(target){
     if(target?.kind==='v091stairs'||target?.kind==='v091innerGate'){
@@ -6838,14 +6923,14 @@ const V09Craft = (() => {
     }
     if(!menuOpen&&!playerDead&&scene==='surface'&&movePower>JOY_DEAD&&performance.now()>stairsCooldown){
       if(!isElevated()){
-        const t=corners.find(t=>distance(player.x,player.y,t.foot.x,t.foot.y)<48&&((t.x-player.x)*moveX+(t.y-player.y)*moveY)>distance(player.x,player.y,t.x,t.y)*.4);
+        const t=stairs.find(t=>V020Walls.usable(t)&&distance(player.x,player.y,t.foot.x,t.foot.y)<38&&((t.x-player.x)*moveX+(t.y-player.y)*moveY)>distance(player.x,player.y,t.x,t.y)*.4);
         if(t){const after=groundAfter;groundAfter=null;beginTransition({x:t.x,y:t.y},true,'stairs',after);return;}
       }else if(!navigation||navigation._pointerFollow){
         const x=player.x,y=player.y,r=player.radius;
         const next={x:x+moveX*(r+10),y:y+moveY*(r+10)};
         const inward=next.x>242&&next.x<1358&&next.y>202&&next.y<998&&elevatedCollision(next.x,next.y);
         if(inward){
-          const t=corners.find(t=>distance(x,y,t.x,t.y)<110&&((t.foot.x-x)*moveX+(t.foot.y-y)*moveY)>distance(x,y,t.foot.x,t.foot.y)*.9);
+          const t=stairs.find(t=>V020Walls.usable(t)&&distance(x,y,t.x,t.y)<58&&((t.foot.x-x)*moveX+(t.foot.y-y)*moveY)>distance(x,y,t.foot.x,t.foot.y)*.9);
           if(t&&descend(t))return;
           if(jumpInward())return;
         }
@@ -6864,7 +6949,7 @@ const V09Craft = (() => {
 
   // Floor slabs must not intercept a muzzle or light already on their upper side.
   function upperObstacles(rails=false){
-    const obstacles=[...surfaceWalls().filter(o=>!o.id?.startsWith('v091wall')&&o.id!=='gate'&&o.id!=='v015northGate'),...solidObjects('surface').filter(o=>!o.id?.startsWith('v091tower'))];
+    const obstacles=[...surfaceWalls().filter(o=>o.group!=='outer'&&o.id!=='gate'&&o.id!=='v015northGate'),...solidObjects('surface').filter(o=>!o.id?.startsWith('v091tower'))];
     if(rails&&!window.V015Base)obstacles.push({x:170,y:130,w:1260,h:6},{x:170,y:130,w:6,h:940},{x:1424,y:130,w:6,h:940},{x:170,y:1064,w:1260,h:6});
     return obstacles;
   }
@@ -6969,7 +7054,7 @@ const V09Craft = (() => {
   drawPlayer=function(){
     if(transition?.kind==='jump'){
       const lift=Math.sin(Math.PI*transition.elapsed/transition.duration)*22;ctx.save();ctx.translate(0,-lift);oldDrawPlayer();ctx.restore();
-    }else oldDrawPlayer();
+    }else if(transition?.kind==='stairs'){const lift=Math.sin(Math.PI*transition.elapsed/transition.duration)*5;ctx.save();ctx.translate(0,-lift);oldDrawPlayer();ctx.restore();}else oldDrawPlayer();
     if(isElevated()&&!transition){label('НА СТЕНЕ',player.x,player.y-34,8,'#d5dfb8');}
   };
   function canonicalPosition(){return transition?{x:transition.source.x,y:transition.source.y,wallLevel:transition.source.wallLevel}:{x:player.x,y:player.y,wallLevel:isElevated()};}
@@ -6979,13 +7064,13 @@ const V09Craft = (() => {
     if(data.wallLevel&&!window.V015Base?.validating&&elevatedCollision(data.x,data.y,player.radius))throw new Error('Unsafe wall position');return true;
   }
   function restore(data){
-    if(data)validate(data);transition=null;groundAfter=null;wallRequest=null;stairsCooldown=0;cancelRoute();innerGateOpen=data?.innerGateOpen??false;player.wallLevel=!!data?.wallLevel&&scene==='surface';invalidateGeometry();
+    if(data)validate(data);transition=null;groundAfter=null;wallRequest=null;stairsCooldown=0;cancelRoute();innerGateOpen=true;player.wallLevel=!!data?.wallLevel&&scene==='surface';invalidateGeometry();
     if(data&&scene==='surface'){
       if(player.wallLevel||!worldCollision(data.x,data.y,player.radius,'surface')){player.x=data.x;player.y=data.y;}else{let found=false;for(let r=4;r<=96&&!found;r+=4)for(let i=0;i<24;i++){const x=data.x+Math.cos(i*Math.PI/12)*r,y=data.y+Math.sin(i*Math.PI/12)*r;if(!worldCollision(x,y,player.radius+1,'surface')){player.x=x;player.y=y;found=true;break;}}}
     }
     updateAction();
   }
-  window.V091Fortress={corners,decks,innerGate,vestibule,cancelGroundRequest,isElevated,elevatedCollision,elevatedClear,findPath,handlePoint,handleObject,handleAutoWalk,cancelRoute,lightCollision,lightObstacles,upperObstacleCollision,canonicalPosition,capture,validate,restore,jumpInward,inwardLanding,toggleInnerGate,landingFor,get transitioning(){return !!transition;},get innerGateOpen(){return innerGateOpen;}};
+  window.V091Fortress={corners,stairs,decks,innerGate,vestibule,cancelGroundRequest,isElevated,elevatedCollision,elevatedClear,findPath,handlePoint,handleObject,handleAutoWalk,cancelRoute,lightCollision,lightObstacles,upperObstacleCollision,canonicalPosition,capture,validate,restore,jumpInward,inwardLanding,toggleInnerGate,landingFor,get transitioning(){return !!transition;},get innerGateOpen(){return innerGateOpen;}};
   v09Style('.v091WallButton{position:fixed;z-index:32;left:50%;top:calc(env(safe-area-inset-top,0px) + 67px);transform:translateX(-50%);display:none;padding:10px 16px;min-height:42px;border:1px solid #a2b994;border-radius:9px;background:rgba(31,53,49,.95);color:#e3ebd4;font:600 12px Arial;box-shadow:0 3px 14px #0007;touch-action:manipulation}.v091WallButton:disabled{opacity:.5}');
   invalidateGeometry();
 })();
@@ -7552,7 +7637,7 @@ decodeGameProgress=function(raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|19\.[01]))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0)))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -7737,7 +7822,7 @@ function v09NewGame(){
   try{
     const id=v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
-    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.19.1';data.v010={schema:1,modules:clone(V010.initialModules)};
+    let data=clone(v09NewGameTemplate);data.savedAt=Date.now();data.gameVersion='0.20.0';data.v010={schema:1,modules:clone(V010.initialModules)};
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
     const raw=v09WriteNewSlot(id,data);
@@ -7762,7 +7847,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(v091SaveName||v091DefaultName(v09ActiveSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.19.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.20.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -9157,7 +9242,7 @@ function viewHeight(){return V010Camera.view().h;}
   const snapshot=()=>Object.fromEntries(order.filter(k=>V010.modules[k]).map(k=>[k,V010.modules[k].capture()]));
   V010.initialModules=clone(snapshot());
   const oldCapture=captureGameProgress,oldDecode=decodeGameProgress,oldRestore=restoreGameProgress;
-  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.19.1';d.v010={schema:1,modules:snapshot()};return d;};
+  captureGameProgress=function(){const d=oldCapture();d.gameVersion='0.20.0';d.v010={schema:1,modules:snapshot()};return d;};
   decodeGameProgress=function(raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -9166,7 +9251,7 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.19.1';return d;
+    d.gameVersion='0.20.0';return d;
   };
   restoreGameProgress=function(d){
     const was=v09SaveTransaction;v09SaveTransaction=true;
@@ -9175,8 +9260,8 @@ function viewHeight(){return V010Camera.view().h;}
   };
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(text);};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.19.1 · Большой мир и свободное развитие';
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.19.1';
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.20.0 · Большой мир и свободное развитие';
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.20.0';
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
@@ -9384,7 +9469,7 @@ window.V0105=(()=>{
     renderQuickSlots();updateAmmoHud();
   };
   const history=[
-    ['0.19.1',{'Улучшения':['Круг выбранной цели масштабируется под размер монстра.','Тела сразу полупрозрачны: 60% видимости, плавное исчезновение через 75–90 секунд.']}], ['0.19.0',{'Новое':['Три отдельные позы смерти каждого из пяти монстров.','День X каждые десять игровых дней: усиление на 50% и осада с четырёх сторон.'],'Баланс':['В обычные дни меньше монстров: спокойное блуждание, атака только при обнаружении игрока.','Стены и двери атакуются монстрами только в день X; ночь сама по себе больше не запускает осаду.'],'Исправления':['Отряды удерживают свою сторону базы, не сбегаясь в один пролом.','Усиление и состояние тел корректно сохраняются без повторного умножения характеристик.']}], ['0.18.0',{'Новое':['Молот для ремонта стен, ворот и дверей.','Камень добывается киркой; бетон изготавливается в печи.','Пять уровней укреплений: 10, 20, 40, 60 и 100 тысяч HP.'],'Улучшения':['Восстановление проломов с проверкой свободного места.','Ремонт 1000 HP/сек.; остаток ремонтной смеси сохраняется.']}], ['0.17.0',{'Новое':['Пять типов монстров: громила, заражённый, ловчий, прыгун и взрывник.','Ночные атаки базы, распределение противников по стенам, постоянные полоски здоровья.'],'Улучшения':['Отдельные анимированные изображения движения и атак.','Тонкая шкала здоровья и шкала сытости над ней.'],'Баланс':['Больше противников ночью; прыжки с дистанции и опасный ближний взрыв.']}], ['0.16.3',{'Улучшения':['Маршрут начинается с безопасного участка сразу; дальнейший путь рассчитывается по кадрам.','Мягкая полупрозрачная линия маршрута; здоровье и сытость над быстрыми слотами.','Рюкзак и хранилище: непрозрачность 100%, 70% или 40%.','Добыча: три действия, выбор одной стопки или выдача всего в рюкзак либо дрон.'],'Исправления':['Пустые быстрые слоты открывают выбор предмета и при касании пальцем.','Нажатие за окном закрывает только верхнюю карточку и не проходит под неё.','Открытие интерфейса сохраняет автопуть и добычу; получение урона останавливает добычу.','Убран отдельный индикатор заряда дрона поверх игрового мира.']}], ['0.16.2',{'Улучшения':['Пять быстрых слотов уменьшены на 30%; компактный выбор из всего рюкзака.','Недоступные для быстрого слота предметы приглушены и подсвечиваются красным при нажатии.'],'Новое':['Съёмные магазины АК и M4 на 30 и 60 патронов.','Без магазина оружие не стреляет; снятие возвращает пустой магазин и весь боезапас в рюкзак.'],'Исправления':['Атомарные операции с магазинами, заполнение стаков до 600 и сохранение точного боезапаса.']}], ['0.16.1',{'Новое':['Физический станок усиления в углу мастерской: оружие, экипировка, пулемёт и модули дрона до +5.','Новые иконки шлема, увеличенного магазина, дрона и станка.','Перенос предметов удержанием между быстрыми слотами, рюкзаком, ящиками и дроном.'],'Улучшения':['Мини-карта немного меньше и сохраняет правильное положение до и после масштабирования.','Окна сразу скрывают игровые кнопки и мини-карту, закрываются крестиком и нажатием на фон.','Поднятые лампы освещают двор поверх низких декораций; вещи расположены ближе к стенам.','Единая прозрачность игровых кнопок и новая иконка тихого шага.'],'Баланс':['Ёмкость батареи дрона увеличена в 2,5 раза.','Добыча руды: 10 за цикл; переплавка железа и меди: 2 секунды за слиток.','Удалены прицел, рукоятка, глушитель и положение на колене.'],'Исправления':['Улучшенные предметы сохраняются на станке без дублирования.','Старые сохранения переносятся с сохранением прогресса плавки; материалы незавершённых удалённых рецептов возвращаются.','Все лестницы остаются доступны после перестановки декораций.']}], ['0.16.0',{'Новое':['Сутки за 20 минут активной игры: плавный рассвет, вечер и ночь; время сохраняется.','Съёмный тяжёлый пулемёт: урон 65, поворот 360°, изготовление и размещение на стенах.'],'Улучшения':['Мягкое локальное освещение бункера, усиленный фонарик и свет дрона.','Лампы на стенах и восемь наружных прожекторов по углам базы.','Открытый двор без машин и лишних перегородок; более тёмный бетон.'],'Исправления':['Перенос прежних сохранений сохраняет прочность внешних и внутренних укреплений.','Проходы и лестницы остаются свободными при установленном пулемёте.','Ворота не закрываются на дроне; разрушение стены во время подъёма не портит положение персонажа.','Северный мост больше не перекрывает верхнюю линию выстрела и света.']}], ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
+    ['0.20.0',{'Новое':['Периметр: 4 угла, 11 стен и одни южные ворота.','16 лестниц с плавным подъёмом. Со стены можно спрыгнуть только во двор.','Пять обликов укреплений и три стадии трещин.'],'Улучшения':['Пулемёт устанавливается в любой точке стены, включая стыки.','Сохранены уровни укреплений, повреждения и установленные пулемёты из предыдущей версии.']}], ['0.19.1',{'Улучшения':['Круг выбранной цели масштабируется под размер монстра.','Тела сразу полупрозрачны: 60% видимости, плавное исчезновение через 75–90 секунд.']}], ['0.19.0',{'Новое':['Три отдельные позы смерти каждого из пяти монстров.','День X каждые десять игровых дней: усиление на 50% и осада с четырёх сторон.'],'Баланс':['В обычные дни меньше монстров: спокойное блуждание, атака только при обнаружении игрока.','Стены и двери атакуются монстрами только в день X; ночь сама по себе больше не запускает осаду.'],'Исправления':['Отряды удерживают свою сторону базы, не сбегаясь в один пролом.','Усиление и состояние тел корректно сохраняются без повторного умножения характеристик.']}], ['0.18.0',{'Новое':['Молот для ремонта стен, ворот и дверей.','Камень добывается киркой; бетон изготавливается в печи.','Пять уровней укреплений: 10, 20, 40, 60 и 100 тысяч HP.'],'Улучшения':['Восстановление проломов с проверкой свободного места.','Ремонт 1000 HP/сек.; остаток ремонтной смеси сохраняется.']}], ['0.17.0',{'Новое':['Пять типов монстров: громила, заражённый, ловчий, прыгун и взрывник.','Ночные атаки базы, распределение противников по стенам, постоянные полоски здоровья.'],'Улучшения':['Отдельные анимированные изображения движения и атак.','Тонкая шкала здоровья и шкала сытости над ней.'],'Баланс':['Больше противников ночью; прыжки с дистанции и опасный ближний взрыв.']}], ['0.16.3',{'Улучшения':['Маршрут начинается с безопасного участка сразу; дальнейший путь рассчитывается по кадрам.','Мягкая полупрозрачная линия маршрута; здоровье и сытость над быстрыми слотами.','Рюкзак и хранилище: непрозрачность 100%, 70% или 40%.','Добыча: три действия, выбор одной стопки или выдача всего в рюкзак либо дрон.'],'Исправления':['Пустые быстрые слоты открывают выбор предмета и при касании пальцем.','Нажатие за окном закрывает только верхнюю карточку и не проходит под неё.','Открытие интерфейса сохраняет автопуть и добычу; получение урона останавливает добычу.','Убран отдельный индикатор заряда дрона поверх игрового мира.']}], ['0.16.2',{'Улучшения':['Пять быстрых слотов уменьшены на 30%; компактный выбор из всего рюкзака.','Недоступные для быстрого слота предметы приглушены и подсвечиваются красным при нажатии.'],'Новое':['Съёмные магазины АК и M4 на 30 и 60 патронов.','Без магазина оружие не стреляет; снятие возвращает пустой магазин и весь боезапас в рюкзак.'],'Исправления':['Атомарные операции с магазинами, заполнение стаков до 600 и сохранение точного боезапаса.']}], ['0.16.1',{'Новое':['Физический станок усиления в углу мастерской: оружие, экипировка, пулемёт и модули дрона до +5.','Новые иконки шлема, увеличенного магазина, дрона и станка.','Перенос предметов удержанием между быстрыми слотами, рюкзаком, ящиками и дроном.'],'Улучшения':['Мини-карта немного меньше и сохраняет правильное положение до и после масштабирования.','Окна сразу скрывают игровые кнопки и мини-карту, закрываются крестиком и нажатием на фон.','Поднятые лампы освещают двор поверх низких декораций; вещи расположены ближе к стенам.','Единая прозрачность игровых кнопок и новая иконка тихого шага.'],'Баланс':['Ёмкость батареи дрона увеличена в 2,5 раза.','Добыча руды: 10 за цикл; переплавка железа и меди: 2 секунды за слиток.','Удалены прицел, рукоятка, глушитель и положение на колене.'],'Исправления':['Улучшенные предметы сохраняются на станке без дублирования.','Старые сохранения переносятся с сохранением прогресса плавки; материалы незавершённых удалённых рецептов возвращаются.','Все лестницы остаются доступны после перестановки декораций.']}], ['0.16.0',{'Новое':['Сутки за 20 минут активной игры: плавный рассвет, вечер и ночь; время сохраняется.','Съёмный тяжёлый пулемёт: урон 65, поворот 360°, изготовление и размещение на стенах.'],'Улучшения':['Мягкое локальное освещение бункера, усиленный фонарик и свет дрона.','Лампы на стенах и восемь наружных прожекторов по углам базы.','Открытый двор без машин и лишних перегородок; более тёмный бетон.'],'Исправления':['Перенос прежних сохранений сохраняет прочность внешних и внутренних укреплений.','Проходы и лестницы остаются свободными при установленном пулемёте.','Ворота не закрываются на дроне; разрушение стены во время подъёма не портит положение персонажа.','Северный мост больше не перекрывает верхнюю линию выстрела и света.']}], ['0.15.2',{'Исправления':['Исправлена ошибка рисования узких стен, из-за которой изображение повторялось и игра не показывала мир.','Кадр восстанавливает состояние Canvas при сбое отрисовки.'],'Улучшения':['Наземные отделения содержат декорации: припаркованные машины, палеты, кейсы, трубы и тележку.','С поверхности убраны дубли склада, мастерской, генераторов и других подземных служб.','Более естественный бетон стен, крупные плиты пола, сдержанные швы и тени.']}], ['0.15.1',{'Исправления':['Станция распознаёт и заряжает принесённый дрон даже при нулевой батарее.','Контроль застревания при возврате, повторный поиск пути и экономия заряда при закрытом проходе.','Посадка всех десяти культур: точный расход выбранного материала из рюкзака и получение из ящиков фермы.'],'Улучшения':['Отдельное окно станции: заряд, питание, время и переключатель автовозврата при 15%.','Дрон на обеих картах; на другом уровне — индикатор у люка.']}], ['0.15.0',{'Новое':['Новая наземная база: склад, мастерская, топливный блок, энергоблок, медпункт и центральный двор.','Вышки с пустыми площадками и прожекторы на стенах.','Отдельная прочность секций всех стен базы, трещины и настоящие проломы.','Зомби атакуют препятствующие им секции и проходят после разрушения.'],'Улучшения':['Состояние укреплений сохраняется; повреждения видны на обеих картах.','Круглая мини-карта ниже настроек; удержание 1,5 секунды: 100%, 60%, 30%.']}], ['0.14.3',{'Улучшения':['Круглая мини-карта расположена ниже кнопки настроек.','Удержание 1,5 секунды переключает непрозрачность: 100%, 60%, 30%.','Выбранная непрозрачность сохраняется после отпускания и повторного входа.','Короткое нажатие по-прежнему открывает карту местности.']}], ['0.14.2',{'Улучшения':['Компактные переключатели фонаря и боевого режима дрона.','Ровная сетка рюкзака внутри карточки дрона и перемещённая станция.','В режиме атаки дрон реагирует на выбранного игроком противника и затем возвращается к основной команде.'],'Баланс':['Боезапас дрона — 600; загрузка из рюкзака и груза дрона.','Каждое попадание дрона наносит 20 HP; темп огня соответствует АК.'],'Исправления':['Точное списание патронов и прекращение огня при выключении боевого режима.','Сохранение команды охраны после боя и совместимость предыдущих сохранений.']}], ['0.14.1',{'Улучшения':['Новая карточка и станция дрона, аварийный возврат в рюкзак.','Плавное сопровождение с обходом препятствий и автоматическими дверями.','Три размера деревьев и перекрытие объектов по глубине.','Обнаружение на большой карте на 50% шире мини-карты.'],'Исправления':['Трактор удалён; восстановлены ручная посадка и сбор урожая.','Сохранения переносят растения и оставшийся груз трактора.']}], ['0.14.0',{'Новое':['Дрон-компаньон: переноска, защита, атака, зарядка и улучшения до +5.','Мини-трактор сажает и собирает грядки, перевозит урожай; общая станция роботов.','Стойка на колене и движение к точке карты.'],'Улучшения':['Компактное производство с крупной иконкой результата.','Полив по циклам и индивидуальное время роста растений.','Расход топлива по нагрузке, включая зарядку.','Пропорции объектов, тени и обстановка жилой комнаты.'],'Исправления':['Попадания в упор, кнопка огня при захвате цели и целые значения HP.','Рыбалка с берега; отдельный вес каждой рыбы и приготовление выбранного количества.','Мини-карта: касание открывает карту, удержание временно меняет прозрачность.','Пороги и дороги, изображения и открывание машин.']}], ['0.13.0',{'Новое':['Пять самостоятельных быстрых слотов, патроны по 600 и рыба с весом.','Обновлённое озеро, живые рыбы и ловля за 6–15 секунд.','Десять вариантов машин, открывающиеся двери и багажники.','Заправки и двухэтажный торговый центр.'],'Улучшения':['Согласованные дороги и подъезды.','Подсветка недостающих материалов при изготовлении.']}], ['0.12.1',{'Новое':['Рыбалка у озера: удочка, рыба, заброс и улов каждые 3–15 секунд.','Удочка создаётся на универсальном станке и назначается в любой быстрый слот.','Три места для рыбалки и две лодки у берега.']}], ['0.12.0',{'Новое':['Внешний мир увеличен в пять раз по площади.','Настройки видимости объектов на обеих картах.'],'Улучшения':['Увеличенные здания с доступными интерьерами и добычей в мебели.','Новые машины с постоянным цветом.','Компактные окна рюкзака и хранилищ с настройкой прозрачности.','Плавные уведомления и анимация добычи руды.']}], ['0.11.1',{'Улучшения':['Мягкое распыление воды и заметные капли над грядками.','Коровы попарно в стойлах у кормушек; новые стилизованные изображения коров и кур.','Электростанок преимущественно сверху, с лёгким наклоном и движущимся рабочим узлом.']}], ['0.11.0',{
  'Новое':['Мини-инвентарь готовой продукции каждого станка: выбор стопки и выдача всего.','Общий бачок полива: 100 л, 10 секунд полива после 45 секунд паузы.','Отдых на кровати восстанавливает здоровье; душ смывает загрязнение после боя.','Дом и автосервис с открывающимися дверями, скрываемой крышей и добычей внутри.','Новые изображения оборудования и животных, механическая анимация станков и открывания ящиков.'],
  'Улучшения':['Единый компактный стиль карточек и производства: материалы → результат.','Прибавки улучшений после итоговых характеристик; четыре строки параметров персонажа.','Настройки слоёв обеих карт и отдельная кнопка снятия цели.','Новые покрытия комнат, двери, лампы, мягкий свет и тени.','Отдельные кормушки и общая поилка, движения и поведение животных.','Метки АК и M4 на патронах; компактная заправка по 10 или до максимума.'],
  'Баланс':['Полный сбалансированный комплект +5 даёт около 300 максимального HP.','Новый урожай — 50 единиц с грядки; старые остатки урожая сохраняются.','Без воды культуры растут со скоростью 35% и не погибают.','Тела зомби плавно исчезают через 75–90 секунд.'],
@@ -9399,7 +9484,7 @@ window.V0105=(()=>{
     const o=v09Overlay('v105Changes','Обновления'),body=o.querySelector('.v09Body');body.replaceChildren();
     history.forEach(([version,groups],i)=>{const d=document.createElement('details');d.open=i===0;const s=document.createElement('summary');s.textContent=version+(i===0?' — текущее':'');d.append(s);for(const [title,items] of Object.entries(groups)){const h=document.createElement('h3');h.textContent=title;const ul=document.createElement('ul');for(const text of items){const li=document.createElement('li');li.textContent=text;ul.append(li);}d.append(h,ul);}body.append(d);});openOverlay(o);
   }
-  const changes=v09Button('Что нового? · Version 0.19.1',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
+  const changes=v09Button('Что нового? · Version 0.20.0',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
   v09Style('#v105Changes .panel{width:min(480px,94vw);padding:14px;font-size:12px;max-height:85dvh}#v105Changes details{border-bottom:1px solid #405452;padding:8px 0}#v105Changes summary{font-size:14px;cursor:pointer;color:#e2c58d}#v105Changes h3{font-size:12px;margin:12px 0 4px;color:#97cab5}#v105Changes ul{padding-left:18px;margin:4px 0;line-height:1.5}#v105Changes li{margin:5px 0}');
   return {tapWorld,equip,markers,drawMapMarkers,showHistory,history,get target(){return liveTarget();},get contextHand(){return contextHand;}};
 })();
@@ -12040,18 +12125,8 @@ window.V015Base=(()=>{
   const rooms=[],retiredSections=new Map();
   function add(id,x,y,w,h,hp,group,side,gate=null){const o={id,x,y,w,h,maxHp:hp,hp,group,side,gate,hitAt:-1e6};sections.push(o);byId.set(id,o);return o;}
   function span(id,x,y,w,h,count,hp,group,side){for(let i=0;i<count;i++)add(id+'_'+i,x+(w>h?w*i/count:0),y+(h>=w?h*i/count:0),w>h?w/count:w,h>=w?h/count:h,hp,group,side);}
-  // Eight panels on each outer side. No overlapping invisible wall remains.
-  for(const [side,y] of [['N',130],['S',998]]){
-    span('v091wall015_'+side+'L',170,y,560,72,4,OUTER_HP,'outer',side);
-    span('v091wall015_'+side+'R',870,y,560,72,4,OUTER_HP,'outer',side);
-  }
-  span('v091wall015_W',170,202,72,796,8,OUTER_HP,'outer','W');
-  span('v091wall015_E',1358,202,72,796,8,OUTER_HP,'outer','E');
-  add('gate',gateRect.x,gateRect.y,gateRect.w,gateRect.h,OUTER_HP,'gate','S','south');
-  add('v015northGate',730,130,140,72,OUTER_HP,'gate','N','north');
-  add('v091innerGate',730,1170,140,20,INNER_HP,'gate','S','airlock');
-  span('v015airlockW',714,1070,16,100,3,INNER_HP,'airlock','W');
-  span('v015airlockE',870,1070,16,100,3,INNER_HP,'airlock','E');
+  V020Walls.create(add);
+  const legacyLayout=new Map(V020Walls.oldLayout().map(o=>[o.id,o]));
   Object.assign(surface.inner,{thickness:32});
   for(const [side,y] of [['N',420],['S',728]]){
     add('v015command'+side+'L',610,y,140,32,INNER_HP,'inner',side);
@@ -12066,6 +12141,7 @@ window.V015Base=(()=>{
     if(side===r.entry)for(const part of ['a','b'])retiredSections.set('v015room_'+r.id+side+part+'_0',ROOM_HP);
     else for(let i=0;i<3;i++)retiredSections.set('v015room_'+r.id+side+'_'+i,ROOM_HP);
   }
+  for(const o of sections)if(o.group==='inner')legacyLayout.set(o.id,{...o,legacyMaxHp:o.maxHp});
   const props=[];
   function prop(id,x,y,w,h,art,variant=0){const p={id:'v015prop_'+id,kind:'baseDecor015',x,y,w,h,art,variant};props.push(p);return p;}
   prop('coveredPallet',455,213,92,64,'tarp',0);prop('cases',565,215,62,43,'cases',1);
@@ -12091,15 +12167,13 @@ window.V015Base=(()=>{
   function stage(o){const p=o.hp/o.maxHp;return p<=0?4:p<=.2?3:p<=.5?2:p<=.9?1:0;}
   function deckPresent(x,y,snapshot){
     const hp=o=>snapshot?snapshot.get(o.id):o.hp;
-    // The old south gate has a bridge over the ground-level opening.
-    if(x>=730&&x<=870&&y>=998&&y<=1070)return hp(byId.get('gate'))>0;
-    return sections.some(o=>(o.group==='outer'||o.gate==='north')&&hp(o)>0&&x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h);
+    return sections.some(o=>V020Walls.perimeter(o)&&hp(o)>0&&x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h);
   }
   function changed(){revision++;invalidateGeometry();queueGameSave();}
   function damage(id,amount){
     const o=typeof id==='string'?byId.get(id):id;if(!o||!byId.has(o.id)||!Number.isFinite(amount)||amount<=0||o.hp<=0||isOpen(o))return false;
     o.hp=Math.max(0,o.hp-amount);o.hitAt=performance.now();
-    if(o.hp===0){changed();if(scene==='surface'&&player.wallLevel&&!V091Fortress.transitioning&&V091Fortress.elevatedCollision(player.x,player.y,player.radius)){player.wallLevel=false;V091Fortress.cancelRoute();settle(player);}
+    if(o.hp===0){changed();if(scene==='surface'&&player.wallLevel&&!V091Fortress.transitioning&&V091Fortress.elevatedCollision(player.x,player.y,player.radius)){player.wallLevel=false;V091Fortress.cancelRoute();const landing=V020Walls.inwardSafePoint(player.x,player.y,player.radius);if(landing)Object.assign(player,landing);else settle(player);}
       if(scene==='surface'&&distance(player.x,player.y,o.x+o.w/2,o.y+o.h/2)<800)message('Пролом в '+(o.group==='outer'?'периметре':o.group==='room'?'стене помещения':'укреплении'));
     }else queueGameSave();return true;
   }
@@ -12151,19 +12225,62 @@ window.V015Base=(()=>{
   function settle(actor,r=actor.radius||12){const p=freePoint(actor.x,actor.y,r);if(p)Object.assign(actor,p);}
   const oldInteractions=interactionObjects;
   interactionObjects=function(which=scene){const old=oldInteractions(which);if(which!=='surface')return old;
-    return [...old.filter(o=>o.id!=='yard_generator'&&!o.id?.startsWith('v015prop_')&&!(byId.has(o.id)&&byId.get(o.id).hp===0)),...sections.filter(o=>o.gate&&!['south','airlock'].includes(o.gate)&&o.hp>0).map(o=>({...o,kind:'baseGate015',name:isOpen(o)?'Закрыть ворота':'Открыть ворота',ref:o.id,range:64}))];};
+    return [...old.filter(o=>o.id!=='yard_generator'&&o.id!=='v091innerGate'&&o.id!=='v015northGate'&&!o.id?.startsWith('v015prop_')&&!(byId.has(o.id)&&byId.get(o.id).hp===0)),...sections.filter(o=>o.gate&&!['south','airlock'].includes(o.gate)&&o.hp>0).map(o=>({...o,kind:'baseGate015',name:isOpen(o)?'Закрыть ворота':'Открыть ворота',ref:o.id,range:64}))];};
   const oldExecute=executeInteraction;
   executeInteraction=function(o){if(o?.kind==='baseGate015'){if(canInteract(o,player.x,player.y))toggle(byId.get(o.ref));return;}
     if(o?.id?.startsWith('v015prop_'))return;
     return oldExecute(o);};
-  function capture(){return{schema:3,northOpen,commandNorthOpen,commandSouthOpen,sections:sections.map(o=>({id:o.id,hp:o.hp,level:o.level}))};}
-  function validate(d){if(!d)return true;
-    const legacy=d.schema===1,expected=sections.length+(legacy?retiredSections.size:0);
-    if((!legacy&&d.schema!==2&&d.schema!==3)||!['northOpen','commandNorthOpen','commandSouthOpen'].every(k=>typeof d[k]==='boolean')||!Array.isArray(d.sections)||d.sections.length!==expected)throw Error('Некорректное состояние укреплений');
-    const seen=new Set();for(const p of d.sections){const section=byId.get(p?.id),maxHp=d.schema===3?(section&&Number.isInteger(p.level)&&p.level>=1&&p.level<=5?[0,10000,20000,40000,60000,100000][p.level]:undefined):(section?.legacyMaxHp??(legacy?retiredSections.get(p?.id):undefined));if(maxHp===undefined||seen.has(p.id)||!Number.isFinite(p.hp)||p.hp<0||p.hp>maxHp)throw Error('Некорректная прочность секции');seen.add(p.id);}return true;}
-  function restore(d){validate(d);const values=new Map(d?.sections.map(o=>[o.id,o]));for(const o of sections){const p=values.get(o.id);o.level=d?.schema===3&&p?p.level:1;o.maxHp=[0,10000,20000,40000,60000,100000][o.level];o.hp=p?(d.schema===3?p.hp:Math.round(p.hp/o.legacyMaxHp*o.maxHp)):o.maxHp;o.hitAt=-1e6;}northOpen=d?.northOpen??false;commandNorthOpen=d?.commandNorthOpen??false;commandSouthOpen=d?.commandSouthOpen??true;revision++;invalidateGeometry();}
+  const HP_LEVELS=[0,10000,20000,40000,60000,100000];
+  function capture(){return{schema:4,northOpen:false,commandNorthOpen,commandSouthOpen,sections:sections.map(o=>({id:o.id,hp:o.hp,level:o.level}))};}
+  function validate(d){
+    if(d===undefined||d===null)return true;
+    const current=d.schema===4,legacy=d.schema===1;
+    const layout=current?byId:legacyLayout,expected=layout.size+(legacy?retiredSections.size:0);
+    if(![1,2,3,4].includes(d.schema)||!['northOpen','commandNorthOpen','commandSouthOpen'].every(k=>typeof d[k]==='boolean')||!Array.isArray(d.sections)||d.sections.length!==expected)throw Error('Некорректное состояние укреплений');
+    const seen=new Set();for(const p of d.sections){
+      const section=layout.get(p?.id),maxHp=d.schema>=3?(section&&Number.isInteger(p.level)&&p.level>=1&&p.level<=5?HP_LEVELS[p.level]:undefined):(section?.legacyMaxHp??(legacy?retiredSections.get(p?.id):undefined));
+      if(maxHp===undefined||seen.has(p.id)||!Number.isFinite(p.hp)||p.hp<0||p.hp>maxHp)throw Error('Некорректная прочность секции');seen.add(p.id);
+    }return true;
+  }
+  function normalizeSave(d){
+    validate(d);if(!d||d.schema===4)return d;
+    const values=new Map(d.sections.map(p=>[p.id,p]));
+    function properties(old){const p=values.get(old.id),level=d.schema>=3?p.level:1,max=d.schema>=3?HP_LEVELS[level]:old.legacyMaxHp;return {level,ratio:clamp(p.hp/max,0,1)};}
+    const merged=sections.map(o=>{
+      let contributors=[];
+      if(o.group==='inner'||o.id==='gate')contributors=[{old:legacyLayout.get(o.id),weight:1}];
+      else for(const old of legacyLayout.values()){
+        if(old.id==='v091innerGate'||old.id.startsWith('v015airlock')||old.id.startsWith('v015command'))continue;
+        const weight=V020Walls.overlap(o,old);if(weight>0)contributors.push({old,weight});
+      }
+      const level=Math.max(1,...contributors.map(({old})=>properties(old).level));let hp=HP_LEVELS[level];
+      if(contributors.length){const total=contributors.reduce((n,c)=>n+c.weight,0);hp=Math.round(HP_LEVELS[level]*contributors.reduce((n,c)=>n+properties(c.old).ratio*c.weight,0)/total);}
+      return {id:o.id,level,hp};
+    });
+    return {schema:4,northOpen:false,commandNorthOpen:d.commandNorthOpen,commandSouthOpen:d.commandSouthOpen,sections:merged};
+  }
+  function migrateGame(d){
+    if(!d?.base015||d.base015.schema===4)return d;
+    const out={...d,base015:normalizeSave(d.base015)};
+    if(d.v091?.fortress)out.v091={...d.v091,fortress:{...d.v091.fortress,innerGateOpen:true}};
+    if(d.turret016)out.turret016={...d.turret016,guns:d.turret016.guns.map(t=>{
+      if(t.fallen||!legacyLayout.has(t.wallId))return {...t};
+      const eligible=sections.filter(o=>!o.gate&&['outer','inner'].includes(o.group));
+      const p=eligible.find(o=>Math.hypot(t.x-clamp(t.x,o.x,o.x+o.w),t.y-clamp(t.y,o.y,o.y+o.h))<17.99);
+      if(p)return {...t,wallId:p.id};
+      // A removed gatehouse mount becomes a recoverable item on the ground.
+      const landing=V020Walls.inwardSafePoint(t.x,t.y,12)||{x:800,y:960};
+      return {...t,...landing,wallId:null,fallen:true};
+    })};
+    return out;
+  }
+  function restore(d){
+    d=normalizeSave(d);const values=new Map(d?.sections.map(o=>[o.id,o]));
+    for(const o of sections){const p=values.get(o.id);o.level=p?.level||1;o.maxHp=HP_LEVELS[o.level];o.hp=p?p.hp:o.maxHp;o.hitAt=-1e6;}
+    northOpen=false;commandNorthOpen=d?.commandNorthOpen??false;commandSouthOpen=d?.commandSouthOpen??true;revision++;invalidateGeometry();
+  }
   const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.base015=capture();return d;};
-  const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const probe=JSON.parse(raw);validate(probe.base015);validating=true;let d;try{d=decodeOld(raw);}finally{validating=false;}
+  const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const probe=migrateGame(JSON.parse(raw));validate(probe.base015);validating=true;let d;try{d=decodeOld(JSON.stringify(probe));}finally{validating=false;}
     if(d.v091?.fortress?.wallLevel){const f=d.v091.fortress,hp=new Map((d.base015?.sections||sections).map(o=>[o.id,d.base015?o.hp:o.maxHp]));
       const fits=(p,contains)=>{for(let i=-1;i<24;i++){const r=i<0?0:player.radius+3,a=i*Math.PI/12;if(!contains(p.x+Math.cos(a)*r,p.y+Math.sin(a)*r))return false;}return true;};
       if(!fits(f,(x,y)=>deckPresent(x,y,hp))){
@@ -12176,18 +12293,18 @@ window.V015Base=(()=>{
       }
     }
     return d;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){restore(d.base015);restoreOld(d);
+  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){d=migrateGame(d);restore(d.base015);restoreOld(d);
     if(scene==='surface'&&!player.wallLevel)settle(player);const drone=window.V014Robots?.state;if(drone&&!drone.packed&&drone.scene==='surface')settle(drone,12);
     for(const z of zombies){delete z._baseRoute;delete z._baseUntil;if(z.alive)settle(z,z.radius);}invalidateGeometry();};
   invalidateGeometry();
   // Rendering is supplied below; geometry and damage do not depend on images.
   const wallSprites=new Map(),lightShapes=new Map(),materials=new Map();let groundCache=null;
-  const api={sections,rooms,props,byId,walls,isOpen,stage,damage,changed,toggle,deckPresent,rayEntry,blocker,siege,capture,validate,restore,freePoint,drawGround,drawFortifications,drawMap,inWorkshop:()=>false,get revision(){return revision;},get validating(){return validating;}};
+  const api={sections,rooms,props,byId,walls,isOpen,stage,damage,changed,toggle,deckPresent,rayEntry,blocker,siege,capture,validate,restore,migrateGame,normalizeSave,legacyLayout,freePoint,drawGround,drawFortifications,drawMap,inWorkshop:()=>false,get revision(){return revision;},get validating(){return validating;}};
   return api;
 
   function drawGround(){drawBaseFloor();drawProps();}
   function drawFortifications(){drawWalls();}
-  function drawMap(c){c.fillStyle='#4d5956';c.fillRect(170,130,1260,940);for(const r of rooms){c.fillStyle='#778276';c.fillRect(r.x,r.y,r.w,r.h);}for(const o of walls()){c.fillStyle=o.hp/o.maxHp>.5?'#c0c7b1':'#bb8d62';c.fillRect(o.x,o.y,o.w,o.h);}c.fillStyle='#182a2a';c.fillRect(765,555,70,70);}
+  function drawMap(c){c.fillStyle='#4d5956';c.fillRect(138,98,1324,1004);for(const r of rooms){c.fillStyle='#778276';c.fillRect(r.x,r.y,r.w,r.h);}for(const o of walls()){c.fillStyle=o.hp/o.maxHp>.5?'#c0c7b1':'#bb8d62';c.fillRect(o.x,o.y,o.w,o.h);}c.fillStyle='#182a2a';c.fillRect(765,555,70,70);}
   function canvasOf(w,h){const c=typeof OffscreenCanvas==='function'?new OffscreenCanvas(Math.ceil(w),Math.ceil(h)):document.createElement('canvas');c.width=Math.ceil(w);c.height=Math.ceil(h);return c;}
   function rect(c,x,y,w,h,fill,stroke=null,r=0){if(!w||!h)return;c.fillStyle=fill;c.beginPath();const radius=Math.max(0,Math.min(r,Math.abs(w)/2,Math.abs(h)/2));if(radius)c.roundRect(x,y,w,h,radius);else c.rect(x,y,w,h);c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1;c.stroke();}}
   function line(c,points,color,width=1){c.strokeStyle=color;c.lineWidth=width;c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
@@ -12346,18 +12463,9 @@ window.V015Base=(()=>{
     if(!open){line(ctx,[[o.x+o.w/2,o.y+3],[o.x+o.w/2,o.y+o.h-3]],'#0f242a',3);for(const x of [o.x+20,o.x+o.w-28]){rect(ctx,x,o.y+5,8,o.h-10,'#a69a6b');for(let y=o.y+7;y<o.y+o.h-5;y+=10)line(ctx,[[x,y],[x+8,y+5]],'#303e3c',3);}
       if(stage(o)>0){line(ctx,[[o.x+o.w*.24,o.y],[o.x+o.w*.4,o.y+o.h*.42],[o.x+o.w*.32,o.y+o.h]],'#12272d',stage(o)+1);if(stage(o)>1)line(ctx,[[o.x+o.w*.75,o.y],[o.x+o.w*.63,o.y+o.h*.61],[o.x+o.w*.88,o.y+o.h]],'#12272d',stage(o)+1);}}
   }
-  function pad(x,y,r=32){if(!deckPresent(x,y)||!sections.some(o=>o.hp>0&&o.group==='outer'&&x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h))return;
-    metal(ctx,x-r,y-r,r*2,r*2,true);metal(ctx,x-r+4,y-r+4,r*2-8,r*2-8);rect(ctx,x-r+10,y-r+10,r*2-20,r*2-20,'#485a55','#263c3f',2);bolts(ctx,x-r,y-r,r*2,r*2);
-    ctx.strokeStyle='#b3b79c55';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.strokeRect(x-14,y-14,28,28);ctx.setLineDash([]);
-    // Empty mounting sockets for a future player-built turret.
-    for(const dx of [-11,11])for(const dy of [-11,11])disk(ctx,x+dx,y+dy,1.5,'#212e31');
-  }
   function drawWalls(){ctx.save();
-    gridFloor(ctx,730,1070,140,100,28,['#59625d','#606861']);
-    for(const o of sections){if(!visibleOnScreen(o.x+o.w/2,o.y+o.h/2,Math.max(o.w,o.h)+35))continue;if(o.gate)gateArt(o);else ctx.drawImage(wallSprite(o),o.x-3,o.y-3);}
-    for(const t of V091Fortress.corners){if(!deckPresent(t.x,t.y))continue;
-      const dx=t.foot.x-t.x,dy=t.foot.y-t.y,a=Math.atan2(dy,dx),len=Math.hypot(dx,dy);ctx.save();ctx.translate(t.x,t.y);ctx.rotate(a);rect(ctx,21,-16,len-21,32,'#27383b','#8a9985');for(let p=25;p<len-4;p+=7){line(ctx,[[p,-13],[p,13]],'#8a9787',3);line(ctx,[[p+2,-13],[p+2,13]],'#111f2955',2);}line(ctx,[[23,-18],[len,-18]],'#adb5a1',2);line(ctx,[[23,18],[len,18]],'#adb5a1',2);ctx.restore();pad(t.x,t.y,34);}
-    for(const y of [401,600,799]){pad(206,y,34);pad(1394,y,34);}for(const x of [450,1150]){pad(x,166,32);pad(x,1034,32);}
+    for(const o of sections){if(!visibleOnScreen(o.x+o.w/2,o.y+o.h/2,Math.max(o.w,o.h)+35))continue;if(o.gate)gateArt(o);else if(o.group==='outer')V020Walls.drawWall(o);else ctx.drawImage(wallSprite(o),o.x-3,o.y-3);}
+    for(const t of V091Fortress.stairs)V020Walls.drawStairs(t);
     drawLights(true);
     for(const o of sections){if(heldItem()==='hammer'||o.hp<=0||o.hp>=o.maxHp||!visibleOnScreen(o.x+o.w/2,o.y+o.h/2,160))continue;const near=distance(player.x,player.y,o.x+o.w/2,o.y+o.h/2)<125,recent=performance.now()-o.hitAt<1900;if(!near&&!recent)continue;const x=o.x+o.w/2,y=o.y-14,w=52;rect(ctx,x-w/2,y,w,4,'#172b30dd',null,2);rect(ctx,x-w/2,y,w*o.hp/o.maxHp,4,o.hp/o.maxHp<=.2?'#d1886b':'#d5bb87',null,2);label(ctx,Math.ceil(o.hp)+' / '+o.maxHp,x,y-4,8,'#d7dfd1');}
     ctx.restore();
@@ -12474,12 +12582,18 @@ window.V016Lighting=(()=>{
   function active(s,served=supplied()){return !!(s.wall?.hp>0&&served.has(s.device)&&daylight()<.995);}
   function fixtures(){
     if(fixturesCache)return fixturesCache;const a=[],base=window.V015Base;if(!base)return a;
-    for(const o of base.sections)if(o.group==='outer'&&Number(o.id.split('_').at(-1))%2===1){
-      const nx=o.side==='W'?1:o.side==='E'?-1:0,ny=o.side==='N'?1:o.side==='S'?-1:0;
-      a.push({id:'lamp016_'+o.id,kind:'wall',wall:o,x:o.x+o.w/2+nx*(o.w/2+4),y:o.y+o.h/2+ny*(o.h/2+4),height:3.8,angle:Math.atan2(ny,nx),range:330,device:o.x+o.w/2<800?'spot_left':'spot_right'});
+    for(const side of ['N','E','S','W'])for(const [i,along]of (side==='N'||side==='S'?[370,650,950,1230]:[300,500,700,900]).entries()){
+      const x=side==='W'?246:side==='E'?1354:along,y=side==='N'?206:side==='S'?994:along;
+      const px=side==='W'?190:side==='E'?1410:x,py=side==='N'?150:side==='S'?1050:y;
+      const wall=base.sections.find(o=>V020Walls.perimeter(o)&&px>=o.x&&px<=o.x+o.w&&py>=o.y&&py<=o.y+o.h);
+      const nx=side==='W'?1:side==='E'?-1:0,ny=side==='N'?1:side==='S'?-1:0;
+      a.push({id:'lamp020_'+side+'_'+i,kind:'wall',wall,x,y,height:3.8,angle:Math.atan2(ny,nx),range:330,device:x<800?'spot_left':'spot_right'});
     }
     for(const [id,x,y,angle]of [['v015commandNL',680,456,Math.PI/2],['v015commandNR',920,456,Math.PI/2],['v015commandSL',680,724,-Math.PI/2],['v015commandSR',920,724,-Math.PI/2]])a.push({id:'lamp016_'+id,kind:'wall',wall:base.byId.get(id),x,y,height:3.8,angle,range:290,device:x<800?'spot_left':'spot_right'});
-    const corners=[['NW',194,126,-Math.PI/2,'v091wall015_NL_0'],['NW',166,154,Math.PI,'v091wall015_NL_0'],['NE',1406,126,-Math.PI/2,'v091wall015_NR_3'],['NE',1434,154,0,'v091wall015_NR_3'],['SW',194,1074,Math.PI/2,'v091wall015_SL_0'],['SW',166,1046,Math.PI,'v091wall015_SL_0'],['SE',1406,1074,Math.PI/2,'v091wall015_SR_3'],['SE',1434,1046,0,'v091wall015_SR_3']];
+    const corners=[['NW',190,94,-Math.PI/2,'v091wall020_corner_NW'],['NW',134,150,Math.PI,'v091wall020_corner_NW'],
+      ['NE',1410,94,-Math.PI/2,'v091wall020_corner_NE'],['NE',1466,150,0,'v091wall020_corner_NE'],
+      ['SW',190,1106,Math.PI/2,'v091wall020_corner_SW'],['SW',134,1050,Math.PI,'v091wall020_corner_SW'],
+      ['SE',1410,1106,Math.PI/2,'v091wall020_corner_SE'],['SE',1466,1050,0,'v091wall020_corner_SE']];
     for(let i=0;i<corners.length;i++){const [corner,x,y,angle,id]=corners[i];a.push({id:'flood016_'+corner+'_'+i%2,kind:'flood',corner,wall:base.byId.get(id),x,y,angle,range:520,device:x<800?'spot_left':'spot_right'});}
     fixturesCache=a;return a;
   }
@@ -12554,7 +12668,7 @@ window.V016Turret=(()=>{
   let nextId=2,placement=null,selected=null,obstacleRevision=-1,obstacles=[],clock=0;
   ITEM[TYPE]={name:'Тяжёлый пулемёт',icon:'▰',deployable:true,description:'Автоматический пулемёт на стене. Урон 65 · дальность 850 · круговой обстрел. Патроны 5,45 × 39: до 600. Заберите в рюкзак, чтобы переставить.'};
   V09Craft.recipes[TYPE]={station:'craft_bench',category:'Оборона базы',name:'Тяжёлый пулемёт',input:{iron:45,copper:18,parts:12},output:TYPE,qty:1,ms:90000};
-  const starter=()=>({id:'hmg016_1',ammo:150,angle:-Math.PI*3/4,enabled:true,x:1410,y:1050,wallId:'v091wall015_SR_3',fallen:false});
+  const starter=()=>({id:'hmg016_1',ammo:150,angle:-Math.PI*3/4,enabled:true,x:1410,y:1050,wallId:'v091wall020_corner_SE',fallen:false});
   guns.push(starter());
   const gunData=t=>({id:t.id,ammo:t.ammo,angle:t.angle,enabled:t.enabled,level:t.level||0});
   const damage=t=>Math.round(combat.damage*(1+.1*(t?.level||0)));
@@ -12573,8 +12687,12 @@ window.V016Turret=(()=>{
   };
   function changed(){queueGameSave();renderBag();refresh();}
   function eligible(w){return !!w&&w.hp>0&&!w.gate&&['outer','inner'].includes(w.group);}
-  function fits(p,w){return !!w&&[p.x,p.y].every(Number.isFinite)&&p.x>=w.x+Math.min(12,w.w/2)&&p.x<=w.x+w.w-Math.min(12,w.w/2)&&p.y>=w.y+Math.min(12,w.h/2)&&p.y<=w.y+w.h-Math.min(12,w.h/2);}
-  function support(t){return !t.fallen&&eligible(V015Base.byId.get(t.wallId))&&fits(t,V015Base.byId.get(t.wallId));}
+  function fits(p,w){return !!w&&[p.x,p.y].every(Number.isFinite)&&distance(p.x,p.y,clamp(p.x,w.x,w.x+w.w),clamp(p.y,w.y,w.y+w.h))<17.99;}
+  function support(t){
+    if(t.fallen)return false;
+    const current=V015Base.byId.get(t.wallId);if(eligible(current)&&fits(t,current))return true;
+    const other=V015Base.sections.find(w=>eligible(w)&&fits(t,w));if(!other)return false;t.wallId=other.id;return true;
+  }
   function snapshotObstacles(){
     if(obstacleRevision===geometryRevision)return obstacles;
     // Match the fortress upper floor: perimeter slabs/bridges are below the
@@ -12589,7 +12707,7 @@ window.V016Turret=(()=>{
   function clear(t,z){
     const minX=Math.min(t.x,z.x)-2,maxX=Math.max(t.x,z.x)+2,minY=Math.min(t.y,z.y)-2,maxY=Math.max(t.y,z.y)+2;
     for(const o of snapshotObstacles()){
-      if(o.id===t.wallId)continue;
+      if(o.id===t.wallId||eligible(o)&&fits(t,o))continue;
       const x=o.r!==undefined?o.x-o.r:o.x,y=o.r!==undefined?o.y-o.r:o.y,w=o.r!==undefined?o.r*2:o.w,h=o.r!==undefined?o.r*2:o.h;
       if(x>maxX||x+w<minX||y>maxY||y+h<minY)continue;
       const hit=ray(t,z,o,1);if(hit!==null&&hit<.9999)return false;
@@ -12600,16 +12718,16 @@ window.V016Turret=(()=>{
     // Wall controls are reachable from the adjacent ground or deck. Only the
     // supporting corner slabs are exempt; intervening walls/objects still block.
     for(const o of [...surfaceWalls(),...solidObjects('surface')]){
-      if(o.id===t.wallId)continue;
+      if(o.id===t.wallId||eligible(o)&&fits(t,o))continue;
       if(o.group==='outer'&&distance(t.x,t.y,clamp(t.x,o.x,o.x+o.w),clamp(t.y,o.y,o.y+o.h))<35)continue;
       const hit=ray(player,t,o,0);if(hit!==null&&hit<.98)return false;
     }return true;
   }
   function candidate(x,y){
+    if(!Number.isFinite(x)||!Number.isFinite(y))return null;
     let best=null,bestD=Infinity;
-    for(const w of V015Base.sections){if(!eligible(w))continue;
-      const px=Math.min(12,w.w/2),py=Math.min(12,w.h/2),p={x:clamp(x,w.x+px,w.x+w.w-px),y:clamp(y,w.y+py,w.y+w.h-py),wallId:w.id};
-      const d=distance(x,y,p.x,p.y);if(d<bestD&&d<=76){best=p;bestD=d;}
+    for(const w of V015Base.sections){if(!eligible(w)||!fits({x,y},w))continue;
+      const d=distance(x,y,clamp(x,w.x,w.x+w.w),clamp(y,w.y,w.y+w.h));if(d<bestD){best={x,y,wallId:w.id};bestD=d;}
     }return best;
   }
   function placementProblem(p){
@@ -12714,7 +12832,7 @@ window.V016Turret=(()=>{
   const canOld=canInteract;canInteract=function(o,x,y){return o?.kind===TYPE?reachable(guns.find(t=>t.id===o.id)||{x:Infinity,y:Infinity}):canOld(o,x,y);};
   const executeOld=executeInteraction;executeInteraction=function(o,...a){if(o?.kind===TYPE){if(!menuOpen&&!playerDead)open(guns.find(t=>t.id===o.id));return;}return executeOld(o,...a);};
   const approachOld=approachObject;approachObject=function(o,...a){if(o?.kind===TYPE){const t=guns.find(t=>t.id===o.id);if(t&&reachable(t))open(t);else if(t){message('Подойдите к пулемёту у стены');if(player.wallLevel)approachPoint(t.x,t.y);}return;}return approachOld(o,...a);};
-  const tapOld=V0105.tapWorld;V0105.tapWorld=function(x,y){if(placement)return selectPoint(x,y);if(scene==='surface'&&V091Fortress.corners.some(c=>{const p=player.wallLevel?c:c.foot;return distance(x,y,p.x,p.y)<=13;}))return false;const t=scene==='surface'&&guns.find(t=>distance(x,y,t.x,t.y)<28);if(t){approachObject({id:t.id,kind:TYPE});return true;}return tapOld(x,y);};
+  const tapOld=V0105.tapWorld;V0105.tapWorld=function(x,y){if(placement)return selectPoint(x,y);if(scene==='surface'&&V091Fortress.stairs.filter(V020Walls.usable).some(c=>{const p=player.wallLevel?c:c.foot;return distance(x,y,p.x,p.y)<=13;}))return false;const t=scene==='surface'&&guns.find(t=>distance(x,y,t.x,t.y)<28);if(t){approachObject({id:t.id,kind:TYPE});return true;}return tapOld(x,y);};
   const updateOld=update;update=function(...a){const r=updateOld(...a);tick(16.667*frameScale);return r;};
   let previewUntil=0;
   function disk(c,x,y,r,color,stroke){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=color;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1.2;c.stroke();}}
@@ -12761,7 +12879,7 @@ window.V016Turret=(()=>{
   }
   const captureOld=captureGameProgress;captureGameProgress=function(){const d=captureOld();d.turret016=capture();return d;};
   const decodeOld=decodeGameProgress;decodeGameProgress=function(raw){const d=decodeOld(raw);validate(d.turret016,d);if(!d.turret016){const tokens=[];const walk=v=>{if(!v||typeof v!=='object')return;if(v.type===TYPE)tokens.push(v);else for(const q of Object.values(v))walk(q);};walk(d);if(tokens.length)throw Error('Отсутствует состояние пулемётов');}return d;};
-  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){validate(d.turret016,d);restoreOld(d);guns.splice(0,guns.length,...copy(d.turret016?.guns||[starter()]));nextId=d.turret016?.nextId||2;runtime.clear();selected=null;cancelPlacement();obstacleRevision=-1;settleUnsupported();};
+  const restoreOld=restoreGameProgress;restoreGameProgress=function(d){d=V015Base.migrateGame(d);validate(d.turret016,d);restoreOld(d);guns.splice(0,guns.length,...copy(d.turret016?.guns||[starter()]));nextId=d.turret016?.nextId||2;runtime.clear();selected=null;cancelPlacement();obstacleRevision=-1;settleUnsupported();};
   v09Style('#v016TurretPanel .v09Panel{width:min(410px,94vw);padding:14px;border-radius:13px}#v016TurretPanel p{font-size:12px;line-height:1.5;margin:10px 0}.v016GunHero{display:flex;align-items:center;gap:10px}.v016GunHero>.itemIcon{width:105px;height:82px;object-fit:contain}.v016GunHero b{font-size:12px}.v016GunHero small{display:block;font-size:10px;color:#9caf9f;margin-top:5px}.v016GunActions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.v016GunActions .menuButton{font-size:11px;min-height:40px;margin:0;padding:7px}.v016GunNote{color:#9fb1a4}#v016Placement{position:fixed;z-index:9500;left:50%;top:calc(var(--v011-hud-top,10px) + 42px);transform:translateX(-50%);width:min(460px,calc(100vw - 24px));box-sizing:border-box;background:#182a2af2;border:1px solid #9ba784;border-radius:10px;padding:9px;text-align:center;color:#e0e7cc;font:11px Arial}.v016PlacementActions{display:flex;justify-content:center;gap:4px;margin-top:7px}.v016PlacementActions .menuButton{margin:0;font-size:11px;padding:5px 8px;min-height:36px;width:auto;min-width:32px}#v016PlaceConfirm{background:#476344}');
   return {damage,combat,guns,validItem,capture,validate,candidate,placementProblem,startPlacement,selectPoint,place,cancelPlacement,pack,reload,unload,setEnabled,reachable,clear,support,settleUnsupported,tick,shootAt,open,draw,paint,get placement(){return placement;},get nextId(){return nextId;}};
 })();
@@ -13284,7 +13402,7 @@ window.V017Monsters=(()=>{
   }
   function chooseWall(z,now){
     const r=prepare(z),inside=insideOuter(z);if(!isDayX()||insideInner(z)){r.target=null;return null;}
-    const eligible=o=>o.side===r.side&&(inside?o.group==='inner':['outer','gate'].includes(o.group)&&o.id!=='v091innerGate');
+    const eligible=o=>(o.sides?o.sides.includes(r.side):o.side===r.side)&&(inside?o.group==='inner':['outer','gate'].includes(o.group)&&o.id!=='v091innerGate');
     if(r.target?.hp>0&&!V015Base.isOpen(r.target)&&eligible(r.target)&&now<r.retarget)return r.target;
     const candidates=V015Base.sections.filter(o=>o.hp>0&&!V015Base.isOpen(o)&&eligible(o));
     let best=null,cost=Infinity;
@@ -13301,8 +13419,14 @@ window.V017Monsters=(()=>{
     const r=prepare(z),inner=insideOuter(z);if(insideInner(z))return null;
     let best=null,cost=Infinity;
     for(const o of V015Base.sections){
-      if(o.side!==r.side||(inner?o.group!=='inner':!['outer','gate'].includes(o.group)||o.id==='v091innerGate')||o.hp>0&&!V015Base.isOpen(o))continue;
-      const vertical=o.side==='W'||o.side==='E',margin=Math.max(0,((vertical?o.h:o.w)-z.radius*2-8)/2),nx=o.side==='W'?-1:o.side==='E'?1:0,ny=o.side==='N'?-1:o.side==='S'?1:0;
+      if(!(o.sides?o.sides.includes(r.side):o.side===r.side)||(inner?o.group!=='inner':!['outer','gate'].includes(o.group)||o.id==='v091innerGate')||o.hp>0&&!V015Base.isOpen(o))continue;
+            if(o.corner){
+        const nx=o.corner.includes('W')?-1:1,ny=o.corner.includes('N')?-1:1,cx=o.x+o.w/2,cy=o.y+o.h/2,offset=o.w/2+z.radius+12;
+        const outside={x:cx+nx*offset,y:cy+ny*offset},inside={x:cx-nx*(o.w/2+6),y:cy-ny*(o.h/2+6)},d=dist(z,outside);
+        if(d<cost&&(!wall||d<dist(z,wallApproach(z,wall))+150)&&lineClear(outside.x,outside.y,inside.x,inside.y,z.radius,'surface')&&lineClear(z.x,z.y,outside.x,outside.y,z.radius,'surface')){best={wall:o,outside,inside};cost=d;}
+        continue;
+      }
+      const vertical=r.side==='W'||r.side==='E',margin=Math.max(0,((vertical?o.h:o.w)-z.radius*2-8)/2),nx=r.side==='W'?-1:r.side==='E'?1:0,ny=r.side==='N'?-1:r.side==='S'?1:0;
       for(const lane of [0,margin,-margin]){
         const cx=o.x+o.w/2+(vertical?0:lane),cy=o.y+o.h/2+(vertical?lane:0),offset=(vertical?o.w:o.h)/2+z.radius+12;
         const outside={x:cx+nx*offset,y:cy+ny*offset},inside={x:cx-nx*offset,y:cy-ny*offset},d=dist(z,outside);
@@ -13518,7 +13642,7 @@ window.V018Build=(()=>{
   addDoor(V011Living.bathDoor,'bunker','bath');
   const record=value=>typeof value==='string'?structures.get(value):structures.get(value?.id);
   const isBroken=id=>record(id)?.object.hp===0;
-  const title=r=>r.kind==='wall'?'Секция стены':r.kind==='gate'?'Ворота':r.kind==='automatic'?'Раздвижная дверь':r.kind==='bath'?'Дверь санузла':'Дверь';
+  const title=r=>r.kind==='wall'?(r.object.corner?'Угол стены':'Секция стены'):r.kind==='gate'?'Ворота':r.kind==='automatic'?'Раздвижная дверь':r.kind==='bath'?'Дверь санузла':'Дверь';
   const held=()=>heldItem()==='hammer'&&bagCount('hammer')>0;
   const count=type=>bag.reduce((n,s)=>n+(s?.type===type&&!s.locked?s.qty:0),0);
   function consume(input){
