@@ -1,0 +1,743 @@
+--- a/index.html
++++ b/index.html
+@@ -4,15 +4,15 @@
+ <meta charset="UTF-8">
+ <meta name="viewport"
+ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+-<title>0.23.0 · Survival Base</title>
++<title>0.23.1 · Survival Base</title>
+ 
+ <script src="https://telegram.org/js/telegram-web-app.js"></script>
+ 
+-<link rel="stylesheet" href="styles/base.css?v=0.23.0">
++<link rel="stylesheet" href="styles/base.css?v=0.23.1">
+ </head>
+ 
+ <body>
+-<div id="versionBadge">VERSION 0.23.0</div>
++<div id="versionBadge">VERSION 0.23.1</div>
+ 
+ <div id="game">
+ 
+@@ -73,7 +73,7 @@
+   <div class="panel">
+ 
+     <h2>⚙️ Настройки</h2>
+-    <div class="subtitle">Survival Base 0.23.0 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
++    <div class="subtitle">Survival Base 0.23.1 · Крепость и удобное производство</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
+ 
+     <div class="settingBox">
+       <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
+@@ -322,7 +322,7 @@
+ 
+ </div>
+ 
+-<script src="js/game.js?v=0.23.0"></script>
++<script src="js/game.js?v=0.23.1"></script>
+ 
+ </body>
+ </html>
+--- a/package.json
++++ b/package.json
+@@ -1,8 +1,8 @@
+ {
+   "name": "last-base",
+-  "version": "0.23.0",
++  "version": "0.23.1",
+   "private": true,
+-  "description": "Last Base Stage 3: data-driven existing gameplay systems, compatible saves.",
++  "description": "Last Base PC / Mobile controls patch; shared actions, compatible saves.",
+   "scripts": {
+     "build": "node tools/build.cjs",
+     "check": "node tools/build.cjs --check && node qa/verify.cjs",
+--- a/src/base/turrets.js
++++ b/src/base/turrets.js
+@@ -167,7 +167,6 @@
+   for(const [label,dx,dy] of [['←',-8,0],['↑',0,-8],['↓',0,8],['→',8,0]]){const b=v09Button(label,()=>{const p=placement?.point;if(p)selectPoint(p.x+dx,p.y+dy);});b.setAttribute('aria-label','Сдвинуть пулемёт '+label);controls.append(b);}
+   const confirm=v09Button('Установить',place);confirm.id='v016PlaceConfirm';controls.append(confirm,v09Button('Отмена',cancelPlacement));document.body.append(bar);
+   function updatePlacement(){if(!placement){bar.style.display='none';return;}bar.style.display='block';const problem=placementProblem(placement.point);tip.textContent=problem||'Место подходит · касание стены / стрелки для сдвига';confirm.disabled=!!problem;}
+-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&placement){e.preventDefault();cancelPlacement();}});
+   const detailsOld=V011UI.details;V011UI.details=function(where,i){detailsOld(where,i);const s=where==='bag'?bag[i]:Number.isInteger(where)?storageChests[where]?.items[i]:null;if(!isType(s?.type))return;
+     const body=el('v010ItemDetails').querySelector('.v09Body'),p=document.createElement('p');p.textContent='В ленте: '+(s.turretData?.ammo||0)+' / '+combatFor(s.turretData).capacity+' · урон '+damage(s.turretData)+' · улучшение +'+(s.turretData?.level||0)+' · радиус '+combatFor(s.turretData).range;body.append(p);
+     const b=v09Button('Установить на стену',()=>{if(where==='bag')startPlacement(s);else message('Сначала переложите пулемёт в рюкзак');});body.prepend(b);
+@@ -176,7 +175,7 @@
+   const canOld=canInteract;canInteract=function(o,x,y){return o?.kind===TYPE?reachable(guns.find(t=>t.id===o.id)||{x:Infinity,y:Infinity}):canOld(o,x,y);};
+   const executeOld=executeInteraction;executeInteraction=function(o,...a){if(o?.kind===TYPE){if(!menuOpen&&!playerDead)open(guns.find(t=>t.id===o.id));return;}return executeOld(o,...a);};
+   const approachOld=approachObject;approachObject=function(o,...a){if(o?.kind===TYPE){const t=guns.find(t=>t.id===o.id);if(t&&reachable(t))open(t);else if(t){message('Подойдите к пулемёту у стены');if(player.wallLevel)approachPoint(t.x,t.y);}return;}return approachOld(o,...a);};
+-  const tapOld=V0105.tapWorld;V0105.tapWorld=function(x,y){if(placement)return selectPoint(x,y);if(scene==='surface'&&V091Fortress.stairs.filter(V020Walls.usable).some(c=>{const p=player.wallLevel?c:c.foot;return distance(x,y,p.x,p.y)<=13;}))return false;const t=scene==='surface'&&guns.find(t=>distance(x,y,t.x,t.y)<28);if(t){approachObject({id:t.id,kind:TYPE});return true;}return tapOld(x,y);};
++  const tapOld=V0105.tapWorld;V0105.tapWorld=function(x,y){if(placement)return selectPoint(x,y);if(scene==='surface'&&V091Fortress.stairs.filter(V020Walls.usable).some(c=>{const p=player.wallLevel?c:c.foot;return distance(x,y,p.x,p.y)<=13;}))return false;const t=scene==='surface'&&guns.find(t=>distance(x,y,t.x,t.y)<28);if(t){GameActions.dispatch('INTERACT',{id:t.id,kind:TYPE});return true;}return tapOld(x,y);};
+   const updateOld=update;update=function(...a){const r=updateOld(...a);tick(16.667*frameScale);return r;};
+   let previewUntil=0;
+   function disk(c,x,y,r,color,stroke){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=color;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1.2;c.stroke();}}
+--- a/src/combat/weapons-crafting.js
++++ b/src/combat/weapons-crafting.js
+@@ -152,8 +152,7 @@
+   hitZombie=function(z,damage=25,options){if(!z.alive||z.health<=0)return;const amount=options?.fixedDamage?damage:window.V010World?.zombieDamage?V010World.zombieDamage(z,damage):damage;oldHit(z,amount);if(!z.alive){emit('combatkill',{id:z.id??zombies.indexOf(z),type:z.type||'normal',weapon:heldItem(),amount:1});}};
+   const oldUpdate=update;
+   update=function(){tick(Math.max(0,frameScale)*1000/60);oldUpdate();};
+-  document.addEventListener('keydown',e=>{if(e.key?.toLowerCase()==='r'&&!['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName)){e.preventDefault();reloadWeapon();}});
+-  const reloadButton=document.createElement('button');reloadButton.id='v010ReloadButton';reloadButton.type='button';reloadButton.title='Перезарядка · R';reloadButton.setAttribute('aria-label','Перезарядить оружие');reloadButton.addEventListener('pointerdown',e=>e.stopPropagation());reloadButton.addEventListener('click',reloadWeapon);document.body.append(reloadButton);
++  const reloadButton=document.createElement('button');reloadButton.id='v010ReloadButton';reloadButton.type='button';reloadButton.title='Перезарядка · R';reloadButton.setAttribute('aria-label','Перезарядить оружие');reloadButton.addEventListener('pointerdown',e=>e.stopPropagation());reloadButton.addEventListener('click',()=>GameActions.dispatch('RELOAD'));document.body.append(reloadButton);
+   const stopButton=document.createElement('button');stopButton.id='v010PracticeStop';stopButton.textContent='Завершить тренировку';stopButton.addEventListener('click',()=>setPractice(false));document.body.append(stopButton);
+   v09Style(`#v010ReloadButton{position:fixed;right:max(22px,env(safe-area-inset-right));bottom:38%;z-index:115;width:48px;height:48px;border-radius:50%;border:1px solid #b5d1cc99;color:#e6f2eb;background:conic-gradient(#70a9a977 var(--reload-progress,0%),#172c30aa 0);font-size:21px;touch-action:none;display:none}#v010ReloadButton:disabled{opacity:.8;font-size:12px}#v010PracticeStop{position:fixed;left:50%;transform:translateX(-50%);top:86px;z-index:112;padding:7px 12px;border-radius:9px;background:#5a4d31;color:#fff;font-size:11px;display:none}.v010UpgradeList{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:6px;max-height:145px;overflow:auto}.v010UpgradeItem{display:flex;align-items:center;gap:6px;padding:5px!important;min-height:46px!important;text-align:left;font-size:11px!important}.v010UpgradeItem.selected{border-color:#e1bd76}.v010UpgradeItem .itemIcon{width:36px;height:36px}.v010UpgradeDetail{background:#152a2e;border-radius:10px;padding:12px;margin:10px 0;font-size:12px;line-height:1.7}.v010Modules{display:grid;grid-template-columns:1fr 1fr;gap:6px}.v010Modules button{font-size:11px!important;min-height:36px!important;margin:0!important;padding:5px!important}#v010UpgradeOverlay .panel{max-width:620px}.v010Cost{color:#d6cba8}.v010UpgradeNote{font-size:11px;color:#acc1bd}`);
+   const oldInteractions=interactionObjects;
+--- a/src/core/input-combat.js
++++ b/src/core/input-combat.js
+@@ -179,6 +179,7 @@
+ 
+ const JOY_TOUCH_RADIUS=JOY_RADIUS+10;
+ function joystickAt(x,y){
++  if(window.GameInput&&!GameInput.isMobile)return null;
+   const c=joystickCenters(),left=distance(x,y,c.left.x,c.left.y),right=distance(x,y,c.right.x,c.right.y);
+   if(Math.min(left,right)>JOY_TOUCH_RADIUS)return null;
+   return left<=right?'left':'right';
+@@ -188,62 +189,62 @@
+   if(window.V014Controls?.beginStick(e,side))return;
+   if(side==='left'&&leftPointerId===null){
+     objectPointer=null;
+-    cancelNavigation();cancelChop();cancelSearch();leftPointerId=e.pointerId;
++    leftPointerId=e.pointerId;
+     const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);
+-    moveX=v.x;moveY=v.y;movePower=v.power;
+-    if(movePower>JOY_DEAD&&!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
++    GameActions.dispatch('MOVE',{kind:'vector',...v,begin:true});
+   }else if(side==='right'&&rightPointerId===null){
+     objectPointer=null;
+-    rightPointerId=e.pointerId;rightAimActive=true;
+-    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);aimPower=v.power;
+-    if(aimPower>JOY_DEAD){player.aimX=v.x;player.aimY=v.y;firing=canFire();if(firing)shoot();}
++    rightPointerId=e.pointerId;
++    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);
++    GameActions.dispatch('AIM',v);
++    if(v.power>JOY_DEAD)GameActions.dispatch('FIRE',{active:true,immediate:true});
+   }else return;
+   e.preventDefault();
+ }
+-window.addEventListener('pointerdown',function(e){
+-  if(menuOpen||playerDead||uiTouch(e.target)||e.button>0)return;
++function handleWorldPointerDown(e){
++  if(!GameActions.playable()||uiTouch(e.target)||e.button>0)return;
+   if(joystickAt(e.clientX,e.clientY)){beginJoystick(e);return;}
+   if(objectPointer||leftPointerId!==null||rightPointerId!==null)return;
+   const {x,y}=screenToWorld(e.clientX,e.clientY);
+-  if(window.V0105?.tapWorld(x,y)){e.preventDefault();return;}
+-  objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target:hitInteraction(x,y),point:{x,y},screenX:e.clientX,screenY:e.clientY,startedAt:performance.now(),following:false,nextPathAt:0};
++  if(GameActions.dispatch('WORLD_TARGET',{x,y})){e.preventDefault();return;}
++  objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target:hitInteraction(x,y),point:{x,y},screenX:e.clientX,screenY:e.clientY,startedAt:performance.now(),following:false,nextPathAt:0,scene,pc:!GameInput.isMobile};
+   e.preventDefault();
+-},{passive:false});
+-window.addEventListener('pointermove',function(e){
++}
++function handleWorldPointerMove(e){
+   if(objectPointer&&objectPointer.id===e.pointerId){
+     objectPointer.screenX=e.clientX;objectPointer.screenY=e.clientY;
+-    if(distance(e.clientX,e.clientY,objectPointer.x,objectPointer.y)>10)startPointerFollow();
++    if(distance(e.clientX,e.clientY,objectPointer.x,objectPointer.y)>10){
++      if(objectPointer.pc&&objectPointer.target)objectPointer.cancelled=true;else startPointerFollow();
++    }
+     e.preventDefault();return;
+   }
+   if(window.V014Controls?.moveStick(e))return;
+   const centers=joystickCenters();
+   if(e.pointerId===leftPointerId){
+-    const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);moveX=v.x;moveY=v.y;movePower=v.power;
+-    if(movePower>JOY_DEAD&&!rightAimActive){player.aimX=v.x;player.aimY=v.y;}e.preventDefault();
++    const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);
++    GameActions.dispatch('MOVE',{kind:'vector',...v});e.preventDefault();
+   }
+   if(e.pointerId===rightPointerId){
+-    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);aimPower=v.power;
+-    if(aimPower>JOY_DEAD){player.aimX=v.x;player.aimY=v.y;firing=canFire();}else firing=false;e.preventDefault();
+-  }
+-},{passive:false});
+-window.addEventListener('pointerup',function(e){
++    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);
++    GameActions.dispatch('AIM',v);GameActions.dispatch('FIRE',{active:v.power>JOY_DEAD});e.preventDefault();
++  }
++}
++function handleWorldPointerUp(e){
+   if(objectPointer&&objectPointer.id===e.pointerId){
+     const tap=objectPointer;objectPointer=null;
+-    if(menuOpen||playerDead)return;
+-    if(tap.following){approachPoint(...Object.values(screenToWorld(e.clientX,e.clientY)),true);return;}
++    if(!GameActions.playable()||tap.scene!==scene||tap.cancelled)return;
++    if(tap.following){GameActions.dispatch('MOVE',{...screenToWorld(e.clientX,e.clientY),following:true});return;}
+     if(uiTouch(e.target))return;
+     if(tap.target){
+       // Moving objects may have changed position since pointerdown. Keep the
+       // selected identity, but use its current interaction geometry on release.
+-      const target=interactionObjects().find(o=>o.id===tap.target.id&&o.kind===tap.target.kind);
+-      if(target)approachObject(target);
+-    }else approachPoint(tap.point.x,tap.point.y);
+-  }
+-},{passive:false});
+-window.addEventListener('pointercancel',e=>{
++      GameActions.dispatch('INTERACT',{id:tap.target.id,kind:tap.target.kind});
++    }else GameActions.dispatch('MOVE',tap.point);
++  }
++}
++function cancelWorldPointer(e){
+   if(objectPointer?.id===e.pointerId){if(objectPointer.following)cancelNavigation();objectPointer=null;}
+-});
+-window.addEventListener('blur',()=>stopControls(true));
++}
+ function startPointerFollow(){
+   if(!objectPointer||objectPointer.following)return;
+   objectPointer.following=true;objectPointer.target=null;
+@@ -258,24 +259,21 @@
+   if(!clear&&now<p.nextPathAt)return;
+   if(p.lastX!==undefined&&distance(x,y,p.lastX,p.lastY)<2&&navigation)return;
+   p.nextPathAt=now+140;p.lastX=x;p.lastY=y;
+-  approachPoint(x,y,true);
++  GameActions.dispatch('MOVE',{x,y,following:true});
+ }
+ 
+ function releaseFixedStick(e){
+   if(e.pointerId===leftPointerId){
+     leftPointerId=null;
+-    moveX=0;
+-    moveY=0;
+-    movePower=0;
++    GameActions.dispatch('MOVE',{kind:'vector',power:0});
+     stopFootsteps();
+     centerJoystickKnob(moveStick);
+   }
+ 
+   if(e.pointerId===rightPointerId){
+     rightPointerId=null;
+-    rightAimActive=false;
+-    aimPower=0;
+-    firing=false;
++    GameActions.dispatch('AIM',{active:false});
++    GameActions.dispatch('FIRE',{active:false});
+     centerJoystickKnob(aimStick);
+ 
+     if(movePower>JOY_DEAD){
+@@ -285,9 +283,7 @@
+   }
+ }
+ 
+-window.addEventListener("pointerup",releaseFixedStick,{passive:false});
+-window.addEventListener("pointercancel",releaseFixedStick,{passive:false});
+-window.addEventListener("lostpointercapture",releaseFixedStick,{passive:false,capture:true});
++// Release/cancel listeners are owned by GameInput for both modes.
+ 
+ window.addEventListener("resize",positionFixedControls);
+ 
+--- a/src/core/loop-viewport.js
++++ b/src/core/loop-viewport.js
+@@ -154,6 +154,7 @@
+ function gameLoop(timestamp=performance.now()){
+   frameScale=lastFrameAt?clamp((timestamp-lastFrameAt)/16.667,.1,3):1;
+   lastFrameAt=timestamp;
++  window.GameInput?.refreshAim();
+   updateFootstepsAudio();
+ 
+ 
+--- a/src/core/rendering.js
++++ b/src/core/rendering.js
+@@ -50,8 +50,7 @@
+     "show"
+   );
+ 
+-  movePower = 0;
+-  firing = false;
++  stopControls(true);
+ 
+   setTimeout(
+     function(){
+@@ -132,10 +131,8 @@
+ 
+ actionButton.addEventListener('pointerdown',function(e){
+   e.preventDefault();e.stopPropagation();
+-  if(menuOpen||playerDead)return;
+-  updateAction();
+-  if(interactionTarget)executeInteraction(interactionTarget);
+-  else message('Подойдите ближе или нажмите на объект');
++  if(!GameInput.isMobile)return;
++  GameActions.dispatch('INTERACT',{nearest:true});
+ });
+ 
+ 
+--- a/src/core/world-inventory.js
++++ b/src/core/world-inventory.js
+@@ -427,7 +427,7 @@
+       button.setAttribute('aria-label',`Слот ${i+1}: ${type?ITEM[type].name:'свободный'}`);
+       button.setAttribute('aria-pressed',String(activeHandSlot===i));
+       button.innerHTML=`<span class="slotNumber">${i+1}</span><span class="slotArt">${type?itemIconHTML(type):'＋'}</span><span class="slotName">${type?ITEM[type].name:'Пусто'}</span>`;
+-      button.addEventListener('click',()=>{if(window.V010Inventory?.clickSuppressed())return;if(name==='quickSlots'&&window.V0162Quick)V0162Quick.open(i);else selectHandSlot(i);});holder.appendChild(button);
++      button.addEventListener('click',()=>{if(window.V010Inventory?.clickSuppressed())return;if(name==='quickSlots'&&window.V0162Quick)V0162Quick.open(i);else GameActions.dispatch('SELECT_SLOT',{index:i});});holder.appendChild(button);
+     });
+   }
+   el('heldItemName').textContent=heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны';
+--- a/src/input/actions.js
++++ b/src/input/actions.js
+@@ -0,0 +1,63 @@
++/* Shared input commands. Device adapters never implement combat, pathfinding,
++   item transfers or interaction rules. Commands are transient, not save data. */
++window.GameActions=(()=>{
++  'use strict';
++  const playable=()=>!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
++  const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
++  function dispatch(type,data={}){
++    // Releases are always allowed, including while a menu is opening.
++    if(type==='FIRE'&&!data.active){firing=false;return true;}
++    if(type==='AIM'&&data.active===false){rightAimActive=false;aimPower=0;return true;}
++    if(type==='MOVE'&&data.kind==='vector'&&data.power===0){moveX=moveY=movePower=0;return true;}
++    if(!playable())return false;
++    switch(type){
++      case 'MOVE':
++        if(data.kind==='vector'){
++          if(!point(data)||!Number.isFinite(data.power))return false;
++          if(data.begin){cancelNavigation();cancelChop();cancelSearch();}
++          moveX=data.x;moveY=data.y;movePower=clamp(data.power,0,1);
++          if(movePower>JOY_DEAD&&!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
++          return true;
++        }
++        if(!point(data))return false;
++        if(data.kind==='route')return !!window.V014Controls?.goTo(data);
++        approachPoint(data.x,data.y,!!data.following);return true;
++      case 'INTERACT': {
++        if(data.nearest){
++          updateAction();
++          if(interactionTarget)executeInteraction(interactionTarget);
++          else message('Подойдите ближе или нажмите на объект');
++          return true;
++        }
++        // Re-resolve type AND instance identity at execution time (moving drone).
++        const target=interactionObjects().find(o=>o.id===data.id&&o.kind===data.kind);
++        if(!target)return false;
++        approachObject(target);return true;
++      }
++      case 'WORLD_TARGET':
++        return point(data)&&!!window.V0105?.tapWorld(data.x,data.y);
++      case 'AIM': {
++        if(!point(data))return false;
++        rightAimActive=true;aimPower=clamp(data.power??1,0,1);
++        if(aimPower>JOY_DEAD){
++          const x=data.kind==='world'?data.x-player.x:data.x,y=data.kind==='world'?data.y-player.y:data.y;
++          const n=data.kind==='world'?Math.hypot(x,y):1;if(n>0){player.aimX=x/n;player.aimY=y/n;}
++        }
++        return true;
++      }
++      case 'FIRE':
++        firing=!!data.active&&canFire();if(firing&&data.immediate)shoot();return firing;
++      case 'RELOAD':return reloadWeapon();
++      case 'SELECT_SLOT':
++        if(!Number.isInteger(data.index)||data.index<0||data.index>=handSlots.length)return false;
++        selectHandSlot(data.index);return true;
++      case 'INVENTORY':renderBag();openOverlay(el('inventoryOverlay'));return true;
++      case 'MAP':window.V010Camera?.showMap();return true;
++      case 'SETTINGS':openOverlay(el('settingsOverlay'));return true;
++      case 'SNEAK':window.V010World?.setSneaking(!V010World.sneaking);return true;
++      default:return false;
++    }
++  }
++  return Object.freeze({dispatch,playable});
++})();
++
+--- a/src/input/router.js
++++ b/src/input/router.js
+@@ -0,0 +1,133 @@
++/* One Pointer Events router for both interfaces. Installed once, before camera
++   pinch listeners; switching modes changes state, never listener registration. */
++window.GameInput=(()=>{
++  'use strict';
++  const KEY='last_base_control_mode_v1',MODES=['AUTO','PC','MOBILE'];
++  const queries=['(pointer: fine)','(hover: hover)','(pointer: coarse)','(any-pointer: fine)','(any-hover: hover)'].map(q=>window.matchMedia?.(q));
++  let preference='AUTO',observed=null,pcPress=null,mounted=false,onModeChange=null,shownMode=null,shownPreference=null;
++  try{const value=localStorage.getItem(KEY);if(MODES.includes(value))preference=value;}catch(_){}
++  function detect(){
++    if(queries[0]?.matches&&queries[1]?.matches)return 'PC';
++    if(queries[2]?.matches)return 'MOBILE';
++    if(queries[3]?.matches&&queries[4]?.matches)return 'PC';
++    return navigator.maxTouchPoints>0?'MOBILE':'PC';
++  }
++  let mode=preference==='AUTO'?detect():preference;
++  const active=()=>pcPress!==null||objectPointer!==null||leftPointerId!==null||rightPointerId!==null||!!window.V010Camera?.touchActive;
++  function release(){
++    const press=pcPress;pcPress=null;
++    if(press){try{canvas.releasePointerCapture?.(press.id);}catch(_){} }
++    window.V014Controls?.releaseInput();
++  }
++  function apply(){
++    const next=preference==='AUTO'?(observed||detect()):preference;
++    if(next!==mode&&mounted){stopControls(true);window.V010Camera?.resetTouch();}
++    mode=next;
++    if(mounted&&(shownMode!==mode||shownPreference!==preference)){
++      shownMode=mode;shownPreference=preference;
++      document.body.dataset.controlMode=mode;document.body.dataset.controlPreference=preference;onModeChange?.(preference,mode);
++    }
++  }
++  function setMode(value){
++    if(!MODES.includes(value))return false;
++    preference=value;observed=null;apply();
++    try{localStorage.setItem(KEY,value);}catch(_){message('Режим изменён. Браузер не разрешил сохранить настройку.');}
++    return true;
++  }
++  function observe(e){
++    if(preference!=='AUTO'||active())return;
++    const next=e.pointerType==='touch'||e.pointerType==='pen'?'MOBILE':e.pointerType==='mouse'?'PC':null;
++    if(next){observed=next;apply();}
++  }
++  // No width or user-agent guesses. A hybrid can use either actual input.
++  window.addEventListener('pointerdown',observe,true);
++  function capabilitiesChanged(){if(preference!=='AUTO')return;observed=null;if(!active())apply();}
++  for(const q of queries){if(q?.addEventListener)q.addEventListener('change',capabilitiesChanged);else q?.addListener?.(capabilitiesChanged);}
++  const world=e=>e.target===canvas;
++  function aim(){
++    if(!pcPress)return;
++    if(mode!=='PC'||pcPress.scene!==scene||!GameActions.playable()){stopPC();return;}
++    const target=window.V0105?.target,p=target||screenToWorld(pcPress.x,pcPress.y);
++    GameActions.dispatch('AIM',{kind:'world',x:p.x,y:p.y});
++  }
++  function stopPC(){
++    if(!pcPress)return;
++    release();GameActions.dispatch('FIRE',{active:false});GameActions.dispatch('AIM',{active:false});
++    if(movePower>JOY_DEAD){player.aimX=moveX;player.aimY=moveY;}
++  }
++  function down(e){
++    if(!GameActions.playable()||!world(e)||uiTouch(e.target))return;
++    if(mode==='PC'){
++      if(e.button===2&&e.pointerType==='mouse'){
++        e.preventDefault();if(active())return;
++        pcPress={id:e.pointerId,x:e.clientX,y:e.clientY,scene};
++        try{canvas.setPointerCapture?.(e.pointerId);}catch(_){}
++        aim();GameActions.dispatch('FIRE',{active:true,immediate:true});return;
++      }
++      if(pcPress||e.button>0)return;
++    }
++    handleWorldPointerDown(e);
++  }
++  function move(e){
++    if(pcPress){
++      if(e.pointerId===pcPress.id){
++        // With mouse chords, releasing RMB may be pointermove, not pointerup.
++        if(typeof e.buttons==='number'&&!(e.buttons&2)){stopPC();return;}
++        pcPress.x=e.clientX;pcPress.y=e.clientY;aim();e.preventDefault();
++      }
++      return;
++    }
++    if(objectPointer||leftPointerId!==null||rightPointerId!==null)handleWorldPointerMove(e);
++  }
++  function up(e){
++    if(pcPress?.id===e.pointerId){stopPC();e.preventDefault();return;}
++    handleWorldPointerUp(e);releaseFixedStick(e);window.V014Controls?.release(e);
++  }
++  function cancel(e){
++    if(pcPress?.id===e.pointerId)stopPC();
++    cancelWorldPointer(e);releaseFixedStick(e);window.V014Controls?.release(e);
++  }
++  window.addEventListener('pointerdown',down,{passive:false});
++  window.addEventListener('pointermove',move,{passive:false});
++  window.addEventListener('pointerup',up,{passive:false});
++  window.addEventListener('pointercancel',cancel,{passive:false});
++  window.addEventListener('lostpointercapture',cancel,true);
++  window.addEventListener('blur',()=>{stopControls(true);window.V010Camera?.resetTouch();});
++  window.addEventListener('contextmenu',e=>{if(mode==='PC'&&world(e))e.preventDefault();});
++  function editable(node){return !!node?.closest?.('input,textarea,select,[contenteditable=""],[contenteditable="true"],[role="textbox"]');}
++  function topOverlay(){return [...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||getComputedStyle(b).zIndex||0)-Number(a.style.zIndex||getComputedStyle(a).zIndex||0))[0];}
++  function escape(){
++    const top=topOverlay();
++    if(top){
++      if(top.id==='deathOverlay')return;
++      if(top.id==='v010MapOverlay'&&!el('v011MapFilterOptions')?.hidden){V012Map.setOptions(false);el('v011MapFilters').focus();return;}
++      closeOverlay(top);return;
++    }
++    if(window.V016Turret?.placement){V016Turret.cancelPlacement();return;}
++    GameActions.dispatch('SETTINGS');
++  }
++  function keydown(e){
++    if(e.defaultPrevented||e.isComposing||e.ctrlKey||e.metaKey||e.altKey)return;
++    if(e.key==='Escape'){
++      if(!e.repeat){e.preventDefault();escape();}return;
++    }
++    if(editable(e.target)||editable(document.activeElement))return;
++    const key=e.code||({r:'KeyR',i:'KeyI',m:'KeyM',c:'KeyC'}[e.key?.toLowerCase()]||(/^[1-5]$/.test(e.key)?'Digit'+e.key:''));
++    const command={KeyR:'RELOAD',KeyI:'INVENTORY',KeyM:'MAP',KeyC:'SNEAK'}[key];
++    const slot=/^Digit[1-5]$/.test(key)?Number(key.slice(-1))-1:null;
++    if(!command&&slot===null)return;
++    if(e.repeat){e.preventDefault();return;}
++    if(preference==='AUTO'&&!active()){observed='PC';apply();}
++    if(mode!=='PC')return;
++    const top=topOverlay(),toggle=command==='INVENTORY'?'inventoryOverlay':command==='MAP'?'v010MapOverlay':null;
++    if(top){if(top.id===toggle){e.preventDefault();closeOverlay(top);}return;}
++    if(!GameActions.playable())return;
++    e.preventDefault();GameActions.dispatch(command||'SELECT_SLOT',slot===null?{}:{index:slot});
++  }
++  // Bubble phase lets focused fields consume Escape (e.g. save-slot rename).
++  document.addEventListener('keydown',keydown);
++  return Object.freeze({setMode,release,refreshAim:aim,
++    mount(fn){if(mounted)return;mounted=true;onModeChange=fn;apply();},
++    get preference(){return preference;},get mode(){return mode;},get isMobile(){return mode==='MOBILE';},
++    get pcFiring(){return pcPress!==null;},get storageKey(){return KEY;}});
++})();
+--- a/src/input/settings.js
++++ b/src/input/settings.js
+@@ -0,0 +1,39 @@
++/* Mode-specific presentation only; the existing touch layout editor is intact. */
++(()=>{
++  const box=document.createElement('div');box.className='settingBox';box.id='controlModeSettings';
++  const label=document.createElement('label');label.className='settingTitle';label.textContent='CONTROL MODE';label.setAttribute('for','controlModeSelect');
++  const select=document.createElement('select');select.id='controlModeSelect';select.setAttribute('aria-describedby','controlModeStatus');
++  for(const value of ['AUTO','PC','MOBILE']){const option=document.createElement('option');option.value=value;option.textContent=value;select.append(option);}
++  const status=document.createElement('div');status.id='controlModeStatus';status.setAttribute('role','status');
++  const help=document.createElement('div');help.id='controlModeHelp';
++  box.append(label,select,status,help);
++  const panel=el('settingsOverlay').querySelector('.panel');panel.querySelector('.settingBox').before(box);
++  select.addEventListener('change',()=>GameInput.setMode(select.value));
++  v09Style(`
++    #controlModeSettings{display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px 12px}
++    #controlModeSettings .settingTitle{margin:0}#controlModeSelect{font:inherit;color:#e3eee7;background:#203630;border:1px solid #89a998;border-radius:6px;padding:7px 10px;min-width:106px;touch-action:manipulation}
++    #controlModeStatus,#controlModeHelp{grid-column:1/-1;font-size:11px;line-height:1.5;color:#b6cfc2}#controlModeHelp{color:#d4dfd5}
++    body[data-control-mode="PC"] #moveControl,body[data-control-mode="PC"] #aimControl,body[data-control-mode="PC"] #actionButton{display:none!important;pointer-events:none!important}
++    body[data-control-mode="PC"] #canvas{cursor:crosshair}
++    body[data-control-mode="PC"] #bagButton,body[data-control-mode="PC"] #v010SneakButton{top:auto!important;bottom:14px!important;transform:none!important}
++    body[data-control-mode="PC"] #bagButton{left:calc(50% + 153px)!important;right:auto!important}
++    body[data-control-mode="PC"] #v010SneakButton{left:calc(50% - 197px)!important;right:auto!important}
++    body[data-control-mode="PC"] #v010ReloadButton{top:auto;bottom:14px;right:calc(50% - 251px);width:44px;height:44px;font-size:18px}
++    body[data-control-mode="PC"] #v014RouteStop{bottom:102px}
++    body[data-control-mode="PC"] #settingsOverlay .panel{width:min(440px,94vw)}
++    @media(min-width:900px){body[data-control-mode="PC"] #inventoryOverlay .panel{max-width:850px}body[data-control-mode="PC"] #storageOverlay .panel{max-width:980px}}
++    @media(max-width:540px){body[data-control-mode="PC"] #v010ReloadButton{right:12px;bottom:76px}body[data-control-mode="PC"] #bagButton{left:auto!important;right:8px!important}body[data-control-mode="PC"] #v010SneakButton{left:8px!important}}
++  `);
++  GameInput.mount((preference,mode)=>{
++    select.value=preference;
++    status.textContent=(preference==='AUTO'?'AUTO → ':'Активен: ')+mode+(preference==='AUTO'?' · по возможностям устройства и последнему вводу':'');
++    help.textContent=mode==='PC'
++      ?'ЛКМ — идти / объект / выбрать врага. Удержание ЛКМ — следовать за указателем. ПКМ — прицел и огонь: по выбранной цели, без цели — к курсору. R — перезарядка · I — инвентарь · 1–5 — слоты · M — карта · C — тихий ход · Esc — закрыть окно / настройки.'
++      :'Левый джойстик — движение. Правый — прицел / огонь, с выбранной целью — Fire. ✋ — действие · ↻ — перезарядка. Касание мира — идти / взаимодействовать / выбрать врага. Два пальца — масштаб. Расположение кнопок меняется в редакторе ниже.';
++    for(const id of ['moveControl','aimControl','actionButton'])el(id).setAttribute('aria-hidden',String(mode==='PC'));
++    el('bagButton').title='Персонаж и инвентарь'+(mode==='PC'?' · I':'');
++    el('settingsButton').title='Настройки'+(mode==='PC'?' · Esc':'');
++    el('v010Minimap').title=mode==='PC'?'Карта · M · удержание 1,5 с: прозрачность':'Касание: большая карта · удержание 1,5 с: 100% → 60% → 30%';
++  });
++})();
++
+--- a/src/inventory/physical-slots.js
++++ b/src/inventory/physical-slots.js
+@@ -52,7 +52,6 @@
+   GameSave.extend('restore','inventory.physical-slots',function(restore,d){d=V014Fish.migrate(copy(d));items.fill(null);if(d.quick013)items.splice(0,5,...copy(d.quick013.items));restore(d);if(!d.quick013){for(let i=0;i<5;i++){const t=d.handSlots[i],j=bag.findIndex(s=>s?.type===t);if(t&&j>=0){items[i]=bag[j];bag[j]=null;}}}reserve=d.quick013?.fishReserve||0;for(const a of [bag,...storageChests.map(c=>c.items)])for(const s of a)if(s?.type==='fish')V014Fish.normalize(s);activeHandSlot=d.activeHandSlot;sync();});
+   // Move the initial starting hands exactly once before the first save is created.
+   for(let i=0;i<5;i++){const j=bag.findIndex(s=>s?.type===handSlots[i]);if(j>=0){items[i]=bag[j];bag[j]=null;}}handSlots=items.map(s=>s?.type||null);
+-  document.addEventListener('keydown',e=>{if(e.key==='5'&&!menuOpen&&!playerDead)selectHandSlot(4);});
+   v09Style(`.v014FishCook{padding:8px 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px}.v014FishCook p{width:100%;margin:0;font-size:13px}.v014FishCook label{font-size:12px}.v014FishCook input{width:58px;background:#18282b;color:#dfebe5;border:1px solid #56706b;border-radius:5px;padding:5px;font:inherit}.v014FishCook small{font-size:11px;color:#a5bcb1}.v014FishCook button{width:auto!important;padding:8px 12px!important;font-size:12px!important}@keyframes v013Short{0%,100%{box-shadow:none}30%{background:#78423e;border-color:#ee8b7e;box-shadow:0 0 0 2px #e9857466}}.v013Missing{animation:v013Short .7s ease-out}#quickSlots{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}#hotbar{grid-template-columns:repeat(5,minmax(0,52px));gap:4px;width:min(276px,92vw)}.v011BatchControls button{font-size:11px!important;padding:5px 8px!important}@media(max-width:540px){#quickSlots{max-width:92vw}.slotArt{max-height:40px}}`);
+   return {items,sync,returnItem,cook,fishWeight,equip};
+ })();
+--- a/src/manifest.json
++++ b/src/manifest.json
+@@ -1,6 +1,6 @@
+ {
+   "format": 1,
+-  "version": "0.23.0",
++  "version": "0.23.1",
+   "mode": "classic-script-concatenation",
+   "files": [
+     "state/owners.js",
+@@ -9,6 +9,8 @@
+     "core/runtime.js",
+     "core/world-inventory.js",
+     "core/input-combat.js",
++    "input/actions.js",
++    "input/router.js",
+     "core/interactions-farm-storage.js",
+     "core/rendering.js",
+     "ui/legacy-panels.js",
+@@ -57,6 +59,7 @@
+     "ui/loot-vitals.js",
+     "combat/monsters.js",
+     "base/construction.js",
++    "input/settings.js",
+     "save/finalize.js",
+     "bootstrap.js"
+   ]
+--- a/src/player/controls.js
++++ b/src/player/controls.js
+@@ -16,19 +16,19 @@
+       if(route||pending)stopRoute();return false;
+     }
+     if(side==='right'&&target()&&rightPointerId===null){
+-      objectPointer=null;rightPointerId=e.pointerId;lockedPress=e.pointerId;rightAimActive=true;aimPower=1;firing=canFire();centerJoystickKnob(aimStick);aimControl.classList.add('v014TargetFire');if(firing)shoot();e.preventDefault();return true;
++      objectPointer=null;rightPointerId=e.pointerId;lockedPress=e.pointerId;GameActions.dispatch('AIM',{x:player.aimX,y:player.aimY,power:1});centerJoystickKnob(aimStick);aimControl.classList.add('v014TargetFire');GameActions.dispatch('FIRE',{active:true,immediate:true});e.preventDefault();return true;
+     }
+     return false;
+   }
+   function moveStick014(e){
+     if(e.pointerId===rightPointerId&&target()){
+-      lockedPress=e.pointerId;rightAimActive=true;aimPower=1;firing=canFire();centerJoystickKnob(aimStick);aimControl.classList.add('v014TargetFire');e.preventDefault();return true;
++      lockedPress=e.pointerId;GameActions.dispatch('AIM',{x:player.aimX,y:player.aimY,power:1});GameActions.dispatch('FIRE',{active:true});centerJoystickKnob(aimStick);aimControl.classList.add('v014TargetFire');e.preventDefault();return true;
+     }
+     if(e.pointerId===lockedPress){lockedPress=null;aimControl.classList.remove('v014TargetFire');}
+     return false;
+   }
+   function release(e){if(e.pointerId===lockedPress){lockedPress=null;aimControl.classList.remove('v014TargetFire');}}
+-  window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);window.addEventListener('lostpointercapture',release);
++  function releaseInput(){lockedPress=null;aimControl.classList.remove('v014TargetFire');}
+   function openDoors(fn){const before=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=before;}}
+   function installPath(points,provisional=false){
+     navigation={destination:route.destination,points,index:0,blockedMs:0,replans:0,scene,map014:true,provisional};
+@@ -127,7 +127,7 @@
+     c.strokeStyle='rgba(207,220,183,.48)';c.lineWidth=2.4/scale;c.stroke();c.restore();
+   }
+   const oldNavDraw=drawNavigationTarget;drawNavigationTarget=function(...args){oldNavDraw(...args);drawRoute(ctx,V010Camera.zoom||1);};
+-  const goButton=v09Button('Идти сюда',()=>{if(goTo(V010Camera.selected||V010Camera.goal)){el('v010MapClose').click();}});goButton.id='v014MapGo';
++  const goButton=v09Button('Идти сюда',()=>{if(GameActions.dispatch('MOVE',{kind:'route',...(V010Camera.selected||V010Camera.goal)})){el('v010MapClose').click();}});goButton.id='v014MapGo';
+   const droneButton=v09Button('Атаковать дроном',()=>{const z=mapSelectedTarget();if(z&&window.V014Robots?.attack(z))el('v010MapClose').click();});droneButton.id='v014MapAttack';droneButton.hidden=true;
+   el('v010MapGoal').after(goButton);goButton.after(droneButton);
+   const clearGoal=V010Camera.clearGoal;V010Camera.clearGoal=function(...args){stopRoute();return clearGoal(...args);};
+@@ -161,6 +161,6 @@
+     @media(max-height:550px){#v010Minimap{top:calc(var(--v011-game-top) + 55px)!important}}
+   `);
+   window.addEventListener('resize',layout);window.visualViewport?.addEventListener('resize',layout);el('v010MapCorner').addEventListener('click',layout);layout();
+-  return {target,contactTarget,beginStick,moveStick:moveStick014,goTo,stopRoute,tickPath,advanceRoute,drawRoute,mapSelectedTarget,layout,get route(){return route;},get planning(){return !!pending;}};
++  return {target,contactTarget,beginStick,moveStick:moveStick014,release,releaseInput,goTo,stopRoute,tickPath,advanceRoute,drawRoute,mapSelectedTarget,layout,get route(){return route;},get planning(){return !!pending;}};
+ })();
+ 
+--- a/src/save/envelope.js
++++ b/src/save/envelope.js
+@@ -4,7 +4,7 @@
+   const snapshot=()=>GameSave.snapshotModules();
+   V010.initialModules=clone(snapshot());
+   
+-  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.23.0';d.v010={schema:1,modules:snapshot()};return d;});
++  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.23.1';d.v010={schema:1,modules:snapshot()};return d;});
+   GameSave.extend('decode','save.envelope',function(oldDecode,raw){
+     let d=oldDecode(raw);
+     if(d.v010!==undefined){
+@@ -13,7 +13,7 @@
+     }
+     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
+     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
+-    d.gameVersion='0.23.0';return d;
++    d.gameVersion='0.23.1';return d;
+   });
+   GameSave.extend('restore','save.envelope',function(oldRestore,d){
+     const was=GameState.session.transaction;GameState.session.transaction=true;
+@@ -22,8 +22,8 @@
+   });
+   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
+   const oldMessage=message;message=function(text){oldMessage(text);V010.log(text);};
+-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.23.0 · Большой мир и свободное развитие';
+-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.23.0';
++  const label=document.querySelector('#settingsOverlay .subtitle');if(label)label.textContent='Survival Base 0.23.1 · Большой мир и свободное развитие';
++  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))el.textContent='VERSION 0.23.1';
+   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
+   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
+   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
+--- a/src/save/format.js
++++ b/src/save/format.js
+@@ -17,7 +17,7 @@
+     }
+     return JSON.stringify(data);
+   }
+-  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.23.0';return data;}
++  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.23.1';return data;}
+   return Object.freeze({version:VERSION,prepare,stamp,
+     migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});
+ })();
+--- a/src/save/slots.js
++++ b/src/save/slots.js
+@@ -125,7 +125,7 @@
+   d.saveName=v091CleanSaveName(d.saveName);
+   const legacy=d.v09===undefined;
+   const legacySchema=d.schema;
+-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.0)))$/.test(d.gameVersion||'')))
++  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01])))$/.test(d.gameVersion||'')))
+     throw new Error('Unsupported current save version');
+   if(legacy){
+     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
+@@ -335,7 +335,7 @@
+     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+     const a=document.createElement('a');a.href=url;
+     const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
+-    a.download=`survival-base-0.23.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
++    a.download=`survival-base-0.23.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+     message('💾 Файл сохранения подготовлен для скачивания.');
+   }catch(error){message('Не удалось подготовить сохранение.');}
+--- a/src/ui/legacy-panels.js
++++ b/src/ui/legacy-panels.js
+@@ -3,6 +3,7 @@
+ ===================================================== */
+ 
+ function stopControls(preserveGather=false){
++  window.GameInput?.release();
+   navigation=null;objectPointer=null;if(!preserveGather)cancelChop();cancelSearch();
+   moveX=0; moveY=0; movePower=0;
+   firing=false; aimPower=0; rightAimActive=false;
+@@ -591,7 +592,7 @@
+ 
+ 
+ /* 0.5.0 UI */
+-el("bagButton").addEventListener("click",()=>{renderBag();openOverlay(el("inventoryOverlay"))});
++el("bagButton").addEventListener("click",()=>GameActions.dispatch('INVENTORY'));
+ el('handAssignClose').addEventListener('click',()=>closeOverlay(el('handAssignOverlay')));
+ el("closeInventory").addEventListener("click",()=>closeOverlay(el("inventoryOverlay")));
+ /* Inventory interactions are installed by V010Inventory. */
+--- a/src/ui/maps-windows.js
++++ b/src/ui/maps-windows.js
+@@ -26,7 +26,6 @@
+   button.onclick=()=>setOptions(options.hidden);
+   overlay.addEventListener('pointerdown',e=>{if(!options.hidden&&!options.contains?.(e.target)&&!e.target.closest?.('#v011MapFilterOptions,#v011MapFilters'))setOptions(false);});
+   close.addEventListener('click',()=>setOptions(false));
+-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!options.hidden){setOptions(false);button.focus();e.stopPropagation();}});
+   const oldShow=V010Camera.showMap;
+   V010Camera.showMap=function(...args){setOptions(false);return oldShow(...args);};
+   // Settings has a closure-bound map opener in older versions; point it at the public opener.
+--- a/src/ui/modal-dragging.js
++++ b/src/ui/modal-dragging.js
+@@ -42,7 +42,6 @@
+   },true);
+   window.addEventListener('contextmenu',e=>{if(dismissGesture)consume(e);},true);
+   window.addEventListener('blur',()=>{pointerGesture=null;dismissGesture=null;});
+-  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const a=[...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||0)-Number(a.style.zIndex||0));if(a[0]){e.preventDefault();closeOverlay(a[0]);}});
+   // Covers legacy direct class changes (death, load, layout editor). :has below
+   // hides controls in the same style update, before the observer callback.
+   if(typeof MutationObserver==='function')new MutationObserver(sync).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+--- a/src/ui/shared.js
++++ b/src/ui/shared.js
+@@ -52,11 +52,6 @@
+   if(Math.random()<.5)loot.push({type:'ammo556',qty:8+Math.floor(Math.random()*13)});
+   return loot;
+ };
+-document.addEventListener('keydown',e=>{
+-  if(e.key==='Escape'){
+-    const overlays=[...document.querySelectorAll('.overlay.open')];const last=overlays.at(-1);
+-    if(last&&last.id!=='deathOverlay')closeOverlay(last);
+-  }
+-});
++// Contextual Escape handling is owned by GameInput.
+ 
+ 
+--- a/src/world/camera.js
++++ b/src/world/camera.js
+@@ -56,7 +56,7 @@
+   window.addEventListener('wheel',e=>{if(!worldInput(e)||menuOpen)return;e.preventDefault();const unit=e.deltaMode===1?16:e.deltaMode===2?screenHeight:1;const delta=clamp(e.deltaY*unit,-400,400),direction=Math.sign(delta);if(direction&&wheelDirection&&direction!==wheelDirection)targetZoom=zoom;if(direction)wheelDirection=direction;setZoom(targetZoom*Math.exp(-delta*.0012));queueGameSave();},{passive:false,capture:true});
+   // Joysticks are transparent overlays, so their touches also target canvas.
+   // Reserve those contacts for controls before considering a map pinch.
+-  window.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch'||!worldInput(e)||menuOpen)return;if(joystickAt(e.clientX,e.clientY)||leftPointerId!==null||rightPointerId!==null)return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(touches.size===2){const [a,b]=[...touches.values()];pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),zoom};stopControls(true);e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
++  window.addEventListener('pointerdown',e=>{if(!GameInput.isMobile||e.pointerType!=='touch'||!worldInput(e)||menuOpen)return;if(joystickAt(e.clientX,e.clientY)||leftPointerId!==null||rightPointerId!==null)return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(touches.size===2){const [a,b]=[...touches.values()];pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),zoom};stopControls(true);e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
+   window.addEventListener('pointermove',e=>{if(!touches.has(e.pointerId))return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch&&touches.size>=2){const [a,b]=[...touches.values()];setZoom(pinch.zoom*Math.hypot(a.x-b.x,a.y-b.y)/Math.max(1,pinch.distance));e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
+   function endTouch(e){if(!touches.has(e.pointerId))return;touches.delete(e.pointerId);if(pinch||performance.now()<suppressTouchUntil){e.preventDefault();e.stopImmediatePropagation();objectPointer=null;cancelNavigation();moveX=moveY=movePower=0;suppressTouchUntil=performance.now()+250;if(!touches.size){pinch=null;queueGameSave();}}}
+   window.addEventListener('pointerup',endTouch,{passive:false,capture:true});window.addEventListener('pointercancel',endTouch,{passive:false,capture:true});
+@@ -143,7 +143,7 @@
+   function capture(){return {schema:1,zoom:targetZoom,tilt,opacity,corner,discovered:[...discovered],known:[...known],markers:clone(markers),goal:goal?{...goal}:null};}
+   function validate(s){if(!s||s.schema!==1||!Number.isFinite(s.zoom)||s.zoom<.25||s.zoom>2.8||![.76,1].includes(s.tilt)||![0,1,2].includes(s.opacity)||!['left','right'].includes(s.corner)||!Array.isArray(s.discovered)||s.discovered.length>3450||s.discovered.some(k=>typeof k!=='string'||!/^(-?\d{1,2}),(-?\d{1,2})$/.test(k)||!((p=>p[0]>=-12&&p[0]<=33&&p[1]>=-15&&p[1]<60)(k.split(',').map(Number))))||!Array.isArray(s.known)||s.known.length>1500||s.known.some(k=>typeof k!=='string'||k.length>80))throw Error('Некорректная карта');const valid=p=>p&&['surface','bunker'].includes(p.scene)&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&(p.scene==='surface'?p.x>=-2800&&p.x<=4400&&p.y>=-2400&&p.y<=9600:p.x>=-1500&&p.x<=3000&&p.y>=-1500&&p.y<=5000);if(!Array.isArray(s.markers)||s.markers.length>40||s.markers.some(m=>!valid(m)||typeof m.name!=='string'||m.name.length>36)||(s.goal!==null&&!valid(s.goal)))throw Error('Некорректные метки');return true;}
+   function restore(s){if(s)validate(s);zoom=targetZoom=clamp(s?.zoom??.8,MIN_ZOOM,MAX_ZOOM);tilt=1;opacity=s?.opacity??0;corner=s?.corner??'right';discovered=new Set(s?.discovered||[]);known=new Set(s?.known||[]);markers=clone(s?.markers||[]);goal=s?.goal?{...s.goal}:null;mapOpen=false;touches.clear();pinch=null;wheelDirection=0;updateSettings();const v=view();camera.x=player.x-v.w/2;camera.y=player.y-v.h/2;updateCamera();reveal();mapDraw(mc,mini.width,mini.height,true);}
+-  const api={point,inverse,view,setZoom,capture,restore,validate,showMap,mapDraw,drawFull,closeMap(){mapOpen=false;cancelMiniHold();},clearGoal(){goal=null;queueGameSave();drawFull();},get goal(){return goal;},get selected(){return selected?{...selected}:null;},setSelected(p){selected=p?{x:p.x,y:p.y}:null;drawFull();},setGoal(p){goal=p?{x:p.x,y:p.y,scene}:null;queueGameSave();drawFull();},mapBounds:bounds,get mapViewport(){return {zoom:mapZoom,pan:{...mapPan}};},get zoom(){return zoom;},get targetZoom(){return targetZoom;},get tilt(){return tilt;},reveal,seen};V010.register('camera',api);updateSettings();return api;
++  const api={resetTouch(){touches.clear();pinch=null;suppressTouchUntil=0;cancelMiniHold();},get touchActive(){return touches.size>0;},point,inverse,view,setZoom,capture,restore,validate,showMap,mapDraw,drawFull,closeMap(){mapOpen=false;cancelMiniHold();},clearGoal(){goal=null;queueGameSave();drawFull();},get goal(){return goal;},get selected(){return selected?{...selected}:null;},setSelected(p){selected=p?{x:p.x,y:p.y}:null;drawFull();},setGoal(p){goal=p?{x:p.x,y:p.y,scene}:null;queueGameSave();drawFull();},mapBounds:bounds,get mapViewport(){return {zoom:mapZoom,pan:{...mapPan}};},get zoom(){return zoom;},get targetZoom(){return targetZoom;},get tilt(){return tilt;},reveal,seen};V010.register('camera',api);updateSettings();return api;
+ })();
+ window.V010Camera=V010Camera;
+ function worldToScreen(x,y){return V010Camera.point(x,y);}
+--- a/src/world/districts.js
++++ b/src/world/districts.js
+@@ -130,8 +130,7 @@
+   updatePlayer=function(){const run=player.runSpeed,walk=player.walkSpeed;if(sneaking){player.runSpeed=run*.5;player.walkSpeed=walk*.5;}walkingNoise=true;try{return oldPlayer();}finally{walkingNoise=false;player.runSpeed=run;player.walkSpeed=walk;}};
+   const sneakButton=document.createElement('button');sneakButton.id='v010SneakButton';sneakButton.textContent='Тихо';sneakButton.title='Тихое передвижение · C';sneakButton.setAttribute('aria-label','Тихое передвижение');sneakButton.setAttribute('aria-pressed','false');document.body.append(sneakButton);
+   function setSneaking(value){sneaking=!!value;sneakButton.classList.toggle('active',sneaking);sneakButton.setAttribute('aria-pressed',String(sneaking));}
+-  sneakButton.addEventListener('click',e=>{e.stopPropagation();if(!menuOpen&&!playerDead)setSneaking(!sneaking);});
+-  document.addEventListener('keydown',e=>{if(!e.repeat&&e.code==='KeyC'&&!menuOpen&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){e.preventDefault();setSneaking(!sneaking);}});
++  sneakButton.addEventListener('click',e=>{e.stopPropagation();GameActions.dispatch('SNEAK');});
+   // Seed encounters in districts, never on the new roads or a fortification.
+   const allSpawns=[...outsideSpawns.map(p=>({...p}))];
+   for(const [x,y] of [[-480,1900],[-560,2360],[-510,2780],[2470,1670],[2000,1850],[2470,2300],[2180,2920],[1070,3480],[1470,3490],[1830,3540],[1010,3880],[1800,3930],[1060,4540],[1630,4540],[2110,4620],[-660,4180],[-320,4380],[480,3640],[2350,4100],[1920,4400],[50,3450],[310,4440],[1890,4650],[2270,3210]])allSpawns.push({x,y});

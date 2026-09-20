@@ -1,5 +1,5 @@
 {
-  "passed": 291,
+  "passed": 293,
   "failed": 0,
   "checks": [
     {
@@ -11,7 +11,7 @@
       "status": "PASS"
     },
     {
-      "id": "stage3.exactAuditedCode",
+      "id": "controls.exactAuditedCode",
       "status": "PASS"
     },
     {
@@ -147,6 +147,26 @@
       "status": "PASS"
     },
     {
+      "id": "reference.unchanged.qa/stage3/index.html",
+      "status": "PASS"
+    },
+    {
+      "id": "reference.unchanged.qa/stage3/js/build-info.json",
+      "status": "PASS"
+    },
+    {
+      "id": "reference.unchanged.qa/stage3/js/game.js",
+      "status": "PASS"
+    },
+    {
+      "id": "reference.unchanged.qa/stage3/js/game.js.map",
+      "status": "PASS"
+    },
+    {
+      "id": "reference.unchanged.qa/stage3/styles/base.css",
+      "status": "PASS"
+    },
+    {
       "id": "reference.unchanged.src/state/owners.js",
       "status": "PASS"
     },
@@ -159,19 +179,7 @@
       "status": "PASS"
     },
     {
-      "id": "reference.unchanged.src/core/input-combat.js",
-      "status": "PASS"
-    },
-    {
       "id": "reference.unchanged.src/core/interactions-farm-storage.js",
-      "status": "PASS"
-    },
-    {
-      "id": "reference.unchanged.src/ui/legacy-panels.js",
-      "status": "PASS"
-    },
-    {
-      "id": "reference.unchanged.src/core/loop-viewport.js",
       "status": "PASS"
     },
     {
@@ -207,10 +215,6 @@
       "status": "PASS"
     },
     {
-      "id": "reference.unchanged.src/world/camera.js",
-      "status": "PASS"
-    },
-    {
       "id": "reference.unchanged.src/assets/catalog.js",
       "status": "PASS"
     },
@@ -231,23 +235,11 @@
       "status": "PASS"
     },
     {
-      "id": "reference.unchanged.src/ui/maps-windows.js",
-      "status": "PASS"
-    },
-    {
       "id": "reference.unchanged.src/world/fishing.js",
       "status": "PASS"
     },
     {
-      "id": "reference.unchanged.src/inventory/physical-slots.js",
-      "status": "PASS"
-    },
-    {
       "id": "reference.unchanged.src/world/lake-city.js",
-      "status": "PASS"
-    },
-    {
-      "id": "reference.unchanged.src/player/controls.js",
       "status": "PASS"
     },
     {
@@ -296,6 +288,14 @@
     },
     {
       "id": "source.audit.src/core/input-combat.js",
+      "status": "PASS"
+    },
+    {
+      "id": "source.audit.src/input/actions.js",
+      "status": "PASS"
+    },
+    {
+      "id": "source.audit.src/input/router.js",
       "status": "PASS"
     },
     {
@@ -491,19 +491,15 @@
       "status": "PASS"
     },
     {
+      "id": "source.audit.src/input/settings.js",
+      "status": "PASS"
+    },
+    {
       "id": "source.audit.src/save/finalize.js",
       "status": "PASS"
     },
     {
       "id": "source.audit.src/bootstrap.js",
-      "status": "PASS"
-    },
-    {
-      "id": "source.audit.index.html",
-      "status": "PASS"
-    },
-    {
-      "id": "source.audit.src/manifest.json",
       "status": "PASS"
     },
     {
@@ -523,7 +519,7 @@
       "status": "PASS"
     },
     {
-      "id": "stage3.onlyDeclaredSourceChanges",
+      "id": "controls.onlyDeclaredSourceChanges",
       "status": "PASS"
     },
     {
@@ -552,6 +548,14 @@
     },
     {
       "id": "syntax.core/input-combat.js",
+      "status": "PASS"
+    },
+    {
+      "id": "syntax.input/actions.js",
+      "status": "PASS"
+    },
+    {
+      "id": "syntax.input/router.js",
       "status": "PASS"
     },
     {
@@ -747,6 +751,10 @@
       "status": "PASS"
     },
     {
+      "id": "syntax.input/settings.js",
+      "status": "PASS"
+    },
+    {
       "id": "syntax.save/finalize.js",
       "status": "PASS"
     },
@@ -755,11 +763,11 @@
       "status": "PASS"
     },
     {
-      "id": "path.styles/base.css?v=0.23.0",
+      "id": "path.styles/base.css?v=0.23.1",
       "status": "PASS"
     },
     {
-      "id": "path.js/game.js?v=0.23.0",
+      "id": "path.js/game.js?v=0.23.1",
       "status": "PASS"
     },
     {

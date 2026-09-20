@@ -26,7 +26,6 @@ window.V012Map=(()=>{
   button.onclick=()=>setOptions(options.hidden);
   overlay.addEventListener('pointerdown',e=>{if(!options.hidden&&!options.contains?.(e.target)&&!e.target.closest?.('#v011MapFilterOptions,#v011MapFilters'))setOptions(false);});
   close.addEventListener('click',()=>setOptions(false));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!options.hidden){setOptions(false);button.focus();e.stopPropagation();}});
   const oldShow=V010Camera.showMap;
   V010Camera.showMap=function(...args){setOptions(false);return oldShow(...args);};
   // Settings has a closure-bound map opener in older versions; point it at the public opener.

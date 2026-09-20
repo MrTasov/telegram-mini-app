@@ -167,7 +167,6 @@ window.V016Turret=(()=>{
   for(const [label,dx,dy] of [['←',-8,0],['↑',0,-8],['↓',0,8],['→',8,0]]){const b=v09Button(label,()=>{const p=placement?.point;if(p)selectPoint(p.x+dx,p.y+dy);});b.setAttribute('aria-label','Сдвинуть пулемёт '+label);controls.append(b);}
   const confirm=v09Button('Установить',place);confirm.id='v016PlaceConfirm';controls.append(confirm,v09Button('Отмена',cancelPlacement));document.body.append(bar);
   function updatePlacement(){if(!placement){bar.style.display='none';return;}bar.style.display='block';const problem=placementProblem(placement.point);tip.textContent=problem||'Место подходит · касание стены / стрелки для сдвига';confirm.disabled=!!problem;}
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&placement){e.preventDefault();cancelPlacement();}});
   const detailsOld=V011UI.details;V011UI.details=function(where,i){detailsOld(where,i);const s=where==='bag'?bag[i]:Number.isInteger(where)?storageChests[where]?.items[i]:null;if(!isType(s?.type))return;
     const body=el('v010ItemDetails').querySelector('.v09Body'),p=document.createElement('p');p.textContent='В ленте: '+(s.turretData?.ammo||0)+' / '+combatFor(s.turretData).capacity+' · урон '+damage(s.turretData)+' · улучшение +'+(s.turretData?.level||0)+' · радиус '+combatFor(s.turretData).range;body.append(p);
     const b=v09Button('Установить на стену',()=>{if(where==='bag')startPlacement(s);else message('Сначала переложите пулемёт в рюкзак');});body.prepend(b);
@@ -176,7 +175,7 @@ window.V016Turret=(()=>{
   const canOld=canInteract;canInteract=function(o,x,y){return o?.kind===TYPE?reachable(guns.find(t=>t.id===o.id)||{x:Infinity,y:Infinity}):canOld(o,x,y);};
   const executeOld=executeInteraction;executeInteraction=function(o,...a){if(o?.kind===TYPE){if(!menuOpen&&!playerDead)open(guns.find(t=>t.id===o.id));return;}return executeOld(o,...a);};
   const approachOld=approachObject;approachObject=function(o,...a){if(o?.kind===TYPE){const t=guns.find(t=>t.id===o.id);if(t&&reachable(t))open(t);else if(t){message('Подойдите к пулемёту у стены');if(player.wallLevel)approachPoint(t.x,t.y);}return;}return approachOld(o,...a);};
-  const tapOld=V0105.tapWorld;V0105.tapWorld=function(x,y){if(placement)return selectPoint(x,y);if(scene==='surface'&&V091Fortress.stairs.filter(V020Walls.usable).some(c=>{const p=player.wallLevel?c:c.foot;return distance(x,y,p.x,p.y)<=13;}))return false;const t=scene==='surface'&&guns.find(t=>distance(x,y,t.x,t.y)<28);if(t){approachObject({id:t.id,kind:TYPE});return true;}return tapOld(x,y);};
+  const tapOld=V0105.tapWorld;V0105.tapWorld=function(x,y){if(placement)return selectPoint(x,y);if(scene==='surface'&&V091Fortress.stairs.filter(V020Walls.usable).some(c=>{const p=player.wallLevel?c:c.foot;return distance(x,y,p.x,p.y)<=13;}))return false;const t=scene==='surface'&&guns.find(t=>distance(x,y,t.x,t.y)<28);if(t){GameActions.dispatch('INTERACT',{id:t.id,kind:TYPE});return true;}return tapOld(x,y);};
   const updateOld=update;update=function(...a){const r=updateOld(...a);tick(16.667*frameScale);return r;};
   let previewUntil=0;
   function disk(c,x,y,r,color,stroke){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=color;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1.2;c.stroke();}}

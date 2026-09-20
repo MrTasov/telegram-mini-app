@@ -154,6 +154,7 @@ let lastFrameAt=0;
 function gameLoop(timestamp=performance.now()){
   frameScale=lastFrameAt?clamp((timestamp-lastFrameAt)/16.667,.1,3):1;
   lastFrameAt=timestamp;
+  window.GameInput?.refreshAim();
   updateFootstepsAudio();
 
 

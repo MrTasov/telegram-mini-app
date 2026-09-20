@@ -42,7 +42,6 @@ window.V0161UI=(()=>{
   },true);
   window.addEventListener('contextmenu',e=>{if(dismissGesture)consume(e);},true);
   window.addEventListener('blur',()=>{pointerGesture=null;dismissGesture=null;});
-  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const a=[...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||0)-Number(a.style.zIndex||0));if(a[0]){e.preventDefault();closeOverlay(a[0]);}});
   // Covers legacy direct class changes (death, load, layout editor). :has below
   // hides controls in the same style update, before the observer callback.
   if(typeof MutationObserver==='function')new MutationObserver(sync).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});

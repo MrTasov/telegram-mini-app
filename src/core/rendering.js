@@ -50,8 +50,7 @@ function transition(title,callback){
     "show"
   );
 
-  movePower = 0;
-  firing = false;
+  stopControls(true);
 
   setTimeout(
     function(){
@@ -132,10 +131,8 @@ function leaveBunker(){
 
 actionButton.addEventListener('pointerdown',function(e){
   e.preventDefault();e.stopPropagation();
-  if(menuOpen||playerDead)return;
-  updateAction();
-  if(interactionTarget)executeInteraction(interactionTarget);
-  else message('Подойдите ближе или нажмите на объект');
+  if(!GameInput.isMobile)return;
+  GameActions.dispatch('INTERACT',{nearest:true});
 });
 
 

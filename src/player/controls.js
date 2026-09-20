@@ -16,19 +16,19 @@ window.V014Controls=(()=>{
       if(route||pending)stopRoute();return false;
     }
     if(side==='right'&&target()&&rightPointerId===null){
-      objectPointer=null;rightPointerId=e.pointerId;lockedPress=e.pointerId;rightAimActive=true;aimPower=1;firing=canFire();centerJoystickKnob(aimStick);aimControl.classList.add('v014TargetFire');if(firing)shoot();e.preventDefault();return true;
+      objectPointer=null;rightPointerId=e.pointerId;lockedPress=e.pointerId;GameActions.dispatch('AIM',{x:player.aimX,y:player.aimY,power:1});centerJoystickKnob(aimStick);aimControl.classList.add('v014TargetFire');GameActions.dispatch('FIRE',{active:true,immediate:true});e.preventDefault();return true;
     }
     return false;
   }
   function moveStick014(e){
     if(e.pointerId===rightPointerId&&target()){
-      lockedPress=e.pointerId;rightAimActive=true;aimPower=1;firing=canFire();centerJoystickKnob(aimStick);aimControl.classList.add('v014TargetFire');e.preventDefault();return true;
+      lockedPress=e.pointerId;GameActions.dispatch('AIM',{x:player.aimX,y:player.aimY,power:1});GameActions.dispatch('FIRE',{active:true});centerJoystickKnob(aimStick);aimControl.classList.add('v014TargetFire');e.preventDefault();return true;
     }
     if(e.pointerId===lockedPress){lockedPress=null;aimControl.classList.remove('v014TargetFire');}
     return false;
   }
   function release(e){if(e.pointerId===lockedPress){lockedPress=null;aimControl.classList.remove('v014TargetFire');}}
-  window.addEventListener('pointerup',release);window.addEventListener('pointercancel',release);window.addEventListener('lostpointercapture',release);
+  function releaseInput(){lockedPress=null;aimControl.classList.remove('v014TargetFire');}
   function openDoors(fn){const before=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=before;}}
   function installPath(points,provisional=false){
     navigation={destination:route.destination,points,index:0,blockedMs:0,replans:0,scene,map014:true,provisional};
@@ -127,7 +127,7 @@ window.V014Controls=(()=>{
     c.strokeStyle='rgba(207,220,183,.48)';c.lineWidth=2.4/scale;c.stroke();c.restore();
   }
   const oldNavDraw=drawNavigationTarget;drawNavigationTarget=function(...args){oldNavDraw(...args);drawRoute(ctx,V010Camera.zoom||1);};
-  const goButton=v09Button('Идти сюда',()=>{if(goTo(V010Camera.selected||V010Camera.goal)){el('v010MapClose').click();}});goButton.id='v014MapGo';
+  const goButton=v09Button('Идти сюда',()=>{if(GameActions.dispatch('MOVE',{kind:'route',...(V010Camera.selected||V010Camera.goal)})){el('v010MapClose').click();}});goButton.id='v014MapGo';
   const droneButton=v09Button('Атаковать дроном',()=>{const z=mapSelectedTarget();if(z&&window.V014Robots?.attack(z))el('v010MapClose').click();});droneButton.id='v014MapAttack';droneButton.hidden=true;
   el('v010MapGoal').after(goButton);goButton.after(droneButton);
   const clearGoal=V010Camera.clearGoal;V010Camera.clearGoal=function(...args){stopRoute();return clearGoal(...args);};
@@ -161,6 +161,6 @@ window.V014Controls=(()=>{
     @media(max-height:550px){#v010Minimap{top:calc(var(--v011-game-top) + 55px)!important}}
   `);
   window.addEventListener('resize',layout);window.visualViewport?.addEventListener('resize',layout);el('v010MapCorner').addEventListener('click',layout);layout();
-  return {target,contactTarget,beginStick,moveStick:moveStick014,goTo,stopRoute,tickPath,advanceRoute,drawRoute,mapSelectedTarget,layout,get route(){return route;},get planning(){return !!pending;}};
+  return {target,contactTarget,beginStick,moveStick:moveStick014,release,releaseInput,goTo,stopRoute,tickPath,advanceRoute,drawRoute,mapSelectedTarget,layout,get route(){return route;},get planning(){return !!pending;}};
 })();
 

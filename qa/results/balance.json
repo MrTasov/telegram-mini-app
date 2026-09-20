@@ -1,5 +1,5 @@
 {
-  "version": "0.23.0",
+  "version": "0.23.1",
   "passed": 1,
   "failed": 0,
   "scope": "Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.",
@@ -48,7 +48,10 @@
     "V010World": [],
     "V010Energy": [],
     "V010Progression": [],
-    "V010Camera": [],
+    "V010Camera": [
+      "resetTouch",
+      "touchActive"
+    ],
     "V0105": [],
     "V011Art": [],
     "V011UI": [],
@@ -73,7 +76,10 @@
       "definition",
       "ownsToken"
     ],
-    "V014Controls": [],
+    "V014Controls": [
+      "release",
+      "releaseInput"
+    ],
     "V014Energy": [],
     "V0141DroneUI": [],
     "V0141Farm": [],

@@ -179,6 +179,7 @@ function joystickCenters(){
 
 const JOY_TOUCH_RADIUS=JOY_RADIUS+10;
 function joystickAt(x,y){
+  if(window.GameInput&&!GameInput.isMobile)return null;
   const c=joystickCenters(),left=distance(x,y,c.left.x,c.left.y),right=distance(x,y,c.right.x,c.right.y);
   if(Math.min(left,right)>JOY_TOUCH_RADIUS)return null;
   return left<=right?'left':'right';
@@ -188,62 +189,62 @@ function beginJoystick(e){
   if(window.V014Controls?.beginStick(e,side))return;
   if(side==='left'&&leftPointerId===null){
     objectPointer=null;
-    cancelNavigation();cancelChop();cancelSearch();leftPointerId=e.pointerId;
+    leftPointerId=e.pointerId;
     const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);
-    moveX=v.x;moveY=v.y;movePower=v.power;
-    if(movePower>JOY_DEAD&&!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
+    GameActions.dispatch('MOVE',{kind:'vector',...v,begin:true});
   }else if(side==='right'&&rightPointerId===null){
     objectPointer=null;
-    rightPointerId=e.pointerId;rightAimActive=true;
-    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);aimPower=v.power;
-    if(aimPower>JOY_DEAD){player.aimX=v.x;player.aimY=v.y;firing=canFire();if(firing)shoot();}
+    rightPointerId=e.pointerId;
+    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);
+    GameActions.dispatch('AIM',v);
+    if(v.power>JOY_DEAD)GameActions.dispatch('FIRE',{active:true,immediate:true});
   }else return;
   e.preventDefault();
 }
-window.addEventListener('pointerdown',function(e){
-  if(menuOpen||playerDead||uiTouch(e.target)||e.button>0)return;
+function handleWorldPointerDown(e){
+  if(!GameActions.playable()||uiTouch(e.target)||e.button>0)return;
   if(joystickAt(e.clientX,e.clientY)){beginJoystick(e);return;}
   if(objectPointer||leftPointerId!==null||rightPointerId!==null)return;
   const {x,y}=screenToWorld(e.clientX,e.clientY);
-  if(window.V0105?.tapWorld(x,y)){e.preventDefault();return;}
-  objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target:hitInteraction(x,y),point:{x,y},screenX:e.clientX,screenY:e.clientY,startedAt:performance.now(),following:false,nextPathAt:0};
+  if(GameActions.dispatch('WORLD_TARGET',{x,y})){e.preventDefault();return;}
+  objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target:hitInteraction(x,y),point:{x,y},screenX:e.clientX,screenY:e.clientY,startedAt:performance.now(),following:false,nextPathAt:0,scene,pc:!GameInput.isMobile};
   e.preventDefault();
-},{passive:false});
-window.addEventListener('pointermove',function(e){
+}
+function handleWorldPointerMove(e){
   if(objectPointer&&objectPointer.id===e.pointerId){
     objectPointer.screenX=e.clientX;objectPointer.screenY=e.clientY;
-    if(distance(e.clientX,e.clientY,objectPointer.x,objectPointer.y)>10)startPointerFollow();
+    if(distance(e.clientX,e.clientY,objectPointer.x,objectPointer.y)>10){
+      if(objectPointer.pc&&objectPointer.target)objectPointer.cancelled=true;else startPointerFollow();
+    }
     e.preventDefault();return;
   }
   if(window.V014Controls?.moveStick(e))return;
   const centers=joystickCenters();
   if(e.pointerId===leftPointerId){
-    const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);moveX=v.x;moveY=v.y;movePower=v.power;
-    if(movePower>JOY_DEAD&&!rightAimActive){player.aimX=v.x;player.aimY=v.y;}e.preventDefault();
+    const v=fixedVector(moveStick,centers.left.x,centers.left.y,e.clientX,e.clientY);
+    GameActions.dispatch('MOVE',{kind:'vector',...v});e.preventDefault();
   }
   if(e.pointerId===rightPointerId){
-    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);aimPower=v.power;
-    if(aimPower>JOY_DEAD){player.aimX=v.x;player.aimY=v.y;firing=canFire();}else firing=false;e.preventDefault();
+    const v=fixedVector(aimStick,centers.right.x,centers.right.y,e.clientX,e.clientY);
+    GameActions.dispatch('AIM',v);GameActions.dispatch('FIRE',{active:v.power>JOY_DEAD});e.preventDefault();
   }
-},{passive:false});
-window.addEventListener('pointerup',function(e){
+}
+function handleWorldPointerUp(e){
   if(objectPointer&&objectPointer.id===e.pointerId){
     const tap=objectPointer;objectPointer=null;
-    if(menuOpen||playerDead)return;
-    if(tap.following){approachPoint(...Object.values(screenToWorld(e.clientX,e.clientY)),true);return;}
+    if(!GameActions.playable()||tap.scene!==scene||tap.cancelled)return;
+    if(tap.following){GameActions.dispatch('MOVE',{...screenToWorld(e.clientX,e.clientY),following:true});return;}
     if(uiTouch(e.target))return;
     if(tap.target){
       // Moving objects may have changed position since pointerdown. Keep the
       // selected identity, but use its current interaction geometry on release.
-      const target=interactionObjects().find(o=>o.id===tap.target.id&&o.kind===tap.target.kind);
-      if(target)approachObject(target);
-    }else approachPoint(tap.point.x,tap.point.y);
+      GameActions.dispatch('INTERACT',{id:tap.target.id,kind:tap.target.kind});
+    }else GameActions.dispatch('MOVE',tap.point);
   }
-},{passive:false});
-window.addEventListener('pointercancel',e=>{
+}
+function cancelWorldPointer(e){
   if(objectPointer?.id===e.pointerId){if(objectPointer.following)cancelNavigation();objectPointer=null;}
-});
-window.addEventListener('blur',()=>stopControls(true));
+}
 function startPointerFollow(){
   if(!objectPointer||objectPointer.following)return;
   objectPointer.following=true;objectPointer.target=null;
@@ -258,24 +259,21 @@ function updatePointerFollow(){
   if(!clear&&now<p.nextPathAt)return;
   if(p.lastX!==undefined&&distance(x,y,p.lastX,p.lastY)<2&&navigation)return;
   p.nextPathAt=now+140;p.lastX=x;p.lastY=y;
-  approachPoint(x,y,true);
+  GameActions.dispatch('MOVE',{x,y,following:true});
 }
 
 function releaseFixedStick(e){
   if(e.pointerId===leftPointerId){
     leftPointerId=null;
-    moveX=0;
-    moveY=0;
-    movePower=0;
+    GameActions.dispatch('MOVE',{kind:'vector',power:0});
     stopFootsteps();
     centerJoystickKnob(moveStick);
   }
 
   if(e.pointerId===rightPointerId){
     rightPointerId=null;
-    rightAimActive=false;
-    aimPower=0;
-    firing=false;
+    GameActions.dispatch('AIM',{active:false});
+    GameActions.dispatch('FIRE',{active:false});
     centerJoystickKnob(aimStick);
 
     if(movePower>JOY_DEAD){
@@ -285,9 +283,7 @@ function releaseFixedStick(e){
   }
 }
 
-window.addEventListener("pointerup",releaseFixedStick,{passive:false});
-window.addEventListener("pointercancel",releaseFixedStick,{passive:false});
-window.addEventListener("lostpointercapture",releaseFixedStick,{passive:false,capture:true});
+// Release/cancel listeners are owned by GameInput for both modes.
 
 window.addEventListener("resize",positionFixedControls);
 

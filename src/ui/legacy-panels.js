@@ -3,6 +3,7 @@
 ===================================================== */
 
 function stopControls(preserveGather=false){
+  window.GameInput?.release();
   navigation=null;objectPointer=null;if(!preserveGather)cancelChop();cancelSearch();
   moveX=0; moveY=0; movePower=0;
   firing=false; aimPower=0; rightAimActive=false;
@@ -591,7 +592,7 @@ el("backControls").addEventListener(
 
 
 /* 0.5.0 UI */
-el("bagButton").addEventListener("click",()=>{renderBag();openOverlay(el("inventoryOverlay"))});
+el("bagButton").addEventListener("click",()=>GameActions.dispatch('INVENTORY'));
 el('handAssignClose').addEventListener('click',()=>closeOverlay(el('handAssignOverlay')));
 el("closeInventory").addEventListener("click",()=>closeOverlay(el("inventoryOverlay")));
 /* Inventory interactions are installed by V010Inventory. */

@@ -427,7 +427,7 @@ function renderQuickSlots(){
       button.setAttribute('aria-label',`Слот ${i+1}: ${type?ITEM[type].name:'свободный'}`);
       button.setAttribute('aria-pressed',String(activeHandSlot===i));
       button.innerHTML=`<span class="slotNumber">${i+1}</span><span class="slotArt">${type?itemIconHTML(type):'＋'}</span><span class="slotName">${type?ITEM[type].name:'Пусто'}</span>`;
-      button.addEventListener('click',()=>{if(window.V010Inventory?.clickSuppressed())return;if(name==='quickSlots'&&window.V0162Quick)V0162Quick.open(i);else selectHandSlot(i);});holder.appendChild(button);
+      button.addEventListener('click',()=>{if(window.V010Inventory?.clickSuppressed())return;if(name==='quickSlots'&&window.V0162Quick)V0162Quick.open(i);else GameActions.dispatch('SELECT_SLOT',{index:i});});holder.appendChild(button);
     });
   }
   el('heldItemName').textContent=heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны';

@@ -1,0 +1,264 @@
+{
+  "version": "0.23.1",
+  "environment": "VM/Pointer Events model, native Canvas2D; no native browser layout",
+  "passed": 64,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "mode.initial.desktop",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.initial.narrowDesktop",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.initial.wideTouch",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.initial.touchLaptop",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.initial.touchFallback",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.initial.manualPC",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.initial.manualMobile",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.initial.corruptSetting",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.clickMovesExactlyOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.hiddenJoystickHasNoHitZone",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.noWASD",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.holdToFollowPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.hoverNeverMovesOrFires",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.RMBFireUsesExistingWeaponOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.RMBAimFollowsCursor",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.targetLockPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.buttonChordDoesNotMove",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.release.cancel",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.release.lostCapture",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.release.blur",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.release.hidden",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.release.menu",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.release.transition",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.release.death",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.reload.RAndButtonSameOwner",
+      "status": "PASS"
+    },
+    {
+      "id": "keyboard.noRepeatNoModifiersNoEditableInput",
+      "status": "PASS"
+    },
+    {
+      "id": "keyboard.layoutIndependentCodes",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.quickSlot.1",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.quickSlot.2",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.quickSlot.3",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.quickSlot.4",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.quickSlot.5",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.inventoryToggle",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.mapToggle",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.escapeSettings",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.escapeOneNestedWindowOnly",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.escapeMapOptionsFirst",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.escapeCannotDismissDeath",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.shortcutCannotActThroughMenu",
+      "status": "PASS"
+    },
+    {
+      "id": "pc.contextmenuWorldOnly",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.switchReleasesBothJoysticks",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.switchReleasesRMB",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.noDuplicateListenersOrPlayer",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.savedSeparatelyFromAllSlots",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.persistenceReload",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.settingsSelectionUsesLiveSwitch",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.invalidValueRejected",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.storageDeniedIsSafe",
+      "status": "PASS"
+    },
+    {
+      "id": "auto.actualPointerChangesMode",
+      "status": "PASS"
+    },
+    {
+      "id": "auto.compatibilityClickCannotChangeModeOrDuplicate",
+      "status": "PASS"
+    },
+    {
+      "id": "auto.manualOverrideWins",
+      "status": "PASS"
+    },
+    {
+      "id": "auto.capabilitiesCanChange",
+      "status": "PASS"
+    },
+    {
+      "id": "mode.layoutAndOrientationPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.touchActionUsesSameInteraction",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.pinchNeverMovesOrFiresTwice",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.modeSwitchClearsPinch",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.editorStillOpens",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.baselineExact.leftBegin",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.baselineExact.leftMove",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.baselineExact.rightBegin",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.baselineExact.rightMove",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.baselineExact.rightRelease",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.baselineExact.leftRelease",
+      "status": "PASS"
+    },
+    {
+      "id": "console.noErrors",
+      "status": "PASS"
+    }
+  ]
+}

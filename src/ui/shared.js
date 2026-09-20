@@ -52,11 +52,6 @@ randomLoot=function(kind){
   if(Math.random()<.5)loot.push({type:'ammo556',qty:8+Math.floor(Math.random()*13)});
   return loot;
 };
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){
-    const overlays=[...document.querySelectorAll('.overlay.open')];const last=overlays.at(-1);
-    if(last&&last.id!=='deathOverlay')closeOverlay(last);
-  }
-});
+// Contextual Escape handling is owned by GameInput.
 
 

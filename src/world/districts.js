@@ -130,8 +130,7 @@ const V010World = (()=>{
   updatePlayer=function(){const run=player.runSpeed,walk=player.walkSpeed;if(sneaking){player.runSpeed=run*.5;player.walkSpeed=walk*.5;}walkingNoise=true;try{return oldPlayer();}finally{walkingNoise=false;player.runSpeed=run;player.walkSpeed=walk;}};
   const sneakButton=document.createElement('button');sneakButton.id='v010SneakButton';sneakButton.textContent='Тихо';sneakButton.title='Тихое передвижение · C';sneakButton.setAttribute('aria-label','Тихое передвижение');sneakButton.setAttribute('aria-pressed','false');document.body.append(sneakButton);
   function setSneaking(value){sneaking=!!value;sneakButton.classList.toggle('active',sneaking);sneakButton.setAttribute('aria-pressed',String(sneaking));}
-  sneakButton.addEventListener('click',e=>{e.stopPropagation();if(!menuOpen&&!playerDead)setSneaking(!sneaking);});
-  document.addEventListener('keydown',e=>{if(!e.repeat&&e.code==='KeyC'&&!menuOpen&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){e.preventDefault();setSneaking(!sneaking);}});
+  sneakButton.addEventListener('click',e=>{e.stopPropagation();GameActions.dispatch('SNEAK');});
   // Seed encounters in districts, never on the new roads or a fortification.
   const allSpawns=[...outsideSpawns.map(p=>({...p}))];
   for(const [x,y] of [[-480,1900],[-560,2360],[-510,2780],[2470,1670],[2000,1850],[2470,2300],[2180,2920],[1070,3480],[1470,3490],[1830,3540],[1010,3880],[1800,3930],[1060,4540],[1630,4540],[2110,4620],[-660,4180],[-320,4380],[480,3640],[2350,4100],[1920,4400],[50,3450],[310,4440],[1890,4650],[2270,3210]])allSpawns.push({x,y});
