@@ -39,11 +39,13 @@ window.V0141Trees=(()=>{
   }
   function inLayer(t,layer){
     if(layer==='all')return true;
-    if(t.id.startsWith('tree12_'))return layer==='expansion12';
-    if(layer==='expansion12')return false;
+    const outer=t.x<-1000||t.x>2600||t.y<0||t.y>4800;
+    if(layer==='expansion12')return outer;
+    if(outer)return false;
     if(layer==='fortress')return inFortress(t.x,t.y);
-    if(layer==='extension')return t.id.startsWith('tree10_');
-    return !inFortress(t.x,t.y)&&!t.id.startsWith('tree10_');
+    const extension=t.x<-400||t.x>2000||t.y>3000;
+    if(layer==='extension')return extension;
+    return !inFortress(t.x,t.y)&&!extension;
   }
   function ground(layer){for(const t of worldTrees){if(!inLayer(t,layer)||!visibleOnScreen(t.x,t.y,95))continue;
     ctx.save();const r=size(t);ctx.fillStyle='#091c1528';ctx.beginPath();ctx.ellipse(t.x+8,t.y+14,t.felled?14:r*.87,t.felled?8:r*.57,.18,0,Math.PI*2);ctx.fill();

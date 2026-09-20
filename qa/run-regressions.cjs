@@ -30,6 +30,10 @@ for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs'])
 }
 let character=fs.readFileSync(path.join(baseline,'tools/behavior.cjs'),'utf8');
 character=character.replace("check('launch.version',\"captureGameProgress().gameVersion\",'0.20.0');",`check('launch.version',"captureGameProgress().gameVersion",'${version}');`);
+// Explicitly replace only the retired planting-material contract in the copied runner.
+character=character.replace(/V0141Farm\.seedType\(([^)]+)\)/g,'farmCrops[$1].itemType')
+ .replace("'.seedConsumed','bagCount(seedType)',1", "'.produceNotConsumed','bagCount(seedType)',2")
+ .replace("'farm.noSeedRefuses','!V0141Farm.plant(0,2)&&farmState[0].crop===null'", "'farm.noSeedRequired','V0141Farm.plant(0,2)&&farmState[0].crop===2'");
 fs.writeFileSync(path.join(work,'tools/behavior.cjs'),adaptAssetWaits(character));
 const results=[];
 for(const [name,script,report]of [

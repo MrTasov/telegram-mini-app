@@ -55,3 +55,15 @@ randomLoot=function(kind){
 // Contextual Escape handling is owned by GameInput.
 
 
+
+/* Lightweight shared click/tap feedback; no transform changes to HUD positions. */
+(()=>{
+  const pending=new WeakMap();
+  const button=e=>e.target?.closest?.('button,[role="button"],input[type="button"],input[type="submit"]');
+  const enabled=b=>b&&!b.disabled&&b.getAttribute('aria-disabled')!=='true';
+  document.addEventListener('pointerdown',e=>{const b=button(e);if(enabled(b)){clearTimeout(pending.get(b));b.classList.add('buttonPressed028');}},{passive:true});
+  const release=e=>{for(const b of document.querySelectorAll('.buttonPressed028')){clearTimeout(pending.get(b));pending.set(b,setTimeout(()=>b.classList.remove('buttonPressed028'),90));}};
+  document.addEventListener('pointerup',release,{passive:true});document.addEventListener('pointercancel',release,{passive:true});window.addEventListener('blur',release);
+  document.addEventListener('click',e=>{const b=button(e);if(enabled(b)){b.classList.add('buttonPressed028');clearTimeout(pending.get(b));pending.set(b,setTimeout(()=>b.classList.remove('buttonPressed028'),110));}});
+  v09Style('button:enabled:active,button:enabled.buttonPressed028,[role="button"]:not([aria-disabled="true"]).buttonPressed028,input[type="button"]:enabled.buttonPressed028,input[type="submit"]:enabled.buttonPressed028{filter:brightness(.82)}#cowOverlay .menuButton{min-height:44px!important;padding:7px 10px!important;font-size:12px!important;margin:4px 0!important}');
+})();

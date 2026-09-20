@@ -34,7 +34,7 @@ function captureGameProgressBase(){
     loot:scavenges.map(o=>({id:o.id,searched:o.searched,loot:clone(o.loot||[])})),
     zombies:GameState.enemies.actors.map(z=>({x:z.x,y:z.y,health:z.health,alive:z.alive,state:z.state})),
     livestock:{
-      animals:clone(livestockAnimals),alive:livestockAlive,
+      animals:clone(livestockAnimals),schema:2,nextCow:GameLivestock.nextCow,reserve:clone(GameLivestock.reserve),alive:livestockAlive,
       warned:livestockWarned,
       emptyMs:livestockEmptySince===null?null:saveElapsed(now,livestockEmptySince),
       eggMs:saveElapsed(now,lastEggProduction),milkMs:saveElapsed(now,lastMilkProduction),
@@ -108,6 +108,7 @@ function decodeGameProgressBase(raw){
     l.animals.filter(a=>a.kind==="cow").length>COW_MAX||
     !['eggMs','milkMs','needMs','breedMs'].every(k=>duration(l[k]))||
     !(l.emptyMs===null||duration(l.emptyMs)))fail();
+  GameLivestock.validate(l);
   if(d.feedCraft!==null){
     const c=d.feedCraft;
     if(!c||!integer(c.qty,1,100000)||!integer(c.total,c.qty,100000)||
@@ -169,6 +170,7 @@ function restoreGameProgressBase(d){
   livestockAnimals.splice(0,livestockAnimals.length,...l.animals.map(a=>
     ({...a,icon:a.kind==="cow"?"🐄":"🐔"})));
   livestockAlive=l.alive;
+  GameLivestock.nextCow=d.livestock.nextCow;GameLivestock.reserve=clone(d.livestock.reserve);
   livestockWarned=l.warned;
   livestockEmptySince=l.emptyMs===null?null:now-l.emptyMs;
   lastEggProduction=now-l.eggMs;

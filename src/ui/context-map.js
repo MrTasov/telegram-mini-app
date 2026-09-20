@@ -154,7 +154,7 @@ window.V0105=(()=>{
     const add=m=>{if(!Number.isFinite(m.x)||!Number.isFinite(m.y)||ids.has(m.id))return;ids.add(m.id);out.push(m);};
     if(scene==='surface'){
       for(const t of worldTrees)if(t.wood>0)add({id:t.id,x:t.x,y:t.y,kind:t.felled?'wood':'tree'});
-      for(const o of V09World.ores)if(o.remaining>0)add({id:o.id,x:o.x,y:o.y,kind:o.type==='stone'?'stone':o.type==='copper_ore'?'copper':'iron'});
+      for(const o of V09World.ores)if(o.remaining>0)add({id:o.id,x:o.x,y:o.y,kind:o.type==='coal'?'coal':o.type==='stone'?'stone':o.type==='copper_ore'?'copper':'iron'});
       for(const o of scavenges)add({id:o.id,x:o.x+o.w/2,y:o.y+o.h/2,kind:o.kind==='car'?'car':'building'});
     }
     for(const o of includeInteractive?interactionObjects(scene):[]){
@@ -175,7 +175,7 @@ window.V0105=(()=>{
         c.fillStyle='#f04e52';c.arc(0,0,r,0,Math.PI*2);c.fill();c.lineWidth=(m.type==='heavy'?1.8:1)/scale;c.strokeStyle='#b71f30';c.stroke();
         if(m.selected){c.beginPath();c.strokeStyle='#ffe5ab';c.lineWidth=1/scale;c.arc(0,0,r+2/scale,0,Math.PI*2);c.stroke();}
       }else if(m.kind==='tree'){c.fillStyle='#75b57b';c.moveTo(0,-r);c.lineTo(r,r);c.lineTo(-r,r);c.closePath();c.fill();}
-      else if(m.kind==='stone'||m.kind==='iron'||m.kind==='copper'){c.fillStyle=m.kind==='stone'?'#d2d2bd':m.kind==='iron'?'#a8a0f4':'#719bf1';c.moveTo(0,-r*1.3);c.lineTo(r,0);c.lineTo(0,r*1.3);c.lineTo(-r,0);c.closePath();c.fill();c.stroke();}
+      else if(m.kind==='coal'||m.kind==='stone'||m.kind==='iron'||m.kind==='copper'){c.fillStyle=m.kind==='coal'?'#65747c':m.kind==='stone'?'#d2d2bd':m.kind==='iron'?'#a8a0f4':'#719bf1';c.moveTo(0,-r*1.3);c.lineTo(r,0);c.lineTo(0,r*1.3);c.lineTo(-r,0);c.closePath();c.fill();c.stroke();}
       else if(m.kind==='interactive'){c.strokeStyle='#82d3d5';c.lineWidth=1.4/scale;c.moveTo(-r,0);c.lineTo(r,0);c.moveTo(0,-r);c.lineTo(0,r);c.stroke();}
       else{c.fillStyle=m.kind==='building'?'#d1ba85':m.kind==='wood'?'#b6986c':'#99aeb6';c.fillRect(-r,-r*.7,r*2,r*1.4);}
       c.restore();

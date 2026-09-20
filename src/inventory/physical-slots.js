@@ -22,10 +22,10 @@ window.V013Inventory=(()=>{
   function cook(count,index=null){
     if(scene!=='bunker'){message('Приготовление доступно на базе');return false;}
     const selected=Number.isInteger(index)?bag[index]:null;if(Number.isInteger(index)&&selected?.type!=='fish')return false;
-    const available=selected?(selected.locked?0:selected.qty):bag.reduce((n,s)=>n+(s?.type==='fish'&&!s.locked?s.qty:0),0);
+    const available=selected?(selected.qty):bag.reduce((n,s)=>n+(s?.type==='fish'?s.qty:0),0);
     count=count===undefined?available:Math.floor(Number(count));if(!Number.isInteger(count)||count<1||count>available){message('Выберите количество доступной рыбы');return false;}
     const draft=copy(bag),taken=[];let left=count;
-    for(let i=0;i<draft.length&&left;i++){const s=draft[i];if(s?.type!=='fish'||s.locked||selected&&i!==index)continue;const n=Math.min(left,s.qty);taken.push(...V014Fish.remove(s,n));s.qty-=n;left-=n;if(!s.qty)draft[i]=null;}
+    for(let i=0;i<draft.length&&left;i++){const s=draft[i];if(s?.type!=='fish'||selected&&i!==index)continue;const n=Math.min(left,s.qty);taken.push(...V014Fish.remove(s,n));s.qty-=n;left-=n;if(!s.qty)draft[i]=null;}
     const grams=reserve+taken.reduce((sum,f)=>sum+f.grams,0),portions=Math.floor(grams/500),remainder=grams%500;
     const original=bag;bag=draft;
     if(portions&&addItem('cooked_fish',portions)){bag=original;message('Нет места для готовой рыбы');return false;}
@@ -42,7 +42,7 @@ window.V013Inventory=(()=>{
       const count=()=>Math.max(1,Math.min(s.qty,Math.floor(Number(input.value)||1)));
       function refresh(){const n=count(),grams=V014Fish.portion(s,n).fishGrams+reserve;I18n.assign(preview,"textContent",n+' рыб → '+Math.floor(grams/500)+' порций'+(grams%500?' · остаток '+(grams%500)+' г':''));}
       input.addEventListener('input',refresh);refresh();panel.append(preview);
-      const make=v09Button('Приготовить',()=>{if(bag[i]!==s){message('Рыба перемещена — выберите её снова');closeOverlay(el('v010ItemDetails'));return;}if(cook(count(),i))closeOverlay(el('v010ItemDetails'));});make.disabled=!!s.locked||scene!=='bunker';panel.append(make);
+      const make=v09Button('Приготовить',()=>{if(bag[i]!==s){message('Рыба перемещена — выберите её снова');closeOverlay(el('v010ItemDetails'));return;}if(cook(count(),i))closeOverlay(el('v010ItemDetails'));});make.disabled=false||scene!=='bunker';panel.append(make);
       if(scene!=='bunker'){const note=document.createElement('small');I18n.assign(note,"textContent",'Приготовление доступно на базе');panel.append(note);}
     }body.append(panel);
   }};

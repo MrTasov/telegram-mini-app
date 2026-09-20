@@ -1,7 +1,7 @@
 // Stage 5 integration checks: real UI builders, save owners and Canvas output.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 process.chdir(path.resolve(__dirname,'..'));const {setup}=require('./runtime.cjs'),checks=[],coverage=[];
-const copy=v=>JSON.parse(JSON.stringify(v)),clean=require('./identity-test-contract.cjs').gameplay;
+const copy=v=>JSON.parse(JSON.stringify(v)),clean=require('./world-farm-contract.cjs').project;
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack?.slice(0,2500)});}}
 const r=setup('index.html',{}, {language:'en'}),E=s=>r.eval(s),fresh=E('JSON.stringify(captureGameProgress())');
 const catalog=require('../tools/locales.cjs').validate();
@@ -70,7 +70,7 @@ check('names.crateSaveMarkerDroneArePreserved',()=>{reset();E('storageChests[0].
 check('cache.bounded',()=>{for(let i=0;i<1300;i++)E(`I18n.text('Рюкзак · ${i}')`);assert.ok(E('I18n.cacheSize')<=1024);});
 // Full serialized payload comparisons against the fixed Stage 4 runtime.
 const base=setup('qa/stage4-fixed/index.html'),candidate=setup('index.html',{}, {language:'en'});
-check('payload.freshGame',()=>assert.deepEqual(clean(candidate.eval('captureGameProgress()')),clean(base.eval('captureGameProgress()'))));
+check('payload.freshGame',()=>assert.deepEqual(clean(candidate.eval('captureGameProgress()'),{fresh:true}),clean(base.eval('captureGameProgress()'),{fresh:true})));
 for(const stage of ['stage0','stage1','stage2'])for(const file of fs.readdirSync('qa/'+stage+'/fixtures').filter(f=>f.endsWith('.json')&&f!=='index.json')){
  const raw=require('./event-test-contract.cjs').raidFixture(fs.readFileSync('qa/'+stage+'/fixtures/'+file,'utf8'));
  for(const language of ['en','ru'])check(`payload.${language}.${stage}.${file}`,()=>{candidate.eval(`I18n.setLanguage('${language}')`);for(const x of [base,candidate])x.eval(`restoreGameProgress(decodeGameProgress(${JSON.stringify(raw)}))`);assert.deepEqual(clean(candidate.eval('captureGameProgress()')),clean(base.eval('captureGameProgress()')));const round=candidate.eval('JSON.stringify(captureGameProgress())');candidate.eval(`restoreGameProgress(decodeGameProgress(${JSON.stringify(round)}))`);assert.deepEqual(clean(candidate.eval('captureGameProgress()')),clean(base.eval('captureGameProgress()')));});

@@ -14,12 +14,12 @@ window.V0161Upgrade=(()=>{
   }
   const droneCost=key=>cost({type:robot.type},key);
   function changed(){lastSignature='';inv.render();queueGameSave();refresh(true);}
-  function deposit(from,index){if(!near()||slots[0])return false;const s=inv.list(from)?.[index];if(!accepts(s)||s.locked){message('Выберите доступное оружие, экипировку или упакованный дрон');return false;}combat.cancelReload();const ok=inv.move(from,index,'upgrade',0);if(ok)changed();return ok;}
-  function depositEquipment(key){const s=equipment[key];if(!near()||slots[0]||!accepts(s)||s.locked)return false;slots[0]=s;equipment[key]=null;combat.refreshStats();changed();return true;}
+  function deposit(from,index){if(!near()||slots[0])return false;const s=inv.list(from)?.[index];if(!accepts(s)){message('Выберите доступное оружие, экипировку или упакованный дрон');return false;}combat.cancelReload();const ok=inv.move(from,index,'upgrade',0);if(ok)changed();return ok;}
+  function depositEquipment(key){const s=equipment[key];if(!near()||slots[0]||!accepts(s))return false;slots[0]=s;equipment[key]=null;combat.refreshStats();changed();return true;}
   function take(){if(!near()||!slots[0])return false;const moved=inv.transfer('upgrade',0,'bag');if(!moved)message('Освободите ячейку в рюкзаке');else changed();return !!moved;}
   function upgrade(s=slots[0],key=selectedModule){
     if(!near()||!s||s!==slots[0]||!accepts(s)){message('Положите предмет на станок усиления');return false;}
-    if(s.locked){message('Сначала открепите предмет');return false;}
+    
     if(isDrone(s)&&!Object.hasOwn(labels,key))return false;
     if(level(s,key)>=maxLevel(s)){message('Максимальное усиление +'+maxLevel(s));return false;}
     if(!devicePowered(station.id)){message('Станку нужно питание · 2 кВт');return false;}
@@ -51,14 +51,14 @@ window.V0161Upgrade=(()=>{
     else if(s){const stats=document.createElement('div');I18n.assign(stats,"innerHTML",V011UI.statsHTML(s));refs.card.append(stats);}
     refs.modules.replaceChildren();if(isDrone(s))for(const [key,label]of Object.entries(labels)){const b=v09Button(label+' +'+robot.state.modules[key],()=>chooseModule(key),selectedModule===key?'selected':'');b.dataset.upgradeModule=key;refs.modules.append(b);}
     refs.materials.replaceChildren();if(s&&level(s)<maxLevel(s))for(const [t,n]of Object.entries(cost(s))){const have=inv.materialCount(t),row=text(refs.materials,'div','v161Material'+(have<n?' missing':''));row.dataset.upgradeMaterial=t;I18n.assign(row,"innerHTML",itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+have+' / '+n+'</small></span>');}
-    I18n.assign(refs.upgrade,"textContent",!s?'Усилить':level(s)>=maxLevel(s)?'Максимум +'+maxLevel(s):'Усилить до +'+(level(s)+1));refs.upgrade.disabled=!s||!on||!near()||level(s)>=maxLevel(s)||!!s.locked;refs.take.disabled=!s||!near();
+    I18n.assign(refs.upgrade,"textContent",!s?'Усилить':level(s)>=maxLevel(s)?'Максимум +'+maxLevel(s):'Усилить до +'+(level(s)+1));refs.upgrade.disabled=!s||!on||!near()||level(s)>=maxLevel(s);refs.take.disabled=!s||!near();
     refs.pick.replaceChildren();for(const [key,item]of Object.entries(equipment))if(accepts(item)){const b=v09Button(ITEM[item.type].name+' · снять со снаряжения',()=>depositEquipment(key));b.disabled=!!s;refs.pick.append(b);}
     refs.quick.replaceChildren();quickItems().forEach((item,i)=>{const cell=inv.cell('quick',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)deposit('quick',i);};refs.quick.append(cell);});
     refs.bag.replaceChildren();for(let i=0;i<BAG_SLOTS;i++){const item=bag[i],cell=inv.cell('bag',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)deposit('bag',i);};if(item&&!accepts(item))cell.classList.add('v161Unavailable');refs.bag.append(cell);}
     // Retain magazine installation and existing specialization without a second
     // cheap enhancement route. Components still consume the correct module.
     if(s&&V09Craft.weapons[s.type])window.V0162Magazines?.render(refs.pick,s,changed);
-    else if(s&&eligibleGear(s))for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[s.type].equip==='feet'?[['speed','Скорость']]:[])]){const b=v09Button((s.specialization===key?'✓ ':'')+label,()=>{s.specialization=key;combat.refreshStats();changed();});b.disabled=!!s.locked;refs.pick.append(b);}
+    else if(s&&eligibleGear(s))for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[s.type].equip==='feet'?[['speed','Скорость']]:[])]){const b=v09Button((s.specialization===key?'✓ ':'')+label,()=>{s.specialization=key;combat.refreshStats();changed();});b.disabled=false;refs.pick.append(b);}
   }
   function quickItems(){return V013Inventory.items;}
   function open(){if(!near()){message('Подойдите к станку усиления в углу мастерской');return false;}if(!overlay)build();openOverlay(overlay);refresh(true);return true;}

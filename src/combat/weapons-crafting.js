@@ -173,14 +173,14 @@ window.V010Combat=(() => {
   function inWorkshop(){return scene==='bunker'&&player.x>=bunker.workshop.left&&player.x<=bunker.workshop.right&&player.y>=bunker.workshop.top&&player.y<=bunker.workshop.bottom;}
   function available(type){
     if(inWorkshop()&&window.V010Inventory?.materialCount)return V010Inventory.materialCount(type);
-    return [bag,...(inWorkshop()?storageChests.map(c=>c.items):[])].reduce((total,a)=>total+a.reduce((n,s)=>n+(s?.type===type&&!s.locked?s.qty:0),0),0);
+    return [bag,...(inWorkshop()?storageChests.map(c=>c.items):[])].reduce((total,a)=>total+a.reduce((n,s)=>n+(s?.type===type?s.qty:0),0),0);
   }
   function costs(item){if(window.V0161Upgrade)return V0161Upgrade.cost(item);const n=(item.level||0)+1;return {iron:4*n,copper:2*n,parts:Math.max(1,n-1),...(n>=4?{advanced_parts:n-3}:{})};}
   function spend(input){
     if(inWorkshop()&&window.V010Inventory?.consumeMaterials)return V010Inventory.consumeMaterials(input);
     if(!Object.entries(input).every(([t,q])=>ITEM[t]&&Number.isInteger(q)&&q>=0&&available(t)>=q))return false;
     const actual=[bag,...(inWorkshop()?storageChests.map(c=>c.items):[])],draft=actual.map(copy);
-    for(const [type,qty] of Object.entries(input)){let left=qty;for(const a of draft)for(let i=0;i<a.length&&left;i++){const s=a[i];if(s?.type!==type||s.locked)continue;const used=Math.min(left,s.qty);if(s.type==='fish')V014Fish.remove(s,used);left-=used;s.qty-=used;if(!s.qty)a[i]=null;}}
+    for(const [type,qty] of Object.entries(input)){let left=qty;for(const a of draft)for(let i=0;i<a.length&&left;i++){const s=a[i];if(s?.type!==type)continue;const used=Math.min(left,s.qty);if(s.type==='fish')V014Fish.remove(s,used);left-=used;s.qty-=used;if(!s.qty)a[i]=null;}}
     actual.forEach((a,i)=>a.splice(0,a.length,...draft[i]));return true;
   }
   function ownedByUid(uid){return (window.V0161Upgrade?.slots||[]).find(s=>s?.uid===uid)||(window.V013Inventory?.items||[]).find(s=>s?.uid===uid)||bag.find(s=>s?.uid===uid)||Object.values(equipment).find(s=>s?.uid===uid);}

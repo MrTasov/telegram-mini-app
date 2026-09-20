@@ -47,7 +47,7 @@ window.V0161UI=(()=>{
   if(typeof MutationObserver==='function')new MutationObserver(sync).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
   function allowMove(from,i,to,j){
     const a=inv.list(from),s=a?.[i];if(!s)return false;
-    if(s.locked&&from!==to)return false;
+    
     if((from==='drone'||to==='drone')&&(!robot.near()||ITEM[s.type]?.robot))return false;
     if(from==='upgrade'||to==='upgrade'){if(!window.V0161Upgrade?.near())return false;if(to==='upgrade'&&!V0161Upgrade.accepts(s))return false;}
     if(to==='quick'){
@@ -57,7 +57,7 @@ window.V0161UI=(()=>{
     return true;
   }
   function refreshQuick(){
-    for(const id of ['storageOverlay','v014DronePanel']){
+    for(const id of ['storageOverlay']){
       const o=el(id),p=o?.querySelector('.v09Body')||o?.querySelector('.panel');if(!p)continue;
       let wrap=o.querySelector('.v0161QuickWrap');if(!wrap){wrap=document.createElement('section');wrap.className='v0161QuickWrap';const title=document.createElement('div');I18n.assign(title,"textContent",'Быстрые слоты · удерживайте для переноса');title.className='v0161QuickTitle';const grid=document.createElement('div');grid.className='v0161QuickGrid';wrap.append(title,grid);p.append(wrap);}
       const grid=wrap.querySelector('.v0161QuickGrid');for(let i=0;i<5;i++){
@@ -71,7 +71,7 @@ window.V0161UI=(()=>{
     b.addEventListener('click',e=>{if(inv.clickSuppressed()){e.preventDefault();e.stopImmediatePropagation();}},true);
   }refreshQuick();};
   const oldItemDetails=V011UI.details;V011UI.details=function(where,i){oldItemDetails(where,i);if(!['quick','drone','upgrade'].includes(where))return;const s=inv.list(where)?.[i],body=el('v010ItemDetails')?.querySelector('.v09Body');if(!s||!body)return;
-    const b=v09Button('В рюкзак',()=>{if(inv.transfer(where,i,'bag'))closeOverlay(el('v010ItemDetails'));else message('Нужна свободная ячейка в рюкзаке');});b.disabled=!!s.locked;body.append(b);
+    const b=v09Button('В рюкзак',()=>{if(inv.transfer(where,i,'bag'))closeOverlay(el('v010ItemDetails'));else message('Нужна свободная ячейка в рюкзаке');});b.disabled=false;body.append(b);
   };
   const sneak=el('v010SneakButton');I18n.assign(sneak,'title','Тихий шаг · C');I18n.setAttr(sneak,'aria-label','Тихий шаг');
   I18n.assign(sneak,"innerHTML",'<svg viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="boot161" x2="0" y2="1"><stop stop-color="#dee4d6"/><stop offset="1" stop-color="#8ea699"/></linearGradient></defs><path d="M13 5h13l-1 15 8 6c3 2 4 5 2 7H8c-3-5-1-9 1-12l3-4Z" fill="url(#boot161)" stroke="#dce9df" stroke-width="1.1"/><path d="M10 28h24M15 12l8 1m-8 4 7 1m-7 4 9 1M9 34h24" fill="none" stroke="#425d54" stroke-width="2"/><path d="M3 17v5m34-7v6" stroke="#b8cbbd" stroke-width="1.5"/></svg>');

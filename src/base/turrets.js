@@ -83,7 +83,7 @@ window.V016Turret=(()=>{
   }
   function selectPoint(x,y){if(!placement)return false;placement.point=candidate(x,y);updatePlacement();return true;}
   function startPlacement(item){
-    if(!validItem(item)||!bag.includes(item)||item.locked){message(item?.locked?'Сначала открепите пулемёт':'Пулемёт должен быть в рюкзаке');return false;}
+    if(!validItem(item)||!bag.includes(item)){message('Пулемёт должен быть в рюкзаке');return false;}
     if(scene!=='surface'){message('Поднимитесь на поверхность, чтобы установить пулемёт');return false;}
     if(playerDead)return false;
     for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);
@@ -93,7 +93,7 @@ window.V016Turret=(()=>{
   function place(){
     if(!placement)return false;
     const {item,point}=placement,index=bag.indexOf(item),problem=placementProblem(point);
-    if(index<0||!validItem(item)||item.locked){cancelPlacement();return false;}
+    if(index<0||!validItem(item)){cancelPlacement();return false;}
     if(problem){message(problem);return false;}
     if(guns.some(t=>t.id===item.turretData.id))return false;
     guns.push({...copy(item.turretData),...point,fallen:false});bag[index]=null;cancelPlacement();changed();message('Пулемёт установлен · '+guns.at(-1).ammo+' патронов');return true;
@@ -103,11 +103,11 @@ window.V016Turret=(()=>{
     if(addItem(typeOf(t),1,{turretData:gunData(t)})){message('Нужна свободная ячейка в рюкзаке');return false;}
     guns.splice(guns.indexOf(t),1);runtime.delete(t.id);selected=null;const panel=el('v016TurretPanel');if(panel)closeOverlay(panel);changed();return true;
   }
-  function ammoAvailable(t){return bag.reduce((n,s)=>n+(s?.type===combatFor(t).ammoType&&!s.locked?s.qty:0),0);}
+  function ammoAvailable(t){return bag.reduce((n,s)=>n+(s?.type===combatFor(t).ammoType?s.qty:0),0);}
   function reload(t,amount=combatFor(t).capacity){
     if(!guns.includes(t)||!reachable(t))return 0;
     let need=Math.min(Math.max(0,Math.floor(amount)),combatFor(t).capacity-t.ammo),used=0;
-    for(let i=0;i<bag.length&&need;i++){const s=bag[i];if(s?.type!==combatFor(t).ammoType||s.locked)continue;const n=Math.min(s.qty,need);s.qty-=n;need-=n;used+=n;if(!s.qty)bag[i]=null;}
+    for(let i=0;i<bag.length&&need;i++){const s=bag[i];if(s?.type!==combatFor(t).ammoType)continue;const n=Math.min(s.qty,need);s.qty-=n;need-=n;used+=n;if(!s.qty)bag[i]=null;}
     t.ammo+=used;if(used)changed();else message('В рюкзаке нет свободных патронов 5,45');return used;
   }
   function unload(t){if(!guns.includes(t)||!reachable(t)||!t.ammo)return 0;const left=addItem(combatFor(t).ammoType,t.ammo),moved=t.ammo-left;t.ammo=left;if(moved)changed();else message('Нет места для патронов');return moved;}

@@ -12,6 +12,7 @@ async function main(){
  const decodeStart=performance.now();await Promise.all([...E('(window.GameAssets?Object.values(AssetManifest.art).map(id=>GameAssets.load(id)):Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode()))'),...E('(window.GameAssets?Object.values(AssetManifest.walls).map(id=>GameAssets.load(id)):[1,2,3,4,5].map(n=>V020Walls.image(n).decode()))')]);const decodeWaitMs=performance.now()-decodeStart;
  const initial=E('JSON.stringify(captureGameProgress())'),scenes=[];
  const cases=[
+  {id:'farm_growing',setup:"scene='bunker';player.x=620;player.y=-640;V09Power.running=true;V09Power.fuel=80;for(let i=0;i<5;i++){V011Farm.beginBed(i,4);for(let n=0;n<50;n++)V011Farm.plantOne(i,n);}if(V011Farm.state.schema===2){farmState.forEach((s,i)=>s.irrigation028={phase:'spray',remainingMs:10000,rng:1234+i});}else{V011Farm.state.next=0;V011Farm.state.end=Date.now()+10000;}updateLivestockAnimals();"},
   {id:'surface_day',setup:"scene='surface';player.x=800;player.y=850;V016Lighting.restore({schema:1,day:1,minute:840});"},
   {id:'surface_night_day_x',setup:"scene='surface';player.x=800;player.y=850;V09Power.running=true;V09Power.fuel=80;V016Lighting.restore({schema:1,day:10,minute:180});"},
   {id:'bunker_power_drone',setup:"scene='bunker';player.x=1264;player.y=740;V09Power.running=true;V09Power.fuel=80;V014Robots.follow();"},

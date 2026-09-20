@@ -4,12 +4,12 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..');process.chdir(root);
 const {setup}=require('./runtime.cjs'),a=setup('qa/stage3/index.html'),b=setup('index.html'),checks=[];
 const json=v=>JSON.parse(JSON.stringify(v));
-const normalized=require('./identity-test-contract.cjs').gameplay;
+const normalized=require('./world-farm-contract.cjs').project;
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.message.slice(0,4000)});}}
 function both(code){const aa=a.eval(code),bb=b.eval(code);assert.deepEqual(json(bb??null),json(aa??null));}
-function compare(){assert.deepEqual(normalized(b.eval('captureGameProgress()')),normalized(a.eval('captureGameProgress()')));}
+function compare(options){assert.deepEqual(normalized(b.eval('captureGameProgress()'),options),normalized(a.eval('captureGameProgress()'),options));}
 function restore(raw){both(`restoreGameProgress(decodeGameProgress(${JSON.stringify(raw)}));`);}
-check('freshGame.fullPayload',compare);
+check('freshGame.fullPayload',()=>compare({fresh:true}));
 for(const stage of ['stage0','stage1','stage2']){
  const dir=path.join(__dirname,stage,'fixtures');
  for(const file of fs.readdirSync(dir).filter(n=>n.endsWith('.json')&&n!=='index.json')){
@@ -34,7 +34,7 @@ const scenarios=[
 for(const s of scenarios)check('simulation.'+s.id,()=>{
  restore(fixture(s.fixture));both(s.start);
  for(let i=0;i<s.frames;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
- compare();
+ compare({droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
 });
 check('transactions.inventoryTransferAndQuickSlots',()=>{
  restore(fixture('equipment_storage'));both('V010Inventory.transfer("bag",0,0,1)');compare();

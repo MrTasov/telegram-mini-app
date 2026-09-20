@@ -31,15 +31,12 @@ window.V0141DroneUI=(()=>{
     }head.append(ammo);body.append(head);
     const commands=section(body,'Команды дрону'),row=node('div','droneCommandGrid');command(row,'follow','Следовать',robot.follow);command(row,'guard','Охранять здесь',robot.guard);command(row,'dock','На станцию',robot.returnToDock);commands.append(row);
     const combat=node('div','droneCombatGrid');command(combat,'defense','Защищать',()=>robot.mode('defense'));command(combat,'attack','Атаковать цель',()=>{robot.mode('attack');const t=V014Controls.target()||V0105.target;if(t)robot.attack(t);else message('Выберите противника на экране или карте');});commands.append(combat);
+    command(commands,'repair','Починить',()=>robot.repair());
+    const rescue=node('div','droneRescue');command(rescue,'pack','Забрать дрон',()=>robot.pack());command(rescue,'launch','Запустить',()=>robot.deploy(bag.find(robot.ownsToken)));body.append(rescue);
     const inv=section(body,'Инвентарь дрона');refs.cargoTitle=inv.children[0];grids.drone=node('div','droneItemGrid');inv.append(grids.drone);
     const cargoFooter=node('div','droneInventoryActions');refs.selection=node('span','droneTransferHint','Выберите предмет');cargoFooter.append(refs.selection);command(cargoFooter,'transfer','Переложить',transferSelected);inv.append(cargoFooter);
     const bagDetails=node('details','dronePlayerBag');bagDetails.open=true;const summary=node('summary');refs.bagTitle=node('span','','Мой рюкзак');summary.append(refs.bagTitle);bagDetails.append(summary);grids.bag=node('div','droneItemGrid');bagDetails.append(grids.bag);body.append(bagDetails);
     refs.range=node('p','droneTransferHint');body.append(refs.range);
-    const rescue=node('div','droneRescue');command(rescue,'pack','Забрать дрон',()=>robot.pack());command(rescue,'launch','Запустить',()=>robot.deploy(bag.find(robot.ownsToken)));body.append(rescue);
-    const more=node('details','droneMore');more.append(node('summary','','Обслуживание'));more.append(node('p','droneTransferHint','Усиление модулей — на станке усиления в мастерской. Заберите дрон в рюкзак.'));
-    const rename=node('div','droneRename'),name=node('input');name.type='text';name.maxLength=24;name.value=state.name;I18n.setAttr(name,'aria-label','Имя дрона');refs.name=name;rename.append(name);command(rename,'rename','Сохранить имя',()=>{state.name=name.value.trim().slice(0,24)||'Спутник';robot.changed();});more.append(rename);
-    for(const [key,label]of [['autoCollect','Собирать открытые предметы рядом'],['economy','Экономить заряд']]){const row=node('label','droneToggle',label),input=node('input');input.type='checkbox';refs[key]=input;input.addEventListener('change',()=>{state[key]=input.checked;robot.changed();});row.append(input);more.append(row);}
-    command(more,'repair','Починить',()=>robot.repair());body.append(more);
     for(const [side,grid]of Object.entries(grids))grid.addEventListener('pointerdown',e=>beginDrag(e,side));
   }
   function slots(side){return side==='bag'?bag:state.cargo;}
@@ -50,8 +47,8 @@ window.V0141DroneUI=(()=>{
     for(let i=0;i<count;i++){const b=grid.children[i],s=a[i],sig=s?JSON.stringify(s):'';if(b.dataset.signature!==sig){b.dataset.signature=sig;I18n.assign(b,"innerHTML",s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'');I18n.setAttr(b,'aria-label',s?ITEM[s.type]?.name+' × '+s.qty:'Пустая ячейка');}b.classList.toggle('selected',selected?.side===side&&selected.i===i);}
   }
   function moveCell(from,i,to,j){
-    const source=slots(from),dest=slots(to),s=source[i];if(!s||s.locked||ITEM[s.type]?.robot||!robot.near()||i===j&&source===dest)return false;
-    if(j<0||j>=size(to))return false;const target=dest[j];if(target?.locked)return false;
+    const source=slots(from),dest=slots(to),s=source[i];if(!s||ITEM[s.type]?.robot||!robot.near()||i===j&&source===dest)return false;
+    if(j<0||j>=size(to))return false;const target=dest[j];
     // The existing stack insertion validates metadata and preserves individual
     // fish weights. A one-slot view makes the drop land exactly where chosen.
     const one=[target||null],moved=robot.transfer(source,i,one,1);
@@ -59,7 +56,7 @@ window.V0141DroneUI=(()=>{
   }
   function transferSelected(){if(!selected)return;const {side,i}=selected;const n=side==='bag'?robot.store(i):robot.take(i);if(n)selected=null;refresh();}
   function beginDrag(e,side){if(window.V0161UI){const b=e.target.closest?.('[data-drone-index]');if(b)V010Inventory.startPointer(e,side==='bag'?'bag':'drone',Number(b.dataset.droneIndex),b);return;}
-    if(e.button!==undefined&&e.button!==0)return;const b=e.target.closest?.('[data-drone-index]');if(!b)return;const i=Number(b.dataset.droneIndex),s=slots(side)[i];if(!s||s.locked||ITEM[s.type]?.robot)return;
+    if(e.button!==undefined&&e.button!==0)return;const b=e.target.closest?.('[data-drone-index]');if(!b)return;const i=Number(b.dataset.droneIndex),s=slots(side)[i];if(!s||ITEM[s.type]?.robot)return;
     drag={id:e.pointerId,side,i,node:b,x:e.clientX,y:e.clientY,t:performance.now(),touch:e.pointerType==='touch',active:false};
     // Ordinary touch swipes remain native scrolling. A deliberate hold enables
     // dragging; the cell is never captured during a normal scroll gesture.
@@ -71,14 +68,13 @@ window.V0141DroneUI=(()=>{
   document.addEventListener('pointerup',e=>endDrag(e));document.addEventListener('pointercancel',e=>endDrag(e,true));
   function refresh(force=false){if(!overlay||!force&&!overlay.classList.contains('open'))return;const active=!state.packed&&state.hp>0&&state.battery>0;
     set(refs.status,robot.statusText());set(refs.battery,Math.round(state.battery)+'%');set(refs.hp,Math.round(state.hp)+' / '+robot.maxHp());set(refs.damage,robot.combat.damage);set(refs.load,state.cargo.filter(Boolean).length+' / '+robot.capacity());set(refs.ammo,state.ammo+' / '+robot.combat.capacity);
-    for(const key of ['autoCollect','economy'])refs[key].checked=state[key];
     for(const key of ['light','combat']){const on=key==='light'?state.light:robot.combatEnabled();refs[key].setAttribute('aria-checked',String(on));set(refs[key+'Value'],on?'ВКЛ':'ВЫКЛ');}
     for(const id of ['follow','guard','dock'])buttons[id].disabled=!active;
     for(const id of ['defense','attack'])buttons[id].disabled=!active||!robot.combatEnabled();
     buttons.follow.classList.toggle('selected',state.task==='follow');buttons.guard.classList.toggle('selected',state.task==='guard');buttons.dock.classList.toggle('selected',['return','docked'].includes(state.task));buttons.defense.classList.toggle('selected',state.mode==='defense');buttons.attack.classList.toggle('selected',state.mode==='attack');
     buttons.reload.disabled=!robot.near()||state.ammo>=robot.combat.capacity||robot.availableAmmo()<1;buttons.pack.disabled=state.packed;buttons.launch.disabled=!state.packed||!bag.some(robot.ownsToken);
     set(refs.cargoTitle,'Инвентарь дрона · '+state.cargo.filter(Boolean).length+' / '+robot.capacity());set(refs.bagTitle,'Мой рюкзак · '+bag.filter(Boolean).length+' / '+BAG_SLOTS);
-    refreshGrid('drone');refreshGrid('bag');const s=selected&&slots(selected.side)[selected.i];set(refs.selection,s?ITEM[s.type].name+' × '+s.qty:'Выберите предмет');set(buttons.transfer,selected?.side==='bag'?'В дрона':'В рюкзак');buttons.transfer.disabled=!s||s.locked||ITEM[s.type]?.robot||!robot.near();
+    refreshGrid('drone');refreshGrid('bag');const s=selected&&slots(selected.side)[selected.i];set(refs.selection,s?ITEM[s.type].name+' × '+s.qty:'Выберите предмет');set(buttons.transfer,selected?.side==='bag'?'В дрона':'В рюкзак');buttons.transfer.disabled=!s||ITEM[s.type]?.robot||!robot.near();
     set(refs.range,robot.near()?'Нажмите предмет или удерживайте для переноса.':'Для переноса предметов дрон должен быть рядом. Команды доступны удалённо.');
     buttons.repair.disabled=!robot.canRepair();
     set(buttons.repair,'Починить · '+Object.entries(robot.repairCost()).map(([type,n])=>ITEM[type].name+' × '+n).join(', '));
@@ -87,7 +83,7 @@ window.V0141DroneUI=(()=>{
   v09Style(`
     #v014DronePanel .panel{width:min(620px,94vw);max-height:84dvh;min-height:0!important;padding:12px;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
     #v014DronePanel .v09Body{font-size:12px;color:#d5e4dd;line-height:1.35}
-    #v014DronePanel .menuButton{font-size:11px!important;min-height:32px!important;padding:6px 8px!important;margin:0!important}
+    #v014DronePanel .menuButton{font-size:11px!important;min-height:44px!important;padding:6px 8px!important;margin:0!important}
     .droneCardHead{display:grid;grid-template-columns:1fr 1.1fr 1.25fr;gap:8px;align-items:stretch}
     .dronePortrait,.droneCardStats,.droneAmmo,.droneCardSection,.dronePlayerBag{border:1px solid #49605e;background:#17292b88;border-radius:9px;padding:9px;min-width:0}
     .dronePortrait{display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse,#42615744,#16282b)}.dronePortrait img{width:100%;height:120px;object-fit:contain}
@@ -105,7 +101,7 @@ window.V0141DroneUI=(()=>{
     #v014DronePanel .droneItemGrid{box-sizing:border-box;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:max-content;align-content:start;align-items:start;gap:5px;width:100%;min-width:0;padding:2px;touch-action:pan-y;overflow-y:auto;overflow-x:hidden;max-height:196px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-gutter:stable}
     #v014DronePanel .droneItemGrid>.droneItemCell{box-sizing:border-box;display:block;position:relative;width:100%;min-width:0;max-width:100%;height:auto!important;aspect-ratio:1/1;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden;background:#15272c!important;border:1px solid #42595a;border-radius:7px;touch-action:pan-y;user-select:none;font-size:20px!important;line-height:1}
     #v014DronePanel .droneItemCell .itemIcon{position:absolute;left:7%;top:5%;width:86%;height:83%;min-width:0;min-height:0;max-width:86%;max-height:83%;object-fit:contain;pointer-events:none}.droneItemCell small{position:absolute;right:4px;bottom:2px;font:10px Arial;color:#e3e8d9;text-shadow:0 1px 3px #000;pointer-events:none}.droneItemCell.selected{outline:1px solid #d4bd82;outline-offset:-2px}.droneItemCell.dragging{opacity:.45}
-    .droneInventoryActions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px;min-height:33px}.droneTransferHint{font-size:10px!important;color:#a6b9b3!important;margin:7px 0!important;min-height:27px}.droneRescue{display:flex;gap:7px}.droneMore{margin-top:12px;font-size:11px}.droneMore summary{cursor:pointer;padding:7px 0;color:#adbfba}.droneUpgradeRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0;font-size:10px}.droneRename{display:flex;gap:6px}.droneRename input{width:55%;font-size:12px}
+    .droneInventoryActions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px;min-height:33px}.droneTransferHint{font-size:10px!important;color:#a6b9b3!important;margin:7px 0!important;min-height:27px}.droneRescue{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.droneMore{margin-top:12px;font-size:11px}.droneMore summary{cursor:pointer;padding:7px 0;color:#adbfba}.droneUpgradeRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0;font-size:10px}.droneRename{display:flex;gap:6px}.droneRename input{width:55%;font-size:12px}
     @media(max-width:480px){.droneCardHead{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}.droneAmmo{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:8px}.droneAmmo .droneStatRow{grid-column:2;grid-row:1}.droneAmmoIcon{grid-row:1/3;height:62px}.droneAmmoIcon .itemIcon{width:48px;height:48px}.droneAmmo>.menuButton{grid-column:2}.dronePortrait img{height:125px}#v014DronePanel .droneItemGrid{max-height:175px}.droneStatus{min-height:28px}}
     @media(max-width:380px){#v014DronePanel .droneItemGrid{grid-template-columns:repeat(5,minmax(0,1fr))}#v014DronePanel .droneSwitch{font-size:10px;gap:4px}.droneSwitchRail{flex-basis:48px}.droneSwitch[aria-checked=true] .droneSwitchRail::after{transform:translateX(23px)}}
   `);

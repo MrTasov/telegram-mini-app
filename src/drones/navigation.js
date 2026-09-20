@@ -24,8 +24,8 @@ window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.mov
     // Long return trips use bounded legs, avoiding arrays for the entire map.
     if(state.scene==='surface'&&dist>1300){const a=Math.atan2(to.y-state.y,to.x-state.x);let found=null;
       for(const delta of [0,.3,-.3,.6,-.6,1,-1]){const q={x:state.x+Math.cos(a+delta)*850,y:state.y+Math.sin(a+delta)*850};if(!worldCollision(q.x,q.y,R,state.scene)){found=q;break;}}if(found)to={...to,...found};}
-    const bounds=pathBounds(to);navKey='drone:'+Object.values(bounds).join(',')+':'+v09Doors.map(d=>devicePowered('door_'+d.room)?1:d.open>.95?2:0).join('');
-    search=v092PathSearch(state.x,state.y,{...to,kind:'ground',id:'drone_goal',range:7,r:0,navBounds:bounds},state.scene,R);
+    const bounds=pathBounds(to);navKey='drone:'+Math.round(state.x/24)+','+Math.round(state.y/24)+':'+Object.values(bounds).join(',')+':'+v09Doors.map(d=>devicePowered('door_'+d.room)?1:d.open>.95?2:0).join('');
+    search=v092PathSearch(state.x,state.y,{...to,kind:'ground',id:'drone_goal',range:7,r:0,navBounds:bounds,navWeight:1.2},state.scene,R);
     goal={...destination};searchAge=0;path=null;retry=.7;metrics.searches++;
   }
   function move(destination,dt){
@@ -38,14 +38,15 @@ window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.mov
     else{
       if(!search&&retry<=0&&(!path?.length||!goal||distance(goal.x,goal.y,destination.x,destination.y)>85))startSearch(destination);
       if(search){const started=performance.now();searchAge+=dt;
-        for(let i=0;i<4;i++){const result=plan(()=>search.next());if(result.done){path=result.value;search=null;if(!path?.length){metrics.failed++;retry=2;}break;}if(performance.now()-started>1.5)break;}
+        for(let i=0;i<16;i++){const result=plan(()=>search.next());if(result.done){path=result.value;search=null;if(!path?.length){metrics.failed++;retry=2;}break;}if(performance.now()-started>1.5)break;}
         metrics.maxSliceMs=Math.max(metrics.maxSliceMs,performance.now()-started);
-        if(searchAge>5){search=null;retry=2;metrics.failed++;}
+        if(searchAge>20){search=null;retry=2;metrics.failed++;}
       }
       while(path?.length&&distance(state.x,state.y,path[0].x,path[0].y)<3)path.shift();
       if(path?.length)waypoint=path[0];
     }
     if(!waypoint){brake(dt);return false;}
+    GamePassages.approach({points:[waypoint],index:0},state,state.scene);
     const dx=waypoint.x-state.x,dy=waypoint.y-state.y,dist=Math.hypot(dx,dy),nextHeading=Math.atan2(dy,dx);
     const gap=state.scene===scene?distance(state.x,state.y,player.x,player.y):300;
     const top=state.task==='follow'?Math.min(movement.followSpeed+state.modules.engine*movement.perLevel,Math.max(movement.minFollowSpeed,playerSpeed*movement.playerFactor)+Math.max(0,gap-movement.catchupDistance)*movement.catchupFactor):movement.travelSpeed+state.modules.engine*movement.perLevel;
@@ -58,7 +59,7 @@ window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.mov
     else{brake(dt);blockedTime+=dt;
       // Keep the path while a powered automatic door is opening. Never issue a
       // manual door action. Other obstructions trigger a delayed path rebuild.
-      const waitingDoor=state.scene==='bunker'&&v09Doors.some(q=>devicePowered('door_'+q.room)&&rectHit(x,y,R+8,q));
+      const waitingDoor=state.scene==='bunker'&&(v09Doors.some(q=>devicePowered('door_'+q.room)&&rectHit(x,y,R+8,q))||rectHit(x,y,R+8,{x:990,y:100,w:78,h:5}));
       if(blockedTime>(waitingDoor?2.5:.6)){path=null;search=null;retry=Math.max(retry,.45);blockedTime=0;}}
     return distance(state.x,state.y,destination.x,destination.y)<3;
   }

@@ -31,7 +31,7 @@ window.V010Inventory=(()=>{
     if(item.type==='fish')window.V014Fish?.normalize(item);
     let left=item.qty;
     for(let i=0;i<Math.min(slots.length,max);i++){
-      const s=slots[i];if(!s||(!allowLocked&&s.locked)||!matches(s,item))continue;
+      const s=slots[i];if(!s||!matches(s,item))continue;
       const n=Math.min(left,stackMax(item.type)-s.qty);if(n>0){if(item.type==='fish')V014Fish.append(s,item,n,item.qty-left);s.qty+=n;left-=n;}if(!left)return 0;
     }
     for(let i=0;i<max&&left>0;i++)if(!slots[i]){const n=Math.min(left,stackMax(item.type));slots[i]=item.type==='fish'?V014Fish.portion(item,n,item.qty-left):{...copy(item),qty:n};left-=n;}
@@ -43,11 +43,11 @@ window.V010Inventory=(()=>{
   removeItem=(type,qty)=>removeFromSlots(bag,type,qty);
   bagUsed=()=>occupied(bag);
   bagCount=type=>bag.reduce((n,s)=>n+(s?.type===type?s.qty:0),0);
-  freeItemSpace=function(slots,type,max){let n=0;for(let i=0;i<max;i++){const s=slots[i];if(!s)n+=stackMax(type);else if(!s.locked&&matches(s,{type,qty:1}))n+=Math.max(0,stackMax(type)-s.qty);}return n;};
+  freeItemSpace=function(slots,type,max){let n=0;for(let i=0;i<max;i++){const s=slots[i];if(!s)n+=stackMax(type);else if(matches(s,{type,qty:1}))n+=Math.max(0,stackMax(type)-s.qty);}return n;};
   function selectedItem(type){const quick=window.V013Inventory?.items.find(s=>s?.type===type);if(quick)return quick;return bag.find(s=>s?.type===type&&s.uid===selectedUid[type])||bag.find(s=>s?.type===type)||null;}
   function selectUid(type,uid){if(typeof uid==='string')selectedUid[type]=uid;}
   function transfer(from,index,to,amount){
-    const a=list(from),b=list(to),s=a?.[index];if(!s||!b||a===b||s.locked)return 0;
+    const a=list(from),b=list(to),s=a?.[index];if(!s||!b||a===b)return 0;
     if(window.V0161UI&&!V0161UI.allowMove(from,index,to))return 0;
     const wanted=Math.max(0,Math.min(s.qty,Math.floor(amount??s.qty)));
     if(!wanted)return 0;
@@ -59,7 +59,7 @@ window.V010Inventory=(()=>{
     if(!s||!b||!Number.isInteger(targetIndex)||targetIndex<0||targetIndex>=capacity(to))return false;
     if(a===b&&index===targetIndex)return true;
     if(window.V0161UI&&!V0161UI.allowMove(from,index,to,targetIndex))return false;
-    const target=b[targetIndex];if(target?.locked)return false;
+    const target=b[targetIndex];
     const wanted=Math.max(0,Math.min(s.qty,Math.floor(amount??s.qty)));if(!wanted)return false;
     if(target&&!matches(s,target)){if(amount!==undefined||!window.V0161UI?.allowMove(to,targetIndex,from,index))return false;a[index]=target;b[targetIndex]=s;notifyChange();return true;}
     const n=Math.min(wanted,stackMax(s.type)-(target?.qty||0));if(n<=0)return false;
@@ -67,13 +67,13 @@ window.V010Inventory=(()=>{
     s.qty-=n;if(!s.qty)a[index]=null;notifyChange();return true;
   }
   function split(where,index,n){
-    const a=list(where),s=a?.[index];if(!s||s.locked||!Number.isInteger(n)||n<1||n>=s.qty)return false;
+    const a=list(where),s=a?.[index];if(!s||!Number.isInteger(n)||n<1||n>=s.qty)return false;
     for(let i=0;i<capacity(where);i++)if(!a[i])return move(where,index,where,i,n);return false;
   }
   function sort(where){
     const a=list(where);if(!a)return false;
-    const loose=a.filter(s=>s&&!s.locked).map(copy).sort((a,b)=>(I18n.compare(ITEM[a.type].name,ITEM[b.type].name)||signature(a).localeCompare(signature(b))));
-    const result=Array.from({length:capacity(where)},(_,i)=>a[i]?.locked?copy(a[i]):null);
+    const loose=a.filter(s=>s).map(copy).sort((a,b)=>(I18n.compare(ITEM[a.type].name,ITEM[b.type].name)||signature(a).localeCompare(signature(b))));
+    const result=Array.from({length:capacity(where)},()=>null);
     for(const s of loose)if(insert(result,s,capacity(where)))return false;
     a.splice(0,a.length,...result);notifyChange();return true;
   }
@@ -108,11 +108,11 @@ window.V010Inventory=(()=>{
   function slotContent(s){
     if(!s)return '';
     const quick=handSlots.indexOf(s.type);
-    return `<div class="ico">${itemIconHTML(s.type)}</div><span class="qty">${s.qty}</span>${quick>=0?'<span class="v010QuickMark">'+(quick+1)+'</span>':''}${s.locked?'<span class="v010LockMark">⌑</span>':''}${s.level?'<span class="v010Level">+'+Number(s.level)+'</span>':''}`;
+    return `<div class="ico">${itemIconHTML(s.type)}</div><span class="qty">${s.qty}</span>${quick>=0?'<span class="v010QuickMark">'+(quick+1)+'</span>':''}${s.level?'<span class="v010Level">+'+Number(s.level)+'</span>':''}`;
   }
   slotHTML=slotContent;
   function cell(where,i,s){
-    const d=document.createElement('button');d.type='button';d.className='invSlot v010Slot'+(s?' hasItem':'')+(s&&handSlots.includes(s.type)?' quickAssigned':'')+(s?.locked?' locked':'');
+    const d=document.createElement('button');d.type='button';d.className='invSlot v010Slot'+(s?' hasItem':'')+(s&&handSlots.includes(s.type)?' quickAssigned':'');
     d.dataset.v010Container=where;d.dataset.v010Index=i;
     I18n.assign(d,"innerHTML",slotContent(s));I18n.assign(d,'title',s?ITEM[s.type].name+' · '+s.qty:'Пустая ячейка');I18n.setAttr(d,'aria-label',I18n.source(d,'title'));
     d.onclick=e=>{e.stopPropagation();if(performance.now()<suppressClick)return;tap(where,i);};
@@ -129,7 +129,7 @@ window.V010Inventory=(()=>{
       if(ITEM[s.type].equip||ITEM[s.type].hand){details(where,i);return;}
       details(where,i);return;
     }
-    const moved=transfer(where,i,where==='bag'?activeStorage:'bag');if(!moved)message(s.locked?'Предмет закреплён':'Нет места для предмета');
+    const moved=transfer(where,i,where==='bag'?activeStorage:'bag');if(!moved)message('Нет места для предмета');
   }
   function button(text,fn,title){const b=document.createElement('button');b.type='button';b.className='v010SmallAction';I18n.assign(b,"textContent",text);b.onclick=fn;if(title){I18n.assign(b,"title",title);I18n.setAttr(b,'aria-label',title);}return b;}
   function toolbar(id,where,storage=false){
@@ -148,11 +148,11 @@ window.V010Inventory=(()=>{
     batchDepth--;notifyChange();message(n?'Переложено: '+n:'Нет подходящих предметов или свободного места');return n;
   }
   function sources(){return [bag,...(scene==='bunker'?storageChests.map(c=>c.items):[])];}
-  function materialCount(type){return sources().reduce((total,a)=>total+a.reduce((n,s)=>n+(s?.type===type&&!s.locked?s.qty:0),0),0);}
+  function materialCount(type){return sources().reduce((total,a)=>total+a.reduce((n,s)=>n+(s?.type===type?s.qty:0),0),0);}
   function consumeMaterials(input,batches=1){
     if(!Number.isInteger(batches)||batches<1||!Object.entries(input).every(([type,n])=>ITEM[type]&&Number.isFinite(n)&&n>=0&&Number.isInteger(n*batches)&&materialCount(type)>=n*batches))return false;
     const actual=sources(),draft=actual.map(copy);
-    for(const [type,n] of Object.entries(input)){let left=n*batches;for(const a of draft)for(let i=0;i<a.length&&left;i++){const s=a[i];if(s?.type!==type||s.locked)continue;const used=Math.min(left,s.qty);if(s.type==='fish')V014Fish.remove(s,used);left-=used;s.qty-=used;if(!s.qty)a[i]=null;}}
+    for(const [type,n] of Object.entries(input)){let left=n*batches;for(const a of draft)for(let i=0;i<a.length&&left;i++){const s=a[i];if(s?.type!==type)continue;const used=Math.min(left,s.qty);if(s.type==='fish')V014Fish.remove(s,used);left-=used;s.qty-=used;if(!s.qty)a[i]=null;}}
     actual.forEach((a,i)=>a.splice(0,a.length,...draft[i]));return true;
   }
   function putMaterials(input,batches=1,atomic=false){
@@ -192,7 +192,6 @@ window.V010Inventory=(()=>{
     const actions=document.createElement('div');actions.className='v010DetailActions';
     if(where==='equipment')actions.append(button('Снять',()=>{if(unequip(index))closeOverlay(o);}));
     else{
-      actions.append(button(s.locked?'Открепить':'Закрепить',()=>{s.locked=!s.locked;notifyChange();details(where,index);}));
       if(where==='bag'&&def.equip)actions.append(button('Надеть',()=>{if(equip(index))closeOverlay(o);}));
       if(where==='bag'&&def.hand)actions.append(button('Быстрый слот',()=>{window.V010Combat?.ensure?.(s);selectUid(s.type,s.uid);closeOverlay(o);openHandAssignment(s.type);}));
       if(activeStorage!==null&&el('storageOverlay').classList.contains('open'))actions.append(button(where==='bag'?'В ящик':'В рюкзак',()=>{transfer(where,index,where==='bag'?activeStorage:'bag');closeOverlay(o);}));
@@ -244,7 +243,7 @@ window.V010Inventory=(()=>{
       if(where!=='bag'||d.index==='backpack'||bag[index])return;
       bag[index]={...copy(d.item),qty:1};equipment[d.index]=null;notifyChange();return;
     }
-    if(!move(d.where,d.index,where,index))message(d.item.locked?'Сначала открепите предмет':'Выберите пустую ячейку или такую же стопку');
+    if(!move(d.where,d.index,where,index))message('Выберите пустую ячейку или такую же стопку');
   }
   // Cancel native touch panning only after an intentional hold. All ordinary
   // touch swipes stay passive and keep browser inertia, even when begun on an icon.
@@ -260,8 +259,8 @@ window.V010Inventory=(()=>{
     .v010Slot{min-height:57px!important;height:57px!important;padding:3px!important;touch-action:none;background:#162428;border:1px solid #415454;color:#e5ece8;cursor:pointer;position:relative;border-radius:8px}
     .v010Slot .ico{height:47px!important;display:flex;align-items:center;justify-content:center}.v010Slot .ico .itemIcon{width:46px!important;height:46px!important;object-fit:contain}
     .v010Slot .qty{position:absolute;right:5px;bottom:3px;font-size:11px!important;font-weight:400;line-height:13px;text-shadow:0 1px 3px #000,0 0 5px #000;margin:0}
-    .v010Slot.quickAssigned{border-color:#d4b96c;box-shadow:inset 0 0 0 1px #d4b96c42}.v010QuickMark{position:absolute;left:5px;top:2px;font-size:10px;color:#ead6a4}.v010LockMark{position:absolute;right:5px;top:2px;font-size:11px;color:#adcfca}.v010Level{position:absolute;bottom:3px;left:4px;font-size:9px;color:#bfdda9}
-    .v010Slot.locked{background:#213438}.v010Slot.dragging{opacity:.3}.v010DropTarget{outline:2px solid #e4c67d!important;outline-offset:-2px}.v010DragGhost{position:fixed;pointer-events:none;z-index:50000;width:54px;height:54px;border:1px solid #e6c479;border-radius:9px;background:#1d3037e8;box-shadow:0 5px 20px #0008}.v010DragGhost .itemIcon{width:52px;height:52px}
+    .v010Slot.quickAssigned{border-color:#d4b96c;box-shadow:inset 0 0 0 1px #d4b96c42}.v010QuickMark{position:absolute;left:5px;top:2px;font-size:10px;color:#ead6a4}.v010Level{position:absolute;bottom:3px;left:4px;font-size:9px;color:#bfdda9}
+    .v010Slot.dragging{opacity:.3}.v010DropTarget{outline:2px solid #e4c67d!important;outline-offset:-2px}.v010DragGhost{position:fixed;pointer-events:none;z-index:50000;width:54px;height:54px;border:1px solid #e6c479;border-radius:9px;background:#1d3037e8;box-shadow:0 5px 20px #0008}.v010DragGhost .itemIcon{width:52px;height:52px}
     .v010InvToolbar{display:flex;justify-content:flex-end;gap:5px;margin:3px 0 -5px}.v010SmallAction{min-width:32px;min-height:32px;margin:0;padding:4px 9px;border:1px solid #56706a;border-radius:7px;background:#25383a;color:#dce9e2;font:inherit;font-size:12px;cursor:pointer}.v010InvToolbar .v010SmallAction{font-size:18px}
     .v010DetailArt{text-align:center}.v010DetailArt .itemIcon{width:110px;height:110px}.v010DetailActions{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.v010DetailActions input{width:65px;background:#15242a;color:#e7eee8;border:1px solid #607572;border-radius:6px;padding:6px}.v010ItemStats{padding:10px;background:#132327;border-radius:8px;line-height:1.8}.v010PresetRow{display:flex;justify-content:space-between;gap:15px;align-items:center;margin:10px 0}.v010PresetRow input{width:80px;padding:6px;background:#15262d;color:#e3eee8;border:1px solid #5e7778;border-radius:6px}
     #v010ItemDetails,#v010Preset{z-index:13000}.equipSlot{touch-action:none}#storageSettings{min-width:32px;min-height:32px;padding:3px 9px}.inventoryGrid{grid-template-columns:repeat(6,minmax(0,1fr))!important}

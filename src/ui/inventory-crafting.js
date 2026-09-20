@@ -48,7 +48,6 @@ window.V011UI=(()=>{
     }
     if(def.hand&&where==='bag')button('В быстрый слот',()=>{combat.ensure(item);inv.selectUid(item.type,item.uid);closeOverlay(overlay);openHandAssignment(item.type);});
     if(where!=='equipment'){
-      button(item.locked?'Открепить':'Закрепить',()=>{item.locked=!item.locked;inv.render();window.V011UI.details(where,index);},false,true);
       if(['bag'].includes(where)||Number.isInteger(where))if(activeStorage!==null&&el('storageOverlay').classList.contains('open'))button(where==='bag'?'В ящик':'В рюкзак',()=>{inv.transfer(where,index,where==='bag'?activeStorage:'bag');closeOverlay(overlay);},false,true);
       if(item.qty>1){const input=document.createElement('input');input.type='number';input.min='1';input.max=item.qty-1;input.value=Math.floor(item.qty/2);I18n.setAttr(input,'aria-label','Количество для разделения');actions.append(input);button('Разделить',()=>{if(inv.split(where,index,Math.floor(Number(input.value))))closeOverlay(overlay);else message('Нужна свободная ячейка');},false,true);}
       if(!def.robot)button('Уничтожить',()=>{if(confirm(I18n.text('Уничтожить «'+def.name+'»'+(item.level?' +'+item.level:'')+'? Предмет будет потерян.'))){locationItems(where)[index]=null;inv.render();closeOverlay(overlay);}},false,true);

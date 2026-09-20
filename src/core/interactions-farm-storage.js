@@ -377,7 +377,21 @@ const livestockAnimals=[
 ];
 
 const COW_BREED_MS=600000; // test: herd can grow by one cow every 10 minutes
-const COW_MAX=21;
+const COW_MAX=GameplayBalance.animals.cowMax;
+// Existing livestock owns six persistent stalls and a legacy-only reserve.
+const GameLivestock={nextCow:1,reserve:[],
+  slot(){const used=new Set(livestockAnimals.filter(a=>a.kind==='cow').map(a=>a.stallId));return Array.from({length:COW_MAX},(_,i)=>'cow_slot_'+(i+1)).find(id=>!used.has(id));},
+  assign(a){a.instanceId='cow:'+this.nextCow++;a.typeId='cow';a.stallId=this.slot();return a;},
+  migrate(d){const l=d.livestock;if(!l||!Array.isArray(l.animals))return;
+    const cows=l.animals.filter(a=>a?.kind==='cow');if(cows.length>21)throw Error('Invalid legacy herd');
+    if(l.schema===undefined){l.schema=2;l.nextCow=1;l.reserve=[];cows.forEach((a,i)=>{a.instanceId='cow:'+l.nextCow++;a.typeId='cow';a.stallId=i<COW_MAX?'cow_slot_'+(i+1):null;});l.reserve=cows.slice(COW_MAX);l.animals=l.animals.filter(a=>a.kind!=='cow'||!l.reserve.includes(a));}
+  },
+  validate(l){const cows=l.animals.filter(a=>a.kind==='cow'),all=[...cows,...(l.reserve||[])];
+    if(l.schema!==2||!Number.isSafeInteger(l.nextCow)||l.nextCow<1||!Array.isArray(l.reserve)||l.reserve.length>15||all.length>21||new Set(all.map(a=>a.instanceId)).size!==all.length||new Set(cows.map(a=>a.stallId)).size!==cows.length||all.some(a=>a.kind!=='cow'||a.typeId!=='cow'||!/^cow:[1-9][0-9]*$/.test(a.instanceId)||Number(a.instanceId.slice(4))>=l.nextCow)||cows.some(a=>!/^cow_slot_[1-9][0-9]*$/.test(a.stallId)||Number(a.stallId.slice(9))>COW_MAX)||l.reserve.some(a=>a.stallId!==null||![a.x,a.y,a.vx,a.vy,a.size].every(Number.isFinite)||Math.abs(a.vx)>1||Math.abs(a.vy)>1||a.size<1||a.size>100))throw Error('Invalid cow stalls');
+  },
+  restoreReserve(){if(!this.reserve.length||cowCount()>=COW_MAX)return false;const a=this.reserve.shift();a.stallId=this.slot();livestockAnimals.push(a);renderCowMenu();queueGameSave();return true;}
+};
+for(const a of livestockAnimals)if(a.kind==='cow'){a.instanceId='cow:'+GameLivestock.nextCow++;a.typeId='cow';a.stallId='cow_slot_'+(Number(a.instanceId.slice(4)));}
 let lastCowBreed=Date.now();
 
 function cowCount(){
@@ -386,14 +400,14 @@ function cowCount(){
 function addCow(){
   if(cowCount()>=COW_MAX) return false;
   const f=bunker.farm;
-  livestockAnimals.push({
+  livestockAnimals.push(GameLivestock.assign({
     kind:"cow",icon:"🐄",
     x:f.left+55+Math.random()*110,
     y:f.top+100+Math.random()*170,
     vx:(Math.random()>.5?.08:-.08),
     vy:(Math.random()>.5?.06:-.06),
     size:31
-  });
+  }));
   return true;
 }
 function updateCowBreeding(){
@@ -417,8 +431,10 @@ function renderCowMenu(){
     `🥚 Накоплено яиц: ${eggs}<br>`+
     `🌾 Корм: ${storageCount(12,"animal_feed")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("animal_feed")})</span><br>`+
     `💧 Вода: ${storageCount(13,"water")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("water")})</span>`);
-  el("cowSlaughterBtn").disabled=n<=2;
-  el("cowSlaughterBtn").style.opacity=n<=2?".45":"1";
+  el("cowSlaughterBtn").disabled=n<=GameplayBalance.animals.cowMin;
+  el("cowSlaughterBtn").style.opacity=n<=GameplayBalance.animals.cowMin?".45":"1";
+  let reserve=el('cowReserve028');if(!reserve){reserve=v09Button('',()=>GameLivestock.restoreReserve());reserve.id='cowReserve028';el('cowSlaughterBtn').after(reserve);}
+  reserve.hidden=!GameLivestock.reserve.length;reserve.disabled=n>=COW_MAX;I18n.assign(reserve,'textContent',I18n.message('animals.reserve',{count:GameLivestock.reserve.length}));
 }
 
 function openCowMenu(){

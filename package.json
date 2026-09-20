@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.27.1",
+  "version": "0.28.0",
   "private": true,
-  "description": "Last Base gameplay / UX corrective patch.",
+  "description": "Last Base World / Farm / Drone / Resources gameplay patch.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -11,7 +11,8 @@
     "assets": "node tools/assets.cjs",
     "locales": "node tools/locales.cjs",
     "bench:stages": "node qa/compare-readiness-performance.cjs",
-    "bench:ux": "node qa/compare-corrective-performance.cjs"
+    "bench:ux": "node qa/compare-corrective-performance.cjs",
+    "bench:world-farm": "node qa/compare-world-farm-performance.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

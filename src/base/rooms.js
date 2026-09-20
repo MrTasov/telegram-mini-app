@@ -182,7 +182,7 @@ window.V011Living=(()=>{
     refresh();queueGameSave();return true;
   }
   function tick(ms){
-    const near=scene==='bunker'&&Math.hypot(player.x-1029,player.y-104)<105;
+    const near=(scene==='bunker'&&Math.hypot(player.x-1029,player.y-104)<105)||!!window.V014Robots?.doorNear(BATH_DOOR)||!!window.V014Robots?.doorOccupies(BATH_DOOR);
     const broken=window.V018Build?.isBroken(BATH_DOOR.id);if(broken)doorProgress=1;
     const open=broken||doorManual||near,was=doorProgress>.9;
     doorProgress=clamp(doorProgress+(open?1:-1)*clamp(Number(ms)||0,0,100)/360,0,1);
@@ -201,7 +201,7 @@ window.V011Living=(()=>{
     if(lastSave>=3){lastSave=0;queueGameSave();}
     refresh();
   }
-  GamePassages.register(BATH_DOOR.id,{playerOnly:true,scene:'bunker',canOpen:()=>true});
+  GamePassages.register(BATH_DOOR.id,{scene:'bunker',bounds:()=>BATH_DOOR,canOpen:()=>true});
   const oldSolid=solidObjects;
   solidObjects=function(which){
     const list=oldSolid(which);if(which!=='bunker')return list;

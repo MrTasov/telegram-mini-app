@@ -72,10 +72,12 @@ window.V014Robots=(()=>{
   function returnStep(dt){
     const p=dockPosition(),target=state.scene==='bunker'?p:{x:800,y:690},d=distance(state.x,state.y,target.x,target.y);
     if(home.level!==state.scene){resetReturn();home.level=state.scene;home.best=d;home.point={x:state.x,y:state.y};}
+    if(home.blocked)return;
     if(home.pause>0){home.pause=Math.max(0,home.pause-dt);return;}
     if(sceneTravel(p,dt)){beginDocking();return;}
     home.age+=dt;home.sample+=dt;home.stale+=dt;
     if(d<home.best-12){home.best=d;home.stale=0;home.retries=0;home.blocked=false;}
+    if(motion.pending){home.still=0;home.sample=0;home.point={x:state.x,y:state.y};return;}
     if(home.sample>=1){const moved=distance(state.x,state.y,home.point.x,home.point.y);home.still=moved<6?home.still+home.sample:0;home.sample=0;home.point={x:state.x,y:state.y};}
     // A detour can initially go away from the station. Require either a real
     // standstill or a long absence of route progress, not one bad distance tick.
@@ -106,7 +108,7 @@ window.V014Robots=(()=>{
   function portion(s,n){return s.type==='fish'&&window.V014Fish?V014Fish.portion(s,n):{...copy(s),qty:n};}
   function removePart(s,n){if(s.type==='fish'&&window.V014Fish)V014Fish.remove(s,n);s.qty-=n;}
   function transfer(source,i,destination,max,amount){
-    const s=source?.[i];if(!s||source===destination||s.locked||ITEM[s.type]?.robot)return 0;
+    const s=source?.[i];if(!s||source===destination||ITEM[s.type]?.robot)return 0;
     const n=Math.min(s.qty,Math.max(0,Math.floor(amount??s.qty)));if(!n)return 0;
     const part=portion(s,n),left=addToSlots(destination,s.type,n,max,part),moved=n-left;
     if(moved){removePart(s,moved);if(!s.qty)source[i]=null;changed();renderBag();}return moved;
@@ -153,14 +155,14 @@ window.V014Robots=(()=>{
     observedTarget=state.mode==='attack'?null:selectedTarget();changed();return true;
   }
   function setCombat(on){return mode(on?(state.combatMode||'defense'):'follow');}
-  function availableAmmo(){return [bag,state.cargo].reduce((n,a)=>n+a.reduce((v,s)=>v+(s?.type===combat.ammoType&&!s.locked?s.qty:0),0),0);}
+  function availableAmmo(){return [bag,state.cargo].reduce((n,a)=>n+a.reduce((v,s)=>v+(s?.type===combat.ammoType?s.qty:0),0),0);}
   function reload(){
     if(!near()){message('Дрон должен быть рядом');return false;}
     let need=Math.max(0,combat.capacity-state.ammo),used=0;
     // Reserved cargo is ammunition only after this explicit transfer. Preserve
     // cell positions, incompatible rounds, locked stacks and all other items.
     for(const source of [bag,state.cargo])for(let i=0;i<source.length&&need>0;i++){
-      const s=source[i];if(s?.type!==combat.ammoType||s.locked)continue;
+      const s=source[i];if(s?.type!==combat.ammoType)continue;
       const n=Math.min(need,s.qty);s.qty-=n;need-=n;used+=n;if(!s.qty)source[i]=null;
     }
     if(!used){message(state.ammo>=combat.capacity?'Боезапас полный':'Нужны патроны 5,45');return false;}

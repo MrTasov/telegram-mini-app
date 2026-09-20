@@ -1,9 +1,13 @@
-# LAST BASE 0.27.1 — Gameplay / UX corrective patch
+# LAST BASE 0.28.0 — World / Farm / Drone / Resources
 
-Single-player release on the existing Stage 6/7 architecture. See [Russian setup](README_RU.md) and [patch report](docs/CORRECTIVE_PATCH_RU.md).
+Single-player patch on stable 0.27.1. See [Russian setup](README_RU.md) and the [current patch report](docs/WORLD_FARM_RESOURCES_RU.md).
 
-Host the extracted `index.html`, `js/`, `styles/`, and `assets/` on the existing HTTP(S) origin to retain the five local save slots. The ready-built bundle is included. Node.js is only needed for development: `npm ci`, `npm run build`, `npm run check`, `npm test`.
+Extract the ZIP and upload its contents with the directory structure intact. The ready-built game needs `index.html`, `js/`, `styles/`, and `assets/`. Keep the existing HTTP(S) origin to retain the five local save slots. Node.js is only required for development: `npm ci`, `npm run build`, `npm run check`, `npm test`.
 
-Ordinary panels no longer pause simulation. Automatic passages support a single movement command. Empty loot closes after a successful transfer; ordinary actions retain movement. The outer wall has four ladders. Drone field/station repair uses configurable material costs.
+This patch adds clustered resource placement, Coal → Gunpowder → Ammo, five walkable seed-free beds with independent irrigation, a 500 L farm tank, six fixed cow stalls, compact drone controls and autonomous return through automatic doors. Item Pin is retired; recipe pins and ordinary inventory quick slots remain.
 
-`dev.html` remains the isolated in-memory Day X testing entry; omit it and `dev/` from ordinary public deployment. No networking or multiplayer was added. Historical Stage 6/7 reports and test evidence remain in `docs/` and `qa/`; current patch results are identified by version 0.27.1.
+Balance data: `src/config/gameplay.js`. Save format: version 3, migrating earlier saves through the existing owners. Legacy cattle beyond six remain in a recoverable reserve. Old water quantity and prepaid crafting orders are retained.
+
+`npm run bench:world-farm` compares 0.27.1 and 0.28.0 in the native Canvas/VM harness. Automated PC/MOBILE profiles do not replace manual desktop/browser/phone testing.
+
+`dev.html` remains the isolated in-memory Day X testing entry; omit it and `dev/` from ordinary public deployment. No network layer or multiplayer was added. Historical reports in `docs/` concern their named releases; current results are in `qa/results/summary.json`.

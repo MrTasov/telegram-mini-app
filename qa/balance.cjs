@@ -19,7 +19,7 @@ configs.environmentAssumptions={equipment:'starter gear; balanced variant and sp
 const expected=JSON.parse(fs.readFileSync(path.join(__dirname,'stage0/audit/configurations.json'))),actual=JSON.parse(JSON.stringify(configs));
 const version=actual.version;actual.version=expected.version; // Release metadata and the explicitly versioned envelope are the only additions.
 assert.equal(actual.save.topKeys.filter(k=>k==='saveVersion').length,1);
-assert.equal(E('captureGameProgress().saveVersion'),2);
+assert.equal(E('captureGameProgress().saveVersion'),3);
 actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='saveVersion'&&k!=='identity027');
 delete actual.save.schemas.identity027;
 const definitionFields={items:['ammo','stackMax','caliber','drone','turret'],weapons:['category','reloadMs','noise','heldStyle','visualRecoil','recoilLabel','magazineTypes','defaultMagazine','extendedMagazine']};
@@ -28,6 +28,13 @@ for(const [id,levels] of Object.entries(actual.effectiveWeapons))for(const [i,de
 for(const group of ['enemies','dayXEnemies'])for(const def of Object.values(actual[group]))for(const key of ['spawnOrder','behavior','healthColor','leap','blast'])delete def[key];
 const addedAPIs={};
 for(const [id,keys] of Object.entries(actual.exposedAPIs)){addedAPIs[id]=keys.filter(k=>!expected.exposedAPIs[id]?.includes(k));actual.exposedAPIs[id]=keys.filter(k=>expected.exposedAPIs[id]?.includes(k));}
+// Approved release 0.28 balance changes; everything else still compares exactly.
+for(const id of ['coal','gunpowder'])delete actual.items[id];
+delete actual.recipes.gunpowder;
+for(const id of ['iron','copper','concrete','ammo','ammo556'])actual.recipes[id].input=expected.recipes[id].input;
+delete actual.save.schemas.livestock;
+for(const id of ['farmV011','farm014'])actual.save.schemas[id]=expected.save.schemas[id];
+for(const [id,removed]of Object.entries({V0141Farm:['stock','seedType','takeSeed'],V011Farm:['wetBetween']}))expected.exposedAPIs[id]=expected.exposedAPIs[id].filter(k=>!removed.includes(k));
 let error=null;try{assert.deepEqual(actual,expected);}catch(e){error=e.message;}
 fs.writeFileSync(path.join(__dirname,'results/configurations.json'),JSON.stringify(configs,null,2)+'\n');
 const report={version,passed:error?0:1,failed:error?1:0,scope:'Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.',addedDefinitionFields:definitionFields,addedEnemyFields:['spawnOrder','behavior','healthColor','leap','blast'],addedAPIs,error,consoleErrors:r.errors};

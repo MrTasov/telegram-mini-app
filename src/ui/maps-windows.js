@@ -152,7 +152,6 @@ window.V012Windows=(()=>{
     }
     #inventoryOverlay .v010Slot,#storageOverlay .v010Slot{height:52px!important;min-height:52px!important;min-width:44px;
       background:rgba(18,35,38,.48);border-color:#9bb6ad55;touch-action:pan-y!important}
-    #inventoryOverlay .v010Slot.locked,#storageOverlay .v010Slot.locked{background:rgba(39,61,60,.60)}
     #inventoryOverlay .v010Slot.quickAssigned,#storageOverlay .v010Slot.quickAssigned{border-color:#d4b96c}
     #inventoryOverlay .v010Slot .ico,#storageOverlay .v010Slot .ico{height:44px!important}
     #inventoryOverlay .v010Slot .ico .itemIcon,#storageOverlay .v010Slot .ico .itemIcon{width:43px!important;height:43px!important}

@@ -18,10 +18,10 @@ window.V018Build=(()=>{
   const isBroken=id=>record(id)?.object.hp===0;
   const title=r=>r.kind==='wall'?(r.object.corner?'Угол стены':'Секция стены'):r.kind==='gate'?'Ворота':r.kind==='automatic'?'Раздвижная дверь':r.kind==='bath'?'Дверь санузла':'Дверь';
   const held=()=>heldItem()==='hammer'&&bagCount('hammer')>0;
-  const count=type=>bag.reduce((n,s)=>n+(s?.type===type&&!s.locked?s.qty:0),0);
+  const count=type=>bag.reduce((n,s)=>n+(s?.type===type?s.qty:0),0);
   function consume(input){
     if(!Object.entries(input).every(([t,n])=>Number.isInteger(n)&&n>=0&&count(t)>=n))return false;
-    for(const [type,n] of Object.entries(input)){let left=n;for(let i=0;i<bag.length&&left;i++){const s=bag[i];if(s?.type!==type||s.locked)continue;const take=Math.min(s.qty,left);s.qty-=take;left-=take;if(!s.qty)bag[i]=null;}}
+    for(const [type,n] of Object.entries(input)){let left=n;for(let i=0;i<bag.length&&left;i++){const s=bag[i];if(s?.type!==type)continue;const take=Math.min(s.qty,left);s.qty-=take;left-=take;if(!s.qty)bag[i]=null;}}
     renderBag();queueGameSave();return true;
   }
   function target(r){const o=r.object;return {id:r.id,kind:'repair018',name:title(r)+' · '+Math.ceil(o.hp)+' / '+o.maxHp+' HP',x:o.x,y:o.y,w:o.w,h:o.h,range:64,ref:r.id};}

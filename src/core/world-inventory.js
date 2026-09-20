@@ -193,7 +193,7 @@ function solidObjects(which){
     ...fixtures,
     {id:'livestock',x:(bunker.farm.cropLeft??90)-37,y:(bunker.farm.top+bunker.farm.bottom)/2-28,w:50,h:56},
     ...chests.flatMap((p,i)=>i===10||i===11?[]:[{id:'chest'+i,x:p.x-(i<10?34:30),y:p.y-(i<10?25:22),w:i<10?68:60,h:i<10?50:44}]),
-    ...getFarmBeds().map((b,i)=>({...b,id:'bed'+i})),
+    // Crop surfaces are walkable; interaction targets remain registered.
     {id:'feed_craft',x:feed.x-28,y:feed.y-23,w:56,h:46}
   ];
 }
@@ -214,6 +214,7 @@ function geometryFor(which){
   return geometryCache[which];
 }
 function worldCollision(x,y,r=15,which=scene,ignoreId=null){
+  if(window.GamePassages?.clearanceBlocked(x,y,r,which))return true;
   if(which==='surface'){
     if(x<(surface.minX??0)+r||x>(surface.maxX??surface.width)-r||y<(surface.minY??0)+r||y>(surface.maxY??surface.height)-r)return true;
   }else if(bunkerGeometryBlocked(x,y,r))return true;
@@ -259,6 +260,8 @@ const ITEM={
  stone:{name:'Камень',icon:'🪨',description:'Добывается киркой. В печи: 2 камня → 1 бетон.'},
  concrete:{name:'Бетон',icon:'▰',description:'Строительный блок. Ремонт: 1 бетон → 1000 HP. Нужен для улучшения стен и дверей.'},
  fishing_rod:{name:'Удочка',icon:'🎣',hand:true},
+ coal:{name:'Уголь',icon:'⬛',stackMax:GameplayBalance.resources.coalStack},
+ gunpowder:{name:'Порох',icon:'◉',stackMax:GameplayBalance.resources.gunpowderStack},
  fish:{name:'Свежая рыба',icon:'🐟',stackMax:20},
   rifle_ak74:{name:'АК-74',icon:'🔫',hand:true},
   axe:{name:'Топор',icon:'🪓',hand:true},
@@ -303,7 +306,7 @@ const STACK_MAX=100;
 // a physical instance. Legacy save envelopes intentionally allow wider stacks.
 function itemStackLimit(type,legacy=false){
   const def=ITEM[type];
-  if(legacy)return def?.ammo?(def.stackMax||600):STACK_MAX;
+  if(legacy)return def?.ammo?(def.stackMax||600):Math.max(STACK_MAX,def?.stackMax||0);
   return def?.deployable||def?.robot||def?.equip||def?.hand?1:def?.stackMax||STACK_MAX;
 }
 let BAG_SLOTS=24;

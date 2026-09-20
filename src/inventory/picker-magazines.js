@@ -4,8 +4,8 @@ window.V0162Quick=(()=>{
   let target=0;
   function flash(cell){cell.classList.remove('v013Missing');void cell.offsetWidth;cell.classList.add('v013Missing');}
   function allowed(item,i=target){
-    if(!item||!HAND_TYPES.includes(item.type)||item.qty!==1||item.locked||quick.items[i]?.locked)return false;
-    return !quick.items.some((s,k)=>k!==i&&s?.type===item.type&&s.locked);
+    if(!item||!HAND_TYPES.includes(item.type)||item.qty!==1)return false;
+    return true;
   }
   function assign(i,index,expected){
     const item=bag[index];if(!Number.isInteger(i)||i<0||i>4||!item||(expected&&item!==expected)||!allowed(item,i))return false;
@@ -71,7 +71,7 @@ window.V0162Magazines=(()=>{
   function change(s,index=null,expected=null){
     if(!rifle(s)||!owner(s))return false;combat.ensure(s);
     const incoming=index===null?null:bag[index];
-    if(index!==null&&(!Number.isInteger(index)||!incoming||!V09Craft.acceptsMagazine(s.type,incoming.type)||!Number.isInteger(incoming.qty)||incoming.qty<1||incoming.locked||(expected&&incoming!==expected)))return false;
+    if(index!==null&&(!Number.isInteger(index)||!incoming||!V09Craft.acceptsMagazine(s.type,incoming.type)||!Number.isInteger(incoming.qty)||incoming.qty<1||(expected&&incoming!==expected)))return false;
     if(!s.magazineType&&!incoming)return false;
     if(combat.validateItem(s)===false)return false;
     const next=copy(bag),weaponIndex=bag.indexOf(s),newType=incoming?.type||null;
@@ -89,14 +89,14 @@ window.V0162Magazines=(()=>{
   }
   const remove=s=>change(s);
   const install=(s,index,expected)=>change(s,index,expected);
-  function installFirst(s,type){const i=bag.findIndex(x=>x?.type===type&&!x.locked);return i>=0&&install(s,i);}
+  function installFirst(s,type){const i=bag.findIndex(x=>x?.type===type);return i>=0&&install(s,i);}
   function choose(s,after){
     if(!rifle(s)||!owner(s))return false;
     const o=v09Overlay('v0162MagazinePicker','Магазин · Рюкзак'),body=o.querySelector('.v09Body');body.replaceChildren();
     const grid=document.createElement('div');grid.className='v162PickGrid';body.append(grid);
     bag.forEach((m,i)=>{if(!m||!V09Craft.acceptsMagazine(s.type,m.type))return;
-      const b=v09Button('',()=>{if(m.locked){V0162Quick.flash(b);return;}if(install(s,i,m)){closeOverlay(o);after?.();}else if(bag[i]!==m)choose(s,after);});
-      b.className='v162PickCell'+(m.locked?' v162Unavailable':'');b.setAttribute('aria-disabled',String(!!m.locked));b.dataset.magazineIndex=i;
+      const b=v09Button('',()=>{if(install(s,i,m)){closeOverlay(o);after?.();}else if(bag[i]!==m)choose(s,after);});
+      b.className='v162PickCell';b.setAttribute('aria-disabled','false');b.dataset.magazineIndex=i;
       I18n.assign(b,"innerHTML",'<span class="v162PickArt">'+itemIconHTML(m.type)+'</span><span class="v162PickName">'+TYPES[m.type]+' патронов</span><small>Пустой · ×'+m.qty+'</small>');grid.append(b);
     });
     if(!grid.children.length){const note=document.createElement('p');I18n.assign(note,"textContent",'В рюкзаке нет свободного магазина');body.append(note);}

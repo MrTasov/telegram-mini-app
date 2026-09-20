@@ -2,13 +2,14 @@
 const V09Craft = (() => {
   const RECIPES = {
  hammer:{station:'craft_bench',category:'Инструменты',name:'Молот',input:{iron:8,wood:6,parts:2},output:'hammer',qty:1,ms:15000},
- concrete:{station:'furnace',category:'Строительство',name:'Бетон',input:{stone:2},output:'concrete',qty:1,ms:2000},
+ concrete:{station:'furnace',category:'Строительство',name:'Бетон',input:{stone:GameplayBalance.processing.stone},output:'concrete',qty:1,ms:2000},
  fishing_rod:{station:'craft_bench',category:'Инструменты',name:'Удочка',input:{wood:10,parts:2},output:'fishing_rod',qty:1,ms:4000},
     feed: {station:'feed_craft',category:'Корм',name:'Корм для животных',input:{grain:10},output:'animal_feed',qty:20,ms:2500},
-    iron: {station:'furnace',category:'Металлы',name:'Железо',input:{iron_ore:1},output:'iron',qty:1,ms:2000},
-    copper: {station:'furnace',category:'Металлы',name:'Медь',input:{copper_ore:1},output:'copper',qty:1,ms:2000},
-    ammo: {station:'craft_bench',category:'Патроны',name:'Патроны 5,45 × 39',input:{iron:2,copper:1},output:'ammo',qty:30,ms:10000},
-    ammo556: {station:'craft_bench',category:'Патроны',name:'Патроны 5.56 × 45',input:{iron:2,copper:1},output:'ammo556',qty:30,ms:10000},
+    iron: {station:'furnace',category:'Металлы',name:'Железо',input:{iron_ore:GameplayBalance.processing.ironOre},output:'iron',qty:1,ms:2000},
+    copper: {station:'furnace',category:'Металлы',name:'Медь',input:{copper_ore:GameplayBalance.processing.copperOre},output:'copper',qty:1,ms:2000},
+    gunpowder:{station:'furnace',category:'Материалы',name:'Порох',input:{coal:GameplayBalance.processing.coal},output:'gunpowder',qty:GameplayBalance.processing.gunpowder,ms:GameplayBalance.processing.gunpowderMs},
+    ammo: {station:'craft_bench',category:'Патроны',name:'Патроны 5,45 × 39',input:{iron:2,copper:1,gunpowder:GameplayBalance.ammunition.ammo.gunpowder},output:'ammo',qty:30,ms:10000},
+    ammo556: {station:'craft_bench',category:'Патроны',name:'Патроны 5.56 × 45',input:{iron:2,copper:1,gunpowder:GameplayBalance.ammunition.ammo556.gunpowder},output:'ammo556',qty:30,ms:10000},
     rifle_ak74: {station:'craft_bench',category:'Оружие',name:'АК-74',input:{iron:20,copper:10,parts:4,wood:4},output:'rifle_ak74',qty:1,ms:60000},
     rifle_m4: {station:'craft_bench',category:'Оружие',name:'M4',input:{iron:18,copper:12,parts:4,wood:4},output:'rifle_m4',qty:1,ms:60000}
   };
@@ -89,7 +90,7 @@ const V09Craft = (() => {
     for(const [type,n] of Object.entries(input))if(removeFromSlots(next,type,n*batches)!==n*batches)return false;
     bag=next;return true;
   }
-  function makeJob(recipe,batches){const r=RECIPES[recipe];return {recipe,batches,totalMs:r.ms*batches,remainingMs:r.ms*batches,completedBatches:0,outputQty:0,collectedQty:0};}
+  function makeJob(recipe,batches){const r=RECIPES[recipe];return {recipe,batches,paidInput:deep(r.input),totalMs:r.ms*batches,remainingMs:r.ms*batches,completedBatches:0,outputQty:0,collectedQty:0};}
   function syncFeed(j){if(j){j.total=RECIPES.feed.qty*j.batches;j.qty=j.total-j.collectedQty;j.readyAt=Date.now()+j.remainingMs;}feedCraftBusy=!!j;}
   function completedAt(j){if(j.remainingMs<=0)return j.batches;return Math.min(j.batches-1,Math.floor(((j.totalMs-j.remainingMs)*j.batches/j.totalMs)+1e-8));}
   function start(id,recipe=selected[id],batches=selectedBatches(id)){
@@ -131,7 +132,7 @@ const V09Craft = (() => {
   function collectType(id,type,limit){
     if(!STATIONS.includes(id)||!ITEM[type])return 0;
     const available=readyItems(id)[type]||0;
-    const stack=(ITEM[type].equip||ITEM[type].hand)?1:STACK_MAX;
+    const stack=itemStackLimit(type);
     const requested=Math.min(available,limit===undefined?stack:Math.max(0,Math.floor(limit)));
     if(!requested||!Number.isFinite(requested))return 0;
     const left=addItem(type,requested),taken=requested-left;
@@ -178,16 +179,19 @@ const V09Craft = (() => {
     if(before>left){renderQuickSlots();queueGameSave();}render();
     if(left)message('Материалы возврата ждут в устройстве: нет места');return before>left;
   }
+  // Jobs retain what was actually prepaid, including orders from older saves.
+  function jobInput(j){return j.paidInput||({iron:{iron_ore:1},copper:{copper_ore:1},ammo:{iron:2,copper:1},ammo556:{iron:2,copper:1}}[j.recipe]||RECIPES[j.recipe].input);}
+  function validPaid(j){const p=j.paidInput;if(p===undefined)return true;return p&&typeof p==='object'&&!Array.isArray(p)&&Object.keys(p).length>0&&Object.entries(p).every(([t,n])=>ITEM[t]&&Number.isSafeInteger(n)&&n>0&&n<=10000);}
   function reserveRefund(id,r,batches){for(const [type,n] of Object.entries(r.input))mix(refundExtra[id],type,n*batches);}
   function cancelQueued(id,index){
     if(!STATIONS.includes(id)||!Number.isInteger(index)||index<0||index>=queueExtra[id].length)return false;
-    const j=queueExtra[id].splice(index,1)[0];reserveRefund(id,RECIPES[j.recipe],j.batches);collectRefund(id);queueGameSave();render();return true;
+    const j=queueExtra[id].splice(index,1)[0];reserveRefund(id,{input:jobInput(j)},j.batches);collectRefund(id);queueGameSave();render();return true;
   }
   function cancelUnstarted(id){
     const j=getJob(id);if(!j)return 0;
     const unit=j.totalMs/j.batches,elapsed=j.totalMs-j.remainingMs;
     const keep=Math.min(j.batches,Math.max(j.completedBatches,Math.ceil(elapsed/unit-1e-9))),cancelled=j.batches-keep;
-    if(!cancelled)return 0;reserveRefund(id,RECIPES[j.recipe],cancelled);
+    if(!cancelled)return 0;reserveRefund(id,{input:jobInput(j)},cancelled);
     if(keep===0){mix(readyExtra[id],RECIPES[j.recipe].output,j.outputQty);setJob(id,null);}
     else{j.batches=keep;j.totalMs=keep*unit;j.remainingMs=Math.max(0,j.totalMs-elapsed);}
     finishAndPromote(id);collectRefund(id);render();queueGameSave();return cancelled;
@@ -415,7 +419,7 @@ const V09Craft = (() => {
     const out={schema:2,jobs:{furnace:null,craft_bench:null},magazines:deep(data.magazines),feed:null};
     function normalJob(src,id,legacy){
       if(src===null)return null;const j=deep(src),r=j&&RECIPES[j.recipe];
-      if(!r||r.station!==id||!int(j.batches,1,legacy?100:MAX_BATCHES)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs))fail();
+      if(!r||!validPaid(j)||r.station!==id||!int(j.batches,1,legacy?100:MAX_BATCHES)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs))fail();
       if(legacy){
         if(!int(j.outputQty,1,r.qty*j.batches)||(j.remainingMs>0&&j.outputQty!==r.qty*j.batches))fail();
         j.completedBatches=completedAt(j);j.collectedQty=j.remainingMs===0?r.qty*j.batches-j.outputQty:0;j.outputQty=j.completedBatches*r.qty-j.collectedQty;
@@ -452,7 +456,7 @@ const V09Craft = (() => {
     if(!data||data.version!==1||!data.queues||!data.ready||!data.refunds||!data.paused)fail();
     for(const id of STATIONS){
       const list=data.queues[id];if(!Array.isArray(list)||list.length>30||typeof data.paused[id]!=='boolean')fail();
-      for(const j of list){const r=RECIPES[j?.recipe];if(!r||r.station!==id||!Number.isInteger(j.batches)||j.batches<1||j.batches>MAX_BATCHES||j.totalMs!==r.ms*j.batches||j.remainingMs!==j.totalMs||j.completedBatches!==0||j.outputQty!==0||j.collectedQty!==0)fail();}
+      for(const j of list){const r=RECIPES[j?.recipe];if(!r||!validPaid(j)||r.station!==id||!Number.isInteger(j.batches)||j.batches<1||j.batches>MAX_BATCHES||j.totalMs!==r.ms*j.batches||j.remainingMs!==j.totalMs||j.completedBatches!==0||j.outputQty!==0||j.collectedQty!==0)fail();}
       for(const field of ['ready','refunds']){const pool=data[field][id];if(!pool||typeof pool!=='object'||Array.isArray(pool)||Object.keys(pool).length>200)fail();for(const [t,n] of Object.entries(pool))if(!ITEM[t]||!Number.isSafeInteger(n)||n<1||n>100000000)fail();}
     }
     if(data.pin!==null&&(!data.pin||!RECIPES[data.pin.recipe]||!Number.isInteger(data.pin.batches)||data.pin.batches<1||data.pin.batches>MAX_BATCHES))fail();

@@ -162,8 +162,8 @@ el("animalWaterBtn").addEventListener("click",function(){
 
 el("cowSlaughterBtn").addEventListener("click",function(){
   const cows=livestockAnimals.filter(a=>a.kind==="cow");
-  if(cows.length<=2){
-    message("🐄 Нельзя: нужно оставить минимум 2 коровы для размножения.");
+  if(cows.length<=GameplayBalance.animals.cowMin){
+    message(I18n.message('animals.minimum',{count:GameplayBalance.animals.cowMin}));
     renderCowMenu();
     return;
   }

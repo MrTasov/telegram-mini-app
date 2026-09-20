@@ -91,7 +91,7 @@
   interactionObjects=function(which=scene){
     const out=previousInteractions(which);
     if(which==='surface')out.push(well,...ores.map(o=>({...o,kind:'ore09',
-      name:(o.type==='stone'?'Камень':o.type==='iron_ore'?'Железная руда':'Медная руда')+(o.remaining?` · ${o.remaining}`:' · восстанавливается'),
+      name:(ITEM[o.type]?.name||o.type)+(o.remaining?` · ${o.remaining}`:' · восстанавливается'),
       range:47,ref:o})));
     return out;
   };
@@ -289,18 +289,18 @@ if(!window.V013City){
     ctx.save();ctx.translate(o.x,o.y);
     if(mining?.id===o.id)window.V012Effects?.oreImpactTransform(mining);
     ellipse(4,12,o.r+7,o.r*.7,'rgba(10,17,16,.25)');
-    const copper=o.type==='copper_ore';
+    const copper=o.type==='copper_ore',coal=o.type==='coal';
     polygon([[-o.r+2,7],[-o.r*.8,-o.r*.52],[-14,-o.r],[18,-o.r*.85],[o.r,-12],[o.r-2,22],[7,o.r*.65],[-23,o.r*.6]],
-      o.remaining?'#69706c':'#484f4b','#363e3b',3);
-    polygon([[-o.r*.8,-o.r*.52],[-14,-o.r],[8,-7],[-8,15],[-o.r+2,7]],o.remaining?'#848a80':'#535b53');
+      o.remaining?(coal?'#292e32':'#69706c'):'#484f4b','#363e3b',3);
+    polygon([[-o.r*.8,-o.r*.52],[-14,-o.r],[8,-7],[-8,15],[-o.r+2,7]],o.remaining?(coal?'#444b51':'#848a80'):'#535b53');
     polygon([[8,-7],[18,-o.r*.85],[o.r,-12],[o.r-2,22]],'#535d59');
     if(o.remaining){
-      const color=copper?'#c88450':'#b5bdc0';
+      const color=coal?'#263038':copper?'#c88450':'#b5bdc0';
       for(const [x,y,k] of [[-21,-10,1],[4,-21,.8],[17,9,1.1],[-9,14,.65]]){
-        polygon([[x-6*k,y],[x,y-8*k],[x+9*k,y-3*k],[x+6*k,y+6*k],[x-5*k,y+5*k]],color,copper?'#e1aa69':'#dce0cf',1);
+        polygon([[x-6*k,y],[x,y-8*k],[x+9*k,y-3*k],[x+6*k,y+6*k],[x-5*k,y+5*k]],color,coal?'#626d77':copper?'#e1aa69':'#dce0cf',1);
       }
     }
-    label(copper?'МЕДНАЯ РУДА':'ЖЕЛЕЗНАЯ РУДА',0,-o.r-15,copper?'#e3b180':'#c4d2cd',10);
+    label(coal?'УГОЛЬ':copper?'МЕДНАЯ РУДА':'ЖЕЛЕЗНАЯ РУДА',0,-o.r-15,copper?'#e3b180':'#c4d2cd',10);
     if(!o.remaining)label(`${Math.ceil(o.regrowMs/60000)} мин. до восстановления`,0,o.r+20,'#b3bdac',9);
     else if(distance(player.x,player.y,o.x,o.y)<160)label(`⛏ ${o.remaining} / ${o.capacity}`,0,o.r+19,'#d3d6b9',10);
     if(mining?.id===o.id)window.V012Effects?.drawOreImpact(o,mining);

@@ -3,7 +3,7 @@ window.V011World=(()=>{
   'use strict';
   const defaults={zombies:true,trees:true,ore:true,buildings:true,interactives:false};
   const filters={...defaults};
-  function mapEnabled(m){return filters[m.kind==='zombie'?'zombies':['tree','wood'].includes(m.kind)?'trees':['iron','copper','stone'].includes(m.kind)?'ore':m.kind==='interactive'?'interactives':'buildings'];}
+  function mapEnabled(m){return filters[m.kind==='zombie'?'zombies':['tree','wood'].includes(m.kind)?'trees':['iron','copper','stone','coal'].includes(m.kind)?'ore':m.kind==='interactive'?'interactives':'buildings'];}
   const legend=el('v010MapOverlay').querySelector('.v010MapLegend');
   const categoryLabels={zombies:'Зомби',trees:'Деревья',ore:'Руда',buildings:'Постройки',interactives:'Оборудование'};
   const tools=el('v010MapOverlay').querySelector('.v010MapTools');

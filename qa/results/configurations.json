@@ -1,5 +1,5 @@
 {
-  "version": "0.27.1",
+  "version": "0.28.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -21,6 +21,16 @@
       "name": "Удочка",
       "icon": "🎣",
       "hand": true
+    },
+    "coal": {
+      "name": "Уголь",
+      "icon": "⬛",
+      "stackMax": 100
+    },
+    "gunpowder": {
+      "name": "Порох",
+      "icon": "◉",
+      "stackMax": 1000
     },
     "fish": {
       "name": "Свежая рыба",
@@ -420,7 +430,7 @@
       "category": "Металлы",
       "name": "Железо",
       "input": {
-        "iron_ore": 1
+        "iron_ore": 2
       },
       "output": "iron",
       "qty": 1,
@@ -431,10 +441,21 @@
       "category": "Металлы",
       "name": "Медь",
       "input": {
-        "copper_ore": 1
+        "copper_ore": 2
       },
       "output": "copper",
       "qty": 1,
+      "ms": 2000
+    },
+    "gunpowder": {
+      "station": "furnace",
+      "category": "Материалы",
+      "name": "Порох",
+      "input": {
+        "coal": 1
+      },
+      "output": "gunpowder",
+      "qty": 4,
       "ms": 2000
     },
     "ammo": {
@@ -443,7 +464,8 @@
       "name": "Патроны 5,45 × 39",
       "input": {
         "iron": 2,
-        "copper": 1
+        "copper": 1,
+        "gunpowder": 6
       },
       "output": "ammo",
       "qty": 30,
@@ -455,7 +477,8 @@
       "name": "Патроны 5.56 × 45",
       "input": {
         "iron": 2,
-        "copper": 1
+        "copper": 1,
+        "gunpowder": 6
       },
       "output": "ammo556",
       "qty": 30,
@@ -2511,12 +2534,13 @@
       "saveVersion"
     ],
     "schemas": {
+      "livestock": 2,
       "v09": 1,
       "v091": 1,
       "v010": 1,
       "gathering": 1,
-      "farmV011": 1,
-      "farm014": 1,
+      "farmV011": 2,
+      "farm014": 2,
       "world011": 2,
       "living011": 1,
       "expansion012": 1,
@@ -2841,9 +2865,9 @@
       "tankRect",
       "troughs",
       "cowStalls",
-      "wetBetween",
       "validateSave",
-      "constants"
+      "constants",
+      "config"
     ],
     "V011World": [
       "filters",
@@ -3069,9 +3093,6 @@
       "bindMenu",
       "migrate",
       "recover",
-      "stock",
-      "seedType",
-      "takeSeed",
       "recovery"
     ],
     "V0141Map": [
