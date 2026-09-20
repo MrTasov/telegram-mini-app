@@ -3,6 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),manifest=JSON.parse(fs.readFileSync(path.join(root,'src/manifest.json')));
 const check=process.argv.includes('--check'),hash=s=>crypto.createHash('sha256').update(s).digest('hex');
+require('./assets.cjs').generate(check);
 if(manifest.mode!=='classic-script-concatenation'||new Set(manifest.files).size!==manifest.files.length)throw Error('Invalid source manifest');
 const parts=manifest.files.map(file=>{
  if(path.isAbsolute(file)||file.split('/').includes('..')||!file.endsWith('.js'))throw Error('Invalid source path: '+file);

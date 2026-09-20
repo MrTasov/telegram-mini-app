@@ -41,12 +41,12 @@ window.V020Walls=(()=>{
     return a;
   }
   // Atlas frames are generated art; positions are physical footprints, not images.
-  const atlas={"1":{"file":"assets/v0200/fortification_level_1.webp","frames":{"wall":[47,88,1442,305],"corner":[293,524,370,402],"stairs":[1001,530,170,393]}},"2":{"file":"assets/v0200/fortification_level_2.webp","frames":{"wall":[47,82,1443,313],"corner":[289,516,376,413],"stairs":[997,519,179,410]}},"3":{"file":"assets/v0200/fortification_level_3.webp","frames":{"wall":[44,79,1449,319],"corner":[275,506,395,425],"stairs":[985,520,208,411]}},"4":{"file":"assets/v0200/fortification_level_4.webp","frames":{"wall":[46,78,1444,316],"corner":[287,511,380,419],"stairs":[991,512,186,419]}},"5":{"file":"assets/v0200/fortification_level_5.webp","frames":{"wall":[40,62,1457,335],"corner":[260,480,408,464],"stairs":[976,508,221,435]}}};
-  const images=new Map(),cache=new Map();
-  function image(level){level=clamp(level||1,1,5);if(!images.has(level)){const im=new Image();im.src=atlas[level].file;images.set(level,im);}return images.get(level);}
+  const atlas=GameAssets.wallAtlases();
+  const cache=new Map();
+  function image(level){return GameAssets.image(AssetManifest.walls[clamp(level||1,1,5)]);}
   image(1); // Higher upgrade atlases are requested only when first visible.
   const frame=(level,part)=>atlas[clamp(level||1,1,5)].frames[part];
-  const ready=level=>{const im=image(level);return im.complete&&im.naturalWidth>0;};
+  const ready=level=>GameAssets.ready(AssetManifest.walls[clamp(level||1,1,5)]);
   const stage=o=>o.hp<=0?4:o.hp/o.maxHp<=.2?3:o.hp/o.maxHp<=.5?2:o.hp/o.maxHp<=.9?1:0;
   function drawFrame(c,level,part,x,y,w,h){
     if(!ready(level))return false;let [sx,sy,sw,sh]=frame(level,part);

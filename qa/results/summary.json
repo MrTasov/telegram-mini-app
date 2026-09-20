@@ -1,81 +1,89 @@
 {
-  "version": "0.23.1",
-  "patch": "PC / Mobile Controls",
-  "stage": 3,
-  "stage4Started": false,
+  "version": "0.24.0",
+  "stage": 4,
+  "stage5Started": false,
   "passed": true,
-  "automatedAssertions": 4016,
+  "automatedAssertions": 5515,
   "originalBaselineAssertions": 477,
   "runs": [
     {
       "id": "build",
       "exitCode": 0,
-      "elapsedMs": 160
+      "elapsedMs": 132
     },
     {
       "id": "verification",
       "exitCode": 0,
-      "elapsedMs": 232
+      "elapsedMs": 189
     },
     {
       "id": "regressions",
       "exitCode": 0,
-      "elapsedMs": 21294
+      "elapsedMs": 17319
     },
     {
       "id": "interactions",
       "exitCode": 0,
-      "elapsedMs": 41344
+      "elapsedMs": 28092
     },
     {
       "id": "saves",
       "exitCode": 0,
-      "elapsedMs": 7691
+      "elapsedMs": 4970
     },
     {
       "id": "balance",
       "exitCode": 0,
-      "elapsedMs": 1199
+      "elapsedMs": 722
     },
     {
       "id": "state-saves",
       "exitCode": 0,
-      "elapsedMs": 10644
+      "elapsedMs": 6897
     },
     {
       "id": "differential",
       "exitCode": 0,
-      "elapsedMs": 33418
+      "elapsedMs": 22412
     },
     {
       "id": "systems",
       "exitCode": 0,
-      "elapsedMs": 2285
+      "elapsedMs": 1503
     },
     {
       "id": "stage3-differential",
       "exitCode": 0,
-      "elapsedMs": 86683
+      "elapsedMs": 33349
     },
     {
       "id": "controls",
       "exitCode": 0,
-      "elapsedMs": 13687
+      "elapsedMs": 10816
     },
     {
       "id": "controls-differential",
       "exitCode": 0,
-      "initialAttempt": {
-        "exitCode": 1,
-        "elapsedMs": 46009,
-        "reason": "The copied Stage 2 oracle normalization removed metadata now present in both Stage 3 builds. Corrected test to compare ALL weapon fields, then re-executed successfully."
-      },
-      "successfulRerunLog": "controls-differential-rerun.log"
+      "elapsedMs": 33710
+    },
+    {
+      "id": "assets",
+      "exitCode": 0,
+      "elapsedMs": 2407
+    },
+    {
+      "id": "asset-rendering",
+      "exitCode": 0,
+      "elapsedMs": 1857
+    },
+    {
+      "id": "stage4-differential",
+      "exitCode": 0,
+      "elapsedMs": 33410
     }
   ],
   "limitations": [
     "VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.",
-    "Seven missing audio assets were already absent in Stage 0."
-  ],
-  "note": "Full existing regression suite passed on final runtime. Additional controls differential re-run after correcting its oracle; no runtime changes followed the full run."
+    "Seven optional audio assets were already absent in Stage 0; absent sounds are not requested."
+  ]
 }

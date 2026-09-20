@@ -70,38 +70,24 @@ function fullscreen(){
 
 }
 
-/* =====================================================
-   AUDIO
-===================================================== */
-
-/*
-  Эти пять файлов должны лежать рядом с index.html:
-
-  gunshot.mp3
-  zombie.mp3
-  hit.mp3
-  player_hit.mp3
-  footsteps.mp3
-  chicken.mp3
-  cow.mp3
-*/
-
+/* Audio paths and optional availability are defined in assets/manifest.json. */
 let masterVolume = 0.70;
 
-function createSound(file){
-  const audio = new Audio(file);
-  audio.preload = "auto";
+function createSound(key){
+  const audio = new Audio();
+  audio.preload = "none";
+  const source=GameAssets.audioSources()[key];if(source)audio.src=source;
   return audio;
 }
 
 const sounds = {
-  gunshot:createSound("gunshot.mp3"),
-  zombie:createSound("zombie.mp3"),
-  hit:createSound("hit.mp3"),
-  playerHit:createSound("player_hit.mp3"),
-  footsteps:createSound("footsteps.mp3"),
-  chicken:createSound("chicken.mp3"),
-  cow:createSound("cow.mp3")
+  gunshot:createSound("gunshot"),
+  zombie:createSound("zombie"),
+  hit:createSound("hit"),
+  playerHit:createSound("playerHit"),
+  footsteps:createSound("footsteps"),
+  chicken:createSound("chicken"),
+  cow:createSound("cow")
 };
 
 /* =====================================================
@@ -114,15 +100,7 @@ let footstepsSource=null;
 let footstepsGain=null;
 let lastZombieBufferAt=0;
 
-const AUDIO_FILES={
-  gunshot:"gunshot.mp3",
-  zombie:"zombie.mp3",
-  hit:"hit.mp3",
-  playerHit:"player_hit.mp3",
-  footsteps:"footsteps.mp3",
-  chicken:"chicken.mp3",
-  cow:"cow.mp3"
-};
+const AUDIO_FILES=GameAssets.audioSources();
 
 function ensureAudioContext(){
   if(audioCtx) return audioCtx;
@@ -134,14 +112,15 @@ function ensureAudioContext(){
 
 async function preloadGameAudio(){
   if(audioLoadStarted) return;
-  audioLoadStarted=true;
   const ctx=ensureAudioContext();
   if(!ctx) return;
+  audioLoadStarted=true;
 
   await Promise.all(
     Object.entries(AUDIO_FILES).map(async function([name,url]){
       try{
-        const r=await fetch(url,{cache:"force-cache"});
+        const r=await fetch(url,{cache:"no-cache"});
+        if(!r.ok)throw Error("Audio request failed");
         const data=await r.arrayBuffer();
         audioBuffers[name]=await ctx.decodeAudioData(data);
       }catch(e){}
@@ -338,10 +317,10 @@ function playSound(sound,volume){
 */
 
 const gunshotPool = [
-  createSound("gunshot.mp3"),
-  createSound("gunshot.mp3"),
-  createSound("gunshot.mp3"),
-  createSound("gunshot.mp3")
+  createSound("gunshot"),
+  createSound("gunshot"),
+  createSound("gunshot"),
+  createSound("gunshot")
 ];
 
 let gunshotPoolIndex = 0;

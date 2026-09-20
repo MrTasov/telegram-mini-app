@@ -16,22 +16,24 @@ for(const match of html.matchAll(/<(?:script|link)\b[^>]*(?:src|href)=["']([^"']
 fs.mkdirSync(path.join(game,'source'));fs.copyFileSync(path.join(baseline,'baseline_0.20.0/source/baseline_0.19.1.html'),path.join(game,'source/baseline_0.19.1.html'));
 fs.mkdirSync(path.join(game,'qa'));
 for(const dir of [path.join(game,'qa'),path.join(work,'tools')])for(const name of ['runtime.cjs','canvas-contract.cjs'])fs.copyFileSync(path.join(__dirname,name),path.join(dir,name));
+// Await the resource owner's decode/validation, without changing any baseline assertion.
+function adaptAssetWaits(code){return code.replaceAll('Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode())','(window.GameAssets?Object.values(AssetManifest.art).map(id=>GameAssets.load(id)):Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode()))').replaceAll('[1,2,3,4,5].map(n=>V020Walls.image(n).decode())','(window.GameAssets?Object.values(AssetManifest.walls).map(id=>GameAssets.load(id)):[1,2,3,4,5].map(n=>V020Walls.image(n).decode()))');}
 for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs']){
  let code=fs.readFileSync(path.join(baseline,'baseline_0.20.0/qa',name),'utf8');
  code=code.replaceAll("captureGameProgress().gameVersion==='0.20.0'",`captureGameProgress().gameVersion==='${version}'`);
  code=code.replace("fs.readFileSync(file,'utf8').split('function selectionRadius(z)')","require('./runtime.cjs').source(file).split('function selectionRadius(z)')");
- fs.writeFileSync(path.join(game,'qa',name),code);
+ fs.writeFileSync(path.join(game,'qa',name),adaptAssetWaits(code));
 }
 let character=fs.readFileSync(path.join(baseline,'tools/behavior.cjs'),'utf8');
 character=character.replace("check('launch.version',\"captureGameProgress().gameVersion\",'0.20.0');",`check('launch.version',"captureGameProgress().gameVersion",'${version}');`);
-fs.writeFileSync(path.join(work,'tools/behavior.cjs'),character);
+fs.writeFileSync(path.join(work,'tools/behavior.cjs'),adaptAssetWaits(character));
 const results=[];
 for(const [name,script,report]of [
  ['perimeter','baseline_0.20.0/qa/perimeter020.cjs','baseline_0.20.0/qa/perimeter_0.20.0.json'],
  ['wall_behaviors','baseline_0.20.0/qa/wall_behaviors020.cjs','baseline_0.20.0/qa/wall_behaviors_0.20.0.json'],
  ['targets','baseline_0.20.0/qa/target0191.cjs','baseline_0.20.0/qa/target_regression_0.20.0.json'],
  ['characterization','tools/behavior.cjs','reports/behavior.json']]){
- const out=cp.spawnSync(process.execPath,[path.join(work,script)],{encoding:'utf8',timeout:240000,maxBuffer:8e6,env:{...process.env,NODE_PATH:[process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,path.join(home,'node_modules'),process.env.NODE_PATH].filter(Boolean).join(path.delimiter)}});
+ const out=cp.spawnSync(process.execPath,[path.join(work,script)],{encoding:'utf8',timeout:240000,maxBuffer:8e6,env:{...process.env,LAST_BASE_ASSETS:assets,NODE_PATH:[process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,path.join(home,'node_modules'),process.env.NODE_PATH].filter(Boolean).join(path.delimiter)}});
  fs.writeFileSync(path.join(resultDir,name+'.log'),out.stdout+'\n'+out.stderr);
  const data=fs.existsSync(path.join(work,report))?JSON.parse(fs.readFileSync(path.join(work,report))):null;
  if(data){data.suiteBaselineVersion='0.20.0';data.testedVersion=version;fs.writeFileSync(path.join(resultDir,name+'.json'),JSON.stringify(data,null,2)+'\n');}

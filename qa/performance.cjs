@@ -9,7 +9,7 @@ const stats=a=>({samples:a.length,meanMs:a.reduce((a,b)=>a+b,0)/a.length,p50Ms:p
 async function main(){
  const before=process.memoryUsage(),boot=performance.now(),r=setup(target),bootMs=performance.now()-boot,E=s=>r.eval(s);
  if(process.env.LAST_BASE_CONTROL_MODE)E(`window.GameInput?.setMode(${JSON.stringify(process.env.LAST_BASE_CONTROL_MODE)})`);
- const decodeStart=performance.now();await Promise.all([...E('Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode())'),...E('[1,2,3,4,5].map(n=>V020Walls.image(n).decode())')]);const decodeWaitMs=performance.now()-decodeStart;
+ const decodeStart=performance.now();await Promise.all([...E('(window.GameAssets?Object.values(AssetManifest.art).map(id=>GameAssets.load(id)):Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode()))'),...E('(window.GameAssets?Object.values(AssetManifest.walls).map(id=>GameAssets.load(id)):[1,2,3,4,5].map(n=>V020Walls.image(n).decode()))')]);const decodeWaitMs=performance.now()-decodeStart;
  const initial=E('JSON.stringify(captureGameProgress())'),scenes=[];
  const cases=[
   {id:'surface_day',setup:"scene='surface';player.x=800;player.y=850;V016Lighting.restore({schema:1,day:1,minute:840});"},

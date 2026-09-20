@@ -1,0 +1,81 @@
+{
+  "version": "0.23.1",
+  "patch": "PC / Mobile Controls",
+  "stage": 3,
+  "stage4Started": false,
+  "passed": true,
+  "automatedAssertions": 4016,
+  "originalBaselineAssertions": 477,
+  "runs": [
+    {
+      "id": "build",
+      "exitCode": 0,
+      "elapsedMs": 160
+    },
+    {
+      "id": "verification",
+      "exitCode": 0,
+      "elapsedMs": 232
+    },
+    {
+      "id": "regressions",
+      "exitCode": 0,
+      "elapsedMs": 21294
+    },
+    {
+      "id": "interactions",
+      "exitCode": 0,
+      "elapsedMs": 41344
+    },
+    {
+      "id": "saves",
+      "exitCode": 0,
+      "elapsedMs": 7691
+    },
+    {
+      "id": "balance",
+      "exitCode": 0,
+      "elapsedMs": 1199
+    },
+    {
+      "id": "state-saves",
+      "exitCode": 0,
+      "elapsedMs": 10644
+    },
+    {
+      "id": "differential",
+      "exitCode": 0,
+      "elapsedMs": 33418
+    },
+    {
+      "id": "systems",
+      "exitCode": 0,
+      "elapsedMs": 2285
+    },
+    {
+      "id": "stage3-differential",
+      "exitCode": 0,
+      "elapsedMs": 86683
+    },
+    {
+      "id": "controls",
+      "exitCode": 0,
+      "elapsedMs": 13687
+    },
+    {
+      "id": "controls-differential",
+      "exitCode": 0,
+      "initialAttempt": {
+        "exitCode": 1,
+        "elapsedMs": 46009,
+        "reason": "The copied Stage 2 oracle normalization removed metadata now present in both Stage 3 builds. Corrected test to compare ALL weapon fields, then re-executed successfully."
+      },
+      "successfulRerunLog": "controls-differential-rerun.log"
+    }
+  ],
+  "limitations": [
+    "VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "Seven missing audio assets were already absent in Stage 0."
+  ],
+  "note": "Full existing regression suite passed on final runtime. Additional controls differential re-run after correcting its oracle; no runtime changes followed the full run."
+}
