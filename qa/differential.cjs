@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..');process.chdir(root);
 const {setup}=require('./runtime.cjs'),a=setup('qa/stage1/index.html'),b=setup('index.html'),checks=[];
 const json=v=>JSON.parse(JSON.stringify(v));
-function normalized(d){d=json(d);delete d.saveVersion;d.gameVersion='metadata-only';return d;}
+const normalized=require('./identity-test-contract.cjs').gameplay;
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.message.slice(0,4000)});}}
 function both(code){const aa=a.eval(code),bb=b.eval(code);assert.deepEqual(json(bb??null),json(aa??null));}
 function compare(){assert.deepEqual(normalized(b.eval('captureGameProgress()')),normalized(a.eval('captureGameProgress()')));}
@@ -13,7 +13,7 @@ check('freshGame.fullPayload',compare);
 for(const stage of ['stage0','stage1']){
  const dir=path.join(__dirname,stage,'fixtures');
  for(const file of fs.readdirSync(dir).filter(n=>n.endsWith('.json')&&n!=='index.json')){
-  const raw=fs.readFileSync(path.join(dir,file),'utf8');
+  const raw=require('./event-test-contract.cjs').raidFixture(fs.readFileSync(path.join(dir,file),'utf8'));
   check(stage+'.'+file+'.decodedPayload',()=>assert.deepEqual(normalized(b.eval(`decodeGameProgress(${JSON.stringify(raw)})`)),normalized(a.eval(`decodeGameProgress(${JSON.stringify(raw)})`))));
   check(stage+'.'+file+'.restoredPayload',()=>{restore(raw);compare();});
   check(stage+'.'+file+'.newRoundtrip',()=>{
@@ -21,7 +21,7 @@ for(const stage of ['stage0','stage1']){
   });
  }
 }
-const fixture=id=>fs.readFileSync(path.join(__dirname,'stage1/fixtures',id+'.json'),'utf8');
+const fixture=id=>require('./event-test-contract.cjs').raidFixture(fs.readFileSync(path.join(__dirname,'stage1/fixtures',id+'.json'),'utf8'));
 const scenarios=[
  {id:'surfaceMovement',fixture:'fresh_game',start:"scene='surface';player.x=800;player.y=850;menuOpen=false;stopControls(true);moveX=.35;moveY=.9;movePower=.8;",frames:90},
  {id:'craftingProgress',fixture:'craft_in_progress',start:"menuOpen=false;stopControls(true);",frames:120},

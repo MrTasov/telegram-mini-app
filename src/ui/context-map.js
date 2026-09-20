@@ -162,7 +162,7 @@ window.V0105=(()=>{
       add({id:o.id,x:o.x+(o.w||0)/2,y:o.y+(o.h||0)/2,kind:'interactive'});
     }
     // Threats last, so their red silhouettes remain readable above scenery.
-    if(scene==='surface')for(const [i,z] of zombies.entries())if(z.alive)add({id:'enemy_'+i,x:z.x,y:z.y,kind:'zombie',radius:z.radius,type:z.type,selected:z===liveTarget()});
+    if(scene==='surface')for(const z of zombies)if(z.alive)add({id:z.instanceId,x:z.x,y:z.y,kind:'zombie',radius:z.radius,type:z.type,selected:z===liveTarget()});
     return out;
   }
   function drawMapMarkers(c,scale,mini,bounds){

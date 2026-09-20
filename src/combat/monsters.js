@@ -13,32 +13,26 @@ window.V017Monsters=(()=>{
   const typeAt=index=>{const ids=kinds();return ids[index%ids.length];};
   const SIDES=['N','E','S','W'],CORPSE_MS=90000;
   // Preserve the ACTUAL Day X contract, including cooldown and special attacks.
-  const dayX=Object.freeze({intervalDays:10,hp:1.5,damage:1.5,speed:1.5,chaseSpeed:1.5,cooldownRate:1.5,mechanics:1.5,population:96,ordinaryPopulation:48,maxPopulation:144});
-  const raidCache=new WeakMap();
-  function stats(z,raid=isDayX()){
-    const s=specs[typeof z==='string'?z:z.type]||specs.normal;if(!raid)return s;
-    let entry=raidCache.get(s);
-    if(!entry||['hp','speed','chaseSpeed','damage','cooldown'].some(key=>entry.source[key]!==s[key])){
-      entry={source:{hp:s.hp,speed:s.speed,chaseSpeed:s.chaseSpeed,damage:s.damage,cooldown:s.cooldown},value:{...s,hp:s.hp*dayX.hp,speed:s.speed*dayX.speed,chaseSpeed:s.chaseSpeed*dayX.chaseSpeed,damage:s.damage*dayX.damage,cooldown:s.cooldown/dayX.cooldownRate}};
-      raidCache.set(s,entry);
-    }
-    return entry.value;
+  const dayX=WorldEvents.dayX;
+  function stats(z,raid){
+    const s=specs[typeof z==='string'?z:z.type]||specs.normal;
+    return WorldEvents.enemyStats(s,raid===undefined?WorldEvents.snapshot().modifiers:raid?WorldEvents.xModifiers:WorldEvents.none);
   }
   let runtime=new WeakMap(),serial=0,lastPopulation=0,effects=[],neighbors=new Map(),lastRaid=null;
   const night=()=>V016Lighting.daylight()<.28;
-  const isDayX=(day=V016Lighting.day)=>Number.isInteger(day)&&day>0&&day%dayX.intervalDays===0;
-  const factor=()=>isDayX()?dayX.mechanics:1;
-  const targetCount=()=>Math.min(dayX.maxPopulation,Math.round((isDayX()?dayX.population:dayX.ordinaryPopulation)*V010World.settings.enemyCount));
+  const isDayX=(day,minute=WorldClock.minute)=>day===undefined?WorldEvents.isActive('day_x'):WorldEvents.matches('day_x',day,minute);
+  const factor=()=>WorldEvents.value('enemy.mechanics');
+  const targetCount=()=>Math.min(dayX.maxPopulation,Math.round((dayX.ordinaryPopulation*WorldEvents.value('spawn.intensity'))*V010World.settings.enemyCount));
   const hash=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
   const angleOf=a=>((a%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
   const insideOuter=z=>z.x>242&&z.x<1358&&z.y>202&&z.y<998;
   const insideInner=z=>z.x>642&&z.x<958&&z.y>452&&z.y<728;
   function nearestSide(z){const x=(z.x-800)/630,y=(z.y-600)/470;return Math.abs(x)>Math.abs(y)?x<0?'W':'E':y<0?'N':'S';}
   function prepare(z,legacy=false){
-    if(!specs[z.type])z.type='normal';const raid=isDayX(),s=stats(z,raid);
+    if(!specs[z.type])z.type='normal';const raid=isDayX(),s=stats(z);
     const changed=z.raid019!==raid;
     if(!z.monster017){z.health=z.alive?Math.max(.001,clamp(z.health/(z.maxHealth||100),0,1)*s.hp):0;z.monster017=true;}
-    else if(changed){const previous=stats(z,z.raid019===true).hp;z.health=z.alive?clamp(z.health/previous,0,1)*s.hp:0;}
+    else if(changed||z.maxHealth!==s.hp){const previous=z.maxHealth||stats(z,z.raid019===true).hp;z.health=z.alive?clamp(z.health/previous,0,1)*s.hp:0;}
     z.raid019=raid;
     z.maxHealth=s.hp;z.radius=s.radius;z.speed=s.speed;z.chaseSpeed=s.chaseSpeed;
     if(!runtime.has(z)){const id=++serial;runtime.set(z,{id,angle:z.wanderAngle||0,walk:0,nextSense:0,sees:false,target:null,retarget:0,attack:0,jump:null,fuse:0,exploded:false,deadAt:z.alive?0:performance.now(),stuck:0,side:nearestSide(z),variant:Math.floor(hash(id*23)*3),deathAngle:angleOf(z.wanderAngle||0),retired:false,pauseUntil:0});}
@@ -135,11 +129,11 @@ window.V017Monsters=(()=>{
   function population(now,force=false){
     if(!force&&now-lastPopulation<1800)return;lastPopulation=now;
     const count=targetCount();let living=zombies.filter(z=>z.alive).length,added=0,removed=0;
-    // Keep array indices stable for drone targets. Surplus actors retire only
+    // Preserve the released population/corpse pool policy. Surplus actors retire only
     // out of sight, without fake kills, rewards, blood or death explosions.
     for(let i=zombies.length-1;i>=0&&living>count&&removed<4;i--){
       const z=zombies[i],r=prepare(z),drone=window.V014Robots?.state;
-      if(!z.alive||r.sees||window.V0105?.target===z||drone?.task==='attack'&&drone.targetIndex===i||sameLevel()&&(dist(z,player)<700||visibleOnScreen(z.x,z.y,130)))continue;
+      if(!z.alive||r.sees||window.V0105?.target===z||drone?.task==='attack'&&drone.targetId===z.instanceId||sameLevel()&&(dist(z,player)<700||visibleOnScreen(z.x,z.y,130)))continue;
       z.alive=false;z.health=0;z.state='wander';z.corpseAt011=Date.now()-CORPSE_MS;r.retired=true;r.deadAt=now-CORPSE_MS;r.target=null;r.fuse=0;r.jump=null;stopZombieAudio(z);living--;removed++;
     }
     for(let i=0;i<zombies.length&&living<count&&added<4;i++){
@@ -149,14 +143,20 @@ window.V017Monsters=(()=>{
     while(living<count&&zombies.length<144&&added<4){const z=spawn(zombies.length);if(!z)break;zombies.push(z);living++;added++;}
     if(added||removed)queueGameSave();
   }
-  function updateMonsters(){
+  function syncEvent(){
     const raid=isDayX();
     if(lastRaid!==raid){if(lastRaid!==null)message(raid?'День X · монстры усилены на 50%':'День X закончился');lastRaid=raid;lastPopulation=-Infinity;for(const z of zombies)prepare(z);}
+  }
+  // Stats switch at the exact clock boundary. Keep the existing notification
+  // timing in the simulation tick (restore/preview must not add journal rows).
+  WorldEvents.onChange(()=>{if(!GameSave.restoring){lastPopulation=-Infinity;for(const z of zombies)prepare(z);}});
+  function updateMonsters(){
+    syncEvent();const raid=isDayX();
     if(menuOpen||playerDead||document.hidden)return;
-    const now=performance.now(),boost=raid?dayX.mechanics:1,dt=Math.min(2,Math.max(0,frameScale));population(now);
+    const now=performance.now(),boost=factor(),dt=Math.min(2,Math.max(0,frameScale));population(now);
     neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,[]);neighbors.get(key).push(z);}
     for(const z of zombies){
-      const r=prepare(z);if(!z.alive)continue;const s=stats(z,raid),d=dist(z,player);
+      const r=prepare(z);if(!z.alive)continue;const s=stats(z),d=dist(z,player);
       if(sameLevel()&&d<ZOMBIE_AUDIO_RADIUS&&visibleOnScreen(z.x,z.y,60)&&now>(z.lastGrowl||0)){playZombieBuffer(z);z.lastGrowl=now+3500+hash(r.id+Math.floor(now/1000))*4500;}
       if(now>=r.nextSense){r.nextSense=now+190+hash(r.id)*100;r.sees=sameLevel()&&!V091Fortress.isElevated()&&d<(V010World.sneaking?130:240)*boost&&lineClear(z.x,z.y,player.x,player.y,0,'surface');}
       if(r.jump){
@@ -266,7 +266,7 @@ window.V017Monsters=(()=>{
     validate(d);restore(d);runtime=new WeakMap();effects=[];lastPopulation=performance.now();lastRaid=isDayX();
     zombies.forEach((z,i)=>{
       const saved=d.monsters017?.schema===2?d.monsters017.actors[i]:null;
-      if(d.monsters017){z.type=d.monsters017.types[i];z.monster017=true;z.raid019=saved?.raid??false;z.health=d.zombies[i].health;}
+      if(d.monsters017){z.type=d.monsters017.types[i];z.monster017=true;z.raid019=saved?.raid??false;z.health=d.zombies[i].health;z.maxHealth=stats(z,z.raid019).hp;}
       else {z.monster017=false;z.health=d.zombies[i].health;z.maxHealth=100;}
       const r=prepare(z);
       if(saved){r.side=saved.side;r.variant=saved.variant;r.deathAngle=saved.deathAngle;r.retired=saved.retired;r.deadAt=z.alive?0:performance.now()-saved.corpseMs;}
@@ -278,4 +278,3 @@ window.V017Monsters=(()=>{
   zombies.forEach((z,i)=>{z.type=typeAt(i);prepare(z);});
   return{specs,stats,dayX,typeAt,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
 })();
-

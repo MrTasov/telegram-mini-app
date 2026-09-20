@@ -1,7 +1,7 @@
 // Stage 5 integration checks: real UI builders, save owners and Canvas output.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 process.chdir(path.resolve(__dirname,'..'));const {setup}=require('./runtime.cjs'),checks=[],coverage=[];
-const copy=v=>JSON.parse(JSON.stringify(v)),clean=d=>{d=copy(d);d.gameVersion='release';return d;};
+const copy=v=>JSON.parse(JSON.stringify(v)),clean=require('./identity-test-contract.cjs').gameplay;
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack?.slice(0,2500)});}}
 const r=setup('index.html',{}, {language:'en'}),E=s=>r.eval(s),fresh=E('JSON.stringify(captureGameProgress())');
 const catalog=require('../tools/locales.cjs').validate();
@@ -72,7 +72,7 @@ check('cache.bounded',()=>{for(let i=0;i<1300;i++)E(`I18n.text('Рюкзак · 
 const base=setup('qa/stage4-fixed/index.html'),candidate=setup('index.html',{}, {language:'en'});
 check('payload.freshGame',()=>assert.deepEqual(clean(candidate.eval('captureGameProgress()')),clean(base.eval('captureGameProgress()'))));
 for(const stage of ['stage0','stage1','stage2'])for(const file of fs.readdirSync('qa/'+stage+'/fixtures').filter(f=>f.endsWith('.json')&&f!=='index.json')){
- const raw=fs.readFileSync('qa/'+stage+'/fixtures/'+file,'utf8');
+ const raw=require('./event-test-contract.cjs').raidFixture(fs.readFileSync('qa/'+stage+'/fixtures/'+file,'utf8'));
  for(const language of ['en','ru'])check(`payload.${language}.${stage}.${file}`,()=>{candidate.eval(`I18n.setLanguage('${language}')`);for(const x of [base,candidate])x.eval(`restoreGameProgress(decodeGameProgress(${JSON.stringify(raw)}))`);assert.deepEqual(clean(candidate.eval('captureGameProgress()')),clean(base.eval('captureGameProgress()')));const round=candidate.eval('JSON.stringify(captureGameProgress())');candidate.eval(`restoreGameProgress(decodeGameProgress(${JSON.stringify(round)}))`);assert.deepEqual(clean(candidate.eval('captureGameProgress()')),clean(base.eval('captureGameProgress()')));});
 }
 check('console.noErrors',()=>{assert.deepEqual(r.errors,[]);assert.deepEqual(base.errors,[]);assert.deepEqual(candidate.errors,[]);});

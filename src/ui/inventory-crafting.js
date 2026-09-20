@@ -36,7 +36,6 @@ window.V011UI=(()=>{
   const locationItems=where=>inv.list(where);
   function details(where,index){
     const item=where==='equipment'?equipment[index]:locationItems(where)?.[index];if(!item)return;
-    combat.ensure(item);
     const def=ITEM[item.type],overlay=v09Overlay('v010ItemDetails',def.name),body=overlay.querySelector('.v09Body');
     I18n.assign(body,"innerHTML",cardHTML(item));
     const actions=document.createElement('div');actions.className='v011ItemActions';
@@ -47,7 +46,7 @@ window.V011UI=(()=>{
       const remove=button('Снять',()=>{if(inv.unequip(index))closeOverlay(overlay);},!worn);
       if(worn&&def.equip==='backpack'){I18n.assign(remove,'title','Чтобы сменить рюкзак, наденьте другой из инвентаря');}
     }
-    if(def.hand&&where==='bag')button('В быстрый слот',()=>{inv.selectUid(item.type,item.uid);closeOverlay(overlay);openHandAssignment(item.type);});
+    if(def.hand&&where==='bag')button('В быстрый слот',()=>{combat.ensure(item);inv.selectUid(item.type,item.uid);closeOverlay(overlay);openHandAssignment(item.type);});
     if(where!=='equipment'){
       button(item.locked?'Открепить':'Закрепить',()=>{item.locked=!item.locked;inv.render();window.V011UI.details(where,index);},false,true);
       if(['bag'].includes(where)||Number.isInteger(where))if(activeStorage!==null&&el('storageOverlay').classList.contains('open'))button(where==='bag'?'В ящик':'В рюкзак',()=>{inv.transfer(where,index,where==='bag'?activeStorage:'bag');closeOverlay(overlay);},false,true);
@@ -59,7 +58,7 @@ window.V011UI=(()=>{
     openOverlay(overlay);
   }
   const oldEquipment=renderEquipment;
-  renderEquipment=function(){oldEquipment();const s=combat.refreshStats(),node=el('characterStats');if(!node)return;
+  renderEquipment=function(){oldEquipment();const s=combat.equipmentSnapshot(),node=el('characterStats');if(!node)return;
     I18n.assign(node,"innerHTML",[['Здоровье',Math.round(player.health)+' / '+Math.round(s.hp)],['Защита',s.armor+'%'],['Скорость','+'+Math.round(s.speed*100)+'%'],['Точность','+'+Math.round(s.accuracy*100)+'%']].map(([label,value])=>'<div class="v011StatRow"><span>'+label+'</span><b>'+value+'</b></div>').join(''));
   };
   // Re-rendering after a deliberate transfer does not shift the inventory scroll position.

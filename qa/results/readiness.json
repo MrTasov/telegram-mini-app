@@ -1,0 +1,247 @@
+{
+  "version": "0.27.0",
+  "passed": 60,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "actors.oneLiveViewNoSecondPlayer",
+      "status": "PASS"
+    },
+    {
+      "id": "actors.identityIndependentOfDisplayName",
+      "status": "PASS"
+    },
+    {
+      "id": "actors.liveContainersAfterRestore",
+      "status": "PASS"
+    },
+    {
+      "id": "identity.factoryDoesNotConsumeExtraRandomNumbers",
+      "status": "PASS"
+    },
+    {
+      "id": "identity.immutableUniqueAndSeparateFromAISeed",
+      "status": "PASS"
+    },
+    {
+      "id": "identity.reorderRoundtripAndMonotonicSpawn",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.targetSurvivesReorderAndIndexRemoval",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.targetSurvivesSaveRestart",
+      "status": "PASS"
+    },
+    {
+      "id": "drone.replacedArraySlotNeverRetargetsNewEnemy",
+      "status": "PASS"
+    },
+    {
+      "id": "map.enemyMarkersUseStableIds",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage0.fresh_game.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage0.day_x.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage0.rifle_ak74_37_60.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage0.drone_packed.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage0.damaged_base_turret.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage1.fresh_game.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage1.day_x.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage1.rifle_ak74_37_60.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage1.drone_packed.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage1.damaged_base_turret.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage2.fresh_game.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage2.day_x.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage2.rifle_ak74_37_60.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage2.drone_packed.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.stage2.damaged_base_turret.deterministicAndRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "identity.slot.1.independentRestart",
+      "status": "PASS"
+    },
+    {
+      "id": "identity.slot.2.independentRestart",
+      "status": "PASS"
+    },
+    {
+      "id": "identity.slot.3.independentRestart",
+      "status": "PASS"
+    },
+    {
+      "id": "identity.slot.4.independentRestart",
+      "status": "PASS"
+    },
+    {
+      "id": "identity.slot.5.independentRestart",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.missing.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.duplicate.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.counterReuse.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.invalidId.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.missingEnemy.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.displayNameId.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.danglingDrone.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.shadowEnemyId.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.shadowEnemyType.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.shadowPlayerId.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject.shadowDroneTarget.beforeAnyMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.PC.sameActorAndResults",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.MOBILE.sameActorAndResults",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.foreignActorCannot.MOVE",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.foreignActorCannot.FIRE",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.foreignActorCannot.AIM",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.foreignActorCannot.SELECT_SLOT",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.foreignActorCannot.RELOAD",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.foreignActorCannot.INTERACT",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.localModalGuardAndReleasePreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.invalidDoesNotMutateState",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.equipmentRenderingCannotCalculateOrClampPlayerHP",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.itemCardAndMagazinePickerDoNotInitializeItems",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.defaultsViewMatchesInitializationWithoutAllocatingUid",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.ammoHudIsReadOnly",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.equipAndUnequipCommitWithoutRenderer",
+      "status": "PASS"
+    },
+    {
+      "id": "world.eventsIndependentOfClientSceneCameraAndMode",
+      "status": "PASS"
+    },
+    {
+      "id": "world.currentClientSceneIsNotWorldAuthority",
+      "status": "PASS"
+    },
+    {
+      "id": "architecture.noNewNetworkOrLoopInNewModules",
+      "status": "PASS"
+    },
+    {
+      "id": "console.noErrors",
+      "status": "PASS"
+    }
+  ]
+}

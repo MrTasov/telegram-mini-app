@@ -13,7 +13,7 @@ async function main(){
  const initial=E('JSON.stringify(captureGameProgress())'),scenes=[];
  const cases=[
   {id:'surface_day',setup:"scene='surface';player.x=800;player.y=850;V016Lighting.restore({schema:1,day:1,minute:840});"},
-  {id:'surface_night_day_x',setup:"scene='surface';player.x=800;player.y=850;V09Power.running=true;V09Power.fuel=80;V016Lighting.restore({schema:1,day:10,minute:1380});"},
+  {id:'surface_night_day_x',setup:"scene='surface';player.x=800;player.y=850;V09Power.running=true;V09Power.fuel=80;V016Lighting.restore({schema:1,day:10,minute:180});"},
   {id:'bunker_power_drone',setup:"scene='bunker';player.x=1264;player.y=740;V09Power.running=true;V09Power.fuel=80;V014Robots.follow();"},
   {id:'inventory_open',setup:"scene='bunker';player.x=1264;player.y=740;openOverlay(el('inventoryOverlay'));"},
   {id:'surface_zoom_out',setup:"scene='surface';player.x=800;player.y=850;V010Camera.restore({...V010Camera.capture(),zoom:.35});"}

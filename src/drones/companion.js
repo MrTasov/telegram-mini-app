@@ -21,6 +21,11 @@ window.V014Robots=(()=>{
   function dockPosition(){return {x:DOCK.x+74,y:DOCK.y+45,scene:'bunker'};}
   function defaults(){return {schema:1,id:INSTANCE_ID,name:'Спутник',...dockPosition(),battery:100,hp:100,ammo:30,packed:false,mode:'defense',combatMode:'defense',resumeTask:null,task:'docked',modules:{body:0,battery:0,cargo:0,weapon:0,engine:0},cargo:[],light:false,autoCollect:true,economy:true,guard:null,targetIndex:null,lowWarn:false,autoReturn:true};}
   const state=defaults();
+  let targetId=null;
+  Object.defineProperties(state,{
+    targetId:{get:()=>targetId,set:id=>{targetId=id;}},
+    targetIndex:{enumerable:true,get(){const i=zombies.findIndex(z=>z.instanceId===targetId);return i<0?null:i;},set(i){targetId=Number.isInteger(i)?zombies[i]?.instanceId??null:null;}}
+  });
   let shot=0,hurt=0,saveClock=0,uiClock=0,angle=0,flash=0,tracer=null,lootSelection=-1,observedTarget=null;
   const motion=V0141DroneMotion.create(state,definition.movement);
   // Station detection does not require drone power. The charging pad is flat;
@@ -36,7 +41,7 @@ window.V014Robots=(()=>{
     const status=state.packed?'DRONE_UNAVAILABLE':state.task==='docking'?'DOCKING':docked?(state.battery>=100?'FULLY_CHARGED':charging?'CHARGING':'NO_POWER'):state.task==='return'?'RETURNING':'NOT_DOCKED';
     return {status,docked,charging,blocked:home.blocked,battery:state.battery,name:state.name,watts:charging?DOCK.watts:0,eta:charging?Math.ceil((100-state.battery)/chargeRate()):null,autoReturn:state.autoReturn,threshold:DOCK.returnThreshold};
   }
-  function beginDocking(){state.task='docking';state.targetIndex=null;state.guard=null;primaryCommand();clearRoute();resetReturn();changed();}
+  function beginDocking(){state.task='docking';state.targetId=null;state.guard=null;primaryCommand();clearRoute();resetReturn();changed();}
   function detectDock(dt){
     if(state.packed||state.scene!=='bunker')return;
     const p=dockPosition(),d=distance(state.x,state.y,p.x,p.y);
@@ -93,7 +98,7 @@ window.V014Robots=(()=>{
     if(state.task!=='attack')return;
     const task=state.resumeTask||'follow';
     state.task=task==='docked'?'return':task==='guard'&&!state.guard?'follow':task;
-    state.resumeTask=null;state.targetIndex=null;clearRoute();changed();
+    state.resumeTask=null;state.targetId=null;clearRoute();changed();
   }
   function primaryCommand(){state.resumeTask=null;observedTarget=selectedTarget();}
   function validStack(s){return s===null||!!(s&&ITEM[s.type]&&!ITEM[s.type].robot&&Number.isInteger(s.qty)&&s.qty>0&&s.qty<=itemStackLimit(s.type)&&V010Combat.validateItem(s)!==false);}
@@ -110,7 +115,7 @@ window.V014Robots=(()=>{
   function pack(){
     if(state.packed)return false;
     if(addItem(TYPE,1,{robotId:state.id})){message('Нужна свободная ячейка');return false;}
-    state.packed=true;state.task='packed';state.targetIndex=null;state.guard=null;undocking=false;resetReturn();primaryCommand();clearRoute();changed();renderBag();return true;
+    state.packed=true;state.task='packed';state.targetId=null;state.guard=null;undocking=false;resetReturn();primaryCommand();clearRoute();changed();renderBag();return true;
   }
   function deploy(item){
     if(!state.packed||!ownsToken(item))return false;
@@ -125,19 +130,19 @@ window.V014Robots=(()=>{
   function follow(){
     if(state.packed||state.hp<=0||state.battery<=0){message('Разместите, зарядите и отремонтируйте дрона');return false;}
     if(atDock()&&state.autoReturn&&state.battery<=DOCK.returnThreshold){message('Дождитесь заряда выше '+DOCK.returnThreshold+'% или отключите автовозврат');return false;}
-    undocking=atDock()||state.task==='docking';resetReturn();state.task='follow';state.guard=null;state.targetIndex=null;primaryCommand();clearRoute();changed();return true;
+    undocking=atDock()||state.task==='docking';resetReturn();state.task='follow';state.guard=null;state.targetId=null;primaryCommand();clearRoute();changed();return true;
   }
   function recall(){return follow();}
-  function returnToDock(){if(state.packed||state.hp<=0||state.battery<=0)return false;if(atDock()||state.task==='docking')return true;undocking=false;resetReturn();state.task='return';state.targetIndex=null;state.guard=null;primaryCommand();clearRoute();changed();return true;}
+  function returnToDock(){if(state.packed||state.hp<=0||state.battery<=0)return false;if(atDock()||state.task==='docking')return true;undocking=false;resetReturn();state.task='return';state.targetId=null;state.guard=null;primaryCommand();clearRoute();changed();return true;}
   function attack(z,quiet=false){
     const fail=text=>{if(!quiet)message(text);return false;};
     if(!combatEnabled())return fail('Включите боевой режим');
     if(state.packed||state.hp<=0||state.battery<=0||scene!=='surface'||!z?.alive||z.health<=0||!zombies.includes(z))return fail('Дрон не готов к вылету');
     if(['return','docking','docked'].includes(state.task)||state.autoReturn&&state.battery<=DOCK.returnThreshold)return fail('Сначала заберите дрон со станции командой «Следовать» и зарядите его');
     if(!state.ammo)return fail('Загрузите патроны 5,45 в дрона');
-    const index=zombies.indexOf(z);if(state.task==='attack'&&state.targetIndex===index)return true;
+    const id=z.instanceId;if(state.task==='attack'&&state.targetId===id)return true;
     if(state.task!=='attack')state.resumeTask=['follow','guard','return','docked'].includes(state.task)?state.task:'follow';
-    state.mode=state.combatMode='attack';state.targetIndex=index;state.task='attack';clearRoute();changed();return true;
+    state.mode=state.combatMode='attack';state.targetId=id;state.task='attack';clearRoute();changed();return true;
   }
   function guard(){if(!follow())return false;state.task='guard';state.guard={x:player.x,y:player.y,scene};changed();return true;}
   function mode(value){
@@ -187,7 +192,7 @@ window.V014Robots=(()=>{
     // Keep the fractional remainder, so frame boundaries cannot slow the gun.
     // Idle time never accumulates into a burst of overdue shots.
     shot=Math.max(-dt,shot-dt);hurt=Math.max(0,hurt-dt);flash=Math.max(0,flash-dt);saveClock+=dt;uiClock+=dt;
-    if(!state.packed&&(state.battery<=0||state.hp<=0)&&!['docked','docking','disabled'].includes(state.task)){state.task='disabled';state.targetIndex=null;primaryCommand();clearRoute();resetReturn();changed();}
+    if(!state.packed&&(state.battery<=0||state.hp<=0)&&!['docked','docking','disabled'].includes(state.task)){state.task='disabled';state.targetId=null;primaryCommand();clearRoute();resetReturn();changed();}
     detectDock(dt);
     if(!state.packed&&state.hp>0&&state.battery>0&&state.battery<=DOCK.returnThreshold&&state.autoReturn&&!['return','docked','docking'].includes(state.task)){
       state.lowWarn=true;returnToDock();message('Дрон: низкий заряд, возвращаюсь на станцию');
@@ -196,13 +201,13 @@ window.V014Robots=(()=>{
     if(selected!==observedTarget){
       const previous=observedTarget;observedTarget=selected;
       if(state.mode==='attack'&&selected)attack(selected,true);
-      else if(state.task==='attack'&&previous===zombies[state.targetIndex])finishAttack();
+      else if(state.task==='attack'&&previous===GameIdentity.enemy(state.targetId))finishAttack();
     }
     if(!state.packed&&state.hp>0&&state.battery>0&&['follow','guard','attack','return'].includes(state.task)){
       const before={x:state.x,y:state.y};let z=null;
       if(state.task==='return')returnStep(dt);
       else if(state.task==='attack'){
-        z=zombies[state.targetIndex];if(!combatEnabled()||!z?.alive||z.health<=0||scene!=='surface'||!state.ammo){finishAttack();}
+        z=GameIdentity.enemy(state.targetId);if(!combatEnabled()||!z?.alive||z.health<=0||scene!=='surface'||!state.ammo){finishAttack();}
         else{if(state.scene!=='surface')sceneTravel({x:800,y:690,scene:'surface'},dt);else if(distance(state.x,state.y,z.x,z.y)>225||!lineClear(state.x,state.y,z.x,z.y,2,'surface')){
           let p=null;for(let i=0;i<12;i++){const a=Math.atan2(state.y-z.y,state.x-z.x)+i*Math.PI/6,q={x:z.x+Math.cos(a)*185,y:z.y+Math.sin(a)*185};if(!worldCollision(q.x,q.y,10,'surface')&&lineClear(q.x,q.y,z.x,z.y,2,'surface')){p=q;break;}}if(p)moveTo(p,dt);else{finishAttack();message('Дрон: нет позиции для атаки');}}
           if(state.task==='attack'&&state.scene==='surface')shootAt(z);
@@ -214,7 +219,7 @@ window.V014Robots=(()=>{
       }
       if(!['docked','docking'].includes(state.task))state.battery=Math.max(0,state.battery-dt*(home.blocked&&state.task==='return'?definition.battery.blockedDrain:definition.battery.idleDrain+(state.light&&!(state.economy&&state.battery<20)?definition.battery.lightDrain:0))/batteryFactor());
       if(state.scene==='surface'&&hurt<=0){const touch=zombies.find(q=>q.alive&&distance(q.x,q.y,state.x,state.y)<(q.radius||16)+16);if(touch){state.hp=Math.max(0,state.hp-12*(1-armor()/100));hurt=1;changed();}}
-      if(state.hp<=0||state.battery<=0){state.task='disabled';state.targetIndex=null;primaryCommand();clearRoute();message(state.hp<=0?'Дрон повреждён — подберите его для ремонта':'Дрон разрядился — подберите его');}
+      if(state.hp<=0||state.battery<=0){state.task='disabled';state.targetId=null;primaryCommand();clearRoute();message(state.hp<=0?'Дрон повреждён — подберите его для ремонта':'Дрон разрядился — подберите его');}
     }
     if(V09Power.devices.robot_drone_charge.active()&&devicePowered('robot_drone_charge')){
       state.battery=Math.min(100,state.battery+dt*chargeRate());if(state.battery===100)state.lowWarn=false;
@@ -281,8 +286,8 @@ window.V014Robots=(()=>{
     if(d.robots014)validate(d.robots014);restoreOld(d);Object.assign(state,defaults(),d.robots014?copy(d.robots014):{});
     if(!d.robots014?.combatMode)state.combatMode=state.mode==='attack'?'attack':'defense';
     clearRoute();resetReturn();undocking=false;shot=hurt=saveClock=0;observedTarget=selectedTarget();
-    state.targetIndex=state.task==='attack'&&zombies[state.targetIndex]?.alive?state.targetIndex:null;
-    if(state.task==='attack'&&(state.targetIndex===null||!combatEnabled()))finishAttack();
+    state.targetId=state.task==='attack'&&GameIdentity.enemy(state.targetId)?.alive?state.targetId:null;
+    if(state.task==='attack'&&(state.targetId===null||!combatEnabled()))finishAttack();
     if(state.task==='docked'&&!state.packed)Object.assign(state,dockPosition());updateHUD();
   });
   v09Style('.v014DroneHUD{position:fixed;right:12px;top:calc(220px + env(safe-area-inset-top,0px));z-index:38;width:auto;min-height:28px!important;padding:5px 8px!important;border-radius:9px!important;font:11px Arial!important;background:#172c2cd9!important;color:#b7d5c8!important}.v014RobotActions{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.v014RobotActions .menuButton,#v014DronePanel details .menuButton{width:auto;min-height:30px!important;padding:6px 8px!important;font-size:11px!important;margin:0}.v014RobotActions .selected{background:#376351!important}.v014RobotGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.v014RobotGrid .menuButton{position:relative;min-height:45px;padding:4px;margin:0}.v014RobotGrid img{max-height:34px;max-width:100%}.v014RobotGrid small{position:absolute;bottom:2px;right:4px;font-size:10px}.v014DroneHeader{display:flex;align-items:center;gap:10px;padding:6px 0 9px;border-bottom:1px solid #58716a55}.v014DroneHeader img{width:64px;height:48px;object-fit:contain;border-radius:8px;background:#1a3436}.v014DroneStats{font-size:11px;line-height:1.55;color:#c7ddd3}.v014DroneStats b{color:#f0d892;font-size:12px}#v014DronePanel .panel{width:min(500px,94vw);max-height:83dvh;overflow-y:auto;padding:12px;min-height:420px}#v014DronePanel p{font-size:11px;line-height:1.5;margin:9px 0}#v014DronePanel input,#v014DronePanel select{max-width:100%;background:#203b3c;color:#deece5;border:1px solid #648178;border-radius:7px;padding:7px}#v014DroneLoot{font-size:11px;min-height:28px;padding:6px 10px}@media(max-height:520px){.v014DroneHUD{top:calc(110px + env(safe-area-inset-top,0px));right:65px}}');

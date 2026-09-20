@@ -19,9 +19,13 @@ const GameSave=(()=>{
     steps.push({id,fn});
     chains[phase]=(...args)=>fn(previous,...args);
   }
-  function capture(){return SaveFormat.stamp(chains.capture());}
+  function capture(){const data=chains.capture();data.identity027=GameIdentity.capture();return SaveFormat.stamp(data);}
   function decode(raw){
-    const data=SaveFormat.stamp(chains.decode(SaveFormat.prepare(raw)));
+    const migration={};
+    const data=SaveFormat.stamp(chains.decode(SaveFormat.prepare(raw,migration)));
+    // Identity migration follows historical owner migrations, which can expand
+    // the enemy array. Validation is still complete before touching live state.
+    SaveFormat.complete(data,migration.sourceVersion);GameIdentity.validate(data);
     validated.set(data,JSON.stringify(data));return data;
   }
   function registerModule(id,system){

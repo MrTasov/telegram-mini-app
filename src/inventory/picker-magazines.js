@@ -103,19 +103,19 @@ window.V0162Magazines=(()=>{
     openOverlay(o);return true;
   }
   function render(parent,s,after){
-    if(!rifle(s))return;combat.ensure(s);
+    if(!rifle(s))return;const view=combat.itemView(s);
     const section=document.createElement('section');section.className='v162Magazine';parent.append(section);
     const label=document.createElement('div');label.className='v162MagazineLabel';I18n.assign(label,"textContent",'Магазин');section.append(label);
     const row=document.createElement('div');row.className='v162MagazineRow';section.append(row);
     const slot=v09Button('',()=>choose(s,after),'v162MagazineSlot');slot.dataset.magazineAction='choose';I18n.setAttr(slot,'aria-label','Магазин · выбрать или заменить');
-    I18n.assign(slot,"innerHTML",s.magazineType?itemIconHTML(s.magazineType):'＋');row.append(slot);
+    I18n.assign(slot,"innerHTML",view.magazineType?itemIconHTML(view.magazineType):'＋');row.append(slot);
     const info=document.createElement('div');info.className='v162MagazineInfo';
-    const name=document.createElement('span');I18n.assign(name,"textContent",s.magazineType?ITEM[s.magazineType].name:'Не установлен');
-    const count=document.createElement('b');I18n.assign(count,"textContent",s.rounds+'/'+combat.gunSpec(s).mag);
+    const name=document.createElement('span');I18n.assign(name,"textContent",view.magazineType?ITEM[view.magazineType].name:'Не установлен');
+    const count=document.createElement('b');I18n.assign(count,"textContent",view.rounds+'/'+combat.gunSpec(s).mag);
     info.append(name,count);row.append(info);
     const actions=document.createElement('div');actions.className='v162MagazineActions';section.append(actions);
-    const put=v09Button(s.magazineType?'Заменить':'Установить',()=>choose(s,after));put.dataset.magazineAction='install';put.disabled=!owner(s);slot.disabled=put.disabled;
-    const take=v09Button('Снять',()=>{if(remove(s))after?.();});take.dataset.magazineAction='remove';take.disabled=!s.magazineType||!owner(s);actions.append(put,take);
+    const put=v09Button(view.magazineType?'Заменить':'Установить',()=>choose(s,after));put.dataset.magazineAction='install';put.disabled=!owner(s);slot.disabled=put.disabled;
+    const take=v09Button('Снять',()=>{if(remove(s))after?.();});take.dataset.magazineAction='remove';take.disabled=!view.magazineType||!owner(s);actions.append(put,take);
   }
   const details=V011UI.details;V011UI.details=function(where,i){details(where,i);const s=inv.list(where)?.[i];if(!rifle(s))return;
     const body=el('v010ItemDetails').querySelector('.v09Body');render(body,s,()=>{if(inv.list(where)?.[i]===s)V011UI.details(where,i);else closeOverlay(el('v010ItemDetails'));});

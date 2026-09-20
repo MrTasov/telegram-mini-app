@@ -1,7 +1,7 @@
 window.V013Inventory=(()=>{
   const items=Array(5).fill(null),copy=x=>JSON.parse(JSON.stringify(x));
   const baseCount=bagCount;bagCount=t=>baseCount(t)+(ITEM[t]?.hand?items.filter(s=>s?.type===t).reduce((n,s)=>n+s.qty,0):0);
-  function sync(){handSlots=items.map(s=>s?.type||null);if(!items[activeHandSlot])activeHandSlot=null;renderQuickSlots();updateAmmoHud();queueGameSave();}
+  function sync(){handSlots=items.map(s=>s?.type||null);if(!items[activeHandSlot])activeHandSlot=null;V010Combat.syncAmmo();renderQuickSlots();updateAmmoHud();queueGameSave();}
   assignHandSlot=function(i){
     if(i<0||i>4||!HAND_TYPES.includes(assigningHandType))return false;
     const type=assigningHandType,old=items.findIndex(s=>s?.type===type);

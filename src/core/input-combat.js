@@ -22,9 +22,9 @@ function createNoise(x,y,radius){
    ZOMBIES
 ===================================================== */
 
-function makeZombie(x,y){
+function makeZombie(x,y,instanceId){
 
-  return {
+  return GameIdentity.attachEnemy({
 
     x:x,
     y:y,
@@ -64,7 +64,7 @@ function makeZombie(x,y){
       2000 +
       Math.random()*5000
 
-  };
+  },instanceId);
 
 }
 

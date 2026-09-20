@@ -1,5 +1,5 @@
 {
-  "version": "0.25.3",
+  "version": "0.27.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -2503,6 +2503,7 @@
       "upgrade0161",
       "monsters017",
       "building018",
+      "identity027",
       "saveVersion"
     ],
     "schemas": {
@@ -2523,7 +2524,8 @@
       "turret016": 1,
       "upgrade0161": 1,
       "monsters017": 2,
-      "building018": 1
+      "building018": 1,
+      "identity027": 1
     },
     "registeredModules": [
       "inventory",
@@ -2674,7 +2676,10 @@
       "getItemStats",
       "gunSpec",
       "refreshStats",
+      "equipmentSnapshot",
+      "syncAmmo",
       "ensure",
+      "itemView",
       "rollFoundItem",
       "currentWeapon",
       "tick",

@@ -1,16 +1,16 @@
 /* 0.16: one bounded darkness mask; existing power circuits and light geometry. */
 window.V016Lighting=(()=>{
-  const dayMs=20*60*1000,TAU=Math.PI*2;
-  let day=1,minute=480,saveElapsed=0,lastHud='',mask=null,maskContext=null;
+  const dayMs=WorldClock.dayMs,TAU=Math.PI*2;
+  let saveElapsed=0,lastHud='',mask=null,maskContext=null;
   let fixturesCache=null,shadowRevision='',droneKey='',droneShape=null;
   const shadowShapes=new Map(),roomMasks=new Map(),sprites=new Map();
   const smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t);};
-  function daylight(){return smooth((minute-300)/180)*(1-smooth((minute-1020)/180));}
-  function capture(){return{schema:1,day,minute};}
-  function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isInteger(d.day)||d.day<1||d.day>1000000||!Number.isFinite(d.minute)||d.minute<0||d.minute>=1440)throw Error('Некорректное время суток');return true;}
-  function hud(){const hours=Math.floor(minute/60),mins=Math.floor(minute%60),raid=day%10===0,text=(raid?'ДЕНЬ X · ':'ДЕНЬ ')+day+' · '+String(hours).padStart(2,'0')+':'+String(mins).padStart(2,'0');if(text!==lastHud){const node=el('v016WorldClock');if(node){I18n.assign(node,"textContent",text);node.style.color=raid?'#d6a083':'';}lastHud=text;}}
-  function restore(d){validate(d);day=d?.day??1;minute=d?.minute??480;saveElapsed=0;lastHud='';shadowShapes.clear();droneKey='';hud();}
-  function tick(ms){if(document.hidden||playerDead||!Number.isFinite(ms)||ms<=0)return;const dt=Math.min(ms,1000);minute+=dt/dayMs*1440;if(minute>=1440){const days=Math.floor(minute/1440);day=Math.min(1000000,day+days);minute%=1440;}saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
+  function daylight(){const minute=WorldClock.minute;return smooth((minute-300)/180)*(1-smooth((minute-1020)/180));}
+  const capture=WorldClock.capture,validate=WorldClock.validate;
+  function hud(){const day=WorldClock.day,minute=WorldClock.minute,hours=Math.floor(minute/60),mins=Math.floor(minute%60),raid=WorldEvents.isActive('day_x'),text=(raid?'ДЕНЬ X · ':'ДЕНЬ ')+day+' · '+String(hours).padStart(2,'0')+':'+String(mins).padStart(2,'0');if(text!==lastHud){const node=el('v016WorldClock');if(node){I18n.assign(node,"textContent",text);node.style.color=raid?'#d6a083':'';}lastHud=text;}}
+  function restore(d){WorldClock.restore(d);saveElapsed=0;lastHud='';shadowShapes.clear();droneKey='';hud();}
+  function tick(ms){if(document.hidden||playerDead)return;const dt=WorldClock.advance(ms);saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
+  WorldEvents.onChange(hud);
   // Existing left/right yard circuits retain their save IDs, priority, battery
   // fallback and switches. Each supplies ten wall lamps and four floods.
   for(const id of ['spot_left','spot_right']){const d=V09Power.devices[id];if(d){d.watts=.95;d.name=id==='spot_left'?'Освещение периметра · левая линия':'Освещение периметра · правая линия';d.active=()=>daylight()<.995;}}
@@ -93,6 +93,6 @@ window.V016Lighting=(()=>{
   GameSave.extend('capture','render.lighting',function(oldCapture){const d=oldCapture();d.lighting016=capture();return d;});
   GameSave.extend('decode','render.lighting',function(oldDecode,raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);});
   GameSave.extend('restore','render.lighting',function(oldRestore,d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);});
-  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,get day(){return day;},maskImage:()=>mask,cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:4,droneShapes:droneShape?1:0,droneLimit:1,width:mask?.width||0,height:mask?.height||0})};
+  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,get day(){return WorldClock.day;},maskImage:()=>mask,cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:4,droneShapes:droneShape?1:0,droneLimit:1,width:mask?.width||0,height:mask?.height||0})};
 })();
 

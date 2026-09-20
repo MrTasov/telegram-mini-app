@@ -133,14 +133,15 @@ for(const [legacy,key] of Object.entries({gameSaveReady:'ready',gameSaveBlocked:
    saveVersion describes the envelope, independently of a release number and
    of per-owner schemas. All historical migrations still run in their order. */
 const SaveFormat=(()=>{
-  const VERSION=1,MAX_BYTES=2*1024*1024;
-  const migrations=[{from:0,to:1,id:'explicit-envelope-version',apply(d){d.saveVersion=1;return d;}}];
-  function prepare(raw){
+  const VERSION=2,MAX_BYTES=2*1024*1024;
+  const migrations=[{from:0,to:1,id:'explicit-envelope-version',apply(d){d.saveVersion=1;return d;}},{from:1,to:2,id:'stable-actor-and-enemy-identities',apply(d){d.saveVersion=2;return d;},complete(d){GameIdentity.migrate(d);}}];
+  function prepare(raw,context){
     if(typeof raw!=='string'||raw.length>MAX_BYTES)throw Error('Save file is too large');
     let data=JSON.parse(raw);
     if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Invalid save');
     let version=Object.hasOwn(data,'saveVersion')?data.saveVersion:0;
     if(!Number.isInteger(version)||version<0||version>VERSION)throw Error('Unsupported save format version');
+    if(context)context.sourceVersion=version;
     while(version<VERSION){
       const migration=migrations.find(m=>m.from===version);
       if(!migration)throw Error('Missing save migration');
@@ -148,8 +149,9 @@ const SaveFormat=(()=>{
     }
     return JSON.stringify(data);
   }
-  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.25.3';return data;}
+  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.27.0';return data;}
   return Object.freeze({version:VERSION,prepare,stamp,
+    complete(data,sourceVersion){for(const m of migrations)if(m.from>=sourceVersion)m.complete?.(data);},
     migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});
 })();
 
@@ -174,9 +176,13 @@ const GameSave=(()=>{
     steps.push({id,fn});
     chains[phase]=(...args)=>fn(previous,...args);
   }
-  function capture(){return SaveFormat.stamp(chains.capture());}
+  function capture(){const data=chains.capture();data.identity027=GameIdentity.capture();return SaveFormat.stamp(data);}
   function decode(raw){
-    const data=SaveFormat.stamp(chains.decode(SaveFormat.prepare(raw)));
+    const migration={};
+    const data=SaveFormat.stamp(chains.decode(SaveFormat.prepare(raw,migration)));
+    // Identity migration follows historical owner migrations, which can expand
+    // the enemy array. Validation is still complete before touching live state.
+    SaveFormat.complete(data,migration.sourceVersion);GameIdentity.validate(data);
     validated.set(data,JSON.stringify(data));return data;
   }
   function registerModule(id,system){
@@ -272,6 +278,71 @@ const GameAssets=(()=>{
   });
 })();
 window.GameAssets=GameAssets;
+
+/* Authoritative in-process world clock. No DOM, camera, input, or wall clock.
+   lighting016 remains the on-disk field for compatibility with every old slot. */
+window.WorldClock=(()=>{
+  const dayMs=20*60*1000,listeners=new Set();
+  let day=1,minute=480;
+  function capture(){return {schema:1,day,minute};}
+  function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isSafeInteger(d.day)||d.day<1||!Number.isFinite(d.minute)||d.minute<0||d.minute>=1440)throw Error('Некорректное время суток');return true;}
+  function notify(){for(const fn of listeners)fn(day,minute);}
+  function restore(d){validate(d);day=d?.day??1;minute=d?.minute??480;notify();}
+  function advance(ms){
+    if(!Number.isFinite(ms)||ms<=0)return 0;
+    const dt=Math.min(ms,1000);minute+=dt/dayMs*1440;
+    if(minute>=1440){day=Math.min(Number.MAX_SAFE_INTEGER,day+Math.floor(minute/1440));minute%=1440;}
+    notify();return dt;
+  }
+  return Object.freeze({dayMs,capture,validate,restore,advance,onChange(fn){listeners.add(fn);return()=>listeners.delete(fn);},get day(){return day;},get minute(){return minute;}});
+})();
+
+/* World modifiers are derived, never multiplied into their own previous value.
+   Numeric channels multiply; boolean channels enable capabilities. Lighting,
+   atmosphere, environment and audio can later consume their own channel names.
+   No atmospheric effects/assets or networking are installed by this registry. */
+window.WorldEvents=(()=>{
+  const definitions=new Map(),overrides=new Map(),listeners=new Set(),cache=new WeakMap();
+  const none=Object.freeze({});
+  const dayX=Object.freeze({intervalDays:10,startMinute:0,endMinute:360,hp:1.5,damage:1.5,speed:1.5,chaseSpeed:1.5,cooldownRate:1.5,mechanics:1.5,population:96,ordinaryPopulation:48,maxPopulation:144});
+  const xModifiers=Object.freeze({'enemy.hp':dayX.hp,'enemy.damage':dayX.damage,'enemy.speed':dayX.speed,'enemy.chaseSpeed':dayX.chaseSpeed,'enemy.cooldownRate':dayX.cooldownRate,'enemy.mechanics':dayX.mechanics,'spawn.intensity':2,'spawn.siege':true});
+  let current=Object.freeze({revision:0,ids:Object.freeze([]),modifiers:none}),signature='';
+  function matches(id,day,minute){const def=definitions.get(id);return !!(def&&Number.isSafeInteger(day)&&day>0&&Number.isFinite(minute)&&minute>=0&&minute<1440&&def.schedule({day,minute}));}
+  function refresh(){
+    const ids=[];for(const [id]of definitions)if(overrides.has(id)?overrides.get(id):matches(id,WorldClock.day,WorldClock.minute))ids.push(id);
+    const next=ids.join('|');if(next===signature)return current;
+    const modifiers={};for(const id of ids)for(const [key,value]of Object.entries(definitions.get(id).modifiers))modifiers[key]=typeof value==='boolean'?!!modifiers[key]||value:(modifiers[key]??1)*value;
+    signature=next;current=Object.freeze({revision:current.revision+1,ids:Object.freeze(ids),modifiers:Object.freeze(modifiers)});
+    for(const fn of listeners)fn(current);return current;
+  }
+  function register(def){
+    if(!def||!/^[a-z][a-z0-9_]*$/.test(def.id)||definitions.has(def.id)||typeof def.schedule!=='function')throw Error('Invalid world event');
+    for(const [key,value]of Object.entries(def.modifiers||{}))if(!/^[a-z][a-zA-Z]*\.[a-z][a-zA-Z]*$/.test(key)||typeof value!=='boolean'&&(!Number.isFinite(value)||value<=0))throw Error('Invalid world modifier');
+    definitions.set(def.id,Object.freeze({...def,modifiers:Object.freeze({...def.modifiers})}));refresh();
+  }
+  function enemyStats(base,modifiers=current.modifiers){
+    if(!['hp','damage','speed','chaseSpeed','cooldownRate'].some(k=>(modifiers['enemy.'+k]??1)!==1))return base;
+    let byModifier=cache.get(base);if(!byModifier){byModifier=new WeakMap();cache.set(base,byModifier);}
+    let entry=byModifier.get(modifiers);const keys=['hp','speed','chaseSpeed','damage','cooldown'];
+    if(!entry||keys.some(k=>entry.source[k]!==base[k])){
+      const value={...base};for(const k of keys)value[k]=k==='cooldown'?base[k]/(modifiers['enemy.cooldownRate']??1):base[k]*(modifiers['enemy.'+k]??1);
+      entry={source:Object.fromEntries(keys.map(k=>[k,base[k]])),value};byModifier.set(modifiers,entry);
+    }return entry.value;
+  }
+  register({id:'day_x',schedule:({day,minute})=>day%dayX.intervalDays===0&&minute>=dayX.startMinute&&minute<dayX.endMinute,modifiers:xModifiers});
+  WorldClock.onChange(refresh);
+  const api={dayX,none,xModifiers,register,matches,enemyStats,
+    isActive:id=>current.ids.includes(id),value:(key,fallback=1)=>current.modifiers[key]??fallback,
+    snapshot:()=>current,definitions:()=>[...definitions.values()].map(d=>({id:d.id,modifiers:d.modifiers})),
+    onChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}};
+  // Absent from the production API. The separate developer entry installs an
+  // isolated storage namespace BEFORE this script can ever run.
+  if(window.LastBaseDeveloper?.isolated===true)api.debugOverride=(id,value)=>{
+    if(!definitions.has(id)||![null,true,false].includes(value))return false;
+    if(value===null)overrides.delete(id);else overrides.set(id,value);refresh();return true;
+  };
+  return Object.freeze(api);
+})();
 
 
 
@@ -1415,6 +1486,49 @@ function nearestScavenge(){
   return best;
 }
 
+/* World-scoped identity. IDs never use display names, array positions, wall time
+   or gameplay RNG. Existing content type keys and gear/robot/turret IDs remain.
+   The only positional mapping is the one-time migration of historical saves. */
+window.GameIdentity=(()=>{
+  let nextEnemy=1,playerId='player:1';
+  const enemyNumber=id=>typeof id==='string'&&/^enemy:[1-9][0-9]*$/.test(id)?Number(id.slice(6)):NaN;
+  function createEnemyId(){
+    if(!Number.isSafeInteger(nextEnemy)||nextEnemy>=Number.MAX_SAFE_INTEGER)throw Error('Enemy identity limit');
+    return 'enemy:'+nextEnemy++;
+  }
+  function attachEnemy(entity,id=createEnemyId()){
+    Object.defineProperties(entity,{
+      instanceId:{value:id},typeId:{get:()=>entity.type||'normal'}
+    });return entity;
+  }
+  function migrate(data){
+    const enemies=data.zombies.map((_,i)=>'enemy:'+(i+1));
+    data.identity027={schema:1,playerId:'player:1',nextEnemy:enemies.length+1,enemies,
+      droneTargetId:data.robots014?.task==='attack'?enemies[data.robots014.targetIndex]??null:null};
+  }
+  function validate(data){
+    const m=data.identity027;
+    // Legacy actor payloads contain gameplay fields only. Conflicting identity
+    // copies would reach Object.assign on read-only runtime IDs during restore.
+    // Reject them here, before any owner is allowed to mutate the live world.
+    const shadowsId=o=>o&&(Object.hasOwn(o,'instanceId')||Object.hasOwn(o,'typeId'));
+    if(shadowsId(data.player)||data.zombies.some(shadowsId)||data.robots014&&Object.hasOwn(data.robots014,'targetId'))throw Error('Ambiguous entity identities');
+    if(!m||m.schema!==1||typeof m.playerId!=='string'||!/^player:[1-9][0-9]*$/.test(m.playerId)||m.playerId.length>64||
+      !Number.isSafeInteger(m.nextEnemy)||m.nextEnemy<1||!Array.isArray(m.enemies)||m.enemies.length!==data.zombies.length||
+      m.enemies.some(id=>!Number.isSafeInteger(enemyNumber(id))||enemyNumber(id)>=m.nextEnemy)||
+      new Set(m.enemies).size!==m.enemies.length||
+      m.droneTargetId!==null&&(!m.enemies.includes(m.droneTargetId)||data.robots014?.task!=='attack'||m.enemies[data.robots014.targetIndex]!==m.droneTargetId))throw Error('Invalid entity identities');
+    if(m.droneTargetId===null&&data.robots014?.task==='attack'&&m.enemies[data.robots014.targetIndex])throw Error('Missing drone target identity');
+    return true;
+  }
+  function capture(){
+    const enemies=zombies.map(z=>z.instanceId),target=window.V014Robots?.state.targetId;
+    return {schema:1,playerId,nextEnemy,enemies,droneTargetId:enemies.includes(target)?target:null};
+  }
+  function restore(data){playerId=data.identity027.playerId;nextEnemy=data.identity027.nextEnemy;}
+  const enemy=id=>typeof id==='string'?zombies.find(z=>z.instanceId===id)||null:null;
+  return Object.freeze({createEnemyId,attachEnemy,migrate,validate,capture,restore,enemy,get playerId(){return playerId;}});
+})();
 /* =====================================================
    NOISE SYSTEM
 ===================================================== */
@@ -1439,9 +1553,9 @@ function createNoise(x,y,radius){
    ZOMBIES
 ===================================================== */
 
-function makeZombie(x,y){
+function makeZombie(x,y,instanceId){
 
-  return {
+  return GameIdentity.attachEnemy({
 
     x:x,
     y:y,
@@ -1481,7 +1595,7 @@ function makeZombie(x,y){
       2000 +
       Math.random()*5000
 
-  };
+  },instanceId);
 
 }
 
@@ -2251,22 +2365,34 @@ function useFarmBed(i){
   openOverlay(el("farmOverlay"));
 }
 
-/* Shared input commands. Device adapters never implement combat, pathfinding,
-   item transfers or interaction rules. Commands are transient, not save data. */
-window.GameActions=(()=>{
-  'use strict';
-  const playable=()=>!window.MainMenu?.active&&!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
+/* One live actor today. These views do not copy inventories or simulation state.
+   Client selection is separate from the actor ID; adding remote actors and their
+   combat/inventory runtimes belongs to the future multiplayer implementation. */
+window.GameActors=(()=>{
+  Object.defineProperties(player,{
+    instanceId:{get:()=>GameIdentity.playerId},typeId:{value:'player'}
+  });
+  const local=Object.freeze({
+    get id(){return player.instanceId;},typeId:'player',
+    get entity(){return player;},get dead(){return playerDead;},get scene(){return scene;},
+    get inventory(){return GameState.inventory;},get combat(){return GameState.combat;}
+  });
+  return Object.freeze({get local(){return local;},get localId(){return local.id;},
+    get:id=>id===local.id?local:null,list:()=>[local]});
+})();
+
+/* Synchronous actor-addressed commands over existing single-player systems.
+   No transport, queue, server, prediction or second simulation is installed. */
+window.GameSimulation=(()=>{
   const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
-  function dispatch(type,data={}){
-    // Releases are always allowed, including while a menu is opening.
-    if(type==='FIRE'&&!data.active){firing=false;return true;}
+  function execute(command){
+    if(!command||!command.payload||typeof command.payload!=='object')return false;
+    const actor=GameActors.get(command.actorId);if(!actor)return false;
+    const {type,payload:data}=command,player=actor.entity;
+    if(type==='FIRE'&&data.active===false){firing=false;return true;}
     if(type==='AIM'&&data.active===false){rightAimActive=false;aimPower=0;return true;}
     if(type==='MOVE'&&data.kind==='vector'&&data.power===0){moveX=moveY=movePower=0;return true;}
-    // An explicit map button may start a route while its own panel is open.
-    // Other panels and all gameplay input retain the normal pause guard.
-    if(window.MainMenu?.active)return false;
-    const mapRoute=type==='MOVE'&&data.kind==='route'&&data.from==='map'&&el('v010MapOverlay')?.classList.contains('open')&&window.V0161UI?.topOverlay()===el('v010MapOverlay');
-    if(!playable()&&!(mapRoute&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show')))return false;
+    if(!GameState.session.ready||actor.dead)return false;
     switch(type){
       case 'MOVE':
         if(data.kind==='vector'){
@@ -2291,10 +2417,8 @@ window.GameActions=(()=>{
         if(!target)return false;
         approachObject(target);return true;
       }
-      case 'WORLD_TARGET':
-        return point(data)&&!!window.V0105?.tapWorld(data.x,data.y);
       case 'AIM': {
-        if(!point(data))return false;
+        if(!point(data)||!Number.isFinite(data.power??1))return false;
         rightAimActive=true;aimPower=clamp(data.power??1,0,1);
         if(aimPower>JOY_DEAD){
           const x=data.kind==='world'?data.x-player.x:data.x,y=data.kind==='world'?data.y-player.y:data.y;
@@ -2303,21 +2427,43 @@ window.GameActions=(()=>{
         return true;
       }
       case 'FIRE':
+        if(typeof data.active!=='boolean')return false;
         firing=!!data.active&&canFire();if(firing&&data.immediate)shoot();return firing;
       case 'RELOAD':return reloadWeapon();
       case 'SELECT_SLOT':
         if(!Number.isInteger(data.index)||data.index<0||data.index>=handSlots.length)return false;
         selectHandSlot(data.index);return true;
-      case 'INVENTORY':renderBag();openOverlay(el('inventoryOverlay'));return true;
-      case 'MAP':window.V010Camera?.showMap();return true;
-      case 'SETTINGS':openOverlay(el('settingsOverlay'));return true;
       case 'SNEAK':window.V010World?.setSneaking(!V010World.sneaking);return true;
       default:return false;
     }
   }
+  return Object.freeze({execute});
+})();
+/* Shared input commands. Device adapters never implement combat, pathfinding,
+   item transfers or interaction rules. Commands are transient, not save data. */
+window.GameActions=(()=>{
+  'use strict';
+  const playable=()=>!window.MainMenu?.active&&!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
+  const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
+  function dispatch(type,data={}){
+    const command={actorId:GameActors.localId,type,payload:data};
+    // Always release local held inputs when a modal or the menu opens.
+    if(type==='FIRE'&&!data.active||type==='AIM'&&data.active===false||type==='MOVE'&&data.kind==='vector'&&data.power===0)return GameSimulation.execute(command);
+    // An explicit map button may start a route while its own panel is open.
+    // Other panels and all gameplay input retain the normal pause guard.
+    if(window.MainMenu?.active)return false;
+    const mapRoute=type==='MOVE'&&data.kind==='route'&&data.from==='map'&&el('v010MapOverlay')?.classList.contains('open')&&window.V0161UI?.topOverlay()===el('v010MapOverlay');
+    if(!playable()&&!(mapRoute&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show')))return false;
+    switch(type){
+      case 'WORLD_TARGET':return point(data)&&!!window.V0105?.tapWorld(data.x,data.y);
+      case 'INVENTORY':renderBag();openOverlay(el('inventoryOverlay'));return true;
+      case 'MAP':window.V010Camera?.showMap();return true;
+      case 'SETTINGS':openOverlay(el('settingsOverlay'));return true;
+      default:return GameSimulation.execute(command);
+    }
+  }
   return Object.freeze({dispatch,playable});
 })();
-
 /* One Pointer Events router for both interfaces. Installed once, before camera
    pinch listeners; switching modes changes state, never listener registration. */
 window.GameInput=(()=>{
@@ -4685,7 +4831,7 @@ function gameLoop(timestamp=performance.now()){
    bag, storage, enemies, farm beds and several subsystem states can be replaced
    by an existing restore or inventory transaction. No snapshot is retained. */
 GameState.register('player',{
-  get entity(){return player;},get dead(){return playerDead;},
+  get entity(){return player;},get id(){return GameActors.localId;},get actors(){return GameActors;},get dead(){return playerDead;},
   get scene(){return scene;}
 },{source:'core/world-inventory.js',saved:['player'],transient:['movement','aim input','last damage/step clocks']});
 
@@ -4706,9 +4852,9 @@ GameState.register('enemies',{
 },{source:'combat/monsters.js',saved:['zombies','monsters017'],transient:['AI routes','nearby grid','attack/jump/fuse timers','audio']});
 
 GameState.register('world',{
-  get scene(){return scene;},get trees(){return worldTrees;},get ores(){return window.V09World?.ores;},
+  get clock(){return WorldClock;},get events(){return WorldEvents;},get identity(){return GameIdentity;},get trees(){return worldTrees;},get ores(){return window.V09World?.ores;},
   get loot(){return scavenges;},get system(){return window.V010World;},get city(){return window.V013City;}
-},{source:'world/districts.js',saved:['trees','loot','v09.world','v010.modules.world','world011','expansion012','city013','gathering'],transient:['navigation','fishing cast','geometry cache','resource animation']});
+},{source:'world/districts.js',saved:['lighting016','identity027','trees','loot','v09.world','v010.modules.world','world011','expansion012','city013','gathering'],transient:['navigation','fishing cast','geometry cache','resource animation']});
 
 GameState.register('base',{
   get sections(){return window.V015Base?.sections;},get doors(){return v09Doors;},
@@ -4743,14 +4889,13 @@ GameState.register('progression',{
 },{source:'ui/progression.js',saved:['v010.modules.progression'],transient:['seen log','render signature','evaluation clock']});
 
 GameState.register('render',{
-  get camera(){return camera;},get map(){return window.V010Camera;},get lighting(){return window.V016Lighting;}
-},{source:'render/lighting.js',saved:['v010.modules.camera','lighting016'],transient:['light masks','image caches','viewport','frameScale']});
+  get scene(){return scene;},get camera(){return camera;},get map(){return window.V010Camera;},get lighting(){return window.V016Lighting;}
+},{source:'render/lighting.js',saved:['v010.modules.camera'],transient:['light masks','image caches','viewport','frameScale']});
 
 GameState.register('ui',{
   get menuOpen(){return menuOpen;},get storage(){return activeStorage;},
   get loot(){return activeLootObject;},get interaction(){return interactionTarget;}
 },{source:'ui/modal-dragging.js',saved:[],transient:['open windows','pointer gesture','click dismissal','selected object','DOM nodes']});
-
 /* =====================================================
    0.7.1 — LOCAL GAME PROGRESS
    Elapsed durations are stored instead of offline deadlines.
@@ -4883,6 +5028,7 @@ function decodeGameProgressBase(raw){
 }
 
 function restoreGameProgressBase(d){
+  GameIdentity.restore(d);
   const now=Date.now();
   bag=clone(d.bag);
   for(const slot of Object.keys(equipment)){
@@ -4913,7 +5059,7 @@ function restoreGameProgressBase(d){
     scavenges[i].loot=clone(o.loot);
   });
   zombies=d.zombies.map((z,i)=>{
-    const restored=Object.assign(makeZombie(z.x,z.y),z);
+    const restored=Object.assign(makeZombie(z.x,z.y,d.identity027.enemies[i]),z);
     if(worldCollision(z.x,z.y,17,'surface'))Object.assign(restored,outsideSpawns[i%outsideSpawns.length],{state:'wander'});
     return restored;
   });
@@ -7312,7 +7458,7 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123])))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.0)))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -7534,7 +7680,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.25.3-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.27.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -7633,9 +7779,10 @@ window.V010Inventory=(()=>{
   const matches=(a,b)=>a&&b&&a.type===b.type&&stackMax(a.type)>1&&signature(a)===signature(b);
   function notifyChange(){
     if(batchDepth)return;
+    window.V010Combat?.refreshStats();window.V010Combat?.syncAmmo();
     window.V013Inventory?.sync();window.V0161Upgrade?.refresh();window.V0161UI?.refreshQuick();window.V0141DroneUI?.refresh();
     renderBag();if(activeStorage!==null)renderStorage();updateAmmoHud();
-    window.V010Combat?.refreshStats?.();queueGameSave();
+    queueGameSave();
   }
   function insert(slots,item,max,allowLocked=false){
     if(!item||!ITEM[item.type]||!Number.isInteger(item.qty)||item.qty<1)return item?.qty||0;
@@ -7924,12 +8071,11 @@ window.V010Combat=(() => {
   const shapes={helmet1:'<path d="M15 36C13 10 50 10 49 35L55 42H11Z" fill="#7c8b60"/><path d="M17 34H47V43H17Z" fill="#8ad1ce" stroke="#263d43" stroke-width="3"/>',advanced_parts:'<path d="M13 15H47V49H13Z" fill="#487984"/><path d="M20 22H40V42H20Z" fill="#d1c28b"/><path d="M8 22H13M8 31H13M8 40H13M47 22H54M47 31H54M47 40H54" stroke="#d1c28b" stroke-width="4"/>',magazine_module:'<path d="M19 8H36Q32 33 48 46L35 54Q14 32 19 8Z" fill="#728a91"/><path d="M24 14Q22 32 37 47M29 14Q27 32 42 44" fill="none" stroke="#283e45" stroke-width="3"/>'};
   const oldIcon=itemIconHTML;
   itemIconHTML=function(type){return shapes[type]?'<svg class="itemIcon" viewBox="0 0 64 64" aria-hidden="true">'+shapes[type]+'</svg>':oldIcon(type);};
-  let nextUid=1,reloading=null,burst=0,lastUid=null,practice=false,trainingRounds=30,practiceHits=0,practiceDamage=0,lastHud='',selectedUid=null;
+  let nextUid=1,reloading=null,burst=0,lastUid=null,practice=false,trainingRounds=30,practiceHits=0,practiceDamage=0,lastHud='',selectedWorkshopItem=null;
   const practiceTarget={id:'v010PracticeTarget',kind:'v010practice',name:'Тренировочная мишень',x:1110,y:734,w:20,h:32,range:95};
-  function ensure(item){
+  function initializeFields(item){
     if(!item)return null;
     if(GUNS[item.type]||ITEM[item.type]?.equip){
-      if(!item.uid)item.uid='gear-'+nextUid++;
       if(!Number.isInteger(item.level))item.level=0;
       if(!item.variant)item.variant='balanced';
       if(!item.specialization)item.specialization='balanced';
@@ -7937,6 +8083,11 @@ window.V010Combat=(() => {
     }
     return item;
   }
+  function ensure(item){
+    if(item&&(GUNS[item.type]||ITEM[item.type]?.equip)&&!item.uid)item.uid='gear-'+nextUid++;
+    return initializeFields(item);
+  }
+  function itemView(item){return item?initializeFields({...item,...(item.modules?{modules:{...item.modules}}:{})}):null;}
   function allItems(){return [...(window.V0161Upgrade?.slots||[]).filter(Boolean),...(window.V013Inventory?.items||[]).filter(Boolean),...bag.filter(Boolean),...Object.values(equipment).filter(Boolean),...storageChests.flatMap(c=>c.items.filter(Boolean))];}
   function migrateItems(legacy){
     const seen=new Set();let largest=nextUid;
@@ -7952,7 +8103,7 @@ window.V010Combat=(() => {
     if(!item||(!GUNS[item.type]&&!['head','body','legs','feet'].includes(ITEM[item.type]?.equip)))return item;
     ensure(item);const roll=Math.random();item.variant=roll<.2?'sturdy':roll<.4?'light':'balanced';return item;
   }
-  function currentWeapon(){const type=heldItem();if(!GUNS[type])return null;return ensure(window.V010Inventory?.selectedItem?.(type)||bag.find(s=>s?.type===type));}
+  function currentWeapon(){const type=heldItem();if(!GUNS[type])return null;return window.V010Inventory?.selectedItem?.(type)||bag.find(s=>s?.type===type)||null;}
   function getItemStats(item){
     if(!item)return null;const d=ITEM[item.type];if(!d)return null;
     const level=clamp(Number(item.level)||0,0,maxUpgradeLevel(item));
@@ -7967,46 +8118,51 @@ window.V010Combat=(() => {
     const g=GUNS[item?.type];if(!g)return null;const m=item.modules||{},level=clamp(Number(item.level)||0,0,maxUpgradeLevel(item)),rules=upgradeProfile(item).stats||upgradeRules.weapon.stats,head=equipment.head?getItemStats(equipment.head).accuracy||0:0;
     return {...g,damage:Math.round(g.damage*(1+level*rules.damagePerLevel+(item.variant==='sturdy'?rules.sturdyDamage:0))),mag:V09Craft.magazineCapacity(item),reloadMs:g.reloadMs,spread:Math.max(rules.minSpread,g.spread*(1-head)),recoil:g.recoil,noise:g.noise,modules:copy(m)};
   }
-  function refreshStats(){
+  function equipmentSnapshot(){
     let hp=100,armor=0,speed=0,accuracy=0;
-    for(const item of Object.values(equipment)){if(!item)continue;ensure(item);const s=getItemStats(item);hp+=s.hp||0;armor+=s.armor||0;speed+=s.speed||0;accuracy+=s.accuracy||0;}
-    player.maxHealth=Math.min(500,hp);player.health=Math.min(player.health,player.maxHealth);
-    player.walkSpeed=BASE_SPEED.walk*(1+Math.min(.2,speed));player.runSpeed=BASE_SPEED.run*(1+Math.min(.2,speed));
-    const h=el('healthText');if(h)I18n.assign(h,"textContent",'❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth));
-    return {hp:player.maxHealth,armor:Math.min(80,armor),speed:Math.min(.2,speed),accuracy:Math.min(.18,accuracy)};
+    for(const item of Object.values(equipment)){if(!item)continue;const s=getItemStats(item);hp+=s.hp||0;armor+=s.armor||0;speed+=s.speed||0;accuracy+=s.accuracy||0;}
+    return {hp:Math.min(500,hp),armor:Math.min(80,armor),speed:Math.min(.2,speed),accuracy:Math.min(.18,accuracy)};
   }
+  // Called by equipment mutations/restoration, never by a card or renderer.
+  function refreshStats(){
+    for(const item of Object.values(equipment))ensure(item);
+    const s=equipmentSnapshot();player.maxHealth=s.hp;player.health=Math.min(player.health,s.hp);
+    player.walkSpeed=BASE_SPEED.walk*(1+s.speed);player.runSpeed=BASE_SPEED.run*(1+s.speed);
+    const h=el('healthText');if(h)I18n.assign(h,"textContent",'❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth));
+    return s;
+  }
+  function syncAmmo(){const item=ensure(currentWeapon()),g=item&&gunSpec(item);if(g){magazine=item.rounds;magazineMax=g.mag;}}
   equippedArmor=function(){return Math.min(80,getItemStats(equipment.body)?.armor||0);};
   const oldRenderEquipment=renderEquipment;
-  renderEquipment=function(){refreshStats();oldRenderEquipment();const st=refreshStats(),node=el('characterStats');if(node)I18n.assign(node,"innerHTML",'HP <b>'+Math.round(player.health)+'/'+Math.round(st.hp)+'</b> · Защита <b>'+st.armor+'%</b><br>Скорость <b>+'+Math.round(st.speed*100)+'%</b> · Точность <b>+'+Math.round(st.accuracy*100)+'%</b><br>Рюкзак: '+BAG_SLOTS+' мест');};
+  renderEquipment=function(){oldRenderEquipment();const st=equipmentSnapshot(),node=el('characterStats');if(node)I18n.assign(node,"innerHTML",'HP <b>'+Math.round(player.health)+'/'+Math.round(st.hp)+'</b> · Защита <b>'+st.armor+'%</b><br>Скорость <b>+'+Math.round(st.speed*100)+'%</b> · Точность <b>+'+Math.round(st.accuracy*100)+'%</b><br>Рюкзак: '+BAG_SLOTS+' мест');};
   function cancelReload(){if(!reloading)return false;reloading=null;updateAmmoHud();return true;}
   function practiceAllowed(){return scene==='surface'&&player.x>=930&&player.x<=1280&&player.y>=650&&player.y<=790&&!window.V091Fortress?.isElevated?.();}
   function setPractice(on){if(on&&!practiceAllowed()){message('Подойдите к тренировочной площадке');return false;}cancelReload();practice=!!on;trainingRounds=30;practiceHits=0;practiceDamage=0;updateAmmoHud();return true;}
   canFire=function(){const s=currentWeapon();return !!s&&gunSpec(s).mag>0;};
   reloadWeapon=function(){
-    const item=currentWeapon();if(!item||menuOpen||playerDead||document.hidden||reloading)return false;const g=gunSpec(item),rounds=practice?trainingRounds:item.rounds;
+    const item=ensure(currentWeapon());if(!item||menuOpen||playerDead||document.hidden||reloading)return false;const g=gunSpec(item),rounds=practice?trainingRounds:item.rounds;
     if(!g.mag||rounds>=g.mag)return false;if(!practice&&bagCount(g.ammo)<=0){message('Нет патронов '+g.caliber);return false;}
     reloading={uid:item.uid,type:item.type,remainingMs:g.reloadMs,totalMs:g.reloadMs,practice};updateAmmoHud();return true;
   };
   updateAmmoHud=function(){
     const item=currentWeapon(),g=item&&gunSpec(item),hud=el('ammoHud'),b=el('v010ReloadButton');
     if(!g){if(hud)hud.style.display='none';if(b)b.style.display='none';return;}
-    magazine=item.rounds;magazineMax=g.mag;
     if(hud)hud.style.display='block';if(b){b.style.display=menuOpen?'none':'block';b.disabled=!!reloading;}
-    const text=practice?`МИШЕНЬ · ${g.mag?Math.min(trainingRounds,g.mag):0}/${g.mag} · попадания ${practiceHits} · урон ${practiceDamage}`:`${g.name} +${item.level} · ${item.rounds}/${g.mag} · запас ${bagCount(g.ammo)}`;
+    const text=practice?`МИШЕНЬ · ${g.mag?Math.min(trainingRounds,g.mag):0}/${g.mag} · попадания ${practiceHits} · урон ${practiceDamage}`:`${g.name} +${item.level||0} · ${item.rounds||0}/${g.mag} · запас ${bagCount(g.ammo)}`;
     const progress=reloading?' · '+I18n.numeric(reloading.remainingMs/1000,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' с':'';
     if(hud&&text+progress!==lastHud){I18n.assign(hud,"textContent",text+progress);lastHud=text+progress;}
     if(b){I18n.assign(b,"textContent",reloading?'↻ '+I18n.numeric(reloading.remainingMs/1000,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false}):'↻');b.style.setProperty('--reload-progress',reloading?Math.round(100*(1-reloading.remainingMs/reloading.totalMs))+'%':'0%');}
     const stop=el('v010PracticeStop');if(stop)stop.style.display=practice&&!menuOpen?'block':'none';
   };
   function tick(ms){
-    const item=currentWeapon();
+    const item=ensure(currentWeapon());
     if(practice&&!practiceAllowed())setPractice(false);
     if(reloading&&(!item||item.uid!==reloading.uid||practice!==reloading.practice||playerDead))cancelReload();
     if(reloading&&!menuOpen&&!document.hidden){
       reloading.remainingMs=Math.max(0,reloading.remainingMs-Math.max(0,ms));
       if(reloading.remainingMs===0){const g=gunSpec(item),need=Math.max(0,g.mag-(practice?trainingRounds:item.rounds));if(practice)trainingRounds=g.mag;else item.rounds+=removeItem(g.ammo,Math.min(need,bagCount(g.ammo)));reloading=null;queueGameSave();}
     }
-    updateAmmoHud();
+    syncAmmo();updateAmmoHud();
   }
   function muzzleClear(ax,ay,bx,by,r=2){
     const fortress=window.V091Fortress;
@@ -8016,7 +8172,7 @@ window.V010Combat=(() => {
     return true;
   }
   shoot=function(){
-    if(menuOpen||playerDead||document.hidden||window.V091Fortress?.transitioning)return;const item=currentWeapon();if(!item||reloading)return;const g=gunSpec(item),now=performance.now();
+    if(menuOpen||playerDead||document.hidden||window.V091Fortress?.transitioning)return;const item=ensure(currentWeapon());if(!item||reloading)return;const g=gunSpec(item),now=performance.now();
     if(!g.mag||now-lastShot<g.delay)return;
     if((practice?trainingRounds:item.rounds)<=0){reloadWeapon();return;}
     if(lastUid!==item.uid||now-lastShot>420)burst=0;burst=Math.min(7,burst+1);lastUid=item.uid;lastShot=now;
@@ -8029,13 +8185,13 @@ window.V010Combat=(() => {
       item.rounds--;const contact=window.V014Controls?.contactTarget();if(contact)hitZombie(contact,g.damage);else if(muzzleClear(player.x,player.y,x,y,2))bullets.push({x,y,dx:dx*12,dy:dy*12,radius:3,life:g.range/12,damage:g.damage,weapon:item.type,wallLevel:!!window.V091Fortress?.isElevated?.()});
       createNoise(player.x,player.y,g.noise);emit('combatshot',{weapon:item.type});queueGameSave();
     }
-    muzzleFlash.time=now;muzzleFlash.x=x;muzzleFlash.y=y;playGunshot();updateAmmoHud();
+    muzzleFlash.time=now;muzzleFlash.x=x;muzzleFlash.y=y;playGunshot();syncAmmo();updateAmmoHud();
     if((practice?trainingRounds:item.rounds)===0)reloadWeapon();
   };
   const oldSelectHand=selectHandSlot;
-  selectHandSlot=function(index){const prev=currentWeapon()?.uid;oldSelectHand(index);if(currentWeapon()?.uid!==prev)cancelReload();updateAmmoHud();};
+  selectHandSlot=function(index){const prev=currentWeapon()?.uid;oldSelectHand(index);if(currentWeapon()?.uid!==prev)cancelReload();syncAmmo();updateAmmoHud();};
   const oldHit=hitZombie;
-  hitZombie=function(z,damage=25,options){if(!z.alive||z.health<=0)return;const amount=options?.fixedDamage?damage:window.V010World?.zombieDamage?V010World.zombieDamage(z,damage):damage;oldHit(z,amount);if(!z.alive){emit('combatkill',{id:z.id??zombies.indexOf(z),type:z.type||'normal',weapon:heldItem(),amount:1});}};
+  hitZombie=function(z,damage=25,options){if(!z.alive||z.health<=0)return;const amount=options?.fixedDamage?damage:window.V010World?.zombieDamage?V010World.zombieDamage(z,damage):damage;oldHit(z,amount);if(!z.alive){emit('combatkill',{id:z.instanceId,type:z.type||'normal',weapon:heldItem(),amount:1});}};
   const oldUpdate=update;
   update=function(){tick(Math.max(0,frameScale)*1000/60);oldUpdate();};
   const reloadButton=document.createElement('button');reloadButton.id='v010ReloadButton';reloadButton.type='button';I18n.assign(reloadButton,'title','Перезарядка · R');I18n.setAttr(reloadButton,'aria-label','Перезарядить оружие');reloadButton.addEventListener('pointerdown',e=>e.stopPropagation());reloadButton.addEventListener('click',()=>GameActions.dispatch('RELOAD'));document.body.append(reloadButton);
@@ -8071,23 +8227,23 @@ window.V010Combat=(() => {
   function textStats(s){if(s.damage)return `Урон ${s.damage} · магазин ${s.mag} · перезарядка ${I18n.numeric(s.reloadMs/1000,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})} с<br>Разброс ${I18n.numeric(s.spread*180/Math.PI,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})}° · отдача ${I18n.numeric(s.recoil*180/Math.PI,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})}°`;return [s.armor?'Защита '+s.armor+'%':'',s.hp?'HP +'+Math.round(s.hp):'',s.speed?'Скорость +'+Math.round(s.speed*100)+'%':'',s.accuracy?'Точность +'+Math.round(s.accuracy*100)+'%':''].filter(Boolean).join(' · ');}
   function renderWorkshop(){
     const body=upgradeOverlay.querySelector('.v09Body');body.replaceChildren();
-    const items=[...bag.filter(Boolean),...Object.values(equipment).filter(Boolean)].filter(i=>GUNS[i.type]||['head','body','feet','legs'].includes(ITEM[i.type]?.equip));items.forEach(ensure);
-    const list=document.createElement('div');list.className='v010UpgradeList';body.append(list);let selected=items.find(i=>i.uid===selectedUid)||items[0];selectedUid=selected?.uid||null;
-    for(const item of items){const b=v09Button('',()=>{selectedUid=item.uid;renderWorkshop();});b.className='v010UpgradeItem'+(item===selected?' selected':'');I18n.assign(b,"innerHTML",itemIconHTML(item.type)+'<span>'+ITEM[item.type].name+' +'+item.level+'</span>');list.append(b);}
+    const items=[...bag.filter(Boolean),...Object.values(equipment).filter(Boolean)].filter(i=>GUNS[i.type]||['head','body','feet','legs'].includes(ITEM[i.type]?.equip));
+    const list=document.createElement('div');list.className='v010UpgradeList';body.append(list);let selected=items.find(i=>i===selectedWorkshopItem)||items[0];selectedWorkshopItem=selected||null;
+    for(const item of items){const b=v09Button('',()=>{selectedWorkshopItem=item;renderWorkshop();});b.className='v010UpgradeItem'+(item===selected?' selected':'');I18n.assign(b,"innerHTML",itemIconHTML(item.type)+'<span>'+ITEM[item.type].name+' +'+(item.level||0)+'</span>');list.append(b);}
     if(!selected){const note=document.createElement('p');I18n.assign(note,"textContent",'Принесите оружие или экипировку для улучшения.');body.append(note);return;}
-    const detail=document.createElement('div');detail.className='v010UpgradeDetail';I18n.assign(detail,"innerHTML",window.V011UI?V011UI.cardHTML(selected):'<b>'+ITEM[selected.type].name+' +'+selected.level+'</b><br>'+textStats(getItemStats(selected)));body.append(detail);
-    const cost=document.createElement('div');cost.className='v010Cost';I18n.assign(cost,"textContent",Object.entries(costs(selected)).map(([t,n])=>ITEM[t].name+': '+available(t)+'/'+n).join(' · '));if(selected.level<maxUpgradeLevel(selected))body.append(cost);
-    const b=v09Button(selected.level>=maxUpgradeLevel(selected)?'Максимум +'+maxUpgradeLevel(selected):'Улучшить до +'+(selected.level+1),()=>{upgrade(selected);renderWorkshop();},'primary');b.disabled=selected.level>=maxUpgradeLevel(selected)||!devicePowered('craft_bench')||!Object.entries(costs(selected)).every(([t,n])=>available(t)>=n);body.append(b);
+    const detail=document.createElement('div');detail.className='v010UpgradeDetail';I18n.assign(detail,"innerHTML",window.V011UI?V011UI.cardHTML(selected):'<b>'+ITEM[selected.type].name+' +'+(selected.level||0)+'</b><br>'+textStats(getItemStats(selected)));body.append(detail);
+    const cost=document.createElement('div');cost.className='v010Cost';I18n.assign(cost,"textContent",Object.entries(costs(selected)).map(([t,n])=>ITEM[t].name+': '+available(t)+'/'+n).join(' · '));if((selected.level||0)<maxUpgradeLevel(selected))body.append(cost);
+    const b=v09Button(selected.level>=maxUpgradeLevel(selected)?'Максимум +'+maxUpgradeLevel(selected):'Улучшить до +'+((selected.level||0)+1),()=>{upgrade(selected);renderWorkshop();},'primary');b.disabled=selected.level>=maxUpgradeLevel(selected)||!devicePowered('craft_bench')||!Object.entries(costs(selected)).every(([t,n])=>available(t)>=n);body.append(b);
     if(!GUNS[selected.type]){const variants=document.createElement('div');variants.className='v010Modules';for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[selected.type].equip==='feet'?[['speed','Скорость']]:[])]){const x=v09Button((selected.specialization===key?'✓ ':'')+label,()=>{selected.specialization=key;refreshStats();renderBag();queueGameSave();renderWorkshop();});variants.append(x);}body.append(variants);}
-    else{const mods=document.createElement('div');mods.className='v010Modules';for(const [key,def]of Object.entries(MODULES)){const equipped=selected.modules[key],x=v09Button((equipped?'Снять: ':'Установить: ')+def.label+(!unlocked(def.unlock)?' · закрыто':''),()=>{const ok=equipped?detach(selected,key):install(selected,key);if(!ok)message('Проверьте чертёж, наличие модуля, питание и место в рюкзаке');renderWorkshop();});x.disabled=!equipped&&(!unlocked(def.unlock)||available(def.type)<1);mods.append(x);}body.append(mods);}
+    else{const mods=document.createElement('div');mods.className='v010Modules';for(const [key,def]of Object.entries(MODULES)){const equipped=selected.modules?.[key],x=v09Button((equipped?'Снять: ':'Установить: ')+def.label+(!unlocked(def.unlock)?' · закрыто':''),()=>{const ok=equipped?detach(selected,key):install(selected,key);if(!ok)message('Проверьте чертёж, наличие модуля, питание и место в рюкзаке');renderWorkshop();});x.disabled=!equipped&&(!unlocked(def.unlock)||available(def.type)<1);mods.append(x);}body.append(mods);}
     const note=document.createElement('p');note.className='v010UpgradeNote';I18n.assign(note,"textContent",'Без случайных провалов. Материалы берутся из рюкзака и складов базы. Улучшение HP не восстанавливает здоровье.');body.append(note);
   }
   function openWorkshop(){if(window.V0161Upgrade)return V0161Upgrade.open();if(!inWorkshop()){message('Улучшения доступны в мастерской');return false;}renderWorkshop();openOverlay(upgradeOverlay);return true;}
   function validateItem(item){if(!item)return true;if(ITEM[item.type]?.turret&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==ITEM[item.type].drone?.instanceId||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,maxUpgradeLevel(item)))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.magazineType!==undefined&&(!GUNS[item.type]?.magazineTypes||(item.magazineType!==null&&!V09Craft.acceptsMagazine(item.type,item.magazineType))))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,gunSpec(item).mag)))return false;return true;}
   function capture(){migrateItems(null);return {schema:1,nextUid};}
   function validate(d){if(!d||d.schema!==1||!Number.isInteger(d.nextUid)||d.nextUid<1||d.nextUid>100000000)throw Error('Некорректные данные экипировки');return true;}
-  function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;lastHud='';const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();updateAmmoHud();}
-  const api={upgradeRules,upgradeProfile,maxUpgradeLevel,equipmentStats,capture,restore,validate,validateItem,getItemStats,gunSpec,refreshStats,ensure,rollFoundItem,currentWeapon,tick,cancelReload,upgrade,costs,install,detach,openWorkshop,renderWorkshop,practiceTarget,setPractice,practiceAllowed,modules:MODULES,get reloading(){return reloading?copy(reloading):null;},get practice(){return practice;}};
+  function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;lastHud='';const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();syncAmmo();updateAmmoHud();}
+  const api={upgradeRules,upgradeProfile,maxUpgradeLevel,equipmentStats,capture,restore,validate,validateItem,getItemStats,gunSpec,refreshStats,equipmentSnapshot,syncAmmo,ensure,itemView,rollFoundItem,currentWeapon,tick,cancelReload,upgrade,costs,install,detach,openWorkshop,renderWorkshop,practiceTarget,setPractice,practiceAllowed,modules:MODULES,get reloading(){return reloading?copy(reloading):null;},get practice(){return practice;}};
   if(window.V010?.modules)V010.register('combat',api);
   restore(null);return api;
 })();
@@ -8940,7 +9096,7 @@ function viewHeight(){return V010Camera.view().h;}
   const snapshot=()=>GameSave.snapshotModules();
   V010.initialModules=clone(snapshot());
   
-  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.25.3';d.v010={schema:1,modules:snapshot()};return d;});
+  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.27.0';d.v010={schema:1,modules:snapshot()};return d;});
   GameSave.extend('decode','save.envelope',function(oldDecode,raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -8949,7 +9105,7 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.25.3';return d;
+    d.gameVersion='0.27.0';return d;
   });
   GameSave.extend('restore','save.envelope',function(oldRestore,d){
     const was=GameState.session.transaction;GameState.session.transaction=true;
@@ -8958,8 +9114,8 @@ function viewHeight(){return V010Camera.view().h;}
   });
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(I18n.canonical(text));};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.25.3'}));
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.25.3');
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.27.0'}));
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.27.0');
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
@@ -9128,7 +9284,7 @@ window.V0105=(()=>{
       add({id:o.id,x:o.x+(o.w||0)/2,y:o.y+(o.h||0)/2,kind:'interactive'});
     }
     // Threats last, so their red silhouettes remain readable above scenery.
-    if(scene==='surface')for(const [i,z] of zombies.entries())if(z.alive)add({id:'enemy_'+i,x:z.x,y:z.y,kind:'zombie',radius:z.radius,type:z.type,selected:z===liveTarget()});
+    if(scene==='surface')for(const z of zombies)if(z.alive)add({id:z.instanceId,x:z.x,y:z.y,kind:'zombie',radius:z.radius,type:z.type,selected:z===liveTarget()});
     return out;
   }
   function drawMapMarkers(c,scale,mini,bounds){
@@ -9236,7 +9392,6 @@ window.V011UI=(()=>{
   const locationItems=where=>inv.list(where);
   function details(where,index){
     const item=where==='equipment'?equipment[index]:locationItems(where)?.[index];if(!item)return;
-    combat.ensure(item);
     const def=ITEM[item.type],overlay=v09Overlay('v010ItemDetails',def.name),body=overlay.querySelector('.v09Body');
     I18n.assign(body,"innerHTML",cardHTML(item));
     const actions=document.createElement('div');actions.className='v011ItemActions';
@@ -9247,7 +9402,7 @@ window.V011UI=(()=>{
       const remove=button('Снять',()=>{if(inv.unequip(index))closeOverlay(overlay);},!worn);
       if(worn&&def.equip==='backpack'){I18n.assign(remove,'title','Чтобы сменить рюкзак, наденьте другой из инвентаря');}
     }
-    if(def.hand&&where==='bag')button('В быстрый слот',()=>{inv.selectUid(item.type,item.uid);closeOverlay(overlay);openHandAssignment(item.type);});
+    if(def.hand&&where==='bag')button('В быстрый слот',()=>{combat.ensure(item);inv.selectUid(item.type,item.uid);closeOverlay(overlay);openHandAssignment(item.type);});
     if(where!=='equipment'){
       button(item.locked?'Открепить':'Закрепить',()=>{item.locked=!item.locked;inv.render();window.V011UI.details(where,index);},false,true);
       if(['bag'].includes(where)||Number.isInteger(where))if(activeStorage!==null&&el('storageOverlay').classList.contains('open'))button(where==='bag'?'В ящик':'В рюкзак',()=>{inv.transfer(where,index,where==='bag'?activeStorage:'bag');closeOverlay(overlay);},false,true);
@@ -9259,7 +9414,7 @@ window.V011UI=(()=>{
     openOverlay(overlay);
   }
   const oldEquipment=renderEquipment;
-  renderEquipment=function(){oldEquipment();const s=combat.refreshStats(),node=el('characterStats');if(!node)return;
+  renderEquipment=function(){oldEquipment();const s=combat.equipmentSnapshot(),node=el('characterStats');if(!node)return;
     I18n.assign(node,"innerHTML",[['Здоровье',Math.round(player.health)+' / '+Math.round(s.hp)],['Защита',s.armor+'%'],['Скорость','+'+Math.round(s.speed*100)+'%'],['Точность','+'+Math.round(s.accuracy*100)+'%']].map(([label,value])=>'<div class="v011StatRow"><span>'+label+'</span><b>'+value+'</b></div>').join(''));
   };
   // Re-rendering after a deliberate transfer does not shift the inventory scroll position.
@@ -10797,7 +10952,7 @@ window.V014Fish=(()=>{
 window.V013Inventory=(()=>{
   const items=Array(5).fill(null),copy=x=>JSON.parse(JSON.stringify(x));
   const baseCount=bagCount;bagCount=t=>baseCount(t)+(ITEM[t]?.hand?items.filter(s=>s?.type===t).reduce((n,s)=>n+s.qty,0):0);
-  function sync(){handSlots=items.map(s=>s?.type||null);if(!items[activeHandSlot])activeHandSlot=null;renderQuickSlots();updateAmmoHud();queueGameSave();}
+  function sync(){handSlots=items.map(s=>s?.type||null);if(!items[activeHandSlot])activeHandSlot=null;V010Combat.syncAmmo();renderQuickSlots();updateAmmoHud();queueGameSave();}
   assignHandSlot=function(i){
     if(i<0||i>4||!HAND_TYPES.includes(assigningHandType))return false;
     const type=assigningHandType,old=items.findIndex(s=>s?.type===type);
@@ -11112,6 +11267,11 @@ window.V014Robots=(()=>{
   function dockPosition(){return {x:DOCK.x+74,y:DOCK.y+45,scene:'bunker'};}
   function defaults(){return {schema:1,id:INSTANCE_ID,name:'Спутник',...dockPosition(),battery:100,hp:100,ammo:30,packed:false,mode:'defense',combatMode:'defense',resumeTask:null,task:'docked',modules:{body:0,battery:0,cargo:0,weapon:0,engine:0},cargo:[],light:false,autoCollect:true,economy:true,guard:null,targetIndex:null,lowWarn:false,autoReturn:true};}
   const state=defaults();
+  let targetId=null;
+  Object.defineProperties(state,{
+    targetId:{get:()=>targetId,set:id=>{targetId=id;}},
+    targetIndex:{enumerable:true,get(){const i=zombies.findIndex(z=>z.instanceId===targetId);return i<0?null:i;},set(i){targetId=Number.isInteger(i)?zombies[i]?.instanceId??null:null;}}
+  });
   let shot=0,hurt=0,saveClock=0,uiClock=0,angle=0,flash=0,tracer=null,lootSelection=-1,observedTarget=null;
   const motion=V0141DroneMotion.create(state,definition.movement);
   // Station detection does not require drone power. The charging pad is flat;
@@ -11127,7 +11287,7 @@ window.V014Robots=(()=>{
     const status=state.packed?'DRONE_UNAVAILABLE':state.task==='docking'?'DOCKING':docked?(state.battery>=100?'FULLY_CHARGED':charging?'CHARGING':'NO_POWER'):state.task==='return'?'RETURNING':'NOT_DOCKED';
     return {status,docked,charging,blocked:home.blocked,battery:state.battery,name:state.name,watts:charging?DOCK.watts:0,eta:charging?Math.ceil((100-state.battery)/chargeRate()):null,autoReturn:state.autoReturn,threshold:DOCK.returnThreshold};
   }
-  function beginDocking(){state.task='docking';state.targetIndex=null;state.guard=null;primaryCommand();clearRoute();resetReturn();changed();}
+  function beginDocking(){state.task='docking';state.targetId=null;state.guard=null;primaryCommand();clearRoute();resetReturn();changed();}
   function detectDock(dt){
     if(state.packed||state.scene!=='bunker')return;
     const p=dockPosition(),d=distance(state.x,state.y,p.x,p.y);
@@ -11184,7 +11344,7 @@ window.V014Robots=(()=>{
     if(state.task!=='attack')return;
     const task=state.resumeTask||'follow';
     state.task=task==='docked'?'return':task==='guard'&&!state.guard?'follow':task;
-    state.resumeTask=null;state.targetIndex=null;clearRoute();changed();
+    state.resumeTask=null;state.targetId=null;clearRoute();changed();
   }
   function primaryCommand(){state.resumeTask=null;observedTarget=selectedTarget();}
   function validStack(s){return s===null||!!(s&&ITEM[s.type]&&!ITEM[s.type].robot&&Number.isInteger(s.qty)&&s.qty>0&&s.qty<=itemStackLimit(s.type)&&V010Combat.validateItem(s)!==false);}
@@ -11201,7 +11361,7 @@ window.V014Robots=(()=>{
   function pack(){
     if(state.packed)return false;
     if(addItem(TYPE,1,{robotId:state.id})){message('Нужна свободная ячейка');return false;}
-    state.packed=true;state.task='packed';state.targetIndex=null;state.guard=null;undocking=false;resetReturn();primaryCommand();clearRoute();changed();renderBag();return true;
+    state.packed=true;state.task='packed';state.targetId=null;state.guard=null;undocking=false;resetReturn();primaryCommand();clearRoute();changed();renderBag();return true;
   }
   function deploy(item){
     if(!state.packed||!ownsToken(item))return false;
@@ -11216,19 +11376,19 @@ window.V014Robots=(()=>{
   function follow(){
     if(state.packed||state.hp<=0||state.battery<=0){message('Разместите, зарядите и отремонтируйте дрона');return false;}
     if(atDock()&&state.autoReturn&&state.battery<=DOCK.returnThreshold){message('Дождитесь заряда выше '+DOCK.returnThreshold+'% или отключите автовозврат');return false;}
-    undocking=atDock()||state.task==='docking';resetReturn();state.task='follow';state.guard=null;state.targetIndex=null;primaryCommand();clearRoute();changed();return true;
+    undocking=atDock()||state.task==='docking';resetReturn();state.task='follow';state.guard=null;state.targetId=null;primaryCommand();clearRoute();changed();return true;
   }
   function recall(){return follow();}
-  function returnToDock(){if(state.packed||state.hp<=0||state.battery<=0)return false;if(atDock()||state.task==='docking')return true;undocking=false;resetReturn();state.task='return';state.targetIndex=null;state.guard=null;primaryCommand();clearRoute();changed();return true;}
+  function returnToDock(){if(state.packed||state.hp<=0||state.battery<=0)return false;if(atDock()||state.task==='docking')return true;undocking=false;resetReturn();state.task='return';state.targetId=null;state.guard=null;primaryCommand();clearRoute();changed();return true;}
   function attack(z,quiet=false){
     const fail=text=>{if(!quiet)message(text);return false;};
     if(!combatEnabled())return fail('Включите боевой режим');
     if(state.packed||state.hp<=0||state.battery<=0||scene!=='surface'||!z?.alive||z.health<=0||!zombies.includes(z))return fail('Дрон не готов к вылету');
     if(['return','docking','docked'].includes(state.task)||state.autoReturn&&state.battery<=DOCK.returnThreshold)return fail('Сначала заберите дрон со станции командой «Следовать» и зарядите его');
     if(!state.ammo)return fail('Загрузите патроны 5,45 в дрона');
-    const index=zombies.indexOf(z);if(state.task==='attack'&&state.targetIndex===index)return true;
+    const id=z.instanceId;if(state.task==='attack'&&state.targetId===id)return true;
     if(state.task!=='attack')state.resumeTask=['follow','guard','return','docked'].includes(state.task)?state.task:'follow';
-    state.mode=state.combatMode='attack';state.targetIndex=index;state.task='attack';clearRoute();changed();return true;
+    state.mode=state.combatMode='attack';state.targetId=id;state.task='attack';clearRoute();changed();return true;
   }
   function guard(){if(!follow())return false;state.task='guard';state.guard={x:player.x,y:player.y,scene};changed();return true;}
   function mode(value){
@@ -11278,7 +11438,7 @@ window.V014Robots=(()=>{
     // Keep the fractional remainder, so frame boundaries cannot slow the gun.
     // Idle time never accumulates into a burst of overdue shots.
     shot=Math.max(-dt,shot-dt);hurt=Math.max(0,hurt-dt);flash=Math.max(0,flash-dt);saveClock+=dt;uiClock+=dt;
-    if(!state.packed&&(state.battery<=0||state.hp<=0)&&!['docked','docking','disabled'].includes(state.task)){state.task='disabled';state.targetIndex=null;primaryCommand();clearRoute();resetReturn();changed();}
+    if(!state.packed&&(state.battery<=0||state.hp<=0)&&!['docked','docking','disabled'].includes(state.task)){state.task='disabled';state.targetId=null;primaryCommand();clearRoute();resetReturn();changed();}
     detectDock(dt);
     if(!state.packed&&state.hp>0&&state.battery>0&&state.battery<=DOCK.returnThreshold&&state.autoReturn&&!['return','docked','docking'].includes(state.task)){
       state.lowWarn=true;returnToDock();message('Дрон: низкий заряд, возвращаюсь на станцию');
@@ -11287,13 +11447,13 @@ window.V014Robots=(()=>{
     if(selected!==observedTarget){
       const previous=observedTarget;observedTarget=selected;
       if(state.mode==='attack'&&selected)attack(selected,true);
-      else if(state.task==='attack'&&previous===zombies[state.targetIndex])finishAttack();
+      else if(state.task==='attack'&&previous===GameIdentity.enemy(state.targetId))finishAttack();
     }
     if(!state.packed&&state.hp>0&&state.battery>0&&['follow','guard','attack','return'].includes(state.task)){
       const before={x:state.x,y:state.y};let z=null;
       if(state.task==='return')returnStep(dt);
       else if(state.task==='attack'){
-        z=zombies[state.targetIndex];if(!combatEnabled()||!z?.alive||z.health<=0||scene!=='surface'||!state.ammo){finishAttack();}
+        z=GameIdentity.enemy(state.targetId);if(!combatEnabled()||!z?.alive||z.health<=0||scene!=='surface'||!state.ammo){finishAttack();}
         else{if(state.scene!=='surface')sceneTravel({x:800,y:690,scene:'surface'},dt);else if(distance(state.x,state.y,z.x,z.y)>225||!lineClear(state.x,state.y,z.x,z.y,2,'surface')){
           let p=null;for(let i=0;i<12;i++){const a=Math.atan2(state.y-z.y,state.x-z.x)+i*Math.PI/6,q={x:z.x+Math.cos(a)*185,y:z.y+Math.sin(a)*185};if(!worldCollision(q.x,q.y,10,'surface')&&lineClear(q.x,q.y,z.x,z.y,2,'surface')){p=q;break;}}if(p)moveTo(p,dt);else{finishAttack();message('Дрон: нет позиции для атаки');}}
           if(state.task==='attack'&&state.scene==='surface')shootAt(z);
@@ -11305,7 +11465,7 @@ window.V014Robots=(()=>{
       }
       if(!['docked','docking'].includes(state.task))state.battery=Math.max(0,state.battery-dt*(home.blocked&&state.task==='return'?definition.battery.blockedDrain:definition.battery.idleDrain+(state.light&&!(state.economy&&state.battery<20)?definition.battery.lightDrain:0))/batteryFactor());
       if(state.scene==='surface'&&hurt<=0){const touch=zombies.find(q=>q.alive&&distance(q.x,q.y,state.x,state.y)<(q.radius||16)+16);if(touch){state.hp=Math.max(0,state.hp-12*(1-armor()/100));hurt=1;changed();}}
-      if(state.hp<=0||state.battery<=0){state.task='disabled';state.targetIndex=null;primaryCommand();clearRoute();message(state.hp<=0?'Дрон повреждён — подберите его для ремонта':'Дрон разрядился — подберите его');}
+      if(state.hp<=0||state.battery<=0){state.task='disabled';state.targetId=null;primaryCommand();clearRoute();message(state.hp<=0?'Дрон повреждён — подберите его для ремонта':'Дрон разрядился — подберите его');}
     }
     if(V09Power.devices.robot_drone_charge.active()&&devicePowered('robot_drone_charge')){
       state.battery=Math.min(100,state.battery+dt*chargeRate());if(state.battery===100)state.lowWarn=false;
@@ -11372,8 +11532,8 @@ window.V014Robots=(()=>{
     if(d.robots014)validate(d.robots014);restoreOld(d);Object.assign(state,defaults(),d.robots014?copy(d.robots014):{});
     if(!d.robots014?.combatMode)state.combatMode=state.mode==='attack'?'attack':'defense';
     clearRoute();resetReturn();undocking=false;shot=hurt=saveClock=0;observedTarget=selectedTarget();
-    state.targetIndex=state.task==='attack'&&zombies[state.targetIndex]?.alive?state.targetIndex:null;
-    if(state.task==='attack'&&(state.targetIndex===null||!combatEnabled()))finishAttack();
+    state.targetId=state.task==='attack'&&GameIdentity.enemy(state.targetId)?.alive?state.targetId:null;
+    if(state.task==='attack'&&(state.targetId===null||!combatEnabled()))finishAttack();
     if(state.task==='docked'&&!state.packed)Object.assign(state,dockPosition());updateHUD();
   });
   v09Style('.v014DroneHUD{position:fixed;right:12px;top:calc(220px + env(safe-area-inset-top,0px));z-index:38;width:auto;min-height:28px!important;padding:5px 8px!important;border-radius:9px!important;font:11px Arial!important;background:#172c2cd9!important;color:#b7d5c8!important}.v014RobotActions{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.v014RobotActions .menuButton,#v014DronePanel details .menuButton{width:auto;min-height:30px!important;padding:6px 8px!important;font-size:11px!important;margin:0}.v014RobotActions .selected{background:#376351!important}.v014RobotGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.v014RobotGrid .menuButton{position:relative;min-height:45px;padding:4px;margin:0}.v014RobotGrid img{max-height:34px;max-width:100%}.v014RobotGrid small{position:absolute;bottom:2px;right:4px;font-size:10px}.v014DroneHeader{display:flex;align-items:center;gap:10px;padding:6px 0 9px;border-bottom:1px solid #58716a55}.v014DroneHeader img{width:64px;height:48px;object-fit:contain;border-radius:8px;background:#1a3436}.v014DroneStats{font-size:11px;line-height:1.55;color:#c7ddd3}.v014DroneStats b{color:#f0d892;font-size:12px}#v014DronePanel .panel{width:min(500px,94vw);max-height:83dvh;overflow-y:auto;padding:12px;min-height:420px}#v014DronePanel p{font-size:11px;line-height:1.5;margin:9px 0}#v014DronePanel input,#v014DronePanel select{max-width:100%;background:#203b3c;color:#deece5;border:1px solid #648178;border-radius:7px;padding:7px}#v014DroneLoot{font-size:11px;min-height:28px;padding:6px 10px}@media(max-height:520px){.v014DroneHUD{top:calc(110px + env(safe-area-inset-top,0px));right:65px}}');
@@ -12297,17 +12457,17 @@ window.V0151Station=(()=>{
 
 /* 0.16: one bounded darkness mask; existing power circuits and light geometry. */
 window.V016Lighting=(()=>{
-  const dayMs=20*60*1000,TAU=Math.PI*2;
-  let day=1,minute=480,saveElapsed=0,lastHud='',mask=null,maskContext=null;
+  const dayMs=WorldClock.dayMs,TAU=Math.PI*2;
+  let saveElapsed=0,lastHud='',mask=null,maskContext=null;
   let fixturesCache=null,shadowRevision='',droneKey='',droneShape=null;
   const shadowShapes=new Map(),roomMasks=new Map(),sprites=new Map();
   const smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t);};
-  function daylight(){return smooth((minute-300)/180)*(1-smooth((minute-1020)/180));}
-  function capture(){return{schema:1,day,minute};}
-  function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isInteger(d.day)||d.day<1||d.day>1000000||!Number.isFinite(d.minute)||d.minute<0||d.minute>=1440)throw Error('Некорректное время суток');return true;}
-  function hud(){const hours=Math.floor(minute/60),mins=Math.floor(minute%60),raid=day%10===0,text=(raid?'ДЕНЬ X · ':'ДЕНЬ ')+day+' · '+String(hours).padStart(2,'0')+':'+String(mins).padStart(2,'0');if(text!==lastHud){const node=el('v016WorldClock');if(node){I18n.assign(node,"textContent",text);node.style.color=raid?'#d6a083':'';}lastHud=text;}}
-  function restore(d){validate(d);day=d?.day??1;minute=d?.minute??480;saveElapsed=0;lastHud='';shadowShapes.clear();droneKey='';hud();}
-  function tick(ms){if(document.hidden||playerDead||!Number.isFinite(ms)||ms<=0)return;const dt=Math.min(ms,1000);minute+=dt/dayMs*1440;if(minute>=1440){const days=Math.floor(minute/1440);day=Math.min(1000000,day+days);minute%=1440;}saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
+  function daylight(){const minute=WorldClock.minute;return smooth((minute-300)/180)*(1-smooth((minute-1020)/180));}
+  const capture=WorldClock.capture,validate=WorldClock.validate;
+  function hud(){const day=WorldClock.day,minute=WorldClock.minute,hours=Math.floor(minute/60),mins=Math.floor(minute%60),raid=WorldEvents.isActive('day_x'),text=(raid?'ДЕНЬ X · ':'ДЕНЬ ')+day+' · '+String(hours).padStart(2,'0')+':'+String(mins).padStart(2,'0');if(text!==lastHud){const node=el('v016WorldClock');if(node){I18n.assign(node,"textContent",text);node.style.color=raid?'#d6a083':'';}lastHud=text;}}
+  function restore(d){WorldClock.restore(d);saveElapsed=0;lastHud='';shadowShapes.clear();droneKey='';hud();}
+  function tick(ms){if(document.hidden||playerDead)return;const dt=WorldClock.advance(ms);saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
+  WorldEvents.onChange(hud);
   // Existing left/right yard circuits retain their save IDs, priority, battery
   // fallback and switches. Each supplies ten wall lamps and four floods.
   for(const id of ['spot_left','spot_right']){const d=V09Power.devices[id];if(d){d.watts=.95;d.name=id==='spot_left'?'Освещение периметра · левая линия':'Освещение периметра · правая линия';d.active=()=>daylight()<.995;}}
@@ -12390,7 +12550,7 @@ window.V016Lighting=(()=>{
   GameSave.extend('capture','render.lighting',function(oldCapture){const d=oldCapture();d.lighting016=capture();return d;});
   GameSave.extend('decode','render.lighting',function(oldDecode,raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);});
   GameSave.extend('restore','render.lighting',function(oldRestore,d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);});
-  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,get day(){return day;},maskImage:()=>mask,cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:4,droneShapes:droneShape?1:0,droneLimit:1,width:mask?.width||0,height:mask?.height||0})};
+  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,get day(){return WorldClock.day;},maskImage:()=>mask,cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:4,droneShapes:droneShape?1:0,droneLimit:1,width:mask?.width||0,height:mask?.height||0})};
 })();
 
 /* 0.16: passable wall-mounted heavy machine guns; one persistent item per gun. */
@@ -12948,19 +13108,19 @@ window.V0162Magazines=(()=>{
     openOverlay(o);return true;
   }
   function render(parent,s,after){
-    if(!rifle(s))return;combat.ensure(s);
+    if(!rifle(s))return;const view=combat.itemView(s);
     const section=document.createElement('section');section.className='v162Magazine';parent.append(section);
     const label=document.createElement('div');label.className='v162MagazineLabel';I18n.assign(label,"textContent",'Магазин');section.append(label);
     const row=document.createElement('div');row.className='v162MagazineRow';section.append(row);
     const slot=v09Button('',()=>choose(s,after),'v162MagazineSlot');slot.dataset.magazineAction='choose';I18n.setAttr(slot,'aria-label','Магазин · выбрать или заменить');
-    I18n.assign(slot,"innerHTML",s.magazineType?itemIconHTML(s.magazineType):'＋');row.append(slot);
+    I18n.assign(slot,"innerHTML",view.magazineType?itemIconHTML(view.magazineType):'＋');row.append(slot);
     const info=document.createElement('div');info.className='v162MagazineInfo';
-    const name=document.createElement('span');I18n.assign(name,"textContent",s.magazineType?ITEM[s.magazineType].name:'Не установлен');
-    const count=document.createElement('b');I18n.assign(count,"textContent",s.rounds+'/'+combat.gunSpec(s).mag);
+    const name=document.createElement('span');I18n.assign(name,"textContent",view.magazineType?ITEM[view.magazineType].name:'Не установлен');
+    const count=document.createElement('b');I18n.assign(count,"textContent",view.rounds+'/'+combat.gunSpec(s).mag);
     info.append(name,count);row.append(info);
     const actions=document.createElement('div');actions.className='v162MagazineActions';section.append(actions);
-    const put=v09Button(s.magazineType?'Заменить':'Установить',()=>choose(s,after));put.dataset.magazineAction='install';put.disabled=!owner(s);slot.disabled=put.disabled;
-    const take=v09Button('Снять',()=>{if(remove(s))after?.();});take.dataset.magazineAction='remove';take.disabled=!s.magazineType||!owner(s);actions.append(put,take);
+    const put=v09Button(view.magazineType?'Заменить':'Установить',()=>choose(s,after));put.dataset.magazineAction='install';put.disabled=!owner(s);slot.disabled=put.disabled;
+    const take=v09Button('Снять',()=>{if(remove(s))after?.();});take.dataset.magazineAction='remove';take.disabled=!view.magazineType||!owner(s);actions.append(put,take);
   }
   const details=V011UI.details;V011UI.details=function(where,i){details(where,i);const s=inv.list(where)?.[i];if(!rifle(s))return;
     const body=el('v010ItemDetails').querySelector('.v09Body');render(body,s,()=>{if(inv.list(where)?.[i]===s)V011UI.details(where,i);else closeOverlay(el('v010ItemDetails'));});
@@ -13116,32 +13276,26 @@ window.V017Monsters=(()=>{
   const typeAt=index=>{const ids=kinds();return ids[index%ids.length];};
   const SIDES=['N','E','S','W'],CORPSE_MS=90000;
   // Preserve the ACTUAL Day X contract, including cooldown and special attacks.
-  const dayX=Object.freeze({intervalDays:10,hp:1.5,damage:1.5,speed:1.5,chaseSpeed:1.5,cooldownRate:1.5,mechanics:1.5,population:96,ordinaryPopulation:48,maxPopulation:144});
-  const raidCache=new WeakMap();
-  function stats(z,raid=isDayX()){
-    const s=specs[typeof z==='string'?z:z.type]||specs.normal;if(!raid)return s;
-    let entry=raidCache.get(s);
-    if(!entry||['hp','speed','chaseSpeed','damage','cooldown'].some(key=>entry.source[key]!==s[key])){
-      entry={source:{hp:s.hp,speed:s.speed,chaseSpeed:s.chaseSpeed,damage:s.damage,cooldown:s.cooldown},value:{...s,hp:s.hp*dayX.hp,speed:s.speed*dayX.speed,chaseSpeed:s.chaseSpeed*dayX.chaseSpeed,damage:s.damage*dayX.damage,cooldown:s.cooldown/dayX.cooldownRate}};
-      raidCache.set(s,entry);
-    }
-    return entry.value;
+  const dayX=WorldEvents.dayX;
+  function stats(z,raid){
+    const s=specs[typeof z==='string'?z:z.type]||specs.normal;
+    return WorldEvents.enemyStats(s,raid===undefined?WorldEvents.snapshot().modifiers:raid?WorldEvents.xModifiers:WorldEvents.none);
   }
   let runtime=new WeakMap(),serial=0,lastPopulation=0,effects=[],neighbors=new Map(),lastRaid=null;
   const night=()=>V016Lighting.daylight()<.28;
-  const isDayX=(day=V016Lighting.day)=>Number.isInteger(day)&&day>0&&day%dayX.intervalDays===0;
-  const factor=()=>isDayX()?dayX.mechanics:1;
-  const targetCount=()=>Math.min(dayX.maxPopulation,Math.round((isDayX()?dayX.population:dayX.ordinaryPopulation)*V010World.settings.enemyCount));
+  const isDayX=(day,minute=WorldClock.minute)=>day===undefined?WorldEvents.isActive('day_x'):WorldEvents.matches('day_x',day,minute);
+  const factor=()=>WorldEvents.value('enemy.mechanics');
+  const targetCount=()=>Math.min(dayX.maxPopulation,Math.round((dayX.ordinaryPopulation*WorldEvents.value('spawn.intensity'))*V010World.settings.enemyCount));
   const hash=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
   const angleOf=a=>((a%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
   const insideOuter=z=>z.x>242&&z.x<1358&&z.y>202&&z.y<998;
   const insideInner=z=>z.x>642&&z.x<958&&z.y>452&&z.y<728;
   function nearestSide(z){const x=(z.x-800)/630,y=(z.y-600)/470;return Math.abs(x)>Math.abs(y)?x<0?'W':'E':y<0?'N':'S';}
   function prepare(z,legacy=false){
-    if(!specs[z.type])z.type='normal';const raid=isDayX(),s=stats(z,raid);
+    if(!specs[z.type])z.type='normal';const raid=isDayX(),s=stats(z);
     const changed=z.raid019!==raid;
     if(!z.monster017){z.health=z.alive?Math.max(.001,clamp(z.health/(z.maxHealth||100),0,1)*s.hp):0;z.monster017=true;}
-    else if(changed){const previous=stats(z,z.raid019===true).hp;z.health=z.alive?clamp(z.health/previous,0,1)*s.hp:0;}
+    else if(changed||z.maxHealth!==s.hp){const previous=z.maxHealth||stats(z,z.raid019===true).hp;z.health=z.alive?clamp(z.health/previous,0,1)*s.hp:0;}
     z.raid019=raid;
     z.maxHealth=s.hp;z.radius=s.radius;z.speed=s.speed;z.chaseSpeed=s.chaseSpeed;
     if(!runtime.has(z)){const id=++serial;runtime.set(z,{id,angle:z.wanderAngle||0,walk:0,nextSense:0,sees:false,target:null,retarget:0,attack:0,jump:null,fuse:0,exploded:false,deadAt:z.alive?0:performance.now(),stuck:0,side:nearestSide(z),variant:Math.floor(hash(id*23)*3),deathAngle:angleOf(z.wanderAngle||0),retired:false,pauseUntil:0});}
@@ -13238,11 +13392,11 @@ window.V017Monsters=(()=>{
   function population(now,force=false){
     if(!force&&now-lastPopulation<1800)return;lastPopulation=now;
     const count=targetCount();let living=zombies.filter(z=>z.alive).length,added=0,removed=0;
-    // Keep array indices stable for drone targets. Surplus actors retire only
+    // Preserve the released population/corpse pool policy. Surplus actors retire only
     // out of sight, without fake kills, rewards, blood or death explosions.
     for(let i=zombies.length-1;i>=0&&living>count&&removed<4;i--){
       const z=zombies[i],r=prepare(z),drone=window.V014Robots?.state;
-      if(!z.alive||r.sees||window.V0105?.target===z||drone?.task==='attack'&&drone.targetIndex===i||sameLevel()&&(dist(z,player)<700||visibleOnScreen(z.x,z.y,130)))continue;
+      if(!z.alive||r.sees||window.V0105?.target===z||drone?.task==='attack'&&drone.targetId===z.instanceId||sameLevel()&&(dist(z,player)<700||visibleOnScreen(z.x,z.y,130)))continue;
       z.alive=false;z.health=0;z.state='wander';z.corpseAt011=Date.now()-CORPSE_MS;r.retired=true;r.deadAt=now-CORPSE_MS;r.target=null;r.fuse=0;r.jump=null;stopZombieAudio(z);living--;removed++;
     }
     for(let i=0;i<zombies.length&&living<count&&added<4;i++){
@@ -13252,14 +13406,20 @@ window.V017Monsters=(()=>{
     while(living<count&&zombies.length<144&&added<4){const z=spawn(zombies.length);if(!z)break;zombies.push(z);living++;added++;}
     if(added||removed)queueGameSave();
   }
-  function updateMonsters(){
+  function syncEvent(){
     const raid=isDayX();
     if(lastRaid!==raid){if(lastRaid!==null)message(raid?'День X · монстры усилены на 50%':'День X закончился');lastRaid=raid;lastPopulation=-Infinity;for(const z of zombies)prepare(z);}
+  }
+  // Stats switch at the exact clock boundary. Keep the existing notification
+  // timing in the simulation tick (restore/preview must not add journal rows).
+  WorldEvents.onChange(()=>{if(!GameSave.restoring){lastPopulation=-Infinity;for(const z of zombies)prepare(z);}});
+  function updateMonsters(){
+    syncEvent();const raid=isDayX();
     if(menuOpen||playerDead||document.hidden)return;
-    const now=performance.now(),boost=raid?dayX.mechanics:1,dt=Math.min(2,Math.max(0,frameScale));population(now);
+    const now=performance.now(),boost=factor(),dt=Math.min(2,Math.max(0,frameScale));population(now);
     neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,[]);neighbors.get(key).push(z);}
     for(const z of zombies){
-      const r=prepare(z);if(!z.alive)continue;const s=stats(z,raid),d=dist(z,player);
+      const r=prepare(z);if(!z.alive)continue;const s=stats(z),d=dist(z,player);
       if(sameLevel()&&d<ZOMBIE_AUDIO_RADIUS&&visibleOnScreen(z.x,z.y,60)&&now>(z.lastGrowl||0)){playZombieBuffer(z);z.lastGrowl=now+3500+hash(r.id+Math.floor(now/1000))*4500;}
       if(now>=r.nextSense){r.nextSense=now+190+hash(r.id)*100;r.sees=sameLevel()&&!V091Fortress.isElevated()&&d<(V010World.sneaking?130:240)*boost&&lineClear(z.x,z.y,player.x,player.y,0,'surface');}
       if(r.jump){
@@ -13369,7 +13529,7 @@ window.V017Monsters=(()=>{
     validate(d);restore(d);runtime=new WeakMap();effects=[];lastPopulation=performance.now();lastRaid=isDayX();
     zombies.forEach((z,i)=>{
       const saved=d.monsters017?.schema===2?d.monsters017.actors[i]:null;
-      if(d.monsters017){z.type=d.monsters017.types[i];z.monster017=true;z.raid019=saved?.raid??false;z.health=d.zombies[i].health;}
+      if(d.monsters017){z.type=d.monsters017.types[i];z.monster017=true;z.raid019=saved?.raid??false;z.health=d.zombies[i].health;z.maxHealth=stats(z,z.raid019).hp;}
       else {z.monster017=false;z.health=d.zombies[i].health;z.maxHealth=100;}
       const r=prepare(z);
       if(saved){r.side=saved.side;r.variant=saved.variant;r.deathAngle=saved.deathAngle;r.retired=saved.retired;r.deadAt=z.alive?0:performance.now()-saved.corpseMs;}
@@ -13381,7 +13541,6 @@ window.V017Monsters=(()=>{
   zombies.forEach((z,i)=>{z.type=typeAt(i);prepare(z);});
   return{specs,stats,dayX,typeAt,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
 })();
-
 /* 0.18.0 — construction on top of existing wall, inventory, mining and craft APIs. */
 window.V018Build=(()=>{
   const health=V015Base.health,LEVELS=health.levels,COSTS=health.costs;

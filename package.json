@@ -1,15 +1,16 @@
 {
   "name": "last-base",
-  "version": "0.25.3",
+  "version": "0.27.0",
   "private": true,
-  "description": "Last Base Stage 5 accepted baseline plus standalone Main Menu patch. Stage 6 not started.",
+  "description": "Last Base Stage 6 World Events and Stage 7 co-op readiness; single-player only.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
     "test": "node qa/run.cjs",
     "bench": "node qa/performance.cjs",
     "assets": "node tools/assets.cjs",
-    "locales": "node tools/locales.cjs"
+    "locales": "node tools/locales.cjs",
+    "bench:stages": "node qa/compare-readiness-performance.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

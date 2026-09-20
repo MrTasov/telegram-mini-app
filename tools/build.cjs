@@ -5,6 +5,7 @@ const root=path.resolve(__dirname,'..'),manifest=JSON.parse(fs.readFileSync(path
 const check=process.argv.includes('--check'),hash=s=>crypto.createHash('sha256').update(s).digest('hex');
 require('./assets.cjs').generate(check);
 require('./locales.cjs').generate(check);
+require('./developer.cjs').generate(check);
 if(manifest.mode!=='classic-script-concatenation'||new Set(manifest.files).size!==manifest.files.length)throw Error('Invalid source manifest');
 const parts=manifest.files.map(file=>{
  if(path.isAbsolute(file)||file.split('/').includes('..')||!file.endsWith('.js'))throw Error('Invalid source path: '+file);

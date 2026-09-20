@@ -17,7 +17,9 @@ fs.mkdirSync(path.join(game,'source'));fs.copyFileSync(path.join(baseline,'basel
 fs.mkdirSync(path.join(game,'qa'));
 for(const dir of [path.join(game,'qa'),path.join(work,'tools')])for(const name of ['runtime.cjs','canvas-contract.cjs'])fs.copyFileSync(path.join(__dirname,name),path.join(dir,name));
 // Await the resource owner's decode/validation, without changing any baseline assertion.
-function adaptAssetWaits(code){return code.replaceAll('Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode())','(window.GameAssets?Object.values(AssetManifest.art).map(id=>GameAssets.load(id)):Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode()))').replaceAll('[1,2,3,4,5].map(n=>V020Walls.image(n).decode())','(window.GameAssets?Object.values(AssetManifest.walls).map(id=>GameAssets.load(id)):[1,2,3,4,5].map(n=>V020Walls.image(n).decode()))');}
+// Stage 6 explicitly changes the Day X window. Exercise historical raid checks
+// at 03:00, inside both contracts; frozen inputs/assertions remain on disk.
+function adaptAssetWaits(code){return code.replace(/day:10,minute:(?:1380|480)/g,'day:10,minute:180').replaceAll('Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode())','(window.GameAssets?Object.values(AssetManifest.art).map(id=>GameAssets.load(id)):Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode()))').replaceAll('[1,2,3,4,5].map(n=>V020Walls.image(n).decode())','(window.GameAssets?Object.values(AssetManifest.walls).map(id=>GameAssets.load(id)):[1,2,3,4,5].map(n=>V020Walls.image(n).decode()))');}
 for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs']){
  let code=fs.readFileSync(path.join(baseline,'baseline_0.20.0/qa',name),'utf8');
  code=code.replaceAll("captureGameProgress().gameVersion==='0.20.0'",`captureGameProgress().gameVersion==='${version}'`);

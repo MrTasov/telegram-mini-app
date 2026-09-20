@@ -19,8 +19,9 @@ configs.environmentAssumptions={equipment:'starter gear; balanced variant and sp
 const expected=JSON.parse(fs.readFileSync(path.join(__dirname,'stage0/audit/configurations.json'))),actual=JSON.parse(JSON.stringify(configs));
 const version=actual.version;actual.version=expected.version; // Release metadata and the explicitly versioned envelope are the only additions.
 assert.equal(actual.save.topKeys.filter(k=>k==='saveVersion').length,1);
-assert.equal(E('captureGameProgress().saveVersion'),1);
-actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='saveVersion');
+assert.equal(E('captureGameProgress().saveVersion'),2);
+actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='saveVersion'&&k!=='identity027');
+delete actual.save.schemas.identity027;
 const definitionFields={items:['ammo','stackMax','caliber','drone','turret'],weapons:['category','reloadMs','noise','heldStyle','visualRecoil','recoilLabel','magazineTypes','defaultMagazine','extendedMagazine']};
 for(const [group,keys] of Object.entries(definitionFields))for(const [id,def] of Object.entries(actual[group]))for(const key of keys)if(!Object.hasOwn(expected[group][id]||{},key))delete def[key];
 for(const [id,levels] of Object.entries(actual.effectiveWeapons))for(const [i,def] of levels.entries())for(const key of definitionFields.weapons)if(!Object.hasOwn(expected.effectiveWeapons[id][i],key))delete def[key];

@@ -130,6 +130,7 @@ function decodeGameProgressBase(raw){
 }
 
 function restoreGameProgressBase(d){
+  GameIdentity.restore(d);
   const now=Date.now();
   bag=clone(d.bag);
   for(const slot of Object.keys(equipment)){
@@ -160,7 +161,7 @@ function restoreGameProgressBase(d){
     scavenges[i].loot=clone(o.loot);
   });
   zombies=d.zombies.map((z,i)=>{
-    const restored=Object.assign(makeZombie(z.x,z.y),z);
+    const restored=Object.assign(makeZombie(z.x,z.y,d.identity027.enemies[i]),z);
     if(worldCollision(z.x,z.y,17,'surface'))Object.assign(restored,outsideSpawns[i%outsideSpawns.length],{state:'wander'});
     return restored;
   });

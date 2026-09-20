@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..');process.chdir(root);
 const {setup}=require('./runtime.cjs'),a=setup('qa/controls-base/index.html'),b=setup('index.html'),checks=[];
 const json=v=>JSON.parse(JSON.stringify(v));
-function normalized(d){d=json(d);d.gameVersion='metadata-only';return d;}
+const normalized=require('./identity-test-contract.cjs').gameplay;
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.message.slice(0,4000)});}}
 function both(code){const aa=a.eval(code),bb=b.eval(code);assert.deepEqual(json(bb??null),json(aa??null));}
 function compare(){assert.deepEqual(normalized(b.eval('captureGameProgress()')),normalized(a.eval('captureGameProgress()')));}
@@ -13,7 +13,7 @@ check('freshGame.fullPayload',compare);
 for(const stage of ['stage0','stage1','stage2']){
  const dir=path.join(__dirname,stage,'fixtures');
  for(const file of fs.readdirSync(dir).filter(n=>n.endsWith('.json')&&n!=='index.json')){
-  const raw=fs.readFileSync(path.join(dir,file),'utf8');
+  const raw=require('./event-test-contract.cjs').raidFixture(fs.readFileSync(path.join(dir,file),'utf8'));
   check(stage+'.'+file+'.decodedPayload',()=>assert.deepEqual(normalized(b.eval(`decodeGameProgress(${JSON.stringify(raw)})`)),normalized(a.eval(`decodeGameProgress(${JSON.stringify(raw)})`))));
   check(stage+'.'+file+'.restoredPayload',()=>{restore(raw);compare();});
   check(stage+'.'+file+'.newRoundtrip',()=>{
@@ -21,7 +21,7 @@ for(const stage of ['stage0','stage1','stage2']){
   });
  }
 }
-const fixture=id=>fs.readFileSync(path.join(__dirname,'stage1/fixtures',id+'.json'),'utf8');
+const fixture=id=>require('./event-test-contract.cjs').raidFixture(fs.readFileSync(path.join(__dirname,'stage1/fixtures',id+'.json'),'utf8'));
 const scenarios=[
  {id:'surfaceMovement',fixture:'fresh_game',start:"scene='surface';player.x=800;player.y=850;menuOpen=false;stopControls(true);moveX=.35;moveY=.9;movePower=.8;",frames:90},
  {id:'craftingProgress',fixture:'craft_in_progress',start:"menuOpen=false;stopControls(true);",frames:120},
@@ -52,14 +52,14 @@ for(const type of gear)for(let level=0;level<=5;level++)for(const variant of ['b
 });
 for(const day of [1,10,11])check('simulation.allEnemyBehaviors.day'+day,()=>{
  restore(fixture('fresh_game'));
- both(`scene='surface';player.x=800;player.y=850;player.health=player.maxHealth;menuOpen=false;stopControls(true);V016Lighting.restore({schema:1,day:${day},minute:1380});zombies=['normal','heavy','fast','leaper','bloater'].map((type,i)=>{const z=makeZombie(760+i*30,800);z.type=type;V017Monsters.prepare(z);return z;});`);
+ both(`scene='surface';player.x=800;player.y=850;player.health=player.maxHealth;menuOpen=false;stopControls(true);V016Lighting.restore({schema:1,day:${day},minute:180});zombies=['normal','heavy','fast','leaper','bloater'].map((type,i)=>{const z=makeZombie(760+i*30,800);z.type=type;V017Monsters.prepare(z);return z;});`);
  for(let i=0;i<180;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
  compare();
 });
 check('dayX.transitionsPreserveHealthRatios',()=>{
  restore(fixture('day_x'));
- for(const day of [11,20,21]){both(`V016Lighting.restore({schema:1,day:${day},minute:840});zombies.forEach(z=>V017Monsters.prepare(z));`);compare();}
+ for(const day of [11,20,21]){both(`V016Lighting.restore({schema:1,day:${day},minute:180});zombies.forEach(z=>V017Monsters.prepare(z));`);compare();}
 });
 check('console.noErrors',()=>{assert.deepEqual(a.errors,[]);assert.deepEqual(b.errors,[]);});
-const result={reference:'0.23.1 manually accepted',candidate:require('../package.json').version,ignoredFields:['gameVersion (release metadata)','no gameplay fields normalized'],passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status!=='PASS').length,checks};
+const result={reference:'0.23.1 manually accepted',candidate:require('../package.json').version,ignoredFields:['gameVersion (release metadata)','identity027/saveVersion (new identity envelope only); no gameplay fields normalized'],passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status!=='PASS').length,checks};
 fs.writeFileSync(path.join(__dirname,'results/stage4-differential.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({passed:result.passed,failed:result.failed,failures:checks.filter(c=>c.status!=='PASS')}));if(result.failed)process.exitCode=1;

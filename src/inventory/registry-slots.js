@@ -21,9 +21,10 @@ window.V010Inventory=(()=>{
   const matches=(a,b)=>a&&b&&a.type===b.type&&stackMax(a.type)>1&&signature(a)===signature(b);
   function notifyChange(){
     if(batchDepth)return;
+    window.V010Combat?.refreshStats();window.V010Combat?.syncAmmo();
     window.V013Inventory?.sync();window.V0161Upgrade?.refresh();window.V0161UI?.refreshQuick();window.V0141DroneUI?.refresh();
     renderBag();if(activeStorage!==null)renderStorage();updateAmmoHud();
-    window.V010Combat?.refreshStats?.();queueGameSave();
+    queueGameSave();
   }
   function insert(slots,item,max,allowLocked=false){
     if(!item||!ITEM[item.type]||!Number.isInteger(item.qty)||item.qty<1)return item?.qty||0;
