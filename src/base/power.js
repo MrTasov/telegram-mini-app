@@ -72,14 +72,14 @@ function v09DeviceStatus(d){
 function renderDeviceSwitch(id){
   const d=V09Power.devices[id],row=document.createElement('div');row.className='v09DeviceRow';row.dataset.powerDevice=id;
   if(!d)return row;
-  const text=document.createElement('div');text.innerHTML='<strong></strong><small></small>';text.querySelector('strong').textContent=d.name;row.appendChild(text);
-  const button=v09Button('',()=>togglePowerDevice(id),'v09DeviceToggle');button.setAttribute('aria-label','Питание: '+d.name);row.appendChild(button);
+  const text=document.createElement('div');I18n.assign(text,"innerHTML",'<strong></strong><small></small>');I18n.assign(text.querySelector('strong'),"textContent",d.name);row.appendChild(text);
+  const button=v09Button('',()=>togglePowerDevice(id),'v09DeviceToggle');I18n.setAttr(button,'aria-label','Питание: '+d.name);row.appendChild(button);
   v09UpdateDeviceRow(row);return row;
 }
 function v09UpdateDeviceRow(row){
   const d=V09Power.devices[row.dataset.powerDevice];if(!d)return;
-  row.querySelector('small').textContent=v09DeviceStatus(d)+' · '+d.watts.toFixed(2).replace(/0$/,'')+' кВт';
-  const b=row.querySelector('button');b.textContent=d.enabled?'Вкл.':'Выкл.';b.classList.toggle('on',d.enabled);b.setAttribute('aria-pressed',String(d.enabled));
+  I18n.assign(row.querySelector('small'),"textContent",v09DeviceStatus(d)+' · '+I18n.numeric(d.watts,{minimumFractionDigits:1,maximumFractionDigits:2,useGrouping:false})+' кВт');
+  const b=row.querySelector('button');I18n.assign(b,"textContent",d.enabled?'Вкл.':'Выкл.');b.classList.toggle('on',d.enabled);b.setAttribute('aria-pressed',String(d.enabled));
 }
 for(const room of Object.keys(V09Power.rooms))if(room!=='yard')registerPowerDevice('light_'+room,room,room==='farm'?.24:room==='corridor'?.18:.12,()=>true,'Освещение');
 const v09Doors=['workshop','storage','room4','room5','room6','room7','farm'].map(room=>{
@@ -165,30 +165,30 @@ v09Style(`
 `);
 function v09PowerStats(){return '<div class="v09PowerStats"><div class="v09PowerStat"><small>Генератор</small><b data-power="running"></b></div><div class="v09PowerStat"><small>Топливо</small><b data-power="fuel"></b><div class="v09PowerMeter"><i data-power="fuelbar"></i></div></div><div class="v09PowerStat"><small>Нагрузка</small><b data-power="load"></b></div></div><div class="v09PowerWarning" data-power="warning"></div>';}
 function v09OpenPowerRemote(){
-  const overlay=v09Overlay('v09PowerOverlay','Пульт · управление базой'),body=overlay.querySelector('.v09Body');body.innerHTML=v09PowerStats();
+  const overlay=v09Overlay('v09PowerOverlay','Пульт · управление базой'),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());
   const tabs=document.createElement('div');tabs.className='v09PowerTabs';
   for(const [key,title] of [['surface','Двор'],['bunker','Бункер']]){const b=v09Button(title,()=>{V09Power.tab=key;v09OpenPowerRemote();});b.classList.toggle('selected',V09Power.tab===key);tabs.appendChild(b);}body.appendChild(tabs);
-  const map=document.createElement('div');map.className='v09BaseMap';map.setAttribute('aria-label','План базы: '+(V09Power.tab==='bunker'?'бункер':'двор'));body.appendChild(map);
+  const map=document.createElement('div');map.className='v09BaseMap';I18n.setAttr(map,'aria-label','План базы: '+(V09Power.tab==='bunker'?'бункер':'двор'));body.appendChild(map);
   if(V09Power.tab==='bunker'){
     const positions={farm:[5,4,90,24],corridor:[44,30,12,65],room6:[7,32,33,18],room7:[60,32,33,18],room4:[7,54,33,18],room5:[60,54,33,18],workshop:[7,76,33,18],storage:[60,76,33,18]};
-    for(const [room,p] of Object.entries(positions)){const b=document.createElement('button');b.className='v09MapRoom';b.dataset.powerRoom=room;b.style.cssText=`left:${p[0]}%;top:${p[1]}%;width:${p[2]}%;height:${p[3]}%`;b.innerHTML='<span></span><small></small>';b.querySelector('span').textContent=room==='corridor'?'↕':V09Power.rooms[room];b.setAttribute('aria-label',V09Power.rooms[room]);b.onclick=()=>{V09Power.selectedRoom=room;v09RenderCircuit();v09RefreshPowerUI();};map.appendChild(b);}
+    for(const [room,p] of Object.entries(positions)){const b=document.createElement('button');b.className='v09MapRoom';b.dataset.powerRoom=room;b.style.cssText=`left:${p[0]}%;top:${p[1]}%;width:${p[2]}%;height:${p[3]}%`;I18n.assign(b,"innerHTML",'<span></span><small></small>');I18n.assign(b.querySelector('span'),"textContent",room==='corridor'?'↕':V09Power.rooms[room]);I18n.setAttr(b,'aria-label',V09Power.rooms[room]);b.onclick=()=>{V09Power.selectedRoom=room;v09RenderCircuit();v09RefreshPowerUI();};map.appendChild(b);}
     if(V09Power.selectedRoom==='yard')V09Power.selectedRoom='workshop';
   }else{
-    V09Power.selectedRoom='yard';map.innerHTML='<div style="position:absolute;inset:10% 13% 15%;border:6px solid #697b77;border-radius:8px"></div><div class="v09MapHatch">Бункер ↓</div><div class="v09YardGate">ВОРОТА</div>';
-    for(let i=0;i<2;i++){const b=document.createElement('button');b.className='v09MapRoom';b.dataset.powerSpot=v09Spotlights[i].id;b.style.cssText=`left:${i?64:15}%;top:61%;width:21%;height:18%`;b.textContent=i?'Правый\nпрожектор':'Левый\nпрожектор';b.onclick=()=>v09OpenDevice(v09Spotlights[i].id);map.appendChild(b);}
+    V09Power.selectedRoom='yard';I18n.assign(map,"innerHTML",'<div style="position:absolute;inset:10% 13% 15%;border:6px solid #697b77;border-radius:8px"></div><div class="v09MapHatch">Бункер ↓</div><div class="v09YardGate">ВОРОТА</div>');
+    for(let i=0;i<2;i++){const b=document.createElement('button');b.className='v09MapRoom';b.dataset.powerSpot=v09Spotlights[i].id;b.style.cssText=`left:${i?64:15}%;top:61%;width:21%;height:18%`;I18n.assign(b,"textContent",i?'Правый\nпрожектор':'Левый\nпрожектор');b.onclick=()=>v09OpenDevice(v09Spotlights[i].id);map.appendChild(b);}
   }
-  const legend=document.createElement('div');legend.className='v09MapLegend';legend.innerHTML='<span>Есть питание</span><span>Выключено</span><span>Нет энергии</span>';body.appendChild(legend);
+  const legend=document.createElement('div');legend.className='v09MapLegend';I18n.assign(legend,"innerHTML",'<span>Есть питание</span><span>Выключено</span><span>Нет энергии</span>');body.appendChild(legend);
   const circuit=document.createElement('div');circuit.className='v09Circuit';circuit.id='v09PowerCircuit';body.appendChild(circuit);v09RenderCircuit();
   const actions=document.createElement('div');actions.className='v09PowerActions';const generator=v09Button('',v09ToggleGenerator);generator.dataset.power='generatorToggle';actions.appendChild(generator);body.appendChild(actions);
   v09RefreshPowerUI();openOverlay(overlay);
 }
 function v09RenderCircuit(){
-  const parent=el('v09PowerCircuit');if(!parent)return;parent.innerHTML='';const room=V09Power.selectedRoom;
+  const parent=el('v09PowerCircuit');if(!parent)return;I18n.assign(parent,"innerHTML",'');const room=V09Power.selectedRoom;
   const header=document.createElement('div');header.className='v09CircuitHeader';
-  const title=document.createElement('div');title.innerHTML='<h3></h3><small></small>';title.querySelector('h3').textContent=V09Power.rooms[room];title.querySelector('small').dataset.roomPowerStatus=room;header.appendChild(title);
+  const title=document.createElement('div');I18n.assign(title,"innerHTML",'<h3></h3><small></small>');I18n.assign(title.querySelector('h3'),"textContent",V09Power.rooms[room]);title.querySelector('small').dataset.roomPowerStatus=room;header.appendChild(title);
   const toggle=v09Button('',()=>v09ToggleRoom(room),'v09DeviceToggle');toggle.dataset.roomPowerToggle=room;header.appendChild(toggle);parent.appendChild(header);
   for(const d of Object.values(V09Power.devices).filter(d=>d.room===room))parent.appendChild(renderDeviceSwitch(d.id));
-  if(room==='room5'){const note=document.createElement('p');note.className='v09PowerNote';note.textContent='Выключатель комнаты управляет её светом и дверью. Генератор запускается и останавливается отдельно.';parent.appendChild(note);}
+  if(room==='room5'){const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Выключатель комнаты управляет её светом и дверью. Генератор запускается и останавливается отдельно.');parent.appendChild(note);}
 }
 function v09ToggleGenerator(){
   if(V09Power.running)V09Power.running=false;
@@ -197,14 +197,14 @@ function v09ToggleGenerator(){
   message(V09Power.running?'Генератор запущен · доступно 10 кВт':'Генератор остановлен');v09PowerChanged();
 }
 function v09OpenGenerator(refuel=false){
-  const overlay=v09Overlay('v09GeneratorOverlay',refuel?'Энергоблок · топливный бак':'Энергоблок · генератор'),body=overlay.querySelector('.v09Body');body.innerHTML=v09PowerStats();
+  const overlay=v09Overlay('v09GeneratorOverlay',refuel?'Энергоблок · топливный бак':'Энергоблок · генератор'),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());
   if(refuel){
-    const gauge=document.createElement('div');gauge.className='v09TankGauge';gauge.innerHTML='<i data-power="tankbar"></i><b data-power="tankvalue"></b>';body.appendChild(gauge);
+    const gauge=document.createElement('div');gauge.className='v09TankGauge';I18n.assign(gauge,"innerHTML",'<i data-power="tankbar"></i><b data-power="tankvalue"></b>');body.appendChild(gauge);
     const note=document.createElement('p');note.className='v09PowerNote';note.dataset.power='bagfuel';body.appendChild(note);
     const buttons=document.createElement('div');buttons.className='v09PowerActions';for(const qty of [1,10,100])buttons.appendChild(v09Button(qty===100?'Заправить максимум':'Добавить '+qty,()=>v09Refuel(qty)));body.appendChild(buttons);
   }
   const toggle=v09Button('',v09ToggleGenerator);toggle.dataset.power='generatorToggle';body.appendChild(toggle);
-  const note=document.createElement('p');note.className='v09PowerNote';note.textContent='Мощность: 10 кВт. 1 единица топлива ≈ 1 минута работы. При остановке генератора производство сохраняет прогресс. Резервная батарея будет подключена позже.';body.appendChild(note);
+  const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Мощность: 10 кВт. 1 единица топлива ≈ 1 минута работы. При остановке генератора производство сохраняет прогресс. Резервная батарея будет подключена позже.');body.appendChild(note);
   body.appendChild(renderDeviceSwitch('light_room5'));v09RefreshPowerUI();openOverlay(overlay);
 }
 function v09Refuel(amount){
@@ -216,29 +216,29 @@ function v09Refuel(amount){
   removeFromSlots(bag,'fuel',whole);V09Power.fuel+=whole;message('Заправлено: '+whole+' топлива');renderBag();v09PowerChanged();
 }
 function v09OpenDevice(id){
-  const d=V09Power.devices[id];if(!d)return;const overlay=v09Overlay('v09PowerDeviceOverlay',d.name),body=overlay.querySelector('.v09Body');body.innerHTML=v09PowerStats();body.appendChild(renderDeviceSwitch(id));
-  const note=document.createElement('p');note.className='v09PowerNote';note.textContent='Контур: '+V09Power.rooms[d.room]+'. Общий выключатель комнаты имеет приоритет над настройкой прибора.';body.appendChild(note);v09RefreshPowerUI();openOverlay(overlay);
+  const d=V09Power.devices[id];if(!d)return;const overlay=v09Overlay('v09PowerDeviceOverlay',d.name),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());body.appendChild(renderDeviceSwitch(id));
+  const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Контур: '+V09Power.rooms[d.room]+'. Общий выключатель комнаты имеет приоритет над настройкой прибора.');body.appendChild(note);v09RefreshPowerUI();openOverlay(overlay);
 }
 function v09RefreshPowerUI(){
   const a=V09Power.allocation();
   document.querySelectorAll('[data-power]').forEach(node=>{
     const key=node.dataset.power;
-    if(key==='running')node.textContent=V09Power.running?(a.load+a.chargeInput>0?'Работает':'Ожидание'):'Выключен';
-    if(key==='fuel')node.textContent=V09Power.fuel.toFixed(1)+' / 100';
-    if(key==='load')node.textContent=a.load.toFixed(2)+' / '+a.supply+' кВт';
+    if(key==='running')I18n.assign(node,"textContent",V09Power.running?(a.load+a.chargeInput>0?'Работает':'Ожидание'):'Выключен');
+    if(key==='fuel')I18n.assign(node,"textContent",I18n.numeric(V09Power.fuel,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' / 100');
+    if(key==='load')I18n.assign(node,"textContent",I18n.numeric(a.load,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' / '+a.supply+' кВт');
     if(key==='fuelbar'||key==='tankbar')node.style[key==='tankbar'?'height':'width']=V09Power.fuel+'%';
-    if(key==='tankvalue')node.textContent=V09Power.fuel.toFixed(1)+' / 100';
-    if(key==='bagfuel')node.textContent='В рюкзаке: '+bagCount('fuel')+' топлива';
-    if(key==='generatorToggle')node.textContent=V09Power.running?'Остановить генератор':'Запустить генератор';
-    if(key==='warning')node.textContent=V09Power.running?(a.demand>V09Power.supply?'Запрошено '+a.demand.toFixed(2)+' кВт. Приборы без мощности ждут — отключите лишние.':'Свободно '+(V09Power.supply-a.load).toFixed(2)+' кВт'):'Нет генерации. Запустите генератор, чтобы включить освещение и производство.';
+    if(key==='tankvalue')I18n.assign(node,"textContent",I18n.numeric(V09Power.fuel,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' / 100');
+    if(key==='bagfuel')I18n.assign(node,"textContent",'В рюкзаке: '+bagCount('fuel')+' топлива');
+    if(key==='generatorToggle')I18n.assign(node,"textContent",V09Power.running?'Остановить генератор':'Запустить генератор');
+    if(key==='warning')I18n.assign(node,"textContent",V09Power.running?(a.demand>V09Power.supply?'Запрошено '+I18n.numeric(a.demand,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' кВт. Приборы без мощности ждут — отключите лишние.':'Свободно '+I18n.numeric(V09Power.supply-a.load,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' кВт'):'Нет генерации. Запустите генератор, чтобы включить освещение и производство.');
   });
   document.querySelectorAll('[data-power-device]').forEach(v09UpdateDeviceRow);
-  document.querySelectorAll('[data-room-power-toggle]').forEach(node=>{const enabled=V09Power.roomEnabled[node.dataset.roomPowerToggle];node.textContent=enabled?'Вкл.':'Выкл.';node.classList.toggle('on',enabled);node.setAttribute('aria-pressed',String(enabled));});
-  document.querySelectorAll('[data-room-power-status]').forEach(node=>{const room=node.dataset.roomPowerStatus;const demand=Object.values(V09Power.devices).filter(d=>d.room===room&&d.enabled&&d.active()).reduce((n,d)=>n+d.watts,0);node.textContent=(V09Power.roomEnabled[room]?'Контур включён':'Контур отключён')+' · '+demand.toFixed(2)+' кВт';});
+  document.querySelectorAll('[data-room-power-toggle]').forEach(node=>{const enabled=V09Power.roomEnabled[node.dataset.roomPowerToggle];I18n.assign(node,"textContent",enabled?'Вкл.':'Выкл.');node.classList.toggle('on',enabled);node.setAttribute('aria-pressed',String(enabled));});
+  document.querySelectorAll('[data-room-power-status]').forEach(node=>{const room=node.dataset.roomPowerStatus;const demand=Object.values(V09Power.devices).filter(d=>d.room===room&&d.enabled&&d.active()).reduce((n,d)=>n+d.watts,0);I18n.assign(node,"textContent",(V09Power.roomEnabled[room]?'Контур включён':'Контур отключён')+' · '+I18n.numeric(demand,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' кВт');});
   document.querySelectorAll('[data-power-room]').forEach(node=>{
     const room=node.dataset.powerRoom,enabled=V09Power.roomEnabled[room],devices=Object.values(V09Power.devices).filter(d=>d.room===room&&d.enabled&&d.active()),powered=enabled&&V09Power.running&&devices.every(d=>a.served.has(d.id));
     node.classList.toggle('powered',powered);node.classList.toggle('waiting',enabled&&!powered);node.classList.toggle('selected',room===V09Power.selectedRoom);
-    node.querySelector('small').textContent=room==='corridor'?'':!enabled?'Выкл.':!powered?'Нет энергии':devices.reduce((s,d)=>s+d.watts,0).toFixed(2)+' кВт';
+    I18n.assign(node.querySelector('small'),"textContent",room==='corridor'?'':!enabled?'Выкл.':!powered?'Нет энергии':I18n.numeric(devices.reduce((s,d)=>s+d.watts,0),{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' кВт');
   });
   document.querySelectorAll('[data-power-spot]').forEach(node=>{const d=V09Power.devices[node.dataset.powerSpot];node.classList.toggle('powered',a.served.has(d.id));node.classList.toggle('waiting',d.enabled&&V09Power.roomEnabled.yard&&!a.served.has(d.id));});
 }
@@ -253,7 +253,7 @@ function v09DrawDoor(d){
   }
   ctx.fillStyle=powered?'#8dc7aa':'#d2ad69';
   if(d.horizontal){ctx.fillRect(cx-13,d.y-6,26,3);ctx.fillRect(cx-13,d.y+d.h+3,26,3);}else{ctx.fillRect(d.x-6,cy-13,3,26);ctx.fillRect(d.x+d.w+3,cy-13,3,26);}
-  if(!powered&&scene==='bunker'&&distance(player.x,player.y,cx,cy)<120&&d.open<.2){ctx.font='10px Arial';ctx.textAlign='center';ctx.fillStyle='#e0c48e';ctx.fillText('ОТКРЫТЬ ВРУЧНУЮ',cx,cy-23);}
+  if(!powered&&scene==='bunker'&&distance(player.x,player.y,cx,cy)<120&&d.open<.2){ctx.font='10px Arial';ctx.textAlign='center';ctx.fillStyle='#e0c48e';ctx.fillText(I18n.text('ОТКРЫТЬ ВРУЧНУЮ'),cx,cy-23);}
   ctx.restore();
 }
 function v09LightPoints(room){
@@ -283,10 +283,10 @@ function v09DrawRoomSwitch(room){
 }
 V09Power.drawRoom=function(room){v09DrawRoomLight(room);v09DrawRoomSwitch(room);const d=v09Doors.find(d=>d.room===room);if(d)v09DrawDoor(d);};
 function v09DrawEnergyReadouts(){
-  ctx.save();ctx.textAlign='center';ctx.fillStyle='#252d29';ctx.fillRect(905,392,85,72);ctx.fillStyle='#b7a361';ctx.fillRect(905,464-72*V09Power.fuel/100,85,72*V09Power.fuel/100);ctx.fillStyle='#ede5b9';ctx.font='12px Arial';ctx.fillText(V09Power.fuel.toFixed(1)+' / 100',947,430);ctx.font='9px Arial';ctx.fillText('ТОПЛИВО',947,448);
-  ctx.fillStyle='#232927';ctx.fillRect(1065,350,125,50);ctx.fillStyle=V09Power.running?'#98d8ab':'#63716b';ctx.fillRect(1080,365,16,16);ctx.fillStyle='#d8e7d8';ctx.font='10px Arial';ctx.fillText(V09Power.running?'ВКЛЮЧЁН':'ВЫКЛЮЧЕН',1140,377);
-  ctx.fillStyle='#46504b';ctx.fillRect(1050,431,154,48);ctx.fillStyle=V09Power.running?'#d8ecd4':'#b6c1b6';ctx.font='13px Arial';ctx.fillText(V09Power.load.toFixed(2)+' / '+(V09Power.running?'10':'0')+' кВт',1127,451);ctx.font='9px Arial';ctx.fillText(V09Power.running?'1 топливо / мин':'ОЖИДАЕТ ЗАПУСКА',1127,469);
-  ctx.fillStyle='#435352';ctx.fillRect(1253,340,69,105);ctx.strokeStyle='#62736b';ctx.lineWidth=2;ctx.strokeRect(1264,361,47,61);ctx.fillStyle='#b0bbb1';ctx.font='18px Arial';ctx.fillText('—',1287,399);ctx.fillStyle='#39474c';ctx.fillRect(1239,479,97,27);ctx.fillStyle='#9fb1b5';ctx.font='9px Arial';ctx.fillText('НЕ ПОДКЛЮЧЕНА',1287,493);ctx.restore();
+  ctx.save();ctx.textAlign='center';ctx.fillStyle='#252d29';ctx.fillRect(905,392,85,72);ctx.fillStyle='#b7a361';ctx.fillRect(905,464-72*V09Power.fuel/100,85,72*V09Power.fuel/100);ctx.fillStyle='#ede5b9';ctx.font='12px Arial';ctx.fillText(I18n.text(I18n.numeric(V09Power.fuel,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' / 100'),947,430);ctx.font='9px Arial';ctx.fillText(I18n.text('ТОПЛИВО'),947,448);
+  ctx.fillStyle='#232927';ctx.fillRect(1065,350,125,50);ctx.fillStyle=V09Power.running?'#98d8ab':'#63716b';ctx.fillRect(1080,365,16,16);ctx.fillStyle='#d8e7d8';ctx.font='10px Arial';ctx.fillText(I18n.text(V09Power.running?'ВКЛЮЧЁН':'ВЫКЛЮЧЕН'),1140,377);
+  ctx.fillStyle='#46504b';ctx.fillRect(1050,431,154,48);ctx.fillStyle=V09Power.running?'#d8ecd4':'#b6c1b6';ctx.font='13px Arial';ctx.fillText(I18n.text(I18n.numeric(V09Power.load,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' / '+(V09Power.running?'10':'0')+' кВт'),1127,451);ctx.font='9px Arial';ctx.fillText(I18n.text(V09Power.running?'1 топливо / мин':'ОЖИДАЕТ ЗАПУСКА'),1127,469);
+  ctx.fillStyle='#435352';ctx.fillRect(1253,340,69,105);ctx.strokeStyle='#62736b';ctx.lineWidth=2;ctx.strokeRect(1264,361,47,61);ctx.fillStyle='#b0bbb1';ctx.font='18px Arial';ctx.fillText(I18n.text('—'),1287,399);ctx.fillStyle='#39474c';ctx.fillRect(1239,479,97,27);ctx.fillStyle='#9fb1b5';ctx.font='9px Arial';ctx.fillText(I18n.text('НЕ ПОДКЛЮЧЕНА'),1287,493);ctx.restore();
 }
 const v09PowerOldDrawBunker=drawBunker;
 drawBunker=function(){

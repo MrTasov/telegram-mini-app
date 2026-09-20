@@ -6,26 +6,26 @@ const V014Energy=(()=>{
   const oldStats=v09PowerStats;
   v09PowerStats=function(){return oldStats()+'<div class="v014Generation" style="font-size:11px;line-height:1.5;color:#9db8b4;margin:7px 0" data-generation014></div>';};
   const refresh=v09RefreshPowerUI;
-  v09RefreshPowerUI=function(){refresh();const kw=output(),rate=fuelRate();for(const node of document.querySelectorAll('[data-generation014]'))node.textContent='Выработка '+kw.toFixed(1)+' / '+V09Power.supply+' кВт · топливо '+rate.toFixed(2)+' / мин';};
+  v09RefreshPowerUI=function(){refresh();const kw=output(),rate=fuelRate();for(const node of document.querySelectorAll('[data-generation014]'))I18n.assign(node,"textContent",'Выработка '+I18n.numeric(kw,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' / '+V09Power.supply+' кВт · топливо '+I18n.numeric(rate,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' / мин');};
   window.V014Energy={output,fuelRate};return window.V014Energy;
 })();
 
 /* Stable mobile card: only values and changed inventory cells are patched. */
 window.V0141DroneUI=(()=>{
   const robot=V014Robots,state=robot.state,refs={},buttons={},grids={};let overlay=null,selected=null,drag=null,suppressUntil=0;
-  const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
-  const set=(e,text)=>{text=String(text);if(e&&e.textContent!==text)e.textContent=text;};
+  const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)I18n.assign(e,"textContent",text);return e;};
+  const set=(e,text)=>{text=String(text);if(e&&I18n.source(e)!==text)I18n.assign(e,"textContent",text);};
   function command(parent,id,text,fn){const b=v09Button(text,()=>{fn();refresh();});buttons[id]=b;parent.append(b);return b;}
   function section(parent,title){const s=node('section','droneCardSection');s.append(node('div','droneSectionTitle',title));parent.append(s);return s;}
   function stat(parent,key,label){const row=node('div','droneStatRow');row.append(node('span','',label));refs[key]=node('b');row.append(refs[key]);parent.append(row);}
   function build(){
     overlay=v09Overlay('v014DronePanel','Дрон');const body=overlay.querySelector('.v09Body');body.replaceChildren();body.classList.add('droneCardBody');
-    const head=node('div','droneCardHead'),portrait=node('div','dronePortrait'),img=node('img');img.src=V011Art.sources.drone014;img.alt='Дрон-компаньон';portrait.append(img);head.append(portrait);
+    const head=node('div','droneCardHead'),portrait=node('div','dronePortrait'),img=node('img');img.src=V011Art.sources.drone014;I18n.assign(img,"alt",'Дрон-компаньон');portrait.append(img);head.append(portrait);
     const stats=node('div','droneCardStats');refs.status=node('b','droneStatus');stats.append(refs.status);stat(stats,'battery','Заряд');stat(stats,'hp','Здоровье');stat(stats,'damage','Урон');stat(stats,'load','Груз');head.append(stats);
     const ammo=node('section','droneAmmo');const ammoHead=node('div','droneStatRow');ammoHead.append(node('span','','Боезапас'));refs.ammo=node('b');ammoHead.append(refs.ammo);ammo.append(ammoHead);
-    const ammoIcon=node('div','droneAmmoIcon');ammoIcon.innerHTML=itemIconHTML('ammo');ammoIcon.append(node('small','','АК · 5,45'));ammo.append(ammoIcon);command(ammo,'reload','Загрузить патроны',()=>robot.reload());
+    const ammoIcon=node('div','droneAmmoIcon');I18n.assign(ammoIcon,"innerHTML",itemIconHTML('ammo'));ammoIcon.append(node('small','','АК · 5,45'));ammo.append(ammoIcon);command(ammo,'reload','Загрузить патроны',()=>robot.reload());
     for(const [key,label]of [['light','Фонарь'],['combat','Боевой режим']]){
-      const toggle=node('button','droneSwitch'),rail=node('span','droneSwitchRail');toggle.type='button';toggle.setAttribute('role','switch');toggle.setAttribute('aria-label',label);rail.setAttribute('aria-hidden','true');
+      const toggle=node('button','droneSwitch'),rail=node('span','droneSwitchRail');toggle.type='button';toggle.setAttribute('role','switch');I18n.setAttr(toggle,'aria-label',label);rail.setAttribute('aria-hidden','true');
       refs[key]=toggle;refs[key+'Value']=node('span','droneSwitchValue');rail.append(refs[key+'Value']);toggle.append(node('span','',label),rail);
       toggle.addEventListener('click',()=>{if(key==='combat')robot.setCombat(!robot.combatEnabled());else{state.light=!state.light;robot.changed();}refresh();});ammo.append(toggle);
     }head.append(ammo);body.append(head);
@@ -37,7 +37,7 @@ window.V0141DroneUI=(()=>{
     refs.range=node('p','droneTransferHint');body.append(refs.range);
     const rescue=node('div','droneRescue');command(rescue,'pack','Забрать дрон',()=>robot.pack());command(rescue,'launch','Запустить',()=>robot.deploy(bag.find(robot.ownsToken)));body.append(rescue);
     const more=node('details','droneMore');more.append(node('summary','','Обслуживание'));more.append(node('p','droneTransferHint','Усиление модулей — на станке усиления в мастерской. Заберите дрон в рюкзак.'));
-    const rename=node('div','droneRename'),name=node('input');name.type='text';name.maxLength=24;name.value=state.name;name.setAttribute('aria-label','Имя дрона');refs.name=name;rename.append(name);command(rename,'rename','Сохранить имя',()=>{state.name=name.value.trim().slice(0,24)||'Спутник';robot.changed();});more.append(rename);
+    const rename=node('div','droneRename'),name=node('input');name.type='text';name.maxLength=24;name.value=state.name;I18n.setAttr(name,'aria-label','Имя дрона');refs.name=name;rename.append(name);command(rename,'rename','Сохранить имя',()=>{state.name=name.value.trim().slice(0,24)||'Спутник';robot.changed();});more.append(rename);
     for(const [key,label]of [['autoCollect','Собирать открытые предметы рядом'],['economy','Экономить заряд']]){const row=node('label','droneToggle',label),input=node('input');input.type='checkbox';refs[key]=input;input.addEventListener('change',()=>{state[key]=input.checked;robot.changed();});row.append(input);more.append(row);}
     command(more,'repair','Отремонтировать',robot.repair);body.append(more);
     for(const [side,grid]of Object.entries(grids))grid.addEventListener('pointerdown',e=>beginDrag(e,side));
@@ -47,7 +47,7 @@ window.V0141DroneUI=(()=>{
   function refreshGrid(side){const grid=grids[side],a=slots(side),count=size(side);
     while(grid.children.length>count)grid.lastChild.remove();
     while(grid.children.length<count){const i=grid.children.length,b=v09Button('',()=>{if(performance.now()<suppressUntil||window.V010Inventory?.clickSuppressed())return;selected={side,i};refresh();});b.dataset.v010Container=side==='bag'?'bag':'drone';b.dataset.v010Index=String(i);b.dataset.droneSide=side;b.dataset.droneIndex=String(i);b.className='menuButton droneItemCell';grid.append(b);}
-    for(let i=0;i<count;i++){const b=grid.children[i],s=a[i],sig=s?JSON.stringify(s):'';if(b.dataset.signature!==sig){b.dataset.signature=sig;b.innerHTML=s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'';b.setAttribute('aria-label',s?ITEM[s.type]?.name+' × '+s.qty:'Пустая ячейка');}b.classList.toggle('selected',selected?.side===side&&selected.i===i);}
+    for(let i=0;i<count;i++){const b=grid.children[i],s=a[i],sig=s?JSON.stringify(s):'';if(b.dataset.signature!==sig){b.dataset.signature=sig;I18n.assign(b,"innerHTML",s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'');I18n.setAttr(b,'aria-label',s?ITEM[s.type]?.name+' × '+s.qty:'Пустая ячейка');}b.classList.toggle('selected',selected?.side===side&&selected.i===i);}
   }
   function moveCell(from,i,to,j){
     const source=slots(from),dest=slots(to),s=source[i];if(!s||s.locked||ITEM[s.type]?.robot||!robot.near()||i===j&&source===dest)return false;

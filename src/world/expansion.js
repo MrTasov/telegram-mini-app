@@ -98,7 +98,7 @@ window.V012Expansion=(()=>{
     // Only connector stubs cross the established map; preserve the rest of it.
     ctx.save();ctx.beginPath();ctx.rect(previous.x,previous.y,previous.w,previous.h);ctx.clip();if(!window.V013City)for(const r of roads.slice(0,6))drawRoad(r);ctx.restore();
     ctx.save();clipNew();drawWorldTrees('expansion12');drawParkedCars();ctx.restore();
-    for(const r of regions)if(visibleOnScreen(r.x,r.y,450)){ctx.save();ctx.globalAlpha=.7;ctx.fillStyle='#d0d8c4';ctx.font='600 15px Arial';ctx.textAlign='center';ctx.fillText(r.name.toUpperCase(),r.x,r.y-250);ctx.restore();}
+    for(const r of regions)if(visibleOnScreen(r.x,r.y,450)){ctx.save();ctx.globalAlpha=.7;ctx.fillStyle='#d0d8c4';ctx.font='600 15px Arial';ctx.textAlign='center';ctx.fillText(I18n.text(r.name.toUpperCase()),r.x,r.y-250);ctx.restore();}
     return out;
   };
   invalidateGeometry();

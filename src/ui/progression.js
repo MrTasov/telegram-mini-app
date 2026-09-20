@@ -107,7 +107,7 @@ window.V010Progression=(()=>{
     const g=GOALS.find(g=>g.id===id);if(g)return {title:g.title,value:state.completedGoals.includes(id)?1:0,max:1};
     return null;
   }
-  const css=document.createElement('style');css.textContent=`
+  const css=document.createElement('style');I18n.assign(css,"textContent",`
   #v010ProgressPanel{width:min(850px,94vw);max-height:88dvh;display:flex;flex-direction:column;text-align:left;padding:18px;gap:10px}
   #v010ProgressPanel h2{margin:0;font-size:20px}#v010ProgressPanel .v010Muted{font-size:12px;color:#a4b7b9;line-height:1.5}
   #v010ProgressBody{overflow:auto;min-height:0;flex:1;overscroll-behavior:contain}.v010ProgressTabs{display:flex;flex-wrap:wrap;gap:6px}
@@ -120,14 +120,14 @@ window.V010Progression=(()=>{
   #v010PinnedGoal{position:fixed;left:max(14px,env(safe-area-inset-left));top:145px;z-index:14;max-width:220px;padding:7px 10px;background:rgba(14,25,30,.73);border:1px solid #64715c;border-radius:8px;text-align:left;color:#e4e9dc;font-size:11px;pointer-events:auto;cursor:pointer;display:none}
   #v010PinnedGoal b{display:block;font-size:12px;font-weight:500}#v010PinnedGoal span{display:block;margin-top:3px;color:#c9d6b4}
   @media(max-height:500px){#v010ProgressPanel{max-height:94dvh;padding:12px}#v010PinnedGoal{top:105px;max-width:180px;font-size:10px}}
-  `;document.head.appendChild(css);
+  `);document.head.appendChild(css);
   const overlay=document.createElement('div');overlay.id='v010ProgressOverlay';overlay.className='overlay';
-  overlay.innerHTML='<div id="v010ProgressPanel" class="panel"><div class="v010ProgressRow"><h2>Статистика и достижения</h2></div><div class="v010Muted">Развивайтесь в своём стиле. Награды и исследования не требуют ежедневного входа.</div><div id="v010ProgressTabs" class="v010ProgressTabs"></div><div id="v010ProgressBody"></div><button id="v010ProgressClose" class="menuButton">Закрыть</button></div>';
+  I18n.assign(overlay,"innerHTML",'<div id="v010ProgressPanel" class="panel"><div class="v010ProgressRow"><h2>Статистика и достижения</h2></div><div class="v010Muted">Развивайтесь в своём стиле. Награды и исследования не требуют ежедневного входа.</div><div id="v010ProgressTabs" class="v010ProgressTabs"></div><div id="v010ProgressBody"></div><button id="v010ProgressClose" class="menuButton">Закрыть</button></div>');
   document.body.appendChild(overlay);
   el('v010ProgressClose').onclick=()=>closeOverlay(overlay);
-  const goalHUD=document.createElement('button');goalHUD.id='v010PinnedGoal';goalHUD.setAttribute('aria-label','Открыть закреплённую цель');goalHUD.onclick=()=>show('achievements');document.body.appendChild(goalHUD);
-  const settingsButton=document.createElement('button');settingsButton.className='menuButton';settingsButton.id='v010OpenProgress';settingsButton.textContent='Статистика, достижения и журнал';settingsButton.onclick=()=>{closeOverlay(el('settingsOverlay'));show();};el('closeSettings').before(settingsButton);
-  function node(tag,text,cls){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
+  const goalHUD=document.createElement('button');goalHUD.id='v010PinnedGoal';I18n.setAttr(goalHUD,'aria-label','Открыть закреплённую цель');goalHUD.onclick=()=>show('achievements');document.body.appendChild(goalHUD);
+  const settingsButton=document.createElement('button');settingsButton.className='menuButton';settingsButton.id='v010OpenProgress';I18n.assign(settingsButton,"textContent",'Статистика, достижения и журнал');settingsButton.onclick=()=>{closeOverlay(el('settingsOverlay'));show();};el('closeSettings').before(settingsButton);
+  function node(tag,text,cls){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)I18n.assign(e,"textContent",text);return e;}
   function button(text,fn,disabled=false){const b=node('button',text,'v010ProgressSmall');b.disabled=disabled;b.onclick=()=>{fn();render();};return b;}
   function addBar(card,value,max){const bar=node('div',undefined,'v010ProgressBar'),fill=node('i');fill.style.width=Math.min(100,value/max*100)+'%';bar.appendChild(fill);card.appendChild(bar);}
   function addRewards(card,id,rewards,eligible){
@@ -137,7 +137,7 @@ window.V010Progression=(()=>{
     else rewards.forEach((reward,i)=>row.appendChild(button((rewards.length>1?'Выбрать: ':'Забрать: ')+ITEM[reward.type].name+' × '+reward.qty,()=>claim(id,i),!eligible)));
     card.appendChild(row);
   }
-  function progressCard(title,id,value,max){const card=node('div',undefined,'v010ProgressCard'),row=node('div',undefined,'v010ProgressRow');row.appendChild(node('strong',title));const pinButton=button(state.pin===id?'★':'☆',()=>pin(id));pinButton.setAttribute('aria-label',state.pin===id?'Открепить цель':'Закрепить цель');pinButton.title=pinButton.getAttribute('aria-label');row.appendChild(pinButton);card.appendChild(row);card.appendChild(node('div',Math.min(value,max)+' / '+max,'v010Muted'));addBar(card,value,max);return card;}
+  function progressCard(title,id,value,max){const card=node('div',undefined,'v010ProgressCard'),row=node('div',undefined,'v010ProgressRow');row.appendChild(node('strong',title));const pinButton=button(state.pin===id?'★':'☆',()=>pin(id));I18n.setAttr(pinButton,'aria-label',state.pin===id?'Открепить цель':'Закрепить цель');I18n.assign(pinButton,'title',I18n.source(pinButton,'aria-label'));row.appendChild(pinButton);card.appendChild(row);card.appendChild(node('div',Math.min(value,max)+' / '+max,'v010Muted'));addBar(card,value,max);return card;}
   function renderPin(){const p=progressFor(state.pin);goalHUD.style.display=p?'block':'none';goalHUD.replaceChildren();if(p){goalHUD.appendChild(node('b',p.title));goalHUD.appendChild(node('span',p.value+' / '+p.max+(p.value>=p.max?' · Готово':'')));}goalHUD.classList.toggle('complete',!!p&&p.value>=p.max);}
   function render(){
     dirty=false;renderPin();const tabs=el('v010ProgressTabs');tabs.replaceChildren();
@@ -148,7 +148,7 @@ window.V010Progression=(()=>{
       for(const a of ACH){const c=progressCard(a.title,a.id,state.counts[a.metric],a.target);addRewards(c,a.id,a.rewards,state.counts[a.metric]>=a.target);body.appendChild(c);}
     }else if(tab==='stats'){
       body.appendChild(node('p','Счётчики ведутся с перехода на 0.10. Старые действия задним числом не выдумываются. Перекладывание предметов не учитывается.','v010Muted'));
-      const grid=node('div',undefined,'v010StatsGrid');for(const k of KEYS){const c=node('div',undefined,'v010ProgressCard');c.appendChild(node('strong',NAMES[k]));c.appendChild(node('div',state.counts[k].toLocaleString('ru-RU'),'v010StatValue'));grid.appendChild(c);}body.appendChild(grid);
+      const grid=node('div',undefined,'v010StatsGrid');for(const k of KEYS){const c=node('div',undefined,'v010ProgressCard');c.appendChild(node('strong',NAMES[k]));c.appendChild(node('div',state.counts[k].toLocaleString(I18n.locale),'v010StatValue'));grid.appendChild(c);}body.appendChild(grid);
       for(const metric of ['mined','harvested','produced']){const rows=Object.entries(state.byResource[metric]);if(!rows.length)continue;const c=node('div',undefined,'v010ProgressCard');c.appendChild(node('strong',NAMES[metric]));for(const [type,n] of rows)c.appendChild(node('div',ITEM[type].name+' — '+n,'v010Muted'));body.appendChild(c);}
     }else if(tab==='research'){
       body.appendChild(node('p','Для каждого чертежа достаточно одного из указанных путей. Открытие чертежа не выдаёт готовое оборудование: его нужно изготовить.','v010Muted'));
@@ -159,7 +159,7 @@ window.V010Progression=(()=>{
       for(const o of ORDERS){const c=progressCard(o.title,o.id,orderProgress(o),o.target);c.appendChild(node('div',o.description,'v010Muted'));if(!state.orders[o.id])c.appendChild(button('Выбрать заказ',()=>startOrder(o.id)));else addRewards(c,o.id,[o.reward],orderProgress(o)>=o.target);body.appendChild(c);}
     }else{
       if(!state.journal.length)body.appendChild(node('p','Здесь появятся события базы, исследования и награды.','v010Muted'));
-      for(const j of state.journal){const c=node('div',undefined,'v010ProgressCard');c.appendChild(node('div',j.text));c.appendChild(node('div',new Date(j.at).toLocaleString('ru-RU'),'v010Muted'));body.appendChild(c);}
+      for(const j of state.journal){const c=node('div',undefined,'v010ProgressCard');c.appendChild(node('div',j.text));c.appendChild(node('div',I18n.dateText(j.at,{dateStyle:'short',timeStyle:'medium'}),'v010Muted'));body.appendChild(c);}
     }
   }
   function show(which='achievements'){tab=['achievements','stats','research','orders','journal'].includes(which)?which:'achievements';evaluate(true);render();openOverlay(overlay);}

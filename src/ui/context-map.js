@@ -28,8 +28,8 @@ const V0104=(()=>{
     for(let i=0;i<lootCapacity;i++){
       const s=activeLoot?.[i],cell=box.children[i],signature=s?s.type+':'+s.qty+':'+(s.level||0):'';
       cell.className='v104LootCell'+(i===selectedLoot?' selected':'');
-      if(cell.dataset.signature!==signature){cell.innerHTML=s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'';cell.dataset.signature=signature;}
-      cell.disabled=!s;cell.setAttribute('aria-label',s?ITEM[s.type].name+' × '+s.qty:'Пусто');cell.onclick=()=>{selectedLoot=i;renderLoot();};
+      if(cell.dataset.signature!==signature){I18n.assign(cell,"innerHTML",s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'');cell.dataset.signature=signature;}
+      cell.disabled=!s;I18n.setAttr(cell,'aria-label',s?ITEM[s.type].name+' × '+s.qty:'Пусто');cell.onclick=()=>{selectedLoot=i;renderLoot();};
     }
     let details=el('v104LootDetails');if(!details){
       details=document.createElement('div');details.id='v104LootDetails';box.after(details);
@@ -39,7 +39,7 @@ const V0104=(()=>{
       const stack=v09Button('Взять стопку',()=>takeLoot(selectedLoot,activeLoot?.[selectedLoot]?.qty||0));stack.id='v011LootStack';
       controls.append(one,stack);details.append(label,controls);
     }
-    const s=activeLoot?.[selectedLoot];el('v011LootLabel').textContent=s?ITEM[s.type].name+' · '+s.qty:'Выберите предмет';
+    const s=activeLoot?.[selectedLoot];I18n.assign(el('v011LootLabel'),"textContent",s?ITEM[s.type].name+' · '+s.qty:'Выберите предмет');
     el('v011LootOne').disabled=el('v011LootStack').disabled=!s;
     el('takeAllLoot').disabled=!activeLoot?.length;
   };
@@ -57,14 +57,14 @@ const V0104=(()=>{
   function requestDelete(id){
     const entry=v09ReadSlot(id);if(!entry)return;
     const o=v09Overlay('v104DeleteSave','Удалить сохранение?'),body=o.querySelector('.v09Body');body.replaceChildren();
-    const label=document.createElement('p');label.textContent=(entry.invalid?'Слот '+id:entry.data.saveName)+' — сохранение и его резервная копия будут удалены.';body.append(label);
+    const label=document.createElement('p');I18n.assign(label,"textContent",I18n.message('save.delete',{name:entry.invalid?I18n.text('Слот '+id):entry.data.saveName}));body.append(label);
     const actions=document.createElement('div');actions.className='v104LootActions';
     actions.append(v09Button('Отмена',()=>{closeOverlay(o);openOverlay(v09SaveOverlay);}),v09Button('Удалить',()=>{if(deleteSlot(id)){closeOverlay(o);openOverlay(v09SaveOverlay);message('Слот '+id+' освобождён');}}));body.append(actions);openOverlay(o);
   }
   V09Saves.deleteSlot=requestDelete;
   // Move the long control explanation into an optional disclosure.
   const settings=el('settingsOverlay').querySelector('.panel'),paragraphs=settings.querySelectorAll('.subtitle');
-  if(paragraphs[1]){const help=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Как управлять';paragraphs[1].before(help);help.append(summary,paragraphs[1]);}
+  if(paragraphs[1]){const help=document.createElement('details'),summary=document.createElement('summary');I18n.assign(summary,"textContent",'Как управлять');paragraphs[1].before(help);help.append(summary,paragraphs[1]);}
   settings.append(el('closeSettings'));
   v09Style(`
     .v010Slot,.equipSlot{touch-action:none!important;-webkit-touch-callout:none;user-select:none}
@@ -118,7 +118,7 @@ window.V0105=(()=>{
   const oldHeld=heldItem,oldSelect=selectHandSlot,oldReconcile=reconcileHands,oldRender=renderQuickSlots;
   heldItem=function(){if(contextHand&&bagCount(contextHand)>0)return contextHand;contextHand=null;return oldHeld();};
   reconcileHands=function(){const shooting=firing;oldReconcile();if(contextHand&&bagCount(contextHand)>0)firing=shooting;else contextHand=null;};
-  renderQuickSlots=function(){oldRender();if(contextHand){for(const id of ['hotbar','quickSlots'])for(const b of el(id).children){b.classList.remove('selected');b.setAttribute('aria-pressed','false');}el('heldItemName').textContent=ITEM[contextHand].name+' · авто';}};
+  renderQuickSlots=function(){oldRender();if(contextHand){for(const id of ['hotbar','quickSlots'])for(const b of el(id).children){b.classList.remove('selected');b.setAttribute('aria-pressed','false');}I18n.assign(el('heldItemName'),"textContent",ITEM[contextHand].name+' · авто');}};
   selectHandSlot=function(i){contextHand=null;const result=oldSelect(i);if(isGun(heldItem()))lastGun=heldItem();else target=null;return result;};
   const oldAssign=assignHandSlot;assignHandSlot=function(i){contextHand=null;target=null;return oldAssign(i);};
   function equip(type){
@@ -215,7 +215,7 @@ window.V0105=(()=>{
   ];
   function showHistory(){
     const o=v09Overlay('v105Changes','Обновления'),body=o.querySelector('.v09Body');body.replaceChildren();
-    history.forEach(([version,groups],i)=>{const d=document.createElement('details');d.open=i===0;const s=document.createElement('summary');s.textContent=version+(i===0?' — текущее':'');d.append(s);for(const [title,items] of Object.entries(groups)){const h=document.createElement('h3');h.textContent=title;const ul=document.createElement('ul');for(const text of items){const li=document.createElement('li');li.textContent=text;ul.append(li);}d.append(h,ul);}body.append(d);});openOverlay(o);
+    history.forEach(([version,groups],i)=>{const d=document.createElement('details');d.open=i===0;const s=document.createElement('summary');I18n.assign(s,"textContent",version+(i===0?' — текущее':''));d.append(s);for(const [title,items] of Object.entries(groups)){const h=document.createElement('h3');I18n.assign(h,"textContent",title);const ul=document.createElement('ul');for(const text of items){const li=document.createElement('li');I18n.assign(li,"textContent",text);ul.append(li);}d.append(h,ul);}body.append(d);});openOverlay(o);
   }
   const changes=v09Button('Что нового? · Version 0.21.0',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
   v09Style('#v105Changes .panel{width:min(480px,94vw);padding:14px;font-size:12px;max-height:85dvh}#v105Changes details{border-bottom:1px solid #405452;padding:8px 0}#v105Changes summary{font-size:14px;cursor:pointer;color:#e2c58d}#v105Changes h3{font-size:12px;margin:12px 0 4px;color:#97cab5}#v105Changes ul{padding-left:18px;margin:4px 0;line-height:1.5}#v105Changes li{margin:5px 0}');

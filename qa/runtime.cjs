@@ -4,19 +4,24 @@ const canvasContract=require('./canvas-contract.cjs');
 const {createCanvas}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES?process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/@napi-rs/canvas':'@napi-rs/canvas');
 const canvas=createCanvas(1280,800);
 class Elem{
- constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.parentNode=null;this.attrs={};this.style={setProperty(k,v){this[k]=v}};this.listeners={};this.dataset=new Proxy({},{set:(o,k,v)=>{o[k]=String(v);this.attrs['data-'+k.replace(/[A-Z]/g,c=>'-'+c.toLowerCase())]=String(v);return true;}});this._text='';this._html='';this.value='';this.disabled=false;this.width=1280;this.height=800;}
+ constructor(tag='div'){this.tagName=tag.toUpperCase();this.nodeType=tag==='#text'?3:tag==='document'?9:1;this.childNodes=[];this.parentNode=null;this.attrs={};this.style={setProperty(k,v){this[k]=v}};this.listeners={};this.dataset=new Proxy({},{set:(o,k,v)=>{o[k]=String(v);this.attrs['data-'+k.replace(/[A-Z]/g,c=>'-'+c.toLowerCase())]=String(v);return true;}});this._text='';this._html='';this.value='';this.disabled=false;this.width=1280;this.height=800;}
+ get children(){return this.childNodes.filter(n=>n.nodeType===1)}set children(v){this.childNodes=v}
+ get nodeValue(){return this.nodeType===3?this._text:null}set nodeValue(v){if(this.nodeType===3)this._text=String(v)}
+ get title(){return this.getAttribute('title')||''}set title(v){this.setAttribute('title',v)}
+ get alt(){return this.getAttribute('alt')||''}set alt(v){this.setAttribute('alt',v)}
+ get placeholder(){return this.getAttribute('placeholder')||''}set placeholder(v){this.setAttribute('placeholder',v)}
  get id(){return this.attrs.id||''}set id(v){this.attrs.id=v}
  get className(){return this.attrs.class||''}set className(v){this.attrs.class=v}
  get classList(){let self=this;return {contains(c){return self.className.split(/\s+/).includes(c)},add(...cs){self.className=[...new Set([...self.className.split(/\s+/),...cs])].join(' ').trim()},remove(...cs){self.className=self.className.split(/\s+/).filter(c=>!cs.includes(c)).join(' ')},toggle(c,b){let has=this.contains(c);let wanted=b===undefined?!has:b;if(wanted)this.add(c);else this.remove(c);return wanted;}}}
  setAttribute(k,v){this.attrs[k]=String(v);if(k.startsWith('data-'))this.dataset[k.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]=String(v);if(k==='value')this.value=v;}
  getAttribute(k){return this.attrs[k]??null}
- append(...nodes){for(let n of nodes){if(typeof n==='string'){let t=new Elem('#text');t._text=n;n=t;}if(n.parentNode)n.remove();this.children.push(n);n.parentNode=this;}}
+ append(...nodes){for(let n of nodes){if(typeof n==='string'){let t=new Elem('#text');t._text=n;n=t;}if(n.parentNode)n.remove();this.childNodes.push(n);n.parentNode=this;}}
  appendChild(n){this.append(n);return n}replaceChildren(...nodes){this.children=[];this.append(...nodes)}
- prepend(...nodes){this.children.unshift(...nodes);for(let n of nodes)n.parentNode=this}
- after(n){const p=this.parentNode;if(p){p.children.splice(p.children.indexOf(this)+1,0,n);n.parentNode=p;}}
- before(n){const p=this.parentNode;if(p){p.children.splice(p.children.indexOf(this),0,n);n.parentNode=p;}}
- remove(){const p=this.parentNode;if(p)p.children=p.children.filter(n=>n!==this);this.parentNode=null}
- set textContent(t){this.children=[];this._text=String(t);this._html=''}get textContent(){return this._text+this.children.map(c=>c.textContent).join('')}
+ prepend(...nodes){this.childNodes.unshift(...nodes);for(let n of nodes)n.parentNode=this}
+ after(n){const p=this.parentNode;if(p){p.childNodes.splice(p.childNodes.indexOf(this)+1,0,n);n.parentNode=p;}}
+ before(n){const p=this.parentNode;if(p){p.childNodes.splice(p.childNodes.indexOf(this),0,n);n.parentNode=p;}}
+ remove(){const p=this.parentNode;if(p)p.childNodes=p.childNodes.filter(n=>n!==this);this.parentNode=null}
+ set textContent(t){this.childNodes=[];this._text='';this._html='';if(this.nodeType===3)this._text=String(t);else this.append(String(t))}get textContent(){return this._text+this.childNodes.map(c=>c.textContent).join('')}
  set innerHTML(s){this.children=[];this._text='';this._html=String(s);parse(String(s),this)}get innerHTML(){return this._html||this.textContent}
  matches(s){s=s.trim();if(!s)return false;if(s.includes(','))return s.split(',').some(x=>this.matches(x));if(s.includes(' ')){const a=s.split(/\s+/),last=a.pop();return this.matches(last)&&!!this.parentNode?.closest(a.join(' '));}
   const attr=[...s.matchAll(/\[([^\]=]+)(?:=['"]?([^\]'"]*)['"]?)?\]/g)];for(const m of attr)if(this.getAttribute(m[1])===null||(m[2]!==undefined&&this.getAttribute(m[1])!==m[2]))return false;s=s.replace(/\[[^\]]+\]/g,'');
@@ -32,7 +37,7 @@ class Elem{
  getContext(){if(this.id==='canvas')return canvas.getContext('2d');this._canvas??=createCanvas(this.width||300,this.height||150);if(this._canvas.width!==this.width)this._canvas.width=this.width;if(this._canvas.height!==this.height)this._canvas.height=this.height;return this._canvas.getContext('2d')}toDataURL(){return (this._canvas||canvas).toDataURL()}
  requestFullscreen(){return Promise.resolve()}
 }
-function parse(html,parent){const stack=[parent];for(const token of html.match(/<!--[\s\S]*?-->|<![^>]*>|<[^>]+>|[^<]+/g)||[]){if(token.startsWith('<!'))continue;if(token.startsWith('</')){const name=token.slice(2).match(/^[\w-]+/)?.[0].toUpperCase();while(stack.length>1){if(stack.pop().tagName===name)break;}continue;}if(token[0]==='<'){const name=token.slice(1).match(/^[\w-]+/)?.[0];if(!name)continue;const n=new Elem(name);for(const a of token.slice(name.length+1).matchAll(/([\w:-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g))n.setAttribute(a[1],a[2]??a[3]??a[4]??'');stack.at(-1).append(n);if(!['meta','link','img','input','br','hr','source','path'].includes(name)&&!token.endsWith('/>'))stack.push(n);}else stack.at(-1)._text+=token;}}
+function parse(html,parent){const stack=[parent];for(const token of html.match(/<!--[\s\S]*?-->|<![^>]*>|<[^>]+>|[^<]+/g)||[]){if(token.startsWith('<!'))continue;if(token.startsWith('</')){const name=token.slice(2).match(/^[\w-]+/)?.[0].toUpperCase();while(stack.length>1){if(stack.pop().tagName===name)break;}continue;}if(token[0]==='<'){const name=token.slice(1).match(/^[\w-]+/)?.[0];if(!name)continue;const n=new Elem(name);for(const a of token.slice(name.length+1).matchAll(/([\w:-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g))n.setAttribute(a[1],a[2]??a[3]??a[4]??'');stack.at(-1).append(n);if(!['meta','link','img','input','br','hr','source','path'].includes(name)&&!token.endsWith('/>'))stack.push(n);}else stack.at(-1).append(token.replace(/&(?:amp|lt|gt|quot|apos|nbsp);/g,x=>({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&apos;':"'",'&nbsp;':'\u00a0'}[x])));}}
 function setup(file,initialStorage={},options={}){
  const html=fs.readFileSync(file,'utf8');const doc=new Elem('document');parse(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/g,''),doc);
  doc.body=doc.querySelector('body');doc.head=doc.querySelector('head');doc.documentElement=doc.querySelector('html');doc.createElement=t=>new Elem(t);doc.createElementNS=(_,t)=>new Elem(t);doc.getElementById=id=>doc.querySelector('#'+id);doc.hidden=false;doc.visibilityState='visible';
@@ -53,6 +58,7 @@ function setup(file,initialStorage={},options={}){
  const migrationPath=resourcePath.join(resourceRoot,'qa/asset-migration.json');
  const oldPaths=referenceBuild&&fs.existsSync(migrationPath)?Object.fromEntries(JSON.parse(fs.readFileSync(migrationPath)).files.map(f=>[f.old,f.path])):{};
  const NativeImage=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES?process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/@napi-rs/canvas':'@napi-rs/canvas').Image;
+ const testLanguage=Object.hasOwn(options,'language')?options.language:process.env.LAST_BASE_TEST_LANGUAGE;if(!referenceBuild&&!storage.has('last_base_language_v1')&&testLanguage)storage.set('last_base_language_v1',testLanguage);
  const imageRequests=[];
  class ResourceImage extends NativeImage{
   set src(value){imageRequests.push(value);const src=Object.hasOwn(options.imageOverrides||{},value)?options.imageOverrides[value]:oldPaths[value]||value;super.src=typeof src==='string'&&!src.startsWith('data:')?resourcePath.resolve(resourceRoot,src):src;}

@@ -1,11 +1,16 @@
-// Sequential control/candidate runs avoid competition between the two runners.
-const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict');
-const root=path.resolve(__dirname,'..'),out=path.join(__dirname,'results');
-for(const [id,target] of [['stage2-control','qa/stage2/index.html'],['stage3','index.html']]){
- const r=cp.spawnSync(process.execPath,['qa/performance.cjs',target,'qa/results/performance-'+id+'.json'],{cwd:root,env:{...process.env,LAST_BASE_ASSETS:root},encoding:'utf8',timeout:300000,maxBuffer:4e6});
- console.log(id+'\n'+r.stdout);if(r.stderr)console.error(r.stderr);if(r.status!==0)process.exit(r.status||1);
+// Sequential, alternating local benchmarks. Do not run with the regression suite.
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),zlib=require('node:zlib');
+const root=path.resolve(__dirname,'..');process.chdir(root);const env={...process.env,LAST_BASE_ASSETS:root,LAST_BASE_CONTROL_MODE:'MOBILE',LAST_BASE_TEST_LANGUAGE:'en'};
+const before='qa/stage4-fixed/index.html',after='index.html',out='qa/results';
+function run(script,args){const r=cp.spawnSync(process.execPath,[script,...args],{cwd:root,env,encoding:'utf8',timeout:240000,maxBuffer:4e6});if(r.stdout)process.stdout.write(r.stdout);if(r.status!==0)throw Error(r.stderr||'Benchmark failed');}
+const loading={before:[],after:[]};
+for(let round=0;round<3;round++)for(const side of round%2?['after','before']:['before','after']){
+ const file=`${out}/stage5-loading-${side}-${round+1}.json`;run('qa/resource-startup.cjs',[side==='before'?before:after,file]);loading[side].push(JSON.parse(fs.readFileSync(file)));
 }
-const reference=JSON.parse(fs.readFileSync(path.join(out,'performance-stage2-control.json'))),candidate=JSON.parse(fs.readFileSync(path.join(out,'performance-stage3.json')));
-assert.deepEqual(reference.consoleErrors,[]);assert.deepEqual(candidate.consoleErrors,[]);
-const scenes=reference.scenes.map((s,i)=>{const c=candidate.scenes[i];assert.equal(c.id,s.id);assert.deepEqual(c.scenario,s.scenario);return{id:s.id,scenario:s.scenario,reference:{median:s.combined.p50Ms,p95:s.combined.p95Ms},candidate:{median:c.combined.p50Ms,p95:c.combined.p95Ms},medianChangePercent:(c.combined.p50Ms/s.combined.p50Ms-1)*100,p95ChangePercent:(c.combined.p95Ms/s.combined.p95Ms-1)*100};});
-const report={reference:reference.gameVersion,candidate:candidate.gameVersion,scenariosMatch:true,scenes,limitations:candidate.limitations};fs.writeFileSync(path.join(out,'performance-stage3-comparison.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report.scenes.map(({id,medianChangePercent,p95ChangePercent})=>({id,medianChangePercent,p95ChangePercent})),null,2));
+for(const [side,file]of [['before',before],['after',after]])run('qa/performance.cjs',[file,`${out}/stage5-performance-${side}.json`]);
+const base=JSON.parse(fs.readFileSync(`${out}/stage5-performance-before.json`)),candidate=JSON.parse(fs.readFileSync(`${out}/stage5-performance-after.json`));
+const median=a=>[...a].sort((a,b)=>a-b)[Math.floor(a.length/2)],pct=(a,b)=>(b/a-1)*100;
+const scenes=base.scenes.map((a,i)=>{const b=candidate.scenes[i];return {id:a.id,beforeP50Ms:a.combined.p50Ms,afterP50Ms:b.combined.p50Ms,p50ChangePercent:pct(a.combined.p50Ms,b.combined.p50Ms),beforeP95Ms:a.combined.p95Ms,afterP95Ms:b.combined.p95Ms,p95ChangePercent:pct(a.combined.p95Ms,b.combined.p95Ms)};});
+const bundles={};for(const [side,file]of [['before','qa/stage4-fixed/js/game.js'],['after','js/game.js']]){const bytes=fs.readFileSync(file);bundles[side]={bytes:bytes.length,gzipBytes:zlib.gzipSync(bytes).length};}
+const result={reference:'0.24.1',candidate:require('../package.json').version,scenes,loading:Object.fromEntries(Object.entries(loading).map(([side,rows])=>[side,{medianBootMs:median(rows.map(r=>r.totalLocalBootAndDecodeMs)),medianHeapGrowthBytes:median(rows.map(r=>r.memoryAfter.heapUsed-r.memoryBefore.heapUsed)),medianRSSGrowthBytes:median(rows.map(r=>r.memoryAfter.rss-r.memoryBefore.rss)),canvasRequests:rows.map(r=>r.canvas.requested),decodedRGBABytes:rows[0].canvas.estimatedRGBABytes,compressedImageBytes:rows[0].uniqueCanvasAndDOMCompressedBytes,uniqueImages:rows[0].uniqueCanvasAndDOMResources}])),bundles,errors:[...base.consoleErrors,...candidate.consoleErrors,...Object.values(loading).flatMap(rs=>rs.flatMap(r=>r.consoleErrors))],limitations:base.limitations,method:'Three alternating cold processes per build; warm five-scene benchmark, 60 warmup + 180 measured frames, sequential baseline then candidate. Local Canvas2D and modeled DOM, not phone FPS.'};
+fs.writeFileSync(`${out}/stage5-performance-comparison.json`,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));

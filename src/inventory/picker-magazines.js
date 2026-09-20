@@ -29,12 +29,12 @@ window.V0162Quick=(()=>{
         if(!assign(i,index,item))flash(b);
       });
       b.className='v162PickCell'+(ok?'':' v162Unavailable');b.dataset.bagIndex=index;
-      b.setAttribute('aria-disabled',String(!ok));b.setAttribute('aria-label',ITEM[item.type].name+(ok?'':' · недоступно для быстрого слота'));
-      b.innerHTML='<span class="v162PickArt">'+itemIconHTML(item.type)+'</span>';
-      const name=document.createElement('span');name.className='v162PickName';name.textContent=ITEM[item.type].name;
-      const qty=document.createElement('small');qty.textContent='×'+item.qty+(item.level?' · +'+item.level:'');b.append(name,qty);grid.append(b);
+      b.setAttribute('aria-disabled',String(!ok));I18n.setAttr(b,'aria-label',ITEM[item.type].name+(ok?'':' · недоступно для быстрого слота'));
+      I18n.assign(b,"innerHTML",'<span class="v162PickArt">'+itemIconHTML(item.type)+'</span>');
+      const name=document.createElement('span');name.className='v162PickName';I18n.assign(name,"textContent",ITEM[item.type].name);
+      const qty=document.createElement('small');I18n.assign(qty,"textContent",'×'+item.qty+(item.level?' · +'+item.level:''));b.append(name,qty);grid.append(b);
     });
-    if(!grid.children.length){const empty=document.createElement('p');empty.textContent='Рюкзак пуст';body.append(empty);}
+    if(!grid.children.length){const empty=document.createElement('p');I18n.assign(empty,"textContent",'Рюкзак пуст');body.append(empty);}
     openOverlay(o);return true;
   }
   const select=selectHandSlot;selectHandSlot=function(i){if(Number.isInteger(i)&&i>=0&&i<5&&!quick.items[i])return open(i);return select(i);};
@@ -97,21 +97,21 @@ window.V0162Magazines=(()=>{
     bag.forEach((m,i)=>{if(!m||!V09Craft.acceptsMagazine(s.type,m.type))return;
       const b=v09Button('',()=>{if(m.locked){V0162Quick.flash(b);return;}if(install(s,i,m)){closeOverlay(o);after?.();}else if(bag[i]!==m)choose(s,after);});
       b.className='v162PickCell'+(m.locked?' v162Unavailable':'');b.setAttribute('aria-disabled',String(!!m.locked));b.dataset.magazineIndex=i;
-      b.innerHTML='<span class="v162PickArt">'+itemIconHTML(m.type)+'</span><span class="v162PickName">'+TYPES[m.type]+' патронов</span><small>Пустой · ×'+m.qty+'</small>';grid.append(b);
+      I18n.assign(b,"innerHTML",'<span class="v162PickArt">'+itemIconHTML(m.type)+'</span><span class="v162PickName">'+TYPES[m.type]+' патронов</span><small>Пустой · ×'+m.qty+'</small>');grid.append(b);
     });
-    if(!grid.children.length){const note=document.createElement('p');note.textContent='В рюкзаке нет свободного магазина';body.append(note);}
+    if(!grid.children.length){const note=document.createElement('p');I18n.assign(note,"textContent",'В рюкзаке нет свободного магазина');body.append(note);}
     openOverlay(o);return true;
   }
   function render(parent,s,after){
     if(!rifle(s))return;combat.ensure(s);
     const section=document.createElement('section');section.className='v162Magazine';parent.append(section);
-    const label=document.createElement('div');label.className='v162MagazineLabel';label.textContent='Магазин';section.append(label);
+    const label=document.createElement('div');label.className='v162MagazineLabel';I18n.assign(label,"textContent",'Магазин');section.append(label);
     const row=document.createElement('div');row.className='v162MagazineRow';section.append(row);
-    const slot=v09Button('',()=>choose(s,after),'v162MagazineSlot');slot.dataset.magazineAction='choose';slot.setAttribute('aria-label','Магазин · выбрать или заменить');
-    slot.innerHTML=s.magazineType?itemIconHTML(s.magazineType):'＋';row.append(slot);
+    const slot=v09Button('',()=>choose(s,after),'v162MagazineSlot');slot.dataset.magazineAction='choose';I18n.setAttr(slot,'aria-label','Магазин · выбрать или заменить');
+    I18n.assign(slot,"innerHTML",s.magazineType?itemIconHTML(s.magazineType):'＋');row.append(slot);
     const info=document.createElement('div');info.className='v162MagazineInfo';
-    const name=document.createElement('span');name.textContent=s.magazineType?ITEM[s.magazineType].name:'Не установлен';
-    const count=document.createElement('b');count.textContent=s.rounds+'/'+combat.gunSpec(s).mag;
+    const name=document.createElement('span');I18n.assign(name,"textContent",s.magazineType?ITEM[s.magazineType].name:'Не установлен');
+    const count=document.createElement('b');I18n.assign(count,"textContent",s.rounds+'/'+combat.gunSpec(s).mag);
     info.append(name,count);row.append(info);
     const actions=document.createElement('div');actions.className='v162MagazineActions';section.append(actions);
     const put=v09Button(s.magazineType?'Заменить':'Установить',()=>choose(s,after));put.dataset.magazineAction='install';put.disabled=!owner(s);slot.disabled=put.disabled;

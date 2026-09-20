@@ -226,16 +226,16 @@ renderEquipment=function(){
   for(const key of ['head','body','legs','feet','backpack']){
     const eq=equipment[key],def=eq&&ITEM[eq.type];
     const row=document.createElement('button');row.type='button';row.className='equipSlot'+(def?' filled':' empty');row.dataset.equipSlot=key;
-    const icon=document.createElement('div');icon.className='equipIcon';icon.innerHTML=def?itemIconHTML(eq.type):v091GearIcon(key,false);
+    const icon=document.createElement('div');icon.className='equipIcon';I18n.assign(icon,"innerHTML",def?itemIconHTML(eq.type):v091GearIcon(key,false));
     const text=document.createElement('div');text.className='equipText';
-    const label=document.createElement('div');label.className='equipLabel';label.textContent=EQUIP_LABELS[key];
-    const name=document.createElement('b');name.textContent=def?def.name:'Не надето';
-    const hint=document.createElement('small');hint.textContent=def?(key==='backpack'?def.capacity+' мест · смена из рюкзака':'Характеристики и действия'):'Свободный слот';
+    const label=document.createElement('div');label.className='equipLabel';I18n.assign(label,"textContent",EQUIP_LABELS[key]);
+    const name=document.createElement('b');I18n.assign(name,"textContent",def?def.name:'Не надето');
+    const hint=document.createElement('small');I18n.assign(hint,"textContent",def?(key==='backpack'?def.capacity+' мест · смена из рюкзака':'Характеристики и действия'):'Свободный слот');
     text.append(label,name,hint);row.append(icon,text);row.addEventListener('click',()=>window.V010Inventory?.details('equipment',key));box.append(row);
   }
-  const figure=document.querySelector('.characterFigure');if(figure)figure.innerHTML=v091Paperdoll();
-  el('characterStats').innerHTML='❤️ HP: <b>'+Math.round(player.health)+'/'+Math.round(player.maxHealth||100)+'</b><br>🛡️ Защита тела: <b>'+equippedArmor()+'%</b><br>🎒 Вместимость: <b>'+BAG_SLOTS+'</b>';
-  el('bagCapacityText').textContent='🎒 Рюкзак · '+bag.length+'/'+BAG_SLOTS;
+  const figure=document.querySelector('.characterFigure');if(figure)I18n.assign(figure,"innerHTML",v091Paperdoll());
+  I18n.assign(el('characterStats'),"innerHTML",'❤️ HP: <b>'+Math.round(player.health)+'/'+Math.round(player.maxHealth||100)+'</b><br>🛡️ Защита тела: <b>'+equippedArmor()+'%</b><br>🎒 Вместимость: <b>'+BAG_SLOTS+'</b>');
+  I18n.assign(el('bagCapacityText'),"textContent",'🎒 Рюкзак · '+bag.length+'/'+BAG_SLOTS);
 };
 function v091Unequip(slot){
   const eq=equipment[slot];if(!eq)return false;

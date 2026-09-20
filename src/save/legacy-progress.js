@@ -184,14 +184,14 @@ function restoreGameProgressBase(d){
   stopControls();
   menuOpen=playerDead;
   el("deathOverlay").classList.toggle("open",playerDead);
-  el("locationName").textContent=scene==="bunker"?"БУНКЕР":"БАЗА";
-  el("healthText").textContent=`❤️ ${Math.round(player.health)}/${Math.round(player.maxHealth)}`;
+  I18n.assign(el("locationName"),"textContent",scene==="bunker"?"БУНКЕР":"БАЗА");
+  I18n.assign(el("healthText"),"textContent",`❤️ ${Math.round(player.health)}/${Math.round(player.maxHealth)}`);
   camera.x=player.x-window.innerWidth/2;
   camera.y=player.y-window.innerHeight/2;
 }
 
 function updateSaveStatus(text){
-  el("saveStatus").textContent=text;
+  I18n.assign(el("saveStatus"),"textContent",text);
 }
 
 function loadGameProgress(){

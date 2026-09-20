@@ -408,12 +408,12 @@ function assignHandSlot(index){
 }
 function openHandAssignment(type){
   assigningHandType=type;
-  el('handAssignTitle').textContent=ITEM[type].name;
-  el('handAssignArt').innerHTML=itemIconHTML(type);
-  const holder=el('handAssignChoices');holder.innerHTML='';
+  I18n.assign(el('handAssignTitle'),"textContent",ITEM[type].name);
+  I18n.assign(el('handAssignArt'),"innerHTML",itemIconHTML(type));
+  const holder=el('handAssignChoices');I18n.assign(holder,"innerHTML",'');
   for(let i=0;i<5;i++){
     const button=document.createElement('button');button.className='menuButton';
-    button.textContent=`Слот ${i+1} · ${handSlots[i]?ITEM[handSlots[i]].name:'Свободный'}`;
+    I18n.assign(button,"textContent",`Слот ${i+1} · ${handSlots[i]?ITEM[handSlots[i]].name:'Свободный'}`);
     button.addEventListener('click',()=>assignHandSlot(i));holder.appendChild(button);
   }
   openOverlay(el('handAssignOverlay'));
@@ -421,16 +421,21 @@ function openHandAssignment(type){
 function renderQuickSlots(){
   reconcileHands();
   for(const name of ['hotbar','quickSlots']){
-    const holder=el(name);holder.innerHTML='';
+    const holder=el(name);I18n.assign(holder,"innerHTML",'');
     handSlots.forEach((type,i)=>{
       const button=document.createElement('button');button.className='handSlot'+(activeHandSlot===i?' selected':'');
-      button.setAttribute('aria-label',`Слот ${i+1}: ${type?ITEM[type].name:'свободный'}`);
+      I18n.setAttr(button,'aria-label',`Слот ${i+1}: ${type?ITEM[type].name:'свободный'}`);
       button.setAttribute('aria-pressed',String(activeHandSlot===i));
-      button.innerHTML=`<span class="slotNumber">${i+1}</span><span class="slotArt">${type?itemIconHTML(type):'＋'}</span><span class="slotName">${type?ITEM[type].name:'Пусто'}</span>`;
+      I18n.assign(button,"innerHTML",`<span class="slotNumber">${i+1}</span><span class="slotArt">${type?itemIconHTML(type):'＋'}</span><span class="slotName">${type?ITEM[type].name:'Пусто'}</span>`);
       button.addEventListener('click',()=>{if(window.V010Inventory?.clickSuppressed())return;if(name==='quickSlots'&&window.V0162Quick)V0162Quick.open(i);else GameActions.dispatch('SELECT_SLOT',{index:i});});holder.appendChild(button);
     });
   }
-  el('heldItemName').textContent=heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны';
+  I18n.assign(el('heldItemName'),"textContent",heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны');
+}
+// The shared work bar follows the actor, including clamped cameras and zoom.
+function positionWorkProgress(bar,offset=58){
+  const p=worldToScreen(player.x,player.y);bar.dataset.workOffset=String(offset);
+  bar.style.left=(p.x-46)+'px';bar.style.top=(p.y-offset)+'px';
 }
 function cancelChop(){chopState=null;el('searchBarWrap').style.display='none';}
 function useTree(tree){
@@ -456,7 +461,7 @@ function updateChop(){
   if(!tree||scene!=='surface'||playerDead||movePower>JOY_DEAD||bagCount('axe')<1||!canInteract(target,player.x,player.y)){cancelChop();return;}
   if(freeItemSpace(bag,'wood',BAG_SLOTS)<=0){cancelChop();message('Рюкзак заполнен');return;}
   const p=clamp((Date.now()-chopState.startedAt)/chopState.duration,0,1);
-  const bar=el('searchBarWrap');bar.style.display=menuOpen?'none':'block';bar.style.left=(worldToScreen(player.x,player.y).x-46)+'px';bar.style.top=(worldToScreen(player.x,player.y).y-58)+'px';el('searchBarFill').style.width=(p*100)+'%';
+  const bar=el('searchBarWrap');bar.style.display=menuOpen?'none':'block';positionWorkProgress(bar,58);el('searchBarFill').style.width=(p*100)+'%';
   if(p>=1){tree.felled=true;tree.regrowMs=600000;invalidateGeometry();cancelChop();collectTreeWood(tree);}
 }
 
@@ -489,7 +494,7 @@ function freeItemSpace(slots,type,maxSlots){
   return Math.max(0,maxSlots-slots.length)*STACK_MAX+
     slots.reduce((n,s)=>n+(s.type===type?Math.max(0,STACK_MAX-s.qty):0),0);
 }
-function updateAmmoHud(){el("ammoHud").textContent=`🔫 ${magazine} / ${bagCount("ammo")}`;el("ammoHud").style.display=canFire()?"block":"none";}
+function updateAmmoHud(){I18n.assign(el("ammoHud"),"textContent",`🔫 ${magazine} / ${bagCount("ammo")}`);el("ammoHud").style.display=canFire()?"block":"none";}
 
 function equippedArmor(){
   const body=equipment.body;
@@ -497,7 +502,7 @@ function equippedArmor(){
 }
 function renderEquipment(){
   const box=el("equipmentSlots"); if(!box)return;
-  box.innerHTML="";
+  I18n.assign(box,"innerHTML","");
   for(const key of ["head","body","legs","feet","backpack"]){
     const eq=equipment[key];
     const d=document.createElement("div");
@@ -505,11 +510,11 @@ function renderEquipment(){
     d.dataset.equipSlot=key;
     const item=eq && eq.type && ITEM[eq.type] ? ITEM[eq.type] : eq;
     const name=item ? (item.name||"Экипировано") : "Пусто";
-    d.innerHTML=`<div class="equipIcon">${item?.icon||EQUIP_ICONS[key]}</div><div class="equipText"><div class="equipLabel">${EQUIP_LABELS[key]}</div><b>${name}</b></div>`;
+    I18n.assign(d,"innerHTML",`<div class="equipIcon">${item?.icon||EQUIP_ICONS[key]}</div><div class="equipText"><div class="equipLabel">${EQUIP_LABELS[key]}</div><b>${name}</b></div>`);
     box.appendChild(d);
   }
-  el("characterStats").innerHTML=`❤️ HP: <b>${Math.round(player.health||100)}/${Math.round(player.maxHealth||100)}</b><br>🛡️ Защита тела: <b>${equippedArmor()}%</b><br>🎒 Вместимость: <b>${BAG_SLOTS}</b>`;
-  el("bagCapacityText").textContent=`🎒 Рюкзак · ${bag.length}/${BAG_SLOTS}`;
+  I18n.assign(el("characterStats"),"innerHTML",`❤️ HP: <b>${Math.round(player.health||100)}/${Math.round(player.maxHealth||100)}</b><br>🛡️ Защита тела: <b>${equippedArmor()}%</b><br>🎒 Вместимость: <b>${BAG_SLOTS}</b>`);
+  I18n.assign(el("bagCapacityText"),"textContent",`🎒 Рюкзак · ${bag.length}/${BAG_SLOTS}`);
 }
 function equipFromBag(index){
   const s=bag[index]; if(!s || !ITEM[s.type] || !ITEM[s.type].equip)return;
@@ -534,10 +539,10 @@ function equipFromBag(index){
 function renderBag(){
   renderEquipment();
   renderQuickSlots();
-  const g=el("inventoryGrid"); g.innerHTML="";
+  const g=el("inventoryGrid"); I18n.assign(g,"innerHTML","");
   for(let i=0;i<BAG_SLOTS;i++){
     const s=bag[i], d=document.createElement("div"); d.className="invSlot"; d.dataset.inventorySlot=i;
-    d.innerHTML=s?`<div class="ico">${itemIconHTML(s.type)}</div><div>${ITEM[s.type].name}</div><div class="qty">${ITEM[s.type].hand?"В СЛОТ":ITEM[s.type].equip?"НАДЕТЬ"+(s.qty>1?" ×"+s.qty:""):"×"+s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`;
+    I18n.assign(d,"innerHTML",s?`<div class="ico">${itemIconHTML(s.type)}</div><div>${ITEM[s.type].name}</div><div class="qty">${ITEM[s.type].hand?"В СЛОТ":ITEM[s.type].equip?"НАДЕТЬ"+(s.qty>1?" ×"+s.qty:""):"×"+s.qty}</div>`:`<div style="opacity:.28">ПУСТО</div>`);
     g.appendChild(d);
   }
 }
@@ -549,10 +554,10 @@ function randomLoot(kind){
   return out.length?out:[{type:kind==="car"?"metal":"food",qty:2}];
 }
 function renderLoot(){
-  const box=el("lootList"); box.innerHTML="";
+  const box=el("lootList"); I18n.assign(box,"innerHTML","");
   for(const s of activeLoot||[]){
     const r=document.createElement("div"); r.className="lootRow";
-    r.innerHTML=`<span>${itemIconHTML(s.type)} ${ITEM[s.type].name}</span><b>×${s.qty}</b>`; box.appendChild(r);
+    I18n.assign(r,"innerHTML",`<span>${itemIconHTML(s.type)} ${ITEM[s.type].name}</span><b>×${s.qty}</b>`); box.appendChild(r);
   }
 }
 function openLoot(obj){
@@ -560,7 +565,7 @@ function openLoot(obj){
   if(!Array.isArray(obj.loot))obj.loot=[];
   activeLootObject=obj;
   activeLoot=obj.loot;
-  el("lootTitle").textContent=obj.kind==="car"?"🚗 Машина":"🏚️ Здание";
+  I18n.assign(el("lootTitle"),"textContent",obj.kind==="car"?"🚗 Машина":"🏚️ Здание");
   renderLoot(); openOverlay(el("lootOverlay"));
   queueGameSave();
 }
@@ -580,8 +585,7 @@ function updateSearch(){
   const p=clamp((performance.now()-searchState.start)/searchState.duration,0,1);
   const bar=el("searchBarWrap");
   bar.style.display="block";
-  bar.style.left=(screenWidth/2-46)+"px";
-  bar.style.top=(screenHeight/2-58)+"px";
+  positionWorkProgress(bar,58);
   el("searchBarFill").style.width=(p*100)+"%";
   if(p>=1){const o=searchState.obj;cancelSearch();openLoot(o)}
 }

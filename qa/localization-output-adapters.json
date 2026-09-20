@@ -1,0 +1,3176 @@
+[
+  {
+    "file": "core/world-inventory.js",
+    "line": 568,
+    "kind": "DOM textContent",
+    "before": "el(\"lootTitle\").textContent=obj.kind===\"car\"?\"🚗 Машина\":\"🏚️ Здание\"",
+    "after": "I18n.assign(el(\"lootTitle\"),\"textContent\",obj.kind===\"car\"?\"🚗 Машина\":\"🏚️ Здание\")"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 560,
+    "kind": "DOM innerHTML",
+    "before": "r.innerHTML=`<span>${itemIconHTML(s.type)} ${ITEM[s.type].name}</span><b>×${s.qty}</b>`",
+    "after": "I18n.assign(r,\"innerHTML\",`<span>${itemIconHTML(s.type)} ${ITEM[s.type].name}</span><b>×${s.qty}</b>`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 557,
+    "kind": "DOM innerHTML",
+    "before": "box.innerHTML=\"\"",
+    "after": "I18n.assign(box,\"innerHTML\",\"\")"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 545,
+    "kind": "DOM innerHTML",
+    "before": "d.innerHTML=s?`<div class=\"ico\">${itemIconHTML(s.type)}</div><div>${ITEM[s.type].name}</div><div class=\"qty\">${ITEM[s.type].hand?\"В СЛОТ\":ITEM[s.type].equip?\"НАДЕТЬ\"+(s.qty>1?\" ×\"+s.qty:\"\"):\"×\"+s.qty}</div>`:`<div style=\"opacity:.28\">ПУСТО</div>`",
+    "after": "I18n.assign(d,\"innerHTML\",s?`<div class=\"ico\">${itemIconHTML(s.type)}</div><div>${ITEM[s.type].name}</div><div class=\"qty\">${ITEM[s.type].hand?\"В СЛОТ\":ITEM[s.type].equip?\"НАДЕТЬ\"+(s.qty>1?\" ×\"+s.qty:\"\"):\"×\"+s.qty}</div>`:`<div style=\"opacity:.28\">ПУСТО</div>`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 542,
+    "kind": "DOM innerHTML",
+    "before": "g.innerHTML=\"\"",
+    "after": "I18n.assign(g,\"innerHTML\",\"\")"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 517,
+    "kind": "DOM textContent",
+    "before": "el(\"bagCapacityText\").textContent=`🎒 Рюкзак · ${bag.length}/${BAG_SLOTS}`",
+    "after": "I18n.assign(el(\"bagCapacityText\"),\"textContent\",`🎒 Рюкзак · ${bag.length}/${BAG_SLOTS}`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 516,
+    "kind": "DOM innerHTML",
+    "before": "el(\"characterStats\").innerHTML=`❤️ HP: <b>${Math.round(player.health||100)}/${Math.round(player.maxHealth||100)}</b><br>🛡️ Защита тела: <b>${equippedArmor()}%</b><br>🎒 Вместимость: <b>${BAG_SLOTS}</b>`",
+    "after": "I18n.assign(el(\"characterStats\"),\"innerHTML\",`❤️ HP: <b>${Math.round(player.health||100)}/${Math.round(player.maxHealth||100)}</b><br>🛡️ Защита тела: <b>${equippedArmor()}%</b><br>🎒 Вместимость: <b>${BAG_SLOTS}</b>`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 513,
+    "kind": "DOM innerHTML",
+    "before": "d.innerHTML=`<div class=\"equipIcon\">${item?.icon||EQUIP_ICONS[key]}</div><div class=\"equipText\"><div class=\"equipLabel\">${EQUIP_LABELS[key]}</div><b>${name}</b></div>`",
+    "after": "I18n.assign(d,\"innerHTML\",`<div class=\"equipIcon\">${item?.icon||EQUIP_ICONS[key]}</div><div class=\"equipText\"><div class=\"equipLabel\">${EQUIP_LABELS[key]}</div><b>${name}</b></div>`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 505,
+    "kind": "DOM innerHTML",
+    "before": "box.innerHTML=\"\"",
+    "after": "I18n.assign(box,\"innerHTML\",\"\")"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 497,
+    "kind": "DOM textContent",
+    "before": "el(\"ammoHud\").textContent=`🔫 ${magazine} / ${bagCount(\"ammo\")}`",
+    "after": "I18n.assign(el(\"ammoHud\"),\"textContent\",`🔫 ${magazine} / ${bagCount(\"ammo\")}`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 433,
+    "kind": "DOM textContent",
+    "before": "el('heldItemName').textContent=heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны'",
+    "after": "I18n.assign(el('heldItemName'),\"textContent\",heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны')"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 429,
+    "kind": "DOM innerHTML",
+    "before": "button.innerHTML=`<span class=\"slotNumber\">${i+1}</span><span class=\"slotArt\">${type?itemIconHTML(type):'＋'}</span><span class=\"slotName\">${type?ITEM[type].name:'Пусто'}</span>`",
+    "after": "I18n.assign(button,\"innerHTML\",`<span class=\"slotNumber\">${i+1}</span><span class=\"slotArt\">${type?itemIconHTML(type):'＋'}</span><span class=\"slotName\">${type?ITEM[type].name:'Пусто'}</span>`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 427,
+    "kind": "DOM attribute",
+    "before": "button.setAttribute('aria-label',`Слот ${i+1}: ${type?ITEM[type].name:'свободный'}`)",
+    "after": "I18n.setAttr(button,'aria-label',`Слот ${i+1}: ${type?ITEM[type].name:'свободный'}`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 424,
+    "kind": "DOM innerHTML",
+    "before": "holder.innerHTML=''",
+    "after": "I18n.assign(holder,\"innerHTML\",'')"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 416,
+    "kind": "DOM textContent",
+    "before": "button.textContent=`Слот ${i+1} · ${handSlots[i]?ITEM[handSlots[i]].name:'Свободный'}`",
+    "after": "I18n.assign(button,\"textContent\",`Слот ${i+1} · ${handSlots[i]?ITEM[handSlots[i]].name:'Свободный'}`)"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 413,
+    "kind": "DOM innerHTML",
+    "before": "holder.innerHTML=''",
+    "after": "I18n.assign(holder,\"innerHTML\",'')"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 412,
+    "kind": "DOM innerHTML",
+    "before": "el('handAssignArt').innerHTML=itemIconHTML(type)",
+    "after": "I18n.assign(el('handAssignArt'),\"innerHTML\",itemIconHTML(type))"
+  },
+  {
+    "file": "core/world-inventory.js",
+    "line": 411,
+    "kind": "DOM textContent",
+    "before": "el('handAssignTitle').textContent=ITEM[type].name",
+    "after": "I18n.assign(el('handAssignTitle'),\"textContent\",ITEM[type].name)"
+  },
+  {
+    "file": "core/input-combat.js",
+    "line": 836,
+    "kind": "DOM textContent",
+    "before": "el(\"farmTitle\").textContent=\"🌱 Грядка \"+(i+1)",
+    "after": "I18n.assign(el(\"farmTitle\"),\"textContent\",\"🌱 Грядка \"+(i+1))"
+  },
+  {
+    "file": "core/input-combat.js",
+    "line": 654,
+    "kind": "DOM textContent",
+    "before": "el(\"locationName\").textContent =\n    \"БАЗА\"",
+    "after": "I18n.assign(el(\"locationName\"),\"textContent\",\"БАЗА\")"
+  },
+  {
+    "file": "core/input-combat.js",
+    "line": 625,
+    "kind": "DOM textContent",
+    "before": "el(\"healthText\").textContent =\n    \"❤️ \"+Math.round(player.health)+\"/\"+Math.round(player.maxHealth)",
+    "after": "I18n.assign(el(\"healthText\"),\"textContent\",\"❤️ \"+Math.round(player.health)+\"/\"+Math.round(player.maxHealth))"
+  },
+  {
+    "file": "core/input-combat.js",
+    "line": 568,
+    "kind": "DOM textContent",
+    "before": "el(\"healthText\").textContent =\n    \"❤️ \" +\n    Math.round(player.health) +\n    \"/\" +\n    Math.round(player.maxHealth)",
+    "after": "I18n.assign(el(\"healthText\"),\"textContent\",\"❤️ \" +\n    Math.round(player.health) +\n    \"/\" +\n    Math.round(player.maxHealth))"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 627,
+    "kind": "DOM textContent",
+    "before": "bt.textContent=ico",
+    "after": "I18n.assign(bt,\"textContent\",ico)"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 625,
+    "kind": "DOM innerHTML",
+    "before": "box.innerHTML=\"\"",
+    "after": "I18n.assign(box,\"innerHTML\",\"\")"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 614,
+    "kind": "DOM innerHTML",
+    "before": "d.innerHTML=slotHTML(bag[i])",
+    "after": "I18n.assign(d,\"innerHTML\",slotHTML(bag[i]))"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 610,
+    "kind": "DOM innerHTML",
+    "before": "d.innerHTML=slotHTML(ch.items[i])",
+    "after": "I18n.assign(d,\"innerHTML\",slotHTML(ch.items[i]))"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 607,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML=\"\"",
+    "after": "I18n.assign(b,\"innerHTML\",\"\")"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 607,
+    "kind": "DOM innerHTML",
+    "before": "a.innerHTML=\"\"",
+    "after": "I18n.assign(a,\"innerHTML\",\"\")"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 606,
+    "kind": "DOM textContent",
+    "before": "el(\"storageTitle\").textContent=`${ch.icon} ${ch.name}`",
+    "after": "I18n.assign(el(\"storageTitle\"),\"textContent\",`${ch.icon} ${ch.name}`)"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 518,
+    "kind": "DOM textContent",
+    "before": "el(\"feedCraftProgressText\").textContent=remaining>0\n    ? \"⚙️ Изготовление корма…\"\n    : `🌾 Готово: ${pendingFeedCraft.qty}. Освободите место в рюкзаке или хранилище корма.`",
+    "after": "I18n.assign(el(\"feedCraftProgressText\"),\"textContent\",remaining>0\n    ? \"⚙️ Изготовление корма…\"\n    : `🌾 Готово: ${pendingFeedCraft.qty}. Освободите место в рюкзаке или хранилище корма.`)"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 495,
+    "kind": "DOM innerHTML",
+    "before": "el(\"feedCraftOutput\").innerHTML=\n    batches>0\n      ? `Будет изготовлено: <b>🌾 ${output} корма</b> (${batches}×)`\n      : `Для 1 крафта загрузите минимум <b>10 зерна</b>.`",
+    "after": "I18n.assign(el(\"feedCraftOutput\"),\"innerHTML\",batches>0\n      ? `Будет изготовлено: <b>🌾 ${output} корма</b> (${batches}×)`\n      : `Для 1 крафта загрузите минимум <b>10 зерна</b>.`)"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 494,
+    "kind": "DOM textContent",
+    "before": "el(\"feedCraftLoaded\").textContent=`🌾 ${feedCraftLoaded}`",
+    "after": "I18n.assign(el(\"feedCraftLoaded\"),\"textContent\",`🌾 ${feedCraftLoaded}`)"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 493,
+    "kind": "DOM textContent",
+    "before": "el(\"feedCraftAvailable\").textContent=`В рюкзаке: ${available} зерна`",
+    "after": "I18n.assign(el(\"feedCraftAvailable\"),\"textContent\",`В рюкзаке: ${available} зерна`)"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 414,
+    "kind": "DOM innerHTML",
+    "before": "el(\"cowStatus\").innerHTML=\n    `<b>🐄 Коровы: ${n} / ${COW_MAX}</b><br>`+\n    `🐔 Куры: ${chickens}<br>`+\n    `🥛 Накоплено молока: ${milk}<br>`+\n    `🥚 Накоплено яиц: ${eggs}<br>`+\n    `🌾 Корм: ${storageCount(12,\"animal_feed\")} / 100 <span style=\"opacity:.65\">(рюкзак: ${bagCount(\"animal_feed\")})</span><br>`+\n    `💧 Вода: ${storageCount(13,\"water\")} / 100 <span style=\"opacity:.65\">(рюкзак: ${bagCount(\"water\")})</span>`",
+    "after": "I18n.assign(el(\"cowStatus\"),\"innerHTML\",`<b>🐄 Коровы: ${n} / ${COW_MAX}</b><br>`+\n    `🐔 Куры: ${chickens}<br>`+\n    `🥛 Накоплено молока: ${milk}<br>`+\n    `🥚 Накоплено яиц: ${eggs}<br>`+\n    `🌾 Корм: ${storageCount(12,\"animal_feed\")} / 100 <span style=\"opacity:.65\">(рюкзак: ${bagCount(\"animal_feed\")})</span><br>`+\n    `💧 Вода: ${storageCount(13,\"water\")} / 100 <span style=\"opacity:.65\">(рюкзак: ${bagCount(\"water\")})</span>`)"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 159,
+    "kind": "DOM attribute",
+    "before": "actionButton.setAttribute('aria-label',interactionTarget?.name||'Действие')",
+    "after": "I18n.setAttr(actionButton,'aria-label',interactionTarget?.name||'Действие')"
+  },
+  {
+    "file": "core/interactions-farm-storage.js",
+    "line": 158,
+    "kind": "DOM textContent",
+    "before": "actionButton.textContent=icons[currentAction]||'✋'",
+    "after": "I18n.assign(actionButton,\"textContent\",icons[currentAction]||'✋')"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 527,
+    "kind": "Canvas fillText",
+    "before": "o.name",
+    "after": "I18n.text(o.name)"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 512,
+    "kind": "Canvas fillText",
+    "before": "hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО'",
+    "after": "I18n.text(hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО')"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 501,
+    "kind": "Canvas fillText",
+    "before": "gateOpen?'ВОРОТА ОТКРЫТЫ':'ВОРОТА ЗАКРЫТЫ'",
+    "after": "I18n.text(gateOpen?'ВОРОТА ОТКРЫТЫ':'ВОРОТА ЗАКРЫТЫ')"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 391,
+    "kind": "Canvas fillText",
+    "before": "\"ВЫХОД\"",
+    "after": "I18n.text(\"ВЫХОД\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 373,
+    "kind": "Canvas fillText",
+    "before": "\"ПОДЗЕМНАЯ ФЕРМА\"",
+    "after": "I18n.text(\"ПОДЗЕМНАЯ ФЕРМА\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 314,
+    "kind": "Canvas fillText",
+    "before": "\"🥣\"",
+    "after": "I18n.text(\"🥣\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 313,
+    "kind": "Canvas fillText",
+    "before": "\"🍞\"",
+    "after": "I18n.text(\"🍞\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 312,
+    "kind": "Canvas fillText",
+    "before": "\"🥫\"",
+    "after": "I18n.text(\"🥫\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 294,
+    "kind": "Canvas fillText",
+    "before": "\"ХОЛОДИЛЬНИК\"",
+    "after": "I18n.text(\"ХОЛОДИЛЬНИК\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 285,
+    "kind": "Canvas fillText",
+    "before": "\"КУХНЯ • ГОТОВКА\"",
+    "after": "I18n.text(\"КУХНЯ • ГОТОВКА\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 249,
+    "kind": "Canvas fillText",
+    "before": "\"МЕД.\"",
+    "after": "I18n.text(\"МЕД.\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 248,
+    "kind": "Canvas fillText",
+    "before": "\"БИНТЫ\"",
+    "after": "I18n.text(\"БИНТЫ\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 239,
+    "kind": "Canvas fillText",
+    "before": "\"МОЙКА\"",
+    "after": "I18n.text(\"МОЙКА\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 222,
+    "kind": "Canvas fillText",
+    "before": "\"МЕДИЦИНСКАЯ КУШЕТКА\"",
+    "after": "I18n.text(\"МЕДИЦИНСКАЯ КУШЕТКА\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 213,
+    "kind": "Canvas fillText",
+    "before": "\"💊  🧪  🩹\"",
+    "after": "I18n.text(\"💊  🧪  🩹\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 211,
+    "kind": "Canvas fillText",
+    "before": "\"МЕДИЦИНСКИЙ СТОЛ\"",
+    "after": "I18n.text(\"МЕДИЦИНСКИЙ СТОЛ\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 189,
+    "kind": "Canvas fillText",
+    "before": "label",
+    "after": "I18n.text(label)"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 123,
+    "kind": "DOM textContent",
+    "before": "el(\"locationName\").textContent =\n        \"БАЗА\"",
+    "after": "I18n.assign(el(\"locationName\"),\"textContent\",\"БАЗА\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 96,
+    "kind": "DOM textContent",
+    "before": "el(\"locationName\").textContent =\n        \"БУНКЕР\"",
+    "after": "I18n.assign(el(\"locationName\"),\"textContent\",\"БУНКЕР\")"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 46,
+    "kind": "DOM textContent",
+    "before": "fade.textContent =\n    title",
+    "after": "I18n.assign(fade,\"textContent\",title)"
+  },
+  {
+    "file": "core/rendering.js",
+    "line": 12,
+    "kind": "DOM textContent",
+    "before": "box.textContent =\n    text",
+    "after": "I18n.assign(box,\"textContent\",text)"
+  },
+  {
+    "file": "ui/legacy-panels.js",
+    "line": 228,
+    "kind": "DOM textContent",
+    "before": "soundValue.textContent =\n      soundSlider.value +\n      \"%\"",
+    "after": "I18n.assign(soundValue,\"textContent\",soundSlider.value +\n      \"%\")"
+  },
+  {
+    "file": "ui/legacy-panels.js",
+    "line": 215,
+    "kind": "DOM textContent",
+    "before": "soundValue.textContent =\n  soundSlider.value +\n  \"%\"",
+    "after": "I18n.assign(soundValue,\"textContent\",soundSlider.value +\n  \"%\")"
+  },
+  {
+    "file": "save/legacy-progress.js",
+    "line": 194,
+    "kind": "DOM textContent",
+    "before": "el(\"saveStatus\").textContent=text",
+    "after": "I18n.assign(el(\"saveStatus\"),\"textContent\",text)"
+  },
+  {
+    "file": "save/legacy-progress.js",
+    "line": 188,
+    "kind": "DOM textContent",
+    "before": "el(\"healthText\").textContent=`❤️ ${Math.round(player.health)}/${Math.round(player.maxHealth)}`",
+    "after": "I18n.assign(el(\"healthText\"),\"textContent\",`❤️ ${Math.round(player.health)}/${Math.round(player.maxHealth)}`)"
+  },
+  {
+    "file": "save/legacy-progress.js",
+    "line": 187,
+    "kind": "DOM textContent",
+    "before": "el(\"locationName\").textContent=scene===\"bunker\"?\"БУНКЕР\":\"БАЗА\"",
+    "after": "I18n.assign(el(\"locationName\"),\"textContent\",scene===\"bunker\"?\"БУНКЕР\":\"БАЗА\")"
+  },
+  {
+    "file": "ui/shared.js",
+    "line": 27,
+    "kind": "DOM attribute",
+    "before": "close.setAttribute('aria-label','Закрыть')",
+    "after": "I18n.setAttr(close,'aria-label','Закрыть')"
+  },
+  {
+    "file": "ui/shared.js",
+    "line": 26,
+    "kind": "DOM textContent",
+    "before": "heading.textContent=title",
+    "after": "I18n.assign(heading,\"textContent\",title)"
+  },
+  {
+    "file": "ui/shared.js",
+    "line": 24,
+    "kind": "DOM attribute",
+    "before": "panel.setAttribute('aria-label',title)",
+    "after": "I18n.setAttr(panel,'aria-label',title)"
+  },
+  {
+    "file": "ui/shared.js",
+    "line": 22,
+    "kind": "DOM attribute",
+    "before": "existing.querySelector('.panel').setAttribute('aria-label',title)",
+    "after": "I18n.setAttr(existing.querySelector('.panel'),'aria-label',title)"
+  },
+  {
+    "file": "ui/shared.js",
+    "line": 22,
+    "kind": "DOM textContent",
+    "before": "existing.querySelector('.v09Title').textContent=title",
+    "after": "I18n.assign(existing.querySelector('.v09Title'),\"textContent\",title)"
+  },
+  {
+    "file": "ui/shared.js",
+    "line": 18,
+    "kind": "DOM textContent",
+    "before": "button.textContent=label",
+    "after": "I18n.assign(button,\"textContent\",label)"
+  },
+  {
+    "file": "ui/shared.js",
+    "line": 16,
+    "kind": "DOM textContent",
+    "before": "style.textContent=css",
+    "after": "I18n.assign(style,\"textContent\",css)"
+  },
+  {
+    "file": "world/resources.js",
+    "line": 180,
+    "kind": "Canvas fillText",
+    "before": "text",
+    "after": "I18n.text(text)"
+  },
+  {
+    "file": "world/resources.js",
+    "line": 172,
+    "kind": "DOM textContent",
+    "before": "actionButton.textContent='💧'",
+    "after": "I18n.assign(actionButton,\"textContent\",'💧')"
+  },
+  {
+    "file": "world/resources.js",
+    "line": 172,
+    "kind": "DOM textContent",
+    "before": "actionButton.textContent='⛏'",
+    "after": "I18n.assign(actionButton,\"textContent\",'⛏')"
+  },
+  {
+    "file": "world/resources.js",
+    "line": 128,
+    "kind": "DOM textContent",
+    "before": "p.textContent='Рюкзак заполнен — освободите место.'",
+    "after": "I18n.assign(p,\"textContent\",'Рюкзак заполнен — освободите место.')"
+  },
+  {
+    "file": "world/resources.js",
+    "line": 115,
+    "kind": "DOM innerHTML",
+    "before": "art.innerHTML='<span>💧</span><b>Вода для фермы</b><small>Наберите воду и пополните запас животных в бункере.</small>'",
+    "after": "I18n.assign(art,\"innerHTML\",'<span>💧</span><b>Вода для фермы</b><small>Наберите воду и пополните запас животных в бункере.</small>')"
+  },
+  {
+    "file": "world/resources.js",
+    "line": 112,
+    "kind": "DOM textContent",
+    "before": "p.textContent=`Ручной колодец работает без электричества. В рюкзаке: ${bagCount('water')} воды.`",
+    "after": "I18n.assign(p,\"textContent\",`Ручной колодец работает без электричества. В рюкзаке: ${bagCount('water')} воды.`)"
+  },
+  {
+    "file": "world/resources.js",
+    "line": 110,
+    "kind": "DOM innerHTML",
+    "before": "body.innerHTML=''",
+    "after": "I18n.assign(body,\"innerHTML\",'')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 289,
+    "kind": "Canvas fillText",
+    "before": "'НЕ ПОДКЛЮЧЕНА'",
+    "after": "I18n.text('НЕ ПОДКЛЮЧЕНА')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 289,
+    "kind": "Canvas fillText",
+    "before": "'—'",
+    "after": "I18n.text('—')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 288,
+    "kind": "Canvas fillText",
+    "before": "V09Power.running?'1 топливо / мин':'ОЖИДАЕТ ЗАПУСКА'",
+    "after": "I18n.text(V09Power.running?'1 топливо / мин':'ОЖИДАЕТ ЗАПУСКА')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 288,
+    "kind": "Canvas fillText",
+    "before": "V09Power.load.toFixed(2)+' / '+(V09Power.running?'10':'0')+' кВт'",
+    "after": "I18n.text(V09Power.load.toFixed(2)+' / '+(V09Power.running?'10':'0')+' кВт')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 287,
+    "kind": "Canvas fillText",
+    "before": "V09Power.running?'ВКЛЮЧЁН':'ВЫКЛЮЧЕН'",
+    "after": "I18n.text(V09Power.running?'ВКЛЮЧЁН':'ВЫКЛЮЧЕН')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 286,
+    "kind": "Canvas fillText",
+    "before": "'ТОПЛИВО'",
+    "after": "I18n.text('ТОПЛИВО')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 286,
+    "kind": "Canvas fillText",
+    "before": "V09Power.fuel.toFixed(1)+' / 100'",
+    "after": "I18n.text(V09Power.fuel.toFixed(1)+' / 100')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 256,
+    "kind": "Canvas fillText",
+    "before": "'ОТКРЫТЬ ВРУЧНУЮ'",
+    "after": "I18n.text('ОТКРЫТЬ ВРУЧНУЮ')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 241,
+    "kind": "DOM textContent",
+    "before": "node.querySelector('small').textContent=room==='corridor'?'':!enabled?'Выкл.':!powered?'Нет энергии':devices.reduce((s,d)=>s+d.watts,0).toFixed(2)+' кВт'",
+    "after": "I18n.assign(node.querySelector('small'),\"textContent\",room==='corridor'?'':!enabled?'Выкл.':!powered?'Нет энергии':devices.reduce((s,d)=>s+d.watts,0).toFixed(2)+' кВт')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 237,
+    "kind": "DOM textContent",
+    "before": "node.textContent=(V09Power.roomEnabled[room]?'Контур включён':'Контур отключён')+' · '+demand.toFixed(2)+' кВт'",
+    "after": "I18n.assign(node,\"textContent\",(V09Power.roomEnabled[room]?'Контур включён':'Контур отключён')+' · '+demand.toFixed(2)+' кВт')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 236,
+    "kind": "DOM textContent",
+    "before": "node.textContent=enabled?'Вкл.':'Выкл.'",
+    "after": "I18n.assign(node,\"textContent\",enabled?'Вкл.':'Выкл.')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 233,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.running?(a.demand>V09Power.supply?'Запрошено '+a.demand.toFixed(2)+' кВт. Приборы без мощности ждут — отключите лишние.':'Свободно '+(V09Power.supply-a.load).toFixed(2)+' кВт'):'Нет генерации. Запустите генератор, чтобы включить освещение и производство.'",
+    "after": "I18n.assign(node,\"textContent\",V09Power.running?(a.demand>V09Power.supply?'Запрошено '+a.demand.toFixed(2)+' кВт. Приборы без мощности ждут — отключите лишние.':'Свободно '+(V09Power.supply-a.load).toFixed(2)+' кВт'):'Нет генерации. Запустите генератор, чтобы включить освещение и производство.')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 232,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.running?'Остановить генератор':'Запустить генератор'",
+    "after": "I18n.assign(node,\"textContent\",V09Power.running?'Остановить генератор':'Запустить генератор')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 231,
+    "kind": "DOM textContent",
+    "before": "node.textContent='В рюкзаке: '+bagCount('fuel')+' топлива'",
+    "after": "I18n.assign(node,\"textContent\",'В рюкзаке: '+bagCount('fuel')+' топлива')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 230,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.fuel.toFixed(1)+' / 100'",
+    "after": "I18n.assign(node,\"textContent\",V09Power.fuel.toFixed(1)+' / 100')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 228,
+    "kind": "DOM textContent",
+    "before": "node.textContent=a.load.toFixed(2)+' / '+a.supply+' кВт'",
+    "after": "I18n.assign(node,\"textContent\",a.load.toFixed(2)+' / '+a.supply+' кВт')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 227,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.fuel.toFixed(1)+' / 100'",
+    "after": "I18n.assign(node,\"textContent\",V09Power.fuel.toFixed(1)+' / 100')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 226,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.running?(a.load+a.chargeInput>0?'Работает':'Ожидание'):'Выключен'",
+    "after": "I18n.assign(node,\"textContent\",V09Power.running?(a.load+a.chargeInput>0?'Работает':'Ожидание'):'Выключен')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 220,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Контур: '+V09Power.rooms[d.room]+'. Общий выключатель комнаты имеет приоритет над настройкой прибора.'",
+    "after": "I18n.assign(note,\"textContent\",'Контур: '+V09Power.rooms[d.room]+'. Общий выключатель комнаты имеет приоритет над настройкой прибора.')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 219,
+    "kind": "DOM innerHTML",
+    "before": "body.innerHTML=v09PowerStats()",
+    "after": "I18n.assign(body,\"innerHTML\",v09PowerStats())"
+  },
+  {
+    "file": "base/power.js",
+    "line": 207,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Мощность: 10 кВт. 1 единица топлива ≈ 1 минута работы. При остановке генератора производство сохраняет прогресс. Резервная батарея будет подключена позже.'",
+    "after": "I18n.assign(note,\"textContent\",'Мощность: 10 кВт. 1 единица топлива ≈ 1 минута работы. При остановке генератора производство сохраняет прогресс. Резервная батарея будет подключена позже.')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 202,
+    "kind": "DOM innerHTML",
+    "before": "gauge.innerHTML='<i data-power=\"tankbar\"></i><b data-power=\"tankvalue\"></b>'",
+    "after": "I18n.assign(gauge,\"innerHTML\",'<i data-power=\"tankbar\"></i><b data-power=\"tankvalue\"></b>')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 200,
+    "kind": "DOM innerHTML",
+    "before": "body.innerHTML=v09PowerStats()",
+    "after": "I18n.assign(body,\"innerHTML\",v09PowerStats())"
+  },
+  {
+    "file": "base/power.js",
+    "line": 191,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Выключатель комнаты управляет её светом и дверью. Генератор запускается и останавливается отдельно.'",
+    "after": "I18n.assign(note,\"textContent\",'Выключатель комнаты управляет её светом и дверью. Генератор запускается и останавливается отдельно.')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 188,
+    "kind": "DOM textContent",
+    "before": "title.querySelector('h3').textContent=V09Power.rooms[room]",
+    "after": "I18n.assign(title.querySelector('h3'),\"textContent\",V09Power.rooms[room])"
+  },
+  {
+    "file": "base/power.js",
+    "line": 188,
+    "kind": "DOM innerHTML",
+    "before": "title.innerHTML='<h3></h3><small></small>'",
+    "after": "I18n.assign(title,\"innerHTML\",'<h3></h3><small></small>')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 186,
+    "kind": "DOM innerHTML",
+    "before": "parent.innerHTML=''",
+    "after": "I18n.assign(parent,\"innerHTML\",'')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 180,
+    "kind": "DOM innerHTML",
+    "before": "legend.innerHTML='<span>Есть питание</span><span>Выключено</span><span>Нет энергии</span>'",
+    "after": "I18n.assign(legend,\"innerHTML\",'<span>Есть питание</span><span>Выключено</span><span>Нет энергии</span>')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 178,
+    "kind": "DOM textContent",
+    "before": "b.textContent=i?'Правый\\nпрожектор':'Левый\\nпрожектор'",
+    "after": "I18n.assign(b,\"textContent\",i?'Правый\\nпрожектор':'Левый\\nпрожектор')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 177,
+    "kind": "DOM innerHTML",
+    "before": "map.innerHTML='<div style=\"position:absolute;inset:10% 13% 15%;border:6px solid #697b77;border-radius:8px\"></div><div class=\"v09MapHatch\">Бункер ↓</div><div class=\"v09YardGate\">ВОРОТА</div>'",
+    "after": "I18n.assign(map,\"innerHTML\",'<div style=\"position:absolute;inset:10% 13% 15%;border:6px solid #697b77;border-radius:8px\"></div><div class=\"v09MapHatch\">Бункер ↓</div><div class=\"v09YardGate\">ВОРОТА</div>')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 174,
+    "kind": "DOM attribute",
+    "before": "b.setAttribute('aria-label',V09Power.rooms[room])",
+    "after": "I18n.setAttr(b,'aria-label',V09Power.rooms[room])"
+  },
+  {
+    "file": "base/power.js",
+    "line": 174,
+    "kind": "DOM textContent",
+    "before": "b.querySelector('span').textContent=room==='corridor'?'↕':V09Power.rooms[room]",
+    "after": "I18n.assign(b.querySelector('span'),\"textContent\",room==='corridor'?'↕':V09Power.rooms[room])"
+  },
+  {
+    "file": "base/power.js",
+    "line": 174,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML='<span></span><small></small>'",
+    "after": "I18n.assign(b,\"innerHTML\",'<span></span><small></small>')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 171,
+    "kind": "DOM attribute",
+    "before": "map.setAttribute('aria-label','План базы: '+(V09Power.tab==='bunker'?'бункер':'двор'))",
+    "after": "I18n.setAttr(map,'aria-label','План базы: '+(V09Power.tab==='bunker'?'бункер':'двор'))"
+  },
+  {
+    "file": "base/power.js",
+    "line": 168,
+    "kind": "DOM innerHTML",
+    "before": "body.innerHTML=v09PowerStats()",
+    "after": "I18n.assign(body,\"innerHTML\",v09PowerStats())"
+  },
+  {
+    "file": "base/power.js",
+    "line": 82,
+    "kind": "DOM textContent",
+    "before": "b.textContent=d.enabled?'Вкл.':'Выкл.'",
+    "after": "I18n.assign(b,\"textContent\",d.enabled?'Вкл.':'Выкл.')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 81,
+    "kind": "DOM textContent",
+    "before": "row.querySelector('small').textContent=v09DeviceStatus(d)+' · '+d.watts.toFixed(2).replace(/0$/,'')+' кВт'",
+    "after": "I18n.assign(row.querySelector('small'),\"textContent\",v09DeviceStatus(d)+' · '+d.watts.toFixed(2).replace(/0$/,'')+' кВт')"
+  },
+  {
+    "file": "base/power.js",
+    "line": 76,
+    "kind": "DOM attribute",
+    "before": "button.setAttribute('aria-label','Питание: '+d.name)",
+    "after": "I18n.setAttr(button,'aria-label','Питание: '+d.name)"
+  },
+  {
+    "file": "base/power.js",
+    "line": 75,
+    "kind": "DOM textContent",
+    "before": "text.querySelector('strong').textContent=d.name",
+    "after": "I18n.assign(text.querySelector('strong'),\"textContent\",d.name)"
+  },
+  {
+    "file": "base/power.js",
+    "line": 75,
+    "kind": "DOM innerHTML",
+    "before": "text.innerHTML='<strong></strong><small></small>'",
+    "after": "I18n.assign(text,\"innerHTML\",'<strong></strong><small></small>')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 165,
+    "review": "nonstandard slot.title=qty?(ITEM[type]?.name||type)+' × '+qty:'Пустая ячейка'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 271,
+    "review": "nonstandard cancel.title='Начатая партия сохранится, материалы следующих вернутся'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 274,
+    "review": "nonstandard x.title='Отменить заказ и вернуть материалы'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 398,
+    "kind": "DOM innerHTML",
+    "before": "box.innerHTML=gunStats(type)",
+    "after": "I18n.assign(box,\"innerHTML\",gunStats(type))"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 371,
+    "kind": "DOM textContent",
+    "before": "hud.textContent=`${g.name} · ${magazines[heldItem()]} / ${bagCount(g.ammo)} · ${g.caliber}`",
+    "after": "I18n.assign(hud,\"textContent\",`${g.name} · ${magazines[heldItem()]} / ${bagCount(g.ammo)} · ${g.caliber}`)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 364,
+    "kind": "Canvas fillText",
+    "before": "'ЭЛЕКТРОСТАНОК · '+state('craft_bench')",
+    "after": "I18n.text('ЭЛЕКТРОСТАНОК · '+state('craft_bench'))"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 358,
+    "kind": "Canvas fillText",
+    "before": "benchWorking?'FAB / ACTIVE':state('craft_bench')==='ГОТОВО'?'READY':'FAB / IDLE'",
+    "after": "I18n.text(benchWorking?'FAB / ACTIVE':state('craft_bench')==='ГОТОВО'?'READY':'FAB / IDLE')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 346,
+    "kind": "Canvas fillText",
+    "before": "state('furnace')",
+    "after": "I18n.text(state('furnace'))"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 346,
+    "kind": "Canvas fillText",
+    "before": "'ПЛАВИЛЬНАЯ ПЕЧЬ'",
+    "after": "I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 335,
+    "kind": "Canvas fillText",
+    "before": "'МАСТЕРСКАЯ'",
+    "after": "I18n.text('МАСТЕРСКАЯ')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 290,
+    "kind": "DOM attribute",
+    "before": "grid.setAttribute('aria-label','Готовые предметы станка')",
+    "after": "I18n.setAttr(grid,'aria-label','Готовые предметы станка')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 289,
+    "kind": "DOM innerHTML",
+    "before": "head.innerHTML='<span>Готово</span><small id=\"v091CraftReady\"></small>'",
+    "after": "I18n.assign(head,\"innerHTML\",'<span>Готово</span><small id=\"v091CraftReady\"></small>')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 283,
+    "kind": "DOM textContent",
+    "before": "costLine.textContent=craftUpgrades[key]?'Установлено':Object.entries(cost).map(([t,n])=>ITEM[t].name+' '+n).join(' · ')",
+    "after": "I18n.assign(costLine,\"textContent\",craftUpgrades[key]?'Установлено':Object.entries(cost).map(([t,n])=>ITEM[t].name+' '+n).join(' · '))"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 277,
+    "kind": "DOM textContent",
+    "before": "summary.textContent='Мастерская · оборудование'",
+    "after": "I18n.assign(summary,\"textContent\",'Мастерская · оборудование')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 274,
+    "kind": "DOM attribute",
+    "before": "x.setAttribute('aria-label',x.title)",
+    "after": "I18n.setAttr(x,'aria-label',x.title)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 274,
+    "kind": "DOM innerHTML",
+    "before": "line.innerHTML=`${itemIconHTML(RECIPES[j.recipe].output)}<span>${RECIPES[j.recipe].name}<small> × ${j.batches*RECIPES[j.recipe].qty}</small></span>`",
+    "after": "I18n.assign(line,\"innerHTML\",`${itemIconHTML(RECIPES[j.recipe].output)}<span>${RECIPES[j.recipe].name}<small> × ${j.batches*RECIPES[j.recipe].qty}</small></span>`)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 273,
+    "kind": "DOM textContent",
+    "before": "h.textContent='Далее · '+queueExtra[id].length",
+    "after": "I18n.assign(h,\"textContent\",'Далее · '+queueExtra[id].length)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 270,
+    "kind": "DOM innerHTML",
+    "before": "progress.innerHTML='<span id=\"v091CraftStatus\"></span><div id=\"v091CraftTime\"></div><div class=\"v09CraftProgress\"><div id=\"v091CraftBar\"></div></div><div class=\"v092ProductionCounts\"><strong id=\"v091CraftMade\"></strong> изготовлено</div>'",
+    "after": "I18n.assign(progress,\"innerHTML\",'<span id=\"v091CraftStatus\"></span><div id=\"v091CraftTime\"></div><div class=\"v09CraftProgress\"><div id=\"v091CraftBar\"></div></div><div class=\"v092ProductionCounts\"><strong id=\"v091CraftMade\"></strong> изготовлено</div>')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 266,
+    "kind": "DOM textContent",
+    "before": "amount.textContent=`Количество: ${r.qty*count}`",
+    "after": "I18n.assign(amount,\"textContent\",`Количество: ${r.qty*count}`)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 263,
+    "kind": "DOM textContent",
+    "before": "compatible.textContent='Для '+weaponsForAmmo(r.output).map(type=>GUNS[type].name).join(' / ')+' · '+ITEM[r.output].caliber",
+    "after": "I18n.assign(compatible,\"textContent\",'Для '+weaponsForAmmo(r.output).map(type=>GUNS[type].name).join(' / ')+' · '+ITEM[r.output].caliber)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 262,
+    "kind": "DOM textContent",
+    "before": "detail.textContent='Урон '+gun.damage+' · Магазин '+gun.mag+' · '+gun.caliber",
+    "after": "I18n.assign(detail,\"textContent\",'Урон '+gun.damage+' · Магазин '+gun.mag+' · '+gun.caliber)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 260,
+    "kind": "DOM textContent",
+    "before": "meta.textContent=duration(r.ms*Math.max(1,count)/(craftUpgrades.workshop?1.2:1))+' · '+watts+' кВт'",
+    "after": "I18n.assign(meta,\"textContent\",duration(r.ms*Math.max(1,count)/(craftUpgrades.workshop?1.2:1))+' · '+watts+' кВт')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 259,
+    "kind": "DOM innerHTML",
+    "before": "result.innerHTML=`${itemIconHTML(r.output)}<b>${r.name}</b><span class=\"v011Yield\">× ${r.qty*Math.max(1,count)}</span>`",
+    "after": "I18n.assign(result,\"innerHTML\",`${itemIconHTML(r.output)}<b>${r.name}</b><span class=\"v011Yield\">× ${r.qty*Math.max(1,count)}</span>`)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 258,
+    "kind": "DOM textContent",
+    "before": "arrow.textContent='→'",
+    "after": "I18n.assign(arrow,\"textContent\",'→')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 256,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML=`${itemIconHTML(type)}<span>${ITEM[type]?.name||type}<strong>${have} / ${need}</strong></span>`",
+    "after": "I18n.assign(b,\"innerHTML\",`${itemIconHTML(type)}<span>${ITEM[type]?.name||type}<strong>${have} / ${need}</strong></span>`)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 255,
+    "kind": "DOM title",
+    "before": "b.title=ITEM[type]?.name||type",
+    "after": "I18n.assign(b,\"title\",ITEM[type]?.name||type)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 253,
+    "kind": "DOM textContent",
+    "before": "help.textContent=recipe?`${ITEM[type].name}: ${labels[recipe[1].station]}. ${Object.entries(recipe[1].input).map(([t,q])=>q+' × '+ITEM[t].name).join(' + ')} → ${recipe[1].qty} шт.`:({iron_ore:'Добывайте киркой за крепостью.',copper_ore:'Добывайте киркой на каменистых участках.',wood:'Рубите деревья топором.',parts:'Обыскивайте гаражи, машины и дома.',grain:'Выращивайте на ферме.',advanced_parts:'Ищите на удалённых складах.'}[type]||'Ищите во время вылазок.')",
+    "after": "I18n.assign(help,\"textContent\",recipe?`${ITEM[type].name}: ${labels[recipe[1].station]}. ${Object.entries(recipe[1].input).map(([t,q])=>q+' × '+ITEM[t].name).join(' + ')} → ${recipe[1].qty} шт.`:({iron_ore:'Добывайте киркой за крепостью.',copper_ore:'Добывайте киркой на каменистых участках.',wood:'Рубите деревья топором.',parts:'Обыскивайте гаражи, машины и дома.',grain:'Выращивайте на ферме.',advanced_parts:'Ищите на удалённых складах.'}[type]||'Ищите во время вылазок.'))"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 249,
+    "kind": "DOM textContent",
+    "before": "help.textContent=''",
+    "after": "I18n.assign(help,\"textContent\",'')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 242,
+    "kind": "DOM textContent",
+    "before": "node.detail.textContent=detail",
+    "after": "I18n.assign(node.detail,\"textContent\",detail)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 233,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML=`${itemIconHTML(r.output)}<span>${r.name}<small></small></span>`",
+    "after": "I18n.assign(b,\"innerHTML\",`${itemIconHTML(r.output)}<span>${r.name}<small></small></span>`)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 233,
+    "kind": "DOM title",
+    "before": "b.title=r.name",
+    "after": "I18n.assign(b,\"title\",r.name)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 232,
+    "kind": "DOM textContent",
+    "before": "heading.textContent=category",
+    "after": "I18n.assign(heading,\"textContent\",category)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 220,
+    "kind": "DOM attribute",
+    "before": "list.setAttribute('aria-label','Рецепты')",
+    "after": "I18n.setAttr(list,'aria-label','Рецепты')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 215,
+    "kind": "DOM textContent",
+    "before": "overlay.querySelector('.v09Title').textContent=labels[id]",
+    "after": "I18n.assign(overlay.querySelector('.v09Title'),\"textContent\",labels[id])"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 215,
+    "kind": "DOM attribute",
+    "before": "overlay.querySelector('.panel').setAttribute('aria-label',labels[id])",
+    "after": "I18n.setAttr(overlay.querySelector('.panel'),'aria-label',labels[id])"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 207,
+    "kind": "DOM textContent",
+    "before": "button.textContent='Забрать всё'",
+    "after": "I18n.assign(button,\"textContent\",'Забрать всё')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 206,
+    "kind": "DOM textContent",
+    "before": "time.querySelector('span').textContent=j?`Сейчас: ${r.name} · ${duration(j.remainingMs/(craftUpgrades.workshop?1.2:1))}`:'Выберите рецепт'",
+    "after": "I18n.assign(time.querySelector('span'),\"textContent\",j?`Сейчас: ${r.name} · ${duration(j.remainingMs/(craftUpgrades.workshop?1.2:1))}`:'Выберите рецепт')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 206,
+    "kind": "DOM innerHTML",
+    "before": "time.innerHTML=j?itemIconHTML(key)+'<span></span>':'<span></span>'",
+    "after": "I18n.assign(time,\"innerHTML\",j?itemIconHTML(key)+'<span></span>':'<span></span>')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 205,
+    "kind": "DOM textContent",
+    "before": "ready.textContent=String(sumReady(id))",
+    "after": "I18n.assign(ready,\"textContent\",String(sumReady(id)))"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 205,
+    "kind": "DOM textContent",
+    "before": "made.textContent=j?`${j.completedBatches*r.qty} / ${j.batches*r.qty}`:'—'",
+    "after": "I18n.assign(made,\"textContent\",j?`${j.completedBatches*r.qty} / ${j.batches*r.qty}`:'—')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 203,
+    "kind": "DOM textContent",
+    "before": "status.textContent=pauseExtra[id]?'Пауза':!V09Power.devices[id].enabled?'Выключен':!powered(id)?'Нет питания':j?'Работает':sumReady(id)?'Готово':'Ожидание'",
+    "after": "I18n.assign(status,\"textContent\",pauseExtra[id]?'Пауза':!V09Power.devices[id].enabled?'Выключен':!powered(id)?'Нет питания':j?'Работает':sumReady(id)?'Готово':'Ожидание')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 170,
+    "kind": "DOM textContent",
+    "before": "total.textContent=String(sumReady(id))",
+    "after": "I18n.assign(total,\"textContent\",String(sumReady(id)))"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 169,
+    "kind": "DOM textContent",
+    "before": "take.textContent='Забрать стопку'",
+    "after": "I18n.assign(take,\"textContent\",'Забрать стопку')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 168,
+    "kind": "DOM textContent",
+    "before": "label.textContent=qty?(ITEM[type]?.name||type)+' · '+qty:'Выберите готовую вещь'",
+    "after": "I18n.assign(label,\"textContent\",qty?(ITEM[type]?.name||type)+' · '+qty:'Выберите готовую вещь')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 165,
+    "kind": "DOM attribute",
+    "before": "slot.setAttribute('aria-label',slot.title)",
+    "after": "I18n.setAttr(slot,'aria-label',slot.title)"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 163,
+    "kind": "DOM textContent",
+    "before": "count.textContent=qty?String(qty):''",
+    "after": "I18n.assign(count,\"textContent\",qty?String(qty):'')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 162,
+    "kind": "DOM innerHTML",
+    "before": "slot.innerHTML=type?itemIconHTML(type)+'<small></small>':''",
+    "after": "I18n.assign(slot,\"innerHTML\",type?itemIconHTML(type)+'<small></small>':'')"
+  },
+  {
+    "file": "crafting/manufacturing.js",
+    "line": 158,
+    "kind": "DOM attribute",
+    "before": "slot.setAttribute('aria-label','Пустая ячейка')",
+    "after": "I18n.setAttr(slot,'aria-label','Пустая ячейка')"
+  },
+  {
+    "file": "base/fortress-navigation.js",
+    "line": 327,
+    "kind": "Canvas fillText",
+    "before": "text",
+    "after": "I18n.text(text)"
+  },
+  {
+    "file": "base/fortress-navigation.js",
+    "line": 273,
+    "kind": "DOM textContent",
+    "before": "actionButton.textContent=innerGateOpen?'🔒':'🔓'",
+    "after": "I18n.assign(actionButton,\"textContent\",innerGateOpen?'🔒':'🔓')"
+  },
+  {
+    "file": "base/fortress-navigation.js",
+    "line": 272,
+    "kind": "DOM textContent",
+    "before": "actionButton.textContent=isElevated()?'↧':'↥'",
+    "after": "I18n.assign(actionButton,\"textContent\",isElevated()?'↧':'↥')"
+  },
+  {
+    "file": "base/fortress-navigation.js",
+    "line": 232,
+    "kind": "DOM attribute",
+    "before": "jumpButton.setAttribute('aria-label','Спрыгнуть со стены внутрь двора')",
+    "after": "I18n.setAttr(jumpButton,'aria-label','Спрыгнуть со стены внутрь двора')"
+  },
+  {
+    "file": "base/fortress-navigation.js",
+    "line": 232,
+    "kind": "DOM textContent",
+    "before": "jumpButton.textContent='↘ Спрыгнуть во двор'",
+    "after": "I18n.assign(jumpButton,\"textContent\",'↘ Спрыгнуть во двор')"
+  },
+  {
+    "file": "core/loot-light-equipment.js",
+    "line": 238,
+    "kind": "DOM textContent",
+    "before": "el('bagCapacityText').textContent='🎒 Рюкзак · '+bag.length+'/'+BAG_SLOTS",
+    "after": "I18n.assign(el('bagCapacityText'),\"textContent\",'🎒 Рюкзак · '+bag.length+'/'+BAG_SLOTS)"
+  },
+  {
+    "file": "core/loot-light-equipment.js",
+    "line": 237,
+    "kind": "DOM innerHTML",
+    "before": "el('characterStats').innerHTML='❤️ HP: <b>'+Math.round(player.health)+'/'+Math.round(player.maxHealth||100)+'</b><br>🛡️ Защита тела: <b>'+equippedArmor()+'%</b><br>🎒 Вместимость: <b>'+BAG_SLOTS+'</b>'",
+    "after": "I18n.assign(el('characterStats'),\"innerHTML\",'❤️ HP: <b>'+Math.round(player.health)+'/'+Math.round(player.maxHealth||100)+'</b><br>🛡️ Защита тела: <b>'+equippedArmor()+'%</b><br>🎒 Вместимость: <b>'+BAG_SLOTS+'</b>')"
+  },
+  {
+    "file": "core/loot-light-equipment.js",
+    "line": 236,
+    "kind": "DOM innerHTML",
+    "before": "figure.innerHTML=v091Paperdoll()",
+    "after": "I18n.assign(figure,\"innerHTML\",v091Paperdoll())"
+  },
+  {
+    "file": "core/loot-light-equipment.js",
+    "line": 233,
+    "kind": "DOM textContent",
+    "before": "hint.textContent=def?(key==='backpack'?def.capacity+' мест · смена из рюкзака':'Характеристики и действия'):'Свободный слот'",
+    "after": "I18n.assign(hint,\"textContent\",def?(key==='backpack'?def.capacity+' мест · смена из рюкзака':'Характеристики и действия'):'Свободный слот')"
+  },
+  {
+    "file": "core/loot-light-equipment.js",
+    "line": 232,
+    "kind": "DOM textContent",
+    "before": "name.textContent=def?def.name:'Не надето'",
+    "after": "I18n.assign(name,\"textContent\",def?def.name:'Не надето')"
+  },
+  {
+    "file": "core/loot-light-equipment.js",
+    "line": 231,
+    "kind": "DOM textContent",
+    "before": "label.textContent=EQUIP_LABELS[key]",
+    "after": "I18n.assign(label,\"textContent\",EQUIP_LABELS[key])"
+  },
+  {
+    "file": "core/loot-light-equipment.js",
+    "line": 229,
+    "kind": "DOM innerHTML",
+    "before": "icon.innerHTML=def?itemIconHTML(eq.type):v091GearIcon(key,false)",
+    "after": "I18n.assign(icon,\"innerHTML\",def?itemIconHTML(eq.type):v091GearIcon(key,false))"
+  },
+  {
+    "file": "save/slots.js",
+    "line": 393,
+    "kind": "DOM textContent",
+    "before": "warning.textContent='Хранилище браузера недоступно. Скачайте текущий прогресс файлом.'",
+    "after": "I18n.assign(warning,\"textContent\",'Хранилище браузера недоступно. Скачайте текущий прогресс файлом.')"
+  },
+  {
+    "file": "save/slots.js",
+    "line": 382,
+    "kind": "DOM textContent",
+    "before": "meta.textContent=!entry?'Свободен':entry.invalid?'Не удалось прочитать. Данные сохранены.':\n        `Слот ${id}${id===GameState.session.activeSlot?' · текущий':''} · ${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`",
+    "after": "I18n.assign(meta,\"textContent\",!entry?'Свободен':entry.invalid?'Не удалось прочитать. Данные сохранены.':\n        `Слот ${id}${id===GameState.session.activeSlot?' · текущий':''} · ${new Date(entry.data.savedAt).toLocaleString('ru-RU')} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`)"
+  },
+  {
+    "file": "save/slots.js",
+    "line": 380,
+    "kind": "DOM textContent",
+    "before": "name.textContent=entry&&!entry.invalid?entry.data.saveName:`Слот ${id}`",
+    "after": "I18n.assign(name,\"textContent\",entry&&!entry.invalid?entry.data.saveName:`Слот ${id}`)"
+  },
+  {
+    "file": "save/slots.js",
+    "line": 375,
+    "kind": "DOM textContent",
+    "before": "intro.textContent='5 независимых слотов. Новая игра и импорт используют свободный слот. Для переноса на другой телефон или компьютер скачайте файл.'",
+    "after": "I18n.assign(intro,\"textContent\",'5 независимых слотов. Новая игра и импорт используют свободный слот. Для переноса на другой телефон или компьютер скачайте файл.')"
+  },
+  {
+    "file": "save/slots.js",
+    "line": 365,
+    "kind": "DOM attribute",
+    "before": "input.setAttribute('aria-label','Название сохранения')",
+    "after": "I18n.setAttr(input,'aria-label','Название сохранения')"
+  },
+  {
+    "file": "save/slots.js",
+    "line": 363,
+    "kind": "DOM textContent",
+    "before": "label.textContent='Название игры · слот '+id",
+    "after": "I18n.assign(label,\"textContent\",'Название игры · слот '+id)"
+  },
+  {
+    "file": "save/slots.js",
+    "line": 60,
+    "kind": "DOM textContent",
+    "before": "hint.textContent=n>=V09_CHICKEN_MAX?'Курятник заполнен.':\n    'Куры размножаются при наличии корма и воды: одна за 5 минут игры.'",
+    "after": "I18n.assign(hint,\"textContent\",n>=V09_CHICKEN_MAX?'Курятник заполнен.':\n    'Куры размножаются при наличии корма и воды: одна за 5 минут игры.')"
+  },
+  {
+    "file": "save/slots.js",
+    "line": 56,
+    "kind": "DOM innerHTML",
+    "before": "status.innerHTML=status.innerHTML.replace(/🐔 Куры: \\d+/,`🐔 Куры: ${n} / ${V09_CHICKEN_MAX}`)",
+    "after": "I18n.assign(status,\"innerHTML\",status.innerHTML.replace(/🐔 Куры: \\d+/,`🐔 Куры: ${n} / ${V09_CHICKEN_MAX}`))"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 116,
+    "review": "nonstandard d.title=s?ITEM[s.type].name+' · '+s.qty:'Пустая ячейка'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 257,
+    "kind": "DOM attribute",
+    "before": "el('storageSettings').setAttribute('aria-label','Настроить ящик')",
+    "after": "I18n.setAttr(el('storageSettings'),'aria-label','Настроить ящик')"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 257,
+    "kind": "DOM title",
+    "before": "el('storageSettings').title='Название и значок ящика'",
+    "after": "I18n.assign(el('storageSettings'),\"title\",'Название и значок ящика')"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 257,
+    "kind": "DOM textContent",
+    "before": "el('storageSettings').textContent='⚙'",
+    "after": "I18n.assign(el('storageSettings'),\"textContent\",'⚙')"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 224,
+    "kind": "DOM innerHTML",
+    "before": "d.ghost.innerHTML=itemIconHTML(d.item.type)",
+    "after": "I18n.assign(d.ghost,\"innerHTML\",itemIconHTML(d.item.type))"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 199,
+    "kind": "dialog",
+    "before": "'Уничтожить «'+def.name+'»'+(s.level?' +'+s.level:'')+'? Предмет будет потерян.'",
+    "after": "I18n.text('Уничтожить «'+def.name+'»'+(s.level?' +'+s.level:'')+'? Предмет будет потерян.')"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 198,
+    "kind": "DOM attribute",
+    "before": "input.setAttribute('aria-label','Количество для разделения')",
+    "after": "I18n.setAttr(input,'aria-label','Количество для разделения')"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 190,
+    "kind": "DOM textContent",
+    "before": "row.textContent=names[key]+': '+formatStat(key,value)+(Number.isFinite(baseline)&&equipped!==s?' · надето '+formatStat(key,baseline):'')",
+    "after": "I18n.assign(row,\"textContent\",names[key]+': '+formatStat(key,value)+(Number.isFinite(baseline)&&equipped!==s?' · надето '+formatStat(key,baseline):''))"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 184,
+    "kind": "DOM textContent",
+    "before": "purpose.textContent=def.description||(def.equip?'Экипировка для слота «'+EQUIP_LABELS[def.equip]+'».':def.hand?'Можно назначить в быстрый слот.':({iron_ore:'Переплавляется в железо в печи.',copper_ore:'Переплавляется в медь в печи.',iron:'Используется для изготовления оружия, патронов и улучшений.',copper:'Металл для производства и электрического оборудования.',ammo:'Боеприпасы для АК-74.',ammo556:'Боеприпасы для M4.',fuel:'Топливо для генератора.',meds:'Медицинские припасы.',water:'Вода для хозяйства и вылазок.',animal_feed:'Корм для животных.'}[s.type]||'Ресурс для производства или развития базы.'))",
+    "after": "I18n.assign(purpose,\"textContent\",def.description||(def.equip?'Экипировка для слота «'+EQUIP_LABELS[def.equip]+'».':def.hand?'Можно назначить в быстрый слот.':({iron_ore:'Переплавляется в железо в печи.',copper_ore:'Переплавляется в медь в печи.',iron:'Используется для изготовления оружия, патронов и улучшений.',copper:'Металл для производства и электрического оборудования.',ammo:'Боеприпасы для АК-74.',ammo556:'Боеприпасы для M4.',fuel:'Топливо для генератора.',meds:'Медицинские припасы.',water:'Вода для хозяйства и вылазок.',animal_feed:'Корм для животных.'}[s.type]||'Ресурс для производства или развития базы.')))"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 183,
+    "kind": "DOM textContent",
+    "before": "text.textContent='Количество: '+(s.qty||1)+(s.level?' · Улучшение +'+s.level:'')",
+    "after": "I18n.assign(text,\"textContent\",'Количество: '+(s.qty||1)+(s.level?' · Улучшение +'+s.level:''))"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 182,
+    "kind": "DOM innerHTML",
+    "before": "art.innerHTML=itemIconHTML(s.type)",
+    "after": "I18n.assign(art,\"innerHTML\",itemIconHTML(s.type))"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 173,
+    "kind": "DOM textContent",
+    "before": "text.textContent=ITEM[type].name",
+    "after": "I18n.assign(text,\"textContent\",ITEM[type].name)"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 171,
+    "kind": "DOM textContent",
+    "before": "desc.textContent='На базе пополняются только недостающие запасы. Закреплённые предметы из ящиков остаются на месте.'",
+    "after": "I18n.assign(desc,\"textContent\",'На базе пополняются только недостающие запасы. Закреплённые предметы из ящиков остаются на месте.')"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 133,
+    "kind": "DOM attribute",
+    "before": "b.setAttribute('aria-label',title)",
+    "after": "I18n.setAttr(b,'aria-label',title)"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 133,
+    "kind": "DOM title",
+    "before": "b.title=title",
+    "after": "I18n.assign(b,\"title\",title)"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 133,
+    "kind": "DOM textContent",
+    "before": "b.textContent=text",
+    "after": "I18n.assign(b,\"textContent\",text)"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 123,
+    "kind": "DOM textContent",
+    "before": "el('storageTitle').textContent=ch.icon+' '+ch.name",
+    "after": "I18n.assign(el('storageTitle'),\"textContent\",ch.icon+' '+ch.name)"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 116,
+    "kind": "DOM attribute",
+    "before": "d.setAttribute('aria-label',d.title)",
+    "after": "I18n.setAttr(d,'aria-label',d.title)"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 116,
+    "kind": "DOM innerHTML",
+    "before": "d.innerHTML=slotContent(s)",
+    "after": "I18n.assign(d,\"innerHTML\",slotContent(s))"
+  },
+  {
+    "file": "inventory/registry-slots.js",
+    "line": 100,
+    "kind": "DOM textContent",
+    "before": "el('bagCapacityText').textContent='Рюкзак · '+occupied(bag)+' / '+BAG_SLOTS",
+    "after": "I18n.assign(el('bagCapacityText'),\"textContent\",'Рюкзак · '+occupied(bag)+' / '+BAG_SLOTS)"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 155,
+    "review": "nonstandard reloadButton.title='Перезарядка · R'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 253,
+    "review": "nonstandard x.title='Открепить рецепт'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 253,
+    "kind": "DOM attribute",
+    "before": "x.setAttribute('aria-label',x.title)",
+    "after": "I18n.setAttr(x,'aria-label',x.title)"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 253,
+    "kind": "DOM innerHTML",
+    "before": "pin.innerHTML=html",
+    "after": "I18n.assign(pin,\"innerHTML\",html)"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 197,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Без случайных провалов. Материалы берутся из рюкзака и складов базы. Улучшение HP не восстанавливает здоровье.'",
+    "after": "I18n.assign(note,\"textContent\",'Без случайных провалов. Материалы берутся из рюкзака и складов базы. Улучшение HP не восстанавливает здоровье.')"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 193,
+    "kind": "DOM textContent",
+    "before": "cost.textContent=Object.entries(costs(selected)).map(([t,n])=>ITEM[t].name+': '+available(t)+'/'+n).join(' · ')",
+    "after": "I18n.assign(cost,\"textContent\",Object.entries(costs(selected)).map(([t,n])=>ITEM[t].name+': '+available(t)+'/'+n).join(' · '))"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 192,
+    "kind": "DOM innerHTML",
+    "before": "detail.innerHTML=window.V011UI?V011UI.cardHTML(selected):'<b>'+ITEM[selected.type].name+' +'+selected.level+'</b><br>'+textStats(getItemStats(selected))",
+    "after": "I18n.assign(detail,\"innerHTML\",window.V011UI?V011UI.cardHTML(selected):'<b>'+ITEM[selected.type].name+' +'+selected.level+'</b><br>'+textStats(getItemStats(selected)))"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 191,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Принесите оружие или экипировку для улучшения.'",
+    "after": "I18n.assign(note,\"textContent\",'Принесите оружие или экипировку для улучшения.')"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 190,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML=itemIconHTML(item.type)+'<span>'+ITEM[item.type].name+' +'+item.level+'</span>'",
+    "after": "I18n.assign(b,\"innerHTML\",itemIconHTML(item.type)+'<span>'+ITEM[item.type].name+' +'+item.level+'</span>')"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 163,
+    "kind": "Canvas fillText",
+    "before": "'ТИР'",
+    "after": "I18n.text('ТИР')"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 156,
+    "kind": "DOM textContent",
+    "before": "stopButton.textContent='Завершить тренировку'",
+    "after": "I18n.assign(stopButton,\"textContent\",'Завершить тренировку')"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 155,
+    "kind": "DOM attribute",
+    "before": "reloadButton.setAttribute('aria-label','Перезарядить оружие')",
+    "after": "I18n.setAttr(reloadButton,'aria-label','Перезарядить оружие')"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 112,
+    "kind": "DOM textContent",
+    "before": "b.textContent=reloading?'↻ '+(reloading.remainingMs/1000).toFixed(1):'↻'",
+    "after": "I18n.assign(b,\"textContent\",reloading?'↻ '+(reloading.remainingMs/1000).toFixed(1):'↻')"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 111,
+    "kind": "DOM textContent",
+    "before": "hud.textContent=text+progress",
+    "after": "I18n.assign(hud,\"textContent\",text+progress)"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 94,
+    "kind": "DOM innerHTML",
+    "before": "node.innerHTML='HP <b>'+Math.round(player.health)+'/'+Math.round(st.hp)+'</b> · Защита <b>'+st.armor+'%</b><br>Скорость <b>+'+Math.round(st.speed*100)+'%</b> · Точность <b>+'+Math.round(st.accuracy*100)+'%</b><br>Рюкзак: '+BAG_SLOTS+' мест'",
+    "after": "I18n.assign(node,\"innerHTML\",'HP <b>'+Math.round(player.health)+'/'+Math.round(st.hp)+'</b> · Защита <b>'+st.armor+'%</b><br>Скорость <b>+'+Math.round(st.speed*100)+'%</b> · Точность <b>+'+Math.round(st.accuracy*100)+'%</b><br>Рюкзак: '+BAG_SLOTS+' мест')"
+  },
+  {
+    "file": "combat/weapons-crafting.js",
+    "line": 89,
+    "kind": "DOM textContent",
+    "before": "h.textContent='❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth)",
+    "after": "I18n.assign(h,\"textContent\",'❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth))"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 131,
+    "review": "nonstandard sneakButton.title='Тихое передвижение · C'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 236,
+    "kind": "DOM textContent",
+    "before": "option.textContent=value+'×'",
+    "after": "I18n.assign(option,\"textContent\",value+'×')"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 236,
+    "kind": "DOM attribute",
+    "before": "select.setAttribute('aria-label',title)",
+    "after": "I18n.setAttr(select,'aria-label',title)"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 236,
+    "kind": "DOM textContent",
+    "before": "span.textContent=title",
+    "after": "I18n.assign(span,\"textContent\",title)"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 235,
+    "kind": "DOM textContent",
+    "before": "desc.textContent='Каждый параметр настраивается отдельно. Менять можно в любой момент.'",
+    "after": "I18n.assign(desc,\"textContent\",'Каждый параметр настраивается отдельно. Менять можно в любой момент.')"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 183,
+    "kind": "Canvas fillText",
+    "before": "label",
+    "after": "I18n.text(label)"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 179,
+    "kind": "Canvas fillText",
+    "before": "t.name",
+    "after": "I18n.text(t.name)"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 131,
+    "kind": "DOM attribute",
+    "before": "sneakButton.setAttribute('aria-label','Тихое передвижение')",
+    "after": "I18n.setAttr(sneakButton,'aria-label','Тихое передвижение')"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 131,
+    "kind": "DOM textContent",
+    "before": "sneakButton.textContent='Тихо'",
+    "after": "I18n.assign(sneakButton,\"textContent\",'Тихо')"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 120,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML=itemIconHTML(s.type)+'<small>'+s.qty+'</small>'",
+    "after": "I18n.assign(b,\"innerHTML\",itemIconHTML(s.type)+'<small>'+s.qty+'</small>')"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 120,
+    "kind": "DOM textContent",
+    "before": "h.textContent=title",
+    "after": "I18n.assign(h,\"textContent\",title)"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 119,
+    "kind": "DOM textContent",
+    "before": "p.textContent='Укрытие · 60 ячеек. Нажмите предмет, чтобы перенести стопку.'",
+    "after": "I18n.assign(p,\"textContent\",'Укрытие · 60 ячеек. Нажмите предмет, чтобы перенести стопку.')"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 102,
+    "kind": "DOM textContent",
+    "before": "p.textContent='Восстановите механизм замка. Потребуется 4 детали. Внутри — материалы и редкая находка.'",
+    "after": "I18n.assign(p,\"textContent\",'Восстановите механизм замка. Потребуется 4 детали. Внутри — материалы и редкая находка.')"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 101,
+    "kind": "DOM innerHTML",
+    "before": "body.innerHTML=''",
+    "after": "I18n.assign(body,\"innerHTML\",'')"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 101,
+    "kind": "DOM textContent",
+    "before": "overlay.querySelector('h2').textContent=title",
+    "after": "I18n.assign(overlay.querySelector('h2'),\"textContent\",title)"
+  },
+  {
+    "file": "world/districts.js",
+    "line": 89,
+    "kind": "DOM textContent",
+    "before": "el('lootTitle').textContent=o.name",
+    "after": "I18n.assign(el('lootTitle'),\"textContent\",o.name)"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 71,
+    "review": "nonstandard select.title=label",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 164,
+    "kind": "Canvas fillText",
+    "before": "!battery.enabled?'ОТКЛЮЧЕНА':a.batteryOutput>0?'ПИТАЕТ БАЗУ':a.chargeInput>0?'ЗАРЯЖАЕТСЯ':fill>0?'РЕЗЕРВ':'РАЗРЯЖЕНА'",
+    "after": "I18n.text(!battery.enabled?'ОТКЛЮЧЕНА':a.batteryOutput>0?'ПИТАЕТ БАЗУ':a.chargeInput>0?'ЗАРЯЖАЕТСЯ':fill>0?'РЕЗЕРВ':'РАЗРЯЖЕНА')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 164,
+    "kind": "Canvas fillText",
+    "before": "Math.round(fill*100)+'%'",
+    "after": "I18n.text(Math.round(fill*100)+'%')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 164,
+    "kind": "Canvas fillText",
+    "before": "a.batteryOutput>0?'СЕТЬ + РЕЗЕРВ':a.chargeInput>0?'СЕТЬ · ЗАРЯДКА':'ПИТАНИЕ БАЗЫ'",
+    "after": "I18n.text(a.batteryOutput>0?'СЕТЬ + РЕЗЕРВ':a.chargeInput>0?'СЕТЬ · ЗАРЯДКА':'ПИТАНИЕ БАЗЫ')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 164,
+    "kind": "Canvas fillText",
+    "before": "fmt(a.load)+' / '+fmt(a.supply)+' кВт'",
+    "after": "I18n.text(fmt(a.load)+' / '+fmt(a.supply)+' кВт')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 121,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Мощность генератора: '+fmt(V09Power.supply)+' кВт. Расход топлива зависит от выбранной сложности. Свободная мощность заряжает батарею; готовые изделия и прогресс сохраняются при остановке.'",
+    "after": "I18n.assign(note,\"textContent\",'Мощность генератора: '+fmt(V09Power.supply)+' кВт. Расход топлива зависит от выбранной сложности. Свободная мощность заряжает батарею; готовые изделия и прогресс сохраняются при остановке.')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 113,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Ёмкость: 1,5 кВт·ч. Зарядка до 3 кВт от свободной мощности генератора, отдача до 6 кВт. Батарея поддерживает базу при остановке генератора и помогает при большой нагрузке. Выключатель энергоблока не отключает резерв.'",
+    "after": "I18n.assign(note,\"textContent\",'Ёмкость: 1,5 кВт·ч. Зарядка до 3 кВт от свободной мощности генератора, отдача до 6 кВт. Батарея поддерживает базу при остановке генератора и помогает при большой нагрузке. Выключатель энергоблока не отключает резерв.')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 112,
+    "kind": "DOM innerHTML",
+    "before": "text.innerHTML='<strong>Резервное питание</strong><small data-power=\"battery-flow\"></small>'",
+    "after": "I18n.assign(text,\"innerHTML\",'<strong>Резервное питание</strong><small data-power=\"battery-flow\"></small>')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 111,
+    "kind": "DOM innerHTML",
+    "before": "body.innerHTML=v09PowerStats()",
+    "after": "I18n.assign(body,\"innerHTML\",v09PowerStats())"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 106,
+    "kind": "DOM textContent",
+    "before": "small.textContent=room==='corridor'?'':!enabled?'Выкл.':!powered?'Ожидание':fmt(devices.reduce((s,d)=>s+d.watts,0))+' кВт'",
+    "after": "I18n.assign(small,\"textContent\",room==='corridor'?'':!enabled?'Выкл.':!powered?'Ожидание':fmt(devices.reduce((s,d)=>s+d.watts,0))+' кВт')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 102,
+    "kind": "DOM textContent",
+    "before": "node.textContent=(V09Power.roomEnabled[room]?'Контур включён':'Контур отключён')+' · '+fmt(load)+' / '+fmt(demand)+' кВт'",
+    "after": "I18n.assign(node,\"textContent\",(V09Power.roomEnabled[room]?'Контур включён':'Контур отключён')+' · '+fmt(load)+' / '+fmt(demand)+' кВт')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 98,
+    "kind": "DOM textContent",
+    "before": "node.textContent=a.shed.length?'Приборов ожидают мощности: '+a.shed.length+'. Высокие приоритеты получают питание первыми.':a.supply<=0?'Нет энергии. Запустите генератор или подключите заряженную батарею.':a.batteryOutput>0?'Батарея питает базу · '+remainingTime(a):a.chargeInput>0?'Свободная мощность заряжает батарею: '+fmt(a.chargeInput)+' кВт':'Свободно '+fmt(a.supply-a.load)+' кВт'",
+    "after": "I18n.assign(node,\"textContent\",a.shed.length?'Приборов ожидают мощности: '+a.shed.length+'. Высокие приоритеты получают питание первыми.':a.supply<=0?'Нет энергии. Запустите генератор или подключите заряженную батарею.':a.batteryOutput>0?'Батарея питает базу · '+remainingTime(a):a.chargeInput>0?'Свободная мощность заряжает батарею: '+fmt(a.chargeInput)+' кВт':'Свободно '+fmt(a.supply-a.load)+' кВт')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 96,
+    "kind": "DOM textContent",
+    "before": "node.textContent=a.chargeInput>0?'Зарядка: '+fmt(a.chargeInput)+' кВт':a.batteryOutput>0?'Питание базы: '+fmt(a.batteryOutput)+' кВт':remainingTime(a)",
+    "after": "I18n.assign(node,\"textContent\",a.chargeInput>0?'Зарядка: '+fmt(a.chargeInput)+' кВт':a.batteryOutput>0?'Питание базы: '+fmt(a.batteryOutput)+' кВт':remainingTime(a))"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 95,
+    "kind": "DOM textContent",
+    "before": "node.textContent=remainingTime(a)",
+    "after": "I18n.assign(node,\"textContent\",remainingTime(a))"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 93,
+    "kind": "DOM textContent",
+    "before": "node.textContent=Math.round(battery.charge/battery.capacity*100)+'% · '+fmt(battery.charge)+' кВт·ч'",
+    "after": "I18n.assign(node,\"textContent\",Math.round(battery.charge/battery.capacity*100)+'% · '+fmt(battery.charge)+' кВт·ч')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 92,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.running?'Остановить генератор':'Запустить генератор'",
+    "after": "I18n.assign(node,\"textContent\",V09Power.running?'Остановить генератор':'Запустить генератор')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 91,
+    "kind": "DOM textContent",
+    "before": "node.textContent='В рюкзаке: '+bagCount('fuel')+' топлива'",
+    "after": "I18n.assign(node,\"textContent\",'В рюкзаке: '+bagCount('fuel')+' топлива')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 90,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.fuel.toFixed(1)+' / '+V09Power.capacity",
+    "after": "I18n.assign(node,\"textContent\",V09Power.fuel.toFixed(1)+' / '+V09Power.capacity)"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 88,
+    "kind": "DOM textContent",
+    "before": "node.textContent=fmt(a.load)+' / '+fmt(a.supply)+' кВт'",
+    "after": "I18n.assign(node,\"textContent\",fmt(a.load)+' / '+fmt(a.supply)+' кВт')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 87,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.fuel.toFixed(1)+' / '+V09Power.capacity",
+    "after": "I18n.assign(node,\"textContent\",V09Power.fuel.toFixed(1)+' / '+V09Power.capacity)"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 86,
+    "kind": "DOM textContent",
+    "before": "node.textContent=V09Power.running?(a.load+a.chargeInput>0?'Работает':'Ожидание'):'Выключен'",
+    "after": "I18n.assign(node,\"textContent\",V09Power.running?(a.load+a.chargeInput>0?'Работает':'Ожидание'):'Выключен')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 79,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Сначала питаются комнаты с высоким приоритетом, затем приборы внутри них. Если энергии не хватает, остальные ждут и возобновляют работу автоматически.'",
+    "after": "I18n.assign(note,\"textContent\",'Сначала питаются комнаты с высоким приоритетом, затем приборы внутри них. Если энергии не хватает, остальные ждут и возобновляют работу автоматически.')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 77,
+    "kind": "DOM textContent",
+    "before": "wrap.textContent='Приоритет комнаты'",
+    "after": "I18n.assign(wrap,\"textContent\",'Приоритет комнаты')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 72,
+    "kind": "DOM textContent",
+    "before": "opt.textContent=priorityName(n)",
+    "after": "I18n.assign(opt,\"textContent\",priorityName(n))"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 71,
+    "kind": "DOM attribute",
+    "before": "select.setAttribute('aria-label',label)",
+    "after": "I18n.setAttr(select,'aria-label',label)"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 67,
+    "kind": "DOM textContent",
+    "before": "small.textContent=v09DeviceStatus(d)+' · '+fmt(d.watts)+' кВт'",
+    "after": "I18n.assign(small,\"textContent\",v09DeviceStatus(d)+' · '+fmt(d.watts)+' кВт')"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 63,
+    "kind": "DOM title",
+    "before": "b.title=label+': '+(on?'включено':'выключено')",
+    "after": "I18n.assign(b,\"title\",label+': '+(on?'включено':'выключено'))"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 63,
+    "kind": "DOM attribute",
+    "before": "b.setAttribute('aria-label',label+': '+(on?'включено':'выключено'))",
+    "after": "I18n.setAttr(b,'aria-label',label+': '+(on?'включено':'выключено'))"
+  },
+  {
+    "file": "base/battery.js",
+    "line": 63,
+    "kind": "DOM textContent",
+    "before": "b.textContent=''",
+    "after": "I18n.assign(b,\"textContent\",'')"
+  },
+  {
+    "file": "ui/progression.js",
+    "line": 140,
+    "review": "nonstandard pinButton.title=pinButton.getAttribute('aria-label')",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "ui/progression.js",
+    "line": 140,
+    "kind": "DOM attribute",
+    "before": "pinButton.setAttribute('aria-label',state.pin===id?'Открепить цель':'Закрепить цель')",
+    "after": "I18n.setAttr(pinButton,'aria-label',state.pin===id?'Открепить цель':'Закрепить цель')"
+  },
+  {
+    "file": "ui/progression.js",
+    "line": 130,
+    "kind": "DOM textContent",
+    "before": "e.textContent=text",
+    "after": "I18n.assign(e,\"textContent\",text)"
+  },
+  {
+    "file": "ui/progression.js",
+    "line": 129,
+    "kind": "DOM textContent",
+    "before": "settingsButton.textContent='Статистика, достижения и журнал'",
+    "after": "I18n.assign(settingsButton,\"textContent\",'Статистика, достижения и журнал')"
+  },
+  {
+    "file": "ui/progression.js",
+    "line": 128,
+    "kind": "DOM attribute",
+    "before": "goalHUD.setAttribute('aria-label','Открыть закреплённую цель')",
+    "after": "I18n.setAttr(goalHUD,'aria-label','Открыть закреплённую цель')"
+  },
+  {
+    "file": "ui/progression.js",
+    "line": 125,
+    "kind": "DOM innerHTML",
+    "before": "overlay.innerHTML='<div id=\"v010ProgressPanel\" class=\"panel\"><div class=\"v010ProgressRow\"><h2>Статистика и достижения</h2></div><div class=\"v010Muted\">Развивайтесь в своём стиле. Награды и исследования не требуют ежедневного входа.</div><div id=\"v010ProgressTabs\" class=\"v010ProgressTabs\"></div><div id=\"v010ProgressBody\"></div><button id=\"v010ProgressClose\" class=\"menuButton\">Закрыть</button></div>'",
+    "after": "I18n.assign(overlay,\"innerHTML\",'<div id=\"v010ProgressPanel\" class=\"panel\"><div class=\"v010ProgressRow\"><h2>Статистика и достижения</h2></div><div class=\"v010Muted\">Развивайтесь в своём стиле. Награды и исследования не требуют ежедневного входа.</div><div id=\"v010ProgressTabs\" class=\"v010ProgressTabs\"></div><div id=\"v010ProgressBody\"></div><button id=\"v010ProgressClose\" class=\"menuButton\">Закрыть</button></div>')"
+  },
+  {
+    "file": "ui/progression.js",
+    "line": 110,
+    "kind": "DOM textContent",
+    "before": "css.textContent=`\n  #v010ProgressPanel{width:min(850px,94vw);max-height:88dvh;display:flex;flex-direction:column;text-align:left;padding:18px;gap:10px}\n  #v010ProgressPanel h2{margin:0;font-size:20px}#v010ProgressPanel .v010Muted{font-size:12px;color:#a4b7b9;line-height:1.5}\n  #v010ProgressBody{overflow:auto;min-height:0;flex:1;overscroll-behavior:contain}.v010ProgressTabs{display:flex;flex-wrap:wrap;gap:6px}\n  #v010ProgressPanel button{cursor:pointer}.v010ProgressTabs button,.v010ProgressSmall{border:1px solid #465961;color:#dce8e6;background:#24343b;border-radius:7px;padding:8px 10px;min-height:34px;font-size:12px}\n  .v010ProgressTabs button.active{border-color:#d8b86c;background:#415146}.v010ProgressCard{border:1px solid #3a4b51;border-radius:9px;padding:11px;margin-bottom:8px;background:#18272e}\n  .v010ProgressCard strong{font-size:14px}.v010ProgressCard .v010ProgressRow{display:flex;align-items:center;justify-content:space-between;gap:8px}\n  .v010ProgressBar{height:5px;border-radius:3px;background:#34454a;margin:8px 0;overflow:hidden}.v010ProgressBar i{height:100%;display:block;background:#a4be83}\n  .v010ProgressRewards{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.v010ProgressSmall img{width:24px;height:24px;object-fit:contain;vertical-align:middle}\n  .v010StatsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.v010StatValue{font-size:25px;color:#e7d197;padding-top:5px}\n  #v010PinnedGoal{position:fixed;left:max(14px,env(safe-area-inset-left));top:145px;z-index:14;max-width:220px;padding:7px 10px;background:rgba(14,25,30,.73);border:1px solid #64715c;border-radius:8px;text-align:left;color:#e4e9dc;font-size:11px;pointer-events:auto;cursor:pointer;display:none}\n  #v010PinnedGoal b{display:block;font-size:12px;font-weight:500}#v010PinnedGoal span{display:block;margin-top:3px;color:#c9d6b4}\n  @media(max-height:500px){#v010ProgressPanel{max-height:94dvh;padding:12px}#v010PinnedGoal{top:105px;max-width:180px;font-size:10px}}\n  `",
+    "after": "I18n.assign(css,\"textContent\",`\n  #v010ProgressPanel{width:min(850px,94vw);max-height:88dvh;display:flex;flex-direction:column;text-align:left;padding:18px;gap:10px}\n  #v010ProgressPanel h2{margin:0;font-size:20px}#v010ProgressPanel .v010Muted{font-size:12px;color:#a4b7b9;line-height:1.5}\n  #v010ProgressBody{overflow:auto;min-height:0;flex:1;overscroll-behavior:contain}.v010ProgressTabs{display:flex;flex-wrap:wrap;gap:6px}\n  #v010ProgressPanel button{cursor:pointer}.v010ProgressTabs button,.v010ProgressSmall{border:1px solid #465961;color:#dce8e6;background:#24343b;border-radius:7px;padding:8px 10px;min-height:34px;font-size:12px}\n  .v010ProgressTabs button.active{border-color:#d8b86c;background:#415146}.v010ProgressCard{border:1px solid #3a4b51;border-radius:9px;padding:11px;margin-bottom:8px;background:#18272e}\n  .v010ProgressCard strong{font-size:14px}.v010ProgressCard .v010ProgressRow{display:flex;align-items:center;justify-content:space-between;gap:8px}\n  .v010ProgressBar{height:5px;border-radius:3px;background:#34454a;margin:8px 0;overflow:hidden}.v010ProgressBar i{height:100%;display:block;background:#a4be83}\n  .v010ProgressRewards{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.v010ProgressSmall img{width:24px;height:24px;object-fit:contain;vertical-align:middle}\n  .v010StatsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.v010StatValue{font-size:25px;color:#e7d197;padding-top:5px}\n  #v010PinnedGoal{position:fixed;left:max(14px,env(safe-area-inset-left));top:145px;z-index:14;max-width:220px;padding:7px 10px;background:rgba(14,25,30,.73);border:1px solid #64715c;border-radius:8px;text-align:left;color:#e4e9dc;font-size:11px;pointer-events:auto;cursor:pointer;display:none}\n  #v010PinnedGoal b{display:block;font-size:12px;font-weight:500}#v010PinnedGoal span{display:block;margin-top:3px;color:#c9d6b4}\n  @media(max-height:500px){#v010ProgressPanel{max-height:94dvh;padding:12px}#v010PinnedGoal{top:105px;max-width:180px;font-size:10px}}\n  `)"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 131,
+    "kind": "Canvas fillText",
+    "before": "o.name",
+    "after": "I18n.text(o.name)"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 114,
+    "kind": "DOM textContent",
+    "before": "el('v010MapHint').textContent='Выбрано место · '+Math.round(selected.x)+', '+Math.round(selected.y)",
+    "after": "I18n.assign(el('v010MapHint'),\"textContent\",'Выбрано место · '+Math.round(selected.x)+', '+Math.round(selected.y))"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 106,
+    "kind": "Canvas fillText",
+    "before": "Math.round(d/scale)+' м'",
+    "after": "I18n.text(Math.round(d/scale)+' м')"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 106,
+    "kind": "Canvas fillText",
+    "before": "scene==='surface'?'N ↑':'Бункер'",
+    "after": "I18n.text(scene==='surface'?'N ↑':'Бункер')"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 41,
+    "kind": "DOM title",
+    "before": "mini.title='Касание: большая карта · удержание 1,5 с: 100% → 60% → 30%'",
+    "after": "I18n.assign(mini,\"title\",'Касание: большая карта · удержание 1,5 с: 100% → 60% → 30%')"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 14,
+    "kind": "DOM textContent",
+    "before": "el('v010MapCorner').textContent=corner==='left'?'Карта слева':'Карта справа'",
+    "after": "I18n.assign(el('v010MapCorner'),\"textContent\",corner==='left'?'Карта слева':'Карта справа')"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 14,
+    "kind": "DOM textContent",
+    "before": "el('v010ViewMode').textContent=tilt===1?'Вид сверху':'Наклонный вид'",
+    "after": "I18n.assign(el('v010ViewMode'),\"textContent\",tilt===1?'Вид сверху':'Наклонный вид')"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 11,
+    "kind": "DOM innerHTML",
+    "before": "camBox.innerHTML='<div class=\"settingTitle\">Камера и мини-карта</div><div class=\"v010CameraControls\"><label>Масштаб <input id=\"v010Zoom\" type=\"range\" min=\"60\" max=\"140\" value=\"80\"></label><button id=\"v010ViewMode\" class=\"menuButton\">Наклонный вид</button><button id=\"v010MapCorner\" class=\"menuButton\">Карта справа</button><button id=\"v010OpenMap\" class=\"menuButton\">Открыть карту</button></div>'",
+    "after": "I18n.assign(camBox,\"innerHTML\",'<div class=\"settingTitle\">Камера и мини-карта</div><div class=\"v010CameraControls\"><label>Масштаб <input id=\"v010Zoom\" type=\"range\" min=\"60\" max=\"140\" value=\"80\"></label><button id=\"v010ViewMode\" class=\"menuButton\">Наклонный вид</button><button id=\"v010MapCorner\" class=\"menuButton\">Карта справа</button><button id=\"v010OpenMap\" class=\"menuButton\">Открыть карту</button></div>')"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 9,
+    "kind": "DOM innerHTML",
+    "before": "overlay.innerHTML='<div class=\"panel v010MapPanel\"><div class=\"v010MapHead\"><b>Карта местности</b><button id=\"v010MapClose\" class=\"menuButton\">Закрыть</button></div><canvas id=\"v010WorldMap\"></canvas><div class=\"v010MapTools\"><input id=\"v010MarkerName\" maxlength=\"36\" placeholder=\"Название метки\"><button id=\"v010MapMark\" class=\"menuButton\">Поставить метку</button><button id=\"v010MapGoal\" class=\"menuButton\">Цель</button><button id=\"v010MapDelete\" class=\"menuButton\">Убрать метку</button></div><div id=\"v010MapHint\" class=\"subtitle\">Нажмите на карту. Колесо мыши или два пальца — масштаб.</div><div class=\"v010MapLegend\">● вы · 🔴 зомби · зелёный △ дерево · ◆ руда · ■ постройка · голубой + объект</div></div>'",
+    "after": "I18n.assign(overlay,\"innerHTML\",'<div class=\"panel v010MapPanel\"><div class=\"v010MapHead\"><b>Карта местности</b><button id=\"v010MapClose\" class=\"menuButton\">Закрыть</button></div><canvas id=\"v010WorldMap\"></canvas><div class=\"v010MapTools\"><input id=\"v010MarkerName\" maxlength=\"36\" placeholder=\"Название метки\"><button id=\"v010MapMark\" class=\"menuButton\">Поставить метку</button><button id=\"v010MapGoal\" class=\"menuButton\">Цель</button><button id=\"v010MapDelete\" class=\"menuButton\">Убрать метку</button></div><div id=\"v010MapHint\" class=\"subtitle\">Нажмите на карту. Колесо мыши или два пальца — масштаб.</div><div class=\"v010MapLegend\">● вы · 🔴 зомби · зелёный △ дерево · ◆ руда · ■ постройка · голубой + объект</div></div>')"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 6,
+    "kind": "DOM attribute",
+    "before": "mini.setAttribute('aria-label','Мини-карта')",
+    "after": "I18n.setAttr(mini,'aria-label','Мини-карта')"
+  },
+  {
+    "file": "world/camera.js",
+    "line": 6,
+    "kind": "DOM title",
+    "before": "mini.title='Касание: прозрачность · удержание: карта'",
+    "after": "I18n.assign(mini,\"title\",'Касание: прозрачность · удержание: карта')"
+  },
+  {
+    "file": "save/envelope.js",
+    "line": 26,
+    "kind": "DOM textContent",
+    "before": "el.textContent='VERSION 0.24.1'",
+    "after": "I18n.assign(el,\"textContent\",'VERSION 0.24.1')"
+  },
+  {
+    "file": "save/envelope.js",
+    "line": 25,
+    "kind": "DOM textContent",
+    "before": "label.textContent='Survival Base 0.24.1 · Большой мир и свободное развитие'",
+    "after": "I18n.assign(label,\"textContent\",'Survival Base 0.24.1 · Большой мир и свободное развитие')"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 218,
+    "kind": "DOM textContent",
+    "before": "li.textContent=text",
+    "after": "I18n.assign(li,\"textContent\",text)"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 218,
+    "kind": "DOM textContent",
+    "before": "h.textContent=title",
+    "after": "I18n.assign(h,\"textContent\",title)"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 218,
+    "kind": "DOM textContent",
+    "before": "s.textContent=version+(i===0?' — текущее':'')",
+    "after": "I18n.assign(s,\"textContent\",version+(i===0?' — текущее':''))"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 121,
+    "kind": "DOM textContent",
+    "before": "el('heldItemName').textContent=ITEM[contextHand].name+' · авто'",
+    "after": "I18n.assign(el('heldItemName'),\"textContent\",ITEM[contextHand].name+' · авто')"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 67,
+    "kind": "DOM textContent",
+    "before": "summary.textContent='Как управлять'",
+    "after": "I18n.assign(summary,\"textContent\",'Как управлять')"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 60,
+    "kind": "DOM textContent",
+    "before": "label.textContent=(entry.invalid?'Слот '+id:entry.data.saveName)+' — сохранение и его резервная копия будут удалены.'",
+    "after": "I18n.assign(label,\"textContent\",(entry.invalid?'Слот '+id:entry.data.saveName)+' — сохранение и его резервная копия будут удалены.')"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 42,
+    "kind": "DOM textContent",
+    "before": "el('v011LootLabel').textContent=s?ITEM[s.type].name+' · '+s.qty:'Выберите предмет'",
+    "after": "I18n.assign(el('v011LootLabel'),\"textContent\",s?ITEM[s.type].name+' · '+s.qty:'Выберите предмет')"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 32,
+    "kind": "DOM attribute",
+    "before": "cell.setAttribute('aria-label',s?ITEM[s.type].name+' × '+s.qty:'Пусто')",
+    "after": "I18n.setAttr(cell,'aria-label',s?ITEM[s.type].name+' × '+s.qty:'Пусто')"
+  },
+  {
+    "file": "ui/context-map.js",
+    "line": 31,
+    "kind": "DOM innerHTML",
+    "before": "cell.innerHTML=s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':''",
+    "after": "I18n.assign(cell,\"innerHTML\",s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 48,
+    "review": "nonstandard remove.title='Чтобы сменить рюкзак, наденьте другой из инвентаря'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 70,
+    "review": "nonstandard person.title='Персонаж и инвентарь'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 263,
+    "kind": "DOM textContent",
+    "before": "toggle.textContent=V09Power.running?'Остановить':'Включить'",
+    "after": "I18n.assign(toggle,\"textContent\",V09Power.running?'Остановить':'Включить')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 256,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Свободная мощность заряжает батарею. Производство сохраняет прогресс при остановке.'",
+    "after": "I18n.assign(note,\"textContent\",'Свободная мощность заряжает батарею. Производство сохраняет прогресс при остановке.')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 253,
+    "kind": "DOM innerHTML",
+    "before": "stats.innerHTML=v09PowerStats()",
+    "after": "I18n.assign(stats,\"innerHTML\",v09PowerStats())"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 252,
+    "kind": "DOM alt",
+    "before": "img.alt='Генератор'",
+    "after": "I18n.assign(img,\"alt\",'Генератор')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 246,
+    "kind": "DOM innerHTML",
+    "before": "hero.innerHTML='<div class=\"v09TankGauge\"><i data-power=\"tankbar\"></i></div><b class=\"v011TankValue\" data-power=\"tankvalue\"></b>'",
+    "after": "I18n.assign(hero,\"innerHTML\",'<div class=\"v09TankGauge\"><i data-power=\"tankbar\"></i></div><b class=\"v011TankValue\" data-power=\"tankvalue\"></b>')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 70,
+    "kind": "DOM attribute",
+    "before": "person.setAttribute('aria-label','Персонаж и инвентарь')",
+    "after": "I18n.setAttr(person,'aria-label','Персонаж и инвентарь')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 70,
+    "kind": "DOM innerHTML",
+    "before": "person.innerHTML='<svg viewBox=\"0 0 48 48\" aria-hidden=\"true\"><circle cx=\"24\" cy=\"14\" r=\"8\"/><path d=\"M10 42v-8c0-8 6-12 14-12s14 4 14 12v8M18 25v12m12-12v12\"/></svg>'",
+    "after": "I18n.assign(person,\"innerHTML\",'<svg viewBox=\"0 0 48 48\" aria-hidden=\"true\"><circle cx=\"24\" cy=\"14\" r=\"8\"/><path d=\"M10 42v-8c0-8 6-12 14-12s14 4 14 12v8M18 25v12m12-12v12\"/></svg>')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 63,
+    "kind": "DOM innerHTML",
+    "before": "node.innerHTML=[['Здоровье',Math.round(player.health)+' / '+Math.round(s.hp)],['Защита',s.armor+'%'],['Скорость','+'+Math.round(s.speed*100)+'%'],['Точность','+'+Math.round(s.accuracy*100)+'%']].map(([label,value])=>'<div class=\"v011StatRow\"><span>'+label+'</span><b>'+value+'</b></div>').join('')",
+    "after": "I18n.assign(node,\"innerHTML\",[['Здоровье',Math.round(player.health)+' / '+Math.round(s.hp)],['Защита',s.armor+'%'],['Скорость','+'+Math.round(s.speed*100)+'%'],['Точность','+'+Math.round(s.accuracy*100)+'%']].map(([label,value])=>'<div class=\"v011StatRow\"><span>'+label+'</span><b>'+value+'</b></div>').join(''))"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 58,
+    "kind": "DOM textContent",
+    "before": "note.textContent='В скобках — прибавка от улучшения, уже учтённая в характеристике.'",
+    "after": "I18n.assign(note,\"textContent\",'В скобках — прибавка от улучшения, уже учтённая в характеристике.')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 55,
+    "kind": "dialog",
+    "before": "'Уничтожить «'+def.name+'»'+(item.level?' +'+item.level:'')+'? Предмет будет потерян.'",
+    "after": "I18n.text('Уничтожить «'+def.name+'»'+(item.level?' +'+item.level:'')+'? Предмет будет потерян.')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 54,
+    "kind": "DOM attribute",
+    "before": "input.setAttribute('aria-label','Количество для разделения')",
+    "after": "I18n.setAttr(input,'aria-label','Количество для разделения')"
+  },
+  {
+    "file": "ui/inventory-crafting.js",
+    "line": 41,
+    "kind": "DOM innerHTML",
+    "before": "body.innerHTML=cardHTML(item)",
+    "after": "I18n.assign(body,\"innerHTML\",cardHTML(item))"
+  },
+  {
+    "file": "farm/growth.js",
+    "line": 281,
+    "kind": "Canvas fillText",
+    "before": "Math.ceil(state.water)+' л'",
+    "after": "I18n.text(Math.ceil(state.water)+' л')"
+  },
+  {
+    "file": "farm/growth.js",
+    "line": 276,
+    "kind": "Canvas fillText",
+    "before": "p>=1?'ГОТОВО':farmTimeLabel((cropTotal(st)-st[grownKey])/(state.water>0?1:DRY_RATE))",
+    "after": "I18n.text(p>=1?'ГОТОВО':farmTimeLabel((cropTotal(st)-st[grownKey])/(state.water>0?1:DRY_RATE)))"
+  },
+  {
+    "file": "farm/growth.js",
+    "line": 275,
+    "kind": "Canvas fillText",
+    "before": "st.crop===null?'ГРЯДКА '+(i+1):window.farmCrops[st.crop].name",
+    "after": "I18n.text(st.crop===null?'ГРЯДКА '+(i+1):window.farmCrops[st.crop].name)"
+  },
+  {
+    "file": "farm/growth.js",
+    "line": 106,
+    "kind": "DOM innerHTML",
+    "before": "body.innerHTML='<div class=\"v011FarmTankIcon\">'+itemIconHTML('water')+'</div><div id=\"v011WaterStatus\"></div><div class=\"v011FarmMeter\"><i id=\"v011WaterFill\"></i></div><p class=\"v011FarmHint\">Бак автоматического полива. Снабжает грядки водой через электрический насос.<br>Насос · 0,5 кВт во время полива. Без воды или питания рост замедляется.</p><button id=\"v011WaterRefill\" class=\"menuButton\">Пополнить воду</button>'",
+    "after": "I18n.assign(body,\"innerHTML\",'<div class=\"v011FarmTankIcon\">'+itemIconHTML('water')+'</div><div id=\"v011WaterStatus\"></div><div class=\"v011FarmMeter\"><i id=\"v011WaterFill\"></i></div><p class=\"v011FarmHint\">Бак автоматического полива. Снабжает грядки водой через электрический насос.<br>Насос · 0,5 кВт во время полива. Без воды или питания рост замедляется.</p><button id=\"v011WaterRefill\" class=\"menuButton\">Пополнить воду</button>')"
+  },
+  {
+    "file": "farm/growth.js",
+    "line": 98,
+    "kind": "DOM textContent",
+    "before": "box.textContent=Math.ceil(state.water)+' / '+CAPACITY+' · '+(state.water<=0||!powered()?'Рост замедлен':spraying()?'Автоматический полив':growing?'Автополив включён':'Нет растущих культур')",
+    "after": "I18n.assign(box,\"textContent\",Math.ceil(state.water)+' / '+CAPACITY+' · '+(state.water<=0||!powered()?'Рост замедлен':spraying()?'Автоматический полив':growing?'Автополив включён':'Нет растущих культур'))"
+  },
+  {
+    "file": "world/interiors.js",
+    "line": 180,
+    "kind": "Canvas fillText",
+    "before": "b.title",
+    "after": "I18n.text(b.title)"
+  },
+  {
+    "file": "world/interiors.js",
+    "line": 172,
+    "kind": "Canvas fillText",
+    "before": "b.doorOpen?'ВХОД ОТКРЫТ':'ВХОД'",
+    "after": "I18n.text(b.doorOpen?'ВХОД ОТКРЫТ':'ВХОД')"
+  },
+  {
+    "file": "world/interiors.js",
+    "line": 138,
+    "kind": "DOM textContent",
+    "before": "el('lootTitle').textContent=f.name",
+    "after": "I18n.assign(el('lootTitle'),\"textContent\",f.name)"
+  },
+  {
+    "file": "world/interiors.js",
+    "line": 21,
+    "kind": "DOM textContent",
+    "before": "span.textContent=text",
+    "after": "I18n.assign(span,\"textContent\",text)"
+  },
+  {
+    "file": "world/interiors.js",
+    "line": 15,
+    "kind": "DOM textContent",
+    "before": "span.textContent=label",
+    "after": "I18n.assign(span,\"textContent\",label)"
+  },
+  {
+    "file": "world/interiors.js",
+    "line": 15,
+    "kind": "DOM attribute",
+    "before": "input.setAttribute('aria-label',label)",
+    "after": "I18n.setAttr(input,'aria-label',label)"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 196,
+    "kind": "DOM textContent",
+    "before": "h.textContent='❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth)",
+    "after": "I18n.assign(h,\"textContent\",'❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth))"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 164,
+    "kind": "DOM textContent",
+    "before": "careStop.textContent=mode==='rest'?'Встать':'Выключить'",
+    "after": "I18n.assign(careStop,\"textContent\",mode==='rest'?'Встать':'Выключить')"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 163,
+    "kind": "DOM textContent",
+    "before": "careText.textContent=mode==='rest'?'Отдых · '+Math.round(player.health)+' / '+Math.round(player.maxHealth)+' HP':dirt>.01?'Душ · очищение одежды':'Душ · чисто'",
+    "after": "I18n.assign(careText,\"textContent\",mode==='rest'?'Отдых · '+Math.round(player.health)+' / '+Math.round(player.maxHealth)+' HP':dirt>.01?'Душ · очищение одежды':'Душ · чисто')"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 106,
+    "kind": "Canvas fillText",
+    "before": "'РЕЗЕРВ'",
+    "after": "I18n.text('РЕЗЕРВ')"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 106,
+    "kind": "Canvas fillText",
+    "before": "Math.round(charge*100)+'%'",
+    "after": "I18n.text(Math.round(charge*100)+'%')"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 106,
+    "kind": "Canvas fillText",
+    "before": "'ГЕНЕРАТОР'",
+    "after": "I18n.text('ГЕНЕРАТОР')"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 106,
+    "kind": "Canvas fillText",
+    "before": "'ТОПЛИВО'",
+    "after": "I18n.text('ТОПЛИВО')"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 106,
+    "kind": "Canvas fillText",
+    "before": "Math.round(V09Power.fuel)+' / '+V09Power.capacity",
+    "after": "I18n.text(Math.round(V09Power.fuel)+' / '+V09Power.capacity)"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 94,
+    "kind": "Canvas fillText",
+    "before": "'ЭЛЕКТРОСТАНОК'",
+    "after": "I18n.text('ЭЛЕКТРОСТАНОК')"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 94,
+    "kind": "Canvas fillText",
+    "before": "'ПЛАВИЛЬНАЯ ПЕЧЬ'",
+    "after": "I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ')"
+  },
+  {
+    "file": "base/rooms.js",
+    "line": 62,
+    "kind": "Canvas fillText",
+    "before": "ch?.name||'Ящик'",
+    "after": "I18n.text(ch?.name||'Ящик')"
+  },
+  {
+    "file": "world/expansion.js",
+    "line": 101,
+    "kind": "Canvas fillText",
+    "before": "r.name.toUpperCase()",
+    "after": "I18n.text(r.name.toUpperCase())"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 11,
+    "review": "nonstandard close.title='Закрыть карту'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 106,
+    "review": "nonstandard close.title='Закрыть'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 212,
+    "kind": "Canvas fillText",
+    "before": "hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО'",
+    "after": "I18n.text(hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 106,
+    "kind": "DOM attribute",
+    "before": "close.setAttribute('aria-label','Закрыть')",
+    "after": "I18n.setAttr(close,'aria-label','Закрыть')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 105,
+    "kind": "DOM textContent",
+    "before": "close.textContent='×'",
+    "after": "I18n.assign(close,\"textContent\",'×')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 81,
+    "kind": "DOM attribute",
+    "before": "button.setAttribute('aria-label',label)",
+    "after": "I18n.setAttr(button,'aria-label',label)"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 81,
+    "kind": "DOM title",
+    "before": "button.title=label",
+    "after": "I18n.assign(button,\"title\",label)"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 79,
+    "kind": "DOM textContent",
+    "before": "button.textContent='◐ '+opacity+'%'",
+    "after": "I18n.assign(button,\"textContent\",'◐ '+opacity+'%')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 34,
+    "kind": "DOM textContent",
+    "before": "el('v011ClearMapGoal').textContent='Снять цель'",
+    "after": "I18n.assign(el('v011ClearMapGoal'),\"textContent\",'Снять цель')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 34,
+    "kind": "DOM textContent",
+    "before": "el('v010MapDelete').textContent='Удалить метку'",
+    "after": "I18n.assign(el('v010MapDelete'),\"textContent\",'Удалить метку')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 33,
+    "kind": "DOM textContent",
+    "before": "el('v010MapGoal').textContent='Выбрать цель'",
+    "after": "I18n.assign(el('v010MapGoal'),\"textContent\",'Выбрать цель')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 33,
+    "kind": "DOM textContent",
+    "before": "el('v010MapMark').textContent='Добавить метку'",
+    "after": "I18n.assign(el('v010MapMark'),\"textContent\",'Добавить метку')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 22,
+    "kind": "DOM attribute",
+    "before": "input.setAttribute('aria-label',text)",
+    "after": "I18n.setAttr(input,'aria-label',text)"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 21,
+    "kind": "DOM textContent",
+    "before": "icon.textContent=symbol",
+    "after": "I18n.assign(icon,\"textContent\",symbol)"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 20,
+    "kind": "DOM textContent",
+    "before": "title.textContent=text",
+    "after": "I18n.assign(title,\"textContent\",text)"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 15,
+    "kind": "DOM textContent",
+    "before": "description.textContent='На мини-карте и карте местности'",
+    "after": "I18n.assign(description,\"textContent\",'На мини-карте и карте местности')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 13,
+    "kind": "DOM attribute",
+    "before": "options.setAttribute('aria-label','Объекты на обеих картах')",
+    "after": "I18n.setAttr(options,'aria-label','Объекты на обеих картах')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 11,
+    "kind": "DOM attribute",
+    "before": "close.setAttribute('aria-label','Закрыть карту')",
+    "after": "I18n.setAttr(close,'aria-label','Закрыть карту')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 11,
+    "kind": "DOM textContent",
+    "before": "close.textContent='×'",
+    "after": "I18n.assign(close,\"textContent\",'×')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 10,
+    "kind": "DOM attribute",
+    "before": "button.setAttribute('aria-label','Настройки карты: какие объекты показывать')",
+    "after": "I18n.setAttr(button,'aria-label','Настройки карты: какие объекты показывать')"
+  },
+  {
+    "file": "ui/maps-windows.js",
+    "line": 9,
+    "kind": "DOM textContent",
+    "before": "button.textContent='⚙ Настройки карты'",
+    "after": "I18n.assign(button,\"textContent\",'⚙ Настройки карты')"
+  },
+  {
+    "file": "world/fishing.js",
+    "line": 122,
+    "kind": "DOM attribute",
+    "before": "actionButton.setAttribute('aria-label',state?'Остановить рыбалку':'Ловить рыбу')",
+    "after": "I18n.setAttr(actionButton,'aria-label',state?'Остановить рыбалку':'Ловить рыбу')"
+  },
+  {
+    "file": "world/fishing.js",
+    "line": 122,
+    "kind": "DOM textContent",
+    "before": "actionButton.textContent=state?'■':'🎣'",
+    "after": "I18n.assign(actionButton,\"textContent\",state?'■':'🎣')"
+  },
+  {
+    "file": "world/fishing.js",
+    "line": 102,
+    "kind": "Canvas fillText",
+    "before": "'🎣 Рыбалка'",
+    "after": "I18n.text('🎣 Рыбалка')"
+  },
+  {
+    "file": "inventory/physical-slots.js",
+    "line": 46,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Приготовление доступно на базе'",
+    "after": "I18n.assign(note,\"textContent\",'Приготовление доступно на базе')"
+  },
+  {
+    "file": "inventory/physical-slots.js",
+    "line": 43,
+    "kind": "DOM textContent",
+    "before": "preview.textContent=n+' рыб → '+Math.floor(grams/500)+' порций'+(grams%500?' · остаток '+(grams%500)+' г':'')",
+    "after": "I18n.assign(preview,\"textContent\",n+' рыб → '+Math.floor(grams/500)+' порций'+(grams%500?' · остаток '+(grams%500)+' г':''))"
+  },
+  {
+    "file": "inventory/physical-slots.js",
+    "line": 40,
+    "kind": "DOM attribute",
+    "before": "input.setAttribute('aria-label','Количество рыб для приготовления')",
+    "after": "I18n.setAttr(input,'aria-label','Количество рыб для приготовления')"
+  },
+  {
+    "file": "inventory/physical-slots.js",
+    "line": 39,
+    "kind": "DOM textContent",
+    "before": "label.textContent='Приготовить рыб: '",
+    "after": "I18n.assign(label,\"textContent\",'Приготовить рыб: ')"
+  },
+  {
+    "file": "inventory/physical-slots.js",
+    "line": 37,
+    "kind": "DOM textContent",
+    "before": "info.textContent=s.qty+' рыб · '+(V014Fish.weight(s)/1000).toFixed(1)+' кг'",
+    "after": "I18n.assign(info,\"textContent\",s.qty+' рыб · '+(V014Fish.weight(s)/1000).toFixed(1)+' кг')"
+  },
+  {
+    "file": "world/lake-city.js",
+    "line": 50,
+    "review": "nonstandard mall.title=mallSource.name+' · '+(n+1)+' этаж'"
+  },
+  {
+    "file": "world/lake-city.js",
+    "line": 121,
+    "kind": "Canvas fillText",
+    "before": "floor?'↓ 1 этаж':'↑ 2 этаж'",
+    "after": "I18n.text(floor?'↓ 1 этаж':'↑ 2 этаж')"
+  },
+  {
+    "file": "world/lake-city.js",
+    "line": 121,
+    "kind": "Canvas fillText",
+    "before": "shops[floor*5+i][0]",
+    "after": "I18n.text(shops[floor*5+i][0])"
+  },
+  {
+    "file": "world/lake-city.js",
+    "line": 119,
+    "kind": "Canvas fillText",
+    "before": "'ТОПЛИВО'",
+    "after": "I18n.text('ТОПЛИВО')"
+  },
+  {
+    "file": "player/controls.js",
+    "line": 147,
+    "kind": "DOM textContent",
+    "before": "hp.textContent='❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth)",
+    "after": "I18n.assign(hp,\"textContent\",'❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth))"
+  },
+  {
+    "file": "player/controls.js",
+    "line": 11,
+    "kind": "DOM textContent",
+    "before": "stop.textContent='■ Остановиться'",
+    "after": "I18n.assign(stop,\"textContent\",'■ Остановиться')"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 50,
+    "kind": "DOM attribute",
+    "before": "b.setAttribute('aria-label',s?ITEM[s.type]?.name+' × '+s.qty:'Пустая ячейка')",
+    "after": "I18n.setAttr(b,'aria-label',s?ITEM[s.type]?.name+' × '+s.qty:'Пустая ячейка')"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 50,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML=s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':''",
+    "after": "I18n.assign(b,\"innerHTML\",s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'')"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 40,
+    "kind": "DOM attribute",
+    "before": "name.setAttribute('aria-label','Имя дрона')",
+    "after": "I18n.setAttr(name,'aria-label','Имя дрона')"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 28,
+    "kind": "DOM attribute",
+    "before": "toggle.setAttribute('aria-label',label)",
+    "after": "I18n.setAttr(toggle,'aria-label',label)"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 26,
+    "kind": "DOM innerHTML",
+    "before": "ammoIcon.innerHTML=itemIconHTML('ammo')",
+    "after": "I18n.assign(ammoIcon,\"innerHTML\",itemIconHTML('ammo'))"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 23,
+    "kind": "DOM alt",
+    "before": "img.alt='Дрон-компаньон'",
+    "after": "I18n.assign(img,\"alt\",'Дрон-компаньон')"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 17,
+    "kind": "DOM textContent",
+    "before": "e.textContent=text",
+    "after": "I18n.assign(e,\"textContent\",text)"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 16,
+    "kind": "DOM textContent",
+    "before": "e.textContent=text",
+    "after": "I18n.assign(e,\"textContent\",text)"
+  },
+  {
+    "file": "drones/interface-power.js",
+    "line": 9,
+    "kind": "DOM textContent",
+    "before": "node.textContent='Выработка '+kw.toFixed(1)+' / '+V09Power.supply+' кВт · топливо '+rate.toFixed(2)+' / мин'",
+    "after": "I18n.assign(node,\"textContent\",'Выработка '+kw.toFixed(1)+' / '+V09Power.supply+' кВт · топливо '+rate.toFixed(2)+' / мин')"
+  },
+  {
+    "file": "farm/manual.js",
+    "line": 52,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML=itemIconHTML(c.itemType)+'<span>'+c.name+'</span><small></small>'",
+    "after": "I18n.assign(b,\"innerHTML\",itemIconHTML(c.itemType)+'<span>'+c.name+'</span><small></small>')"
+  },
+  {
+    "file": "farm/manual.js",
+    "line": 50,
+    "kind": "DOM textContent",
+    "before": "subtitle.textContent='Выберите культуру. На грядку нужен один посадочный материал из рюкзака.'",
+    "after": "I18n.assign(subtitle,\"textContent\",'Выберите культуру. На грядку нужен один посадочный материал из рюкзака.')"
+  },
+  {
+    "file": "farm/manual.js",
+    "line": 36,
+    "kind": "DOM textContent",
+    "before": "el('farmTitle').textContent='Грядка '+(index+1)",
+    "after": "I18n.assign(el('farmTitle'),\"textContent\",'Грядка '+(index+1))"
+  },
+  {
+    "file": "farm/manual.js",
+    "line": 33,
+    "kind": "DOM textContent",
+    "before": "r.textContent='Забрать оставшийся урожай · '+recovery.reduce((n,s)=>n+s.qty,0)",
+    "after": "I18n.assign(r,\"textContent\",'Забрать оставшийся урожай · '+recovery.reduce((n,s)=>n+s.qty,0))"
+  },
+  {
+    "file": "farm/manual.js",
+    "line": 32,
+    "kind": "DOM textContent",
+    "before": "take.textContent='Взять '+ITEM[seedType(selected)].name.toLowerCase()+' × 1 из ящика'",
+    "after": "I18n.assign(take,\"textContent\",'Взять '+ITEM[seedType(selected)].name.toLowerCase()+' × 1 из ящика')"
+  },
+  {
+    "file": "farm/manual.js",
+    "line": 30,
+    "kind": "DOM textContent",
+    "before": "info.textContent=crop.name+' · '+farmTimeLabel(farmGrowMs(selected))+'\\nДля грядки: '+ITEM[seedType(selected)].name+' × 1 · в рюкзаке '+available.bag",
+    "after": "I18n.assign(info,\"textContent\",crop.name+' · '+farmTimeLabel(farmGrowMs(selected))+'\\nДля грядки: '+ITEM[seedType(selected)].name+' × 1 · в рюкзаке '+available.bag)"
+  },
+  {
+    "file": "farm/manual.js",
+    "line": 29,
+    "kind": "DOM textContent",
+    "before": "badge.textContent=available.bag?'В рюкзаке: '+available.bag:available.farm?'В ящике: '+available.farm:'Нет материала'",
+    "after": "I18n.assign(badge,\"textContent\",available.bag?'В рюкзаке: '+available.bag:available.farm?'В ящике: '+available.farm:'Нет материала')"
+  },
+  {
+    "file": "base/structures.js",
+    "line": 215,
+    "kind": "Canvas fillText",
+    "before": "text",
+    "after": "I18n.text(text)"
+  },
+  {
+    "file": "drones/station.js",
+    "line": 60,
+    "kind": "Canvas fillText",
+    "before": "text",
+    "after": "I18n.text(text)"
+  },
+  {
+    "file": "drones/station.js",
+    "line": 60,
+    "kind": "Canvas strokeText",
+    "before": "text",
+    "after": "I18n.text(text)"
+  },
+  {
+    "file": "drones/station.js",
+    "line": 33,
+    "kind": "DOM attribute",
+    "before": "refs.meter.setAttribute('aria-label','Заряд '+Math.round(s.battery)+'%')",
+    "after": "I18n.setAttr(refs.meter,'aria-label','Заряд '+Math.round(s.battery)+'%')"
+  },
+  {
+    "file": "drones/station.js",
+    "line": 15,
+    "kind": "DOM attribute",
+    "before": "refs.auto.setAttribute('aria-label','Автовозврат при низком заряде')",
+    "after": "I18n.setAttr(refs.auto,'aria-label','Автовозврат при низком заряде')"
+  },
+  {
+    "file": "drones/station.js",
+    "line": 9,
+    "kind": "DOM alt",
+    "before": "image.alt='Дрон'",
+    "after": "I18n.assign(image,\"alt\",'Дрон')"
+  },
+  {
+    "file": "drones/station.js",
+    "line": 6,
+    "kind": "DOM textContent",
+    "before": "n.textContent=String(text)",
+    "after": "I18n.assign(n,\"textContent\",String(text))"
+  },
+  {
+    "file": "drones/station.js",
+    "line": 5,
+    "kind": "DOM textContent",
+    "before": "n.textContent=text",
+    "after": "I18n.assign(n,\"textContent\",text)"
+  },
+  {
+    "file": "render/lighting.js",
+    "line": 11,
+    "kind": "DOM textContent",
+    "before": "node.textContent=text",
+    "after": "I18n.assign(node,\"textContent\",text)"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 210,
+    "kind": "Canvas fillText",
+    "before": "'ПОДОБРАТЬ'",
+    "after": "I18n.text('ПОДОБРАТЬ')"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 206,
+    "kind": "Canvas fillText",
+    "before": "spec.range+' · ОБСТРЕЛ 360°'",
+    "after": "I18n.text(spec.range+' · ОБСТРЕЛ 360°')"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 171,
+    "kind": "DOM textContent",
+    "before": "p.textContent='В ленте: '+(s.turretData?.ammo||0)+' / '+combatFor(s.turretData).capacity+' · урон '+damage(s.turretData)+' · улучшение +'+(s.turretData?.level||0)+' · радиус '+combatFor(s.turretData).range",
+    "after": "I18n.assign(p,\"textContent\",'В ленте: '+(s.turretData?.ammo||0)+' / '+combatFor(s.turretData).capacity+' · урон '+damage(s.turretData)+' · улучшение +'+(s.turretData?.level||0)+' · радиус '+combatFor(s.turretData).range)"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 169,
+    "kind": "DOM textContent",
+    "before": "tip.textContent=problem||'Место подходит · касание стены / стрелки для сдвига'",
+    "after": "I18n.assign(tip,\"textContent\",problem||'Место подходит · касание стены / стрелки для сдвига')"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 167,
+    "kind": "DOM attribute",
+    "before": "b.setAttribute('aria-label','Сдвинуть пулемёт '+label)",
+    "after": "I18n.setAttr(b,'aria-label','Сдвинуть пулемёт '+label)"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 163,
+    "kind": "DOM textContent",
+    "before": "b.textContent=t.enabled?'Автоогонь: вкл.':'Автоогонь: выкл.'",
+    "after": "I18n.assign(b,\"textContent\",t.enabled?'Автоогонь: вкл.':'Автоогонь: выкл.')"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 162,
+    "kind": "DOM textContent",
+    "before": "el('v016GunStatus').textContent=status(t)+' · '+t.ammo+' / '+combatFor(t).capacity",
+    "after": "I18n.assign(el('v016GunStatus'),\"textContent\",status(t)+' · '+t.ammo+' / '+combatFor(t).capacity)"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 160,
+    "kind": "DOM textContent",
+    "before": "note.textContent='Установка в рюкзаке → выбрать стену → сдвинуть → установить. Пулемёт не перекрывает проход.'",
+    "after": "I18n.assign(note,\"textContent\",'Установка в рюкзаке → выбрать стену → сдвинуть → установить. Пулемёт не перекрывает проход.')"
+  },
+  {
+    "file": "base/turrets.js",
+    "line": 155,
+    "kind": "DOM innerHTML",
+    "before": "hero.innerHTML=itemIconHTML(typeOf(t))+'<div><b>'+damage(t)+' урона · +'+(t.level||0)+' · '+combatFor(t).range+' дальность</b><small>Патроны '+(V09Craft.weaponsForAmmo(combatFor(t).ammoType).map(id=>V09Craft.weapons[id].caliber)[0]||ITEM[combatFor(t).ammoType].caliber)+' · ёмкость '+combatFor(t).capacity+'</small></div>'",
+    "after": "I18n.assign(hero,\"innerHTML\",itemIconHTML(typeOf(t))+'<div><b>'+damage(t)+' урона · +'+(t.level||0)+' · '+combatFor(t).range+' дальность</b><small>Патроны '+(V09Craft.weaponsForAmmo(combatFor(t).ammoType).map(id=>V09Craft.weapons[id].caliber)[0]||ITEM[combatFor(t).ammoType].caliber)+' · ёмкость '+combatFor(t).capacity+'</small></div>')"
+  },
+  {
+    "file": "ui/modal-dragging.js",
+    "line": 65,
+    "review": "nonstandard cell.title=(i+1)+' · '+(ITEM[quick.items[i]?.type]?.name||'Пусто')",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "ui/modal-dragging.js",
+    "line": 76,
+    "review": "nonstandard sneak.title='Тихий шаг · C'",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "ui/modal-dragging.js",
+    "line": 77,
+    "kind": "DOM innerHTML",
+    "before": "sneak.innerHTML='<svg viewBox=\"0 0 40 40\" aria-hidden=\"true\"><defs><linearGradient id=\"boot161\" x2=\"0\" y2=\"1\"><stop stop-color=\"#dee4d6\"/><stop offset=\"1\" stop-color=\"#8ea699\"/></linearGradient></defs><path d=\"M13 5h13l-1 15 8 6c3 2 4 5 2 7H8c-3-5-1-9 1-12l3-4Z\" fill=\"url(#boot161)\" stroke=\"#dce9df\" stroke-width=\"1.1\"/><path d=\"M10 28h24M15 12l8 1m-8 4 7 1m-7 4 9 1M9 34h24\" fill=\"none\" stroke=\"#425d54\" stroke-width=\"2\"/><path d=\"M3 17v5m34-7v6\" stroke=\"#b8cbbd\" stroke-width=\"1.5\"/></svg>'",
+    "after": "I18n.assign(sneak,\"innerHTML\",'<svg viewBox=\"0 0 40 40\" aria-hidden=\"true\"><defs><linearGradient id=\"boot161\" x2=\"0\" y2=\"1\"><stop stop-color=\"#dee4d6\"/><stop offset=\"1\" stop-color=\"#8ea699\"/></linearGradient></defs><path d=\"M13 5h13l-1 15 8 6c3 2 4 5 2 7H8c-3-5-1-9 1-12l3-4Z\" fill=\"url(#boot161)\" stroke=\"#dce9df\" stroke-width=\"1.1\"/><path d=\"M10 28h24M15 12l8 1m-8 4 7 1m-7 4 9 1M9 34h24\" fill=\"none\" stroke=\"#425d54\" stroke-width=\"2\"/><path d=\"M3 17v5m34-7v6\" stroke=\"#b8cbbd\" stroke-width=\"1.5\"/></svg>')"
+  },
+  {
+    "file": "ui/modal-dragging.js",
+    "line": 76,
+    "kind": "DOM attribute",
+    "before": "sneak.setAttribute('aria-label','Тихий шаг')",
+    "after": "I18n.setAttr(sneak,'aria-label','Тихий шаг')"
+  },
+  {
+    "file": "ui/modal-dragging.js",
+    "line": 65,
+    "kind": "DOM textContent",
+    "before": "n.textContent=i+1",
+    "after": "I18n.assign(n,\"textContent\",i+1)"
+  },
+  {
+    "file": "ui/modal-dragging.js",
+    "line": 62,
+    "kind": "DOM textContent",
+    "before": "title.textContent='Быстрые слоты · удерживайте для переноса'",
+    "after": "I18n.assign(title,\"textContent\",'Быстрые слоты · удерживайте для переноса')"
+  },
+  {
+    "file": "ui/modal-dragging.js",
+    "line": 11,
+    "kind": "DOM attribute",
+    "before": "b.setAttribute('aria-label','Закрыть')",
+    "after": "I18n.setAttr(b,'aria-label','Закрыть')"
+  },
+  {
+    "file": "ui/modal-dragging.js",
+    "line": 11,
+    "kind": "DOM title",
+    "before": "b.title='Закрыть'",
+    "after": "I18n.assign(b,\"title\",'Закрыть')"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 70,
+    "kind": "Canvas fillText",
+    "before": "'УСИЛЕНИЕ'",
+    "after": "I18n.text('УСИЛЕНИЕ')"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 54,
+    "kind": "DOM textContent",
+    "before": "refs.upgrade.textContent=!s?'Усилить':level(s)>=maxLevel(s)?'Максимум +'+maxLevel(s):'Усилить до +'+(level(s)+1)",
+    "after": "I18n.assign(refs.upgrade,\"textContent\",!s?'Усилить':level(s)>=maxLevel(s)?'Максимум +'+maxLevel(s):'Усилить до +'+(level(s)+1))"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 53,
+    "kind": "DOM innerHTML",
+    "before": "row.innerHTML=itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+have+' / '+n+'</small></span>'",
+    "after": "I18n.assign(row,\"innerHTML\",itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+have+' / '+n+'</small></span>')"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 51,
+    "kind": "DOM innerHTML",
+    "before": "stats.innerHTML=V011UI.statsHTML(s)",
+    "after": "I18n.assign(stats,\"innerHTML\",V011UI.statsHTML(s))"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 47,
+    "kind": "DOM textContent",
+    "before": "hint.textContent='＋'",
+    "after": "I18n.assign(hint,\"textContent\",'＋')"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 47,
+    "kind": "DOM attribute",
+    "before": "cell.setAttribute('aria-label',s?ITEM[s.type].name:'Ячейка станка усиления')",
+    "after": "I18n.setAttr(cell,'aria-label',s?ITEM[s.type].name:'Ячейка станка усиления')"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 46,
+    "kind": "DOM textContent",
+    "before": "refs.power.textContent=on?'Питание включено · 2 кВт':'Нет питания · требуется 2 кВт'",
+    "after": "I18n.assign(refs.power,\"textContent\",on?'Питание включено · 2 кВт':'Нет питания · требуется 2 кВт')"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 34,
+    "kind": "DOM innerHTML",
+    "before": "header.innerHTML='<img src=\"'+V011Art.sources.upgrade_station0161+'\" alt=\"Станок усиления\"><div><b>Усиление снаряжения</b><p>Оружие · экипировка · пулемёт · дрон</p><small id=\"v161UpgradePower\"></small></div>'",
+    "after": "I18n.assign(header,\"innerHTML\",'<img src=\"'+V011Art.sources.upgrade_station0161+'\" alt=\"Станок усиления\"><div><b>Усиление снаряжения</b><p>Оружие · экипировка · пулемёт · дрон</p><small id=\"v161UpgradePower\"></small></div>')"
+  },
+  {
+    "file": "inventory/upgrades.js",
+    "line": 31,
+    "kind": "DOM textContent",
+    "before": "e.textContent=value",
+    "after": "I18n.assign(e,\"textContent\",value)"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 114,
+    "kind": "DOM textContent",
+    "before": "count.textContent=s.rounds+'/'+combat.gunSpec(s).mag",
+    "after": "I18n.assign(count,\"textContent\",s.rounds+'/'+combat.gunSpec(s).mag)"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 113,
+    "kind": "DOM textContent",
+    "before": "name.textContent=s.magazineType?ITEM[s.magazineType].name:'Не установлен'",
+    "after": "I18n.assign(name,\"textContent\",s.magazineType?ITEM[s.magazineType].name:'Не установлен')"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 111,
+    "kind": "DOM innerHTML",
+    "before": "slot.innerHTML=s.magazineType?itemIconHTML(s.magazineType):'＋'",
+    "after": "I18n.assign(slot,\"innerHTML\",s.magazineType?itemIconHTML(s.magazineType):'＋')"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 110,
+    "kind": "DOM attribute",
+    "before": "slot.setAttribute('aria-label','Магазин · выбрать или заменить')",
+    "after": "I18n.setAttr(slot,'aria-label','Магазин · выбрать или заменить')"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 108,
+    "kind": "DOM textContent",
+    "before": "label.textContent='Магазин'",
+    "after": "I18n.assign(label,\"textContent\",'Магазин')"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 102,
+    "kind": "DOM textContent",
+    "before": "note.textContent='В рюкзаке нет свободного магазина'",
+    "after": "I18n.assign(note,\"textContent\",'В рюкзаке нет свободного магазина')"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 100,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML='<span class=\"v162PickArt\">'+itemIconHTML(m.type)+'</span><span class=\"v162PickName\">'+TYPES[m.type]+' патронов</span><small>Пустой · ×'+m.qty+'</small>'",
+    "after": "I18n.assign(b,\"innerHTML\",'<span class=\"v162PickArt\">'+itemIconHTML(m.type)+'</span><span class=\"v162PickName\">'+TYPES[m.type]+' патронов</span><small>Пустой · ×'+m.qty+'</small>')"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 37,
+    "kind": "DOM textContent",
+    "before": "empty.textContent='Рюкзак пуст'",
+    "after": "I18n.assign(empty,\"textContent\",'Рюкзак пуст')"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 35,
+    "kind": "DOM textContent",
+    "before": "qty.textContent='×'+item.qty+(item.level?' · +'+item.level:'')",
+    "after": "I18n.assign(qty,\"textContent\",'×'+item.qty+(item.level?' · +'+item.level:''))"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 34,
+    "kind": "DOM textContent",
+    "before": "name.textContent=ITEM[item.type].name",
+    "after": "I18n.assign(name,\"textContent\",ITEM[item.type].name)"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 33,
+    "kind": "DOM innerHTML",
+    "before": "b.innerHTML='<span class=\"v162PickArt\">'+itemIconHTML(item.type)+'</span>'",
+    "after": "I18n.assign(b,\"innerHTML\",'<span class=\"v162PickArt\">'+itemIconHTML(item.type)+'</span>')"
+  },
+  {
+    "file": "inventory/picker-magazines.js",
+    "line": 32,
+    "kind": "DOM attribute",
+    "before": "b.setAttribute('aria-label',ITEM[item.type].name+(ok?'':' · недоступно для быстрого слота'))",
+    "after": "I18n.setAttr(b,'aria-label',ITEM[item.type].name+(ok?'':' · недоступно для быстрого слота'))"
+  },
+  {
+    "file": "ui/loot-vitals.js",
+    "line": 38,
+    "review": "nonstandard cell.title=ITEM[s.type]?.name||s.type",
+    "after": "Reviewed DOM title adapter"
+  },
+  {
+    "file": "ui/loot-vitals.js",
+    "line": 88,
+    "kind": "DOM textContent",
+    "before": "el('v163HungerValue').textContent=hunger",
+    "after": "I18n.assign(el('v163HungerValue'),\"textContent\",hunger)"
+  },
+  {
+    "file": "ui/loot-vitals.js",
+    "line": 86,
+    "kind": "DOM textContent",
+    "before": "health.textContent='❤️ '+hp+' / '+max",
+    "after": "I18n.assign(health,\"textContent\",'❤️ '+hp+' / '+max)"
+  },
+  {
+    "file": "ui/loot-vitals.js",
+    "line": 78,
+    "kind": "DOM innerHTML",
+    "before": "bar.innerHTML='<div class=\"v163Health\" role=\"meter\" aria-label=\"Здоровье\"><span class=\"v163HealthFill\"></span></div><div class=\"v163Hunger\" title=\"Сытость\"><span class=\"v163HungerFill\"></span><span class=\"v163HungerLabel\">🍖 <span id=\"v163HungerValue\">100</span></span></div>'",
+    "after": "I18n.assign(bar,\"innerHTML\",'<div class=\"v163Health\" role=\"meter\" aria-label=\"Здоровье\"><span class=\"v163HealthFill\"></span></div><div class=\"v163Hunger\" title=\"Сытость\"><span class=\"v163HungerFill\"></span><span class=\"v163HungerLabel\">🍖 <span id=\"v163HungerValue\">100</span></span></div>')"
+  },
+  {
+    "file": "ui/loot-vitals.js",
+    "line": 37,
+    "kind": "DOM innerHTML",
+    "before": "cell.innerHTML='<span class=\"ico\">'+itemIconHTML(s.type)+'</span><span class=\"qty\">'+s.qty+'</span>'",
+    "after": "I18n.assign(cell,\"innerHTML\",'<span class=\"ico\">'+itemIconHTML(s.type)+'</span><span class=\"qty\">'+s.qty+'</span>')"
+  },
+  {
+    "file": "ui/loot-vitals.js",
+    "line": 27,
+    "kind": "DOM textContent",
+    "before": "takeButton.textContent='Забрать'",
+    "after": "I18n.assign(takeButton,\"textContent\",'Забрать')"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 150,
+    "kind": "Canvas fillText",
+    "before": "o.remaining?o.remaining+' / '+o.capacity:Math.ceil(o.regrowMs/60000)+' мин.'",
+    "after": "I18n.text(o.remaining?o.remaining+' / '+o.capacity:Math.ceil(o.regrowMs/60000)+' мин.')"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 150,
+    "kind": "Canvas fillText",
+    "before": "'КАМЕНЬ'",
+    "after": "I18n.text('КАМЕНЬ')"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 133,
+    "kind": "Canvas fillText",
+    "before": "'Ур. '+o.level+' · '+Math.round(o.hp).toLocaleString('ru-RU')",
+    "after": "I18n.text('Ур. '+o.level+' · '+Math.round(o.hp).toLocaleString('ru-RU'))"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 127,
+    "kind": "Canvas fillText",
+    "before": "Math.ceil(o.hp)+' / '+o.maxHp",
+    "after": "I18n.text(Math.ceil(o.hp)+' / '+o.maxHp)"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 114,
+    "kind": "DOM attribute",
+    "before": "actionButton.setAttribute('aria-label',interactionTarget.name)",
+    "after": "I18n.setAttr(actionButton,'aria-label',interactionTarget.name)"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 114,
+    "kind": "DOM innerHTML",
+    "before": "actionButton.innerHTML=itemIconHTML('hammer')",
+    "after": "I18n.assign(actionButton,\"innerHTML\",itemIconHTML('hammer'))"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 107,
+    "kind": "DOM textContent",
+    "before": "refs.note.textContent=!full?'1000 HP/сек. · 1 бетон = 1000 HP. Остаток смеси сохраняется.':o.level>=maxLevel(r)?'Укрепление полностью улучшено.':'Материалы из рюкзака. После улучшения прочность будет полной.'",
+    "after": "I18n.assign(refs.note,\"textContent\",!full?'1000 HP/сек. · 1 бетон = 1000 HP. Остаток смеси сохраняется.':o.level>=maxLevel(r)?'Укрепление полностью улучшено.':'Материалы из рюкзака. После улучшения прочность будет полной.')"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 106,
+    "kind": "DOM textContent",
+    "before": "refs.button.textContent=!full?'Ремонтировать':o.level>=maxLevel(r)?'Максимальный уровень':'Улучшить до '+(o.level+1)+' · '+definition(r).levels[o.level+1].toLocaleString('ru-RU')+' HP'",
+    "after": "I18n.assign(refs.button,\"textContent\",!full?'Ремонтировать':o.level>=maxLevel(r)?'Максимальный уровень':'Улучшить до '+(o.level+1)+' · '+definition(r).levels[o.level+1].toLocaleString('ru-RU')+' HP')"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 105,
+    "kind": "DOM innerHTML",
+    "before": "cell.innerHTML=itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+count(t)+' / '+n+'</small></span>'",
+    "after": "I18n.assign(cell,\"innerHTML\",itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+count(t)+' / '+n+'</small></span>')"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 102,
+    "kind": "DOM textContent",
+    "before": "refs.hp.textContent=Math.ceil(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU')+' HP'",
+    "after": "I18n.assign(refs.hp,\"textContent\",Math.ceil(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU')+' HP')"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 102,
+    "kind": "DOM textContent",
+    "before": "refs.level.textContent=title(r)+' · '+o.level+' / '+maxLevel(r)",
+    "after": "I18n.assign(refs.level,\"textContent\",title(r)+' · '+o.level+' / '+maxLevel(r))"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 99,
+    "kind": "DOM textContent",
+    "before": "hudText.textContent='Ремонт · '+Math.floor(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU')",
+    "after": "I18n.assign(hudText,\"textContent\",'Ремонт · '+Math.floor(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU'))"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 91,
+    "kind": "DOM innerHTML",
+    "before": "meter.innerHTML='<i id=\"v018HPFill\"></i>'",
+    "after": "I18n.assign(meter,\"innerHTML\",'<i id=\"v018HPFill\"></i>')"
+  },
+  {
+    "file": "base/construction.js",
+    "line": 90,
+    "kind": "DOM innerHTML",
+    "before": "hero.innerHTML=itemIconHTML('hammer')+'<div><b id=\"v018Level\"></b><span id=\"v018HP\"></span></div>'",
+    "after": "I18n.assign(hero,\"innerHTML\",itemIconHTML('hammer')+'<div><b id=\"v018Level\"></b><span id=\"v018HP\"></span></div>')"
+  },
+  {
+    "file": "input/settings.js",
+    "line": 36,
+    "kind": "DOM title",
+    "before": "el('v010Minimap').title=mode==='PC'?'Карта · M · удержание 1,5 с: прозрачность':'Касание: большая карта · удержание 1,5 с: 100% → 60% → 30%'",
+    "after": "I18n.assign(el('v010Minimap'),\"title\",mode==='PC'?'Карта · M · удержание 1,5 с: прозрачность':'Касание: большая карта · удержание 1,5 с: 100% → 60% → 30%')"
+  },
+  {
+    "file": "input/settings.js",
+    "line": 35,
+    "kind": "DOM title",
+    "before": "el('settingsButton').title='Настройки'+(mode==='PC'?' · Esc':'')",
+    "after": "I18n.assign(el('settingsButton'),\"title\",'Настройки'+(mode==='PC'?' · Esc':''))"
+  },
+  {
+    "file": "input/settings.js",
+    "line": 34,
+    "kind": "DOM title",
+    "before": "el('bagButton').title='Персонаж и инвентарь'+(mode==='PC'?' · I':'')",
+    "after": "I18n.assign(el('bagButton'),\"title\",'Персонаж и инвентарь'+(mode==='PC'?' · I':''))"
+  },
+  {
+    "file": "input/settings.js",
+    "line": 30,
+    "kind": "DOM textContent",
+    "before": "help.textContent=mode==='PC'\n      ?'ЛКМ — идти / объект / выбрать врага. Удержание ЛКМ — следовать за указателем. ПКМ — прицел и огонь: по выбранной цели, без цели — к курсору. R — перезарядка · I — инвентарь · 1–5 — слоты · M — карта · C — тихий ход · Esc — закрыть окно / настройки.'\n      :'Левый джойстик — движение. Правый — прицел / огонь, с выбранной целью — Fire. ✋ — действие · ↻ — перезарядка. Касание мира — идти / взаимодействовать / выбрать врага. Два пальца — масштаб. Расположение кнопок меняется в редакторе ниже.'",
+    "after": "I18n.assign(help,\"textContent\",mode==='PC'\n      ?'ЛКМ — идти / объект / выбрать врага. Удержание ЛКМ — следовать за указателем. ПКМ — прицел и огонь: по выбранной цели, без цели — к курсору. R — перезарядка · I — инвентарь · 1–5 — слоты · M — карта · C — тихий ход · Esc — закрыть окно / настройки.'\n      :'Левый джойстик — движение. Правый — прицел / огонь, с выбранной целью — Fire. ✋ — действие · ↻ — перезарядка. Касание мира — идти / взаимодействовать / выбрать врага. Два пальца — масштаб. Расположение кнопок меняется в редакторе ниже.')"
+  },
+  {
+    "file": "input/settings.js",
+    "line": 29,
+    "kind": "DOM textContent",
+    "before": "status.textContent=(preference==='AUTO'?'AUTO → ':'Активен: ')+mode+(preference==='AUTO'?' · по возможностям устройства и последнему вводу':'')",
+    "after": "I18n.assign(status,\"textContent\",(preference==='AUTO'?'AUTO → ':'Активен: ')+mode+(preference==='AUTO'?' · по возможностям устройства и последнему вводу':''))"
+  },
+  {
+    "file": "input/settings.js",
+    "line": 6,
+    "kind": "DOM textContent",
+    "before": "option.textContent=value",
+    "after": "I18n.assign(option,\"textContent\",value)"
+  },
+  {
+    "file": "input/settings.js",
+    "line": 4,
+    "kind": "DOM textContent",
+    "before": "label.textContent='CONTROL MODE'",
+    "after": "I18n.assign(label,\"textContent\",'CONTROL MODE')"
+  }
+]

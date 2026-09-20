@@ -229,7 +229,7 @@
     return possibilities.find(p=>distance(x,y,p.x,p.y)<=170&&!worldCollision(p.x,p.y,player.radius+4,'surface'))||null;
   }
   function jumpInward(){const point=inwardLanding();if(!point){message('Во дворе нет свободного места для приземления');return false;}return beginTransition(point,false,'jump');}
-  const jumpButton=document.createElement('button');jumpButton.id='v091JumpInward';jumpButton.type='button';jumpButton.className='v091WallButton';jumpButton.textContent='↘ Спрыгнуть во двор';jumpButton.setAttribute('aria-label','Спрыгнуть со стены внутрь двора');
+  const jumpButton=document.createElement('button');jumpButton.id='v091JumpInward';jumpButton.type='button';jumpButton.className='v091WallButton';I18n.assign(jumpButton,"textContent",'↘ Спрыгнуть во двор');I18n.setAttr(jumpButton,'aria-label','Спрыгнуть со стены внутрь двора');
   jumpButton.addEventListener('pointerdown',e=>e.stopPropagation());jumpButton.addEventListener('click',e=>{e.stopPropagation();jumpInward();});document.body.appendChild(jumpButton);
   const oldPlayerUpdate=updatePlayer;
   updatePlayer=function(){
@@ -269,8 +269,8 @@
   const oldAction=updateAction;
   updateAction=function(){
     oldAction();
-    if(currentAction==='v091stairs')actionButton.textContent=isElevated()?'↧':'↥';
-    if(currentAction==='v091innerGate')actionButton.textContent=innerGateOpen?'🔒':'🔓';
+    if(currentAction==='v091stairs')I18n.assign(actionButton,"textContent",isElevated()?'↧':'↥');
+    if(currentAction==='v091innerGate')I18n.assign(actionButton,"textContent",innerGateOpen?'🔒':'🔓');
     const show=isElevated()&&!menuOpen&&!playerDead&&!transition;
     jumpButton.style.display=show?'block':'none';if(show)jumpButton.disabled=!inwardLanding();
   };
@@ -324,7 +324,7 @@
 
   function rect(x,y,w,h,fill,stroke=null,width=1){ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.strokeRect(x,y,w,h);}}
   function line(ax,ay,bx,by,color,width=1){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();}
-  function label(text,x,y,size=10,color='#c9d1c6'){ctx.fillStyle=color;ctx.textAlign='center';ctx.font=`600 ${size}px Arial`;ctx.fillText(text,x,y);}
+  function label(text,x,y,size=10,color='#c9d1c6'){ctx.fillStyle=color;ctx.textAlign='center';ctx.font=`600 ${size}px Arial`;ctx.fillText(I18n.text(text),x,y);}
   function wallDeck(o,vertical=false){
     // Offset foundations and multiple ledges make the top-down wall read as tall.
     rect(o.x+11,o.y+18,o.w,o.h,'rgba(8,15,17,.38)');rect(o.x,o.y,o.w,o.h,'#303b3c','#1c282b',3);

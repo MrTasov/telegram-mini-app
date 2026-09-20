@@ -34,16 +34,16 @@ window.V013Inventory=(()=>{
   function equip(type){let i=items.findIndex(s=>s?.type===type);if(i<0){if(!bag.some(s=>s?.type===type)){message('Нужен предмет: '+ITEM[type]?.name);return false;}i=items.findIndex(s=>!s);if(i<0)i=Number.isInteger(activeHandSlot)?activeHandSlot:0;assigningHandType=type;assignHandSlot(i);}else selectHandSlot(i);return true;}
   const details=V011UI.details;V011UI.details=function(where,i){details(where,i);const s=where==='bag'?bag[i]:Number.isInteger(where)?storageChests[where]?.items[i]:null;if(s?.type==='fish'){
     const body=el('v010ItemDetails').querySelector('.v09Body'),panel=document.createElement('div');panel.className='v014FishCook';
-    const info=document.createElement('p');info.textContent=s.qty+' рыб · '+(V014Fish.weight(s)/1000).toFixed(1)+' кг';panel.append(info);
+    const info=document.createElement('p');I18n.assign(info,"textContent",s.qty+' рыб · '+I18n.numeric(V014Fish.weight(s)/1000,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' кг');panel.append(info);
     if(where==='bag'){
-      const label=document.createElement('label');label.textContent='Приготовить рыб: ';
-      const input=document.createElement('input');input.type='number';input.min='1';input.max=String(s.qty);input.step='1';input.value='1';input.setAttribute('aria-label','Количество рыб для приготовления');input.id='v014FishCount';label.append(input);panel.append(label);
+      const label=document.createElement('label');I18n.assign(label,"textContent",'Приготовить рыб: ');
+      const input=document.createElement('input');input.type='number';input.min='1';input.max=String(s.qty);input.step='1';input.value='1';I18n.setAttr(input,'aria-label','Количество рыб для приготовления');input.id='v014FishCount';label.append(input);panel.append(label);
       const preview=document.createElement('small');
       const count=()=>Math.max(1,Math.min(s.qty,Math.floor(Number(input.value)||1)));
-      function refresh(){const n=count(),grams=V014Fish.portion(s,n).fishGrams+reserve;preview.textContent=n+' рыб → '+Math.floor(grams/500)+' порций'+(grams%500?' · остаток '+(grams%500)+' г':'');}
+      function refresh(){const n=count(),grams=V014Fish.portion(s,n).fishGrams+reserve;I18n.assign(preview,"textContent",n+' рыб → '+Math.floor(grams/500)+' порций'+(grams%500?' · остаток '+(grams%500)+' г':''));}
       input.addEventListener('input',refresh);refresh();panel.append(preview);
       const make=v09Button('Приготовить',()=>{if(bag[i]!==s){message('Рыба перемещена — выберите её снова');closeOverlay(el('v010ItemDetails'));return;}if(cook(count(),i))closeOverlay(el('v010ItemDetails'));});make.disabled=!!s.locked||scene!=='bunker';panel.append(make);
-      if(scene!=='bunker'){const note=document.createElement('small');note.textContent='Приготовление доступно на базе';panel.append(note);}
+      if(scene!=='bunker'){const note=document.createElement('small');I18n.assign(note,"textContent",'Приготовление доступно на базе');panel.append(note);}
     }body.append(panel);
   }};
   GameSave.extend('capture','inventory.physical-slots',function(cap){const d=cap();d.quick013={schema:1,items:copy(items),fishReserve:reserve};return d;});

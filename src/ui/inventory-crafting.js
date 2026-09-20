@@ -11,7 +11,7 @@ window.V011UI=(()=>{
     iron_ore:'Переплавляется в железные слитки.',copper_ore:'Переплавляется в медные слитки.',iron:'Для оружия, патронов, оборудования и улучшений.',copper:'Для электрического оборудования и модулей.',ammo:'Для АК-74 · калибр 5,45.',ammo556:'Для M4 · калибр 5,56.',fuel:'Запас топлива для генератора.',meds:'Медицинские припасы для восстановления здоровья.',water:'Для питья и хозяйства базы.',animal_feed:'Корм для животных.',wood:'Строительный материал и сырьё для производства.'
   };
   const names={hp:'Здоровье',armor:'Защита',speed:'Скорость',accuracy:'Точность',damage:'Урон',mag:'Магазин',reloadMs:'Перезарядка',spread:'Разброс',recoil:'Отдача',capacity:'Вместимость'};
-  const number=n=>Number.isInteger(n)?String(n):String(Math.round(n*100)/100);
+  const number=n=>I18n.numeric(n,{maximumFractionDigits:2,useGrouping:false});
   function format(key,n,bonus=false){
     const sign=n>0&&(bonus||['hp','speed','accuracy'].includes(key))?'+':'';
     if(['speed','accuracy'].includes(key))return sign+number(Math.round(n*100))+'%';
@@ -38,36 +38,36 @@ window.V011UI=(()=>{
     const item=where==='equipment'?equipment[index]:locationItems(where)?.[index];if(!item)return;
     combat.ensure(item);
     const def=ITEM[item.type],overlay=v09Overlay('v010ItemDetails',def.name),body=overlay.querySelector('.v09Body');
-    body.innerHTML=cardHTML(item);
+    I18n.assign(body,"innerHTML",cardHTML(item));
     const actions=document.createElement('div');actions.className='v011ItemActions';
     function button(label,fn,disabled=false,secondary=false){const b=v09Button(label,fn,secondary?'v011Secondary':'');b.disabled=disabled;actions.append(b);return b;}
     if(def.equip){
       const worn=where==='equipment';
       button('Надеть',()=>{if(inv.equip(index))closeOverlay(overlay);},worn||where!=='bag');
       const remove=button('Снять',()=>{if(inv.unequip(index))closeOverlay(overlay);},!worn);
-      if(worn&&def.equip==='backpack'){remove.title='Чтобы сменить рюкзак, наденьте другой из инвентаря';}
+      if(worn&&def.equip==='backpack'){I18n.assign(remove,'title','Чтобы сменить рюкзак, наденьте другой из инвентаря');}
     }
     if(def.hand&&where==='bag')button('В быстрый слот',()=>{inv.selectUid(item.type,item.uid);closeOverlay(overlay);openHandAssignment(item.type);});
     if(where!=='equipment'){
       button(item.locked?'Открепить':'Закрепить',()=>{item.locked=!item.locked;inv.render();window.V011UI.details(where,index);},false,true);
       if(['bag'].includes(where)||Number.isInteger(where))if(activeStorage!==null&&el('storageOverlay').classList.contains('open'))button(where==='bag'?'В ящик':'В рюкзак',()=>{inv.transfer(where,index,where==='bag'?activeStorage:'bag');closeOverlay(overlay);},false,true);
-      if(item.qty>1){const input=document.createElement('input');input.type='number';input.min='1';input.max=item.qty-1;input.value=Math.floor(item.qty/2);input.setAttribute('aria-label','Количество для разделения');actions.append(input);button('Разделить',()=>{if(inv.split(where,index,Math.floor(Number(input.value))))closeOverlay(overlay);else message('Нужна свободная ячейка');},false,true);}
-      if(!def.robot)button('Уничтожить',()=>{if(confirm('Уничтожить «'+def.name+'»'+(item.level?' +'+item.level:'')+'? Предмет будет потерян.')){locationItems(where)[index]=null;inv.render();closeOverlay(overlay);}},false,true);
+      if(item.qty>1){const input=document.createElement('input');input.type='number';input.min='1';input.max=item.qty-1;input.value=Math.floor(item.qty/2);I18n.setAttr(input,'aria-label','Количество для разделения');actions.append(input);button('Разделить',()=>{if(inv.split(where,index,Math.floor(Number(input.value))))closeOverlay(overlay);else message('Нужна свободная ячейка');},false,true);}
+      if(!def.robot)button('Уничтожить',()=>{if(confirm(I18n.text('Уничтожить «'+def.name+'»'+(item.level?' +'+item.level:'')+'? Предмет будет потерян.'))){locationItems(where)[index]=null;inv.render();closeOverlay(overlay);}},false,true);
     }
     body.append(actions);
-    if((item.level||0)>0){const note=document.createElement('p');note.className='v011ItemFootnote';note.textContent='В скобках — прибавка от улучшения, уже учтённая в характеристике.';body.append(note);}
+    if((item.level||0)>0){const note=document.createElement('p');note.className='v011ItemFootnote';I18n.assign(note,"textContent",'В скобках — прибавка от улучшения, уже учтённая в характеристике.');body.append(note);}
     openOverlay(overlay);
   }
   const oldEquipment=renderEquipment;
   renderEquipment=function(){oldEquipment();const s=combat.refreshStats(),node=el('characterStats');if(!node)return;
-    node.innerHTML=[['Здоровье',Math.round(player.health)+' / '+Math.round(s.hp)],['Защита',s.armor+'%'],['Скорость','+'+Math.round(s.speed*100)+'%'],['Точность','+'+Math.round(s.accuracy*100)+'%']].map(([label,value])=>'<div class="v011StatRow"><span>'+label+'</span><b>'+value+'</b></div>').join('');
+    I18n.assign(node,"innerHTML",[['Здоровье',Math.round(player.health)+' / '+Math.round(s.hp)],['Защита',s.armor+'%'],['Скорость','+'+Math.round(s.speed*100)+'%'],['Точность','+'+Math.round(s.accuracy*100)+'%']].map(([label,value])=>'<div class="v011StatRow"><span>'+label+'</span><b>'+value+'</b></div>').join(''));
   };
   // Re-rendering after a deliberate transfer does not shift the inventory scroll position.
   for(const [key,fn] of [['bag',renderBag],['storage',renderStorage]]){
     const wrapped=function(...args){const panels=[...document.querySelectorAll('#inventoryOverlay .panel,#storageOverlay .panel')],scroll=panels.map(p=>p.scrollTop||0);const result=fn.apply(this,args);panels.forEach((p,i)=>p.scrollTop=scroll[i]);return result;};
     if(key==='bag')renderBag=wrapped;else renderStorage=wrapped;
   }
-  const person=el('bagButton');person.innerHTML='<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="14" r="8"/><path d="M10 42v-8c0-8 6-12 14-12s14 4 14 12v8M18 25v12m12-12v12"/></svg>';person.title='Персонаж и инвентарь';person.setAttribute('aria-label','Персонаж и инвентарь');
+  const person=el('bagButton');I18n.assign(person,"innerHTML",'<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="14" r="8"/><path d="M10 42v-8c0-8 6-12 14-12s14 4 14 12v8M18 25v12m12-12v12"/></svg>');I18n.assign(person,'title','Персонаж и инвентарь');I18n.setAttr(person,'aria-label','Персонаж и инвентарь');
   function safeArea(){
     const app=window.Telegram?.WebApp;
     const top=app?Math.max(56,Number(app.safeAreaInset?.top||0)+Number(app.contentSafeAreaInset?.top||0))+10:10;
@@ -243,24 +243,24 @@ window.V011CraftUI=(()=>{
   v09OpenGenerator=function(refuel=false){
     const overlay=v09Overlay('v09GeneratorOverlay',refuel?'Топливный бак':'Генератор'),body=overlay.querySelector('.v09Body');body.replaceChildren();
     if(refuel){
-      const hero=document.createElement('div');hero.className='v011FuelHero';hero.innerHTML='<div class="v09TankGauge"><i data-power="tankbar"></i></div><b class="v011TankValue" data-power="tankvalue"></b>';body.append(hero);
+      const hero=document.createElement('div');hero.className='v011FuelHero';I18n.assign(hero,"innerHTML",'<div class="v09TankGauge"><i data-power="tankbar"></i></div><b class="v011TankValue" data-power="tankvalue"></b>');body.append(hero);
       const note=document.createElement('p');note.className='v09PowerNote';note.dataset.power='bagfuel';body.append(note);
       const actions=document.createElement('div');actions.className='v09PowerActions';
       for(const n of [10,100]){const b=v09Button(n===10?'Добавить 10':'Заправить до максимума',()=>v09Refuel(n));b.dataset.refuel=String(n);actions.append(b);}body.append(actions);
     }else{
       const sources=window.V011Art?.sources;
-      if(sources?.generator){const img=document.createElement('img');img.className='v011GeneratorArt';img.src=sources.generator;img.alt='Генератор';body.append(img);}
-      const stats=document.createElement('div');stats.innerHTML=v09PowerStats();body.append(stats);
+      if(sources?.generator){const img=document.createElement('img');img.className='v011GeneratorArt';img.src=sources.generator;I18n.assign(img,"alt",'Генератор');body.append(img);}
+      const stats=document.createElement('div');I18n.assign(stats,"innerHTML",v09PowerStats());body.append(stats);
       const row=document.createElement('div');row.className='v011GeneratorSwitch';const status=document.createElement('span');status.dataset.power='running';row.append(status);
       const toggle=v09Button('',v09ToggleGenerator);toggle.dataset.power='generatorToggle';toggle.setAttribute('role','switch');row.append(toggle);body.append(row);
-      const note=document.createElement('p');note.className='v09PowerNote';note.textContent='Свободная мощность заряжает батарею. Производство сохраняет прогресс при остановке.';body.append(note);
+      const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Свободная мощность заряжает батарею. Производство сохраняет прогресс при остановке.');body.append(note);
     }
     v09RefreshPowerUI();openOverlay(overlay);
   };
   const refresh=v09RefreshPowerUI;
   v09RefreshPowerUI=function(){
     refresh();const o=el('v09GeneratorOverlay');if(!o)return;
-    const toggle=o.querySelector('[data-power="generatorToggle"]');if(toggle){toggle.textContent=V09Power.running?'Остановить':'Включить';toggle.setAttribute('aria-checked',String(V09Power.running));toggle.classList.toggle('on',V09Power.running);}
+    const toggle=o.querySelector('[data-power="generatorToggle"]');if(toggle){I18n.assign(toggle,"textContent",V09Power.running?'Остановить':'Включить');toggle.setAttribute('aria-checked',String(V09Power.running));toggle.classList.toggle('on',V09Power.running);}
     for(const b of o.querySelectorAll('[data-refuel]'))b.disabled=bagCount('fuel')<=0||Math.floor(V09Power.capacity-V09Power.fuel)<=0;
   };
   return {get ammunition(){return Object.fromEntries(Object.keys(ITEM).filter(type=>ITEM[type].ammo).map(type=>[type,V09Craft.weaponsForAmmo(type)[0]]));}};

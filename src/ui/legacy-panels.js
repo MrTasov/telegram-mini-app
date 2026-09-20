@@ -212,9 +212,8 @@ masterVolume =
     soundSlider.value
   ) / 100;
 
-soundValue.textContent =
-  soundSlider.value +
-  "%";
+I18n.assign(soundValue,"textContent",soundSlider.value +
+  "%");
 
 soundSlider.addEventListener(
   "input",
@@ -225,9 +224,8 @@ soundSlider.addEventListener(
         soundSlider.value
       ) / 100;
 
-    soundValue.textContent =
-      soundSlider.value +
-      "%";
+    I18n.assign(soundValue,"textContent",soundSlider.value +
+      "%");
 
     try{
 

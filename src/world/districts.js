@@ -86,7 +86,7 @@ const V010World = (()=>{
     const first=o.zone&&!o.searched;
     if(first){o.loot=lootFor(o);o.searched=true;o.searchedAt=Date.now();}
     oldOpenLoot(o);
-    if(o.zone)el('lootTitle').textContent=o.name;
+    if(o.zone)I18n.assign(el('lootTitle'),"textContent",o.name);
     if(first&&o.id==='supplywreck10'&&!events.supplywreck10){events.supplywreck10=true;window.V010Progression?.unlock('tools_upgrade');emit('worldevent',{id:o.id,kind:'supply'});log('Найдены припасы разбитого грузовика');queueGameSave();}
   };
   const oldExecute=executeInteraction;
@@ -98,8 +98,8 @@ const V010World = (()=>{
     if(target.id==='supplywreck10'&&!target.ref.searched){oldExecute(target);if(searchState?.obj===target.ref)searchState.duration=2300;return;}
     return oldExecute(target);
   };
-  function panel(title){if(!overlay)overlay=v09Overlay('v010WorldOverlay',title);overlay.querySelector('h2').textContent=title;const body=overlay.querySelector('.v09Body');body.innerHTML='';return body;}
-  function showUnlock(target){stopControls(true);const body=panel('Запертый склад');const p=document.createElement('p');p.textContent='Восстановите механизм замка. Потребуется 4 детали. Внутри — материалы и редкая находка.';body.append(p);
+  function panel(title){if(!overlay)overlay=v09Overlay('v010WorldOverlay',title);I18n.assign(overlay.querySelector('h2'),"textContent",title);const body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",'');return body;}
+  function showUnlock(target){stopControls(true);const body=panel('Запертый склад');const p=document.createElement('p');I18n.assign(p,"textContent",'Восстановите механизм замка. Потребуется 4 детали. Внутри — материалы и редкая находка.');body.append(p);
     const b=v09Button('Открыть · 4 детали',()=>{if(bagCount('parts')<4||!canInteract(target,player.x,player.y))return;removeItem('parts',4);events.lockedwarehouse10=true;window.V010Progression?.unlock('precision_blueprint');closeOverlay(overlay);emit('worldevent',{id:target.id,kind:'warehouse'});log('Открыт склад промзоны');queueGameSave();startSearch(target.ref);});b.disabled=bagCount('parts')<4;body.append(b);openOverlay(overlay);
   }
   function beginShortcut(s){
@@ -116,8 +116,8 @@ const V010World = (()=>{
   }
   function openCache(c){
     if(window.V010Inventory?.openExternalChest){V010Inventory.openExternalChest(c);return;}
-    const body=panel(c.name);const p=document.createElement('p');p.textContent='Укрытие · 60 ячеек. Нажмите предмет, чтобы перенести стопку.';body.append(p);
-    for(const [title,from,to,max] of [['В укрытии',c.items,bag,BAG_SLOTS],['В рюкзаке',bag,c.items,60]]){const h=document.createElement('h3');h.textContent=title;body.append(h);const grid=document.createElement('div');grid.className='v010CacheGrid';body.append(grid);from.forEach((s,i)=>{if(!s)return;const b=v09Button('',()=>{const count=s.qty,left=addToSlots(to,s.type,count,max,s),moved=count-left;if(moved){if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)from[i]=null;renderBag();queueGameSave();openCache(c);}else message('Нет свободного места');});b.innerHTML=itemIconHTML(s.type)+'<small>'+s.qty+'</small>';grid.append(b);});}
+    const body=panel(c.name);const p=document.createElement('p');I18n.assign(p,"textContent",'Укрытие · 60 ячеек. Нажмите предмет, чтобы перенести стопку.');body.append(p);
+    for(const [title,from,to,max] of [['В укрытии',c.items,bag,BAG_SLOTS],['В рюкзаке',bag,c.items,60]]){const h=document.createElement('h3');I18n.assign(h,"textContent",title);body.append(h);const grid=document.createElement('div');grid.className='v010CacheGrid';body.append(grid);from.forEach((s,i)=>{if(!s)return;const b=v09Button('',()=>{const count=s.qty,left=addToSlots(to,s.type,count,max,s),moved=count-left;if(moved){if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)from[i]=null;renderBag();queueGameSave();openCache(c);}else message('Нет свободного места');});I18n.assign(b,"innerHTML",itemIconHTML(s.type)+'<small>'+s.qty+'</small>');grid.append(b);});}
     openOverlay(overlay);
   }
   // Walk/run noise is distinct from a shot or pickaxe strike. Crouching never silences a gun.
@@ -128,7 +128,7 @@ const V010World = (()=>{
   };
   const oldPlayer=updatePlayer;
   updatePlayer=function(){const run=player.runSpeed,walk=player.walkSpeed;if(sneaking){player.runSpeed=run*.5;player.walkSpeed=walk*.5;}walkingNoise=true;try{return oldPlayer();}finally{walkingNoise=false;player.runSpeed=run;player.walkSpeed=walk;}};
-  const sneakButton=document.createElement('button');sneakButton.id='v010SneakButton';sneakButton.textContent='Тихо';sneakButton.title='Тихое передвижение · C';sneakButton.setAttribute('aria-label','Тихое передвижение');sneakButton.setAttribute('aria-pressed','false');document.body.append(sneakButton);
+  const sneakButton=document.createElement('button');sneakButton.id='v010SneakButton';I18n.assign(sneakButton,"textContent",'Тихо');I18n.assign(sneakButton,'title','Тихое передвижение · C');I18n.setAttr(sneakButton,'aria-label','Тихое передвижение');sneakButton.setAttribute('aria-pressed','false');document.body.append(sneakButton);
   function setSneaking(value){sneaking=!!value;sneakButton.classList.toggle('active',sneaking);sneakButton.setAttribute('aria-pressed',String(sneaking));}
   sneakButton.addEventListener('click',e=>{e.stopPropagation();GameActions.dispatch('SNEAK');});
   // Seed encounters in districts, never on the new roads or a fortification.
@@ -176,11 +176,11 @@ const V010World = (()=>{
     ctx.save();ctx.translate(z.x,z.y);ctx.rotate(a);ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(3,7,t.radius+3,t.radius*.6,0,0,Math.PI*2);ctx.fill();
     ctx.fillStyle=hit?'#d8c5b2':t.color;ctx.fillRect(-t.radius*.6,-t.radius*.65,t.radius*1.2,t.radius*1.45);ctx.fillStyle=hit?'#ead9bd':'#a29c77';ctx.beginPath();ctx.arc(3,-t.radius,7,0,Math.PI*2);ctx.fill();ctx.strokeStyle=t.color;ctx.lineWidth=z.type==='heavy'?9:4;ctx.beginPath();ctx.moveTo(3,-4);ctx.lineTo(24,-8);ctx.moveTo(3,8);ctx.lineTo(25,7);ctx.stroke();
     if(z.type==='heavy'){ctx.strokeStyle='#b99c68';ctx.lineWidth=3;ctx.strokeRect(-11,-10,22,27);}else{ctx.strokeStyle='#c3a286';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-8,0);ctx.lineTo(6,11);ctx.stroke();}ctx.restore();
-    if(distance(player.x,player.y,z.x,z.y)<220){ctx.fillStyle=z.type==='heavy'?'#d0b276':'#d6a18a';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText(t.name,z.x,z.y-t.radius-12);}
+    if(distance(player.x,player.y,z.x,z.y)<220){ctx.fillStyle=z.type==='heavy'?'#d0b276':'#d6a18a';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText(I18n.text(t.name),z.x,z.y-t.radius-12);}
   };
   function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h);}
   function line(points,color,width=1){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();}
-  function text(label,x,y,size=12,color='#e0dcc2'){ctx.fillStyle=color;ctx.font=`600 ${size}px Arial`;ctx.textAlign='center';ctx.fillText(label,x,y);}
+  function text(label,x,y,size=12,color='#e0dcc2'){ctx.fillStyle=color;ctx.font=`600 ${size}px Arial`;ctx.textAlign='center';ctx.fillText(I18n.text(label),x,y);}
   function poly(points,color){ctx.fillStyle=color;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();}
   function ellipse(x,y,rx,ry,color){ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();}
   function visibleRect(o,pad=80){return visibleOnScreen(o.x+(o.w||0)/2,o.y+(o.h||0)/2,Math.max(o.w||0,o.h||0)/2+pad);}
@@ -227,13 +227,13 @@ const V010World = (()=>{
   const oldDrawSurface=drawSurface;
   drawSurface=function(){oldDrawSurface();drawOutskirts();};
   function updateShortcut(dt){if(!shortcutWork)return;const s=shortcuts.find(o=>o.id===shortcutWork.id),target={...s,range:65};if(!s||scene!=='surface'||menuOpen||playerDead||movePower>JOY_DEAD||!canInteract(target,player.x,player.y)){shortcutWork=null;el('searchBarWrap').style.display='none';return;}
-    shortcutWork.elapsed+=dt;const bar=el('searchBarWrap');bar.style.display='block';const p=(typeof worldToScreen==='function'?worldToScreen(player.x,player.y):{x:player.x-camera.x,y:player.y-camera.y});bar.style.left=(p.x-46)+'px';bar.style.top=(p.y-64)+'px';el('searchBarFill').style.width=Math.min(100,shortcutWork.elapsed/shortcutWork.duration*100)+'%';if(shortcutWork.elapsed>=shortcutWork.duration)finishShortcut(s);
+    shortcutWork.elapsed+=dt;const bar=el('searchBarWrap');bar.style.display='block';positionWorkProgress(bar,64);el('searchBarFill').style.width=Math.min(100,shortcutWork.elapsed/shortcutWork.duration*100)+'%';if(shortcutWork.elapsed>=shortcutWork.duration)finishShortcut(s);
   }
   const oldUpdate=update;
   update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)updateShortcut(16.667*frameScale);else if(shortcutWork){shortcutWork=null;el('searchBarWrap').style.display='none';}elapsed+=frameScale;if(elapsed>=20){elapsed=0;sneakButton.style.display=menuOpen||playerDead?'none':'block';}};
   function setSetting(key,value){if(!Object.hasOwn(defaults,key)||![.5,1,1.5,2].includes(value))return false;settings[key]=value;if(key==='enemyCount')adjustPopulation();queueGameSave();return true;}
-  function showDifficulty(){const body=panel('Сложность');const desc=document.createElement('p');desc.className='v09Muted';desc.textContent='Каждый параметр настраивается отдельно. Менять можно в любой момент.';body.append(desc);
-    for(const [key,title] of [['enemyCount','Количество зомби'],['enemyStrength','Сила зомби'],['fuelRate','Расход топлива'],['miningRate','Скорость добычи']]){const label=document.createElement('label');label.className='v010Difficulty';const span=document.createElement('span');span.textContent=title;const select=document.createElement('select');select.setAttribute('aria-label',title);for(const value of [.5,1,1.5,2]){const option=document.createElement('option');option.value=String(value);option.textContent=value+'×';select.append(option);}select.value=String(settings[key]);select.addEventListener('change',()=>setSetting(key,Number(select.value)));label.append(span,select);body.append(label);}openOverlay(overlay);
+  function showDifficulty(){const body=panel('Сложность');const desc=document.createElement('p');desc.className='v09Muted';I18n.assign(desc,"textContent",'Каждый параметр настраивается отдельно. Менять можно в любой момент.');body.append(desc);
+    for(const [key,title] of [['enemyCount','Количество зомби'],['enemyStrength','Сила зомби'],['fuelRate','Расход топлива'],['miningRate','Скорость добычи']]){const label=document.createElement('label');label.className='v010Difficulty';const span=document.createElement('span');I18n.assign(span,"textContent",title);const select=document.createElement('select');I18n.setAttr(select,'aria-label',title);for(const value of [.5,1,1.5,2]){const option=document.createElement('option');option.value=String(value);I18n.assign(option,"textContent",value+'×');select.append(option);}select.value=String(settings[key]);select.addEventListener('change',()=>setSetting(key,Number(select.value)));label.append(span,select);body.append(label);}openOverlay(overlay);
   }
   const difficultyButton=v09Button('Сложность мира',showDifficulty);difficultyButton.id='v010DifficultyButton';el('settingsOverlay').querySelector('.panel').append(difficultyButton);
   function migrateEntries(entries,all,old,make){if(!Array.isArray(entries))throw new Error('Нет данных мира');const allowed=new Set(all.map(o=>o.id)),byId=new Map();for(const o of entries){if(!o||!allowed.has(o.id)||byId.has(o.id))throw new Error('Неверный объект мира');byId.set(o.id,o);}if(!old.every(id=>byId.has(id)))throw new Error('Неполные данные мира');return all.map(o=>byId.get(o.id)||make(o));}

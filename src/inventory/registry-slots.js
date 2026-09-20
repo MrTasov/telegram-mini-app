@@ -71,7 +71,7 @@ window.V010Inventory=(()=>{
   }
   function sort(where){
     const a=list(where);if(!a)return false;
-    const loose=a.filter(s=>s&&!s.locked).map(copy).sort((a,b)=>(ITEM[a.type].name.localeCompare(ITEM[b.type].name,'ru')||signature(a).localeCompare(signature(b))));
+    const loose=a.filter(s=>s&&!s.locked).map(copy).sort((a,b)=>(I18n.compare(ITEM[a.type].name,ITEM[b.type].name)||signature(a).localeCompare(signature(b))));
     const result=Array.from({length:capacity(where)},(_,i)=>a[i]?.locked?copy(a[i]):null);
     for(const s of loose)if(insert(result,s,capacity(where)))return false;
     a.splice(0,a.length,...result);notifyChange();return true;
@@ -97,7 +97,7 @@ window.V010Inventory=(()=>{
   v091Unequip=unequip;
   if(window.V091Equipment)V091Equipment.unequip=unequip;
   const oldEquipRender=renderEquipment;
-  renderEquipment=function(){oldEquipRender();el('bagCapacityText').textContent='Рюкзак · '+occupied(bag)+' / '+BAG_SLOTS;
+  renderEquipment=function(){oldEquipRender();I18n.assign(el('bagCapacityText'),"textContent",'Рюкзак · '+occupied(bag)+' / '+BAG_SLOTS);
     el('equipmentSlots').querySelectorAll('[data-equip-slot]').forEach(row=>{
       row.addEventListener('click',e=>{if(performance.now()<suppressClick){e.preventDefault();e.stopImmediatePropagation?.();}},true);
       const key=row.dataset.equipSlot;row.oncontextmenu=e=>{e.preventDefault();details('equipment',key);};
@@ -113,14 +113,14 @@ window.V010Inventory=(()=>{
   function cell(where,i,s){
     const d=document.createElement('button');d.type='button';d.className='invSlot v010Slot'+(s?' hasItem':'')+(s&&handSlots.includes(s.type)?' quickAssigned':'')+(s?.locked?' locked':'');
     d.dataset.v010Container=where;d.dataset.v010Index=i;
-    d.innerHTML=slotContent(s);d.title=s?ITEM[s.type].name+' · '+s.qty:'Пустая ячейка';d.setAttribute('aria-label',d.title);
+    I18n.assign(d,"innerHTML",slotContent(s));I18n.assign(d,'title',s?ITEM[s.type].name+' · '+s.qty:'Пустая ячейка');I18n.setAttr(d,'aria-label',I18n.source(d,'title'));
     d.onclick=e=>{e.stopPropagation();if(performance.now()<suppressClick)return;tap(where,i);};
     d.oncontextmenu=e=>{e.preventDefault();details(where,i);};
     d.addEventListener('pointerdown',e=>startPointer(e,where,i,d));return d;
   }
   function renderGrid(id,where){const g=el(id),a=list(where);if(!g||!a)return;g.replaceChildren();for(let i=0;i<capacity(where);i++)g.append(cell(where,i,a[i]));}
   renderBag=function(){renderEquipment();renderQuickSlots();renderGrid('inventoryGrid','bag');};
-  renderStorage=function(){renderQuickSlots();updateAmmoHud();const ch=storageChests[activeStorage];if(!ch)return;el('storageTitle').textContent=ch.icon+' '+ch.name;renderGrid('storageContents',activeStorage);renderGrid('storageBag','bag');};
+  renderStorage=function(){renderQuickSlots();updateAmmoHud();const ch=storageChests[activeStorage];if(!ch)return;I18n.assign(el('storageTitle'),"textContent",ch.icon+' '+I18n.crateName(ch,activeStorage));renderGrid('storageContents',activeStorage);renderGrid('storageBag','bag');};
   function tap(where,i){
     const s=list(where)?.[i];if(!s)return;
     if(['quick','drone','upgrade'].includes(where)){details(where,i);return;}
@@ -130,7 +130,7 @@ window.V010Inventory=(()=>{
     }
     const moved=transfer(where,i,where==='bag'?activeStorage:'bag');if(!moved)message(s.locked?'Предмет закреплён':'Нет места для предмета');
   }
-  function button(text,fn,title){const b=document.createElement('button');b.type='button';b.className='v010SmallAction';b.textContent=text;b.onclick=fn;if(title){b.title=title;b.setAttribute('aria-label',title);}return b;}
+  function button(text,fn,title){const b=document.createElement('button');b.type='button';b.className='v010SmallAction';I18n.assign(b,"textContent",text);b.onclick=fn;if(title){I18n.assign(b,"title",title);I18n.setAttr(b,'aria-label',title);}return b;}
   function toolbar(id,where,storage=false){
     const target=el(id);if(!target)return;
     const bar=document.createElement('div');bar.className='v010InvToolbar';bar.dataset.forGrid=id;
@@ -168,9 +168,9 @@ window.V010Inventory=(()=>{
   }
   function showPreset(){
     const o=v09Overlay('v010Preset','Комплект для вылазки'),body=o.querySelector('.v09Body');body.replaceChildren();
-    const desc=document.createElement('p');desc.textContent='На базе пополняются только недостающие запасы. Закреплённые предметы из ящиков остаются на месте.';body.append(desc);
+    const desc=document.createElement('p');I18n.assign(desc,"textContent",'На базе пополняются только недостающие запасы. Закреплённые предметы из ящиков остаются на месте.');body.append(desc);
     const inputs={};for(const type of [...Object.keys(ITEM).filter(type=>ITEM[type].ammo),'meds','water','food','fuel']){
-      const row=document.createElement('label');row.className='v010PresetRow';const text=document.createElement('span');text.textContent=ITEM[type].name;
+      const row=document.createElement('label');row.className='v010PresetRow';const text=document.createElement('span');I18n.assign(text,"textContent",ITEM[type].name);
       const input=document.createElement('input');input.type='number';input.min='0';input.max='500';input.value=preset[type]||0;inputs[type]=input;row.append(text,input);body.append(row);
     }
     body.append(v09Button('Сохранить комплект',()=>{preset={};for(const [type,input] of Object.entries(inputs))preset[type]=Math.max(0,Math.min(500,Math.floor(Number(input.value)||0)));queueGameSave();closeOverlay(o);}));openOverlay(o);
@@ -179,15 +179,15 @@ window.V010Inventory=(()=>{
     if(window.V011UI)return V011UI.details(where,index);
     const s=where==='equipment'?equipment[index]:list(where)?.[index];if(!s)return;
     const def=ITEM[s.type],o=v09Overlay('v010ItemDetails',def.name),body=o.querySelector('.v09Body');body.replaceChildren();
-    const art=document.createElement('div');art.className='v010DetailArt';art.innerHTML=itemIconHTML(s.type);body.append(art);
-    const text=document.createElement('p');text.textContent='Количество: '+(s.qty||1)+(s.level?' · Улучшение +'+s.level:'');body.append(text);
-    const purpose=document.createElement('p');purpose.textContent=def.description||(def.equip?'Экипировка для слота «'+EQUIP_LABELS[def.equip]+'».':def.hand?'Можно назначить в быстрый слот.':({iron_ore:'Переплавляется в железо в печи.',copper_ore:'Переплавляется в медь в печи.',iron:'Используется для изготовления оружия, патронов и улучшений.',copper:'Металл для производства и электрического оборудования.',ammo:'Боеприпасы для АК-74.',ammo556:'Боеприпасы для M4.',fuel:'Топливо для генератора.',meds:'Медицинские припасы.',water:'Вода для хозяйства и вылазок.',animal_feed:'Корм для животных.'}[s.type]||'Ресурс для производства или развития базы.'));body.append(purpose);
+    const art=document.createElement('div');art.className='v010DetailArt';I18n.assign(art,"innerHTML",itemIconHTML(s.type));body.append(art);
+    const text=document.createElement('p');I18n.assign(text,"textContent",'Количество: '+(s.qty||1)+(s.level?' · Улучшение +'+s.level:''));body.append(text);
+    const purpose=document.createElement('p');I18n.assign(purpose,"textContent",def.description||(def.equip?'Экипировка для слота «'+EQUIP_LABELS[def.equip]+'».':def.hand?'Можно назначить в быстрый слот.':({iron_ore:'Переплавляется в железо в печи.',copper_ore:'Переплавляется в медь в печи.',iron:'Используется для изготовления оружия, патронов и улучшений.',copper:'Металл для производства и электрического оборудования.',ammo:'Боеприпасы для АК-74.',ammo556:'Боеприпасы для M4.',fuel:'Топливо для генератора.',meds:'Медицинские припасы.',water:'Вода для хозяйства и вылазок.',animal_feed:'Корм для животных.'}[s.type]||'Ресурс для производства или развития базы.')));body.append(purpose);
     const equipped=def.equip?equipment[def.equip]:def.hand?selectedItem(heldItem()):null;
     const current=window.V010Combat?.getItemStats?.(s),old=equipped&&window.V010Combat?.getItemStats?.(equipped);
     const fallback={armor:def.armor,capacity:def.capacity};const stats=current||fallback;
     const names={armor:'Защита',hp:'HP',health:'HP',maxHealth:'Макс. HP',speed:'Скорость',damage:'Урон',spread:'Разброс',accuracy:'Точность',magazine:'Магазин',capacity:'Мест',mag:'Магазин',reloadMs:'Перезарядка',recoil:'Отдача',delay:'Интервал выстрела'};
-    const formatStat=(key,n)=>['speed','accuracy'].includes(key)?Math.round(n*100)+'%':['spread','recoil'].includes(key)?(n*180/Math.PI).toFixed(2)+'°':key==='reloadMs'?(n/1000).toFixed(1)+' с':(Math.round(n*100)/100)+(key==='armor'?'%':'');
-    if(stats){const box=document.createElement('div');box.className='v010ItemStats';for(const [key,value] of Object.entries(stats)){if(!names[key]||!Number.isFinite(value))continue;const row=document.createElement('div'),baseline=old?.[key]??(equipped&&ITEM[equipped.type]?.[key]);row.textContent=names[key]+': '+formatStat(key,value)+(Number.isFinite(baseline)&&equipped!==s?' · надето '+formatStat(key,baseline):'');box.append(row);}body.append(box);}
+    const formatStat=(key,n)=>['speed','accuracy'].includes(key)?Math.round(n*100)+'%':['spread','recoil'].includes(key)?I18n.numeric(n*180/Math.PI,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+'°':key==='reloadMs'?I18n.numeric(n/1000,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' с':(Math.round(n*100)/100)+(key==='armor'?'%':'');
+    if(stats){const box=document.createElement('div');box.className='v010ItemStats';for(const [key,value] of Object.entries(stats)){if(!names[key]||!Number.isFinite(value))continue;const row=document.createElement('div'),baseline=old?.[key]??(equipped&&ITEM[equipped.type]?.[key]);I18n.assign(row,"textContent",names[key]+': '+formatStat(key,value)+(Number.isFinite(baseline)&&equipped!==s?' · надето '+formatStat(key,baseline):''));box.append(row);}body.append(box);}
     const actions=document.createElement('div');actions.className='v010DetailActions';
     if(where==='equipment')actions.append(button('Снять',()=>{if(unequip(index))closeOverlay(o);}));
     else{
@@ -195,8 +195,8 @@ window.V010Inventory=(()=>{
       if(where==='bag'&&def.equip)actions.append(button('Надеть',()=>{if(equip(index))closeOverlay(o);}));
       if(where==='bag'&&def.hand)actions.append(button('Быстрый слот',()=>{window.V010Combat?.ensure?.(s);selectUid(s.type,s.uid);closeOverlay(o);openHandAssignment(s.type);}));
       if(activeStorage!==null&&el('storageOverlay').classList.contains('open'))actions.append(button(where==='bag'?'В ящик':'В рюкзак',()=>{transfer(where,index,where==='bag'?activeStorage:'bag');closeOverlay(o);}));
-      if(s.qty>1){const input=document.createElement('input');input.type='number';input.min='1';input.max=s.qty-1;input.value=Math.floor(s.qty/2);input.setAttribute('aria-label','Количество для разделения');actions.append(input,button('Разделить',()=>{if(split(where,index,Math.floor(Number(input.value))))closeOverlay(o);else message('Для разделения нужна пустая ячейка');}));}
-      actions.append(button('Уничтожить',()=>{if(confirm('Уничтожить «'+def.name+'»'+(s.level?' +'+s.level:'')+'? Предмет будет потерян.')){list(where)[index]=null;notifyChange();closeOverlay(o);}}));
+      if(s.qty>1){const input=document.createElement('input');input.type='number';input.min='1';input.max=s.qty-1;input.value=Math.floor(s.qty/2);I18n.setAttr(input,'aria-label','Количество для разделения');actions.append(input,button('Разделить',()=>{if(split(where,index,Math.floor(Number(input.value))))closeOverlay(o);else message('Для разделения нужна пустая ячейка');}));}
+      actions.append(button('Уничтожить',()=>{if(confirm(I18n.text('Уничтожить «'+def.name+'»'+(s.level?' +'+s.level:'')+'? Предмет будет потерян.'))){list(where)[index]=null;notifyChange();closeOverlay(o);}}));
     }
     body.append(actions);openOverlay(o);
   }
@@ -221,7 +221,7 @@ window.V010Inventory=(()=>{
       }
     }
     if(!d.active&&dist<7)return;
-    if(!d.active){d.active=true;d.ghost=document.createElement('div');d.ghost.className='v010DragGhost';d.ghost.innerHTML=itemIconHTML(d.item.type);document.body.append(d.ghost);d.node.classList.add('dragging');}
+    if(!d.active){d.active=true;d.ghost=document.createElement('div');d.ghost.className='v010DragGhost';I18n.assign(d.ghost,"innerHTML",itemIconHTML(d.item.type));document.body.append(d.ghost);d.node.classList.add('dragging');}
     e.preventDefault();d.ghost.style.left=(e.clientX-27)+'px';d.ghost.style.top=(e.clientY-27)+'px';
     d.target?.classList.remove('v010DropTarget');d.target=targetAt(e.clientX,e.clientY);d.target?.classList.add('v010DropTarget');
     // Scroll only the panel under the pointer; this permits moving to the end of a large chest.
@@ -254,7 +254,7 @@ window.V010Inventory=(()=>{
   },{passive:false,capture:true});
   document.addEventListener('pointermove',pointerMove,{passive:false});document.addEventListener('pointerup',e=>pointerEnd(e));document.addEventListener('pointercancel',e=>pointerEnd(e,true));
   toolbar('inventoryGrid','bag');toolbar('storageContents',()=>activeStorage,true);toolbar('storageBag','bag');
-  el('storageSettings').textContent='⚙';el('storageSettings').title='Название и значок ящика';el('storageSettings').setAttribute('aria-label','Настроить ящик');
+  I18n.assign(el('storageSettings'),"textContent",'⚙');I18n.assign(el('storageSettings'),"title",'Название и значок ящика');I18n.setAttr(el('storageSettings'),'aria-label','Настроить ящик');
   v09Style(`
     .v010Slot{min-height:57px!important;height:57px!important;padding:3px!important;touch-action:none;background:#162428;border:1px solid #415454;color:#e5ece8;cursor:pointer;position:relative;border-radius:8px}
     .v010Slot .ico{height:47px!important;display:flex;align-items:center;justify-content:center}.v010Slot .ico .itemIcon{width:46px!important;height:46px!important;object-fit:contain}

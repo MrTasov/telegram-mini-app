@@ -95,7 +95,7 @@ window.V011Farm=(()=>{
   function renderWater(){
     const box=el('v011WaterStatus');if(!box)return;
     const growing=window.farmState.filter(st=>st.crop!==null&&growth(st,state.at)<cropTotal(st)).length;
-    box.textContent=Math.ceil(state.water)+' / '+CAPACITY+' · '+(state.water<=0||!powered()?'Рост замедлен':spraying()?'Автоматический полив':growing?'Автополив включён':'Нет растущих культур');
+    I18n.assign(box,"textContent",Math.ceil(state.water)+' / '+CAPACITY+' · '+(state.water<=0||!powered()?'Рост замедлен':spraying()?'Автоматический полив':growing?'Автополив включён':'Нет растущих культур'));
     const meter=el('v011WaterFill');if(meter)meter.style.width=state.water+'%';
     const btn=el('v011WaterRefill');if(btn)btn.disabled=state.water>CAPACITY-1||bagCount('water')<=0;
   }
@@ -103,7 +103,7 @@ window.V011Farm=(()=>{
     settle();let overlay=el('v011Irrigation');
     if(!overlay){
       overlay=v09Overlay('v011Irrigation','Полив огорода');
-      const body=overlay.querySelector('.v09Body');body.innerHTML='<div class="v011FarmTankIcon">'+itemIconHTML('water')+'</div><div id="v011WaterStatus"></div><div class="v011FarmMeter"><i id="v011WaterFill"></i></div><p class="v011FarmHint">Бак автоматического полива. Снабжает грядки водой через электрический насос.<br>Насос · 0,5 кВт во время полива. Без воды или питания рост замедляется.</p><button id="v011WaterRefill" class="menuButton">Пополнить воду</button>';
+      const body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",'<div class="v011FarmTankIcon">'+itemIconHTML('water')+'</div><div id="v011WaterStatus"></div><div class="v011FarmMeter"><i id="v011WaterFill"></i></div><p class="v011FarmHint">Бак автоматического полива. Снабжает грядки водой через электрический насос.<br>Насос · 0,5 кВт во время полива. Без воды или питания рост замедляется.</p><button id="v011WaterRefill" class="menuButton">Пополнить воду</button>');
       el('v011WaterRefill').addEventListener('click',()=>refill());
     }
     renderWater();openOverlay(overlay);
@@ -272,13 +272,13 @@ window.V011Farm=(()=>{
           if(spray&&wet)drawSpray(x,y,i*50+c*10+r);
         }
       }
-      ctx.fillStyle='#bcc9a7';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(st.crop===null?'ГРЯДКА '+(i+1):window.farmCrops[st.crop].name,b.x+b.w/2,b.y+21);
-      if(st.crop!==null){ctx.fillStyle=p>=1?'#d4dea0':'#a8baa0';ctx.font='10px Arial';ctx.fillText(p>=1?'ГОТОВО':farmTimeLabel((cropTotal(st)-st[grownKey])/(state.water>0?1:DRY_RATE)),b.x+b.w/2,b.y+b.h-10);}
+      ctx.fillStyle='#bcc9a7';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text(st.crop===null?'ГРЯДКА '+(i+1):window.farmCrops[st.crop].name),b.x+b.w/2,b.y+21);
+      if(st.crop!==null){ctx.fillStyle=p>=1?'#d4dea0':'#a8baa0';ctx.font='10px Arial';ctx.fillText(I18n.text(p>=1?'ГОТОВО':farmTimeLabel((cropTotal(st)-st[grownKey])/(state.water>0?1:DRY_RATE))),b.x+b.w/2,b.y+b.h-10);}
     });
     const b=tankRect();ctx.fillStyle='#10212366';round(b.x+4,b.y+5,b.w,b.h,8);ctx.fill();const g=ctx.createLinearGradient(b.x,b.y,b.x+b.w,b.y);g.addColorStop(0,'#486c68');g.addColorStop(.5,'#96b4a4');g.addColorStop(1,'#456b67');ctx.fillStyle=g;round(b.x,b.y,b.w,b.h,9);ctx.fill();
     ctx.fillStyle='#173535';round(b.x+28,b.y+12,9,51,3);ctx.fill();ctx.fillStyle='#78c8d2';ctx.fillRect(b.x+30,b.y+61-state.water*.47,5,state.water*.47);ctx.fillStyle='#cadaaf';ctx.fillRect(b.x+29,b.y+14,1,46);
     ellipse(b.x+17,b.y+17,8,8,'#36574f');ellipse(b.x+17,b.y+17,5,5,'#8ea69a');pipe([[b.x+22,b.y],[b.x+22,mainY]],'#769e91',4);
-    ctx.textAlign='center';ctx.fillStyle='#d1ddd0';ctx.font='9px Arial';ctx.fillText(Math.ceil(state.water)+' л',b.x+b.w/2,b.y+b.h+15);
+    ctx.textAlign='center';ctx.fillStyle='#d1ddd0';ctx.font='9px Arial';ctx.fillText(I18n.text(Math.ceil(state.water)+' л'),b.x+b.w/2,b.y+b.h+15);
   }
   let floorPattern=null;
   function floor(){

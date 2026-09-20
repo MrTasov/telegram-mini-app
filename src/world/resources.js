@@ -107,12 +107,12 @@
   let wellOverlay;
   function renderWell(){
     if(!wellOverlay)wellOverlay=v09Overlay('v09Well','Колодец');
-    const body=wellOverlay.querySelector('.v09Body');body.innerHTML='';
+    const body=wellOverlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",'');
     const p=document.createElement('p');p.className='v09Muted';
-    p.textContent=`Ручной колодец работает без электричества. В рюкзаке: ${bagCount('water')} воды.`;
+    I18n.assign(p,"textContent",`Ручной колодец работает без электричества. В рюкзаке: ${bagCount('water')} воды.`);
     body.appendChild(p);
     const art=document.createElement('div');art.className='v09WellArt';
-    art.innerHTML='<span>💧</span><b>Вода для фермы</b><small>Наберите воду и пополните запас животных в бункере.</small>';
+    I18n.assign(art,"innerHTML",'<span>💧</span><b>Вода для фермы</b><small>Наберите воду и пополните запас животных в бункере.</small>');
     body.appendChild(art);
     for(const qty of [10,25,50]){
       const b=v09Button(`Набрать ${qty} воды`,()=>{
@@ -125,7 +125,7 @@
       });
       b.disabled=freeItemSpace(bag,'water',BAG_SLOTS)<1;body.appendChild(b);
     }
-    if(freeItemSpace(bag,'water',BAG_SLOTS)<1){const p=document.createElement('p');p.textContent='Рюкзак заполнен — освободите место.';body.appendChild(p);}
+    if(freeItemSpace(bag,'water',BAG_SLOTS)<1){const p=document.createElement('p');I18n.assign(p,"textContent",'Рюкзак заполнен — освободите место.');body.appendChild(p);}
   }
   const oldExecute=executeInteraction;
   executeInteraction=function(target){
@@ -166,10 +166,10 @@
       if(!document.hidden)createNoise(o.x,o.y,230);queueGameSave();
     }
     const bar=el('searchBarWrap');
-    if(mining){bar.style.display=menuOpen?'none':'block';bar.style.left=(worldToScreen(player.x,player.y).x-46)+'px';bar.style.top=(worldToScreen(player.x,player.y).y-62)+'px';el('searchBarFill').style.width=(100*mining.elapsed/mining.duration)+'%';}
+    if(mining){bar.style.display=menuOpen?'none':'block';positionWorkProgress(bar,62);el('searchBarFill').style.width=(100*mining.elapsed/mining.duration)+'%';}
   }
   const oldAction=updateAction;
-  updateAction=function(){oldAction();if(currentAction==='ore09')actionButton.textContent='⛏';if(currentAction==='well09')actionButton.textContent='💧';};
+  updateAction=function(){oldAction();if(currentAction==='ore09')I18n.assign(actionButton,"textContent",'⛏');if(currentAction==='well09')I18n.assign(actionButton,"textContent",'💧');};
 
   // Every static landmark is code-native canvas artwork, drawn in world coordinates.
   function polygon(points,fill,stroke,width=1){
@@ -177,7 +177,7 @@
     if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke();}
   }
   function line(points,color,width=1){ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
-  function label(text,x,y,color='#bac8b6',size=11){ctx.fillStyle=color;ctx.font=`600 ${size}px Arial`;ctx.textAlign='center';ctx.fillText(text,x,y);}
+  function label(text,x,y,color='#bac8b6',size=11){ctx.fillStyle=color;ctx.font=`600 ${size}px Arial`;ctx.textAlign='center';ctx.fillText(I18n.text(text),x,y);}
   function ellipse(x,y,rx,ry,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();}
   function sign(x,y,title,subtitle){
     ctx.fillStyle='#535749';ctx.fillRect(x-34,y+9,7,30);ctx.fillRect(x+27,y+9,7,30);

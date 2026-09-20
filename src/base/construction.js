@@ -87,8 +87,8 @@ window.V018Build=(()=>{
   function open(value){
     const r=record(value);if(!near(r)||!held())return false;selected=r.id;
     const overlay=v09Overlay('v018Structure',title(r)),body=overlay.querySelector('.v09Body');body.replaceChildren();
-    const hero=document.createElement('div');hero.className='v018BuildHero';hero.innerHTML=itemIconHTML('hammer')+'<div><b id="v018Level"></b><span id="v018HP"></span></div>';body.append(hero);
-    const meter=document.createElement('div');meter.className='v018BuildMeter';meter.innerHTML='<i id="v018HPFill"></i>';body.append(meter);
+    const hero=document.createElement('div');hero.className='v018BuildHero';I18n.assign(hero,"innerHTML",itemIconHTML('hammer')+'<div><b id="v018Level"></b><span id="v018HP"></span></div>');body.append(hero);
+    const meter=document.createElement('div');meter.className='v018BuildMeter';I18n.assign(meter,"innerHTML",'<i id="v018HPFill"></i>');body.append(meter);
     const costs=document.createElement('div');costs.className='v018BuildCosts';body.append(costs);
     const button=v09Button('',()=>{const q=record(selected);if(!q)return;if(q.object.hp<q.object.maxHp)start(q.id);else upgrade(q.id);});button.id='v018BuildButton';body.append(button);
     const note=document.createElement('p');note.className='v018BuildNote';body.append(note);
@@ -96,22 +96,22 @@ window.V018Build=(()=>{
   }
   function refresh(force=false){
     hud.style.display=job&&!menuOpen&&!document.hidden?'flex':'none';
-    if(job){const o=record(job.id)?.object;if(o)hudText.textContent='Ремонт · '+Math.floor(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU');}
+    if(job){const o=record(job.id)?.object;if(o)I18n.assign(hudText,"textContent",'Ремонт · '+Math.floor(o.hp).toLocaleString(I18n.locale)+' / '+o.maxHp.toLocaleString(I18n.locale));}
     if(!refs?.overlay.classList.contains('open'))return;
     const r=record(selected);if(!r)return;const o=r.object,full=o.hp>=o.maxHp,key=[o.level,full,count('concrete'),count('iron'),credit,near(r),held()].join('/');
-    refs.level.textContent=title(r)+' · '+o.level+' / '+maxLevel(r);refs.hp.textContent=Math.ceil(o.hp).toLocaleString('ru-RU')+' / '+o.maxHp.toLocaleString('ru-RU')+' HP';refs.fill.style.width=100*o.hp/o.maxHp+'%';
+    I18n.assign(refs.level,"textContent",title(r)+' · '+o.level+' / '+maxLevel(r));I18n.assign(refs.hp,"textContent",Math.ceil(o.hp).toLocaleString(I18n.locale)+' / '+o.maxHp.toLocaleString(I18n.locale)+' HP');refs.fill.style.width=100*o.hp/o.maxHp+'%';
     if(!force&&key===refs.signature)return;refs.signature=key;refs.costs.replaceChildren();
     const inputs=!full?{[definition(r).repair.material]:Math.ceil(Math.max(0,o.maxHp-o.hp-credit)/definition(r).repair.hpPerUnit)}:definition(r).costs[o.level+1]||{};
-    for(const [t,n] of Object.entries(inputs)){const cell=document.createElement('div');cell.className='v018BuildMaterial'+(count(t)<n?' missing':'');cell.dataset.buildMaterial=t;cell.innerHTML=itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+count(t)+' / '+n+'</small></span>';refs.costs.append(cell);}
-    refs.button.textContent=!full?'Ремонтировать':o.level>=maxLevel(r)?'Максимальный уровень':'Улучшить до '+(o.level+1)+' · '+definition(r).levels[o.level+1].toLocaleString('ru-RU')+' HP';refs.button.disabled=!near(r)||!held()||(full&&o.level>=maxLevel(r));
-    refs.note.textContent=!full?'1000 HP/сек. · 1 бетон = 1000 HP. Остаток смеси сохраняется.':o.level>=maxLevel(r)?'Укрепление полностью улучшено.':'Материалы из рюкзака. После улучшения прочность будет полной.';
+    for(const [t,n] of Object.entries(inputs)){const cell=document.createElement('div');cell.className='v018BuildMaterial'+(count(t)<n?' missing':'');cell.dataset.buildMaterial=t;I18n.assign(cell,"innerHTML",itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+count(t)+' / '+n+'</small></span>');refs.costs.append(cell);}
+    I18n.assign(refs.button,"textContent",!full?'Ремонтировать':o.level>=maxLevel(r)?'Максимальный уровень':'Улучшить до '+(o.level+1)+' · '+definition(r).levels[o.level+1].toLocaleString(I18n.locale)+' HP');refs.button.disabled=!near(r)||!held()||(full&&o.level>=maxLevel(r));
+    I18n.assign(refs.note,"textContent",!full?'1000 HP/сек. · 1 бетон = 1000 HP. Остаток смеси сохраняется.':o.level>=maxLevel(r)?'Укрепление полностью улучшено.':'Материалы из рюкзака. После улучшения прочность будет полной.');
   }
   const interactions=interactionObjects;interactionObjects=function(which=scene){const out=interactions(which);if(!held()||(which==='surface'&&V013City.floor))return out;const available=[...structures.values()].filter(r=>r.scene===which);const ids=new Set(available.map(r=>r.id));return [...out.filter(o=>!ids.has(o.id)),...available.map(target)];};
   const hit=hitInteraction;hitInteraction=function(x,y){if(held()&&(scene!=='surface'||!V013City.floor)){const r=[...structures.values()].find(r=>r.scene===scene&&rectHit(x,y,7,r.object));if(r)return target(r);}return hit(x,y);};
   const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind==='repair018'){const r=record(o.ref);if(!r)return;if(r.object.hp<r.object.maxHp)start(r.id);else open(r.id);return;}
     if(o&&isBroken(o.id)&&!V015Base.byId.has(o.id)){message('Дверь разрушена · восстановите её молотом');return;}return execute(o,...args);};
   const approach=approachObject;approachObject=function(o,...args){if(o?.kind==='repair018'&&near(record(o.ref)))return executeInteraction(o);return approach(o,...args);};
-  const action=updateAction;updateAction=function(...args){const out=action(...args);if(held()){const candidates=[...structures.values()].filter(near);candidates.sort((a,b)=>{const p=contactPoint(a.object,player.x,player.y),q=contactPoint(b.object,player.x,player.y);return Math.hypot(player.x-p.x,player.y-p.y)-Math.hypot(player.x-q.x,player.y-q.y);});if(candidates.length){const r=candidates[0];interactionTarget=currentActionObject=target(r);currentAction='repair018';actionButton.innerHTML=itemIconHTML('hammer');actionButton.classList.add('available');actionButton.classList.remove('inactive');actionButton.setAttribute('aria-label',interactionTarget.name);}}return out;};
+  const action=updateAction;updateAction=function(...args){const out=action(...args);if(held()){const candidates=[...structures.values()].filter(near);candidates.sort((a,b)=>{const p=contactPoint(a.object,player.x,player.y),q=contactPoint(b.object,player.x,player.y);return Math.hypot(player.x-p.x,player.y-p.y)-Math.hypot(player.x-q.x,player.y-q.y);});if(candidates.length){const r=candidates[0];interactionTarget=currentActionObject=target(r);currentAction='repair018';I18n.assign(actionButton,"innerHTML",itemIconHTML('hammer'));actionButton.classList.add('available');actionButton.classList.remove('inactive');I18n.setAttr(actionButton,'aria-label',interactionTarget.name);}}return out;};
   const hurt=damagePlayer;damagePlayer=function(...args){const hp=player.health,out=hurt(...args);if(player.health<hp)stop();return out;};
   const solids=solidObjects;solidObjects=function(which=scene){return solids(which).filter(o=>!isBroken(o.id));};
   const oldDoorDraw=v09DrawDoor;v09DrawDoor=function(d){if(!isBroken(d.id))oldDoorDraw(d);else{ctx.save();ctx.strokeStyle='#7d898466';ctx.lineWidth=2;ctx.strokeRect(d.x,d.y,d.w,d.h);ctx.restore();}};
@@ -124,13 +124,13 @@ window.V018Build=(()=>{
       const distance=Math.hypot(cx-player.x,cy-player.y);
       if(!holding){
         if(!V015Base.byId.has(r.id)&&o.hp>0&&o.hp<o.maxHp&&(distance<125||performance.now()-(o.hitAt||0)<1900)){
-          ctx.save();ctx.fillStyle='#172b30dd';ctx.fillRect(cx-26,o.y-14,52,4);ctx.fillStyle='#d5bb87';ctx.fillRect(cx-26,o.y-14,52*o.hp/o.maxHp,4);ctx.font='8px Arial';ctx.textAlign='center';ctx.fillStyle='#d7dfd1';ctx.fillText(Math.ceil(o.hp)+' / '+o.maxHp,cx,o.y-18);ctx.restore();
+          ctx.save();ctx.fillStyle='#172b30dd';ctx.fillRect(cx-26,o.y-14,52,4);ctx.fillStyle='#d5bb87';ctx.fillRect(cx-26,o.y-14,52*o.hp/o.maxHp,4);ctx.font='8px Arial';ctx.textAlign='center';ctx.fillStyle='#d7dfd1';ctx.fillText(I18n.text(Math.ceil(o.hp)+' / '+o.maxHp),cx,o.y-18);ctx.restore();
         }
         continue;
       }
       if(distance>210)continue;
       ctx.save();const active=job?.id===r.id;ctx.strokeStyle=active?'#c7ce9fbb':'#b5c6b477';ctx.lineWidth=1;ctx.setLineDash(o.hp?[]:[5,4]);ctx.strokeRect(o.x-1,o.y-1,o.w+2,o.h+2);ctx.setLineDash([]);
-      ctx.fillStyle='#132421df';ctx.fillRect(cx-34,cy-15,68,25);ctx.fillStyle='#b9cbbf';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText('Ур. '+o.level+' · '+Math.round(o.hp).toLocaleString('ru-RU'),cx,cy-4);ctx.fillStyle='#42514b';ctx.fillRect(cx-28,cy+2,56,3);ctx.fillStyle='#9abb93';ctx.fillRect(cx-28,cy+2,56*o.hp/o.maxHp,3);ctx.restore();
+      ctx.fillStyle='#132421df';ctx.fillRect(cx-34,cy-15,68,25);ctx.fillStyle='#b9cbbf';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText(I18n.text('Ур. '+o.level+' · '+Math.round(o.hp).toLocaleString(I18n.locale)),cx,cy-4);ctx.fillStyle='#42514b';ctx.fillRect(cx-28,cy+2,56,3);ctx.fillStyle='#9abb93';ctx.fillRect(cx-28,cy+2,56*o.hp/o.maxHp,3);ctx.restore();
     }
     if(job){const r=record(job.id);if(!r||r.scene!==scene)return;const p=contactPoint(r.object,player.x,player.y),t=performance.now()/70;ctx.save();ctx.fillStyle='#d0c5a699';for(let i=0;i<3;i++){const a=t+i*2;ctx.fillRect(p.x+Math.sin(a)*7,p.y+Math.cos(a)*5,2,2);}ctx.restore();}
   }
@@ -147,7 +147,7 @@ window.V018Build=(()=>{
     if(!p)continue;const o={id:'stone018_'+i,type:'stone',...p,r:35+i%3*4,capacity:150,remaining:150,regrowMs:0};V09World.ores.push(o);stoneNodes.push(o);
   }
   function drawStone(o){if(!visibleOnScreen(o.x,o.y,100))return;ctx.save();ctx.translate(o.x,o.y);const mining=V09World.miningState();if(mining?.id===o.id)V012Effects.oreImpactTransform(mining);
-    ctx.fillStyle='#15221d44';ctx.beginPath();ctx.ellipse(4,11,o.r,o.r*.65,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=o.remaining?1:.4;V011Art.draw('stone018',-o.r,-o.r,o.r*2,o.r*2);ctx.globalAlpha=1;ctx.fillStyle='#d2d5c6';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText('КАМЕНЬ',0,-o.r-10);if(Math.hypot(player.x-o.x,player.y-o.y)<160){ctx.font='9px Arial';ctx.fillText(o.remaining?o.remaining+' / '+o.capacity:Math.ceil(o.regrowMs/60000)+' мин.',0,o.r+14);}if(mining?.id===o.id)V012Effects.drawOreImpact(o,mining);ctx.restore();
+    ctx.fillStyle='#15221d44';ctx.beginPath();ctx.ellipse(4,11,o.r,o.r*.65,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=o.remaining?1:.4;V011Art.draw('stone018',-o.r,-o.r,o.r*2,o.r*2);ctx.globalAlpha=1;ctx.fillStyle='#d2d5c6';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text('КАМЕНЬ'),0,-o.r-10);if(Math.hypot(player.x-o.x,player.y-o.y)<160){ctx.font='9px Arial';ctx.fillText(I18n.text(o.remaining?o.remaining+' / '+o.capacity:Math.ceil(o.regrowMs/60000)+' мин.'),0,o.r+14);}if(mining?.id===o.id)V012Effects.drawOreImpact(o,mining);ctx.restore();
   }
   function enemyDoorStep(z,s,r,now,dt,dark){
     if(!window.V017Monsters?.isDayX())return false;

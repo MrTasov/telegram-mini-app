@@ -26,14 +26,14 @@ window.V0141Farm=(()=>{
     if(!left)farmState[index]={crop:null,plantedAt:0};else st.harvestLeft=left;
     if(moved){V010.emit('harvested',{type,qty:moved});queueGameSave();renderBag();message('Собрано: '+ITEM[type].name+' × '+moved+(left?' · осталось '+left:''));}else message('В рюкзаке нет места');return moved;
   }
-  function refresh(){for(const b of document.querySelectorAll('.farmCropBtn')){const n=Number(b.dataset.crop),available=stock(n);b.classList.toggle('selected',n===selected);b.classList.toggle('noPlantingMaterial',!available.bag);const badge=b.querySelector('small');if(badge)badge.textContent=available.bag?'В рюкзаке: '+available.bag:available.farm?'В ящике: '+available.farm:'Нет материала';b.setAttribute('aria-pressed',String(n===selected));}
-    const crop=farmCrops[selected],available=stock(selected),info=el('farmPlantInfo');if(info)info.textContent=crop.name+' · '+farmTimeLabel(farmGrowMs(selected))+'\nДля грядки: '+ITEM[seedType(selected)].name+' × 1 · в рюкзаке '+available.bag;
+  function refresh(){for(const b of document.querySelectorAll('.farmCropBtn')){const n=Number(b.dataset.crop),available=stock(n);b.classList.toggle('selected',n===selected);b.classList.toggle('noPlantingMaterial',!available.bag);const badge=b.querySelector('small');if(badge)I18n.assign(badge,"textContent",available.bag?'В рюкзаке: '+available.bag:available.farm?'В ящике: '+available.farm:'Нет материала');b.setAttribute('aria-pressed',String(n===selected));}
+    const crop=farmCrops[selected],available=stock(selected),info=el('farmPlantInfo');if(info)I18n.assign(info,"textContent",crop.name+' · '+farmTimeLabel(farmGrowMs(selected))+'\nДля грядки: '+ITEM[seedType(selected)].name+' × 1 · в рюкзаке '+available.bag);
     const p=el('farmPlantConfirm');if(p)p.disabled=farmState[window.activeFarmBed]?.crop!==null;
-    const take=el('farmSeedTake');if(take){take.hidden=available.bag>0||available.farm===0;take.disabled=!available.farm;take.textContent='Взять '+ITEM[seedType(selected)].name.toLowerCase()+' × 1 из ящика';}
-    const r=el('farmRecovery');if(r){r.hidden=!recovery.length;r.textContent='Забрать оставшийся урожай · '+recovery.reduce((n,s)=>n+s.qty,0);}}
+    const take=el('farmSeedTake');if(take){take.hidden=available.bag>0||available.farm===0;take.disabled=!available.farm;I18n.assign(take,"textContent",'Взять '+ITEM[seedType(selected)].name.toLowerCase()+' × 1 из ящика');}
+    const r=el('farmRecovery');if(r){r.hidden=!recovery.length;I18n.assign(r,"textContent",'Забрать оставшийся урожай · '+recovery.reduce((n,s)=>n+s.qty,0));}}
   function use(index){if(!closeEnough(index))return;V011Farm.settle();const st=farmState[index];if(!st)return;
     if(st.crop!==null){if(V011Farm.ready(index))harvest(index);else{const wait=Math.max(...V011Farm.plants(st).filter(p=>p.planted&&!p.harvested).map(p=>p.duration-p.elapsed),0);message('До урожая '+farmTimeLabel(wait/(V011Farm.state.water>0&&devicePowered('irrigation014')?1:.35)));}return;}
-    window.activeFarmBed=index;el('farmTitle').textContent='Грядка '+(index+1);refresh();openOverlay(el('farmOverlay'));
+    window.activeFarmBed=index;I18n.assign(el('farmTitle'),"textContent",'Грядка '+(index+1));refresh();openOverlay(el('farmOverlay'));
   }
   function recover(){for(const s of recovery)s.qty=addItem(s.type,s.qty);recovery=recovery.filter(s=>s.qty);refresh();renderBag();queueGameSave();if(recovery.length)message('Освободите место в рюкзаке');}
   function takeSeed(){
@@ -47,9 +47,9 @@ window.V0141Farm=(()=>{
   function bindMenu(){
     if(bound){refresh();return;}
     if(!plantingStock){const d=captureGameProgress();provideStock(d);recovery=d.farmRecovery0141;plantingStock=true;deliverRecovery();}
-    const subtitle=el('farmOverlay').querySelector('.subtitle');if(subtitle)subtitle.textContent='Выберите культуру. На грядку нужен один посадочный материал из рюкзака.';
+    const subtitle=el('farmOverlay').querySelector('.subtitle');if(subtitle)I18n.assign(subtitle,"textContent",'Выберите культуру. На грядку нужен один посадочный материал из рюкзака.');
     const buttons=[...document.querySelectorAll('.farmCropBtn')];
-    for(const b of buttons){const n=Number(b.dataset.crop),c=farmCrops[n];b.innerHTML=itemIconHTML(c.itemType)+'<span>'+c.name+'</span><small></small>';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();selected=n;refresh();});}
+    for(const b of buttons){const n=Number(b.dataset.crop),c=farmCrops[n];I18n.assign(b,"innerHTML",itemIconHTML(c.itemType)+'<span>'+c.name+'</span><small></small>');b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();selected=n;refresh();});}
     const grid=document.createElement('div');grid.className='farmPlantGrid';if(!buttons.length)return;buttons[0].before(grid);for(const b of buttons)grid.append(b);const end=grid;const info=document.createElement('p');info.id='farmPlantInfo';end.after(info);
     const take=v09Button('Взять из ящика',takeSeed);take.id='farmSeedTake';info.after(take);
     const confirm=v09Button('Посадить',()=>plant(window.activeFarmBed,selected));confirm.id='farmPlantConfirm';take.after(confirm);

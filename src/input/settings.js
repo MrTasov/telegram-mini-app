@@ -1,9 +1,9 @@
 /* Mode-specific presentation only; the existing touch layout editor is intact. */
 (()=>{
   const box=document.createElement('div');box.className='settingBox';box.id='controlModeSettings';
-  const label=document.createElement('label');label.className='settingTitle';label.textContent='CONTROL MODE';label.setAttribute('for','controlModeSelect');
+  const label=document.createElement('label');label.className='settingTitle';I18n.assign(label,"textContent",'CONTROL MODE');label.setAttribute('for','controlModeSelect');
   const select=document.createElement('select');select.id='controlModeSelect';select.setAttribute('aria-describedby','controlModeStatus');
-  for(const value of ['AUTO','PC','MOBILE']){const option=document.createElement('option');option.value=value;option.textContent=value;select.append(option);}
+  for(const value of ['AUTO','PC','MOBILE']){const option=document.createElement('option');option.value=value;I18n.assign(option,"textContent",value);select.append(option);}
   const status=document.createElement('div');status.id='controlModeStatus';status.setAttribute('role','status');
   const help=document.createElement('div');help.id='controlModeHelp';
   box.append(label,select,status,help);
@@ -26,14 +26,14 @@
   `);
   GameInput.mount((preference,mode)=>{
     select.value=preference;
-    status.textContent=(preference==='AUTO'?'AUTO → ':'Активен: ')+mode+(preference==='AUTO'?' · по возможностям устройства и последнему вводу':'');
-    help.textContent=mode==='PC'
+    I18n.assign(status,"textContent",(preference==='AUTO'?'AUTO → ':'Активен: ')+mode+(preference==='AUTO'?' · по возможностям устройства и последнему вводу':''));
+    I18n.assign(help,"textContent",mode==='PC'
       ?'ЛКМ — идти / объект / выбрать врага. Удержание ЛКМ — следовать за указателем. ПКМ — прицел и огонь: по выбранной цели, без цели — к курсору. R — перезарядка · I — инвентарь · 1–5 — слоты · M — карта · C — тихий ход · Esc — закрыть окно / настройки.'
-      :'Левый джойстик — движение. Правый — прицел / огонь, с выбранной целью — Fire. ✋ — действие · ↻ — перезарядка. Касание мира — идти / взаимодействовать / выбрать врага. Два пальца — масштаб. Расположение кнопок меняется в редакторе ниже.';
+      :'Левый джойстик — движение. Правый — прицел / огонь, с выбранной целью — Fire. ✋ — действие · ↻ — перезарядка. Касание мира — идти / взаимодействовать / выбрать врага. Два пальца — масштаб. Расположение кнопок меняется в редакторе ниже.');
     for(const id of ['moveControl','aimControl','actionButton'])el(id).setAttribute('aria-hidden',String(mode==='PC'));
-    el('bagButton').title='Персонаж и инвентарь'+(mode==='PC'?' · I':'');
-    el('settingsButton').title='Настройки'+(mode==='PC'?' · Esc':'');
-    el('v010Minimap').title=mode==='PC'?'Карта · M · удержание 1,5 с: прозрачность':'Касание: большая карта · удержание 1,5 с: 100% → 60% → 30%';
+    I18n.assign(el('bagButton'),"title",'Персонаж и инвентарь'+(mode==='PC'?' · I':''));
+    I18n.assign(el('settingsButton'),"title",'Настройки'+(mode==='PC'?' · Esc':''));
+    I18n.assign(el('v010Minimap'),"title",mode==='PC'?'Карта · M · удержание 1,5 с: прозрачность':'Касание: большая карта · удержание 1,5 с: 100% → 60% → 30%');
   });
 })();
 

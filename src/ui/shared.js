@@ -13,18 +13,18 @@ handSlots[3]='remote';
 if(storageChests[2].name==='Металл')storageChests[2].name='Железо';
 handSvg.remote='<rect x="26" y="5" width="47" height="59" rx="7" fill="#273e43" stroke="#91adb2" stroke-width="3"/><rect x="33" y="13" width="33" height="29" rx="3" fill="#122a2c"/><path d="M38 35V20h10v15m6 0V20h8v15" fill="none" stroke="#7bcdb0" stroke-width="3"/><circle cx="50" cy="52" r="5" fill="#a9d8ba"/>';
 handSvg.pickaxe='<path d="M28 60L64 14" stroke="#6b472b" stroke-width="10" stroke-linecap="round"/><path d="M28 58L63 14" stroke="#bf945b" stroke-width="6" stroke-linecap="round"/><path d="M27 18Q62 -2 86 28L62 18 50 18Z" fill="#b6c7cb" stroke="#526b74" stroke-width="2"/>';
-function v09Style(css){const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);return style;}
+function v09Style(css){const style=document.createElement('style');I18n.assign(style,"textContent",css);document.head.appendChild(style);return style;}
 function v09Button(label,fn,className=''){
-  const button=document.createElement('button');button.type='button';button.className='menuButton '+className;button.textContent=label;
+  const button=document.createElement('button');button.type='button';button.className='menuButton '+className;I18n.assign(button,"textContent",label);
   if(fn)button.addEventListener('click',fn);return button;
 }
 function v09Overlay(id,title){
-  if(el(id)){const existing=el(id);existing.querySelector('.v09Title').textContent=title;existing.querySelector('.panel').setAttribute('aria-label',title);return existing;}
+  if(el(id)){const existing=el(id);I18n.assign(existing.querySelector('.v09Title'),"textContent",title);I18n.setAttr(existing.querySelector('.panel'),'aria-label',title);return existing;}
   const overlay=document.createElement('div');overlay.id=id;overlay.className='overlay v09Overlay';
-  const panel=document.createElement('section');panel.className='panel v09Panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',title);
+  const panel=document.createElement('section');panel.className='panel v09Panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');I18n.setAttr(panel,'aria-label',title);
   const header=document.createElement('div');header.className='v09Header';
-  const heading=document.createElement('h2');heading.textContent=title;heading.className='v09Title';
-  const close=v09Button('×',()=>closeOverlay(overlay),'v09Close');close.setAttribute('aria-label','Закрыть');
+  const heading=document.createElement('h2');I18n.assign(heading,"textContent",title);heading.className='v09Title';
+  const close=v09Button('×',()=>closeOverlay(overlay),'v09Close');I18n.setAttr(close,'aria-label','Закрыть');
   header.append(heading,close);const body=document.createElement('div');body.className='v09Body';panel.append(header,body);overlay.append(panel);el('game').append(overlay);
   overlay.addEventListener('pointerdown',e=>{if(e.target===overlay){e.preventDefault();e.stopPropagation();closeOverlay(overlay);}});
   return overlay;

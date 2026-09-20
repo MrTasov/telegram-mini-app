@@ -565,11 +565,10 @@ function damagePlayer(amount){
     player.health = 0;
   }
 
-  el("healthText").textContent =
-    "❤️ " +
+  I18n.assign(el("healthText"),"textContent","❤️ " +
     Math.round(player.health) +
     "/" +
-    Math.round(player.maxHealth);
+    Math.round(player.maxHealth));
 
   playSound(
     sounds.playerHit,
@@ -622,8 +621,7 @@ function respawn(){
   player.health =
     player.maxHealth;
 
-  el("healthText").textContent =
-    "❤️ "+Math.round(player.health)+"/"+Math.round(player.maxHealth);
+  I18n.assign(el("healthText"),"textContent","❤️ "+Math.round(player.health)+"/"+Math.round(player.maxHealth));
 
   scene =
     "surface";
@@ -651,8 +649,7 @@ function respawn(){
   menuOpen =
     false;
 
-  el("locationName").textContent =
-    "БАЗА";
+  I18n.assign(el("locationName"),"textContent","БАЗА");
 
   el("deathOverlay").classList.remove(
     "open"
@@ -833,7 +830,7 @@ function useFarmBed(i){
   }
 
   window.activeFarmBed=i;
-  el("farmTitle").textContent="🌱 Грядка "+(i+1);
+  I18n.assign(el("farmTitle"),"textContent","🌱 Грядка "+(i+1));
   openOverlay(el("farmOverlay"));
 }
 

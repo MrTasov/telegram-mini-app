@@ -6,20 +6,20 @@ window.V012Map=(()=>{
   const button=v09Button('Настройки карты');button.id=previousButton.id;previousButton.remove();
   const options=el('v011MapFilterOptions'),close=el('v010MapClose');
   const headActions=document.createElement('div');headActions.className='v012MapActions';
-  button.textContent='⚙ Настройки карты';button.setAttribute('aria-controls',options.id);
-  button.setAttribute('aria-label','Настройки карты: какие объекты показывать');
-  close.textContent='×';close.setAttribute('aria-label','Закрыть карту');close.title='Закрыть карту';
+  I18n.assign(button,"textContent",'⚙ Настройки карты');button.setAttribute('aria-controls',options.id);
+  I18n.setAttr(button,'aria-label','Настройки карты: какие объекты показывать');
+  I18n.assign(close,"textContent",'×');I18n.setAttr(close,'aria-label','Закрыть карту');I18n.assign(close,'title','Закрыть карту');
   headActions.append(button,close);head.append(headActions);head.after(options);
-  options.setAttribute('role','group');options.setAttribute('aria-label','Объекты на обеих картах');
+  options.setAttribute('role','group');I18n.setAttr(options,'aria-label','Объекты на обеих картах');
   const description=document.createElement('div');description.className='v012MapFilterHint';
-  description.textContent='На мини-карте и карте местности';options.prepend(description);
+  I18n.assign(description,"textContent",'На мини-карте и карте местности');options.prepend(description);
   const labels={zombies:['●','Зомби','#ef626a'],trees:['▲','Деревья','#79bd83'],ore:['◆','Руда','#b0a6f2'],buildings:['■','Постройки и машины','#d4bd8e'],interactives:['+','Другие объекты','#82d3d5']};
   const inputs={};
   for(const [i,row] of [...options.querySelectorAll('label')].entries()){
     const key=Object.keys(labels)[i],[symbol,text,color]=labels[key],input=row.querySelector('input');
-    const title=row.querySelector('span');title.textContent=text;
-    const icon=document.createElement('span');icon.className='v012MapKey';icon.style.color=color;icon.textContent=symbol;icon.setAttribute('aria-hidden','true');
-    row.prepend(icon);row.append(input);input.id='v012MapLayer_'+key;input.setAttribute('role','switch');input.setAttribute('aria-label',text);inputs[key]=input;
+    const title=row.querySelector('span');I18n.assign(title,"textContent",text);
+    const icon=document.createElement('span');icon.className='v012MapKey';icon.style.color=color;I18n.assign(icon,"textContent",symbol);icon.setAttribute('aria-hidden','true');
+    row.prepend(icon);row.append(input);input.id='v012MapLayer_'+key;input.setAttribute('role','switch');I18n.setAttr(input,'aria-label',text);inputs[key]=input;
   }
   function setOptions(open){options.hidden=!open;button.setAttribute('aria-expanded',String(open));button.classList.toggle('v012Active',open);}
   // Replace the legacy handler: the same saved checkboxes now live above the map canvas.
@@ -30,8 +30,8 @@ window.V012Map=(()=>{
   V010Camera.showMap=function(...args){setOptions(false);return oldShow(...args);};
   // Settings has a closure-bound map opener in older versions; point it at the public opener.
   el('v010OpenMap').onclick=()=>V010Camera.showMap();
-  el('v010MapMark').textContent='Добавить метку';el('v010MapGoal').textContent='Выбрать цель';
-  el('v010MapDelete').textContent='Удалить метку';el('v011ClearMapGoal').textContent='Снять цель';
+  I18n.assign(el('v010MapMark'),"textContent",'Добавить метку');I18n.assign(el('v010MapGoal'),"textContent",'Выбрать цель');
+  I18n.assign(el('v010MapDelete'),"textContent",'Удалить метку');I18n.assign(el('v011ClearMapGoal'),"textContent",'Снять цель');
   v09Style(`
     #v010MapOverlay{position:fixed;box-sizing:border-box;padding:max(8px,var(--v011-game-top,10px)) max(8px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));}
     #v010MapOverlay .v010MapPanel{position:relative;display:flex;flex-direction:column;box-sizing:border-box;width:min(900px,100%);height:100%;max-height:780px;overflow:hidden;padding:11px;border-radius:13px;background:#152423f5;}
@@ -76,9 +76,9 @@ window.V012Windows=(()=>{
   function apply(){
     document.documentElement.style.setProperty('--v012-window-alpha',String(opacity/100));
     for(const button of buttons){
-      button.textContent='◐ '+opacity+'%';
+      I18n.assign(button,"textContent",'◐ '+opacity+'%');
       const label='Непрозрачность фона: '+opacity+'%. Нажмите, чтобы изменить';
-      button.title=label;button.setAttribute('aria-label',label);
+      I18n.assign(button,"title",label);I18n.setAttr(button,'aria-label',label);
     }
   }
   function setOpacity(value){
@@ -102,8 +102,8 @@ window.V012Windows=(()=>{
     if(!panel||!close||!title)continue;
     const header=document.createElement('div');header.className='v012InventoryHeader';
     title.before(header);header.append(title,close);
-    close.textContent='×';close.classList.add('v012InventoryClose');
-    close.title='Закрыть';close.setAttribute('aria-label','Закрыть');
+    I18n.assign(close,"textContent",'×');close.classList.add('v012InventoryClose');
+    I18n.assign(close,'title','Закрыть');I18n.setAttr(close,'aria-label','Закрыть');
   }
   apply();
   v09Style(`
@@ -209,7 +209,7 @@ window.V012Effects=(()=>{
       const g=ctx.createLinearGradient(-w/2,0,w/2,0);g.addColorStop(0,'#51463a');g.addColorStop(.45,'#97806a');g.addColorStop(1,'#564b3e');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(-w*.45,-h*.48,w*.90,h*.96,11);ctx.fill();ctx.fillStyle='#263c45';ctx.fillRect(-w*.33,-h*.20,w*.66,h*.46);
     }
     ctx.restore();
-    if(Math.hypot(player.x-o.x-o.w/2,player.y-o.y-o.h/2)<180){ctx.fillStyle='#dfdbc2';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО',o.x+o.w/2,o.y-10);}
+    if(Math.hypot(player.x-o.x-o.w/2,player.y-o.y-o.h/2)<180){ctx.fillStyle='#dfdbc2';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text(hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО'),o.x+o.w/2,o.y-10);}
   }
   drawParkedCars=function(){for(const o of scavenges)if(o.kind==='car')drawCar(o);};
   return{pickaxeSwing,oreImpactTransform,drawOreImpact,drawCar};

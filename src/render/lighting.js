@@ -8,7 +8,7 @@ window.V016Lighting=(()=>{
   function daylight(){return smooth((minute-300)/180)*(1-smooth((minute-1020)/180));}
   function capture(){return{schema:1,day,minute};}
   function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isInteger(d.day)||d.day<1||d.day>1000000||!Number.isFinite(d.minute)||d.minute<0||d.minute>=1440)throw Error('Некорректное время суток');return true;}
-  function hud(){const hours=Math.floor(minute/60),mins=Math.floor(minute%60),raid=day%10===0,text=(raid?'ДЕНЬ X · ':'ДЕНЬ ')+day+' · '+String(hours).padStart(2,'0')+':'+String(mins).padStart(2,'0');if(text!==lastHud){const node=el('v016WorldClock');if(node){node.textContent=text;node.style.color=raid?'#d6a083':'';}lastHud=text;}}
+  function hud(){const hours=Math.floor(minute/60),mins=Math.floor(minute%60),raid=day%10===0,text=(raid?'ДЕНЬ X · ':'ДЕНЬ ')+day+' · '+String(hours).padStart(2,'0')+':'+String(mins).padStart(2,'0');if(text!==lastHud){const node=el('v016WorldClock');if(node){I18n.assign(node,"textContent",text);node.style.color=raid?'#d6a083':'';}lastHud=text;}}
   function restore(d){validate(d);day=d?.day??1;minute=d?.minute??480;saveElapsed=0;lastHud='';shadowShapes.clear();droneKey='';hud();}
   function tick(ms){if(document.hidden||playerDead||!Number.isFinite(ms)||ms<=0)return;const dt=Math.min(ms,1000);minute+=dt/dayMs*1440;if(minute>=1440){const days=Math.floor(minute/1440);day=Math.min(1000000,day+days);minute%=1440;}saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
   // Existing left/right yard circuits retain their save IDs, priority, battery

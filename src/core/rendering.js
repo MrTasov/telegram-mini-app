@@ -9,8 +9,7 @@ function message(text){
   const box =
     el("message");
 
-  box.textContent =
-    text;
+  I18n.assign(box,"textContent",text);
 
   box.classList.add(
     "show"
@@ -43,8 +42,7 @@ function transition(title,callback){
   const fade =
     el("fade");
 
-  fade.textContent =
-    title;
+  I18n.assign(fade,"textContent",title);
 
   fade.classList.add(
     "show"
@@ -93,8 +91,7 @@ function enterBunker(){
       bullets.length =
         0;
 
-      el("locationName").textContent =
-        "БУНКЕР";
+      I18n.assign(el("locationName"),"textContent","БУНКЕР");
       queueGameSave();
 
     }
@@ -120,8 +117,7 @@ function leaveBunker(){
       bullets.length =
         0;
 
-      el("locationName").textContent =
-        "БАЗА";
+      I18n.assign(el("locationName"),"textContent","БАЗА");
       queueGameSave();
 
     }
@@ -186,7 +182,7 @@ function drawBunker(){
     ctx.fillStyle="rgba(255,255,255,.64)";
     ctx.font="12px Arial";
     ctx.textAlign="center";
-    ctx.fillText(label,(o.left+o.right)/2,o.top+34);
+    ctx.fillText(I18n.text(label),(o.left+o.right)/2,o.top+34);
   }
 
   // №2 — WORKSHOP (visual redesign; existing interaction preserved)
@@ -208,9 +204,9 @@ function drawBunker(){
   ctx.fillRect(145,300,245,78);
   ctx.strokeStyle="#83999d"; ctx.lineWidth=3; ctx.strokeRect(145,300,245,78);
   ctx.fillStyle="#dce8e9"; ctx.font="12px Arial"; ctx.textAlign="center";
-  ctx.fillText("МЕДИЦИНСКИЙ СТОЛ",267,330);
+  ctx.fillText(I18n.text("МЕДИЦИНСКИЙ СТОЛ"),267,330);
   ctx.font="19px Arial";
-  ctx.fillText("💊  🧪  🩹",267,359);
+  ctx.fillText(I18n.text("💊  🧪  🩹"),267,359);
 
   // Decorative examination bed along the lower wall
   ctx.fillStyle="#596568";
@@ -219,7 +215,7 @@ function drawBunker(){
   ctx.fillStyle="#cbd5d7";
   ctx.fillRect(160,658,55,42);
   ctx.fillStyle="#e8eeee"; ctx.font="10px Arial";
-  ctx.fillText("МЕДИЦИНСКАЯ КУШЕТКА",257,728);
+  ctx.fillText(I18n.text("МЕДИЦИНСКАЯ КУШЕТКА"),257,728);
 
   // Medicine cabinet on the left wall
   ctx.fillStyle="#e1e7e8";
@@ -236,7 +232,7 @@ function drawBunker(){
   ctx.fillStyle="#b7c5c7";
   ctx.beginPath(); ctx.ellipse(505,342,26,12,0,0,Math.PI*2); ctx.fill();
   ctx.fillStyle="#dce4e5"; ctx.font="9px Arial";
-  ctx.fillText("МОЙКА",505,366);
+  ctx.fillText(I18n.text("МОЙКА"),505,366);
 
   // Two compact supply crates beside the examination bed
   ctx.fillStyle="#59694f";
@@ -245,8 +241,8 @@ function drawBunker(){
   ctx.strokeStyle="#829174";
   ctx.strokeRect(430,650,55,52); ctx.strokeRect(500,650,55,52);
   ctx.fillStyle="#fff"; ctx.font="9px Arial";
-  ctx.fillText("БИНТЫ",457,681);
-  ctx.fillText("МЕД.",527,681);
+  ctx.fillText(I18n.text("БИНТЫ"),457,681);
+  ctx.fillText(I18n.text("МЕД."),527,681);
 
   // Door side and the central approach remain clear for movement.
   // №5 — POWER ROOM: FUEL -> GENERATOR -> BATTERY
@@ -282,7 +278,7 @@ function drawBunker(){
   ctx.fillRect(348,-153,66,20);
 
   ctx.fillStyle="#eee8dc"; ctx.font="11px Arial"; ctx.textAlign="center";
-  ctx.fillText("КУХНЯ • ГОТОВКА",310,-180);
+  ctx.fillText(I18n.text("КУХНЯ • ГОТОВКА"),310,-180);
 
   // LEFT WALL — refrigerator
   ctx.fillStyle="#596466";
@@ -291,7 +287,7 @@ function drawBunker(){
   ctx.strokeStyle="#778285"; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(110,0); ctx.lineTo(182,0); ctx.stroke();
   ctx.fillStyle="#dfe6e6"; ctx.font="10px Arial";
-  ctx.fillText("ХОЛОДИЛЬНИК",146,112);
+  ctx.fillText(I18n.text("ХОЛОДИЛЬНИК"),146,112);
 
   // BOTTOM WALL — dining table
   ctx.fillStyle="#624c37";
@@ -309,9 +305,9 @@ function drawBunker(){
   ctx.fillRect(110,145,72,78);
   ctx.strokeStyle="#786b57"; ctx.strokeRect(110,145,72,78);
   ctx.fillStyle="#d7c8a7"; ctx.font="14px Arial";
-  ctx.fillText("🥫",128,175);
-  ctx.fillText("🍞",161,175);
-  ctx.fillText("🥣",145,207);
+  ctx.fillText(I18n.text("🥫"),128,175);
+  ctx.fillText(I18n.text("🍞"),161,175);
+  ctx.fillText(I18n.text("🥣"),145,207);
 
   // Door side and central approach remain unobstructed.
   // №7 — LIVING ROOM, matched to the latest approved screenshot
@@ -370,7 +366,7 @@ function drawBunker(){
   ctx.fillStyle="#fff";
   ctx.font="20px Arial";
   ctx.textAlign="center";
-  ctx.fillText("ПОДЗЕМНАЯ ФЕРМА",(f.left+f.right)/2,f.top+22);
+  ctx.fillText(I18n.text("ПОДЗЕМНАЯ ФЕРМА"),(f.left+f.right)/2,f.top+22);
 
   // Rear wall and exit/hatch
   ctx.strokeStyle="#747878";
@@ -388,7 +384,7 @@ function drawBunker(){
   ctx.fillStyle="white";
   ctx.font="12px Arial";
   ctx.textAlign="center";
-  ctx.fillText("ВЫХОД",725,1187);
+  ctx.fillText(I18n.text("ВЫХОД"),725,1187);
 }
 
 /* =====================================================
@@ -498,7 +494,7 @@ function drawGate(){
     ctx.strokeStyle='#c5a36a';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x+8,y+10);ctx.lineTo(x+w/2-9,y+h-10);ctx.moveTo(x+w/2+9,y+h-10);ctx.lineTo(x+w-8,y+10);ctx.stroke();
     ctx.fillStyle='#d7b475';ctx.fillRect(x+w/2-6,y+h/2-5,12,10);
   }
-  ctx.fillStyle=gateOpen?'#c5d4be':'#dec18c';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(gateOpen?'ВОРОТА ОТКРЫТЫ':'ВОРОТА ЗАКРЫТЫ',x+w/2,y-13);
+  ctx.fillStyle=gateOpen?'#c5d4be':'#dec18c';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text(gateOpen?'ВОРОТА ОТКРЫТЫ':'ВОРОТА ЗАКРЫТЫ'),x+w/2,y-13);
 }
 function drawParkedCars(){
   for(const o of scavenges){
@@ -509,7 +505,7 @@ function drawParkedCars(){
     ctx.fillStyle='#273a40';ctx.fillRect(-25,-25,12,50);ctx.fillRect(20,-25,16,50);
     ctx.strokeStyle='#8e897a';ctx.lineWidth=1;ctx.strokeRect(-10,-26,26,52);ctx.beginPath();ctx.moveTo(-53,-22);ctx.lineTo(-32,-22);ctx.moveTo(-53,22);ctx.lineTo(-32,22);ctx.stroke();
     ctx.fillStyle='#bdaf79';ctx.fillRect(59,-24,5,12);ctx.fillRect(59,12,5,12);ctx.fillStyle='#793b32';ctx.fillRect(-65,-24,4,10);ctx.fillRect(-65,14,4,10);ctx.restore();
-    ctx.fillStyle='#eee1bc';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО',o.x+o.w/2,o.y-10);
+    ctx.fillStyle='#eee1bc';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text(hasSearchableLoot(o)?'ОБЫСКАТЬ':'ПУСТО'),o.x+o.w/2,o.y-10);
   }
 }
 function drawNavigationTarget(){
@@ -524,7 +520,7 @@ function drawNavigationTarget(){
   ctx.save();ctx.strokeStyle='#e0b36a';ctx.lineWidth=2;ctx.setLineDash([6,5]);
   if(o.r!==undefined){ctx.beginPath();ctx.arc(o.x,o.y,o.r+7,0,Math.PI*2);ctx.stroke();}
   else ctx.strokeRect(o.x-6,o.y-6,o.w+12,o.h+12);
-  ctx.setLineDash([]);ctx.font='12px Arial';ctx.textAlign='center';ctx.fillStyle='#f0d2a2';ctx.fillText(o.name,o.x+(o.w||0)/2,o.y-(o.r||0)-16);ctx.restore();
+  ctx.setLineDash([]);ctx.font='12px Arial';ctx.textAlign='center';ctx.fillStyle='#f0d2a2';ctx.fillText(I18n.text(o.kind==='storage'?I18n.crateName(storageChests[o.ref],o.ref):o.name),o.x+(o.w||0)/2,o.y-(o.r||0)-16);ctx.restore();
 }
 
 

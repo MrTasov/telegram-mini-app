@@ -8,7 +8,7 @@ window.V0161UI=(()=>{
     if(pointerGesture)pointerGesture.opened=true;
     o.style.zIndex=String(++serial);const panel=o.querySelector('.panel');
     if(panel&&!o.querySelector('.v09Close,.v012InventoryClose,.v0161Close,#v010MapClose,#closeLoot')){
-      const b=v09Button('×',()=>closeOverlay(o),'v0161Close');b.title='Закрыть';b.setAttribute('aria-label','Закрыть');panel.prepend(b);
+      const b=v09Button('×',()=>closeOverlay(o),'v0161Close');I18n.assign(b,"title",'Закрыть');I18n.setAttr(b,'aria-label','Закрыть');panel.prepend(b);
     }
     if(o.id==='v014DronePanel'||o.id==='storageOverlay')refreshQuick();sync();
   }
@@ -59,10 +59,10 @@ window.V0161UI=(()=>{
   function refreshQuick(){
     for(const id of ['storageOverlay','v014DronePanel']){
       const o=el(id),p=o?.querySelector('.v09Body')||o?.querySelector('.panel');if(!p)continue;
-      let wrap=o.querySelector('.v0161QuickWrap');if(!wrap){wrap=document.createElement('section');wrap.className='v0161QuickWrap';const title=document.createElement('div');title.textContent='Быстрые слоты · удерживайте для переноса';title.className='v0161QuickTitle';const grid=document.createElement('div');grid.className='v0161QuickGrid';wrap.append(title,grid);p.append(wrap);}
+      let wrap=o.querySelector('.v0161QuickWrap');if(!wrap){wrap=document.createElement('section');wrap.className='v0161QuickWrap';const title=document.createElement('div');I18n.assign(title,"textContent",'Быстрые слоты · удерживайте для переноса');title.className='v0161QuickTitle';const grid=document.createElement('div');grid.className='v0161QuickGrid';wrap.append(title,grid);p.append(wrap);}
       const grid=wrap.querySelector('.v0161QuickGrid');for(let i=0;i<5;i++){
         const sig=JSON.stringify(quick.items[i]||null),old=grid.children[i];if(old?.dataset.signature===sig)continue;
-        const cell=inv.cell('quick',i,quick.items[i]);cell.dataset.signature=sig;cell.title=(i+1)+' · '+(ITEM[quick.items[i]?.type]?.name||'Пусто');const n=document.createElement('span');n.className='v010QuickMark';n.textContent=i+1;cell.append(n);if(old){old.before(cell);old.remove();}else grid.append(cell);
+        const cell=inv.cell('quick',i,quick.items[i]);cell.dataset.signature=sig;I18n.assign(cell,'title',(i+1)+' · '+(ITEM[quick.items[i]?.type]?.name||'Пусто'));const n=document.createElement('span');n.className='v010QuickMark';I18n.assign(n,"textContent",i+1);cell.append(n);if(old){old.before(cell);old.remove();}else grid.append(cell);
       }
     }
   }
@@ -73,8 +73,8 @@ window.V0161UI=(()=>{
   const oldItemDetails=V011UI.details;V011UI.details=function(where,i){oldItemDetails(where,i);if(!['quick','drone','upgrade'].includes(where))return;const s=inv.list(where)?.[i],body=el('v010ItemDetails')?.querySelector('.v09Body');if(!s||!body)return;
     const b=v09Button('В рюкзак',()=>{if(inv.transfer(where,i,'bag'))closeOverlay(el('v010ItemDetails'));else message('Нужна свободная ячейка в рюкзаке');});b.disabled=!!s.locked;body.append(b);
   };
-  const sneak=el('v010SneakButton');sneak.title='Тихий шаг · C';sneak.setAttribute('aria-label','Тихий шаг');
-  sneak.innerHTML='<svg viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="boot161" x2="0" y2="1"><stop stop-color="#dee4d6"/><stop offset="1" stop-color="#8ea699"/></linearGradient></defs><path d="M13 5h13l-1 15 8 6c3 2 4 5 2 7H8c-3-5-1-9 1-12l3-4Z" fill="url(#boot161)" stroke="#dce9df" stroke-width="1.1"/><path d="M10 28h24M15 12l8 1m-8 4 7 1m-7 4 9 1M9 34h24" fill="none" stroke="#425d54" stroke-width="2"/><path d="M3 17v5m34-7v6" stroke="#b8cbbd" stroke-width="1.5"/></svg>';
+  const sneak=el('v010SneakButton');I18n.assign(sneak,'title','Тихий шаг · C');I18n.setAttr(sneak,'aria-label','Тихий шаг');
+  I18n.assign(sneak,"innerHTML",'<svg viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="boot161" x2="0" y2="1"><stop stop-color="#dee4d6"/><stop offset="1" stop-color="#8ea699"/></linearGradient></defs><path d="M13 5h13l-1 15 8 6c3 2 4 5 2 7H8c-3-5-1-9 1-12l3-4Z" fill="url(#boot161)" stroke="#dce9df" stroke-width="1.1"/><path d="M10 28h24M15 12l8 1m-8 4 7 1m-7 4 9 1M9 34h24" fill="none" stroke="#425d54" stroke-width="2"/><path d="M3 17v5m34-7v6" stroke="#b8cbbd" stroke-width="1.5"/></svg>');
   v09Style(`
     #v010Minimap{width:120px!important;height:120px!important;top:calc(var(--v011-game-top) + 100px)!important;transform:none!important;z-index:35!important}
     @media(max-width:500px){#v010Minimap{width:106px!important;height:106px!important}}
@@ -88,7 +88,7 @@ window.V0161UI=(()=>{
     .v0161QuickGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.v0161QuickGrid .v010Slot{min-width:0!important}
     #quickSlots>button,#hotbar>button{touch-action:pan-y!important;user-select:none;-webkit-touch-callout:none}
   `);
-  sync();renderQuickSlots();return{sync,opened,closed,allowMove,refreshQuick,controls};
+  sync();renderQuickSlots();return{sync,opened,closed,allowMove,refreshQuick,controls,topOverlay};
 })();
 
 // Save migration is ordered before all historical validators. Never reset a

@@ -24,7 +24,7 @@ window.V0163Loot=(()=>{
   const takeButton=el('takeAllLoot'),closeButton=el('closeLoot');
   el('v014DroneLoot')?.remove();panel.querySelector('.v0161Close')?.remove();
   const droneButton=v09Button('Забрать дроном',()=>take('drone'));droneButton.id='v014DroneLoot';
-  takeButton.textContent='Забрать';actions.append(takeButton,droneButton,closeButton);panel.append(actions);
+  I18n.assign(takeButton,"textContent",'Забрать');actions.append(takeButton,droneButton,closeButton);panel.append(actions);
   function render(){
     if(source!==activeLootObject){source=activeLootObject;selected=-1;capacity=6;}
     if(!activeLoot?.[selected])selected=-1;
@@ -34,8 +34,8 @@ window.V0163Loot=(()=>{
     for(let i=0;i<capacity;i++){
       const s=activeLoot?.[i],cell=document.createElement('div');cell.className='v010Slot v163LootCell';
       if(s){cell.dataset.lootIndex=i;cell.setAttribute('role','button');cell.tabIndex=0;
-        cell.innerHTML='<span class="ico">'+itemIconHTML(s.type)+'</span><span class="qty">'+s.qty+'</span>';
-        cell.title=ITEM[s.type]?.name||s.type;
+        I18n.assign(cell,"innerHTML",'<span class="ico">'+itemIconHTML(s.type)+'</span><span class="qty">'+s.qty+'</span>');
+        I18n.assign(cell,'title',ITEM[s.type]?.name||s.type);
         const choose=()=>{selected=selected===i?-1:i;refreshSelection();};
         cell.addEventListener('click',choose);cell.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}});
       }
@@ -75,7 +75,7 @@ window.V0163Loot=(()=>{
 
 window.V0163Vitals=(()=>{
   const health=el('healthText'),oldBox=health.closest('.hudBox'),bar=document.createElement('div');
-  bar.id='v163Vitals';bar.innerHTML='<div class="v163Health" role="meter" aria-label="Здоровье"><span class="v163HealthFill"></span></div><div class="v163Hunger" title="Сытость"><span class="v163HungerFill"></span><span class="v163HungerLabel">🍖 <span id="v163HungerValue">100</span></span></div>';
+  bar.id='v163Vitals';I18n.assign(bar,"innerHTML",'<div class="v163Health" role="meter" aria-label="Здоровье"><span class="v163HealthFill"></span></div><div class="v163Hunger" title="Сытость"><span class="v163HungerFill"></span><span class="v163HungerLabel">🍖 <span id="v163HungerValue">100</span></span></div>');
   bar.querySelector('.v163Health').append(health);document.body.append(bar);oldBox?.remove();
   let signature='';
   function refresh(){
@@ -83,9 +83,9 @@ window.V0163Vitals=(()=>{
     // this release does not introduce a new hunger mechanic.
     const hp=Math.max(0,Math.round(player.health)),max=Math.max(1,Math.round(player.maxHealth)),hunger=Math.round(player.hunger??100),key=[hp,max,hunger].join('/');
     if(key===signature)return;signature=key;
-    health.textContent='❤️ '+hp+' / '+max;const meter=bar.querySelector('.v163Health');
+    I18n.assign(health,"textContent",'❤️ '+hp+' / '+max);const meter=bar.querySelector('.v163Health');
     meter.setAttribute('aria-valuemin','0');meter.setAttribute('aria-valuemax',String(max));meter.setAttribute('aria-valuenow',String(hp));
-    bar.style.setProperty('--hunger',clamp(hunger,0,100)+'%');bar.style.setProperty('--hp',Math.min(100,hp/max*100)+'%');bar.classList.toggle('low',hp/max<.3);el('v163HungerValue').textContent=hunger;
+    bar.style.setProperty('--hunger',clamp(hunger,0,100)+'%');bar.style.setProperty('--hp',Math.min(100,hp/max*100)+'%');bar.classList.toggle('low',hp/max<.3);I18n.assign(el('v163HungerValue'),"textContent",hunger);
   }
   const old=update;update=function(...args){const out=old(...args);refresh();return out;};
   v09Style(`

@@ -1,0 +1,3827 @@
+{
+  "version": "0.25.0",
+  "passed": 950,
+  "failed": 0,
+  "runs": [
+    {
+      "id": "controls",
+      "exitCode": 0,
+      "passed": 64,
+      "failed": 0
+    },
+    {
+      "id": "map-workbar",
+      "exitCode": 0,
+      "passed": 55,
+      "failed": 0
+    },
+    {
+      "id": "interactions",
+      "exitCode": 0,
+      "passed": 831,
+      "failed": 0
+    }
+  ],
+  "checks": [
+    {
+      "id": "controls.en.mode.initial.desktop",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.initial.narrowDesktop",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.initial.wideTouch",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.initial.touchLaptop",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.initial.touchFallback",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.initial.manualPC",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.initial.manualMobile",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.initial.corruptSetting",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.clickMovesExactlyOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.hiddenJoystickHasNoHitZone",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.noWASD",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.holdToFollowPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.hoverNeverMovesOrFires",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.RMBFireUsesExistingWeaponOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.RMBAimFollowsCursor",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.targetLockPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.buttonChordDoesNotMove",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.release.cancel",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.release.lostCapture",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.release.blur",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.release.hidden",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.release.menu",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.release.transition",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.release.death",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.reload.RAndButtonSameOwner",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.keyboard.noRepeatNoModifiersNoEditableInput",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.keyboard.layoutIndependentCodes",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.quickSlot.1",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.quickSlot.2",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.quickSlot.3",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.quickSlot.4",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.quickSlot.5",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.inventoryToggle",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.mapToggle",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.escapeSettings",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.escapeOneNestedWindowOnly",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.escapeMapOptionsFirst",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.escapeCannotDismissDeath",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.shortcutCannotActThroughMenu",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.pc.contextmenuWorldOnly",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.switchReleasesBothJoysticks",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.switchReleasesRMB",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.noDuplicateListenersOrPlayer",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.savedSeparatelyFromAllSlots",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.persistenceReload",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.settingsSelectionUsesLiveSwitch",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.invalidValueRejected",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.storageDeniedIsSafe",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.auto.actualPointerChangesMode",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.auto.compatibilityClickCannotChangeModeOrDuplicate",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.auto.manualOverrideWins",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.auto.capabilitiesCanChange",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mode.layoutAndOrientationPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.touchActionUsesSameInteraction",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.pinchNeverMovesOrFiresTwice",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.modeSwitchClearsPinch",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.editorStillOpens",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.baselineExact.leftBegin",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.baselineExact.leftMove",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.baselineExact.rightBegin",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.baselineExact.rightMove",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.baselineExact.rightRelease",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.mobile.baselineExact.leftRelease",
+      "status": "PASS"
+    },
+    {
+      "id": "controls.en.console.noErrors",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.realSelectionStartsRoute.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.savedGoalFallback.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.settingsBelowMap.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.realSelectionStartsRoute.MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.savedGoalFallback.MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.settingsBelowMap.MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.guards.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.guards.dead",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.guards.hidden",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.guards.transition",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.guards.otherPanelOnTop",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.guards.wrongScene",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.generalMoveStillBlockedByPanel",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.map.blockedDestinationStaysOpen",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.0.6.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.0.6.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.0.6.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.0.6.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.1.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.1.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.1.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.1.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.1.4.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.1.4.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.1.4.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.390x844.1.4.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.0.6.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.0.6.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.0.6.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.0.6.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.1.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.1.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.1.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.1.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.1.4.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.1.4.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.1.4.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.844x390.1.4.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.0.6.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.0.6.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.0.6.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.0.6.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.1.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.1.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.1.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.1.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.1.4.NW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.1.4.NE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.1.4.SW",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.projection.1280x800.1.4.SE",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.realMining.iron_ore",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.realMining.copper_ore",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.realMining.stone",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.bar.woodFollowsAfterCameraChange",
+      "status": "PASS"
+    },
+    {
+      "id": "map-workbar.en.console.noErrors",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.craft_bench.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.furnace.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest0.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest1.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest2.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest3.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest4.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest5.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest6.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest7.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest8.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.chest9.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.generator.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.tank.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.battery.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.robots014_dock.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.upgrade0161.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.garden_tank.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.livestock.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.feed_craft.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.mouse.hmg016_1.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.craft_bench.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.furnace.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest0.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest1.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest2.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest3.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest4.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest5.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest6.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest7.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest8.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.selection.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.selection.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.selection.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.chest9.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.generator.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.tank.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.battery.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.robots014_dock.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.upgrade0161.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.garden_tank.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.livestock.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.feed_craft.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.hit",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.open.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.staysOpen.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.outsideClosesOnly.0",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.open.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.staysOpen.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.outsideClosesOnly.1",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.open.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.staysOpen.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.touch.hmg016_1.outsideClosesOnly.2",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.switch.chest6.480",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.switch.chest5.481",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.switch.chest6.482",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.switch.craft_bench.483",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.switch.furnace.484",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.switch.craft_bench.485",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_workshop.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_workshop.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_workshop.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_workshop.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_storage.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_storage.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_storage.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_storage.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room4.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room4.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room4.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room4.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room5.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room5.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room5.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room5.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room6.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room6.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room6.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room6.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room7.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room7.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room7.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_room7.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_farm.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_farm.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_farm.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_farm.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_corridor.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_corridor.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_corridor.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.switch_corridor.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed2.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed2.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed2.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed2.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed2.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed2.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed3.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed3.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed3.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed3.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed3.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed3.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed4.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed4.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed4.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed4.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed4.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed4.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_workshop.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_workshop.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_workshop.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_workshop.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_storage.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_storage.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_storage.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_storage.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room4.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room4.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room4.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room4.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room5.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room5.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room5.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room5.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room6.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room6.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room6.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room6.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room7.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room7.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room7.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_room7.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_farm.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_farm.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_farm.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.v09door_farm.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_workshop_1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_2.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_2.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_2.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_2.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_2.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_2.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_3.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_3.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_3.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_3.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_3.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_storage_3.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room4_1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room5_1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room6_1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_room7_1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_2.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_2.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_2.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_2.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_2.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_2.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_3.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_3.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_3.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_3.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_3.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_farm_3.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_0.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_0.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_0.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_0.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_0.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_0.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_1.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_1.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_1.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_1.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_1.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_1.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_2.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_2.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_2.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_2.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_2.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_2.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_3.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_3.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_3.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_3.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_3.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_3.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_4.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_4.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_4.mouse.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_4.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_4.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.lamp_corridor_4.touch.panel",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_cow.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_cow.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_cow.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_cow.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_chicken.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_chicken.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_chicken.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_chicken.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_water.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_water.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_water.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.animal_water.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.bed.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.shower.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.shower.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.shower.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.shower.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.living_bath_door.mouse.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.living_bath_door.mouse.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.living_bath_door.touch.selectable",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.base.living_bath_door.touch.oneAction",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.visualHit.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.open.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.visualHit.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.open.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.visualHit.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.open.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.visualHit.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.open.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.visualHit.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.mouse.open.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.visualHit.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.open.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.visualHit.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.open.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.visualHit.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.open.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.visualHit.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.open.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.visualHit.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.guard.touch.open.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.visualHit.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.open.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.visualHit.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.open.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.visualHit.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.open.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.visualHit.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.open.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.visualHit.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.mouse.open.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.visualHit.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.open.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.visualHit.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.open.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.visualHit.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.open.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.visualHit.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.open.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.visualHit.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.follow.touch.open.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.visualHit.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.open.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.visualHit.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.open.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.visualHit.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.open.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.visualHit.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.open.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.visualHit.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.mouse.open.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.visualHit.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.open.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.visualHit.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.open.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.visualHit.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.open.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.visualHit.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.open.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.visualHit.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.disabled.touch.open.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.visualHit.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.open.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.visualHit.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.open.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.visualHit.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.open.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.visualHit.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.open.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.visualHit.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.mouse.open.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.visualHit.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.open.0,-10",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.visualHit.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.open.-24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.visualHit.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.open.24,-24",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.visualHit.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.open.0,-38",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.visualHit.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.docked.touch.open.25,5",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.dockForeground",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.drone.movingUsesCurrentGeometry",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.modal.nestedDismissDoesNotClickThrough",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.modal.nextGestureIsImmediate",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.modal.retargetedOpenerStaysOpen",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.modal.escapeCloses",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.modal.touchNoCompatibilityClick",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.modal.touchNextDismiss",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.modal.keyboardSettings",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.modal.keyboardClose",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.pointer.cancelDoesNotOpen",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.pointer.afterCancelWorks",
+      "status": "PASS"
+    },
+    {
+      "id": "interactions.en.console.noErrors",
+      "status": "PASS"
+    }
+  ]
+}

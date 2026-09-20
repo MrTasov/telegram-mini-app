@@ -155,8 +155,8 @@ function updateAction(){
   const near=interactionObjects().filter(o=>canInteract(o,player.x,player.y));
   near.sort((a,b)=>{const p=contactPoint(a,player.x,player.y),q=contactPoint(b,player.x,player.y);return distance(player.x,player.y,p.x,p.y)-distance(player.x,player.y,q.x,q.y);});
   interactionTarget=near[0]||null;currentAction=interactionTarget?.kind||null;currentActionObject=interactionTarget;
-  actionButton.textContent=icons[currentAction]||'✋';actionButton.classList.toggle('available',!!currentAction);actionButton.classList.toggle('inactive',!currentAction);
-  actionButton.setAttribute('aria-label',interactionTarget?.name||'Действие');
+  I18n.assign(actionButton,"textContent",icons[currentAction]||'✋');actionButton.classList.toggle('available',!!currentAction);actionButton.classList.toggle('inactive',!currentAction);
+  I18n.setAttr(actionButton,'aria-label',interactionTarget?.kind==='storage'?I18n.crateName(storageChests[interactionTarget.ref],interactionTarget.ref):interactionTarget?.name||'Действие');
 }
 
 
@@ -411,13 +411,12 @@ function renderCowMenu(){
   const chickens=livestockAnimals.filter(a=>a.kind==="chicken").length;
   const milk=storageCount(11,"milk");
   const eggs=storageCount(10,"eggs");
-  el("cowStatus").innerHTML=
-    `<b>🐄 Коровы: ${n} / ${COW_MAX}</b><br>`+
+  I18n.assign(el("cowStatus"),"innerHTML",`<b>🐄 Коровы: ${n} / ${COW_MAX}</b><br>`+
     `🐔 Куры: ${chickens}<br>`+
     `🥛 Накоплено молока: ${milk}<br>`+
     `🥚 Накоплено яиц: ${eggs}<br>`+
     `🌾 Корм: ${storageCount(12,"animal_feed")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("animal_feed")})</span><br>`+
-    `💧 Вода: ${storageCount(13,"water")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("water")})</span>`;
+    `💧 Вода: ${storageCount(13,"water")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("water")})</span>`);
   el("cowSlaughterBtn").disabled=n<=2;
   el("cowSlaughterBtn").style.opacity=n<=2?".45":"1";
 }
@@ -490,12 +489,11 @@ function renderFeedCraftMenu(){
   if(feedCraftLoaded>available)feedCraftLoaded=available;
   const batches=Math.floor(feedCraftLoaded/10);
   const output=batches*20;
-  el("feedCraftAvailable").textContent=`В рюкзаке: ${available} зерна`;
-  el("feedCraftLoaded").textContent=`🌾 ${feedCraftLoaded}`;
-  el("feedCraftOutput").innerHTML=
-    batches>0
+  I18n.assign(el("feedCraftAvailable"),"textContent",`В рюкзаке: ${available} зерна`);
+  I18n.assign(el("feedCraftLoaded"),"textContent",`🌾 ${feedCraftLoaded}`);
+  I18n.assign(el("feedCraftOutput"),"innerHTML",batches>0
       ? `Будет изготовлено: <b>🌾 ${output} корма</b> (${batches}×)`
-      : `Для 1 крафта загрузите минимум <b>10 зерна</b>.`;
+      : `Для 1 крафта загрузите минимум <b>10 зерна</b>.`);
   const can=batches>0 && !feedCraftBusy;
   el("feedCraftBtn").disabled=!can;
   el("feedCraftBtn").style.opacity=can?"1":".45";
@@ -515,9 +513,9 @@ function renderPendingFeedCraft(){
   el("feedCraftRecipe").style.display="none";
   el("feedCraftProgress").style.display="";
   el("feedCraftBar").style.width=(clamp(1-remaining/2500,0,1)*100).toFixed(0)+"%";
-  el("feedCraftProgressText").textContent=remaining>0
+  I18n.assign(el("feedCraftProgressText"),"textContent",remaining>0
     ? "⚙️ Изготовление корма…"
-    : `🌾 Готово: ${pendingFeedCraft.qty}. Освободите место в рюкзаке или хранилище корма.`;
+    : `🌾 Готово: ${pendingFeedCraft.qty}. Освободите место в рюкзаке или хранилище корма.`);
 }
 
 function updateFeedCraft(){
@@ -603,15 +601,15 @@ function renderStorage(){
   renderQuickSlots();updateAmmoHud();
   const ch=storageChests[activeStorage];
   if(!ch)return;
-  el("storageTitle").textContent=`${ch.icon} ${ch.name}`;
-  const a=el("storageContents"),b=el("storageBag");a.innerHTML="";b.innerHTML="";
+  I18n.assign(el("storageTitle"),"textContent",`${ch.icon} ${I18n.crateName(ch,activeStorage)}`);
+  const a=el("storageContents"),b=el("storageBag");I18n.assign(a,"innerHTML","");I18n.assign(b,"innerHTML","");
   for(let i=0;i<60;i++){
     const d=document.createElement("div");d.className="invSlot";d.dataset.chestSlot=i;
-    d.innerHTML=slotHTML(ch.items[i]);a.appendChild(d);
+    I18n.assign(d,"innerHTML",slotHTML(ch.items[i]));a.appendChild(d);
   }
   for(let i=0;i<BAG_SLOTS;i++){
     const d=document.createElement("div");d.className="invSlot";d.dataset.bagSlot=i;
-    d.innerHTML=slotHTML(bag[i]);b.appendChild(d);
+    I18n.assign(d,"innerHTML",slotHTML(bag[i]));b.appendChild(d);
   }
 }
 function openChestSettings(){
@@ -622,9 +620,9 @@ function openChestSettings(){
     "📦","🥤","🧰","⭐","🔧","🎒",
     ...Object.values(ITEM).map(item=>item.icon)
   ])];
-  const box=el("chestIconChoices");box.innerHTML="";
+  const box=el("chestIconChoices");I18n.assign(box,"innerHTML","");
   for(const ico of icons){
-    const bt=document.createElement("button");bt.className="smallBtn";bt.textContent=ico;
+    const bt=document.createElement("button");bt.className="smallBtn";I18n.assign(bt,"textContent",ico);
     bt.style.fontSize="24px";bt.dataset.icon=ico;box.appendChild(bt);
   }
   const settingsOverlay=el("chestSettingsOverlay");

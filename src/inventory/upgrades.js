@@ -28,10 +28,10 @@ window.V0161Upgrade=(()=>{
     pulseUntil=performance.now()+1000;V010.emit('equipmentupgrade',{type:s.type,level:level(s,key)});combat.refreshStats();robot.changed();changed();message((isDrone(s)?labels[key]:ITEM[s.type].name)+' · усилено до +'+level(s,key));return true;
   }
   function upgradeDrone(key){return isDrone(slots[0])&&upgrade(slots[0],key);}
-  function text(parent,tag,cls,value){const e=document.createElement(tag);e.className=cls;if(value!==undefined)e.textContent=value;parent.append(e);return e;}
+  function text(parent,tag,cls,value){const e=document.createElement(tag);e.className=cls;if(value!==undefined)I18n.assign(e,"textContent",value);parent.append(e);return e;}
   function build(){
     overlay=v09Overlay('v0161UpgradePanel','Станок усиления');const body=overlay.querySelector('.v09Body');body.replaceChildren();
-    const header=text(body,'div','v161StationHero');header.innerHTML='<img src="'+V011Art.sources.upgrade_station0161+'" alt="Станок усиления"><div><b>Усиление снаряжения</b><p>Оружие · экипировка · пулемёт · дрон</p><small id="v161UpgradePower"></small></div>';
+    const header=text(body,'div','v161StationHero');I18n.assign(header,"innerHTML",'<img src="'+V011Art.sources.upgrade_station0161+'" alt="Станок усиления"><div><b>Усиление снаряжения</b><p>Оружие · экипировка · пулемёт · дрон</p><small id="v161UpgradePower"></small></div>');
     refs.power=el('v161UpgradePower');const area=text(body,'div','v161UpgradeWork');refs.cradle=text(area,'div','v161Cradle');refs.card=text(area,'div','v161UpgradeCard');
     refs.modules=text(body,'div','v161UpgradeModules');refs.materials=text(body,'div','v161UpgradeMaterials');
     const actions=text(body,'div','v161UpgradeActions');refs.upgrade=v09Button('Усилить',()=>upgrade());refs.upgrade.id='v161UpgradeButton';refs.take=v09Button('Забрать предмет',take);refs.take.id='v161UpgradeTake';actions.append(refs.upgrade,refs.take);
@@ -43,15 +43,15 @@ window.V0161Upgrade=(()=>{
     if(!overlay||!overlay.classList.contains('open'))return;
     const s=slots[0],on=devicePowered(station.id),signature=JSON.stringify([s,robot.state.modules,robot.state.hp,robot.state.battery,bag,quickItems(),equipment,selectedModule,on,near(),Object.entries(cost(s)).map(([t])=>inv.materialCount(t))]);
     if(!force&&lastSignature===signature)return;lastSignature=signature;
-    refs.power.textContent=on?'Питание включено · 2 кВт':'Нет питания · требуется 2 кВт';refs.power.className=on?'powered':'missing';
-    refs.cradle.replaceChildren();const cell=inv.cell('upgrade',0,s);cell.id='v161UpgradeSlot';cell.setAttribute('aria-label',s?ITEM[s.type].name:'Ячейка станка усиления');if(!s){const hint=document.createElement('span');hint.textContent='＋';cell.append(hint);}refs.cradle.append(cell);
+    I18n.assign(refs.power,"textContent",on?'Питание включено · 2 кВт':'Нет питания · требуется 2 кВт');refs.power.className=on?'powered':'missing';
+    refs.cradle.replaceChildren();const cell=inv.cell('upgrade',0,s);cell.id='v161UpgradeSlot';I18n.setAttr(cell,'aria-label',s?ITEM[s.type].name:'Ячейка станка усиления');if(!s){const hint=document.createElement('span');I18n.assign(hint,"textContent",'＋');cell.append(hint);}refs.cradle.append(cell);
     refs.card.replaceChildren();text(refs.card,'b','',s?ITEM[s.type].name:'Выберите предмет');text(refs.card,'div','v161Level',s?'Усиление +'+level(s)+' / '+maxLevel(s):'Перенесите предмет сюда');
     if(isDrone(s)){text(refs.card,'p','',robot.state.name+' · '+Math.round(robot.state.battery)+'%');text(refs.card,'p','','Здоровье '+Math.round(robot.state.hp)+' / '+robot.maxHp()+' · урон '+robot.combat.damage);}
     else if(isTurret(s)){text(refs.card,'p','','Урон '+V016Turret.damage(s.turretData)+' · патроны '+s.turretData.ammo+' / '+V016Turret.combatFor(s.turretData).capacity);text(refs.card,'p','','Дальность '+V016Turret.combatFor(s.turretData).range+' · поворот 360°');}
-    else if(s){const stats=document.createElement('div');stats.innerHTML=V011UI.statsHTML(s);refs.card.append(stats);}
+    else if(s){const stats=document.createElement('div');I18n.assign(stats,"innerHTML",V011UI.statsHTML(s));refs.card.append(stats);}
     refs.modules.replaceChildren();if(isDrone(s))for(const [key,label]of Object.entries(labels)){const b=v09Button(label+' +'+robot.state.modules[key],()=>chooseModule(key),selectedModule===key?'selected':'');b.dataset.upgradeModule=key;refs.modules.append(b);}
-    refs.materials.replaceChildren();if(s&&level(s)<maxLevel(s))for(const [t,n]of Object.entries(cost(s))){const have=inv.materialCount(t),row=text(refs.materials,'div','v161Material'+(have<n?' missing':''));row.dataset.upgradeMaterial=t;row.innerHTML=itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+have+' / '+n+'</small></span>';}
-    refs.upgrade.textContent=!s?'Усилить':level(s)>=maxLevel(s)?'Максимум +'+maxLevel(s):'Усилить до +'+(level(s)+1);refs.upgrade.disabled=!s||!on||!near()||level(s)>=maxLevel(s)||!!s.locked;refs.take.disabled=!s||!near();
+    refs.materials.replaceChildren();if(s&&level(s)<maxLevel(s))for(const [t,n]of Object.entries(cost(s))){const have=inv.materialCount(t),row=text(refs.materials,'div','v161Material'+(have<n?' missing':''));row.dataset.upgradeMaterial=t;I18n.assign(row,"innerHTML",itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+have+' / '+n+'</small></span>');}
+    I18n.assign(refs.upgrade,"textContent",!s?'Усилить':level(s)>=maxLevel(s)?'Максимум +'+maxLevel(s):'Усилить до +'+(level(s)+1));refs.upgrade.disabled=!s||!on||!near()||level(s)>=maxLevel(s)||!!s.locked;refs.take.disabled=!s||!near();
     refs.pick.replaceChildren();for(const [key,item]of Object.entries(equipment))if(accepts(item)){const b=v09Button(ITEM[item.type].name+' · снять со снаряжения',()=>depositEquipment(key));b.disabled=!!s;refs.pick.append(b);}
     refs.quick.replaceChildren();quickItems().forEach((item,i)=>{const cell=inv.cell('quick',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)deposit('quick',i);};refs.quick.append(cell);});
     refs.bag.replaceChildren();for(let i=0;i<BAG_SLOTS;i++){const item=bag[i],cell=inv.cell('bag',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)deposit('bag',i);};if(item&&!accepts(item))cell.classList.add('v161Unavailable');refs.bag.append(cell);}
@@ -67,7 +67,7 @@ window.V0161Upgrade=(()=>{
   const solids=solidObjects;solidObjects=function(which=scene){const a=solids(which);return which==='bunker'?[...a,{...station}]:a;};
   const objects=interactionObjects;interactionObjects=function(which=scene){const a=objects(which);return which==='bunker'?[...a,{...station}]:a;};
   const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind===station.kind)return open();return execute(o,...args);};
-  const drawB=drawBunker;drawBunker=function(...a){const r=drawB(...a);ctx.save();V011Rooms.shadow(station.x,station.y,station.w,station.h,11,'workshop');V011Art.draw('upgrade_station0161',station.x,station.y,station.w,station.h);if(performance.now()<pulseUntil){const y=station.y+35+(performance.now()%850)/850*45;ctx.strokeStyle='#85e7caaa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(station.x+34,y);ctx.lineTo(station.x+108,y);ctx.stroke();}ctx.fillStyle='#bbd5c2';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText('УСИЛЕНИЕ',station.x+station.w/2,station.y+station.h+14);ctx.restore();return r;};
+  const drawB=drawBunker;drawBunker=function(...a){const r=drawB(...a);ctx.save();V011Rooms.shadow(station.x,station.y,station.w,station.h,11,'workshop');V011Art.draw('upgrade_station0161',station.x,station.y,station.w,station.h);if(performance.now()<pulseUntil){const y=station.y+35+(performance.now()%850)/850*45;ctx.strokeStyle='#85e7caaa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(station.x+34,y);ctx.lineTo(station.x+108,y);ctx.stroke();}ctx.fillStyle='#bbd5c2';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text('УСИЛЕНИЕ'),station.x+station.w/2,station.y+station.h+14);ctx.restore();return r;};
   GameSave.extend('capture','inventory.upgrades',function(cap){const d=cap();d.upgrade0161={schema:1,item:copy(slots[0])};return d;});
   function validate(d){const u=d.upgrade0161;if(u===undefined)return true;if(!u||u.schema!==1||!Object.hasOwn(u,'item'))throw Error('Некорректный станок усиления');const s=u.item;if(s===null)return true;
     if(!s||s.qty!==1||!ITEM[s.type]||!(eligibleGear(s)||isTurret(s)||isDrone(s))||combat.validateItem(s)===false)throw Error('Некорректный предмет на станке');

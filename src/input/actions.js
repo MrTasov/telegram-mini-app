@@ -9,7 +9,10 @@ window.GameActions=(()=>{
     if(type==='FIRE'&&!data.active){firing=false;return true;}
     if(type==='AIM'&&data.active===false){rightAimActive=false;aimPower=0;return true;}
     if(type==='MOVE'&&data.kind==='vector'&&data.power===0){moveX=moveY=movePower=0;return true;}
-    if(!playable())return false;
+    // An explicit map button may start a route while its own panel is open.
+    // Other panels and all gameplay input retain the normal pause guard.
+    const mapRoute=type==='MOVE'&&data.kind==='route'&&data.from==='map'&&el('v010MapOverlay')?.classList.contains('open')&&window.V0161UI?.topOverlay()===el('v010MapOverlay');
+    if(!playable()&&!(mapRoute&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show')))return false;
     switch(type){
       case 'MOVE':
         if(data.kind==='vector'){

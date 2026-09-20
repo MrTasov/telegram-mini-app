@@ -1,0 +1,76 @@
+{
+  "version": "0.24.1",
+  "controlMode": "MOBILE",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "dpr": 1
+  },
+  "javascriptAndModeledDOMMs": 411.73691899999994,
+  "remainingInitialDecodeMs": 0.6881690000000162,
+  "totalLocalBootAndDecodeMs": 412.42508799999996,
+  "canvas": {
+    "requested": 2,
+    "compressedBytes": 1016726,
+    "estimatedRGBABytes": 7176192,
+    "images": [
+      {
+        "path": "assets/atlases/fortifications/level_1.webp",
+        "bytes": 990894,
+        "width": 1536,
+        "height": 1024,
+        "decodedRGBABytes": 6291456
+      },
+      {
+        "path": "assets/images/props/fishing_boat.webp",
+        "bytes": 25832,
+        "width": 384,
+        "height": 576,
+        "decodedRGBABytes": 884736
+      }
+    ]
+  },
+  "domImageSources": [
+    "assets/icons/items/potato.png",
+    "assets/icons/items/carrot.png",
+    "assets/icons/items/tomato.png",
+    "assets/icons/items/corn.png",
+    "assets/icons/items/grain.png",
+    "assets/icons/items/beans.png",
+    "assets/icons/items/onion.png",
+    "assets/icons/items/berries.png",
+    "assets/icons/items/medicinal_herbs.png",
+    "assets/icons/items/technical_crop.png",
+    "assets/icons/items/rifle_ak74.png",
+    "assets/icons/items/axe.png",
+    "assets/icons/items/flashlight.png",
+    "assets/icons/items/remote.png",
+    "assets/icons/items/backpack1.png",
+    "assets/icons/items/ammo.png",
+    "assets/icons/items/pickaxe.png",
+    "assets/icons/items/fuel.png"
+  ],
+  "uniqueCanvasAndDOMResources": 20,
+  "uniqueCanvasAndDOMCompressedBytes": 1858069,
+  "memoryBefore": {
+    "rss": 63414272,
+    "heapTotal": 12316672,
+    "heapUsed": 8418520,
+    "external": 3773133,
+    "arrayBuffers": 146595
+  },
+  "memoryAfter": {
+    "rss": 143831040,
+    "heapTotal": 35311616,
+    "heapUsed": 21267272,
+    "external": 4764031,
+    "arrayBuffers": 1137453
+  },
+  "consoleErrors": [],
+  "limitations": [
+    "Local filesystem Image decoding with modeled DOM; not a mobile network/browser startup measurement.",
+    "DOM img URLs are counted; this harness does not decode/layout DOM images.",
+    "RGBA is a width*height*4 estimate for requested Canvas images, not measured browser/GPU memory.",
+    "RSS includes native Canvas/VM/harness and is noisy; phone/WebView memory must be checked manually."
+  ]
+}

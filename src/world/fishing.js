@@ -50,7 +50,7 @@ window.V012Fishing=(()=>{
     const grams=100*Math.round(3+Math.pow(Math.random(),2)*17);
     if(!space()||addItem('fish',1,{fishGrams:grams})>0){stop();message('Рюкзак заполнен · рыбалка остановлена');return;}
     window.V013Lake?.caught();
-    const spot=state.spot;message('🐟 Рыба · '+(grams/1000).toFixed(1)+' кг');queueGameSave();
+    const spot=state.spot;message('🐟 Рыба · '+I18n.numeric(grams/1000,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' кг');queueGameSave();
     if(menuOpen)V010Inventory.render();
     // At most one catch per frame: returning from background never yields a burst of offline loot.
     if(space())cycle(spot);else stop();
@@ -99,7 +99,7 @@ window.V012Fishing=(()=>{
       ctx.fillStyle='#92785a';ctx.strokeStyle='#c2aa7a';ctx.lineWidth=1;
       // Small shore-side timber pad; remains on walkable land.
       for(let j=-1;j<=1;j++){ctx.fillRect(s.x-16,s.y+j*9-4,32,8);ctx.strokeRect(s.x-16,s.y+j*9-4,32,8);}
-      if(Math.hypot(player.x-s.x,player.y-s.y)<210){ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillStyle='#e3e9ce';ctx.fillText('🎣 Рыбалка',s.x,s.y-22);}
+      if(Math.hypot(player.x-s.x,player.y-s.y)<210){ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillStyle='#e3e9ce';ctx.fillText(I18n.text('🎣 Рыбалка'),s.x,s.y-22);}
     }
     if(state){
       const ph=phase(),s=state.spot;
@@ -119,7 +119,7 @@ window.V012Fishing=(()=>{
   const updateOld=update;update=function(...args){const out=updateOld(...args);tick();return out;};
   const surfaceOld=drawSurface;drawSurface=function(...args){const out=surfaceOld(...args);drawWater();return out;};
   const drawOld=drawPlayer;drawPlayer=function(...args){drawLine();return drawOld(...args);};
-  const actionOld=updateAction;updateAction=function(...args){const out=actionOld(...args);if(scene==='surface'&&heldItem()==='fishing_rod'){const shore=state?.spot||shoreTarget();if(shore){interactionTarget=shore;currentActionObject=shore;currentAction='fishing0121';actionButton.classList.add('available');actionButton.classList.remove('inactive');}}if(currentAction==='fishing0121'){actionButton.textContent=state?'■':'🎣';actionButton.setAttribute('aria-label',state?'Остановить рыбалку':'Ловить рыбу');}return out;};
+  const actionOld=updateAction;updateAction=function(...args){const out=actionOld(...args);if(scene==='surface'&&heldItem()==='fishing_rod'){const shore=state?.spot||shoreTarget();if(shore){interactionTarget=shore;currentActionObject=shore;currentAction='fishing0121';actionButton.classList.add('available');actionButton.classList.remove('inactive');}}if(currentAction==='fishing0121'){I18n.assign(actionButton,"textContent",state?'■':'🎣');I18n.setAttr(actionButton,'aria-label',state?'Остановить рыбалку':'Ловить рыбу');}return out;};
   GameSave.extend('restore','world.fishing',function(restoreOld,...args){stop();return restoreOld(...args);});
   return {spots,boats,start,stop,tick,phase,drawHeld,drawWater,delay,shoreTarget,get state(){return state?{...state,spot:{...state.spot}}:null;}};
 })();

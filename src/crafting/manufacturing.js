@@ -78,7 +78,7 @@ const V09Craft = (() => {
   `);
   const overlay=v09Overlay('v09CraftOverlay','Мастерская');
   const body=overlay.querySelector('.v09Body');
-  function gunStats(type){const g=GUNS[type];if(!g)return '';return `<div class="v09GunStats">Урон <b>${g.damage}</b> · ${Math.round(60000/g.delay)} выстр./мин · магазин ${g.mag}<br>Разброс ${(g.spread*180/Math.PI).toFixed(1)}° · дальность ${g.range} · отдача ${g.recoilLabel}<br>Патроны: ${g.caliber}</div>`;}
+  function gunStats(type){const g=GUNS[type];if(!g)return '';return `<div class="v09GunStats">Урон <b>${g.damage}</b> · ${Math.round(60000/g.delay)} выстр./мин · магазин ${g.mag}<br>Разброс ${I18n.numeric(g.spread*180/Math.PI,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})}° · дальность ${g.range} · отдача ${g.recoilLabel}<br>Патроны: ${g.caliber}</div>`;}
   function maximum(r){return Math.max(0,Math.min(MAX_BATCHES,...Object.entries(r.input).map(([type,n])=>Math.floor(materialCount(type)/n))));}
   const selectedBatches=id=>quantity[id];
   const maxSelection=id=>maximum(RECIPES[selected[id]]);
@@ -155,19 +155,19 @@ const V09Craft = (() => {
     const size=Math.max(6,order.length);
     while(grid._cells.length<size){
       const slot=v09Button('',()=>{if(!slot.dataset.output)return;readySelected[id]=slot.dataset.output;refreshReadyView(id);});
-      slot.className='v011OutputCell';slot.setAttribute('aria-label','Пустая ячейка');grid.append(slot);grid._cells.push(slot);
+      slot.className='v011OutputCell';I18n.setAttr(slot,'aria-label','Пустая ячейка');grid.append(slot);grid._cells.push(slot);
     }
     grid._cells.forEach((slot,index)=>{
       const type=order[index]||'',qty=items[type]||0;
-      if(slot.dataset.output!==type){slot.dataset.output=type;slot.innerHTML=type?itemIconHTML(type)+'<small></small>':'';}
-      const count=slot.querySelector('small');if(count)count.textContent=qty?String(qty):'';
+      if(slot.dataset.output!==type){slot.dataset.output=type;I18n.assign(slot,"innerHTML",type?itemIconHTML(type)+'<small></small>':'');}
+      const count=slot.querySelector('small');if(count)I18n.assign(count,"textContent",qty?String(qty):'');
       slot.disabled=!qty;slot.classList.toggle('empty',!qty);slot.classList.toggle('selected',readySelected[id]===type&&!!qty);
-      slot.title=qty?(ITEM[type]?.name||type)+' × '+qty:'Пустая ячейка';slot.setAttribute('aria-label',slot.title);
+      I18n.assign(slot,'title',qty?(ITEM[type]?.name||type)+' × '+qty:'Пустая ячейка');I18n.setAttr(slot,'aria-label',I18n.source(slot,'title'));
     });
     const type=readySelected[id],qty=items[type]||0,label=el('v011OutputLabel'),take=el('v011CollectSelected');
-    if(label)label.textContent=qty?(ITEM[type]?.name||type)+' · '+qty:'Выберите готовую вещь';
-    if(take){take.disabled=!qty;take.textContent='Забрать стопку';}
-    const total=el('v091CraftReady');if(total)total.textContent=String(sumReady(id));
+    if(label)I18n.assign(label,"textContent",qty?(ITEM[type]?.name||type)+' · '+qty:'Выберите готовую вещь');
+    if(take){take.disabled=!qty;I18n.assign(take,"textContent",'Забрать стопку');}
+    const total=el('v091CraftReady');if(total)I18n.assign(total,"textContent",String(sumReady(id)));
   }
   function collectRefund(id){
     if(!STATIONS.includes(id))return false;
@@ -200,11 +200,11 @@ const V09Craft = (() => {
   function refreshProgress(){
     if(!activeStation)return;const id=activeStation,j=getJob(id),r=j?RECIPES[j.recipe]:null;
     const status=el('v091CraftStatus'),bar=el('v091CraftBar'),made=el('v091CraftMade'),ready=el('v091CraftReady'),time=el('v091CraftTime'),button=el('v091CraftCollect');
-    if(status)status.textContent=pauseExtra[id]?'Пауза':!V09Power.devices[id].enabled?'Выключен':!powered(id)?'Нет питания':j?'Работает':sumReady(id)?'Готово':'Ожидание';
+    if(status)I18n.assign(status,"textContent",pauseExtra[id]?'Пауза':!V09Power.devices[id].enabled?'Выключен':!powered(id)?'Нет питания':j?'Работает':sumReady(id)?'Готово':'Ожидание');
     const percent=j?clamp(100*(1-j.remainingMs/j.totalMs),0,100):0;
-    if(bar)bar.style.width=percent+'%';if(made)made.textContent=j?`${j.completedBatches*r.qty} / ${j.batches*r.qty}`:'—';if(ready)ready.textContent=String(sumReady(id));
-    if(time){const key=j?r.output:'';if(time.dataset.output!==key){time.innerHTML=j?itemIconHTML(key)+'<span></span>':'<span></span>';time.dataset.output=key;}time.querySelector('span').textContent=j?`Сейчас: ${r.name} · ${duration(j.remainingMs/(craftUpgrades.workshop?1.2:1))}`:'Выберите рецепт';}
-    if(button){button.disabled=sumReady(id)===0;button.textContent='Забрать всё';}
+    if(bar)bar.style.width=percent+'%';if(made)I18n.assign(made,"textContent",j?`${j.completedBatches*r.qty} / ${j.batches*r.qty}`:'—');if(ready)I18n.assign(ready,"textContent",String(sumReady(id)));
+    if(time){const key=j?r.output:'';if(time.dataset.output!==key){I18n.assign(time,"innerHTML",j?itemIconHTML(key)+'<span></span>':'<span></span>');time.dataset.output=key;}I18n.assign(time.querySelector('span'),"textContent",j?`Сейчас: ${r.name} · ${duration(j.remainingMs/(craftUpgrades.workshop?1.2:1))}`:'Выберите рецепт');}
+    if(button){button.disabled=sumReady(id)===0;I18n.assign(button,"textContent",'Забрать всё');}
     refreshReadyView(id);
   }
   function render(){
@@ -212,12 +212,12 @@ const V09Craft = (() => {
     if(!RECIPES[selected[id]]||RECIPES[selected[id]].station!==id)selected[id]=Object.keys(RECIPES).find(k=>RECIPES[k].station===id);
     // Keep the recipe list mounted: replacing it drops scroll position, pointer capture and keyboard focus.
     const focus=document.activeElement,focusControl=focus?.dataset?.craftControl;
-    overlay.querySelector('.panel').setAttribute('aria-label',labels[id]);overlay.querySelector('.v09Title').textContent=labels[id];
+    I18n.setAttr(overlay.querySelector('.panel'),'aria-label',labels[id]);I18n.assign(overlay.querySelector('.v09Title'),"textContent",labels[id]);
     if(!craftView||craftView.id!==id||craftView.layout.parentNode!==body){
       body.replaceChildren();
       const device=renderDeviceSwitch(id);device.classList.add('v010CraftDevice');body.append(device);
       const layout=document.createElement('div');layout.className='v092CraftLayout';body.append(layout);
-      const list=document.createElement('div');list.className='v092RecipeList';list.setAttribute('aria-label','Рецепты');layout.append(list);
+      const list=document.createElement('div');list.className='v092RecipeList';I18n.setAttr(list,'aria-label','Рецепты');layout.append(list);
       const scroll=document.createElement('div');scroll.className='v091CraftScroll';layout.append(scroll);
       const actions=document.createElement('div');actions.className='v091CraftActions';body.append(actions);
       craftView={id,device,layout,list,scroll,actions,recipeKeys:null,buttons:new Map(),detailRecipe:null};
@@ -229,8 +229,8 @@ const V09Craft = (() => {
     if(craftView.recipeKeys!==recipeKeys){
       list.replaceChildren();craftView.buttons.clear();let category='';
       for(const [key,r] of recipes){
-        if(category!==r.category){category=r.category;const heading=document.createElement('div');heading.className='v092Category';heading.textContent=category;list.append(heading);}
-        const b=v09Button('',()=>{if(selected[id]===key)return;selected[id]=key;quantity[id]=0;render();});b.className='v092Recipe';b.dataset.recipe=key;b.title=r.name;b.innerHTML=`${itemIconHTML(r.output)}<span>${r.name}<small></small></span>`;
+        if(category!==r.category){category=r.category;const heading=document.createElement('div');heading.className='v092Category';I18n.assign(heading,"textContent",category);list.append(heading);}
+        const b=v09Button('',()=>{if(selected[id]===key)return;selected[id]=key;quantity[id]=0;render();});b.className='v092Recipe';b.dataset.recipe=key;I18n.assign(b,"title",r.name);I18n.assign(b,"innerHTML",`${itemIconHTML(r.output)}<span>${r.name}<small></small></span>`);
         list.append(b);craftView.buttons.set(key,{button:b,detail:b.querySelector('small')});
       }
       craftView.recipeKeys=recipeKeys;
@@ -239,55 +239,55 @@ const V09Craft = (() => {
       const node=craftView.buttons.get(key),selectedHere=selected[id]===key;
       node.button.classList.toggle('selected',selectedHere);node.button.setAttribute('aria-pressed',String(selectedHere));
       const detail=availableRecipe(r)?'×'+r.qty+' · '+duration(r.ms):'🔒 Нужен чертёж';
-      if(node.detail.textContent!==detail)node.detail.textContent=detail;
+      if(I18n.source(node.detail)!==detail)I18n.assign(node.detail,"textContent",detail);
     }
     scroll.replaceChildren();if(!craftView.output)actions.replaceChildren();craftView.detailRecipe=selected[id];
     quantity[id]=clamp(quantity[id],0,6000);const r=RECIPES[selected[id]],count=selectedBatches(id),watts=id==='furnace'?6:id==='craft_bench'?2:1;
     const info=document.createElement('div');info.className='v092RecipeDetails';scroll.append(info);
     const flow=document.createElement('div');flow.className='v011RecipeFlow';info.append(flow);
     const materials=document.createElement('div');materials.className='v092Materials';flow.append(materials);
-    const help=document.createElement('div');help.className='v092MaterialHelp';help.textContent='';
+    const help=document.createElement('div');help.className='v092MaterialHelp';I18n.assign(help,"textContent",'');
     for(const [type,n] of Object.entries(r.input)){
       const need=n*Math.max(1,count),have=materialCount(type),b=v09Button('',()=>{
         const recipe=Object.entries(RECIPES).find(([,v])=>v.output===type);
-        help.textContent=recipe?`${ITEM[type].name}: ${labels[recipe[1].station]}. ${Object.entries(recipe[1].input).map(([t,q])=>q+' × '+ITEM[t].name).join(' + ')} → ${recipe[1].qty} шт.`:({iron_ore:'Добывайте киркой за крепостью.',copper_ore:'Добывайте киркой на каменистых участках.',wood:'Рубите деревья топором.',parts:'Обыскивайте гаражи, машины и дома.',grain:'Выращивайте на ферме.',advanced_parts:'Ищите на удалённых складах.'}[type]||'Ищите во время вылазок.');
+        I18n.assign(help,"textContent",recipe?`${ITEM[type].name}: ${labels[recipe[1].station]}. ${Object.entries(recipe[1].input).map(([t,q])=>q+' × '+ITEM[t].name).join(' + ')} → ${recipe[1].qty} шт.`:({iron_ore:'Добывайте киркой за крепостью.',copper_ore:'Добывайте киркой на каменистых участках.',wood:'Рубите деревья топором.',parts:'Обыскивайте гаражи, машины и дома.',grain:'Выращивайте на ферме.',advanced_parts:'Ищите на удалённых складах.'}[type]||'Ищите во время вылазок.'));
       });
-      b.className='v092Ingredient'+(have<need?' v09CraftShort':'');b.title=ITEM[type]?.name||type;
-      b.innerHTML=`${itemIconHTML(type)}<span>${ITEM[type]?.name||type}<strong>${have} / ${need}</strong></span>`;materials.append(b);
+      b.className='v092Ingredient'+(have<need?' v09CraftShort':'');I18n.assign(b,"title",ITEM[type]?.name||type);
+      I18n.assign(b,"innerHTML",`${itemIconHTML(type)}<span>${ITEM[type]?.name||type}<strong>${have} / ${need}</strong></span>`);materials.append(b);
     }
-    const arrow=document.createElement('div');arrow.className='v011RecipeArrow';arrow.textContent='→';arrow.setAttribute('aria-hidden','true');flow.append(arrow);
-    const result=document.createElement('div');result.className='v092RecipeHero';result.innerHTML=`${itemIconHTML(r.output)}<b>${r.name}</b><span class="v011Yield">× ${r.qty*Math.max(1,count)}</span>`;flow.append(result);
-    const meta=document.createElement('div');meta.className='v011RecipeMeta';meta.textContent=duration(r.ms*Math.max(1,count)/(craftUpgrades.workshop?1.2:1))+' · '+watts+' кВт';info.append(meta);
+    const arrow=document.createElement('div');arrow.className='v011RecipeArrow';I18n.assign(arrow,"textContent",'→');arrow.setAttribute('aria-hidden','true');flow.append(arrow);
+    const result=document.createElement('div');result.className='v092RecipeHero';I18n.assign(result,"innerHTML",`${itemIconHTML(r.output)}<b>${r.name}</b><span class="v011Yield">× ${r.qty*Math.max(1,count)}</span>`);flow.append(result);
+    const meta=document.createElement('div');meta.className='v011RecipeMeta';I18n.assign(meta,"textContent",duration(r.ms*Math.max(1,count)/(craftUpgrades.workshop?1.2:1))+' · '+watts+' кВт');info.append(meta);
     const gun=GUNS[r.output];
-    if(gun){const detail=document.createElement('small');detail.className='v011RecipeWeapon';detail.textContent='Урон '+gun.damage+' · Магазин '+gun.mag+' · '+gun.caliber;info.append(detail);}
-    if(ITEM[r.output]?.ammo){const compatible=document.createElement('small');compatible.className='v011RecipeWeapon';compatible.textContent='Для '+weaponsForAmmo(r.output).map(type=>GUNS[type].name).join(' / ')+' · '+ITEM[r.output].caliber;info.append(compatible);}
+    if(gun){const detail=document.createElement('small');detail.className='v011RecipeWeapon';I18n.assign(detail,"textContent",'Урон '+gun.damage+' · Магазин '+gun.mag+' · '+gun.caliber);info.append(detail);}
+    if(ITEM[r.output]?.ammo){const compatible=document.createElement('small');compatible.className='v011RecipeWeapon';I18n.assign(compatible,"textContent",'Для '+weaponsForAmmo(r.output).map(type=>GUNS[type].name).join(' / ')+' · '+ITEM[r.output].caliber);info.append(compatible);}
     info.append(help);
     const controls=document.createElement('div');controls.className='v011BatchControls';scroll.append(controls);
-    const amount=document.createElement('div');amount.className='v091QuantityCount';amount.textContent=`Количество: ${r.qty*count}`;controls.append(amount);
+    const amount=document.createElement('div');amount.className='v091QuantityCount';I18n.assign(amount,"textContent",`Количество: ${r.qty*count}`);controls.append(amount);
     const q=document.createElement('div');q.className='v09CraftQuantity';for(const [label,value] of [['+1',quantity[id]+1],['+10',quantity[id]+10],['MAX',maxSelection(id)],['0',0]]){const b=v09Button(label,()=>{quantity[id]=clamp(value,0,6000);render();});b.dataset.craftControl='quantity-'+label;q.append(b);}controls.append(q);
-    const make=v09Button((job?'В очередь':'Изготовить')+' · '+r.qty*count,()=>{const missing=Object.entries(r.input).filter(([t,n])=>materialCount(t)<n*Math.max(1,count));if(missing.length){for(const b of materials.children)if(missing.some(([t])=>b.title===ITEM[t].name)){b.classList.remove('v013Missing');void b.offsetWidth;b.classList.add('v013Missing');}return;}if(!count)quantity[id]=1;start(id);},'primary');make.classList.add('v011CraftMake');make.dataset.craftControl='make';make.disabled=!availableRecipe(r)||queueExtra[id].length>=30;scroll.append(make);
+    const make=v09Button((job?'В очередь':'Изготовить')+' · '+r.qty*count,()=>{const missing=Object.entries(r.input).filter(([t,n])=>materialCount(t)<n*Math.max(1,count));if(missing.length){for(const b of materials.children)if(missing.some(([t])=>I18n.source(b,'title')===ITEM[t].name)){b.classList.remove('v013Missing');void b.offsetWidth;b.classList.add('v013Missing');}return;}if(!count)quantity[id]=1;start(id);},'primary');make.classList.add('v011CraftMake');make.dataset.craftControl='make';make.disabled=!availableRecipe(r)||queueExtra[id].length>=30;scroll.append(make);
     const pin=v09Button(pinnedRecipe?.recipe===selected[id]?'Открепить рецепт':'Закрепить рецепт',()=>{pinnedRecipe=pinnedRecipe?.recipe===selected[id]?null:{recipe:selected[id],batches:Math.max(1,count)};render();queueGameSave();});pin.className='v010CraftSmall v011PinRecipe';pin.dataset.craftControl='pin';scroll.append(pin);
-    const progress=document.createElement('div');progress.className='v092Production';progress.innerHTML='<span id="v091CraftStatus"></span><div id="v091CraftTime"></div><div class="v09CraftProgress"><div id="v091CraftBar"></div></div><div class="v092ProductionCounts"><strong id="v091CraftMade"></strong> изготовлено</div>';scroll.append(progress);
-    if(job){const jobControls=document.createElement('div');jobControls.className='v010CraftControls';const p=v09Button(pauseExtra[id]?'Продолжить':'Пауза',()=>setPaused(id,!pauseExtra[id]));p.className='v010CraftSmall';p.dataset.craftControl='pause';jobControls.append(p);const cancel=v09Button('Отменить остаток',()=>cancelUnstarted(id));cancel.className='v010CraftSmall';cancel.dataset.craftControl='cancel';cancel.title='Начатая партия сохранится, материалы следующих вернутся';jobControls.append(cancel);scroll.append(jobControls);}
+    const progress=document.createElement('div');progress.className='v092Production';I18n.assign(progress,"innerHTML",'<span id="v091CraftStatus"></span><div id="v091CraftTime"></div><div class="v09CraftProgress"><div id="v091CraftBar"></div></div><div class="v092ProductionCounts"><strong id="v091CraftMade"></strong> изготовлено</div>');scroll.append(progress);
+    if(job){const jobControls=document.createElement('div');jobControls.className='v010CraftControls';const p=v09Button(pauseExtra[id]?'Продолжить':'Пауза',()=>setPaused(id,!pauseExtra[id]));p.className='v010CraftSmall';p.dataset.craftControl='pause';jobControls.append(p);const cancel=v09Button('Отменить остаток',()=>cancelUnstarted(id));cancel.className='v010CraftSmall';cancel.dataset.craftControl='cancel';I18n.assign(cancel,'title','Начатая партия сохранится, материалы следующих вернутся');jobControls.append(cancel);scroll.append(jobControls);}
     const queue=document.createElement('div');queue.className='v010CraftQueue';
-    if(queueExtra[id].length){const h=document.createElement('div');h.className='v092Category';h.textContent='Далее · '+queueExtra[id].length;queue.append(h);}
-    queueExtra[id].forEach((j,index)=>{const line=document.createElement('div');line.className='v010QueueRow';line.innerHTML=`${itemIconHTML(RECIPES[j.recipe].output)}<span>${RECIPES[j.recipe].name}<small> × ${j.batches*RECIPES[j.recipe].qty}</small></span>`;const x=v09Button('×',()=>cancelQueued(id,index));x.title='Отменить заказ и вернуть материалы';x.setAttribute('aria-label',x.title);line.append(x);queue.append(line);});scroll.append(queue);
+    if(queueExtra[id].length){const h=document.createElement('div');h.className='v092Category';I18n.assign(h,"textContent",'Далее · '+queueExtra[id].length);queue.append(h);}
+    queueExtra[id].forEach((j,index)=>{const line=document.createElement('div');line.className='v010QueueRow';I18n.assign(line,"innerHTML",`${itemIconHTML(RECIPES[j.recipe].output)}<span>${RECIPES[j.recipe].name}<small> × ${j.batches*RECIPES[j.recipe].qty}</small></span>`);const x=v09Button('×',()=>cancelQueued(id,index));I18n.assign(x,'title','Отменить заказ и вернуть материалы');I18n.setAttr(x,'aria-label',I18n.source(x,'title'));line.append(x);queue.append(line);});scroll.append(queue);
     const refunds=Object.values(refundExtra[id]).reduce((a,n)=>a+n,0);if(refunds){const b=v09Button('Вернуть материалы · '+refunds,()=>collectRefund(id));b.className='v010CraftSmall';scroll.append(b);}
     if(id==='craft_bench'){
-      const extra=document.createElement('details');extra.className='v011CraftMore';const summary=document.createElement('summary');summary.textContent='Мастерская · оборудование';extra.append(summary);
+      const extra=document.createElement('details');extra.className='v011CraftMore';const summary=document.createElement('summary');I18n.assign(summary,"textContent",'Мастерская · оборудование');extra.append(summary);
       const mods=document.createElement('div');mods.className='v010CraftExtras';extra.append(mods);
       if(typeof V010Combat!=='undefined'){const b=v09Button('Экипировка и модули',()=>V010Combat.openWorkshop());b.className='v010CraftSmall';mods.append(b);}
       for(const [key,name,cost] of [['workshop','Станки +20%',{iron:30,copper:10,parts:10}],['tools','Кирка +20%',{iron:15,copper:5,parts:4}]]){
         const unlock=key==='workshop'?'workshop_efficiency':'tools_upgrade',unlocked=typeof V010Progression!=='undefined'&&V010Progression.isUnlocked(unlock),wrap=document.createElement('div');wrap.className='v010CraftUpgrade';
         const b=v09Button(craftUpgrades[key]?name+' ✓':name+(unlocked?'':' 🔒'),()=>improve(key));b.className='v010CraftSmall';b.disabled=craftUpgrades[key]||!unlocked;wrap.append(b);
-        const costLine=document.createElement('small');costLine.textContent=craftUpgrades[key]?'Установлено':Object.entries(cost).map(([t,n])=>ITEM[t].name+' '+n).join(' · ');wrap.append(costLine);mods.append(wrap);
+        const costLine=document.createElement('small');I18n.assign(costLine,"textContent",craftUpgrades[key]?'Установлено':Object.entries(cost).map(([t,n])=>ITEM[t].name+' '+n).join(' · '));wrap.append(costLine);mods.append(wrap);
       }scroll.append(extra);
     }
     // Keep the output cells mounted across recipe and queue updates.
     if(!craftView.output){
       const output=document.createElement('div');output.className='v011OutputInventory';
-      const head=document.createElement('div');head.className='v011OutputHead';head.innerHTML='<span>Готово</span><small id="v091CraftReady"></small>';output.append(head);
-      const grid=document.createElement('div');grid.id='v010ReadyList';grid.setAttribute('aria-label','Готовые предметы станка');output.append(grid);
+      const head=document.createElement('div');head.className='v011OutputHead';I18n.assign(head,"innerHTML",'<span>Готово</span><small id="v091CraftReady"></small>');output.append(head);
+      const grid=document.createElement('div');grid.id='v010ReadyList';I18n.setAttr(grid,'aria-label','Готовые предметы станка');output.append(grid);
       const label=document.createElement('div');label.id='v011OutputLabel';output.append(label);
       const buttons=document.createElement('div');buttons.className='v011OutputActions';
       const selectedTake=v09Button('Забрать стопку',()=>collectType(id,readySelected[id]));selectedTake.id='v011CollectSelected';buttons.append(selectedTake);
@@ -332,7 +332,7 @@ const V09Craft = (() => {
   function state(id){const j=getJob(id);return pauseExtra[id]?'ПАУЗА':!active(id)&&sumReady(id)?'ГОТОВО':!powered(id)?'НЕТ ПИТАНИЯ':j?'РАБОТАЕТ':'ОЖИДАНИЕ';}
   function drawWorkshop(){
     ctx.save();
-    ctx.fillStyle='#e4e8dc';ctx.font='15px Arial';ctx.textAlign='center';ctx.fillText('МАСТЕРСКАЯ',450,795);
+    ctx.fillStyle='#e4e8dc';ctx.font='15px Arial';ctx.textAlign='center';ctx.fillText(I18n.text('МАСТЕРСКАЯ'),450,795);
     // Fireproof plinth and vent sit against the upper wall; clear aisle to the right.
     ctx.fillStyle='#292d2d';ctx.fillRect(130,784,208,153);ctx.strokeStyle='#666d67';ctx.lineWidth=2;ctx.strokeRect(130,784,208,153);
     ctx.fillStyle='#697170';ctx.fillRect(205,768,48,43);ctx.fillStyle='#92958d';ctx.fillRect(190,795,78,13);
@@ -343,7 +343,7 @@ const V09Craft = (() => {
     else{ctx.fillStyle='#172020';ctx.fillRect(164,819,88,64);ctx.fillStyle='#5c6160';ctx.fillRect(175,862,63,8);}
     ctx.fillStyle=working?'#ecb967':state('furnace')==='ГОТОВО'?'#9fccad':'#7d8b84';ctx.fillRect(276,822,24,7);
     ctx.strokeStyle='#253332';ctx.lineWidth=3;for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(270,845+i*7);ctx.lineTo(304,845+i*7);ctx.stroke();}
-    ctx.fillStyle='#e3e7dc';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText('ПЛАВИЛЬНАЯ ПЕЧЬ',231,905);ctx.font='9px Arial';ctx.fillStyle='#c5cbb8';ctx.fillText(state('furnace'),231,920);
+    ctx.fillStyle='#e3e7dc';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText(I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ'),231,905);ctx.font='9px Arial';ctx.fillStyle='#c5cbb8';ctx.fillText(I18n.text(state('furnace')),231,920);
     // Electric fabrication cell: screen, gantry, belt drive and receiving tray.
     const benchWorking=active('craft_bench')&&powered('craft_bench'),benchOn=powered('craft_bench');
     ctx.fillStyle='#202e34';ctx.fillRect(152,1126,282,99);ctx.strokeStyle='#657f89';ctx.lineWidth=3;ctx.strokeRect(160,1135,265,80);
@@ -355,20 +355,20 @@ const V09Craft = (() => {
     ctx.fillStyle='#748f96';ctx.fillRect(armX,1147,14,42);ctx.fillStyle='#c3d5cc';ctx.fillRect(armX-3,1161,20,11);ctx.fillStyle=benchWorking?'#75ead2':'#35655e';ctx.fillRect(armX+4,1166,6,5);
     for(const x of [182,314]){ctx.save();ctx.translate(x,1196);ctx.rotate(benchPhase*3);ctx.strokeStyle='#9aaeb3';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,6,0,Math.PI*2);ctx.moveTo(-6,0);ctx.lineTo(6,0);ctx.moveTo(0,-6);ctx.lineTo(0,6);ctx.stroke();ctx.restore();}
     ctx.fillStyle='#12272e';ctx.fillRect(334,1144,60,29);ctx.strokeStyle='#6e9da7';ctx.lineWidth=2;ctx.strokeRect(334,1144,60,29);
-    ctx.fillStyle=benchOn?'#91dfd3':'#33595f';ctx.font='7px monospace';ctx.fillText(benchWorking?'FAB / ACTIVE':state('craft_bench')==='ГОТОВО'?'READY':'FAB / IDLE',364,1154);
+    ctx.fillStyle=benchOn?'#91dfd3':'#33595f';ctx.font='7px monospace';ctx.fillText(I18n.text(benchWorking?'FAB / ACTIVE':state('craft_bench')==='ГОТОВО'?'READY':'FAB / IDLE'),364,1154);
     ctx.fillStyle='#283c42';ctx.fillRect(340,1160,47,5);ctx.fillStyle=benchOn?'#7acebe':'#385652';ctx.fillRect(340,1160,getJob('craft_bench')?47*(1-getJob('craft_bench').remainingMs/getJob('craft_bench').totalMs):4,5);
     ctx.fillStyle='#172a2c';ctx.fillRect(333,1179,66,24);ctx.strokeStyle='#718984';ctx.strokeRect(333,1179,66,24);
     if(getJob('craft_bench')?.outputQty>0){ctx.fillStyle='#d4bc79';ctx.fillRect(342,1186,17,9);ctx.fillRect(370,1186,17,9);}
     ctx.fillStyle=benchWorking?'#7ee8ce':state('craft_bench')==='ГОТОВО'?'#93cca2':'#47616a';ctx.beginPath();ctx.arc(411,1150,4,0,Math.PI*2);ctx.fill();
     ctx.strokeStyle='#202f38';ctx.lineWidth=2;for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(405,1171+i*5);ctx.lineTo(418,1171+i*5);ctx.stroke();}
-    ctx.fillStyle='#dce9e3';ctx.font='9px Arial';ctx.fillText('ЭЛЕКТРОСТАНОК · '+state('craft_bench'),290,1236);
+    ctx.fillStyle='#dce9e3';ctx.font='9px Arial';ctx.fillText(I18n.text('ЭЛЕКТРОСТАНОК · '+state('craft_bench')),290,1236);
     ctx.restore();
   }
 
   // Store ammunition per weapon. The legacy magazine field is kept compatible with old saves.
   canFire=function(){const type=heldItem();return !!GUNS[type]&&bagCount(type)>0;};
   function syncMagazine(){magazine=magazines[heldItem()]??magazines.rifle_ak74;magazineMax=30;}
-  updateAmmoHud=function(){syncMagazine();const g=GUNS[heldItem()],hud=el('ammoHud');hud.style.display=canFire()?'block':'none';if(g)hud.textContent=`${g.name} · ${magazines[heldItem()]} / ${bagCount(g.ammo)} · ${g.caliber}`;};
+  updateAmmoHud=function(){syncMagazine();const g=GUNS[heldItem()],hud=el('ammoHud');hud.style.display=canFire()?'block':'none';if(g)I18n.assign(hud,"textContent",`${g.name} · ${magazines[heldItem()]} / ${bagCount(g.ammo)} · ${g.caliber}`);};
   reloadWeapon=function(){
     const type=heldItem(),g=GUNS[type];if(!g||bagCount(type)<1)return;
     const got=removeItem(g.ammo,g.mag-magazines[type]);magazines[type]+=got;syncMagazine();updateAmmoHud();
@@ -395,7 +395,7 @@ const V09Craft = (() => {
     ctx.strokeStyle='#afbab0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(12,-4);ctx.lineTo(34,-4);ctx.stroke();ctx.restore();
   }
   const oldAssign=openHandAssignment;
-  openHandAssignment=function(type){oldAssign(type);const old=el('v09HeldGunStats');if(old)old.remove();if(!GUNS[type])return;const box=document.createElement('div');box.id='v09HeldGunStats';box.className='v09CraftInfo';box.innerHTML=gunStats(type);el('handAssignChoices').before(box);};
+  openHandAssignment=function(type){oldAssign(type);const old=el('v09HeldGunStats');if(old)old.remove();if(!GUNS[type])return;const box=document.createElement('div');box.id='v09HeldGunStats';box.className='v09CraftInfo';I18n.assign(box,"innerHTML",gunStats(type));el('handAssignChoices').before(box);};
   const oldPlayerDraw=drawPlayer;
   drawPlayer=function(){
     oldPlayerDraw();

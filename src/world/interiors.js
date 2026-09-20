@@ -12,13 +12,13 @@ window.V011World=(()=>{
   const options=document.createElement('div');options.id='v011MapFilterOptions';options.className='v011MapFilterOptions';options.hidden=true;tools.after(options);
   const boxes={};
   for(const [key,label] of Object.entries(categoryLabels)){
-    const row=document.createElement('label'),input=document.createElement('input'),span=document.createElement('span');input.type='checkbox';input.checked=filters[key];input.setAttribute('aria-label',label);span.textContent=label;row.append(input,span);options.append(row);boxes[key]=input;
+    const row=document.createElement('label'),input=document.createElement('input'),span=document.createElement('span');input.type='checkbox';input.checked=filters[key];I18n.setAttr(input,'aria-label',label);I18n.assign(span,"textContent",label);row.append(input,span);options.append(row);boxes[key]=input;
     input.addEventListener('change',()=>setFilter(key,input.checked));
   }
   function updateLegend(){
     legend.replaceChildren();
     for(const [key,color,text] of [['player','#f1ead1','● Вы'],['zombies','#f04e52','● Зомби'],['trees','#75b57b','▲ Деревья'],['ore','#a8a0f4','◆ Руда'],['buildings','#d1ba85','■ Постройки'],['interactives','#82d3d5','+ Оборудование']]){
-      if(key!=='player'&&!filters[key])continue;const span=document.createElement('span');span.style.color=color;span.textContent=text;legend.append(span);
+      if(key!=='player'&&!filters[key])continue;const span=document.createElement('span');span.style.color=color;I18n.assign(span,"textContent",text);legend.append(span);
     }
     for(const key of Object.keys(boxes))boxes[key].checked=filters[key];
   }
@@ -135,7 +135,7 @@ window.V011World=(()=>{
   openLoot=function(o){
     const f=containers.find(f=>f.ref===o);
     if(f&&!o.searched&&!o.zone){o.loot=freshLoot(f);o.searched=true;o.searchedAt=Date.now();}
-    const result=oldOpenLoot(o);if(f)el('lootTitle').textContent=f.name;return result;
+    const result=oldOpenLoot(o);if(f)I18n.assign(el('lootTitle'),"textContent",f.name);return result;
   };
   function tick(dt=16.667*frameScale){
     const step=Math.max(0,Math.min(dt,100))/330;
@@ -169,7 +169,7 @@ window.V011World=(()=>{
     for(const f of b.furniture)drawFurniture(f);
     for(const w of walls(b)){if(w.id===b.id+'_door')continue;rect(w.x+3,w.y+4,w.w,w.h,'#14262944');rect(w.x,w.y,w.w,w.h,'#748b87');rect(w.x,w.y,w.w,3,'#b8c9ba');}
     const d=doorRect(b);rect(d.x-9,d.y+12,d.w+18,30,'#667770');line(d.x-8,d.y+40,d.x+d.w+8,d.y+40,'#a1bbb1',2);rect(d.x,d.y,d.w,d.h,'#516360');if(!window.V018Build?.isBroken(d.id)){ctx.save();ctx.translate(d.x,d.y+d.h/2);ctx.rotate(-b.doorProgress*Math.PI/2);rect(0,-4,d.w,8,'#607e79');rect(2,-4,d.w-4,2,'#bbd8c0');rect(d.w-12,-1,5,3,'#d3b47e');ctx.restore();}
-    ctx.font='10px Arial';ctx.textAlign='center';ctx.fillStyle='#d1dfce';ctx.fillText(b.doorOpen?'ВХОД ОТКРЫТ':'ВХОД',b.x+b.w/2,b.y+b.h+22);
+    ctx.font='10px Arial';ctx.textAlign='center';ctx.fillStyle='#d1dfce';ctx.fillText(I18n.text(b.doorOpen?'ВХОД ОТКРЫТ':'ВХОД'),b.x+b.w/2,b.y+b.h+22);
     ctx.restore();
   }
   const oldSurface=drawSurface;drawSurface=function(...args){const r=oldSurface(...args);for(const b of buildings)drawInterior(b);return r;};
@@ -177,7 +177,7 @@ window.V011World=(()=>{
     if(scene!=='surface')return;
     for(const b of buildings){if(b.roof<.005||!visibleOnScreen(b.x+b.w/2,b.y+b.h/2,Math.max(b.w,b.h)))continue;
       ctx.save();ctx.globalAlpha*=b.roof;const gradient=ctx.createLinearGradient(b.x,b.y,b.x+b.w,b.y+b.h);gradient.addColorStop(0,b.style==='home'?'#70817e':'#69838b');gradient.addColorStop(.5,b.style==='home'?'#536b68':'#4b656f');gradient.addColorStop(1,'#354c50');rect(b.x-4,b.y-5,b.w+8,b.h-23,gradient);line(b.x,b.y+b.h/2,b.x+b.w,b.y+b.h/2,'#9dafaa',5);for(let x=b.x+14;x<b.x+b.w;x+=27)line(x,b.y,x,b.y+b.h-29,'#becac222',2);ctx.strokeStyle='#a0b6ae';ctx.lineWidth=2;ctx.strokeRect(b.x-4,b.y-5,b.w+8,b.h-23);rect(b.x+b.w-73,b.y+28,44,58,'#284d5b');line(b.x+b.w-51,b.y+29,b.x+b.w-51,b.y+85,'#9cc2be80',2);line(b.x+b.w-73,b.y+57,b.x+b.w-29,b.y+57,'#9cc2be80',2);ctx.restore();
-      ctx.save();ctx.font='11px Arial';ctx.textAlign='center';ctx.fillStyle='#cbdcd0';ctx.fillText(b.title,b.x+b.w/2,b.y-18);ctx.restore();
+      ctx.save();ctx.font='11px Arial';ctx.textAlign='center';ctx.fillStyle='#cbdcd0';ctx.fillText(I18n.text(b.title),b.x+b.w/2,b.y-18);ctx.restore();
     }
   }
 

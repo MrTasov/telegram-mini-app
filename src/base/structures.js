@@ -212,7 +212,7 @@ window.V015Base=(()=>{
   function rect(c,x,y,w,h,fill,stroke=null,r=0){if(!w||!h)return;c.fillStyle=fill;c.beginPath();const radius=Math.max(0,Math.min(r,Math.abs(w)/2,Math.abs(h)/2));if(radius)c.roundRect(x,y,w,h,radius);else c.rect(x,y,w,h);c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1;c.stroke();}}
   function line(c,points,color,width=1){c.strokeStyle=color;c.lineWidth=width;c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}
   function disk(c,x,y,r,color,stroke=null){c.fillStyle=color;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1;c.stroke();}}
-  function label(c,text,x,y,size=12,color='#bcc5ba'){c.font=`600 ${size}px Arial`;c.textAlign='center';c.fillStyle=color;c.fillText(text,x,y);}
+  function label(c,text,x,y,size=12,color='#bcc5ba'){c.font=`600 ${size}px Arial`;c.textAlign='center';c.fillStyle=color;c.fillText(I18n.text(text),x,y);}
   function metal(c,x,y,w,h,dark=false){const g=c.createLinearGradient(x,y,x+w*.2,y+h);g.addColorStop(0,dark?'#515d5e':'#94a09b');g.addColorStop(.12,dark?'#3c494c':'#727d79');g.addColorStop(.85,dark?'#303b3e':'#596561');g.addColorStop(1,dark?'#263034':'#3b4848');rect(c,x,y,w,h,g,'#202b2f',2);line(c,[[x+2,y+2],[x+w-3,y+2]],'#c1cbb359',1);}
   function bolts(c,x,y,w,h){for(const px of [x+5,x+w-5])for(const py of [y+5,y+h-5]){disk(c,px,py,1.8,'#19262a');disk(c,px-.4,py-.5,1,'#bac3af');}}
   function material(kind){

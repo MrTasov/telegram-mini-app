@@ -8,7 +8,7 @@ window.V014Controls=(()=>{
     return zombies.filter(z=>z.alive&&z.health>0&&Math.hypot(z.x-player.x,z.y-player.y)<=player.radius+z.radius+2&&lineClear(player.x,player.y,z.x,z.y,0,'surface')).sort((a,b)=>Math.hypot(a.x-player.x,a.y-player.y)-Math.hypot(b.x-player.x,b.y-player.y))[0]||null;
   }
   const sneak=el('v010SneakButton'),bagButton=el('bagButton');
-  const stop=document.createElement('button');stop.id='v014RouteStop';stop.textContent='■ Остановиться';stop.type='button';document.body.append(stop);
+  const stop=document.createElement('button');stop.id='v014RouteStop';I18n.assign(stop,"textContent",'■ Остановиться');stop.type='button';document.body.append(stop);
   function stopRoute(){route=null;pending=null;cancelNavigation();stop.style.display='none';}
   stop.onclick=stopRoute;
   function beginStick(e,side){
@@ -127,7 +127,7 @@ window.V014Controls=(()=>{
     c.strokeStyle='rgba(207,220,183,.48)';c.lineWidth=2.4/scale;c.stroke();c.restore();
   }
   const oldNavDraw=drawNavigationTarget;drawNavigationTarget=function(...args){oldNavDraw(...args);drawRoute(ctx,V010Camera.zoom||1);};
-  const goButton=v09Button('Идти сюда',()=>{if(GameActions.dispatch('MOVE',{kind:'route',...(V010Camera.selected||V010Camera.goal)})){el('v010MapClose').click();}});goButton.id='v014MapGo';
+  const goButton=v09Button('Идти сюда',()=>{if(GameActions.dispatch('MOVE',{...(V010Camera.selected||V010Camera.goal),kind:'route',from:'map'})){el('v010MapClose').click();}});goButton.id='v014MapGo';
   const droneButton=v09Button('Атаковать дроном',()=>{const z=mapSelectedTarget();if(z&&window.V014Robots?.attack(z))el('v010MapClose').click();});droneButton.id='v014MapAttack';droneButton.hidden=true;
   el('v010MapGoal').after(goButton);goButton.after(droneButton);
   const clearGoal=V010Camera.clearGoal;V010Camera.clearGoal=function(...args){stopRoute();return clearGoal(...args);};
@@ -144,7 +144,7 @@ window.V014Controls=(()=>{
     if(route&&!pending&&(!navigation||route.scene!==scene||playerDead)){route=null;}
     stop.style.display=!menuOpen&&!!route?'block':'none';
     if(el('v010MapOverlay').classList.contains('open')){mapEnemy=mapSelectedTarget();droneButton.hidden=!mapEnemy;}
-    const hp=el('healthText');if(hp)hp.textContent='❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth);
+    const hp=el('healthText');if(hp)I18n.assign(hp,"textContent",'❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth));
     return out;
   };
   GameSave.extend('restore','player.controls',function(restore,d){route=pending=null;lockedPress=null;restore(d);layout();});
