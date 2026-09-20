@@ -50,6 +50,7 @@ function setup(file,initialStorage={},options={}){
  canvas.width=1280;canvas.height=800;canvasContract.reset(canvas.getContext('2d'));
  const mainCanvas=doc.getElementById('canvas');
  for(const key of ['width','height'])Object.defineProperty(mainCanvas,key,{get:()=>canvas[key],set:value=>{canvas[key]=value;canvasContract.reset(canvas.getContext('2d'));},configurable:true});
+ const scheduler={rafRequests:0,intervals:[]};
  const storage=new Map(Object.entries(initialStorage)),timers=new Map();let counter=0,clock=10000;
  const epoch=options.epoch??Date.UTC(2026,8,19,12),math=Object.create(Math);let seed=options.seed??20260919;
  math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
@@ -73,7 +74,7 @@ function setup(file,initialStorage={},options={}){
  const mediaLists=new Map();
  function matchMedia(q){if(!mediaLists.has(q))mediaLists.set(q,{matches:!!options.media?.[q],listeners:[],addEventListener(type,fn){if(type==='change')this.listeners.push(fn);}});return mediaLists.get(q);}
  const windowListeners={},windowCapture={};const errors=[];const sandbox={document:doc,localStorage:storageAPI,console:{log(){},warn:(...x)=>errors.push(x.join(' ')),error:(...x)=>errors.push(x.join(' '))},navigator:{userAgent:'test',maxTouchPoints:options.maxTouchPoints??0},innerWidth:options.width??1280,innerHeight:options.height??800,devicePixelRatio:1,screen:{orientation:{addEventListener(){}}},performance:{now:()=>clock},Audio,Image:ResourceImage,OffscreenCanvas:class{constructor(w,h){return createCanvas(w,h)}},URL,Blob,Math,Date,JSON,Object,Array,Set,Map,Number,String,Boolean,Uint8Array,Float32Array,Float64Array,Int32Array,Promise,
- setTimeout:(f,ms)=>{const n=++counter;timers.set(n,{f,ms});return n},clearTimeout:n=>timers.delete(n),setInterval:()=>++counter,clearInterval(){},requestAnimationFrame:()=>0,cancelAnimationFrame(){},addEventListener(k,f,opts){((opts===true||opts?.capture?windowCapture:windowListeners)[k]??=[]).push(f)},removeEventListener(){},matchMedia,getComputedStyle:e=>({getPropertyValue:()=>'',...e.style}),fetch:()=>Promise.reject(Error('test audio disabled')),location:{href:'http://test.local/game',protocol:'http:'},alert(){},confirm:()=>true,atob:s=>Buffer.from(s,'base64').toString('binary'),btoa:s=>Buffer.from(s,'binary').toString('base64')};
+ setTimeout:(f,ms)=>{const n=++counter;timers.set(n,{f,ms});return n},clearTimeout:n=>timers.delete(n),setInterval:(fn,ms)=>{scheduler.intervals.push({fn,ms});return ++counter},clearInterval(){},requestAnimationFrame:()=>{scheduler.rafRequests++;return 0},cancelAnimationFrame(){},addEventListener(k,f,opts){((opts===true||opts?.capture?windowCapture:windowListeners)[k]??=[]).push(f)},removeEventListener(){},matchMedia,getComputedStyle:e=>({getPropertyValue:()=>'',...e.style}),fetch:()=>Promise.reject(Error('test audio disabled')),location:{href:'http://test.local/game',protocol:'http:'},alert(){},confirm:()=>true,atob:s=>Buffer.from(s,'base64').toString('binary'),btoa:s=>Buffer.from(s,'binary').toString('base64')};
  sandbox.Math=math;sandbox.Date=ClockDate;
  sandbox.setTimeout=(f,ms=0)=>{const id=++counter;timers.set(id,{f,ms,at:clock+ms});return id;};
  sandbox.window=sandbox;sandbox.self=sandbox;const context=vm.createContext(sandbox);
@@ -85,6 +86,9 @@ function setup(file,initialStorage={},options={}){
    const code=src?fs.readFileSync(scriptFile,'utf8'):m[2];
    vm.runInContext(code,context,{filename:scriptFile,timeout:20000});loadedScripts.push(scriptFile);
  }
+ // Legacy gameplay suites intentionally exercise their historical post-launch
+ // setup. Menu-specific suites opt out and assert the real untouched boot state.
+ if(context.MainMenu&&options.mainMenu!==true){vm.runInContext('loadGameProgress();MainMenu.sessionSelected();',context,{timeout:20000});}
  function emit(type,target,props={}){
    const e={type,target,button:0,pointerId:1,pointerType:'touch',clientX:50,clientY:50,...props,defaultPrevented:false,cancelBubble:false,immediate:false,
      preventDefault(){this.defaultPrevented=true},stopPropagation(){this.cancelBubble=true},stopImmediatePropagation(){this.cancelBubble=true;this.immediate=true}};
@@ -95,7 +99,7 @@ function setup(file,initialStorage={},options={}){
    for(const n of path){if(e.cancelBubble)break;call(n,n.listeners[type]);if(!e.immediate&&n['on'+type])n['on'+type](e);}
    if(!e.cancelBubble)call(sandbox,windowListeners[type]);return e;
  }
- return {imageRequests,setCapabilities(media,maxTouchPoints){if(maxTouchPoints!==undefined)sandbox.navigator.maxTouchPoints=maxTouchPoints;for(const [q,m]of mediaLists){const changed=m.matches!==!!media[q];m.matches=!!media[q];if(changed)for(const fn of m.listeners)fn({matches:m.matches});}},listenerCounts(){const count=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,v.length]));return {window:count(windowListeners),capture:count(windowCapture),document:count(doc.listeners)};},emit,dispatch(type,e={}){e.type=type;e.target??=doc.querySelector('#canvas');e.preventDefault??=()=>{};e.stopPropagation??=()=>{};for(const f of windowListeners[type]||[])f(e);},eval:(s)=>vm.runInContext(s,context,{timeout:30000}),doc,storage,context,errors,canvas,advance(ms){clock+=ms},flushTimers(ms){const end=clock+ms;let count=0;for(;;){const next=[...timers.entries()].filter(([id,t])=>t.at<=end).sort((a,b)=>a[1].at-b[1].at)[0];if(!next)break;if(++count>1000)throw Error('Timer loop in harness');clock=Math.max(clock,next[1].at);timers.delete(next[0]);next[1].f();}clock=end;},timers};
+ return {scheduler,imageRequests,setCapabilities(media,maxTouchPoints){if(maxTouchPoints!==undefined)sandbox.navigator.maxTouchPoints=maxTouchPoints;for(const [q,m]of mediaLists){const changed=m.matches!==!!media[q];m.matches=!!media[q];if(changed)for(const fn of m.listeners)fn({matches:m.matches});}},listenerCounts(){const count=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,v.length]));return {window:count(windowListeners),capture:count(windowCapture),document:count(doc.listeners)};},emit,dispatch(type,e={}){e.type=type;e.target??=doc.querySelector('#canvas');e.preventDefault??=()=>{};e.stopPropagation??=()=>{};for(const f of windowListeners[type]||[])f(e);},eval:(s)=>vm.runInContext(s,context,{timeout:30000}),doc,storage,context,errors,canvas,advance(ms){clock+=ms},flushTimers(ms){const end=clock+ms;let count=0;for(;;){const next=[...timers.entries()].filter(([id,t])=>t.at<=end).sort((a,b)=>a[1].at-b[1].at)[0];if(!next)break;if(++count>1000)throw Error('Timer loop in harness');clock=Math.max(clock,next[1].at);timers.delete(next[0]);next[1].f();}clock=end;},timers};
 }
 function source(file){const path=require('node:path'),html=fs.readFileSync(file,'utf8');return [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].map(m=>{const src=m[1].match(/\bsrc=["']([^"']+)["']/)?.[1];return src?(/^https?:/.test(src)?'':fs.readFileSync(path.resolve(path.dirname(file),src.split(/[?#]/)[0]),'utf8')):m[2];}).join('\n');}
 module.exports={setup,canvas,source};

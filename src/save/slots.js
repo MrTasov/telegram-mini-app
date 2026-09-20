@@ -125,7 +125,7 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[01])))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[012])))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -225,7 +225,7 @@ function v09ReportStorageFailure(manual=false){
   updateSaveStatus('Не удалось сохранить: хранилище браузера недоступно или заполнено. Скачайте резервную копию.');
   if(manual)message('Не удалось сохранить игру. Можно скачать сохранение файлом.');
 }
-loadGameProgress=function(){
+loadGameProgress=function(createIfEmpty=true){
   try{
     const occupied=v09OccupiedSlots();
     const savedActive=Number(localStorage.getItem(V09_ACTIVE_KEY));
@@ -254,6 +254,7 @@ loadGameProgress=function(){
       updateSaveStatus('Сохранение не удалось прочитать. Оно не изменено. Доступны импорт и новая игра в свободном слоте.');
       return false;
     }
+    if(!createIfEmpty)return false;
     const id=v09FreeSlot();const raw=v09WriteNewSlot(id,captureGameProgress());
     GameState.session.name=JSON.parse(raw).saveName;
     GameState.session.activeSlot=id;GameState.session.lastVerified=raw;GameState.session.blocked=false;
@@ -303,19 +304,30 @@ function v09ChooseSlot(id){
     localStorage.setItem(V09_ACTIVE_KEY,String(id));
     restoreGameProgress(next.data);
     GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=JSON.stringify(next.data);
-    updateSaveStatus(`💾 Слот ${id} · игра загружена.`);message(`Продолжаем игру из слота ${id}.`);return true;
+    updateSaveStatus(`💾 Слот ${id} · игра загружена.`);message(`Продолжаем игру из слота ${id}.`);window.MainMenu?.sessionSelected();return true;
   }catch(error){message('Не удалось загрузить игру. Сохранения не удалены.');return false;}
 }
-function v09NewGame(){
+function v09NewGame(selectedId=null,confirmed=null){
   try{
-    const id=v09FreeSlot();
+    const id=selectedId??v09FreeSlot();
     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
+    if(!Number.isInteger(id)||id<1||id>V09_SLOT_COUNT)return false;
+    const occupied=v09OccupiedSlots().includes(id);
+    if(occupied&&(!confirmed||confirmed.primary!==localStorage.getItem(v09SlotKey(id))||confirmed.backup!==localStorage.getItem(v09BackupKey(id))))return false;
     let data=GameSave.newGameData();
     data=decodeGameProgress(JSON.stringify(data));
     if(!v09BeforeSwitch())return false;
-    const raw=v09WriteNewSlot(id,data);
+    let raw;
+    if(!occupied)raw=v09WriteNewSlot(id,data);
+    else{
+      // Replace the validated primary atomically; rollback all keys on storage failure.
+      data.saveName=v091DefaultName(id);raw=JSON.stringify(data);decodeGameProgress(raw);
+      const keys=[v09SlotKey(id),v09BackupKey(id),V09_ACTIVE_KEY],before=keys.map(k=>localStorage.getItem(k));
+      try{localStorage.setItem(keys[0],raw);localStorage.removeItem(keys[1]);localStorage.setItem(keys[2],String(id));}
+      catch(error){for(let i=0;i<keys.length;i++)try{if(before[i]===null)localStorage.removeItem(keys[i]);else localStorage.setItem(keys[i],before[i]);}catch(_){}throw error;}
+    }
     restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=raw;
-    updateSaveStatus(`💾 Новая игра · слот ${id}.`);message(`Новая игра в слоте ${id}. Другие сохранения остались на месте.`);return true;
+    updateSaveStatus(`💾 Новая игра · слот ${id}.`);message(`Новая игра в слоте ${id}. Другие сохранения остались на месте.`);window.MainMenu?.sessionSelected();return true;
   }catch(error){v09ReportStorageFailure(true);return false;}
 }
 function v09ImportSave(raw){
@@ -326,7 +338,7 @@ function v09ImportSave(raw){
     if(!v09BeforeSwitch())return false;
     const importedRaw=v09WriteNewSlot(id,data);
     restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=importedRaw;
-    updateSaveStatus(`💾 Импортировано в слот ${id}.`);message(`Сохранение загружено в отдельный слот ${id}.`);return true;
+    updateSaveStatus(`💾 Импортировано в слот ${id}.`);message(`Сохранение загружено в отдельный слот ${id}.`);window.MainMenu?.sessionSelected();return true;
   }catch(error){v09ReportStorageFailure(true);return false;}
 }
 function v09DownloadSave(){
@@ -335,7 +347,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.25.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.25.2-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}

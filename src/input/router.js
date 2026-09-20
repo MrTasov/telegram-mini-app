@@ -97,6 +97,7 @@ window.GameInput=(()=>{
   function editable(node){return !!node?.closest?.('input,textarea,select,[contenteditable=""],[contenteditable="true"],[role="textbox"]');}
   function topOverlay(){return [...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||getComputedStyle(b).zIndex||0)-Number(a.style.zIndex||getComputedStyle(a).zIndex||0))[0];}
   function escape(){
+    if(window.MainMenu?.active&&!topOverlay()){MainMenu.back();return;}
     const top=topOverlay();
     if(top){
       if(top.id==='deathOverlay')return;

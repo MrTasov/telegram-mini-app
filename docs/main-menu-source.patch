@@ -1,0 +1,313 @@
+--- src/bootstrap.js (0.25.1)
++++ src/bootstrap.js (0.25.2)
+@@ -1,4 +1,7 @@
+-loadGameProgress();GameState.session.ready=true;
++let gameplayStarted=false;
++function startSelectedGame(){
++if(gameplayStarted)return;
++gameplayStarted=true;GameState.session.ready=true;
+ grantStarterItems();
+ renderQuickSlots();
+ if(starterPending.length)message('Освободите место в рюкзаке: предметы обновления ждут выдачи');
+@@ -36,10 +39,11 @@
+   Telegram fullscreen запускается ПОСЛЕ игры.
+ */
+ 
+-setTimeout(
+-  fullscreen,
+-  400
+-);
++setTimeout(fullscreen,400);
++}
++
++resizeCanvas();applyControls();
++MainMenu.mount(startSelectedGame);
+ 
+ 
+ // 0.6.18: direct canvas farm taps removed; contextual action button is used instead.
+
+--- src/input/actions.js (0.25.1)
++++ src/input/actions.js (0.25.2)
+@@ -2,7 +2,7 @@
+    item transfers or interaction rules. Commands are transient, not save data. */
+ window.GameActions=(()=>{
+   'use strict';
+-  const playable=()=>!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
++  const playable=()=>!window.MainMenu?.active&&!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
+   const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
+   function dispatch(type,data={}){
+     // Releases are always allowed, including while a menu is opening.
+@@ -11,6 +11,7 @@
+     if(type==='MOVE'&&data.kind==='vector'&&data.power===0){moveX=moveY=movePower=0;return true;}
+     // An explicit map button may start a route while its own panel is open.
+     // Other panels and all gameplay input retain the normal pause guard.
++    if(window.MainMenu?.active)return false;
+     const mapRoute=type==='MOVE'&&data.kind==='route'&&data.from==='map'&&el('v010MapOverlay')?.classList.contains('open')&&window.V0161UI?.topOverlay()===el('v010MapOverlay');
+     if(!playable()&&!(mapRoute&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show')))return false;
+     switch(type){
+
+--- src/input/router.js (0.25.1)
++++ src/input/router.js (0.25.2)
+@@ -97,6 +97,7 @@
+   function editable(node){return !!node?.closest?.('input,textarea,select,[contenteditable=""],[contenteditable="true"],[role="textbox"]');}
+   function topOverlay(){return [...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||getComputedStyle(b).zIndex||0)-Number(a.style.zIndex||getComputedStyle(a).zIndex||0))[0];}
+   function escape(){
++    if(window.MainMenu?.active&&!topOverlay()){MainMenu.back();return;}
+     const top=topOverlay();
+     if(top){
+       if(top.id==='deathOverlay')return;
+
+--- src/save/envelope.js (0.25.1)
++++ src/save/envelope.js (0.25.2)
+@@ -4,7 +4,7 @@
+   const snapshot=()=>GameSave.snapshotModules();
+   V010.initialModules=clone(snapshot());
+   
+-  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.25.1';d.v010={schema:1,modules:snapshot()};return d;});
++  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.25.2';d.v010={schema:1,modules:snapshot()};return d;});
+   GameSave.extend('decode','save.envelope',function(oldDecode,raw){
+     let d=oldDecode(raw);
+     if(d.v010!==undefined){
+@@ -13,7 +13,7 @@
+     }
+     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
+     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
+-    d.gameVersion='0.25.1';return d;
++    d.gameVersion='0.25.2';return d;
+   });
+   GameSave.extend('restore','save.envelope',function(oldRestore,d){
+     const was=GameState.session.transaction;GameState.session.transaction=true;
+@@ -22,8 +22,8 @@
+   });
+   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
+   const oldMessage=message;message=function(text){oldMessage(text);V010.log(I18n.canonical(text));};
+-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.25.1'}));
+-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.25.1');
++  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.25.2'}));
++  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.25.2');
+   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
+   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
+   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
+
+--- src/save/format.js (0.25.1)
++++ src/save/format.js (0.25.2)
+@@ -17,7 +17,7 @@
+     }
+     return JSON.stringify(data);
+   }
+-  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.25.1';return data;}
++  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.25.2';return data;}
+   return Object.freeze({version:VERSION,prepare,stamp,
+     migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});
+ })();
+
+--- src/save/slots.js (0.25.1)
++++ src/save/slots.js (0.25.2)
+@@ -125,7 +125,7 @@
+   d.saveName=v091CleanSaveName(d.saveName);
+   const legacy=d.v09===undefined;
+   const legacySchema=d.schema;
+-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[01])))$/.test(d.gameVersion||'')))
++  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[012])))$/.test(d.gameVersion||'')))
+     throw new Error('Unsupported current save version');
+   if(legacy){
+     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
+@@ -225,7 +225,7 @@
+   updateSaveStatus('Не удалось сохранить: хранилище браузера недоступно или заполнено. Скачайте резервную копию.');
+   if(manual)message('Не удалось сохранить игру. Можно скачать сохранение файлом.');
+ }
+-loadGameProgress=function(){
++loadGameProgress=function(createIfEmpty=true){
+   try{
+     const occupied=v09OccupiedSlots();
+     const savedActive=Number(localStorage.getItem(V09_ACTIVE_KEY));
+@@ -254,6 +254,7 @@
+       updateSaveStatus('Сохранение не удалось прочитать. Оно не изменено. Доступны импорт и новая игра в свободном слоте.');
+       return false;
+     }
++    if(!createIfEmpty)return false;
+     const id=v09FreeSlot();const raw=v09WriteNewSlot(id,captureGameProgress());
+     GameState.session.name=JSON.parse(raw).saveName;
+     GameState.session.activeSlot=id;GameState.session.lastVerified=raw;GameState.session.blocked=false;
+@@ -303,19 +304,30 @@
+     localStorage.setItem(V09_ACTIVE_KEY,String(id));
+     restoreGameProgress(next.data);
+     GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=JSON.stringify(next.data);
+-    updateSaveStatus(`💾 Слот ${id} · игра загружена.`);message(`Продолжаем игру из слота ${id}.`);return true;
++    updateSaveStatus(`💾 Слот ${id} · игра загружена.`);message(`Продолжаем игру из слота ${id}.`);window.MainMenu?.sessionSelected();return true;
+   }catch(error){message('Не удалось загрузить игру. Сохранения не удалены.');return false;}
+ }
+-function v09NewGame(){
+-  try{
+-    const id=v09FreeSlot();
++function v09NewGame(selectedId=null,confirmed=null){
++  try{
++    const id=selectedId??v09FreeSlot();
+     if(!id){message('Все 5 слотов заняты. Новая игра не создана; прежний прогресс сохранён.');return false;}
++    if(!Number.isInteger(id)||id<1||id>V09_SLOT_COUNT)return false;
++    const occupied=v09OccupiedSlots().includes(id);
++    if(occupied&&(!confirmed||confirmed.primary!==localStorage.getItem(v09SlotKey(id))||confirmed.backup!==localStorage.getItem(v09BackupKey(id))))return false;
+     let data=GameSave.newGameData();
+     data=decodeGameProgress(JSON.stringify(data));
+     if(!v09BeforeSwitch())return false;
+-    const raw=v09WriteNewSlot(id,data);
++    let raw;
++    if(!occupied)raw=v09WriteNewSlot(id,data);
++    else{
++      // Replace the validated primary atomically; rollback all keys on storage failure.
++      data.saveName=v091DefaultName(id);raw=JSON.stringify(data);decodeGameProgress(raw);
++      const keys=[v09SlotKey(id),v09BackupKey(id),V09_ACTIVE_KEY],before=keys.map(k=>localStorage.getItem(k));
++      try{localStorage.setItem(keys[0],raw);localStorage.removeItem(keys[1]);localStorage.setItem(keys[2],String(id));}
++      catch(error){for(let i=0;i<keys.length;i++)try{if(before[i]===null)localStorage.removeItem(keys[i]);else localStorage.setItem(keys[i],before[i]);}catch(_){}throw error;}
++    }
+     restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=raw;
+-    updateSaveStatus(`💾 Новая игра · слот ${id}.`);message(`Новая игра в слоте ${id}. Другие сохранения остались на месте.`);return true;
++    updateSaveStatus(`💾 Новая игра · слот ${id}.`);message(`Новая игра в слоте ${id}. Другие сохранения остались на месте.`);window.MainMenu?.sessionSelected();return true;
+   }catch(error){v09ReportStorageFailure(true);return false;}
+ }
+ function v09ImportSave(raw){
+@@ -326,7 +338,7 @@
+     if(!v09BeforeSwitch())return false;
+     const importedRaw=v09WriteNewSlot(id,data);
+     restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=importedRaw;
+-    updateSaveStatus(`💾 Импортировано в слот ${id}.`);message(`Сохранение загружено в отдельный слот ${id}.`);return true;
++    updateSaveStatus(`💾 Импортировано в слот ${id}.`);message(`Сохранение загружено в отдельный слот ${id}.`);window.MainMenu?.sessionSelected();return true;
+   }catch(error){v09ReportStorageFailure(true);return false;}
+ }
+ function v09DownloadSave(){
+@@ -335,7 +347,7 @@
+     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+     const a=document.createElement('a');a.href=url;
+     const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
+-    a.download=`survival-base-0.25.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
++    a.download=`survival-base-0.25.2-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+     message('💾 Файл сохранения подготовлен для скачивания.');
+   }catch(error){message('Не удалось подготовить сохранение.');}
+
+--- src/ui/main-menu.js (0.25.1)
++++ src/ui/main-menu.js (0.25.2)
+@@ -0,0 +1,111 @@
++/* Start screen owns presentation and launch selection, never simulation or save data.
++   Background implementation is isolated from menu actions: animated WebP works
++   through <picture>; future video is configured here without changing save/UI logic. */
++const MenuBackground=(()=>{
++  const config={type:'image',video:{portrait:'',landscape:''}};
++  let video=null,query=null,listener=null;
++  function mount(){
++    if(config.type!=='video')return;
++    const host=el('mainMenuMedia');query=window.matchMedia('(orientation: portrait)');
++    video=document.createElement('video');video.muted=true;video.loop=true;video.playsInline=true;video.setAttribute('aria-hidden','true');
++    const poster=host.querySelector('img');if(poster)video.poster=poster.currentSrc||poster.src;
++    listener=()=>{const src=config.video[query.matches?'portrait':'landscape'];if(!src)return;video.src=src;video.play()?.catch(()=>{});};
++    host.replaceChildren(video);query.addEventListener?.('change',listener);listener();
++  }
++  function release(){if(video){video.pause();video.removeAttribute('src');video.load();}query?.removeEventListener?.('change',listener);el('mainMenuMedia').replaceChildren();video=query=listener=null;}
++  return {config,mount,release};
++})();
++window.MainMenu=(()=>{
++  let active=true,mounted=false,busy=false,start=null,screen='home',pending=null;
++  const root=()=>el('mainMenu');
++  const put=(node,key,params={})=>I18n.assign(node,'textContent',I18n.message('menu.'+key,params));
++  function status(key){const node=el('mainMenuStatus');if(key)put(node,key);else I18n.assign(node,'textContent','');}
++  // Read-only preview, with the same decoder and independent backup fallback as gameplay.
++  function inspect(){
++    try{
++      const slots=Array.from({length:V09_SLOT_COUNT},(_,i)=>v09ReadSlot(i+1));
++      const current=Number(localStorage.getItem(V09_ACTIVE_KEY));
++      const valid=slots.filter(s=>s&&!s.invalid).sort((a,b)=>b.data.savedAt-a.data.savedAt||Number(b.id===current)-Number(a.id===current)||a.id-b.id);
++      let legacy=null;
++      if(!valid.length&&localStorage.getItem('survival_base_slots_deleted')!=='1')for(const key of [GAME_SAVE_KEY,GAME_SAVE_BACKUP_KEY]){
++        const raw=localStorage.getItem(key);if(raw===null)continue;try{legacy={data:decodeGameProgress(raw)};break;}catch(_){}
++      }
++      return {slots,latest:valid[0]||null,legacy,error:false};
++    }catch(_){return {slots:[],latest:null,legacy:null,error:true};}
++  }
++  function refresh(){
++    if(!active)return;const data=inspect();el('menuContinue').disabled=data.error||(!data.latest&&!data.legacy);
++    el('menuNew').disabled=data.error;el('menuLoad').disabled=data.error;
++    if(data.error)status('storage');
++    if(screen==='new'||screen==='load')renderSlots(data);
++  }
++  function closePanels(){for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);}
++  function sessionSelected(){
++    if(!active||!start||!GameState.session.activeSlot||GameState.session.blocked)return false;
++    active=false;busy=false;pending=null;closePanels();root().hidden=true;document.body.classList.remove('main-menu-active');MenuBackground.release();
++    V0161UI.sync();start();canvas.focus?.();return true;
++  }
++  function run(fn){
++    if(!active||busy)return false;busy=true;status(null);
++    try{if(!fn()){status('failed');refresh();return false;}return true;}
++    catch(_){status('storage');return false;}
++    finally{busy=false;}
++  }
++  function continueGame(){return run(()=>{const data=inspect();if(data.error)return false;if(data.latest)return V09Saves.load(data.latest.id);
++    if(data.legacy){if(!loadGameProgress(false))return false;return sessionSelected();}return false;});}
++  function chooseNew(id){
++    if(!active||busy)return;const data=inspect();if(data.error){status('storage');return;}const entry=data.slots[id-1];
++    if(!entry){run(()=>V09Saves.newGame(id));return;}
++    try{pending={id,primary:localStorage.getItem(v09SlotKey(id)),backup:localStorage.getItem(v09BackupKey(id))};}
++    catch(_){status('storage');return;}
++    el('mainMenuSlots').hidden=true;el('mainMenuConfirm').hidden=false;
++    put(el('mainMenuConfirmText'),'confirm',{slot:id,name:entry.invalid?I18n.t('menu.slot',{slot:id}):entry.data.saveName});el('mainMenuCancel').focus();
++  }
++  function replace(){
++    if(!pending||!active||busy)return false;
++    const p=pending;
++    try{if(p.primary!==localStorage.getItem(v09SlotKey(p.id))||p.backup!==localStorage.getItem(v09BackupKey(p.id))){pending=null;show('new');status('changed');return false;}}
++    catch(_){status('storage');return false;}
++    return run(()=>V09Saves.newGame(p.id,p));
++  }
++  function renderSlots(data=inspect()){
++    const list=el('mainMenuSlots');list.replaceChildren();
++    for(let id=1;id<=V09_SLOT_COUNT;id++){
++      const entry=data.slots[id-1],button=document.createElement('button');button.type='button';button.className='mainMenuSlot';button.dataset.slot=String(id);
++      const title=document.createElement('strong');put(title,'slot',{slot:id});button.append(title);
++      const name=document.createElement('span');
++      if(!entry)put(name,'empty');else if(entry.invalid)put(name,'invalid');else I18n.assign(name,'textContent',I18n.verbatim(entry.data.saveName));button.append(name);
++      if(entry&&!entry.invalid){const meta=document.createElement('small');I18n.assign(meta,'textContent',I18n.dateText(entry.data.savedAt,{dateStyle:'short',timeStyle:'short'})+' · '+I18n.message('menu.'+(entry.data.player.scene==='bunker'?'bunker':'surface'))+(entry.recovered?' · '+I18n.message('menu.backup'):''));button.append(meta);}
++      button.disabled=screen==='load'&&(!entry||entry.invalid);button.addEventListener('click',()=>screen==='new'?chooseNew(id):run(()=>V09Saves.load(id)));list.append(button);
++    }
++    if(screen==='load'&&data.legacy){const b=document.createElement('button');b.type='button';put(b,'legacy');b.onclick=continueGame;list.append(b);}
++  }
++  function show(next){
++    if(!active)return;screen=next;pending=null;status(null);el('mainMenuButtons').hidden=next!=='home';el('mainMenuPanel').hidden=next==='home';el('mainMenuConfirm').hidden=true;el('mainMenuSlots').hidden=false;
++    if(next!=='home'){put(el('mainMenuTitle'),next);put(el('mainMenuDescription'),next+'.help');renderSlots();el('mainMenuBack').focus();}else refresh();
++  }
++  function back(){if(!active)return;if(pending){pending=null;show('new');}else show('home');}
++  function exit(){
++    if(!active)return;
++    try{const app=window.Telegram?.WebApp;if(app&&(app.initData||(app.platform&&app.platform!=='unknown'))&&typeof app.close==='function'){app.close();return;}}catch(_){}
++    // Ordinary browser tabs cannot reliably be closed by script. Keep the menu
++    // usable and explain the native close action instead of calling window.close.
++    status('exit.help');
++  }
++  function mount(onStart){
++    if(mounted)return;mounted=true;start=onStart;menuOpen=true;GameState.session.ready=false;
++    for(const [id,key,fn]of [['menuContinue','continue',continueGame],['menuNew','new',()=>show('new')],['menuLoad','load',()=>show('load')],['menuSettings','settings',()=>{status(null);openOverlay(el('settingsOverlay'));}],['menuExit','exit',exit],['mainMenuBack','back',()=>show('home')],['mainMenuReplace','replace',replace],['mainMenuCancel','cancel',()=>show('new')]]){
++      const b=el(id);I18n.bind(b,'menu.'+key);b.addEventListener('click',fn);b.disabled=false;
++    }
++    // Only preferences and controls belong to Settings before a game is selected.
++    for(const n of el('settingsOverlay').querySelector('.panel').children){
++      if(n.tagName==='BUTTON'&&!['fullscreenButton','closeSettings'].includes(n.id))n.classList.add('requires-game');
++      if(n.querySelector?.('#saveGameButton'))n.classList.add('requires-game');
++    }
++    I18n.onChange(()=>{if(active){I18n.setAttr(el('mainMenuButtons'),'aria-label',I18n.t('menu.nav'));if(screen!=='home'){put(el('mainMenuTitle'),screen);put(el('mainMenuDescription'),screen+'.help');renderSlots();}}});
++    window.addEventListener('storage',()=>{if(active){pending=null;el('mainMenuConfirm').hidden=true;el('mainMenuSlots').hidden=false;refresh();}});
++    I18n.setAttr(el('mainMenuButtons'),'aria-label',I18n.t('menu.nav'));
++    MenuBackground.mount();refresh();V0161UI.sync();
++  }
++  return {mount,inspect,continueGame,show,back,chooseNew,replace,exit,sessionSelected,refresh,get active(){return active;}};
++})();
+
+--- src/ui/modal-dragging.js (0.25.1)
++++ src/ui/modal-dragging.js (0.25.2)
+@@ -3,7 +3,7 @@
+   const inv=V010Inventory,robot=V014Robots,quick=V013Inventory;
+   const controls=['v010Minimap','moveControl','aimControl','actionButton','bagButton','settingsButton','hotbar','v010SneakButton','v010ReloadButton','v014DroneHUD','v091JumpInward','v014RouteStop','v010PracticeStop','v010PinnedRecipe','v010PinnedGoal','searchBarWrap','v016Placement','v163Vitals','heldItemName'];
+   let serial=15000,dismissGesture=null,pointerGesture=null;
+-  function sync(){const open=!!document.querySelector('.overlay.open');menuOpen=open||playerDead;if(document.body.classList.contains('v0161Modal')!==menuOpen)document.body.classList.toggle('v0161Modal',menuOpen);}
++  function sync(){const open=!!document.querySelector('.overlay.open');menuOpen=open||playerDead||!!window.MainMenu?.active;if(document.body.classList.contains('v0161Modal')!==menuOpen)document.body.classList.toggle('v0161Modal',menuOpen);}
+   function opened(o){
+     if(pointerGesture)pointerGesture.opened=true;
+     o.style.zIndex=String(++serial);const panel=o.querySelector('.panel');

@@ -1,12 +1,12 @@
 {
-  "version": "0.25.1",
+  "version": "0.25.2",
   "reference": "0.24.1 Stage 4 fixes, 5574 passing assertions",
-  "sourceHash": "47c36b657e658587412497428d6f742aa19e4b1c5c523ffd6a0d22ee2ffb4935",
+  "sourceHash": "95a7bc6340fd31473b758978c0f84bfd552504e7d22ea5f12554dab6d5331be2",
   "cssHash": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0",
   "files": [
     {
       "file": "src/i18n/catalogs.js",
-      "sha256": "6e8190e93d7173f5fb27b9da9dfbff5ebf0222d6d9661cf8f1e98e1dd6b16e9b"
+      "sha256": "2b5e2be1a60d205cc7574f3b15f9a9d838b3df97454aa6695f1abdc8549fec46"
     },
     {
       "file": "src/i18n/runtime.js",
@@ -18,7 +18,7 @@
     },
     {
       "file": "src/save/format.js",
-      "sha256": "12545f4962f4b49757ff7966fa02fa34abdf8313dea52c29be9ea9873e638aa3"
+      "sha256": "1ca20378a05accb622d3a2b44c95ea74f03632566bf63d60553d09829f21e7ad"
     },
     {
       "file": "src/save/pipeline.js",
@@ -26,7 +26,7 @@
     },
     {
       "file": "src/assets/manifest.js",
-      "sha256": "6565787fd597e832818a6c53aa0e1faa76ab5b238a0cacc4ed9dd74d9e411225"
+      "sha256": "ad2e425e5290367f1bb909dca2be84ee740f3e0345979ecc728b1c7fb4b8eb1a"
     },
     {
       "file": "src/assets/resources.js",
@@ -46,11 +46,11 @@
     },
     {
       "file": "src/input/actions.js",
-      "sha256": "90e6caf641f4a66c3654a34e4a6b7a8b8ee14b3dbf1ce33d49db60458fd0cc92"
+      "sha256": "479e4faf74ef12cf70f243fa44d2b2457797590e8024afd8628fd8cf42818e65"
     },
     {
       "file": "src/input/router.js",
-      "sha256": "be4558aeb2db9b655cdf54d70052d2a3db4307fc5883c29bb03142c3fd22b0a2"
+      "sha256": "f76a3e86057b817a13a7baab7307eed4becbd977873dfa71491c818f4f2920b9"
     },
     {
       "file": "src/core/interactions-farm-storage.js",
@@ -106,7 +106,7 @@
     },
     {
       "file": "src/save/slots.js",
-      "sha256": "ca41fa792fb9aa3cfbc42a1d5dfaa480bb230b5c0fc21eab154b92ece816a127"
+      "sha256": "010cf50d2800c309ba91fb8716d972cea11f0a9396bdf20795339aa1ebc3f6a8"
     },
     {
       "file": "src/inventory/registry-slots.js",
@@ -134,7 +134,7 @@
     },
     {
       "file": "src/save/envelope.js",
-      "sha256": "964af887779f9013ec5cc26efedebe98012d0bf9564cbd72175ae3a4db3d08f7"
+      "sha256": "4b287459be6e33b7258a4a5e823b763d4df36c2629008e3f9c79f2f25231d5fb"
     },
     {
       "file": "src/ui/context-map.js",
@@ -222,7 +222,7 @@
     },
     {
       "file": "src/ui/modal-dragging.js",
-      "sha256": "bdebafc299c497d28902f9432155767ec471c50aa4d95b0efb11e2606e23246e"
+      "sha256": "cf5766b2a820a8fbf9c6f0d238c975ebb06c45b04ec985c51136416a836dce62"
     },
     {
       "file": "src/inventory/upgrades.js",
@@ -257,12 +257,16 @@
       "sha256": "306b578bacee5ad4b704cc8ea1bd0ae27cdf73f06c9618f321ea69931e30c4fe"
     },
     {
+      "file": "src/ui/main-menu.js",
+      "sha256": "b99783418fb337ce5b0be0d5d262bfe5ea6b9c13521a44c42e0e01684cc7b903"
+    },
+    {
       "file": "src/bootstrap.js",
-      "sha256": "1056fb88fc233106487c8b0b5a51acc4bfdc0a6d7ebb434396456d5db2b41893"
+      "sha256": "f87648278579dced4f2178225c1e4dccf78e855c359b1854349fae8f16cfe937"
     },
     {
       "file": "locales/en.json",
-      "sha256": "e1d4fe2c4cf1f840edce46ecce942917cca1dff4180959d0ff7abfeacdb0bacd"
+      "sha256": "be6ee8efdf0c09205a30f716115146c385b9856f80f1caa0e1cc9de5dee29e68"
     },
     {
       "file": "locales/legacy.json",
@@ -274,7 +278,7 @@
     },
     {
       "file": "locales/ru.json",
-      "sha256": "f7c28e43bdca1a8a2fc5187c4a605db0352dfec2087478e9841580b6decefddf"
+      "sha256": "7465f3a10a5fadbe1c6aa30ef81e0de5e79b7bf2f8cbc29c459467151f04aa97"
     },
     {
       "file": "locales/sources.json",
@@ -745,6 +749,22 @@
     {
       "file": "qa/stage4-fixed/styles/base.css",
       "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/stage5-accepted/index.html",
+      "sha256": "6d12b025f66e7bc03c1a3ec5f8af9f6dc6f78583cd1ef7cfeebcffa0b2ad668c"
+    },
+    {
+      "file": "qa/stage5-accepted/js/game.js",
+      "sha256": "1518533cdafa20c6965b035f03fa6d9048f3b41d974746befc01b56c71174989"
+    },
+    {
+      "file": "qa/stage5-accepted/js/game.js.map",
+      "sha256": "908e3baa399e2685684b9b8193c7feccc6847ad7aa41c2ac3517fe6bb0514dad"
+    },
+    {
+      "file": "qa/stage5-accepted/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
     }
   ],
   "unchangedStage2Sources": [],
@@ -760,6 +780,7 @@
     "base/structures.js",
     "base/turrets.js",
     "base/wall-art.js",
+    "bootstrap.js",
     "combat/monsters.js",
     "combat/weapons-crafting.js",
     "core/input-combat.js",
@@ -777,6 +798,7 @@
     "i18n/runtime.js",
     "i18n/settings.js",
     "input/actions.js",
+    "input/router.js",
     "input/settings.js",
     "inventory/physical-slots.js",
     "inventory/picker-magazines.js",
@@ -792,6 +814,7 @@
     "ui/inventory-crafting.js",
     "ui/legacy-panels.js",
     "ui/loot-vitals.js",
+    "ui/main-menu.js",
     "ui/maps-windows.js",
     "ui/modal-dragging.js",
     "ui/progression.js",

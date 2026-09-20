@@ -2,7 +2,7 @@
    item transfers or interaction rules. Commands are transient, not save data. */
 window.GameActions=(()=>{
   'use strict';
-  const playable=()=>!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
+  const playable=()=>!window.MainMenu?.active&&!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
   const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
   function dispatch(type,data={}){
     // Releases are always allowed, including while a menu is opening.
@@ -11,6 +11,7 @@ window.GameActions=(()=>{
     if(type==='MOVE'&&data.kind==='vector'&&data.power===0){moveX=moveY=movePower=0;return true;}
     // An explicit map button may start a route while its own panel is open.
     // Other panels and all gameplay input retain the normal pause guard.
+    if(window.MainMenu?.active)return false;
     const mapRoute=type==='MOVE'&&data.kind==='route'&&data.from==='map'&&el('v010MapOverlay')?.classList.contains('open')&&window.V0161UI?.topOverlay()===el('v010MapOverlay');
     if(!playable()&&!(mapRoute&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show')))return false;
     switch(type){

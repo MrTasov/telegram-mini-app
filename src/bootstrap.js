@@ -1,4 +1,7 @@
-loadGameProgress();GameState.session.ready=true;
+let gameplayStarted=false;
+function startSelectedGame(){
+if(gameplayStarted)return;
+gameplayStarted=true;GameState.session.ready=true;
 grantStarterItems();
 renderQuickSlots();
 if(starterPending.length)message('Освободите место в рюкзаке: предметы обновления ждут выдачи');
@@ -36,10 +39,11 @@ gameLoop();
   Telegram fullscreen запускается ПОСЛЕ игры.
 */
 
-setTimeout(
-  fullscreen,
-  400
-);
+setTimeout(fullscreen,400);
+}
+
+resizeCanvas();applyControls();
+MainMenu.mount(startSelectedGame);
 
 
 // 0.6.18: direct canvas farm taps removed; contextual action button is used instead.

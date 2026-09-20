@@ -3,7 +3,7 @@ window.V0161UI=(()=>{
   const inv=V010Inventory,robot=V014Robots,quick=V013Inventory;
   const controls=['v010Minimap','moveControl','aimControl','actionButton','bagButton','settingsButton','hotbar','v010SneakButton','v010ReloadButton','v014DroneHUD','v091JumpInward','v014RouteStop','v010PracticeStop','v010PinnedRecipe','v010PinnedGoal','searchBarWrap','v016Placement','v163Vitals','heldItemName'];
   let serial=15000,dismissGesture=null,pointerGesture=null;
-  function sync(){const open=!!document.querySelector('.overlay.open');menuOpen=open||playerDead;if(document.body.classList.contains('v0161Modal')!==menuOpen)document.body.classList.toggle('v0161Modal',menuOpen);}
+  function sync(){const open=!!document.querySelector('.overlay.open');menuOpen=open||playerDead||!!window.MainMenu?.active;if(document.body.classList.contains('v0161Modal')!==menuOpen)document.body.classList.toggle('v0161Modal',menuOpen);}
   function opened(o){
     if(pointerGesture)pointerGesture.opened=true;
     o.style.zIndex=String(++serial);const panel=o.querySelector('.panel');
