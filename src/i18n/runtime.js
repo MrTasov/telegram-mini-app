@@ -65,8 +65,11 @@ window.I18n=(()=>{
     const old=map[name];raw=raw??(old&&old.rendered===value?old.raw:value);
     const rendered=text(raw);map[name]={raw,rendered};if(node.getAttribute(name)!==rendered)node.setAttribute(name,rendered);
   }
-  function localize(node){if(!node)return;if(node.nodeType===3){bindText(node);return;}if(skipped(node))return;
-    for(const name of ['title','placeholder','aria-label','alt'])bindAttr(node,name);
+  function localize(node){if(!node)return;if(node.nodeType===3){bindText(node);return;}
+    // Comments/doctype have no attribute API. Documents and fragments only
+    // contain children; only Elements can carry translatable attributes.
+    if(node.nodeType===1){if(skipped(node))return;for(const name of ['title','placeholder','aria-label','alt'])bindAttr(node,name);}
+    else if(node.nodeType!==9&&node.nodeType!==11)return;
     for(const child of node.childNodes||[])localize(child);
   }
   function assign(node,property,value){

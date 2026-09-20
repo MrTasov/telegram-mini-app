@@ -5,6 +5,9 @@ const copy=v=>JSON.parse(JSON.stringify(v)),clean=d=>{d=copy(d);d.gameVersion='r
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack?.slice(0,2500)});}}
 const r=setup('index.html',{}, {language:'en'}),E=s=>r.eval(s),fresh=E('JSON.stringify(captureGameProgress())');
 const catalog=require('../tools/locales.cjs').validate();
+check('boot.htmlCommentsPreserved',()=>{const nodes=[];const walk=n=>{if(n.nodeType===8)nodes.push(n);for(const c of n.childNodes||[])walk(c);};walk(r.doc);assert.ok(nodes.length>=5);assert.equal(typeof nodes[0].getAttribute,'undefined');assert.ok(E('GameState.session.ready'));assert.ok(r.canvas.width>0);});
+check('dom.commentDocumentFragmentAndLanguageSwitch',()=>{const comment=r.doc.createComment('Камень');const box=r.doc.createElement('div');box.append(comment,'Камень');r.doc.body.append(box);for(const lang of ['ru','en','ru','en']){E(`I18n.setLanguage('${lang}')`);assert.equal(comment.nodeValue,'Камень');assert.equal(box.textContent,lang==='ru'?'Камень':'Stone');}E('I18n.localize(document);I18n.localize({nodeType:10});I18n.localize({nodeType:11,childNodes:[{nodeType:8,nodeValue:"comment"}]});draw();');box.remove();});
+
 check('catalog.validAndPaired',()=>assert.deepEqual(catalog.manifest.locales.map(l=>l.id),['en','ru']));
 for(const lang of ['en','ru']){
  E(`I18n.setLanguage('${lang}')`);

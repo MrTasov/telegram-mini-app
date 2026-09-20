@@ -3,6 +3,12 @@ const vm=require('vm'),fs=require('fs');
 const canvasContract=require('./canvas-contract.cjs');
 const {createCanvas}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES?process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/@napi-rs/canvas':'@napi-rs/canvas');
 const canvas=createCanvas(1280,800);
+// Comment nodes deliberately have no Element attribute API, as in browser DOM.
+class CommentNode{
+ constructor(value){this.nodeType=8;this.nodeValue=value;this.parentNode=null;this.childNodes=[];}
+ get textContent(){return this.nodeValue}set textContent(value){this.nodeValue=String(value)}
+ remove(){if(this.parentNode)this.parentNode.childNodes=this.parentNode.childNodes.filter(n=>n!==this);this.parentNode=null;}
+}
 class Elem{
  constructor(tag='div'){this.tagName=tag.toUpperCase();this.nodeType=tag==='#text'?3:tag==='document'?9:1;this.childNodes=[];this.parentNode=null;this.attrs={};this.style={setProperty(k,v){this[k]=v}};this.listeners={};this.dataset=new Proxy({},{set:(o,k,v)=>{o[k]=String(v);this.attrs['data-'+k.replace(/[A-Z]/g,c=>'-'+c.toLowerCase())]=String(v);return true;}});this._text='';this._html='';this.value='';this.disabled=false;this.width=1280;this.height=800;}
  get children(){return this.childNodes.filter(n=>n.nodeType===1)}set children(v){this.childNodes=v}
@@ -21,7 +27,7 @@ class Elem{
  after(n){const p=this.parentNode;if(p){p.childNodes.splice(p.childNodes.indexOf(this)+1,0,n);n.parentNode=p;}}
  before(n){const p=this.parentNode;if(p){p.childNodes.splice(p.childNodes.indexOf(this),0,n);n.parentNode=p;}}
  remove(){const p=this.parentNode;if(p)p.childNodes=p.childNodes.filter(n=>n!==this);this.parentNode=null}
- set textContent(t){this.childNodes=[];this._text='';this._html='';if(this.nodeType===3)this._text=String(t);else this.append(String(t))}get textContent(){return this._text+this.childNodes.map(c=>c.textContent).join('')}
+ set textContent(t){this.childNodes=[];this._text='';this._html='';if(this.nodeType===3)this._text=String(t);else this.append(String(t))}get textContent(){return this._text+this.childNodes.filter(c=>c.nodeType!==8).map(c=>c.textContent).join('')}
  set innerHTML(s){this.children=[];this._text='';this._html=String(s);parse(String(s),this)}get innerHTML(){return this._html||this.textContent}
  matches(s){s=s.trim();if(!s)return false;if(s.includes(','))return s.split(',').some(x=>this.matches(x));if(s.includes(' ')){const a=s.split(/\s+/),last=a.pop();return this.matches(last)&&!!this.parentNode?.closest(a.join(' '));}
   const attr=[...s.matchAll(/\[([^\]=]+)(?:=['"]?([^\]'"]*)['"]?)?\]/g)];for(const m of attr)if(this.getAttribute(m[1])===null||(m[2]!==undefined&&this.getAttribute(m[1])!==m[2]))return false;s=s.replace(/\[[^\]]+\]/g,'');
@@ -37,10 +43,10 @@ class Elem{
  getContext(){if(this.id==='canvas')return canvas.getContext('2d');this._canvas??=createCanvas(this.width||300,this.height||150);if(this._canvas.width!==this.width)this._canvas.width=this.width;if(this._canvas.height!==this.height)this._canvas.height=this.height;return this._canvas.getContext('2d')}toDataURL(){return (this._canvas||canvas).toDataURL()}
  requestFullscreen(){return Promise.resolve()}
 }
-function parse(html,parent){const stack=[parent];for(const token of html.match(/<!--[\s\S]*?-->|<![^>]*>|<[^>]+>|[^<]+/g)||[]){if(token.startsWith('<!'))continue;if(token.startsWith('</')){const name=token.slice(2).match(/^[\w-]+/)?.[0].toUpperCase();while(stack.length>1){if(stack.pop().tagName===name)break;}continue;}if(token[0]==='<'){const name=token.slice(1).match(/^[\w-]+/)?.[0];if(!name)continue;const n=new Elem(name);for(const a of token.slice(name.length+1).matchAll(/([\w:-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g))n.setAttribute(a[1],a[2]??a[3]??a[4]??'');stack.at(-1).append(n);if(!['meta','link','img','input','br','hr','source','path'].includes(name)&&!token.endsWith('/>'))stack.push(n);}else stack.at(-1).append(token.replace(/&(?:amp|lt|gt|quot|apos|nbsp);/g,x=>({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&apos;':"'",'&nbsp;':'\u00a0'}[x])));}}
+function parse(html,parent){const stack=[parent];for(const token of html.match(/<!--[\s\S]*?-->|<![^>]*>|<[^>]+>|[^<]+/g)||[]){if(token.startsWith('<!--')){stack.at(-1).append(new CommentNode(token.slice(4,-3)));continue;}if(token.startsWith('<!'))continue;if(token.startsWith('</')){const name=token.slice(2).match(/^[\w-]+/)?.[0].toUpperCase();while(stack.length>1){if(stack.pop().tagName===name)break;}continue;}if(token[0]==='<'){const name=token.slice(1).match(/^[\w-]+/)?.[0];if(!name)continue;const n=new Elem(name);for(const a of token.slice(name.length+1).matchAll(/([\w:-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g))n.setAttribute(a[1],a[2]??a[3]??a[4]??'');stack.at(-1).append(n);if(!['meta','link','img','input','br','hr','source','path'].includes(name)&&!token.endsWith('/>'))stack.push(n);}else stack.at(-1).append(token.replace(/&(?:amp|lt|gt|quot|apos|nbsp);/g,x=>({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'\"','&apos;':"'",'&nbsp;':'\u00a0'}[x])));}}
 function setup(file,initialStorage={},options={}){
  const html=fs.readFileSync(file,'utf8');const doc=new Elem('document');parse(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/g,''),doc);
- doc.body=doc.querySelector('body');doc.head=doc.querySelector('head');doc.documentElement=doc.querySelector('html');doc.createElement=t=>new Elem(t);doc.createElementNS=(_,t)=>new Elem(t);doc.getElementById=id=>doc.querySelector('#'+id);doc.hidden=false;doc.visibilityState='visible';
+ doc.body=doc.querySelector('body');doc.head=doc.querySelector('head');doc.documentElement=doc.querySelector('html');doc.createComment=t=>new CommentNode(t);doc.createElement=t=>new Elem(t);doc.createElementNS=(_,t)=>new Elem(t);doc.getElementById=id=>doc.querySelector('#'+id);doc.hidden=false;doc.visibilityState='visible';
  canvas.width=1280;canvas.height=800;canvasContract.reset(canvas.getContext('2d'));
  const mainCanvas=doc.getElementById('canvas');
  for(const key of ['width','height'])Object.defineProperty(mainCanvas,key,{get:()=>canvas[key],set:value=>{canvas[key]=value;canvasContract.reset(canvas.getContext('2d'));},configurable:true});

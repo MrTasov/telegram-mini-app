@@ -1,5 +1,5 @@
 {
-  "version": "0.25.0",
+  "version": "0.25.1",
   "reference": "0.24.1 fixed Stage 4",
   "languages": [
     "en",
@@ -73,9 +73,17 @@
     "craft.feed_craft",
     "recipe.feed"
   ],
-  "passed": 3407,
+  "passed": 3409,
   "failed": 0,
   "checks": [
+    {
+      "id": "boot.htmlCommentsPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "dom.commentDocumentFragmentAndLanguageSwitch",
+      "status": "PASS"
+    },
     {
       "id": "catalog.validAndPaired",
       "status": "PASS"
