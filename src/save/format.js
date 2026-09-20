@@ -17,7 +17,7 @@ const SaveFormat=(()=>{
     }
     return JSON.stringify(data);
   }
-  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.25.2';return data;}
+  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.25.3';return data;}
   return Object.freeze({version:VERSION,prepare,stamp,
     migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});
 })();

@@ -3,7 +3,8 @@
 :root{
  --menu-brightness:.91;--menu-saturation:.72;--menu-contrast:.91;
  --menu-cold-opacity:.065;--menu-mist-opacity:.09;
- --menu-ui-x:50%;--menu-ui-bottom:5%;--menu-ui-width:900px;
+ --menu-ui-x:50%;--menu-ui-bottom:5%;--menu-ui-width:640px;
+ --menu-home-button-height:34px;--menu-home-font-size:11px;
  --menu-button-height:48px;--menu-button-gap:12px;--menu-font-size:13px;
  --menu-art-x:50%;--menu-art-y:0%;
 }
@@ -17,6 +18,9 @@
 .mainMenuMist{opacity:var(--menu-mist-opacity);background:linear-gradient(180deg,transparent 20%,#92a9b1 58%,#5d7784 83%,transparent),radial-gradient(ellipse at 35% 68%,#c1cdd0,transparent 72%)}
 #mainMenuButtons{position:absolute;left:var(--menu-ui-x);bottom:max(var(--menu-ui-bottom),calc(env(safe-area-inset-bottom) + 18px));transform:translateX(-50%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--menu-button-gap);width:min(var(--menu-ui-width),calc(100% - 48px))}
 #mainMenu button{box-sizing:border-box;color:#e9ede8;background:rgba(10,21,25,.88);border:1px solid #78918b;border-radius:4px;min-height:var(--menu-button-height);padding:10px 12px;font-size:var(--menu-font-size);font-weight:700;letter-spacing:.08em;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+/* Approximately half the former visible area; dialog controls keep their size. */
+#mainMenuButtons>button{position:relative;min-height:var(--menu-home-button-height);padding:4px 6px;font-size:var(--menu-home-font-size);line-height:1.15;letter-spacing:.04em}
+@media(pointer:coarse){#mainMenuButtons>button::after{content:"";position:absolute;inset:-6px 0}}
 #mainMenu button:focus-visible{outline:2px solid #e0c991;outline-offset:3px}
 #mainMenu button:active{background:#3a4a49;border-color:#e4d4ac}
 @media(hover:hover){#mainMenu button:hover:not(:disabled){background:#2b3c3d;border-color:#d2c4a2}}
@@ -32,11 +36,12 @@
 #mainMenuStatus{position:absolute;left:50%;top:max(32%,env(safe-area-inset-top));transform:translateX(-50%);width:min(440px,80%);box-sizing:border-box;text-align:center;white-space:pre-line;font-size:14px;line-height:1.5;margin:0;padding:10px 14px;background:rgba(8,17,22,.94);border-radius:5px;z-index:2}
 #mainMenuStatus:empty{display:none}
 #mainMenuVersion{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(9px,env(safe-area-inset-bottom));color:#a8b6ba;font-size:10px;letter-spacing:.14em}
-body.main-menu-active #game>:not(.overlay),body.main-menu-active>:not(#mainMenu):not(#game):not(.overlay):not(script):not(style){visibility:hidden!important;pointer-events:none!important}
+/* Menu and static overlays share #game's fixed-position stacking context. */
+body.main-menu-active #game>:not(.overlay):not(#mainMenu),body.main-menu-active>:not(#mainMenu):not(#game):not(.overlay):not(script):not(style){visibility:hidden!important;pointer-events:none!important}
 body.main-menu-active .requires-game{display:none!important}
-@media(orientation:portrait){:root{--menu-brightness:.94;--menu-saturation:.73;--menu-contrast:.92;--menu-mist-opacity:.07;--menu-art-y:50%;--menu-ui-x:65%;--menu-ui-bottom:4%;--menu-ui-width:58%;--menu-button-height:44px;--menu-button-gap:8px;--menu-font-size:13px}
+@media(orientation:portrait){:root{--menu-brightness:.94;--menu-saturation:.73;--menu-contrast:.92;--menu-mist-opacity:.07;--menu-art-y:50%;--menu-ui-x:65%;--menu-ui-bottom:4%;--menu-ui-width:42%;--menu-home-button-height:32px;--menu-button-height:44px;--menu-button-gap:12px;--menu-font-size:13px}
  #mainMenuButtons{grid-template-columns:1fr;width:var(--menu-ui-width)}
 }
-@media(orientation:landscape) and (max-width:950px){:root{--menu-ui-width:760px;--menu-font-size:11px;--menu-button-gap:7px;--menu-button-height:44px}}
-@media(orientation:portrait) and (max-height:620px){:root{--menu-button-height:38px;--menu-button-gap:5px;--menu-font-size:11px;--menu-ui-bottom:3%}}
+@media(orientation:landscape) and (max-width:950px){:root{--menu-ui-width:540px;--menu-home-button-height:32px;--menu-home-font-size:10px;--menu-font-size:11px;--menu-button-gap:7px;--menu-button-height:44px}}
+@media(orientation:portrait) and (max-height:620px){:root{--menu-home-button-height:30px;--menu-home-font-size:10px;--menu-button-height:38px;--menu-button-gap:14px;--menu-font-size:11px;--menu-ui-bottom:3%}}
 @media(prefers-reduced-motion:reduce){#mainMenu *{animation:none!important;transition:none!important}}

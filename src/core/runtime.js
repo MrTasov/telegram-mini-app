@@ -50,24 +50,35 @@ if(tg){
 
 }
 
-function fullscreen(){
-
-  if(!tg){
-    return;
+// Shared by the start screen and Settings. A browser request must happen in
+// the original user gesture; a denial must never interrupt menu/game actions.
+let browserFullscreenPending=false,telegramFullscreenAttempted=false;
+function mobileFullscreenDevice(){
+  const platform=window.Telegram?.WebApp?.platform;
+  return platform==='android'||platform==='ios'||
+    (navigator.maxTouchPoints>0&&window.matchMedia('(pointer: coarse)').matches);
+}
+function fullscreen({allowBrowser=true,automatic=false}={}){
+  const app=window.Telegram?.WebApp;
+  if(app&&(app.initData||(app.platform&&app.platform!=='unknown'))){
+    if(app.isFullscreen)return true;
+    try{app.expand?.();}catch(_){}
+    try{
+      if(typeof app.requestFullscreen==='function'&&(!app.isVersionAtLeast||app.isVersionAtLeast('8.0'))){
+        if(automatic&&telegramFullscreenAttempted)return true;
+        const result=app.requestFullscreen();telegramFullscreenAttempted=true;
+        result?.catch?.(()=>{telegramFullscreenAttempted=false;});return true;
+      }
+    }catch(_){}
   }
-
+  if(!allowBrowser||browserFullscreenPending||document.fullscreenElement||document.webkitFullscreenElement)return false;
+  const root=document.documentElement,request=root.requestFullscreen||root.webkitRequestFullscreen;
+  if(typeof request!=='function'||document.fullscreenEnabled===false)return false;
   try{
-    tg.expand();
-  }catch(e){}
-
-  try{
-
-    if(typeof tg.requestFullscreen === "function"){
-      tg.requestFullscreen();
-    }
-
-  }catch(e){}
-
+    browserFullscreenPending=true;
+    Promise.resolve(request.call(root)).then(()=>{browserFullscreenPending=false;},()=>{browserFullscreenPending=false;});
+    return true;
+  }catch(_){browserFullscreenPending=false;return false;}
 }
 
 /* Audio paths and optional availability are defined in assets/manifest.json. */
@@ -523,4 +534,3 @@ function resizeCanvas(){
   );
 
 }
-

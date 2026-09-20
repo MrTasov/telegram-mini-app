@@ -148,7 +148,7 @@ const SaveFormat=(()=>{
     }
     return JSON.stringify(data);
   }
-  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.25.2';return data;}
+  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.25.3';return data;}
   return Object.freeze({version:VERSION,prepare,stamp,
     migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});
 })();
@@ -325,24 +325,35 @@ if(tg){
 
 }
 
-function fullscreen(){
-
-  if(!tg){
-    return;
+// Shared by the start screen and Settings. A browser request must happen in
+// the original user gesture; a denial must never interrupt menu/game actions.
+let browserFullscreenPending=false,telegramFullscreenAttempted=false;
+function mobileFullscreenDevice(){
+  const platform=window.Telegram?.WebApp?.platform;
+  return platform==='android'||platform==='ios'||
+    (navigator.maxTouchPoints>0&&window.matchMedia('(pointer: coarse)').matches);
+}
+function fullscreen({allowBrowser=true,automatic=false}={}){
+  const app=window.Telegram?.WebApp;
+  if(app&&(app.initData||(app.platform&&app.platform!=='unknown'))){
+    if(app.isFullscreen)return true;
+    try{app.expand?.();}catch(_){}
+    try{
+      if(typeof app.requestFullscreen==='function'&&(!app.isVersionAtLeast||app.isVersionAtLeast('8.0'))){
+        if(automatic&&telegramFullscreenAttempted)return true;
+        const result=app.requestFullscreen();telegramFullscreenAttempted=true;
+        result?.catch?.(()=>{telegramFullscreenAttempted=false;});return true;
+      }
+    }catch(_){}
   }
-
+  if(!allowBrowser||browserFullscreenPending||document.fullscreenElement||document.webkitFullscreenElement)return false;
+  const root=document.documentElement,request=root.requestFullscreen||root.webkitRequestFullscreen;
+  if(typeof request!=='function'||document.fullscreenEnabled===false)return false;
   try{
-    tg.expand();
-  }catch(e){}
-
-  try{
-
-    if(typeof tg.requestFullscreen === "function"){
-      tg.requestFullscreen();
-    }
-
-  }catch(e){}
-
+    browserFullscreenPending=true;
+    Promise.resolve(request.call(root)).then(()=>{browserFullscreenPending=false;},()=>{browserFullscreenPending=false;});
+    return true;
+  }catch(_){browserFullscreenPending=false;return false;}
 }
 
 /* Audio paths and optional availability are defined in assets/manifest.json. */
@@ -798,7 +809,6 @@ function resizeCanvas(){
   );
 
 }
-
 /* =====================================================
    WORLD
 ===================================================== */
@@ -7302,7 +7312,7 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[012])))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123])))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -7524,7 +7534,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.25.2-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.25.3-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}
@@ -8930,7 +8940,7 @@ function viewHeight(){return V010Camera.view().h;}
   const snapshot=()=>GameSave.snapshotModules();
   V010.initialModules=clone(snapshot());
   
-  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.25.2';d.v010={schema:1,modules:snapshot()};return d;});
+  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.25.3';d.v010={schema:1,modules:snapshot()};return d;});
   GameSave.extend('decode','save.envelope',function(oldDecode,raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -8939,7 +8949,7 @@ function viewHeight(){return V010Camera.view().h;}
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.25.2';return d;
+    d.gameVersion='0.25.3';return d;
   });
   GameSave.extend('restore','save.envelope',function(oldRestore,d){
     const was=GameState.session.transaction;GameState.session.transaction=true;
@@ -8948,8 +8958,8 @@ function viewHeight(){return V010Camera.view().h;}
   });
   const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(I18n.canonical(text));};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.25.2'}));
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.25.2');
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.25.3'}));
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.25.3');
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
@@ -13689,7 +13699,7 @@ const MenuBackground=(()=>{
   return {config,mount,release};
 })();
 window.MainMenu=(()=>{
-  let active=true,mounted=false,busy=false,start=null,screen='home',pending=null;
+  let active=true,mounted=false,busy=false,start=null,screen='home',pending=null,fullscreenGestureUsed=false;
   const root=()=>el('mainMenu');
   const put=(node,key,params={})=>I18n.assign(node,'textContent',I18n.message('menu.'+key,params));
   function status(key){const node=el('mainMenuStatus');if(key)put(node,key);else I18n.assign(node,'textContent','');}
@@ -13767,12 +13777,20 @@ window.MainMenu=(()=>{
   }
   function mount(onStart){
     if(mounted)return;mounted=true;start=onStart;menuOpen=true;GameState.session.ready=false;
+    // Native Telegram can enter fullscreen immediately. Browsers need a tap;
+    // capture click keeps user activation and still lets the selected action run.
+    if(mobileFullscreenDevice())fullscreen({allowBrowser:false,automatic:true});
+    root().addEventListener('click',e=>{
+      if(!active||fullscreenGestureUsed||e.target.closest?.('#menuExit'))return;
+      if(e.pointerType!=='touch'&&!mobileFullscreenDevice())return;
+      fullscreenGestureUsed=true;fullscreen({automatic:true});
+    },true);
     for(const [id,key,fn]of [['menuContinue','continue',continueGame],['menuNew','new',()=>show('new')],['menuLoad','load',()=>show('load')],['menuSettings','settings',()=>{status(null);openOverlay(el('settingsOverlay'));}],['menuExit','exit',exit],['mainMenuBack','back',()=>show('home')],['mainMenuReplace','replace',replace],['mainMenuCancel','cancel',()=>show('new')]]){
       const b=el(id);I18n.bind(b,'menu.'+key);b.addEventListener('click',fn);b.disabled=false;
     }
     // Only preferences and controls belong to Settings before a game is selected.
     for(const n of el('settingsOverlay').querySelector('.panel').children){
-      if(n.tagName==='BUTTON'&&!['fullscreenButton','closeSettings'].includes(n.id))n.classList.add('requires-game');
+      if(n.tagName==='BUTTON'&&!['fullscreenButton','openControlSettings','closeSettings'].includes(n.id))n.classList.add('requires-game');
       if(n.querySelector?.('#saveGameButton'))n.classList.add('requires-game');
     }
     I18n.onChange(()=>{if(active){I18n.setAttr(el('mainMenuButtons'),'aria-label',I18n.t('menu.nav'));if(screen!=='home'){put(el('mainMenuTitle'),screen);put(el('mainMenuDescription'),screen+'.help');renderSlots();}}});
@@ -13819,11 +13837,7 @@ console.log("0.8: equipment, interactions, navigation and safe base");
 
 gameLoop();
 
-/*
-  Telegram fullscreen запускается ПОСЛЕ игры.
-*/
-
-setTimeout(fullscreen,400);
+// Fullscreen is requested by the start screen or the shared Settings button.
 }
 
 resizeCanvas();applyControls();
@@ -13843,6 +13857,5 @@ el("farmClose").addEventListener("click", function(e){
   e.stopPropagation();
   closeOverlay(el("farmOverlay"));
 });
-
 
 //# sourceMappingURL=game.js.map

@@ -35,11 +35,7 @@ console.log("0.8: equipment, interactions, navigation and safe base");
 
 gameLoop();
 
-/*
-  Telegram fullscreen запускается ПОСЛЕ игры.
-*/
-
-setTimeout(fullscreen,400);
+// Fullscreen is requested by the start screen or the shared Settings button.
 }
 
 resizeCanvas();applyControls();
@@ -59,4 +55,3 @@ el("farmClose").addEventListener("click", function(e){
   e.stopPropagation();
   closeOverlay(el("farmOverlay"));
 });
-

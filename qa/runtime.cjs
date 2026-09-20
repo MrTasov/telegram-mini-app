@@ -77,7 +77,7 @@ function setup(file,initialStorage={},options={}){
  setTimeout:(f,ms)=>{const n=++counter;timers.set(n,{f,ms});return n},clearTimeout:n=>timers.delete(n),setInterval:(fn,ms)=>{scheduler.intervals.push({fn,ms});return ++counter},clearInterval(){},requestAnimationFrame:()=>{scheduler.rafRequests++;return 0},cancelAnimationFrame(){},addEventListener(k,f,opts){((opts===true||opts?.capture?windowCapture:windowListeners)[k]??=[]).push(f)},removeEventListener(){},matchMedia,getComputedStyle:e=>({getPropertyValue:()=>'',...e.style}),fetch:()=>Promise.reject(Error('test audio disabled')),location:{href:'http://test.local/game',protocol:'http:'},alert(){},confirm:()=>true,atob:s=>Buffer.from(s,'base64').toString('binary'),btoa:s=>Buffer.from(s,'binary').toString('base64')};
  sandbox.Math=math;sandbox.Date=ClockDate;
  sandbox.setTimeout=(f,ms=0)=>{const id=++counter;timers.set(id,{f,ms,at:clock+ms});return id;};
- sandbox.window=sandbox;sandbox.self=sandbox;const context=vm.createContext(sandbox);
+ sandbox.window=sandbox;sandbox.self=sandbox;options.beforeScripts?.(sandbox);const context=vm.createContext(sandbox);
  const path=require('node:path'),loadedScripts=[];
  for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){
    const src=m[1].match(/\bsrc=["']([^"']+)["']/)?.[1];

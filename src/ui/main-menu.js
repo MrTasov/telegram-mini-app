@@ -16,7 +16,7 @@ const MenuBackground=(()=>{
   return {config,mount,release};
 })();
 window.MainMenu=(()=>{
-  let active=true,mounted=false,busy=false,start=null,screen='home',pending=null;
+  let active=true,mounted=false,busy=false,start=null,screen='home',pending=null,fullscreenGestureUsed=false;
   const root=()=>el('mainMenu');
   const put=(node,key,params={})=>I18n.assign(node,'textContent',I18n.message('menu.'+key,params));
   function status(key){const node=el('mainMenuStatus');if(key)put(node,key);else I18n.assign(node,'textContent','');}
@@ -94,12 +94,20 @@ window.MainMenu=(()=>{
   }
   function mount(onStart){
     if(mounted)return;mounted=true;start=onStart;menuOpen=true;GameState.session.ready=false;
+    // Native Telegram can enter fullscreen immediately. Browsers need a tap;
+    // capture click keeps user activation and still lets the selected action run.
+    if(mobileFullscreenDevice())fullscreen({allowBrowser:false,automatic:true});
+    root().addEventListener('click',e=>{
+      if(!active||fullscreenGestureUsed||e.target.closest?.('#menuExit'))return;
+      if(e.pointerType!=='touch'&&!mobileFullscreenDevice())return;
+      fullscreenGestureUsed=true;fullscreen({automatic:true});
+    },true);
     for(const [id,key,fn]of [['menuContinue','continue',continueGame],['menuNew','new',()=>show('new')],['menuLoad','load',()=>show('load')],['menuSettings','settings',()=>{status(null);openOverlay(el('settingsOverlay'));}],['menuExit','exit',exit],['mainMenuBack','back',()=>show('home')],['mainMenuReplace','replace',replace],['mainMenuCancel','cancel',()=>show('new')]]){
       const b=el(id);I18n.bind(b,'menu.'+key);b.addEventListener('click',fn);b.disabled=false;
     }
     // Only preferences and controls belong to Settings before a game is selected.
     for(const n of el('settingsOverlay').querySelector('.panel').children){
-      if(n.tagName==='BUTTON'&&!['fullscreenButton','closeSettings'].includes(n.id))n.classList.add('requires-game');
+      if(n.tagName==='BUTTON'&&!['fullscreenButton','openControlSettings','closeSettings'].includes(n.id))n.classList.add('requires-game');
       if(n.querySelector?.('#saveGameButton'))n.classList.add('requires-game');
     }
     I18n.onChange(()=>{if(active){I18n.setAttr(el('mainMenuButtons'),'aria-label',I18n.t('menu.nav'));if(screen!=='home'){put(el('mainMenuTitle'),screen);put(el('mainMenuDescription'),screen+'.help');renderSlots();}}});

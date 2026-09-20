@@ -1,0 +1,78 @@
+{
+  "version": "0.25.3",
+  "passed": 17,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "settings.stackingContext.menuAndBothSharedPanelsAreSiblings",
+      "status": "PASS"
+    },
+    {
+      "id": "settings.sameNodePreferencesAndListenersAcrossMenuAndGame",
+      "status": "PASS"
+    },
+    {
+      "id": "settings.controlEditorWorksBeforeLaunchAndReturnsToSameSettings",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.telegramPhoneStartsAtMenuOnlyOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.telegramAlreadyFullscreenDoesNotRequestAgain",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.browserWaitsForFirstTapNoDoubleCommand",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.pendingRequestDeduplicatedAndDenialCanBeRetriedManually",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.syncFailureDoesNotBlockNewGame",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.unsupportedPhoneKeepsMenuAndSettingsUsable",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.browserSDKDoesNotMasqueradeAsTelegram",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.oldTelegramFallsBackToBrowserOnTap",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.desktopSmallViewportIsNotAReasonToForceFullscreen",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.touchscreenLaptopMouseDoesNotAutomaticallyEnter",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.exitNeverTriggersBrowserFullscreen",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.webkitAndPolicyDisabledHandled",
+      "status": "PASS"
+    },
+    {
+      "id": "fullscreen.phoneManualPCModeStillUsesDeviceCapabilities",
+      "status": "PASS"
+    },
+    {
+      "id": "layout.halfAreaWithoutShrinkingSlotAndSettingsControls",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "DOM topology and CSS contract checks; no browser compositor or physical phone measurement. Fullscreen APIs are mocked."
+  ]
+}
