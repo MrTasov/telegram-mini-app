@@ -21,7 +21,7 @@ window.V0141DroneUI=(()=>{
   function build(){
     overlay=v09Overlay('v014DronePanel','Дрон');const body=overlay.querySelector('.v09Body');body.replaceChildren();body.classList.add('droneCardBody');
     const head=node('div','droneCardHead'),portrait=node('div','dronePortrait'),img=node('img');img.src=V011Art.sources.drone014;I18n.assign(img,"alt",'Дрон-компаньон');portrait.append(img);head.append(portrait);
-    const stats=node('div','droneCardStats');refs.status=node('b','droneStatus');stats.append(refs.status);stat(stats,'battery','Заряд');stat(stats,'hp','Здоровье');stat(stats,'damage','Урон');stat(stats,'load','Груз');head.append(stats);
+    const stats=node('div','droneCardStats');refs.status=node('b','droneStatus');stats.append(refs.status);stat(stats,'battery',I18n.message('ux.drone_battery'));stat(stats,'hp','Прочность');stat(stats,'damage','Урон');stat(stats,'load','Груз');head.append(stats);
     const ammo=node('section','droneAmmo');const ammoHead=node('div','droneStatRow');ammoHead.append(node('span','','Боезапас'));refs.ammo=node('b');ammoHead.append(refs.ammo);ammo.append(ammoHead);
     const ammoIcon=node('div','droneAmmoIcon');I18n.assign(ammoIcon,"innerHTML",itemIconHTML('ammo'));ammoIcon.append(node('small','','АК · 5,45'));ammo.append(ammoIcon);command(ammo,'reload','Загрузить патроны',()=>robot.reload());
     for(const [key,label]of [['light','Фонарь'],['combat','Боевой режим']]){
@@ -39,7 +39,7 @@ window.V0141DroneUI=(()=>{
     const more=node('details','droneMore');more.append(node('summary','','Обслуживание'));more.append(node('p','droneTransferHint','Усиление модулей — на станке усиления в мастерской. Заберите дрон в рюкзак.'));
     const rename=node('div','droneRename'),name=node('input');name.type='text';name.maxLength=24;name.value=state.name;I18n.setAttr(name,'aria-label','Имя дрона');refs.name=name;rename.append(name);command(rename,'rename','Сохранить имя',()=>{state.name=name.value.trim().slice(0,24)||'Спутник';robot.changed();});more.append(rename);
     for(const [key,label]of [['autoCollect','Собирать открытые предметы рядом'],['economy','Экономить заряд']]){const row=node('label','droneToggle',label),input=node('input');input.type='checkbox';refs[key]=input;input.addEventListener('change',()=>{state[key]=input.checked;robot.changed();});row.append(input);more.append(row);}
-    command(more,'repair','Отремонтировать',robot.repair);body.append(more);
+    command(more,'repair','Починить',()=>robot.repair());body.append(more);
     for(const [side,grid]of Object.entries(grids))grid.addEventListener('pointerdown',e=>beginDrag(e,side));
   }
   function slots(side){return side==='bag'?bag:state.cargo;}
@@ -80,7 +80,8 @@ window.V0141DroneUI=(()=>{
     set(refs.cargoTitle,'Инвентарь дрона · '+state.cargo.filter(Boolean).length+' / '+robot.capacity());set(refs.bagTitle,'Мой рюкзак · '+bag.filter(Boolean).length+' / '+BAG_SLOTS);
     refreshGrid('drone');refreshGrid('bag');const s=selected&&slots(selected.side)[selected.i];set(refs.selection,s?ITEM[s.type].name+' × '+s.qty:'Выберите предмет');set(buttons.transfer,selected?.side==='bag'?'В дрона':'В рюкзак');buttons.transfer.disabled=!s||s.locked||ITEM[s.type]?.robot||!robot.near();
     set(refs.range,robot.near()?'Нажмите предмет или удерживайте для переноса.':'Для переноса предметов дрон должен быть рядом. Команды доступны удалённо.');
-    buttons.repair.disabled=state.hp>=robot.maxHp()||!robot.atDock()||!robot.near();
+    buttons.repair.disabled=!robot.canRepair();
+    set(buttons.repair,'Починить · '+Object.entries(robot.repairCost()).map(([type,n])=>ITEM[type].name+' × '+n).join(', '));
   }
   function open(){if(!overlay)build();openOverlay(overlay);refresh(true);}
   v09Style(`

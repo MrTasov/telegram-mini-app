@@ -137,7 +137,7 @@ window.V0105=(()=>{
     if(!z){target=null;return false;}
     const gun=[heldItem(),lastGun,...guns()].find(t=>isGun(t)&&bagCount(t)>0);
     if(!gun){message('В рюкзаке нет оружия');return true;}
-    if(!window.V014Controls?.route)cancelNavigation();cancelSearch();if(!equip(gun))return true;target=z;aim();return true;
+    if(!equip(gun))return true;target=z;aim();return true;
   }
   const oldShoot=shoot;shoot=function(...args){aim();return oldShoot(...args);};
   const oldPlayer=updatePlayer;updatePlayer=function(...args){const out=oldPlayer(...args);aim();return out;};

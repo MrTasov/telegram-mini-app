@@ -152,7 +152,7 @@ window.V017Monsters=(()=>{
   WorldEvents.onChange(()=>{if(!GameSave.restoring){lastPopulation=-Infinity;for(const z of zombies)prepare(z);}});
   function updateMonsters(){
     syncEvent();const raid=isDayX();
-    if(menuOpen||playerDead||document.hidden)return;
+    if(GameFlow.paused)return;
     const now=performance.now(),boost=factor(),dt=Math.min(2,Math.max(0,frameScale));population(now);
     neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,[]);neighbors.get(key).push(z);}
     for(const z of zombies){

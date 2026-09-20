@@ -124,11 +124,11 @@ update=function(){powerTick(frameScale/60);v09PowerOldUpdate();};
 const v09PowerOldCollision=worldCollision;
 worldCollision=function(x,y,r=15,which=scene,ignoreId=null){
   if(v09PowerOldCollision(x,y,r,which,ignoreId))return true;
-  if(which==='bunker'&&(!V09Power.pathfinding||window.V014Robots?.planningKey()))for(const d of v09Doors){if(d.id===ignoreId||window.V014Robots?.planningKey()&&window.V014Robots.motion.doorPowered(d.room))continue;for(const panel of v09DoorPanels(d))if(rectHit(x,y,r,panel))return true;}
+  if(which==='bunker')for(const d of v09Doors){if(d.id===ignoreId||window.GamePassages?.canPlanThrough(d.id))continue;for(const panel of v09DoorPanels(d))if(rectHit(x,y,r,panel))return true;}
   return false;
 };
 const v09PowerOldPath=findWalkPath;
-findWalkPath=function(...args){const old=V09Power.pathfinding;V09Power.pathfinding=true;try{return v09PowerOldPath(...args);}finally{V09Power.pathfinding=old;}};
+findWalkPath=function(...args){return GamePassages.plan(()=>v09PowerOldPath(...args));};
 const v09PowerOldInteractions=interactionObjects;
 interactionObjects=function(which=scene){
   const base=v09PowerOldInteractions(which);
@@ -145,7 +145,7 @@ executeInteraction=function(target){
   if(!target||!target.kind.startsWith('v09'))return v09PowerOldExecute(target);
   if(!['v09room_switch','v09door','v09fuel','v09generator','v09battery','v09power_device'].includes(target.kind))return v09PowerOldExecute(target);
   if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
-  cancelNavigation();stopControls(true);
+  GameMovement.openUI();
   if(target.kind==='v09room_switch')v09ToggleRoom(target.room);
   if(target.kind==='v09door'){
     const door=v09Doors.find(d=>d.id===target.id);door.manual=true;door.away=0;message(devicePowered('door_'+door.room)?'Дверь открывается':'Дверь открыта вручную');queueGameSave();

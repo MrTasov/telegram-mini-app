@@ -1,5 +1,5 @@
 {
-  "version": "0.27.0",
+  "version": "0.27.1",
   "passed": 1,
   "failed": 0,
   "scope": "Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.",
@@ -79,7 +79,9 @@
       "type",
       "instanceId",
       "definition",
-      "ownsToken"
+      "ownsToken",
+      "repairCost",
+      "canRepair"
     ],
     "V014Controls": [
       "release",

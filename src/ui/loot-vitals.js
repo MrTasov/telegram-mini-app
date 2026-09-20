@@ -1,21 +1,4 @@
-/* 0.16.3 — compact loot actions and bottom vitals. */
-// An in-range interaction that opens UI is not a movement command. Some older
-// object handlers release input before opening their panel; preserve work only
-// for that UI transition, never for movement, damage or a new gathering target.
-(()=>{
-  const execute=executeInteraction;
-  executeInteraction=function(...args){
-    const opened=new Set(document.querySelectorAll('.overlay.open'));
-    const before={chop:chopState,mining:V09World.miningState(),nav:navigation,x:player.x,y:player.y,hp:player.health,scene};
-    const out=execute(...args);
-    if(!playerDead&&player.health===before.hp&&scene===before.scene&&player.x===before.x&&player.y===before.y&&[...document.querySelectorAll('.overlay.open')].some(o=>!opened.has(o))){
-      if(before.chop&&!chopState)chopState=before.chop;
-      if(before.mining&&!V09World.miningState())V09World.resumeMining(before.mining);
-      if(before.nav?.map014&&V014Controls.route)navigation=before.nav;
-    }
-    return out;
-  };
-})();
+/* Shared loot transactions and vitals. */
 window.V0163Loot=(()=>{
   let selected=-1,source=null,capacity=6;
   const open=openLoot;openLoot=function(...args){selected=-1;capacity=6;return open(...args);};
@@ -65,6 +48,7 @@ window.V0163Loot=(()=>{
     }
     activeLoot=activeLoot.filter(Boolean);activeLootObject.loot=activeLoot;selected=-1;
     render();renderBag();updateAmmoHud();V014Robots.changed();queueGameSave();
+    if(!activeLoot.some(s=>s&&s.qty>0))closeOverlay(el('lootOverlay'));
     if(left)message(drone?'Недостаточно места в дроне':'Рюкзак заполнен');
     return moved>0;
   }

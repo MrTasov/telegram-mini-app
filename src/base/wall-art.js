@@ -12,8 +12,8 @@ window.V020Walls=(()=>{
     {id:'sw',corner:'SW',side:'S',sides:['S','W'],x:218,y:1022}
   ];
   const stairs=[];
-  for(const side of ['N','E','S','W'])for(let i=0;i<4;i++){
-    const along=(side==='N'?[340,680,930,1270]:side==='S'?[340,640,960,1270]:[300,560,740,900])[i];
+  for(const side of ['N','E','S','W']){
+    const i=1,along=side==='N'?800:side==='S'?1050:600;
     const x=side==='W'?210:side==='E'?1390:along,y=side==='N'?170:side==='S'?1030:along;
     const nx=side==='W'?1:side==='E'?-1:0,ny=side==='N'?1:side==='S'?-1:0;
     stairs.push({id:side.toLowerCase()+'_'+i,side,name:'Лестница',x,y,foot:{x:x+nx*110,y:y+ny*110},angle:Math.atan2(ny,nx)-Math.PI/2});

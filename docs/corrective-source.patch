@@ -1,0 +1,686 @@
+--- a/src/base/battery.js
++++ b/src/base/battery.js
+@@ -120,7 +120,7 @@
+   const originalGenerator=v09OpenGenerator;
+   v09OpenGenerator=function(refuel=false){originalGenerator(refuel);const body=el('v09GeneratorOverlay')?.querySelector('.v09Body');if(!body)return;const note=[...body.querySelectorAll('.v09PowerNote')].find(n=>I18n.source(n).includes('Мощность:'));if(note)I18n.assign(note,"textContent",'Мощность генератора: '+fmt(V09Power.supply)+' кВт. Расход топлива зависит от выбранной сложности. Свободная мощность заряжает батарею; готовые изделия и прогресс сохраняются при остановке.');body.appendChild(v09Button('Резервная батарея',openBattery));};
+   const originalExecute=executeInteraction;
+-  executeInteraction=function(target){if(target?.kind!=='v09battery')return originalExecute(target);if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;cancelNavigation();stopControls(true);openBattery();};
++  executeInteraction=function(target){if(target?.kind!=='v09battery')return originalExecute(target);if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;GameMovement.openUI();openBattery();};
+   function monitor(a){
+     edge('fuelLow',V09Power.running&&V09Power.fuel>0&&V09Power.fuel<=2,'Топливо заканчивается: заправьте генератор.');
+     edge('batteryLow',a.batteryOutput>0&&battery.charge/battery.capacity<=.1,'Низкий заряд резервной батареи.');
+--- a/src/base/fortress-navigation.js
++++ b/src/base/fortress-navigation.js
+@@ -234,7 +234,7 @@
+   const oldPlayerUpdate=updatePlayer;
+   updatePlayer=function(){
+     if(transition){
+-      if(menuOpen||playerDead||document.hidden)return;
++      if(GameFlow.paused)return;
+       const t=transition;
+       if(t.toUpper&&elevatedCollision(t.target.x,t.target.y,player.radius)){
+         const safe=window.V015Base?.freePoint(t.source.x,t.source.y,player.radius)||t.source;
+@@ -249,7 +249,7 @@
+       if(p>=1){stairsCooldown=performance.now()+300;player.wallLevel=t.toUpper;transition=null;player.moving=false;if(leftPointerId===null)movePower=moveX=moveY=0;queueGameSave();if(t.after)t.after();}
+       return;
+     }
+-    if(!menuOpen&&!playerDead&&scene==='surface'&&movePower>JOY_DEAD&&performance.now()>stairsCooldown){
++    if(!GameFlow.paused&&scene==='surface'&&movePower>JOY_DEAD&&performance.now()>stairsCooldown){
+       if(!isElevated()){
+         const t=stairs.find(t=>V020Walls.usable(t)&&distance(player.x,player.y,t.foot.x,t.foot.y)<38&&((t.x-player.x)*moveX+(t.y-player.y)*moveY)>distance(player.x,player.y,t.x,t.y)*.4);
+         if(t){const after=groundAfter;groundAfter=null;beginTransition({x:t.x,y:t.y},true,'stairs',after);return;}
+@@ -432,7 +432,7 @@
+     return oldGeometry(x,y,0)||walls.some(o=>rectHit(x,y,r,o))||penBlocked(x,y,r);
+   };
+   const fortress=()=>typeof V091Fortress==='object'?V091Fortress:null;
+-  function withOpenDoors(fn){const old=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=old;}}
++  function withOpenDoors(fn){return GamePassages.plan(fn);}
+   let pending=null;
+   function queuePath(destination){
+     if(pending&&!pending.onResult){pending.latest=destination;return;}
+@@ -445,7 +445,8 @@
+   }
+   function tickPath(){
+     if(!pending)return;
+-    if(menuOpen||playerDead||pending.scene!==scene||pending.revision!==geometryRevision||leftPointerId!==null){pending=null;return;}
++    if(GameFlow.paused||pending.scene!==scene||leftPointerId!==null){pending=null;return;}
++    if(pending.revision!==geometryRevision){pending.revision=geometryRevision;pending.g=v092PathSearch(player.x,player.y,pending.destination,scene,player.radius+1);}
+     const task=pending,start=performance.now();let out,steps=0;
+     do{out=withOpenDoors(()=>task.g.next());if(out.done)break;}while(++steps<8&&performance.now()-start<1.5);
+     if(!out.done)return;
+--- a/src/base/power.js
++++ b/src/base/power.js
+@@ -124,11 +124,11 @@
+ const v09PowerOldCollision=worldCollision;
+ worldCollision=function(x,y,r=15,which=scene,ignoreId=null){
+   if(v09PowerOldCollision(x,y,r,which,ignoreId))return true;
+-  if(which==='bunker'&&(!V09Power.pathfinding||window.V014Robots?.planningKey()))for(const d of v09Doors){if(d.id===ignoreId||window.V014Robots?.planningKey()&&window.V014Robots.motion.doorPowered(d.room))continue;for(const panel of v09DoorPanels(d))if(rectHit(x,y,r,panel))return true;}
++  if(which==='bunker')for(const d of v09Doors){if(d.id===ignoreId||window.GamePassages?.canPlanThrough(d.id))continue;for(const panel of v09DoorPanels(d))if(rectHit(x,y,r,panel))return true;}
+   return false;
+ };
+ const v09PowerOldPath=findWalkPath;
+-findWalkPath=function(...args){const old=V09Power.pathfinding;V09Power.pathfinding=true;try{return v09PowerOldPath(...args);}finally{V09Power.pathfinding=old;}};
++findWalkPath=function(...args){return GamePassages.plan(()=>v09PowerOldPath(...args));};
+ const v09PowerOldInteractions=interactionObjects;
+ interactionObjects=function(which=scene){
+   const base=v09PowerOldInteractions(which);
+@@ -145,7 +145,7 @@
+   if(!target||!target.kind.startsWith('v09'))return v09PowerOldExecute(target);
+   if(!['v09room_switch','v09door','v09fuel','v09generator','v09battery','v09power_device'].includes(target.kind))return v09PowerOldExecute(target);
+   if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+-  cancelNavigation();stopControls(true);
++  GameMovement.openUI();
+   if(target.kind==='v09room_switch')v09ToggleRoom(target.room);
+   if(target.kind==='v09door'){
+     const door=v09Doors.find(d=>d.id===target.id);door.manual=true;door.away=0;message(devicePowered('door_'+door.room)?'Дверь открывается':'Дверь открыта вручную');queueGameSave();
+--- a/src/base/rooms.js
++++ b/src/base/rooms.js
+@@ -201,6 +201,7 @@
+     if(lastSave>=3){lastSave=0;queueGameSave();}
+     refresh();
+   }
++  GamePassages.register(BATH_DOOR.id,{playerOnly:true,scene:'bunker',canOpen:()=>true});
+   const oldSolid=solidObjects;
+   solidObjects=function(which){
+     const list=oldSolid(which);if(which!=='bunker')return list;
+--- a/src/base/turrets.js
++++ b/src/base/turrets.js
+@@ -137,7 +137,7 @@
+   function tick(ms){
+     settleUnsupported();
+     if(placement&&(!bag.includes(placement.item)||scene!=='surface'||playerDead))cancelPlacement();
+-    if(scene!=='surface'||document.hidden||playerDead||menuOpen)return;
++    if(scene!=='surface'||GameFlow.paused)return;
+     const dt=clamp(Number(ms)||0,0,100)/1000;clock+=dt;
+     for(const t of guns){const s=stateFor(t);s.flash=Math.max(0,s.flash-dt);s.shot=Math.max(-dt,s.shot-dt);s.search-=dt;
+       if(t.fallen||!t.enabled||!t.ammo){s.target=null;s.shot=0;continue;}
+@@ -150,7 +150,7 @@
+     if(clock>=.25){clock=0;if(placement)updatePlacement();refresh();}
+   }
+   function status(t){return t.fallen?'Опора разрушена · заберите в рюкзак':!t.enabled?'Автоогонь выключен':!t.ammo?'Нет патронов 5,45':'Автоогонь · поворот 360°';}
+-  function open(t){if(!guns.includes(t)||!reachable(t)){message('Подойдите к пулемёту');return false;}selected=t;cancelNavigation();stopControls(true);
++  function open(t){if(!guns.includes(t)||!reachable(t)){message('Подойдите к пулемёту');return false;}selected=t;GameMovement.openUI();
+     const o=v09Overlay('v016TurretPanel','Тяжёлый пулемёт'),body=o.querySelector('.v09Body');body.replaceChildren();
+     const hero=document.createElement('div');hero.className='v016GunHero';I18n.assign(hero,"innerHTML",itemIconHTML(typeOf(t))+'<div><b>'+damage(t)+' урона · +'+(t.level||0)+' · '+combatFor(t).range+' дальность</b><small>Патроны '+(V09Craft.weaponsForAmmo(combatFor(t).ammoType).map(id=>V09Craft.weapons[id].caliber)[0]||ITEM[combatFor(t).ammoType].caliber)+' · ёмкость '+combatFor(t).capacity+'</small></div>');body.append(hero);
+     const stats=document.createElement('p');stats.id='v016GunStatus';body.append(stats);
+--- a/src/base/wall-art.js
++++ b/src/base/wall-art.js
+@@ -12,8 +12,8 @@
+     {id:'sw',corner:'SW',side:'S',sides:['S','W'],x:218,y:1022}
+   ];
+   const stairs=[];
+-  for(const side of ['N','E','S','W'])for(let i=0;i<4;i++){
+-    const along=(side==='N'?[340,680,930,1270]:side==='S'?[340,640,960,1270]:[300,560,740,900])[i];
++  for(const side of ['N','E','S','W']){
++    const i=1,along=side==='N'?800:side==='S'?1050:600;
+     const x=side==='W'?210:side==='E'?1390:along,y=side==='N'?170:side==='S'?1030:along;
+     const nx=side==='W'?1:side==='E'?-1:0,ny=side==='N'?1:side==='S'?-1:0;
+     stairs.push({id:side.toLowerCase()+'_'+i,side,name:'Лестница',x,y,foot:{x:x+nx*110,y:y+ny*110},angle:Math.atan2(ny,nx)-Math.PI/2});
+--- a/src/combat/monsters.js
++++ b/src/combat/monsters.js
+@@ -152,7 +152,7 @@
+   WorldEvents.onChange(()=>{if(!GameSave.restoring){lastPopulation=-Infinity;for(const z of zombies)prepare(z);}});
+   function updateMonsters(){
+     syncEvent();const raid=isDayX();
+-    if(menuOpen||playerDead||document.hidden)return;
++    if(GameFlow.paused)return;
+     const now=performance.now(),boost=factor(),dt=Math.min(2,Math.max(0,frameScale));population(now);
+     neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,[]);neighbors.get(key).push(z);}
+     for(const z of zombies){
+--- a/src/combat/weapons-crafting.js
++++ b/src/combat/weapons-crafting.js
+@@ -125,7 +125,7 @@
+     const item=ensure(currentWeapon());
+     if(practice&&!practiceAllowed())setPractice(false);
+     if(reloading&&(!item||item.uid!==reloading.uid||practice!==reloading.practice||playerDead))cancelReload();
+-    if(reloading&&!menuOpen&&!document.hidden){
++    if(reloading&&!GameFlow.paused){
+       reloading.remainingMs=Math.max(0,reloading.remainingMs-Math.max(0,ms));
+       if(reloading.remainingMs===0){const g=gunSpec(item),need=Math.max(0,g.mag-(practice?trainingRounds:item.rounds));if(practice)trainingRounds=g.mag;else item.rounds+=removeItem(g.ammo,Math.min(need,bagCount(g.ammo)));reloading=null;queueGameSave();}
+     }
+--- a/src/core/input-combat.js
++++ b/src/core/input-combat.js
+@@ -204,9 +204,10 @@
+ function handleWorldPointerDown(e){
+   if(!GameActions.playable()||uiTouch(e.target)||e.button>0)return;
+   if(joystickAt(e.clientX,e.clientY)){beginJoystick(e);return;}
+-  if(objectPointer||leftPointerId!==null||rightPointerId!==null)return;
++  if(objectPointer)return;
+   const {x,y}=screenToWorld(e.clientX,e.clientY);
+   if(GameActions.dispatch('WORLD_TARGET',{x,y})){e.preventDefault();return;}
++  if(leftPointerId!==null||rightPointerId!==null)return;
+   objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target:hitInteraction(x,y),point:{x,y},screenX:e.clientX,screenY:e.clientY,startedAt:performance.now(),following:false,nextPathAt:0,scene,pc:!GameInput.isMobile};
+   e.preventDefault();
+ }
+@@ -451,10 +452,11 @@
+ 
+ function updatePlayer(){
+ 
+-  if(menuOpen || playerDead){
++  if(GameFlow.paused){
+     return;
+   }
+ 
++  GamePassages.approach(navigation);
+   updateAutoWalk();
+   player.moving = movePower > JOY_DEAD;
+   player.running = movePower >= RUN_THRESHOLD;
+@@ -668,7 +670,7 @@
+ 
+ function zombieCanMoveTo(x,y){return !worldCollision(x,y,17,'surface');}
+ function updateZombies(){
+-  if(scene!=='surface'||menuOpen||playerDead)return;
++  if(scene!=='surface'||GameFlow.paused)return;
+   const now=performance.now();
+   for(const z of zombies){
+     if(!z.alive)continue;
+--- a/src/core/interactions-farm-storage.js
++++ b/src/core/interactions-farm-storage.js
+@@ -48,7 +48,7 @@
+ }
+ function executeInteraction(target){
+   if(!target||menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+-  navigation=null;movePower=0;moveX=0;moveY=0;
++  GameMovement.begin('INTERACT',target);
+   if(target.kind==='gate')toggleGate();
+   else if(target.kind==='bunker')enterBunker();
+   else if(target.kind==='surface')leaveBunker();
+@@ -71,7 +71,7 @@
+ 
+   if(target.navBounds)bounds=target.navBounds;
+   const cell=target.navCell===36?36:12,cols=Math.ceil(bounds.w/cell),rows=Math.ceil(bounds.h/cell),size=cols*rows;
+-  const key=which+':'+radius+':'+cell+':'+geometryRevision+':'+[bounds.x,bounds.y,bounds.w,bounds.h].join(',')+':'+(window.V014Robots?.planningKey()||'');let entry=v092PathCache.get(key);if(!entry){if(v092PathCache.size>5)v092PathCache.clear();entry={cells:new Uint8Array(size),edges:new Map()};v092PathCache.set(key,entry);}const cached=entry.cells,closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
++  const key=which+':'+radius+':'+cell+':'+geometryRevision+':'+[bounds.x,bounds.y,bounds.w,bounds.h].join(',')+':'+(window.V014Robots?.planningKey()||'')+':'+(window.GamePassages?.key()||'');let entry=v092PathCache.get(key);if(!entry){if(v092PathCache.size>5)v092PathCache.clear();entry={cells:new Uint8Array(size),edges:new Map()};v092PathCache.set(key,entry);}const cached=entry.cells,closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
+   const point=id=>({x:bounds.x+(id%cols+.5)*cell,y:bounds.y+(Math.floor(id/cols)+.5)*cell});
+   const walkable=id=>{if(id<0||id>=size)return false;if(!cached[id]){const p=point(id);cached[id]=worldCollision(p.x,p.y,radius,which)?2:1;}return cached[id]===1;};
+   const sx=Math.floor((startX-bounds.x)/cell),sy=Math.floor((startY-bounds.y)/cell);
+--- a/src/core/loop-viewport.js
++++ b/src/core/loop-viewport.js
+@@ -65,7 +65,7 @@
+ ===================================================== */
+ 
+ function updateTrees(){
+-  if(menuOpen||playerDead||document.hidden)return;
++  if(GameFlow.paused)return;
+   for(const t of worldTrees){
+     if(!t.felled||t.wood>0)continue;
+     t.regrowMs=Math.max(0,t.regrowMs-16.667*frameScale);
+@@ -171,7 +171,7 @@
+ 
+   try{
+ 
+-    update();
++    if(!GameFlow.paused)update();
+     draw();
+ 
+   }catch(error){
+--- a/src/core/runtime.js
++++ b/src/core/runtime.js
+@@ -200,7 +200,7 @@
+ }
+ 
+ function updateFootstepsAudio(){
+-  if(playerDead || menuOpen || movePower<=JOY_DEAD){
++  if(GameFlow.paused || movePower<=JOY_DEAD){
+     stopFootsteps();
+     return;
+   }
+--- a/src/core/world-inventory.js
++++ b/src/core/world-inventory.js
+@@ -221,7 +221,7 @@
+   for(let cy=Math.floor((y-r)/g.cell);cy<=Math.floor((y+r)/g.cell);cy++)for(let cx=Math.floor((x-r)/g.cell);cx<=Math.floor((x+r)/g.cell);cx++){
+     const nearby=g.grid[cx+','+cy];if(!nearby)continue;
+     for(const o of nearby){
+-      if(o.id===ignoreId)continue;
++      if(o.id===ignoreId||window.GamePassages?.canPlanThrough(o.id))continue;
+       if(o.r!==undefined){if(distance(x,y,o.x,o.y)<=o.r+r)return true;}
+       else if(rectHit(x,y,r,o))return true;
+     }
+--- a/src/crafting/manufacturing.js
++++ b/src/crafting/manufacturing.js
+@@ -306,7 +306,7 @@
+   executeInteraction=function(target){
+     if(target?.kind!=='v09craft')return oldExecute(target);
+     if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+-    navigation=null;movePower=0;moveX=0;moveY=0;open(target.id);
++    GameMovement.begin('INTERACT',target);open(target.id);
+   };
+   // All manufacturing uses the same panel dimensions and incremental queue model.
+   openFeedCraftMenu=function(){feedCraftLoaded=0;open('feed_craft');};
+--- a/src/drones/companion.js
++++ b/src/drones/companion.js
+@@ -7,6 +7,7 @@
+     instanceId:INSTANCE_ID,upgrades:V010Combat.upgradeRules.drone,
+     modules:{body:'Корпус',battery:'Аккумулятор',cargo:'Контейнер',weapon:'Оружие',engine:'Двигатель'},
+     combat:{ammoType:'ammo',capacity:600,damage:20,damagePerLevel:.2,intervalMs:155,range:270},
++    repair:{material:'parts',durabilityPerUnit:25},
+     body:{hp:100,hpPerLevel:25,armorPerLevel:6},cargo:{base:12,levelStride:2,perStride:6},
+     battery:{factor:2.5,perLevel:.3,chargeSeconds:180,shotCost:.025,idleDrain:.08,lightDrain:.018,blockedDrain:.003},
+     movement:{radius:10,followSpeed:490,travelSpeed:290,perLevel:18,minFollowSpeed:235,playerFactor:1.13,catchupDistance:90,catchupFactor:1.4,acceleration:850,brake:900,deceleration:1000}
+@@ -167,7 +168,13 @@
+   }
+   function cost(key){if(window.V0161Upgrade)return V0161Upgrade.droneCost(key);const l=state.modules[key]??5;return {metal:8*(l+1),parts:3*(l+1),...(l>=3?{copper:5*(l-1)}:{})};}
+   function upgrade(key){return window.V0161Upgrade?.upgradeDrone(key)||false;}
+-  function repair(){if(!atDock()||!stationNear()){message('Ремонт доступен на станции');return false;}if(state.hp>=maxHp())return false;const n=Math.max(1,Math.ceil((maxHp()-state.hp)/25));if(!V010Inventory.consumeMaterials({parts:n},1)){message('Нужны детали: '+n);return false;}state.hp=maxHp();changed();return true;}
++  function repairCost(){const rule=definition.repair;return {[rule.material]:Math.max(0,Math.ceil((maxHp()-state.hp)/rule.durabilityPerUnit))};}
++  function canRepair(atStation=false){return state.hp<maxHp()&&(atStation?atDock()&&stationNear():state.hp>0&&near()&&!state.packed);}
++  function repair(atStation=false){
++    if(!canRepair(atStation)){message(atStation?'Доставьте дрона на станцию':'Для ремонта подойдите к исправному дрону. Сломанный дрон доставьте на станцию.');return false;}
++    const price=repairCost();if(!V010Inventory.consumeMaterials(price,1)){message('Недостаточно материалов для ремонта');return false;}
++    state.hp=maxHp();changed();renderBag();updateHUD();return true;
++  }
+   function moveTo(p,dt){const result=motion.move(p,dt);angle=motion.heading;return result;}
+   function sceneTravel(p,dt){const result=motion.travel(p,dt);angle=motion.heading;return result;}
+   function doorNear(d){return !state.packed&&state.scene==='bunker'&&state.hp>0&&state.battery>0&&state.task!=='docked'&&distance(state.x,state.y,d.x+d.w/2,d.y+d.h/2)<105;}
+@@ -292,6 +299,6 @@
+   });
+   v09Style('.v014DroneHUD{position:fixed;right:12px;top:calc(220px + env(safe-area-inset-top,0px));z-index:38;width:auto;min-height:28px!important;padding:5px 8px!important;border-radius:9px!important;font:11px Arial!important;background:#172c2cd9!important;color:#b7d5c8!important}.v014RobotActions{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.v014RobotActions .menuButton,#v014DronePanel details .menuButton{width:auto;min-height:30px!important;padding:6px 8px!important;font-size:11px!important;margin:0}.v014RobotActions .selected{background:#376351!important}.v014RobotGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.v014RobotGrid .menuButton{position:relative;min-height:45px;padding:4px;margin:0}.v014RobotGrid img{max-height:34px;max-width:100%}.v014RobotGrid small{position:absolute;bottom:2px;right:4px;font-size:10px}.v014DroneHeader{display:flex;align-items:center;gap:10px;padding:6px 0 9px;border-bottom:1px solid #58716a55}.v014DroneHeader img{width:64px;height:48px;object-fit:contain;border-radius:8px;background:#1a3436}.v014DroneStats{font-size:11px;line-height:1.55;color:#c7ddd3}.v014DroneStats b{color:#f0d892;font-size:12px}#v014DronePanel .panel{width:min(500px,94vw);max-height:83dvh;overflow-y:auto;padding:12px;min-height:420px}#v014DronePanel p{font-size:11px;line-height:1.5;margin:9px 0}#v014DronePanel input,#v014DronePanel select{max-width:100%;background:#203b3c;color:#deece5;border:1px solid #648178;border-radius:7px;padding:7px}#v014DroneLoot{font-size:11px;min-height:28px;padding:6px 10px}@media(max-height:520px){.v014DroneHUD{top:calc(110px + env(safe-area-inset-top,0px));right:65px}}');
+   invalidateGeometry();
+-  return {type:TYPE,instanceId:INSTANCE_ID,definition,ownsToken,state,stationInfo,install,stationNear,returnProgress:()=>({...home}),setAutoReturn(on){state.autoReturn=!!on;changed();},combat,combatEnabled,setCombat,availableAmmo,dockPosition,station:DOCK,status:()=>({...state,maxHp:maxHp(),capacity:capacity(),atDock:atDock()}),capacity,maxHp,near,atDock,open,openStation,follow,recall,returnToDock,attack,guard,mode,pack,deploy,store,take,reload,upgrade,repair,cost,transfer,validate,tick,doorNear,doorOccupies,planningKey:motion.key,motion,statusText,changed,draw:drawDrone,setLootSelection:i=>{lootSelection=i;},dispatchLoot};
++  return {type:TYPE,instanceId:INSTANCE_ID,definition,ownsToken,state,stationInfo,install,stationNear,returnProgress:()=>({...home}),setAutoReturn(on){state.autoReturn=!!on;changed();},combat,combatEnabled,setCombat,availableAmmo,dockPosition,station:DOCK,status:()=>({...state,maxHp:maxHp(),capacity:capacity(),atDock:atDock()}),capacity,maxHp,near,atDock,open,openStation,follow,recall,returnToDock,attack,guard,mode,pack,deploy,store,take,reload,upgrade,repair,repairCost,canRepair,cost,transfer,validate,tick,doorNear,doorOccupies,planningKey:motion.key,motion,statusText,changed,draw:drawDrone,setLootSelection:i=>{lootSelection=i;},dispatchLoot};
+ })();
+ 
+--- a/src/drones/interface-power.js
++++ b/src/drones/interface-power.js
+@@ -21,7 +21,7 @@
+   function build(){
+     overlay=v09Overlay('v014DronePanel','Дрон');const body=overlay.querySelector('.v09Body');body.replaceChildren();body.classList.add('droneCardBody');
+     const head=node('div','droneCardHead'),portrait=node('div','dronePortrait'),img=node('img');img.src=V011Art.sources.drone014;I18n.assign(img,"alt",'Дрон-компаньон');portrait.append(img);head.append(portrait);
+-    const stats=node('div','droneCardStats');refs.status=node('b','droneStatus');stats.append(refs.status);stat(stats,'battery','Заряд');stat(stats,'hp','Здоровье');stat(stats,'damage','Урон');stat(stats,'load','Груз');head.append(stats);
++    const stats=node('div','droneCardStats');refs.status=node('b','droneStatus');stats.append(refs.status);stat(stats,'battery',I18n.message('ux.drone_battery'));stat(stats,'hp','Прочность');stat(stats,'damage','Урон');stat(stats,'load','Груз');head.append(stats);
+     const ammo=node('section','droneAmmo');const ammoHead=node('div','droneStatRow');ammoHead.append(node('span','','Боезапас'));refs.ammo=node('b');ammoHead.append(refs.ammo);ammo.append(ammoHead);
+     const ammoIcon=node('div','droneAmmoIcon');I18n.assign(ammoIcon,"innerHTML",itemIconHTML('ammo'));ammoIcon.append(node('small','','АК · 5,45'));ammo.append(ammoIcon);command(ammo,'reload','Загрузить патроны',()=>robot.reload());
+     for(const [key,label]of [['light','Фонарь'],['combat','Боевой режим']]){
+@@ -39,7 +39,7 @@
+     const more=node('details','droneMore');more.append(node('summary','','Обслуживание'));more.append(node('p','droneTransferHint','Усиление модулей — на станке усиления в мастерской. Заберите дрон в рюкзак.'));
+     const rename=node('div','droneRename'),name=node('input');name.type='text';name.maxLength=24;name.value=state.name;I18n.setAttr(name,'aria-label','Имя дрона');refs.name=name;rename.append(name);command(rename,'rename','Сохранить имя',()=>{state.name=name.value.trim().slice(0,24)||'Спутник';robot.changed();});more.append(rename);
+     for(const [key,label]of [['autoCollect','Собирать открытые предметы рядом'],['economy','Экономить заряд']]){const row=node('label','droneToggle',label),input=node('input');input.type='checkbox';refs[key]=input;input.addEventListener('change',()=>{state[key]=input.checked;robot.changed();});row.append(input);more.append(row);}
+-    command(more,'repair','Отремонтировать',robot.repair);body.append(more);
++    command(more,'repair','Починить',()=>robot.repair());body.append(more);
+     for(const [side,grid]of Object.entries(grids))grid.addEventListener('pointerdown',e=>beginDrag(e,side));
+   }
+   function slots(side){return side==='bag'?bag:state.cargo;}
+@@ -80,7 +80,8 @@
+     set(refs.cargoTitle,'Инвентарь дрона · '+state.cargo.filter(Boolean).length+' / '+robot.capacity());set(refs.bagTitle,'Мой рюкзак · '+bag.filter(Boolean).length+' / '+BAG_SLOTS);
+     refreshGrid('drone');refreshGrid('bag');const s=selected&&slots(selected.side)[selected.i];set(refs.selection,s?ITEM[s.type].name+' × '+s.qty:'Выберите предмет');set(buttons.transfer,selected?.side==='bag'?'В дрона':'В рюкзак');buttons.transfer.disabled=!s||s.locked||ITEM[s.type]?.robot||!robot.near();
+     set(refs.range,robot.near()?'Нажмите предмет или удерживайте для переноса.':'Для переноса предметов дрон должен быть рядом. Команды доступны удалённо.');
+-    buttons.repair.disabled=state.hp>=robot.maxHp()||!robot.atDock()||!robot.near();
++    buttons.repair.disabled=!robot.canRepair();
++    set(buttons.repair,'Починить · '+Object.entries(robot.repairCost()).map(([type,n])=>ITEM[type].name+' × '+n).join(', '));
+   }
+   function open(){if(!overlay)build();openOverlay(overlay);refresh(true);}
+   v09Style(`
+--- a/src/drones/station.js
++++ b/src/drones/station.js
+@@ -8,7 +8,7 @@
+     overlay=v09Overlay('v0151Station','Станция дрона');const body=overlay.querySelector('.v09Body');
+     const head=node('div','stationHead'),image=node('img');image.src=V011Art.sources.drone014;I18n.assign(image,"alt",'Дрон');head.append(image);
+     const summary=node('div');refs.name=node('b');refs.status=node('div','stationStatus');refs.status.setAttribute('role','status');summary.append(refs.name,refs.status);head.append(summary);body.append(head);
+-    const rows=node('div','stationReadings');for(const [key,label]of [['battery','Заряд'],['power','Потребление'],['eta','До полного заряда']]){
++    const rows=node('div','stationReadings');for(const [key,label]of [['battery',I18n.message('ux.drone_battery')],['durability','Прочность'],['power','Потребление'],['eta','До полного заряда']]){
+       const row=node('div','stationReading');row.append(node('span','',label));refs[key]=node('b');row.append(refs[key]);rows.append(row);
+     }body.append(rows);
+     refs.meter=node('div','stationBattery');refs.fill=node('span');refs.meter.append(refs.fill);body.append(refs.meter);
+@@ -19,6 +19,7 @@
+     const actions=node('div','stationActions');
+     function command(id,text,action){const b=v09Button(text,()=>{action();refresh();});b.id='station_'+id;buttons[id]=b;actions.append(b);}
+     command('install','Поставить из рюкзака',robot.install);
++    command('repair','Починить дрон',()=>robot.repair(true));
+     command('return','На станцию',robot.returnToDock);
+     command('follow','Следовать',robot.follow);
+     command('pack','Забрать дрон',robot.pack);
+@@ -28,11 +29,14 @@
+   function refresh(){
+     if(!overlay||!overlay.classList.contains('open'))return;
+     const info=robot.stationInfo();set(refs.name,I18n.verbatim(s.name));set(refs.status,info.blocked&&s.task==='return'?'Путь закрыт · ожидание':statuses[info.status]);
++    set(refs.durability,Math.round(s.hp)+' / '+robot.maxHp());
++    buttons.repair.disabled=!robot.canRepair(true);
++    set(buttons.repair,'Починить дрон · '+Object.entries(robot.repairCost()).map(([type,n])=>ITEM[type].name+' × '+n).join(', '));
+     refs.status.dataset.state=info.status;set(refs.battery,Math.round(s.battery)+'%');set(refs.power,info.watts+' / '+robot.station.watts+' кВт');
+     const eta=info.eta===null?'—':Math.floor(info.eta/60)+' мин '+info.eta%60+' сек';set(refs.eta,info.status==='FULLY_CHARGED'?'Готово':eta);
+     refs.fill.style.width=s.battery+'%';I18n.setAttr(refs.meter,'aria-label','Заряд '+Math.round(s.battery)+'%');
+     refs.auto.setAttribute('aria-checked',String(s.autoReturn));set(refs.autoValue,s.autoReturn?'ВКЛ':'ВЫКЛ');
+-    set(refs.hint,info.status==='NO_POWER'?'Зарядка продолжится, когда база сможет подать 1 кВт.':info.blocked?'Откройте проход или заберите дрон в рюкзак.':s.hp<=0?'После зарядки отремонтируйте корпус в управлении дроном.':'Разряженный дрон можно принести в рюкзаке и поставить на площадку.');
++    set(refs.hint,info.status==='NO_POWER'?'Зарядка продолжится, когда база сможет подать 1 кВт.':info.blocked?'Откройте проход или заберите дрон в рюкзак.':s.hp<=0?'Заберите сломанного дрона в рюкзак, установите на станцию и нажмите «Починить дрон».':'Разряженный дрон можно принести в рюкзаке и поставить на площадку.');
+     buttons.install.disabled=!s.packed||!robot.stationNear()||!bag.some(robot.ownsToken);
+     buttons.return.disabled=s.packed||s.hp<=0||s.battery<=0||['return','docked','docking'].includes(s.task);
+     buttons.follow.disabled=s.packed||s.hp<=0||s.battery<=0||info.docked&&s.autoReturn&&s.battery<=info.threshold;
+--- a/src/farm/growth.js
++++ b/src/farm/growth.js
+@@ -142,7 +142,7 @@
+   // presentation and autonomous, frame-rate independent movement are replaced.
+   updateLivestockAnimals=function(){
+     const now=performance.now(),dt=clamp((now-lastAnimalAt)/1000,0,.12);lastAnimalAt=now;
+-    if(scene!=='bunker'||!livestockAlive||menuOpen)return;
++    if(scene!=='bunker'||!livestockAlive||GameFlow.paused)return;
+     const p=habitat(),feed=storageCount(12,'animal_feed')>0,water=storageCount(13,'water')>0;
+     const stalls=cowStalls();let cowIndex=0;
+     livestockAnimals.forEach((a,i)=>{
+--- a/src/input/actions.js
++++ b/src/input/actions.js
+@@ -2,7 +2,7 @@
+    item transfers or interaction rules. Commands are transient, not save data. */
+ window.GameActions=(()=>{
+   'use strict';
+-  const playable=()=>!window.MainMenu?.active&&!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
++  const playable=()=>!GameFlow.paused&&!menuOpen&&!el('fade')?.classList.contains('show');
+   const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
+   function dispatch(type,data={}){
+     const command={actorId:GameActors.localId,type,payload:data};
+--- a/src/input/router.js
++++ b/src/input/router.js
+@@ -89,8 +89,8 @@
+   }
+   window.addEventListener('pointerdown',down,{passive:false});
+   window.addEventListener('pointermove',move,{passive:false});
+-  window.addEventListener('pointerup',up,{passive:false});
+-  window.addEventListener('pointercancel',cancel,{passive:false});
++  window.addEventListener('pointerup',up,{passive:false,capture:true});
++  window.addEventListener('pointercancel',cancel,{passive:false,capture:true});
+   window.addEventListener('lostpointercapture',cancel,true);
+   window.addEventListener('blur',()=>{stopControls(true);window.V010Camera?.resetTouch();});
+   window.addEventListener('contextmenu',e=>{if(mode==='PC'&&world(e))e.preventDefault();});
+--- a/src/inventory/upgrades.js
++++ b/src/inventory/upgrades.js
+@@ -46,7 +46,7 @@
+     I18n.assign(refs.power,"textContent",on?'Питание включено · 2 кВт':'Нет питания · требуется 2 кВт');refs.power.className=on?'powered':'missing';
+     refs.cradle.replaceChildren();const cell=inv.cell('upgrade',0,s);cell.id='v161UpgradeSlot';I18n.setAttr(cell,'aria-label',s?ITEM[s.type].name:'Ячейка станка усиления');if(!s){const hint=document.createElement('span');I18n.assign(hint,"textContent",'＋');cell.append(hint);}refs.cradle.append(cell);
+     refs.card.replaceChildren();text(refs.card,'b','',s?ITEM[s.type].name:'Выберите предмет');text(refs.card,'div','v161Level',s?'Усиление +'+level(s)+' / '+maxLevel(s):'Перенесите предмет сюда');
+-    if(isDrone(s)){text(refs.card,'p','',robot.state.name+' · '+Math.round(robot.state.battery)+'%');text(refs.card,'p','','Здоровье '+Math.round(robot.state.hp)+' / '+robot.maxHp()+' · урон '+robot.combat.damage);}
++    if(isDrone(s)){text(refs.card,'p','',robot.state.name+' · '+Math.round(robot.state.battery)+'%');text(refs.card,'p','','Прочность '+Math.round(robot.state.hp)+' / '+robot.maxHp()+' · урон '+robot.combat.damage);}
+     else if(isTurret(s)){text(refs.card,'p','','Урон '+V016Turret.damage(s.turretData)+' · патроны '+s.turretData.ammo+' / '+V016Turret.combatFor(s.turretData).capacity);text(refs.card,'p','','Дальность '+V016Turret.combatFor(s.turretData).range+' · поворот 360°');}
+     else if(s){const stats=document.createElement('div');I18n.assign(stats,"innerHTML",V011UI.statsHTML(s));refs.card.append(stats);}
+     refs.modules.replaceChildren();if(isDrone(s))for(const [key,label]of Object.entries(labels)){const b=v09Button(label+' +'+robot.state.modules[key],()=>chooseModule(key),selectedModule===key?'selected':'');b.dataset.upgradeModule=key;refs.modules.append(b);}
+--- a/src/manifest.json
++++ b/src/manifest.json
+@@ -1,6 +1,6 @@
+ {
+   "format": 1,
+-  "version": "0.27.0",
++  "version": "0.27.1",
+   "mode": "classic-script-concatenation",
+   "files": [
+     "i18n/catalogs.js",
+@@ -15,6 +15,7 @@
+     "core/runtime.js",
+     "core/world-inventory.js",
+     "state/identity.js",
++    "simulation/flow.js",
+     "core/input-combat.js",
+     "state/actors.js",
+     "simulation/commands.js",
+@@ -29,6 +30,7 @@
+     "ui/shared.js",
+     "world/resources.js",
+     "base/power.js",
++    "world/passages.js",
+     "crafting/manufacturing.js",
+     "base/wall-art.js",
+     "base/fortress-navigation.js",
+--- a/src/player/controls.js
++++ b/src/player/controls.js
+@@ -29,7 +29,7 @@
+   }
+   function release(e){if(e.pointerId===lockedPress){lockedPress=null;aimControl.classList.remove('v014TargetFire');}}
+   function releaseInput(){lockedPress=null;aimControl.classList.remove('v014TargetFire');}
+-  function openDoors(fn){const before=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=before;}}
++  function openDoors(fn){return GamePassages.plan(fn);}
+   function installPath(points,provisional=false){
+     navigation={destination:route.destination,points,index:0,blockedMs:0,replans:0,scene,map014:true,provisional};
+     const corners=[];
+@@ -117,8 +117,7 @@
+   const oldStopControls=stopControls;stopControls=function(preserve=false,...args){const nav=preserve&&route?navigation:null,task=preserve?pending:null;const out=oldStopControls(preserve,...args);if(nav)navigation=nav;if(task)pending=task;return out;};
+   const oldPlayer=updatePlayer;updatePlayer=function(...args){
+     tickPath();
+-    // The world continues while a panel is open. Only the route resumes input here.
+-    const restoreMenu=menuOpen;try{if(route&&navigation&&!document.hidden)menuOpen=false;return oldPlayer(...args);}finally{menuOpen=restoreMenu;}
++    return oldPlayer(...args);
+   };
+   function drawRoute(c,scale){if(!route||route.scene!==scene||!navigation?.points)return;
+     const nav=navigation;c.save();c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(player.x,player.y);
+--- a/src/save/envelope.js
++++ b/src/save/envelope.js
+@@ -4,7 +4,7 @@
+   const snapshot=()=>GameSave.snapshotModules();
+   V010.initialModules=clone(snapshot());
+   
+-  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.27.0';d.v010={schema:1,modules:snapshot()};return d;});
++  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.27.1';d.v010={schema:1,modules:snapshot()};return d;});
+   GameSave.extend('decode','save.envelope',function(oldDecode,raw){
+     let d=oldDecode(raw);
+     if(d.v010!==undefined){
+@@ -13,17 +13,17 @@
+     }
+     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
+     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
+-    d.gameVersion='0.27.0';return d;
++    d.gameVersion='0.27.1';return d;
+   });
+   GameSave.extend('restore','save.envelope',function(oldRestore,d){
+     const was=GameState.session.transaction;GameState.session.transaction=true;
+     try{oldRestore(d);for(const name of order)V010.modules[name]?.restore(d.v010?.modules?.[name]??null);if(window.V010Inventory)V010Inventory.render();V091Light.invalidate();}
+     finally{GameState.session.transaction=was;}
+   });
+-  const oldUpdate=update;update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)V010.modules.progression?.tick(16.667*frameScale);};
++  const oldUpdate=update;update=function(){oldUpdate();if(!GameFlow.paused)V010.modules.progression?.tick(16.667*frameScale);};
+   const oldMessage=message;message=function(text){oldMessage(text);V010.log(I18n.canonical(text));};
+-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.27.0'}));
+-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.27.0');
++  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.27.1'}));
++  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.27.1');
+   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
+   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
+   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');
+--- a/src/save/format.js
++++ b/src/save/format.js
+@@ -18,7 +18,7 @@
+     }
+     return JSON.stringify(data);
+   }
+-  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.27.0';return data;}
++  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.27.1';return data;}
+   return Object.freeze({version:VERSION,prepare,stamp,
+     complete(data,sourceVersion){for(const m of migrations)if(m.from>=sourceVersion)m.complete?.(data);},
+     migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});
+--- a/src/save/slots.js
++++ b/src/save/slots.js
+@@ -125,7 +125,7 @@
+   d.saveName=v091CleanSaveName(d.saveName);
+   const legacy=d.v09===undefined;
+   const legacySchema=d.schema;
+-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.0)))$/.test(d.gameVersion||'')))
++  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01])))$/.test(d.gameVersion||'')))
+     throw new Error('Unsupported current save version');
+   if(legacy){
+     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
+@@ -347,7 +347,7 @@
+     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+     const a=document.createElement('a');a.href=url;
+     const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
+-    a.download=`survival-base-0.27.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
++    a.download=`survival-base-0.27.1-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+     message('💾 Файл сохранения подготовлен для скачивания.');
+   }catch(error){message('Не удалось подготовить сохранение.');}
+--- a/src/simulation/flow.js
++++ b/src/simulation/flow.js
+@@ -0,0 +1,23 @@
++/* UI capture is not simulation pause. Explicit pause reasons are transient. */
++window.GameFlow=(()=>{
++  const reasons=new Set();
++  return Object.freeze({
++    get paused(){return reasons.size>0||!GameState.session.ready||!!window.MainMenu?.active||playerDead||document.hidden;},
++    pause(reason='explicit'){reasons.add(reason);stopControls(true);},
++    resume(reason='explicit'){reasons.delete(reason);},
++    get reasons(){return [...reasons];}
++  });
++})();
++/* Actions own movement compatibility, not windows or individual input devices. */
++window.GameMovement=(()=>{
++  const stationary=new Set(['tree','ore09','search','bunker','surface','living_bed','living_shower','fishing0121','repair018','shortcut10']);
++  const policy=Object.freeze({MOVE:false,INTERACT:true,AIM:true,FIRE:true,RELOAD:true,SELECT_SLOT:true,WORLD_TARGET:true,INVENTORY:true,MAP:true,SETTINGS:true,SNEAK:true});
++  const canMoveWhileActive=(type,target)=>type==='INTERACT'?(target?.kind==='search'&&target.ref?.searched||!stationary.has(target?.kind)):policy[type]!==false;
++  function begin(type,target){if(!canMoveWhileActive(type,target)){window.V014Controls?.stopRoute();cancelNavigation();}}
++  function openUI(){
++    // Release combat capture, but retain both commanded routes and a held left
++    // stick. Pointer-up still releases that stick even over a modal.
++    window.GameInput?.release();firing=false;rightAimActive=false;aimPower=0;rightPointerId=null;centerJoystickKnob(aimStick);
++  }
++  return Object.freeze({policy,canMoveWhileActive,begin,openUI});
++})();
+--- a/src/ui/context-map.js
++++ b/src/ui/context-map.js
+@@ -137,7 +137,7 @@
+     if(!z){target=null;return false;}
+     const gun=[heldItem(),lastGun,...guns()].find(t=>isGun(t)&&bagCount(t)>0);
+     if(!gun){message('В рюкзаке нет оружия');return true;}
+-    if(!window.V014Controls?.route)cancelNavigation();cancelSearch();if(!equip(gun))return true;target=z;aim();return true;
++    if(!equip(gun))return true;target=z;aim();return true;
+   }
+   const oldShoot=shoot;shoot=function(...args){aim();return oldShoot(...args);};
+   const oldPlayer=updatePlayer;updatePlayer=function(...args){const out=oldPlayer(...args);aim();return out;};
+--- a/src/ui/legacy-panels.js
++++ b/src/ui/legacy-panels.js
+@@ -16,7 +16,7 @@
+ 
+ function openOverlay(overlay){
+ 
+-  stopControls(true);
++  GameMovement.openUI();
+ 
+   menuOpen = true;
+ 
+--- a/src/ui/loot-vitals.js
++++ b/src/ui/loot-vitals.js
+@@ -1,21 +1,4 @@
+-/* 0.16.3 — compact loot actions and bottom vitals. */
+-// An in-range interaction that opens UI is not a movement command. Some older
+-// object handlers release input before opening their panel; preserve work only
+-// for that UI transition, never for movement, damage or a new gathering target.
+-(()=>{
+-  const execute=executeInteraction;
+-  executeInteraction=function(...args){
+-    const opened=new Set(document.querySelectorAll('.overlay.open'));
+-    const before={chop:chopState,mining:V09World.miningState(),nav:navigation,x:player.x,y:player.y,hp:player.health,scene};
+-    const out=execute(...args);
+-    if(!playerDead&&player.health===before.hp&&scene===before.scene&&player.x===before.x&&player.y===before.y&&[...document.querySelectorAll('.overlay.open')].some(o=>!opened.has(o))){
+-      if(before.chop&&!chopState)chopState=before.chop;
+-      if(before.mining&&!V09World.miningState())V09World.resumeMining(before.mining);
+-      if(before.nav?.map014&&V014Controls.route)navigation=before.nav;
+-    }
+-    return out;
+-  };
+-})();
++/* Shared loot transactions and vitals. */
+ window.V0163Loot=(()=>{
+   let selected=-1,source=null,capacity=6;
+   const open=openLoot;openLoot=function(...args){selected=-1;capacity=6;return open(...args);};
+@@ -65,6 +48,7 @@
+     }
+     activeLoot=activeLoot.filter(Boolean);activeLootObject.loot=activeLoot;selected=-1;
+     render();renderBag();updateAmmoHud();V014Robots.changed();queueGameSave();
++    if(!activeLoot.some(s=>s&&s.qty>0))closeOverlay(el('lootOverlay'));
+     if(left)message(drone?'Недостаточно места в дроне':'Рюкзак заполнен');
+     return moved>0;
+   }
+--- a/src/world/camera.js
++++ b/src/world/camera.js
+@@ -130,7 +130,7 @@
+     if(o.zone==='fuel'){ctx.fillStyle='#bd9470';ctx.fillRect(o.x+25,o.y-height+25,55,42);ctx.fillStyle='#344d50';ctx.fillRect(o.x+32,o.y-height+32,40,18);}
+     ctx.fillStyle='#e0dfc8';ctx.font='11px Arial';ctx.textAlign='center';if(o.name)ctx.fillText(I18n.text(o.name),o.x+o.w/2,o.y+o.h*.6-height);ctx.restore();
+   }
+-  const oldDraw=draw;draw=function(){const density=canvas.width/Math.max(1,screenWidth);ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,screenWidth,screenHeight);ctx.save();try{ctx.scale(zoom,zoom);ctx.translate(-camera.x,-camera.y);if(scene==='surface'){ctx.fillStyle='#27372d';const v=view();ctx.fillRect(camera.x,camera.y,v.w,v.h);drawSurface();if(tilt!==1)for(const o of scavenges)building(o);}else drawBunker();drawNavigationTarget();drawBullets();if(scene==='surface'&&window.V0141Trees)V0141Trees.drawActors();else{drawPlayer();if(scene==='surface')for(const z of zombies)drawZombie(z);}if(scene==='surface')window.V011World?.drawRoofs();if(scene==='surface'&&tilt!==1)for(const o of scavenges)building(o,true);drawFlashlight();}catch(error){canvas.width=canvas.width;throw error;}finally{ctx.restore();ctx.setTransform(density,0,0,density,0,0);}clock+=16.667*frameScale;if(clock>=160){clock=0;if(!menuOpen)reveal();}if(!menuOpen)mapDraw(mc,mini.width,mini.height,true);else if(overlay.classList.contains('open'))drawFull();mini.style.display=menuOpen?'none':'block';const workBar=el('searchBarWrap');if(workBar.style.display==='block')positionWorkProgress(workBar,Number(workBar.dataset.workOffset)||58);};
++  const oldDraw=draw;draw=function(){const density=canvas.width/Math.max(1,screenWidth);ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,screenWidth,screenHeight);ctx.save();try{ctx.scale(zoom,zoom);ctx.translate(-camera.x,-camera.y);if(scene==='surface'){ctx.fillStyle='#27372d';const v=view();ctx.fillRect(camera.x,camera.y,v.w,v.h);drawSurface();if(tilt!==1)for(const o of scavenges)building(o);}else drawBunker();drawNavigationTarget();drawBullets();if(scene==='surface'&&window.V0141Trees)V0141Trees.drawActors();else{drawPlayer();if(scene==='surface')for(const z of zombies)drawZombie(z);}if(scene==='surface')window.V011World?.drawRoofs();if(scene==='surface'&&tilt!==1)for(const o of scavenges)building(o,true);drawFlashlight();}catch(error){canvas.width=canvas.width;throw error;}finally{ctx.restore();ctx.setTransform(density,0,0,density,0,0);}clock+=16.667*frameScale;if(clock>=160){clock=0;if(!GameFlow.paused)reveal();}if(!menuOpen)mapDraw(mc,mini.width,mini.height,true);else if(overlay.classList.contains('open'))drawFull();mini.style.display=menuOpen?'none':'block';const workBar=el('searchBarWrap');if(workBar.style.display==='block')positionWorkProgress(workBar,Number(workBar.dataset.workOffset)||58);};
+   // Reproject the dark mask in screen pixels so far zoom never allocates a world-sized canvas.
+   let mask=null,maskContext=null;
+   V091Light.illuminate=function(){const beam=V091Light.cone();if(scene==='bunker'){
+--- a/src/world/districts.js
++++ b/src/world/districts.js
+@@ -94,12 +94,12 @@
+     if(!target||menuOpen||playerDead||!canInteract(target,player.x,player.y))return oldExecute(target);
+     if(target.id==='lockedwarehouse10'&&!events.lockedwarehouse10){showUnlock(target);return;}
+     if(target.kind==='shortcut10'){beginShortcut(target.ref);return;}
+-    if(target.kind==='shelter10'){stopControls(true);openCache(target.ref);return;}
++    if(target.kind==='shelter10'){openCache(target.ref);return;}
+     if(target.id==='supplywreck10'&&!target.ref.searched){oldExecute(target);if(searchState?.obj===target.ref)searchState.duration=2300;return;}
+     return oldExecute(target);
+   };
+   function panel(title){if(!overlay)overlay=v09Overlay('v010WorldOverlay',title);I18n.assign(overlay.querySelector('h2'),"textContent",title);const body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",'');return body;}
+-  function showUnlock(target){stopControls(true);const body=panel('Запертый склад');const p=document.createElement('p');I18n.assign(p,"textContent",'Восстановите механизм замка. Потребуется 4 детали. Внутри — материалы и редкая находка.');body.append(p);
++  function showUnlock(target){const body=panel('Запертый склад');const p=document.createElement('p');I18n.assign(p,"textContent",'Восстановите механизм замка. Потребуется 4 детали. Внутри — материалы и редкая находка.');body.append(p);
+     const b=v09Button('Открыть · 4 детали',()=>{if(bagCount('parts')<4||!canInteract(target,player.x,player.y))return;removeItem('parts',4);events.lockedwarehouse10=true;window.V010Progression?.unlock('precision_blueprint');closeOverlay(overlay);emit('worldevent',{id:target.id,kind:'warehouse'});log('Открыт склад промзоны');queueGameSave();startSearch(target.ref);});b.disabled=bagCount('parts')<4;body.append(b);openOverlay(overlay);
+   }
+   function beginShortcut(s){
+@@ -152,7 +152,7 @@
+     }return false;
+   }
+   updateZombies=function(){
+-    if(scene!=='surface'||menuOpen||playerDead)return;
++    if(scene!=='surface'||GameFlow.paused)return;
+     const now=performance.now(),onWall=!!window.V091Fortress?.isElevated?.();
+     for(const z of zombies){if(!z.alive)continue;const type=TYPES[z.type]||TYPES.normal,d=distance(player.x,player.y,z.x,z.y);if(d>950){z.state='wander';continue;}
+       if(window.V015Base?.siege(z,type,now,frameScale,settings.enemyStrength))continue;
+@@ -226,11 +226,11 @@
+   }
+   const oldDrawSurface=drawSurface;
+   drawSurface=function(){oldDrawSurface();drawOutskirts();};
+-  function updateShortcut(dt){if(!shortcutWork)return;const s=shortcuts.find(o=>o.id===shortcutWork.id),target={...s,range:65};if(!s||scene!=='surface'||menuOpen||playerDead||movePower>JOY_DEAD||!canInteract(target,player.x,player.y)){shortcutWork=null;el('searchBarWrap').style.display='none';return;}
++  function updateShortcut(dt){if(!shortcutWork)return;const s=shortcuts.find(o=>o.id===shortcutWork.id),target={...s,range:65};if(!s||scene!=='surface'||GameFlow.paused||movePower>JOY_DEAD||!canInteract(target,player.x,player.y)){shortcutWork=null;el('searchBarWrap').style.display='none';return;}
+     shortcutWork.elapsed+=dt;const bar=el('searchBarWrap');bar.style.display='block';positionWorkProgress(bar,64);el('searchBarFill').style.width=Math.min(100,shortcutWork.elapsed/shortcutWork.duration*100)+'%';if(shortcutWork.elapsed>=shortcutWork.duration)finishShortcut(s);
+   }
+   const oldUpdate=update;
+-  update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)updateShortcut(16.667*frameScale);else if(shortcutWork){shortcutWork=null;el('searchBarWrap').style.display='none';}elapsed+=frameScale;if(elapsed>=20){elapsed=0;sneakButton.style.display=menuOpen||playerDead?'none':'block';}};
++  update=function(){oldUpdate();if(!GameFlow.paused)updateShortcut(16.667*frameScale);else if(shortcutWork){shortcutWork=null;el('searchBarWrap').style.display='none';}elapsed+=frameScale;if(elapsed>=20){elapsed=0;sneakButton.style.display=menuOpen||playerDead?'none':'block';}};
+   function setSetting(key,value){if(!Object.hasOwn(defaults,key)||![.5,1,1.5,2].includes(value))return false;settings[key]=value;if(key==='enemyCount')adjustPopulation();queueGameSave();return true;}
+   function showDifficulty(){const body=panel('Сложность');const desc=document.createElement('p');desc.className='v09Muted';I18n.assign(desc,"textContent",'Каждый параметр настраивается отдельно. Менять можно в любой момент.');body.append(desc);
+     for(const [key,title] of [['enemyCount','Количество зомби'],['enemyStrength','Сила зомби'],['fuelRate','Расход топлива'],['miningRate','Скорость добычи']]){const label=document.createElement('label');label.className='v010Difficulty';const span=document.createElement('span');I18n.assign(span,"textContent",title);const select=document.createElement('select');I18n.setAttr(select,'aria-label',title);for(const value of [.5,1,1.5,2]){const option=document.createElement('option');option.value=String(value);I18n.assign(option,"textContent",value+'×');select.append(option);}select.value=String(settings[key]);select.addEventListener('change',()=>setSetting(key,Number(select.value)));label.append(span,select);body.append(label);}openOverlay(overlay);
+--- a/src/world/passages.js
++++ b/src/world/passages.js
+@@ -0,0 +1,27 @@
++/* Planning permissions never change collision or visible door state. */
++window.GamePassages=(()=>{
++  const entries=new Map();let permissions=null;
++  function register(id,definition){entries.set(id,definition);}
++  const available=d=>!!d&&(!d.playerOnly||!window.V014Robots?.planningKey())&&!!d.canOpen();
++  function plan(fn){
++    const previous=permissions,before=V09Power.pathfinding;
++    if(!permissions)permissions=new Map([...entries].map(([id,d])=>[id,available(d)]));
++    V09Power.pathfinding=true;try{return fn();}finally{permissions=previous;V09Power.pathfinding=before;}
++  }
++  function canPlanThrough(id){return V09Power.pathfinding&&!!(permissions?permissions.get(id):available(entries.get(id)));}
++  function key(){return [...entries].map(([id,d])=>id+':'+Number(permissions?permissions.get(id):available(d))).join(',');}
++  function crosses(a,b,o){let low=0,high=1;for(const [axis,size]of [['x','w'],['y','h']]){const delta=b[axis]-a[axis],min=o[axis]-player.radius,max=o[axis]+o[size]+player.radius;if(Math.abs(delta)<1e-9){if(a[axis]<min||a[axis]>max)return false;}else{let x=(min-a[axis])/delta,y=(max-a[axis])/delta;if(x>y)[x,y]=[y,x];low=Math.max(low,x);high=Math.min(high,y);if(low>high)return false;}}return true;}
++  function approach(nav){
++    const next=nav?.points?.[nav.index];if(!next)return;
++    for(const d of entries.values()){
++      if(!d.openNear||d.scene!==scene||!d.canOpen())continue;
++      const o=d.bounds(),p=contactPoint(o,player.x,player.y);
++      if(distance(player.x,player.y,p.x,p.y)<90&&crosses(player,next,o))d.openNear();
++    }
++  }
++  for(const d of v09Doors)register(d.id,{scene:'bunker',canOpen:()=>(window.V014Robots?.planningKey()?V014Robots.motion.doorPowered(d.room):devicePowered('door_'+d.room))||d.manual||!!window.V018Build?.isBroken(d.id)});
++  // The old main gate has a binary manual actuator, no sliding animation.
++  // Reuse it only when a player route actually reaches its proximity zone.
++  register('gate',{playerOnly:true,scene:'surface',canOpen:()=>true,bounds:()=>gateRect,openNear:()=>{if(!gateOpen)toggleGate();}});
++  return Object.freeze({register,plan,canPlanThrough,key,approach});
++})();
+--- a/src/world/resources.js
++++ b/src/world/resources.js
+@@ -131,7 +131,7 @@
+   executeInteraction=function(target){
+     if(!target||!['ore09','well09'].includes(target.kind))return oldExecute(target);
+     if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
+-    navigation=null;movePower=0;moveX=0;moveY=0;
++    GameMovement.begin('INTERACT',target);
+     if(target.kind==='ore09')beginMining(target.ref);
+     else {stopMining();renderWell();openOverlay(wellOverlay);}
+   };
+@@ -140,7 +140,7 @@
+   const oldUpdate=update;
+   update=function(){
+     oldUpdate();
+-    if(!menuOpen&&!playerDead&&!document.hidden){
++    if(!GameFlow.paused){
+       const dt=16.667*frameScale;
+       for(const o of ores)if(!o.remaining){
+         o.regrowMs=Math.max(0,o.regrowMs-dt);

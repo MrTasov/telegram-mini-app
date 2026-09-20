@@ -7,6 +7,7 @@ window.V014Robots=(()=>{
     instanceId:INSTANCE_ID,upgrades:V010Combat.upgradeRules.drone,
     modules:{body:'Корпус',battery:'Аккумулятор',cargo:'Контейнер',weapon:'Оружие',engine:'Двигатель'},
     combat:{ammoType:'ammo',capacity:600,damage:20,damagePerLevel:.2,intervalMs:155,range:270},
+    repair:{material:'parts',durabilityPerUnit:25},
     body:{hp:100,hpPerLevel:25,armorPerLevel:6},cargo:{base:12,levelStride:2,perStride:6},
     battery:{factor:2.5,perLevel:.3,chargeSeconds:180,shotCost:.025,idleDrain:.08,lightDrain:.018,blockedDrain:.003},
     movement:{radius:10,followSpeed:490,travelSpeed:290,perLevel:18,minFollowSpeed:235,playerFactor:1.13,catchupDistance:90,catchupFactor:1.4,acceleration:850,brake:900,deceleration:1000}
@@ -167,7 +168,13 @@ window.V014Robots=(()=>{
   }
   function cost(key){if(window.V0161Upgrade)return V0161Upgrade.droneCost(key);const l=state.modules[key]??5;return {metal:8*(l+1),parts:3*(l+1),...(l>=3?{copper:5*(l-1)}:{})};}
   function upgrade(key){return window.V0161Upgrade?.upgradeDrone(key)||false;}
-  function repair(){if(!atDock()||!stationNear()){message('Ремонт доступен на станции');return false;}if(state.hp>=maxHp())return false;const n=Math.max(1,Math.ceil((maxHp()-state.hp)/25));if(!V010Inventory.consumeMaterials({parts:n},1)){message('Нужны детали: '+n);return false;}state.hp=maxHp();changed();return true;}
+  function repairCost(){const rule=definition.repair;return {[rule.material]:Math.max(0,Math.ceil((maxHp()-state.hp)/rule.durabilityPerUnit))};}
+  function canRepair(atStation=false){return state.hp<maxHp()&&(atStation?atDock()&&stationNear():state.hp>0&&near()&&!state.packed);}
+  function repair(atStation=false){
+    if(!canRepair(atStation)){message(atStation?'Доставьте дрона на станцию':'Для ремонта подойдите к исправному дрону. Сломанный дрон доставьте на станцию.');return false;}
+    const price=repairCost();if(!V010Inventory.consumeMaterials(price,1)){message('Недостаточно материалов для ремонта');return false;}
+    state.hp=maxHp();changed();renderBag();updateHUD();return true;
+  }
   function moveTo(p,dt){const result=motion.move(p,dt);angle=motion.heading;return result;}
   function sceneTravel(p,dt){const result=motion.travel(p,dt);angle=motion.heading;return result;}
   function doorNear(d){return !state.packed&&state.scene==='bunker'&&state.hp>0&&state.battery>0&&state.task!=='docked'&&distance(state.x,state.y,d.x+d.w/2,d.y+d.h/2)<105;}
@@ -292,6 +299,6 @@ window.V014Robots=(()=>{
   });
   v09Style('.v014DroneHUD{position:fixed;right:12px;top:calc(220px + env(safe-area-inset-top,0px));z-index:38;width:auto;min-height:28px!important;padding:5px 8px!important;border-radius:9px!important;font:11px Arial!important;background:#172c2cd9!important;color:#b7d5c8!important}.v014RobotActions{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.v014RobotActions .menuButton,#v014DronePanel details .menuButton{width:auto;min-height:30px!important;padding:6px 8px!important;font-size:11px!important;margin:0}.v014RobotActions .selected{background:#376351!important}.v014RobotGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.v014RobotGrid .menuButton{position:relative;min-height:45px;padding:4px;margin:0}.v014RobotGrid img{max-height:34px;max-width:100%}.v014RobotGrid small{position:absolute;bottom:2px;right:4px;font-size:10px}.v014DroneHeader{display:flex;align-items:center;gap:10px;padding:6px 0 9px;border-bottom:1px solid #58716a55}.v014DroneHeader img{width:64px;height:48px;object-fit:contain;border-radius:8px;background:#1a3436}.v014DroneStats{font-size:11px;line-height:1.55;color:#c7ddd3}.v014DroneStats b{color:#f0d892;font-size:12px}#v014DronePanel .panel{width:min(500px,94vw);max-height:83dvh;overflow-y:auto;padding:12px;min-height:420px}#v014DronePanel p{font-size:11px;line-height:1.5;margin:9px 0}#v014DronePanel input,#v014DronePanel select{max-width:100%;background:#203b3c;color:#deece5;border:1px solid #648178;border-radius:7px;padding:7px}#v014DroneLoot{font-size:11px;min-height:28px;padding:6px 10px}@media(max-height:520px){.v014DroneHUD{top:calc(110px + env(safe-area-inset-top,0px));right:65px}}');
   invalidateGeometry();
-  return {type:TYPE,instanceId:INSTANCE_ID,definition,ownsToken,state,stationInfo,install,stationNear,returnProgress:()=>({...home}),setAutoReturn(on){state.autoReturn=!!on;changed();},combat,combatEnabled,setCombat,availableAmmo,dockPosition,station:DOCK,status:()=>({...state,maxHp:maxHp(),capacity:capacity(),atDock:atDock()}),capacity,maxHp,near,atDock,open,openStation,follow,recall,returnToDock,attack,guard,mode,pack,deploy,store,take,reload,upgrade,repair,cost,transfer,validate,tick,doorNear,doorOccupies,planningKey:motion.key,motion,statusText,changed,draw:drawDrone,setLootSelection:i=>{lootSelection=i;},dispatchLoot};
+  return {type:TYPE,instanceId:INSTANCE_ID,definition,ownsToken,state,stationInfo,install,stationNear,returnProgress:()=>({...home}),setAutoReturn(on){state.autoReturn=!!on;changed();},combat,combatEnabled,setCombat,availableAmmo,dockPosition,station:DOCK,status:()=>({...state,maxHp:maxHp(),capacity:capacity(),atDock:atDock()}),capacity,maxHp,near,atDock,open,openStation,follow,recall,returnToDock,attack,guard,mode,pack,deploy,store,take,reload,upgrade,repair,repairCost,canRepair,cost,transfer,validate,tick,doorNear,doorOccupies,planningKey:motion.key,motion,statusText,changed,draw:drawDrone,setLootSelection:i=>{lootSelection=i;},dispatchLoot};
 })();
 

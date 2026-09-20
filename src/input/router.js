@@ -89,8 +89,8 @@ window.GameInput=(()=>{
   }
   window.addEventListener('pointerdown',down,{passive:false});
   window.addEventListener('pointermove',move,{passive:false});
-  window.addEventListener('pointerup',up,{passive:false});
-  window.addEventListener('pointercancel',cancel,{passive:false});
+  window.addEventListener('pointerup',up,{passive:false,capture:true});
+  window.addEventListener('pointercancel',cancel,{passive:false,capture:true});
   window.addEventListener('lostpointercapture',cancel,true);
   window.addEventListener('blur',()=>{stopControls(true);window.V010Camera?.resetTouch();});
   window.addEventListener('contextmenu',e=>{if(mode==='PC'&&world(e))e.preventDefault();});

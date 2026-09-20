@@ -137,7 +137,7 @@ window.V016Turret=(()=>{
   function tick(ms){
     settleUnsupported();
     if(placement&&(!bag.includes(placement.item)||scene!=='surface'||playerDead))cancelPlacement();
-    if(scene!=='surface'||document.hidden||playerDead||menuOpen)return;
+    if(scene!=='surface'||GameFlow.paused)return;
     const dt=clamp(Number(ms)||0,0,100)/1000;clock+=dt;
     for(const t of guns){const s=stateFor(t);s.flash=Math.max(0,s.flash-dt);s.shot=Math.max(-dt,s.shot-dt);s.search-=dt;
       if(t.fallen||!t.enabled||!t.ammo){s.target=null;s.shot=0;continue;}
@@ -150,7 +150,7 @@ window.V016Turret=(()=>{
     if(clock>=.25){clock=0;if(placement)updatePlacement();refresh();}
   }
   function status(t){return t.fallen?'Опора разрушена · заберите в рюкзак':!t.enabled?'Автоогонь выключен':!t.ammo?'Нет патронов 5,45':'Автоогонь · поворот 360°';}
-  function open(t){if(!guns.includes(t)||!reachable(t)){message('Подойдите к пулемёту');return false;}selected=t;cancelNavigation();stopControls(true);
+  function open(t){if(!guns.includes(t)||!reachable(t)){message('Подойдите к пулемёту');return false;}selected=t;GameMovement.openUI();
     const o=v09Overlay('v016TurretPanel','Тяжёлый пулемёт'),body=o.querySelector('.v09Body');body.replaceChildren();
     const hero=document.createElement('div');hero.className='v016GunHero';I18n.assign(hero,"innerHTML",itemIconHTML(typeOf(t))+'<div><b>'+damage(t)+' урона · +'+(t.level||0)+' · '+combatFor(t).range+' дальность</b><small>Патроны '+(V09Craft.weaponsForAmmo(combatFor(t).ammoType).map(id=>V09Craft.weapons[id].caliber)[0]||ITEM[combatFor(t).ammoType].caliber)+' · ёмкость '+combatFor(t).capacity+'</small></div>');body.append(hero);
     const stats=document.createElement('p');stats.id='v016GunStatus';body.append(stats);

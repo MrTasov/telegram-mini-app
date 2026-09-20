@@ -8,7 +8,7 @@ window.V0151Station=(()=>{
     overlay=v09Overlay('v0151Station','Станция дрона');const body=overlay.querySelector('.v09Body');
     const head=node('div','stationHead'),image=node('img');image.src=V011Art.sources.drone014;I18n.assign(image,"alt",'Дрон');head.append(image);
     const summary=node('div');refs.name=node('b');refs.status=node('div','stationStatus');refs.status.setAttribute('role','status');summary.append(refs.name,refs.status);head.append(summary);body.append(head);
-    const rows=node('div','stationReadings');for(const [key,label]of [['battery','Заряд'],['power','Потребление'],['eta','До полного заряда']]){
+    const rows=node('div','stationReadings');for(const [key,label]of [['battery',I18n.message('ux.drone_battery')],['durability','Прочность'],['power','Потребление'],['eta','До полного заряда']]){
       const row=node('div','stationReading');row.append(node('span','',label));refs[key]=node('b');row.append(refs[key]);rows.append(row);
     }body.append(rows);
     refs.meter=node('div','stationBattery');refs.fill=node('span');refs.meter.append(refs.fill);body.append(refs.meter);
@@ -19,6 +19,7 @@ window.V0151Station=(()=>{
     const actions=node('div','stationActions');
     function command(id,text,action){const b=v09Button(text,()=>{action();refresh();});b.id='station_'+id;buttons[id]=b;actions.append(b);}
     command('install','Поставить из рюкзака',robot.install);
+    command('repair','Починить дрон',()=>robot.repair(true));
     command('return','На станцию',robot.returnToDock);
     command('follow','Следовать',robot.follow);
     command('pack','Забрать дрон',robot.pack);
@@ -28,11 +29,14 @@ window.V0151Station=(()=>{
   function refresh(){
     if(!overlay||!overlay.classList.contains('open'))return;
     const info=robot.stationInfo();set(refs.name,I18n.verbatim(s.name));set(refs.status,info.blocked&&s.task==='return'?'Путь закрыт · ожидание':statuses[info.status]);
+    set(refs.durability,Math.round(s.hp)+' / '+robot.maxHp());
+    buttons.repair.disabled=!robot.canRepair(true);
+    set(buttons.repair,'Починить дрон · '+Object.entries(robot.repairCost()).map(([type,n])=>ITEM[type].name+' × '+n).join(', '));
     refs.status.dataset.state=info.status;set(refs.battery,Math.round(s.battery)+'%');set(refs.power,info.watts+' / '+robot.station.watts+' кВт');
     const eta=info.eta===null?'—':Math.floor(info.eta/60)+' мин '+info.eta%60+' сек';set(refs.eta,info.status==='FULLY_CHARGED'?'Готово':eta);
     refs.fill.style.width=s.battery+'%';I18n.setAttr(refs.meter,'aria-label','Заряд '+Math.round(s.battery)+'%');
     refs.auto.setAttribute('aria-checked',String(s.autoReturn));set(refs.autoValue,s.autoReturn?'ВКЛ':'ВЫКЛ');
-    set(refs.hint,info.status==='NO_POWER'?'Зарядка продолжится, когда база сможет подать 1 кВт.':info.blocked?'Откройте проход или заберите дрон в рюкзак.':s.hp<=0?'После зарядки отремонтируйте корпус в управлении дроном.':'Разряженный дрон можно принести в рюкзаке и поставить на площадку.');
+    set(refs.hint,info.status==='NO_POWER'?'Зарядка продолжится, когда база сможет подать 1 кВт.':info.blocked?'Откройте проход или заберите дрон в рюкзак.':s.hp<=0?'Заберите сломанного дрона в рюкзак, установите на станцию и нажмите «Починить дрон».':'Разряженный дрон можно принести в рюкзаке и поставить на площадку.');
     buttons.install.disabled=!s.packed||!robot.stationNear()||!bag.some(robot.ownsToken);
     buttons.return.disabled=s.packed||s.hp<=0||s.battery<=0||['return','docked','docking'].includes(s.task);
     buttons.follow.disabled=s.packed||s.hp<=0||s.battery<=0||info.docked&&s.autoReturn&&s.battery<=info.threshold;

@@ -29,7 +29,7 @@ window.V014Controls=(()=>{
   }
   function release(e){if(e.pointerId===lockedPress){lockedPress=null;aimControl.classList.remove('v014TargetFire');}}
   function releaseInput(){lockedPress=null;aimControl.classList.remove('v014TargetFire');}
-  function openDoors(fn){const before=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=before;}}
+  function openDoors(fn){return GamePassages.plan(fn);}
   function installPath(points,provisional=false){
     navigation={destination:route.destination,points,index:0,blockedMs:0,replans:0,scene,map014:true,provisional};
     const corners=[];
@@ -117,8 +117,7 @@ window.V014Controls=(()=>{
   const oldStopControls=stopControls;stopControls=function(preserve=false,...args){const nav=preserve&&route?navigation:null,task=preserve?pending:null;const out=oldStopControls(preserve,...args);if(nav)navigation=nav;if(task)pending=task;return out;};
   const oldPlayer=updatePlayer;updatePlayer=function(...args){
     tickPath();
-    // The world continues while a panel is open. Only the route resumes input here.
-    const restoreMenu=menuOpen;try{if(route&&navigation&&!document.hidden)menuOpen=false;return oldPlayer(...args);}finally{menuOpen=restoreMenu;}
+    return oldPlayer(...args);
   };
   function drawRoute(c,scale){if(!route||route.scene!==scene||!navigation?.points)return;
     const nav=navigation;c.save();c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(player.x,player.y);

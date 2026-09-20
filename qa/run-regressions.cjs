@@ -24,6 +24,8 @@ for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs'])
  let code=fs.readFileSync(path.join(baseline,'baseline_0.20.0/qa',name),'utf8');
  code=code.replaceAll("captureGameProgress().gameVersion==='0.20.0'",`captureGameProgress().gameVersion==='${version}'`);
  code=code.replace("fs.readFileSync(file,'utf8').split('function selectionRadius(z)')","require('./runtime.cjs').source(file).split('function selectionRadius(z)')");
+ // UX patch intentionally replaces 16 ladders with 4. Frozen files stay intact.
+ if(name==='perimeter020.cjs')code=code.replace('three spans and four ladders','three spans and one ladder').replace("stairs.filter(t=>t.side==='${side}').length===4","stairs.filter(t=>t.side==='${side}').length===1").replace('for(let i=0;i<16;i++)','for(let i=0;i<4;i++)').replace('ladder on destroyed section becomes unavailable','removed ladder remains absent on destroyed section').replace('!V020Walls.usable(V091Fortress.stairs[0])',"!V091Fortress.stairs.some(t=>t.id==='n_0')");
  fs.writeFileSync(path.join(game,'qa',name),adaptAssetWaits(code));
 }
 let character=fs.readFileSync(path.join(baseline,'tools/behavior.cjs'),'utf8');

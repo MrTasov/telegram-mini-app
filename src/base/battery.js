@@ -120,7 +120,7 @@ const V010Energy=(()=>{
   const originalGenerator=v09OpenGenerator;
   v09OpenGenerator=function(refuel=false){originalGenerator(refuel);const body=el('v09GeneratorOverlay')?.querySelector('.v09Body');if(!body)return;const note=[...body.querySelectorAll('.v09PowerNote')].find(n=>I18n.source(n).includes('Мощность:'));if(note)I18n.assign(note,"textContent",'Мощность генератора: '+fmt(V09Power.supply)+' кВт. Расход топлива зависит от выбранной сложности. Свободная мощность заряжает батарею; готовые изделия и прогресс сохраняются при остановке.');body.appendChild(v09Button('Резервная батарея',openBattery));};
   const originalExecute=executeInteraction;
-  executeInteraction=function(target){if(target?.kind!=='v09battery')return originalExecute(target);if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;cancelNavigation();stopControls(true);openBattery();};
+  executeInteraction=function(target){if(target?.kind!=='v09battery')return originalExecute(target);if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;GameMovement.openUI();openBattery();};
   function monitor(a){
     edge('fuelLow',V09Power.running&&V09Power.fuel>0&&V09Power.fuel<=2,'Топливо заканчивается: заправьте генератор.');
     edge('batteryLow',a.batteryOutput>0&&battery.charge/battery.capacity<=.1,'Низкий заряд резервной батареи.');

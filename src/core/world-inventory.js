@@ -221,7 +221,7 @@ function worldCollision(x,y,r=15,which=scene,ignoreId=null){
   for(let cy=Math.floor((y-r)/g.cell);cy<=Math.floor((y+r)/g.cell);cy++)for(let cx=Math.floor((x-r)/g.cell);cx<=Math.floor((x+r)/g.cell);cx++){
     const nearby=g.grid[cx+','+cy];if(!nearby)continue;
     for(const o of nearby){
-      if(o.id===ignoreId)continue;
+      if(o.id===ignoreId||window.GamePassages?.canPlanThrough(o.id))continue;
       if(o.r!==undefined){if(distance(x,y,o.x,o.y)<=o.r+r)return true;}
       else if(rectHit(x,y,r,o))return true;
     }

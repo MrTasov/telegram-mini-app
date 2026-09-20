@@ -18,7 +18,7 @@ const SaveFormat=(()=>{
     }
     return JSON.stringify(data);
   }
-  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.27.0';return data;}
+  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.27.1';return data;}
   return Object.freeze({version:VERSION,prepare,stamp,
     complete(data,sourceVersion){for(const m of migrations)if(m.from>=sourceVersion)m.complete?.(data);},
     migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});

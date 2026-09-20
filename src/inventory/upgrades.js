@@ -46,7 +46,7 @@ window.V0161Upgrade=(()=>{
     I18n.assign(refs.power,"textContent",on?'Питание включено · 2 кВт':'Нет питания · требуется 2 кВт');refs.power.className=on?'powered':'missing';
     refs.cradle.replaceChildren();const cell=inv.cell('upgrade',0,s);cell.id='v161UpgradeSlot';I18n.setAttr(cell,'aria-label',s?ITEM[s.type].name:'Ячейка станка усиления');if(!s){const hint=document.createElement('span');I18n.assign(hint,"textContent",'＋');cell.append(hint);}refs.cradle.append(cell);
     refs.card.replaceChildren();text(refs.card,'b','',s?ITEM[s.type].name:'Выберите предмет');text(refs.card,'div','v161Level',s?'Усиление +'+level(s)+' / '+maxLevel(s):'Перенесите предмет сюда');
-    if(isDrone(s)){text(refs.card,'p','',robot.state.name+' · '+Math.round(robot.state.battery)+'%');text(refs.card,'p','','Здоровье '+Math.round(robot.state.hp)+' / '+robot.maxHp()+' · урон '+robot.combat.damage);}
+    if(isDrone(s)){text(refs.card,'p','',robot.state.name+' · '+Math.round(robot.state.battery)+'%');text(refs.card,'p','','Прочность '+Math.round(robot.state.hp)+' / '+robot.maxHp()+' · урон '+robot.combat.damage);}
     else if(isTurret(s)){text(refs.card,'p','','Урон '+V016Turret.damage(s.turretData)+' · патроны '+s.turretData.ammo+' / '+V016Turret.combatFor(s.turretData).capacity);text(refs.card,'p','','Дальность '+V016Turret.combatFor(s.turretData).range+' · поворот 360°');}
     else if(s){const stats=document.createElement('div');I18n.assign(stats,"innerHTML",V011UI.statsHTML(s));refs.card.append(stats);}
     refs.modules.replaceChildren();if(isDrone(s))for(const [key,label]of Object.entries(labels)){const b=v09Button(label+' +'+robot.state.modules[key],()=>chooseModule(key),selectedModule===key?'selected':'');b.dataset.upgradeModule=key;refs.modules.append(b);}

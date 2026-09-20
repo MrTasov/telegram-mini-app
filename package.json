@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "private": true,
-  "description": "Last Base Stage 6 World Events and Stage 7 co-op readiness; single-player only.",
+  "description": "Last Base gameplay / UX corrective patch.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -10,7 +10,8 @@
     "bench": "node qa/performance.cjs",
     "assets": "node tools/assets.cjs",
     "locales": "node tools/locales.cjs",
-    "bench:stages": "node qa/compare-readiness-performance.cjs"
+    "bench:stages": "node qa/compare-readiness-performance.cjs",
+    "bench:ux": "node qa/compare-corrective-performance.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

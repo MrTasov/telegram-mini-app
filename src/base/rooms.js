@@ -201,6 +201,7 @@ window.V011Living=(()=>{
     if(lastSave>=3){lastSave=0;queueGameSave();}
     refresh();
   }
+  GamePassages.register(BATH_DOOR.id,{playerOnly:true,scene:'bunker',canOpen:()=>true});
   const oldSolid=solidObjects;
   solidObjects=function(which){
     const list=oldSolid(which);if(which!=='bunker')return list;

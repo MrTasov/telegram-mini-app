@@ -1,5 +1,5 @@
 {
-  "version": "0.27.0",
+  "version": "0.27.1",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -295,6 +295,10 @@
           "damagePerLevel": 0.2,
           "intervalMs": 155,
           "range": 270
+        },
+        "repair": {
+          "material": "parts",
+          "durabilityPerUnit": 25
         },
         "body": {
           "hp": 100,
@@ -3015,6 +3019,8 @@
       "reload",
       "upgrade",
       "repair",
+      "repairCost",
+      "canRepair",
       "cost",
       "transfer",
       "validate",

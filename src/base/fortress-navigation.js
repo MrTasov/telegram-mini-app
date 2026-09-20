@@ -234,7 +234,7 @@
   const oldPlayerUpdate=updatePlayer;
   updatePlayer=function(){
     if(transition){
-      if(menuOpen||playerDead||document.hidden)return;
+      if(GameFlow.paused)return;
       const t=transition;
       if(t.toUpper&&elevatedCollision(t.target.x,t.target.y,player.radius)){
         const safe=window.V015Base?.freePoint(t.source.x,t.source.y,player.radius)||t.source;
@@ -249,7 +249,7 @@
       if(p>=1){stairsCooldown=performance.now()+300;player.wallLevel=t.toUpper;transition=null;player.moving=false;if(leftPointerId===null)movePower=moveX=moveY=0;queueGameSave();if(t.after)t.after();}
       return;
     }
-    if(!menuOpen&&!playerDead&&scene==='surface'&&movePower>JOY_DEAD&&performance.now()>stairsCooldown){
+    if(!GameFlow.paused&&scene==='surface'&&movePower>JOY_DEAD&&performance.now()>stairsCooldown){
       if(!isElevated()){
         const t=stairs.find(t=>V020Walls.usable(t)&&distance(player.x,player.y,t.foot.x,t.foot.y)<38&&((t.x-player.x)*moveX+(t.y-player.y)*moveY)>distance(player.x,player.y,t.x,t.y)*.4);
         if(t){const after=groundAfter;groundAfter=null;beginTransition({x:t.x,y:t.y},true,'stairs',after);return;}
@@ -432,7 +432,7 @@ const V091Navigation=(()=>{
     return oldGeometry(x,y,0)||walls.some(o=>rectHit(x,y,r,o))||penBlocked(x,y,r);
   };
   const fortress=()=>typeof V091Fortress==='object'?V091Fortress:null;
-  function withOpenDoors(fn){const old=V09Power.pathfinding;V09Power.pathfinding=true;try{return fn();}finally{V09Power.pathfinding=old;}}
+  function withOpenDoors(fn){return GamePassages.plan(fn);}
   let pending=null;
   function queuePath(destination){
     if(pending&&!pending.onResult){pending.latest=destination;return;}
@@ -445,7 +445,8 @@ const V091Navigation=(()=>{
   }
   function tickPath(){
     if(!pending)return;
-    if(menuOpen||playerDead||pending.scene!==scene||pending.revision!==geometryRevision||leftPointerId!==null){pending=null;return;}
+    if(GameFlow.paused||pending.scene!==scene||leftPointerId!==null){pending=null;return;}
+    if(pending.revision!==geometryRevision){pending.revision=geometryRevision;pending.g=v092PathSearch(player.x,player.y,pending.destination,scene,player.radius+1);}
     const task=pending,start=performance.now();let out,steps=0;
     do{out=withOpenDoors(()=>task.g.next());if(out.done)break;}while(++steps<8&&performance.now()-start<1.5);
     if(!out.done)return;

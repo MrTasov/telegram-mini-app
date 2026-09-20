@@ -16,7 +16,7 @@ function stopControls(preserveGather=false){
 
 function openOverlay(overlay){
 
-  stopControls(true);
+  GameMovement.openUI();
 
   menuOpen = true;
 

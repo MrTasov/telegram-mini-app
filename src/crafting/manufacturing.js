@@ -306,7 +306,7 @@ const V09Craft = (() => {
   executeInteraction=function(target){
     if(target?.kind!=='v09craft')return oldExecute(target);
     if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
-    navigation=null;movePower=0;moveX=0;moveY=0;open(target.id);
+    GameMovement.begin('INTERACT',target);open(target.id);
   };
   // All manufacturing uses the same panel dimensions and incremental queue model.
   openFeedCraftMenu=function(){feedCraftLoaded=0;open('feed_craft');};

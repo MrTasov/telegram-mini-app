@@ -142,7 +142,7 @@ window.V011Farm=(()=>{
   // presentation and autonomous, frame-rate independent movement are replaced.
   updateLivestockAnimals=function(){
     const now=performance.now(),dt=clamp((now-lastAnimalAt)/1000,0,.12);lastAnimalAt=now;
-    if(scene!=='bunker'||!livestockAlive||menuOpen)return;
+    if(scene!=='bunker'||!livestockAlive||GameFlow.paused)return;
     const p=habitat(),feed=storageCount(12,'animal_feed')>0,water=storageCount(13,'water')>0;
     const stalls=cowStalls();let cowIndex=0;
     livestockAnimals.forEach((a,i)=>{

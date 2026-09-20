@@ -200,7 +200,7 @@ function startFootsteps(){
 }
 
 function updateFootstepsAudio(){
-  if(playerDead || menuOpen || movePower<=JOY_DEAD){
+  if(GameFlow.paused || movePower<=JOY_DEAD){
     stopFootsteps();
     return;
   }

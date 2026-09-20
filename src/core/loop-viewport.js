@@ -65,7 +65,7 @@ document.addEventListener(
 ===================================================== */
 
 function updateTrees(){
-  if(menuOpen||playerDead||document.hidden)return;
+  if(GameFlow.paused)return;
   for(const t of worldTrees){
     if(!t.felled||t.wood>0)continue;
     t.regrowMs=Math.max(0,t.regrowMs-16.667*frameScale);
@@ -171,7 +171,7 @@ function gameLoop(timestamp=performance.now()){
 
   try{
 
-    update();
+    if(!GameFlow.paused)update();
     draw();
 
   }catch(error){

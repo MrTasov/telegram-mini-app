@@ -94,12 +94,12 @@ const V010World = (()=>{
     if(!target||menuOpen||playerDead||!canInteract(target,player.x,player.y))return oldExecute(target);
     if(target.id==='lockedwarehouse10'&&!events.lockedwarehouse10){showUnlock(target);return;}
     if(target.kind==='shortcut10'){beginShortcut(target.ref);return;}
-    if(target.kind==='shelter10'){stopControls(true);openCache(target.ref);return;}
+    if(target.kind==='shelter10'){openCache(target.ref);return;}
     if(target.id==='supplywreck10'&&!target.ref.searched){oldExecute(target);if(searchState?.obj===target.ref)searchState.duration=2300;return;}
     return oldExecute(target);
   };
   function panel(title){if(!overlay)overlay=v09Overlay('v010WorldOverlay',title);I18n.assign(overlay.querySelector('h2'),"textContent",title);const body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",'');return body;}
-  function showUnlock(target){stopControls(true);const body=panel('Запертый склад');const p=document.createElement('p');I18n.assign(p,"textContent",'Восстановите механизм замка. Потребуется 4 детали. Внутри — материалы и редкая находка.');body.append(p);
+  function showUnlock(target){const body=panel('Запертый склад');const p=document.createElement('p');I18n.assign(p,"textContent",'Восстановите механизм замка. Потребуется 4 детали. Внутри — материалы и редкая находка.');body.append(p);
     const b=v09Button('Открыть · 4 детали',()=>{if(bagCount('parts')<4||!canInteract(target,player.x,player.y))return;removeItem('parts',4);events.lockedwarehouse10=true;window.V010Progression?.unlock('precision_blueprint');closeOverlay(overlay);emit('worldevent',{id:target.id,kind:'warehouse'});log('Открыт склад промзоны');queueGameSave();startSearch(target.ref);});b.disabled=bagCount('parts')<4;body.append(b);openOverlay(overlay);
   }
   function beginShortcut(s){
@@ -152,7 +152,7 @@ const V010World = (()=>{
     }return false;
   }
   updateZombies=function(){
-    if(scene!=='surface'||menuOpen||playerDead)return;
+    if(scene!=='surface'||GameFlow.paused)return;
     const now=performance.now(),onWall=!!window.V091Fortress?.isElevated?.();
     for(const z of zombies){if(!z.alive)continue;const type=TYPES[z.type]||TYPES.normal,d=distance(player.x,player.y,z.x,z.y);if(d>950){z.state='wander';continue;}
       if(window.V015Base?.siege(z,type,now,frameScale,settings.enemyStrength))continue;
@@ -226,11 +226,11 @@ const V010World = (()=>{
   }
   const oldDrawSurface=drawSurface;
   drawSurface=function(){oldDrawSurface();drawOutskirts();};
-  function updateShortcut(dt){if(!shortcutWork)return;const s=shortcuts.find(o=>o.id===shortcutWork.id),target={...s,range:65};if(!s||scene!=='surface'||menuOpen||playerDead||movePower>JOY_DEAD||!canInteract(target,player.x,player.y)){shortcutWork=null;el('searchBarWrap').style.display='none';return;}
+  function updateShortcut(dt){if(!shortcutWork)return;const s=shortcuts.find(o=>o.id===shortcutWork.id),target={...s,range:65};if(!s||scene!=='surface'||GameFlow.paused||movePower>JOY_DEAD||!canInteract(target,player.x,player.y)){shortcutWork=null;el('searchBarWrap').style.display='none';return;}
     shortcutWork.elapsed+=dt;const bar=el('searchBarWrap');bar.style.display='block';positionWorkProgress(bar,64);el('searchBarFill').style.width=Math.min(100,shortcutWork.elapsed/shortcutWork.duration*100)+'%';if(shortcutWork.elapsed>=shortcutWork.duration)finishShortcut(s);
   }
   const oldUpdate=update;
-  update=function(){oldUpdate();if(!menuOpen&&!playerDead&&!document.hidden)updateShortcut(16.667*frameScale);else if(shortcutWork){shortcutWork=null;el('searchBarWrap').style.display='none';}elapsed+=frameScale;if(elapsed>=20){elapsed=0;sneakButton.style.display=menuOpen||playerDead?'none':'block';}};
+  update=function(){oldUpdate();if(!GameFlow.paused)updateShortcut(16.667*frameScale);else if(shortcutWork){shortcutWork=null;el('searchBarWrap').style.display='none';}elapsed+=frameScale;if(elapsed>=20){elapsed=0;sneakButton.style.display=menuOpen||playerDead?'none':'block';}};
   function setSetting(key,value){if(!Object.hasOwn(defaults,key)||![.5,1,1.5,2].includes(value))return false;settings[key]=value;if(key==='enemyCount')adjustPopulation();queueGameSave();return true;}
   function showDifficulty(){const body=panel('Сложность');const desc=document.createElement('p');desc.className='v09Muted';I18n.assign(desc,"textContent",'Каждый параметр настраивается отдельно. Менять можно в любой момент.');body.append(desc);
     for(const [key,title] of [['enemyCount','Количество зомби'],['enemyStrength','Сила зомби'],['fuelRate','Расход топлива'],['miningRate','Скорость добычи']]){const label=document.createElement('label');label.className='v010Difficulty';const span=document.createElement('span');I18n.assign(span,"textContent",title);const select=document.createElement('select');I18n.setAttr(select,'aria-label',title);for(const value of [.5,1,1.5,2]){const option=document.createElement('option');option.value=String(value);I18n.assign(option,"textContent",value+'×');select.append(option);}select.value=String(settings[key]);select.addEventListener('change',()=>setSetting(key,Number(select.value)));label.append(span,select);body.append(label);}openOverlay(overlay);

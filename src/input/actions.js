@@ -2,7 +2,7 @@
    item transfers or interaction rules. Commands are transient, not save data. */
 window.GameActions=(()=>{
   'use strict';
-  const playable=()=>!window.MainMenu?.active&&!menuOpen&&!playerDead&&!document.hidden&&!el('fade')?.classList.contains('show');
+  const playable=()=>!GameFlow.paused&&!menuOpen&&!el('fade')?.classList.contains('show');
   const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
   function dispatch(type,data={}){
     const command={actorId:GameActors.localId,type,payload:data};

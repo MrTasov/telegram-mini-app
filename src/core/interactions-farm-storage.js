@@ -48,7 +48,7 @@ function hitInteraction(x,y){
 }
 function executeInteraction(target){
   if(!target||menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
-  navigation=null;movePower=0;moveX=0;moveY=0;
+  GameMovement.begin('INTERACT',target);
   if(target.kind==='gate')toggleGate();
   else if(target.kind==='bunker')enterBunker();
   else if(target.kind==='surface')leaveBunker();
@@ -71,7 +71,7 @@ function* v092PathSearch(startX,startY,target,which=scene,radius=player.radius,f
 
   if(target.navBounds)bounds=target.navBounds;
   const cell=target.navCell===36?36:12,cols=Math.ceil(bounds.w/cell),rows=Math.ceil(bounds.h/cell),size=cols*rows;
-  const key=which+':'+radius+':'+cell+':'+geometryRevision+':'+[bounds.x,bounds.y,bounds.w,bounds.h].join(',')+':'+(window.V014Robots?.planningKey()||'');let entry=v092PathCache.get(key);if(!entry){if(v092PathCache.size>5)v092PathCache.clear();entry={cells:new Uint8Array(size),edges:new Map()};v092PathCache.set(key,entry);}const cached=entry.cells,closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
+  const key=which+':'+radius+':'+cell+':'+geometryRevision+':'+[bounds.x,bounds.y,bounds.w,bounds.h].join(',')+':'+(window.V014Robots?.planningKey()||'')+':'+(window.GamePassages?.key()||'');let entry=v092PathCache.get(key);if(!entry){if(v092PathCache.size>5)v092PathCache.clear();entry={cells:new Uint8Array(size),edges:new Map()};v092PathCache.set(key,entry);}const cached=entry.cells,closed=new Uint8Array(size),cost=new Float64Array(size),parent=new Int32Array(size);cost.fill(Infinity);parent.fill(-1);
   const point=id=>({x:bounds.x+(id%cols+.5)*cell,y:bounds.y+(Math.floor(id/cols)+.5)*cell});
   const walkable=id=>{if(id<0||id>=size)return false;if(!cached[id]){const p=point(id);cached[id]=worldCollision(p.x,p.y,radius,which)?2:1;}return cached[id]===1;};
   const sx=Math.floor((startX-bounds.x)/cell),sy=Math.floor((startY-bounds.y)/cell);

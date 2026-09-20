@@ -204,9 +204,10 @@ function beginJoystick(e){
 function handleWorldPointerDown(e){
   if(!GameActions.playable()||uiTouch(e.target)||e.button>0)return;
   if(joystickAt(e.clientX,e.clientY)){beginJoystick(e);return;}
-  if(objectPointer||leftPointerId!==null||rightPointerId!==null)return;
+  if(objectPointer)return;
   const {x,y}=screenToWorld(e.clientX,e.clientY);
   if(GameActions.dispatch('WORLD_TARGET',{x,y})){e.preventDefault();return;}
+  if(leftPointerId!==null||rightPointerId!==null)return;
   objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target:hitInteraction(x,y),point:{x,y},screenX:e.clientX,screenY:e.clientY,startedAt:performance.now(),following:false,nextPathAt:0,scene,pc:!GameInput.isMobile};
   e.preventDefault();
 }
@@ -451,10 +452,11 @@ function bunkerGeometryBlocked(x,y,r){
 
 function updatePlayer(){
 
-  if(menuOpen || playerDead){
+  if(GameFlow.paused){
     return;
   }
 
+  GamePassages.approach(navigation);
   updateAutoWalk();
   player.moving = movePower > JOY_DEAD;
   player.running = movePower >= RUN_THRESHOLD;
@@ -668,7 +670,7 @@ el("respawnButton").addEventListener(
 
 function zombieCanMoveTo(x,y){return !worldCollision(x,y,17,'surface');}
 function updateZombies(){
-  if(scene!=='surface'||menuOpen||playerDead)return;
+  if(scene!=='surface'||GameFlow.paused)return;
   const now=performance.now();
   for(const z of zombies){
     if(!z.alive)continue;

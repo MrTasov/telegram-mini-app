@@ -131,7 +131,7 @@
   executeInteraction=function(target){
     if(!target||!['ore09','well09'].includes(target.kind))return oldExecute(target);
     if(menuOpen||playerDead||!canInteract(target,player.x,player.y))return;
-    navigation=null;movePower=0;moveX=0;moveY=0;
+    GameMovement.begin('INTERACT',target);
     if(target.kind==='ore09')beginMining(target.ref);
     else {stopMining();renderWell();openOverlay(wellOverlay);}
   };
@@ -140,7 +140,7 @@
   const oldUpdate=update;
   update=function(){
     oldUpdate();
-    if(!menuOpen&&!playerDead&&!document.hidden){
+    if(!GameFlow.paused){
       const dt=16.667*frameScale;
       for(const o of ores)if(!o.remaining){
         o.regrowMs=Math.max(0,o.regrowMs-dt);

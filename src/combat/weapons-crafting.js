@@ -125,7 +125,7 @@ window.V010Combat=(() => {
     const item=ensure(currentWeapon());
     if(practice&&!practiceAllowed())setPractice(false);
     if(reloading&&(!item||item.uid!==reloading.uid||practice!==reloading.practice||playerDead))cancelReload();
-    if(reloading&&!menuOpen&&!document.hidden){
+    if(reloading&&!GameFlow.paused){
       reloading.remainingMs=Math.max(0,reloading.remainingMs-Math.max(0,ms));
       if(reloading.remainingMs===0){const g=gunSpec(item),need=Math.max(0,g.mag-(practice?trainingRounds:item.rounds));if(practice)trainingRounds=g.mag;else item.rounds+=removeItem(g.ammo,Math.min(need,bagCount(g.ammo)));reloading=null;queueGameSave();}
     }
