@@ -234,16 +234,18 @@ window.V017Monsters=(()=>{
     const r=prepare(z),age=Math.max(0,performance.now()-r.deadAt);if(r.retired||age>=CORPSE_MS)return;
     const s=specs[z.type],key='corpse_'+s.art+'019',im=V011Art.image(key);if(!V011Art.ready(key))return;
     const b=V011Art.frame(key,r.variant);if(!b)return;
-    const size=s.size*1.16,scale=size/Math.max(b.w,b.h),w=b.w*scale,h=b.h*scale;
+    const size=s.size*1.16*(AssetManifest.images[GameAssets.artId('monster_'+s.art+'017')].visualScale||1),scale=size/Math.max(b.w,b.h),w=b.w*scale,h=b.h*scale;
     ctx.save();ctx.translate(z.x,z.y);ctx.rotate(r.deathAngle);ctx.globalAlpha*=corpseOpacity(z);ctx.drawImage(im,b.x,b.y,b.w,b.h,-w/2,-h/2,w,h);ctx.restore();
   }
   drawZombie=function(z){
     if(!visibleOnScreen(z.x,z.y,120))return;if(!z.alive){drawCorpse(z);return;}const r=prepare(z),s=specs[z.type],now=performance.now();
-    const attack=r.attack>now||r.jump||r.fuse,frame=attack?4+Math.min(3,Math.max(0,Math.floor((r.jump?(now-r.jump.start)/r.jump.duration:r.fuse?(now-(r.fuseAt??now))/(r.fuseDuration||850):1-(r.attack-now)/400)*4))):Math.floor(r.walk/9)%4;
-    const key='monster_'+s.art+'017',im=V011Art.image(key),jump=r.jump?Math.sin(clamp((now-r.jump.start-(r.jump.windup??255))/(r.jump.duration-(r.jump.windup??255)),0,1)*Math.PI)*24:0;
+    const key='monster_'+s.art+'017',visual=AssetManifest.images[GameAssets.artId(key)],anim=visual.animation,size=s.size*(visual.visualScale||1);
+    const attack=r.attack>now||r.jump||r.fuse,progress=r.jump?(now-r.jump.start)/r.jump.duration:r.fuse?(now-(r.fuseAt??now))/(r.fuseDuration||850):1-(r.attack-now)/400;
+    const frame=attack?anim.attack.start+Math.min(anim.attack.count-1,Math.max(0,Math.floor(progress*anim.attack.count))):anim.walk.start+Math.floor(r.walk/(anim.walk.distance/anim.walk.count))%anim.walk.count;
+    const im=V011Art.image(key),jump=r.jump?Math.sin(clamp((now-r.jump.start-(r.jump.windup??255))/(r.jump.duration-(r.jump.windup??255)),0,1)*Math.PI)*24:0;
     ctx.save();ctx.translate(z.x,z.y);
     ctx.fillStyle='#07121155';ctx.beginPath();ctx.ellipse(3,7,s.radius*1.05,s.radius*.65,0,0,Math.PI*2);ctx.fill();ctx.translate(0,-jump);ctx.rotate(r.angle-Math.PI/2);
-    if(V011Art.ready(key)){const b=V011Art.frame(key,frame);ctx.drawImage(im,b.x,b.y,b.w,b.h,-s.size*.375,-s.size*.5,s.size*.75,s.size);}
+    if(V011Art.ready(key)){const b=V011Art.frame(key,frame);ctx.drawImage(im,b.x,b.y,b.w,b.h,-size*.375,-size*.5,size*.75,size);}
     else {ctx.fillStyle=s.color;ctx.beginPath();ctx.ellipse(0,0,s.radius,s.radius*1.2,0,0,Math.PI*2);ctx.fill();}
     ctx.restore();
     if(r.fuse&&z.alive){ctx.save();ctx.strokeStyle='#e9b57b';ctx.globalAlpha=.3+.4*Math.sin(now/70)**2;ctx.lineWidth=2;ctx.beginPath();ctx.arc(z.x,z.y,z.radius+7,0,Math.PI*2);ctx.stroke();ctx.restore();}

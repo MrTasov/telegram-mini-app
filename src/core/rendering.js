@@ -395,6 +395,7 @@ function drawPlayer(){
   const angle=Math.atan2(player.aimY,player.aimX),item=heldItem();
   const bob=player.moving?Math.sin(player.walkAnimation)*3:0;
   const recoil=canFire()&&performance.now()-muzzleFlash.time<95?(typeof V09Craft!=='undefined'?(V09Craft.weapons[item]?.visualRecoil??-2.4):-2.4):0;
+  if(!window.ActorVisuals?.drawPlayer(angle,item,recoil)){
   ctx.save();ctx.translate(player.x,player.y);ctx.rotate(angle);
   ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.ellipse(-2,3,20,17,0,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='#222c2c';ctx.lineWidth=8;ctx.lineCap='round';
@@ -442,6 +443,7 @@ function drawPlayer(){
   ctx.fillStyle=equipment.head?'#637258':'#cca784';ctx.beginPath();ctx.arc(1,0,8,0,Math.PI*2);ctx.fill();
   ctx.fillStyle=equipment.head?'#414d3d':'#483c30';ctx.beginPath();ctx.arc(-1,0,7,Math.PI*.5,Math.PI*1.5);ctx.fill();
   ctx.restore();
+  }
   if(canFire()&&rightAimActive){
     const dx=Math.cos(angle),dy=Math.sin(angle);let reach=88;
     for(let t=18;t<88;t+=3)if(worldCollision(player.x+dx*t,player.y+dy*t,1,scene)){reach=t;break;}
@@ -776,8 +778,8 @@ function drawBullets(){
     ctx.beginPath();
 
     ctx.arc(
-      muzzleFlash.x,
-      muzzleFlash.y,
+      (window.ActorVisuals?.muzzlePoint()||muzzleFlash).x,
+      (window.ActorVisuals?.muzzlePoint()||muzzleFlash).y,
       10,
       0,
       Math.PI*2

@@ -1,0 +1,111 @@
+{
+  "version": "0.29.0",
+  "reference": "0.28.0",
+  "passed": 24,
+  "failed": 0,
+  "memory": {
+    "oldZombieDecodedBytes": 31457280,
+    "newZombieAndPlayerDecodedBytes": 20807680,
+    "sleepBlendCanvasBytes": 221184,
+    "deltaBytes": -10428416,
+    "scope": "RGBA pixel estimate, corpse and all other shared images unchanged; not process RSS"
+  },
+  "checks": [
+    {
+      "id": "gameplay.exactSpecs",
+      "status": "PASS"
+    },
+    {
+      "id": "save.028FullCaptureCompatible",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.exact028.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.exact028.MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "render.noGameplayMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "walk.existingPhaseEightFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "walk.backwardsUsesSameAimAndPhase",
+      "status": "PASS"
+    },
+    {
+      "id": "tools.sharedBodyAndFullStrike",
+      "status": "PASS"
+    },
+    {
+      "id": "idle.plantedSeparatePose",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.unarmed",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.rifle_ak74",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.axe",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.pickaxe",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.hammer",
+      "status": "PASS"
+    },
+    {
+      "id": "attachment.renderedGripAtHandAllRotations",
+      "status": "PASS"
+    },
+    {
+      "id": "sleep.liveRestOwnerFourFramesLoop",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.normal.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.heavy.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.fast.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.leaper.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.bloater.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "cache.noRepeatedLoadsOnPoseChanges",
+      "status": "PASS"
+    },
+    {
+      "id": "memory.moreFramesLessActiveDecodedPixels",
+      "status": "PASS"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ]
+}

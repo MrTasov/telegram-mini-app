@@ -42,11 +42,22 @@ function validate(m,base=root){
   for(const next of d.prefetch||[])if(!m.images[next]||next===id)problem(id,'invalid prefetch reference');
  }
  for(const group of ['art','icons','walls'])for(const [key,id]of Object.entries(m[group]))if(!m.images[id])problem(group+'.'+key,'unknown resource');
- // The existing renderer consumes 8 walking/attack cells, 3 corpse variants,
- // and the same 3 named wall regions. Layout and crop data remain editable.
+ // Frame groups are explicit; gameplay timing remains in the existing owners.
  for(const [key,id]of Object.entries(m.art)){
-  const count=key.startsWith('monster_')?8:key.startsWith('corpse_')?3:null;
-  if(count&&(m.images[id]?.atlas?.layout!=='grid'||m.images[id].atlas.frameCount!==count))problem(key,'frame count incompatible with existing animation');
+  const d=m.images[id],a=d?.atlas;
+  if(key.startsWith('corpse_')&&(a?.layout!=='grid'||a.frameCount!==3))problem(key,'corpse variants must remain 3');
+  if(key.startsWith('monster_')){
+   const walk=d.animation?.walk,attack=d.animation?.attack;
+   if(a?.layout!=='grid'||walk?.start!==0||walk?.count!==8||walk?.distance!==36||attack?.start!==8||attack?.count!==4||a.frameCount!==12)problem(key,'invalid walk/attack frame groups');
+   if(!(d.visualScale>0&&d.visualScale<=1))problem(key,'invalid visual scale');
+  }
+ }
+ if(m.actors){
+  for(const [name,id]of Object.entries(m.actors.body))if(!m.images[id]?.atlas)problem('actor.'+name,'missing body atlas');
+  for(const [name,item]of Object.entries(m.actors.items)){
+   if(!m.actors.body[item.body]||!Number.isInteger(item.frame)||item.frame<0||item.frame>=m.images[m.actors.equipment]?.atlas?.frameCount||!item.grip?.every(Number.isFinite)||!(item.scale>0))problem('actor.'+name,'invalid equipment anchor');
+  }
+  for(const [key,count]of [['rifleHands',8],['toolHands',16]])if(m.actors[key]?.length!==count||m.actors[key].some(pair=>pair.length!==2||pair.some(p=>p.length!==2||!p.every(Number.isFinite))))problem(key,'invalid hand anchors');
  }
  for(const id of Object.values(m.walls))for(const part of ['wall','corner','stairs'])if(!m.images[id]?.atlas?.frames?.[part])problem(id,'missing wall region '+part);
  for(const [key,target]of Object.entries(m.aliases))if(m.art[key]||!m.art[target])problem('alias.'+key,'invalid art alias');

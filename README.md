@@ -1,13 +1,15 @@
-# LAST BASE 0.28.0 — World / Farm / Drone / Resources
+# LAST BASE 0.29.0 — Character / Zombie Visual & Animation
 
-Single-player patch on stable 0.27.1. See [Russian setup](README_RU.md) and the [current patch report](docs/WORLD_FARM_RESOURCES_RU.md).
+Visual patch on stable **0.28.0**. See [Russian setup](README_RU.md) and the [patch report](docs/CHARACTER_ANIMATION_REPORT_RU.md).
 
-Extract the ZIP and upload its contents with the directory structure intact. The ready-built game needs `index.html`, `js/`, `styles/`, and `assets/`. Keep the existing HTTP(S) origin to retain the five local save slots. Node.js is only required for development: `npm ci`, `npm run build`, `npm run check`, `npm test`.
+Upload the archive contents with the directory structure intact. The ready-built game uses `index.html`, `js/`, `styles/`, and `assets/`. Keep the existing HTTP(S) origin and existing browser storage to retain local save slots.
 
-This patch adds clustered resource placement, Coal → Gunpowder → Ammo, five walkable seed-free beds with independent irrigation, a 500 L farm tank, six fixed cow stalls, compact drone controls and autonomous return through automatic doors. Item Pin is retired; recipe pins and ordinary inventory quick slots remain.
+New survivor body atlases: unarmed walk, rifle-ready walk, shared tool carry/strike, idle poses and breathing sleep. AK, axe, pickaxe and hammer are separate equipment sprites. Five existing zombie types now have eight walking and four attack frames. Living/corpse images use the same 0.88 scale; collision radii and gameplay definitions remain unchanged.
 
-Balance data: `src/config/gameplay.js`. Save format: version 3, migrating earlier saves through the existing owners. Legacy cattle beyond six remain in a recoverable reserve. Old water quantity and prepaid crafting orders are retained.
+Save format remains **3**. Existing M4, fishing rod, remote and flashlight keep their previous specialized renderer. No new gameplay weapon or tool is registered.
 
-`npm run bench:world-farm` compares 0.27.1 and 0.28.0 in the native Canvas/VM harness. Automated PC/MOBILE profiles do not replace manual desktop/browser/phone testing.
+For a visual review, open `character-preview.html` through the same HTTP server. It uses the shared actor renderer, not game saves. `qa/results/character-visuals/` contains native Canvas renders at PC/mobile viewport sizes. Native browser and phone checks are still required.
 
-`dev.html` remains the isolated in-memory Day X testing entry; omit it and `dev/` from ordinary public deployment. No network layer or multiplayer was added. Historical reports in `docs/` concern their named releases; current results are in `qa/results/summary.json`.
+Development: `npm ci`, `npm run build`, `npm run check`, `npm test`. Performance: `node qa/compare-character-performance.cjs`. Runtime assets are included; `tools/pack-actors.cjs` is an optional offline packer requiring the original generated PNG files named in `tools/actor-sources.json`. Full ImageGen prompts are in `docs/CHARACTER_ASSET_PROMPTS.json`.
+
+`dev.html` remains the isolated Day X testing entry. Omit development/QA material from public deployment if desired. Historical reports concern their named releases. No deployment or subsequent gameplay patch is included.

@@ -28,7 +28,8 @@ const jobs=[
  ['corrective','qa/corrective.cjs',[]],
  ['world-farm','qa/world-farm.cjs',[]],
  ['drone-return','qa/drone-return.cjs',[]],
- ['resource-access','qa/resource-access.cjs',[]]
+ ['resource-access','qa/resource-access.cjs',[]],
+ ['character-animation','qa/character-animation.cjs',[]]
 ],runs=[];
 for(const [id,file,args]of jobs){
  console.log('Running '+id+'…');const start=Date.now();
@@ -38,6 +39,6 @@ for(const [id,file,args]of jobs){
 }
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
 const reports=[read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
-reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'));
-const summary={version:require('../package.json').version,stage:7,patch:"world-farm-drone-resources",stage6Started:true,stage7Started:true,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.','Seven optional audio assets were already absent in Stage 0; absent sounds are not requested.']};
+reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'));
+const summary={version:require('../package.json').version,stage:7,patch:"character-zombie-visual-animation",stage6Started:true,stage7Started:true,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.','Seven optional audio assets were already absent in Stage 0; absent sounds are not requested.']};
 fs.writeFileSync(path.join(out,'summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));if(!summary.passed)process.exitCode=1;

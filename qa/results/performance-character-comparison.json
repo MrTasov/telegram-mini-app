@@ -1,0 +1,47 @@
+{
+  "reference": "0.28.0",
+  "candidate": "0.29.0",
+  "method": "Same native Canvas harness, seed and 60 warmup + 180 measured frames; sequential releases, PC/MOBILE input profiles. No phone FPS claim.",
+  "modes": {
+    "PC": [
+      {
+        "id": "surface_day",
+        "beforeP50": 27.809178999999858,
+        "afterP50": 28.828286999999364,
+        "beforeP95": 31.78177500000038,
+        "afterP95": 33.582188999999744,
+        "deltaPercent": 3.664646122776616
+      },
+      {
+        "id": "surface_zoom_out",
+        "beforeP50": 38.94034699999975,
+        "afterP50": 37.89031900000009,
+        "beforeP95": 44.36467799999991,
+        "afterP95": 45.54665300000124,
+        "deltaPercent": -2.6965039628426113
+      }
+    ],
+    "MOBILE": [
+      {
+        "id": "surface_day",
+        "beforeP50": 27.720696000000316,
+        "afterP50": 27.766946000000644,
+        "beforeP95": 34.55930399999943,
+        "afterP95": 32.463418000000274,
+        "deltaPercent": 0.16684285272032806
+      },
+      {
+        "id": "surface_zoom_out",
+        "beforeP50": 37.857191999999486,
+        "afterP50": 37.6958510000004,
+        "beforeP95": 43.73056700000234,
+        "afterP95": 42.213487999999415,
+        "deltaPercent": -0.4261832203484195
+      }
+    ]
+  },
+  "notes": [
+    "PC baseline repeated sequentially after QA finished to remove startup CPU overlap.",
+    "All timing samples are native Canvas/VM, not browser or physical phone FPS."
+  ]
+}

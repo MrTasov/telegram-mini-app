@@ -314,6 +314,7 @@ window.V011Living=(()=>{
     ctx.fillStyle='#733d32';for(const [x,y,r] of [[-5,-8,3],[8,9,2.3],[-11,4,2.7],[3,-11,1.6],[-4,10,2]]){ctx.beginPath();ctx.ellipse(x,y,r,r*.65,.35,0,Math.PI*2);ctx.fill();}ctx.restore();
   }
   function drawRest(){
+    if(window.ActorVisuals?.drawSleep(BED,elapsed*1000))return;
     ctx.save();ctx.translate(BED.x,BED.y);ctx.scale(BED.w/95,BED.h/225);ctx.translate(-1240,205);const breath=Math.sin(performance.now()/1150)*.45;
     ctx.fillStyle='#273e38';ctx.beginPath();ctx.ellipse(1287,-88,22+breath,43,0,0,Math.PI*2);ctx.fill();
     box(1269,-57,14,45,'#354f43',5);box(1290,-57,14,45,'#354f43',5);ctx.fillStyle='#bf9e7c';ctx.beginPath();ctx.arc(1287,-142,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#484337';ctx.beginPath();ctx.arc(1287,-146,11,Math.PI,Math.PI*2);ctx.fill();

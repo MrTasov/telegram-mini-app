@@ -633,134 +633,164 @@
       }
     },
     "art/monster_bloater017": {
-      "path": "assets/atlases/enemies/bloater.webp",
+      "path": "assets/atlases/enemies/bloater_029.webp",
       "size": [
-        1536,
-        1024
+        768,
+        768
       ],
-      "crop": {
-        "x": 39,
-        "y": 44,
-        "w": 1460,
-        "h": 937
-      },
       "atlas": {
         "layout": "grid",
         "columns": 4,
-        "rows": 2,
+        "rows": 3,
         "frameSize": [
-          384,
-          512
+          192,
+          256
         ],
-        "frameCount": 8
+        "frameCount": 12
       },
       "prefetch": [
         "art/corpse_bloater019"
-      ]
+      ],
+      "animation": {
+        "walk": {
+          "start": 0,
+          "count": 8,
+          "distance": 36
+        },
+        "attack": {
+          "start": 8,
+          "count": 4
+        }
+      },
+      "visualScale": 0.88
     },
     "art/monster_brute017": {
-      "path": "assets/atlases/enemies/brute.webp",
+      "path": "assets/atlases/enemies/brute_029.webp",
       "size": [
-        1536,
-        1024
+        768,
+        768
       ],
-      "crop": {
-        "x": 44,
-        "y": 19,
-        "w": 1459,
-        "h": 983
-      },
       "atlas": {
         "layout": "grid",
         "columns": 4,
-        "rows": 2,
+        "rows": 3,
         "frameSize": [
-          384,
-          512
+          192,
+          256
         ],
-        "frameCount": 8
+        "frameCount": 12
       },
       "prefetch": [
         "art/corpse_brute019"
-      ]
+      ],
+      "animation": {
+        "walk": {
+          "start": 0,
+          "count": 8,
+          "distance": 36
+        },
+        "attack": {
+          "start": 8,
+          "count": 4
+        }
+      },
+      "visualScale": 0.88
     },
     "art/monster_leaper017": {
-      "path": "assets/atlases/enemies/leaper.webp",
+      "path": "assets/atlases/enemies/leaper_029.webp",
       "size": [
-        1536,
-        1024
+        768,
+        768
       ],
-      "crop": {
-        "x": 65,
-        "y": 44,
-        "w": 1413,
-        "h": 921
-      },
       "atlas": {
         "layout": "grid",
         "columns": 4,
-        "rows": 2,
+        "rows": 3,
         "frameSize": [
-          384,
-          512
+          192,
+          256
         ],
-        "frameCount": 8
+        "frameCount": 12
       },
       "prefetch": [
         "art/corpse_leaper019"
-      ]
+      ],
+      "animation": {
+        "walk": {
+          "start": 0,
+          "count": 8,
+          "distance": 36
+        },
+        "attack": {
+          "start": 8,
+          "count": 4
+        }
+      },
+      "visualScale": 0.88
     },
     "art/monster_runner017": {
-      "path": "assets/atlases/enemies/runner.webp",
+      "path": "assets/atlases/enemies/runner_029.webp",
       "size": [
-        1536,
-        1024
+        768,
+        768
       ],
-      "crop": {
-        "x": 56,
-        "y": 11,
-        "w": 1423,
-        "h": 986
-      },
       "atlas": {
         "layout": "grid",
         "columns": 4,
-        "rows": 2,
+        "rows": 3,
         "frameSize": [
-          384,
-          512
+          192,
+          256
         ],
-        "frameCount": 8
+        "frameCount": 12
       },
       "prefetch": [
         "art/corpse_runner019"
-      ]
+      ],
+      "animation": {
+        "walk": {
+          "start": 0,
+          "count": 8,
+          "distance": 36
+        },
+        "attack": {
+          "start": 8,
+          "count": 4
+        }
+      },
+      "visualScale": 0.88
     },
     "art/monster_walker017": {
-      "path": "assets/atlases/enemies/walker.webp",
+      "path": "assets/atlases/enemies/walker_029.webp",
       "size": [
-        1536,
-        1024
+        768,
+        768
       ],
-      "crop": {
-        "x": 35,
-        "y": 43,
-        "w": 1466,
-        "h": 935
-      },
       "atlas": {
         "layout": "grid",
         "columns": 4,
-        "rows": 2,
+        "rows": 3,
         "frameSize": [
-          384,
-          512
+          192,
+          256
         ],
-        "frameCount": 8
+        "frameCount": 12
       },
       "prefetch": [
         "art/corpse_walker019"
-      ]
+      ],
+      "animation": {
+        "walk": {
+          "start": 0,
+          "count": 8,
+          "distance": 36
+        },
+        "attack": {
+          "start": 8,
+          "count": 4
+        }
+      },
+      "visualScale": 0.88
     },
     "art/shower": {
       "path": "assets/images/props/shower.webp",
@@ -1350,6 +1380,256 @@
         1280,
         1280
       ]
+    },
+    "historical/monster_walker": {
+      "path": "assets/atlases/enemies/walker.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "x": 35,
+        "y": 43,
+        "w": 1466,
+        "h": 935
+      },
+      "atlas": {
+        "layout": "grid",
+        "columns": 4,
+        "rows": 2,
+        "frameSize": [
+          384,
+          512
+        ],
+        "frameCount": 8
+      },
+      "prefetch": [
+        "art/corpse_walker019"
+      ],
+      "historical": true
+    },
+    "historical/monster_brute": {
+      "path": "assets/atlases/enemies/brute.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "x": 44,
+        "y": 19,
+        "w": 1459,
+        "h": 983
+      },
+      "atlas": {
+        "layout": "grid",
+        "columns": 4,
+        "rows": 2,
+        "frameSize": [
+          384,
+          512
+        ],
+        "frameCount": 8
+      },
+      "prefetch": [
+        "art/corpse_brute019"
+      ],
+      "historical": true
+    },
+    "historical/monster_runner": {
+      "path": "assets/atlases/enemies/runner.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "x": 56,
+        "y": 11,
+        "w": 1423,
+        "h": 986
+      },
+      "atlas": {
+        "layout": "grid",
+        "columns": 4,
+        "rows": 2,
+        "frameSize": [
+          384,
+          512
+        ],
+        "frameCount": 8
+      },
+      "prefetch": [
+        "art/corpse_runner019"
+      ],
+      "historical": true
+    },
+    "historical/monster_leaper": {
+      "path": "assets/atlases/enemies/leaper.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "x": 65,
+        "y": 44,
+        "w": 1413,
+        "h": 921
+      },
+      "atlas": {
+        "layout": "grid",
+        "columns": 4,
+        "rows": 2,
+        "frameSize": [
+          384,
+          512
+        ],
+        "frameCount": 8
+      },
+      "prefetch": [
+        "art/corpse_leaper019"
+      ],
+      "historical": true
+    },
+    "historical/monster_bloater": {
+      "path": "assets/atlases/enemies/bloater.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "x": 39,
+        "y": 44,
+        "w": 1460,
+        "h": 937
+      },
+      "atlas": {
+        "layout": "grid",
+        "columns": 4,
+        "rows": 2,
+        "frameSize": [
+          384,
+          512
+        ],
+        "frameCount": 8
+      },
+      "prefetch": [
+        "art/corpse_bloater019"
+      ],
+      "historical": true
+    },
+    "actor/unarmed": {
+      "path": "assets/atlases/player/unarmed_029.webp",
+      "size": [
+        768,
+        512
+      ],
+      "atlas": {
+        "layout": "grid",
+        "columns": 4,
+        "rows": 2,
+        "frameSize": [
+          192,
+          256
+        ],
+        "frameCount": 8
+      }
+    },
+    "actor/rifle": {
+      "path": "assets/atlases/player/rifle_029.webp",
+      "size": [
+        768,
+        512
+      ],
+      "atlas": {
+        "layout": "grid",
+        "columns": 4,
+        "rows": 2,
+        "frameSize": [
+          192,
+          256
+        ],
+        "frameCount": 8
+      },
+      "prefetch": [
+        "actor/equipment"
+      ]
+    },
+    "actor/tools": {
+      "path": "assets/atlases/player/tools_029.webp",
+      "size": [
+        768,
+        1024
+      ],
+      "atlas": {
+        "layout": "grid",
+        "columns": 4,
+        "rows": 4,
+        "frameSize": [
+          192,
+          256
+        ],
+        "frameCount": 16
+      },
+      "prefetch": [
+        "actor/equipment"
+      ]
+    },
+    "actor/sleep": {
+      "path": "assets/atlases/player/sleep_029.webp",
+      "size": [
+        384,
+        576
+      ],
+      "atlas": {
+        "layout": "grid",
+        "columns": 2,
+        "rows": 2,
+        "frameSize": [
+          192,
+          288
+        ],
+        "frameCount": 4
+      }
+    },
+    "actor/equipment": {
+      "path": "assets/atlases/player/equipment_029.webp",
+      "size": [
+        512,
+        512
+      ],
+      "atlas": {
+        "layout": "grid",
+        "columns": 2,
+        "rows": 2,
+        "frameSize": [
+          256,
+          256
+        ],
+        "frameCount": 4
+      }
+    },
+    "actor/idle": {
+      "path": "assets/atlases/player/idle_029.webp",
+      "size": [
+        384,
+        512
+      ],
+      "atlas": {
+        "layout": "grid",
+        "columns": 2,
+        "rows": 2,
+        "frameSize": [
+          192,
+          256
+        ],
+        "frameCount": 4
+      },
+      "prefetch": [
+        "actor/unarmed",
+        "actor/rifle",
+        "actor/tools",
+        "actor/equipment",
+        "actor/sleep"
+      ]
     }
   },
   "art": {
@@ -1492,6 +1772,349 @@
     "cow": {
       "path": "assets/audio/effects/cow.mp3",
       "optional": true
+    }
+  },
+  "actors": {
+    "body": {
+      "unarmed": "actor/unarmed",
+      "rifle": "actor/rifle",
+      "tool": "actor/tools",
+      "sleep": "actor/sleep",
+      "idle": "actor/idle"
+    },
+    "equipment": "actor/equipment",
+    "pivot": [
+      96,
+      116
+    ],
+    "bodyScale": 0.25,
+    "walkCount": 8,
+    "toolStrike": {
+      "start": 8,
+      "count": 8,
+      "cycleMs": 900
+    },
+    "sleep": {
+      "count": 4,
+      "cycleMs": 4800,
+      "worldHeight": 154
+    },
+    "rifleHands": [
+      [
+        [
+          87,
+          99
+        ],
+        [
+          96,
+          134
+        ]
+      ],
+      [
+        [
+          88,
+          101
+        ],
+        [
+          98,
+          135
+        ]
+      ],
+      [
+        [
+          87.5,
+          97.5
+        ],
+        [
+          96,
+          131.5
+        ]
+      ],
+      [
+        [
+          87.5,
+          99
+        ],
+        [
+          96,
+          131
+        ]
+      ],
+      [
+        [
+          87,
+          100
+        ],
+        [
+          97,
+          135
+        ]
+      ],
+      [
+        [
+          88,
+          101
+        ],
+        [
+          98,
+          135
+        ]
+      ],
+      [
+        [
+          88,
+          100
+        ],
+        [
+          96,
+          134
+        ]
+      ],
+      [
+        [
+          88,
+          100
+        ],
+        [
+          96,
+          134
+        ]
+      ]
+    ],
+    "toolHands": [
+      [
+        [
+          75.67,
+          123.76
+        ],
+        [
+          113.86,
+          125.88
+        ]
+      ],
+      [
+        [
+          72.84,
+          128.71
+        ],
+        [
+          113.15,
+          128.0
+        ]
+      ],
+      [
+        [
+          77.08,
+          124.46
+        ],
+        [
+          111.73,
+          126.59
+        ]
+      ],
+      [
+        [
+          78.5,
+          125.17
+        ],
+        [
+          115.27,
+          123.76
+        ]
+      ],
+      [
+        [
+          92.64,
+          122.34
+        ],
+        [
+          131.54,
+          118.81
+        ]
+      ],
+      [
+        [
+          79.2,
+          124.46
+        ],
+        [
+          117.39,
+          126.59
+        ]
+      ],
+      [
+        [
+          78.5,
+          122.34
+        ],
+        [
+          113.86,
+          125.88
+        ]
+      ],
+      [
+        [
+          78.5,
+          122.34
+        ],
+        [
+          118.81,
+          125.17
+        ]
+      ],
+      [
+        [
+          84.15,
+          138.61
+        ],
+        [
+          111.03,
+          140.73
+        ]
+      ],
+      [
+        [
+          51.62,
+          68.6
+        ],
+        [
+          50.92,
+          46.67
+        ]
+      ],
+      [
+        [
+          59.4,
+          32.53
+        ],
+        [
+          68.6,
+          16.27
+        ]
+      ],
+      [
+        [
+          73.19,
+          21.92
+        ],
+        [
+          66.83,
+          7.78
+        ]
+      ],
+      [
+        [
+          93.35,
+          137.19
+        ],
+        [
+          101.13,
+          151.34
+        ]
+      ],
+      [
+        [
+          100.77,
+          161.24
+        ],
+        [
+          107.14,
+          171.14
+        ]
+      ],
+      [
+        [
+          74.25,
+          123.05
+        ],
+        [
+          94.06,
+          125.88
+        ]
+      ],
+      [
+        [
+          76.02,
+          124.46
+        ],
+        [
+          105.72,
+          125.17
+        ]
+      ]
+    ],
+    "items": {
+      "rifle_ak74": {
+        "body": "rifle",
+        "frame": 0,
+        "grip": [
+          139,
+          85
+        ],
+        "supportGrip": [
+          139,
+          160
+        ],
+        "scale": 0.12,
+        "muzzle": [
+          139,
+          251
+        ]
+      },
+      "axe": {
+        "body": "tool",
+        "frame": 1,
+        "grip": [
+          129,
+          55
+        ],
+        "scale": 0.16
+      },
+      "pickaxe": {
+        "body": "tool",
+        "frame": 2,
+        "grip": [
+          131,
+          55
+        ],
+        "scale": 0.16
+      },
+      "hammer": {
+        "body": "tool",
+        "frame": 3,
+        "grip": [
+          129,
+          55
+        ],
+        "scale": 0.145
+      }
+    },
+    "idle": {
+      "frames": {
+        "unarmed": 0,
+        "rifle": 1,
+        "tool": 2
+      },
+      "rifleHands": [
+        [
+          86,
+          103
+        ],
+        [
+          97,
+          138
+        ]
+      ],
+      "toolHands": [
+        [
+          78,
+          122
+        ],
+        [
+          118,
+          123
+        ]
+      ]
     }
   }
 }
