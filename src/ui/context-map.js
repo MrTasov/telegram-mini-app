@@ -118,7 +118,7 @@ window.V0105=(()=>{
   const oldHeld=heldItem,oldSelect=selectHandSlot,oldReconcile=reconcileHands,oldRender=renderQuickSlots;
   heldItem=function(){if(contextHand&&bagCount(contextHand)>0)return contextHand;contextHand=null;return oldHeld();};
   reconcileHands=function(){const shooting=firing;oldReconcile();if(contextHand&&bagCount(contextHand)>0)firing=shooting;else contextHand=null;};
-  renderQuickSlots=function(){oldRender();if(contextHand){for(const id of ['hotbar','quickSlots'])for(const b of el(id).children){b.classList.remove('selected');b.setAttribute('aria-pressed','false');}I18n.assign(el('heldItemName'),"textContent",ITEM[contextHand].name+' · авто');}};
+  renderQuickSlots=function(){oldRender();if(contextHand){for(const id of ['hotbar','quickSlots'])for(const b of el(id).children){b.classList.remove('selected');b.setAttribute('aria-pressed','false');}window.GameHUD?.refreshEquipped();}};
   selectHandSlot=function(i){contextHand=null;const result=oldSelect(i);if(isGun(heldItem()))lastGun=heldItem();else target=null;return result;};
   const oldAssign=assignHandSlot;assignHandSlot=function(i){contextHand=null;target=null;return oldAssign(i);};
   function equip(type){

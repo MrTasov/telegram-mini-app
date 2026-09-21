@@ -1,7 +1,7 @@
 {
   "version": "0.29.0",
-  "reference": "0.29.0 audio-unlock-hotfix-1 plus reviewed walk-soft-steps-1; frozen fixtures retained",
-  "sourceHash": "835806c439cb2fdb255055e4bd7b57abef054e393b38cdbdcf658bcbe9366dac",
+  "reference": "0.29.0 walk-soft-steps-1 plus reviewed hud-display-1 presentation changes; frozen gameplay fixtures retained",
+  "sourceHash": "402e6f24151fb170b2b3abdde8689709adb5e7e84cecb2eb9999df5f28c17a69",
   "cssHash": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0",
   "files": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "file": "src/i18n/catalogs.js",
-      "sha256": "9be386d46534858fea9ae09552f1bff7572832ba40c21312bfdde7e54a67ff14"
+      "sha256": "237db1a3a868a5f40f0d3fa2c63fb043b504b6c030e722af6832ef08d595034d"
     },
     {
       "file": "src/i18n/runtime.js",
@@ -50,7 +50,7 @@
     },
     {
       "file": "src/core/world-inventory.js",
-      "sha256": "8e42ad9b3c0bfe2e2669cea5ef7f0d92ff206a5306ac99009e4e1bfa734a910f"
+      "sha256": "b88def9efc1e215a12c774e4e38dc42e968c142c1465aa3ef3e9261aebd51ad3"
     },
     {
       "file": "src/state/identity.js",
@@ -94,7 +94,7 @@
     },
     {
       "file": "src/core/loop-viewport.js",
-      "sha256": "a20cfbccd0e52c7df36e78fa98933bc885d280e2f69a45c424d552c67c68d491"
+      "sha256": "70b8fedc9a99b544f1d95e1fe49c11c86dac82bf847b3d2aa4e119125f11d2b8"
     },
     {
       "file": "src/state/bindings.js",
@@ -146,7 +146,7 @@
     },
     {
       "file": "src/combat/weapons-crafting.js",
-      "sha256": "1e231375b66bbe7ea20ddca96662a6ff711f17788610de52b2a8f9fe7db332a5"
+      "sha256": "4565d7ca810fcc30be782080d247b109bdd17a34eac0ba9d726f869a6a9e8eb3"
     },
     {
       "file": "src/world/districts.js",
@@ -162,7 +162,7 @@
     },
     {
       "file": "src/world/camera.js",
-      "sha256": "3bc016ce78a123112775ed4ab8bda749a70760e1e04ac3396ad2954cb9ac75bb"
+      "sha256": "82328129ec2694d04a5a5ea1815c2d3d501d65f10de4f30c0ee0ea54118a3e72"
     },
     {
       "file": "src/save/envelope.js",
@@ -170,7 +170,7 @@
     },
     {
       "file": "src/ui/context-map.js",
-      "sha256": "6779afb8b16598e59177bdca05a704239c7b5d13165c90dab1b492c1571f754f"
+      "sha256": "dd7eda6cb4f66c57558896b25a001fb19fdd11b83935317ea09b3a011950ced4"
     },
     {
       "file": "src/assets/catalog.js",
@@ -182,7 +182,7 @@
     },
     {
       "file": "src/ui/inventory-crafting.js",
-      "sha256": "ba13389ac736fb0743086eb57d922b0885a5133a3c9fbe730ee717d1cbf92c8c"
+      "sha256": "53e583c42d0560ca8562672fa527a0ac19086ab8e54ad33b4cd9b92ed6c5e884"
     },
     {
       "file": "src/farm/growth.js",
@@ -250,7 +250,7 @@
     },
     {
       "file": "src/render/lighting.js",
-      "sha256": "ea60cc74c74b794264d26822977f6f845a1bf8370dffae9e42cf81a50b94dfa6"
+      "sha256": "dcf1a9ee54ed5779486f9dc59e267da2844aa82a468f369fd14d26bd821536bb"
     },
     {
       "file": "src/base/turrets.js",
@@ -291,6 +291,10 @@
     {
       "file": "src/i18n/settings.js",
       "sha256": "6ec0611e9548b7a4b0763f67ccc404e37799f12777e88a302d267010d721697a"
+    },
+    {
+      "file": "src/ui/display.js",
+      "sha256": "7c7cb38cbcdd4102cac78a26cd1fb385f831b7d264f118d5c9907974c3b081f7"
     },
     {
       "file": "src/save/finalize.js",
@@ -894,6 +898,7 @@
     "state/bindings.js",
     "state/identity.js",
     "ui/context-map.js",
+    "ui/display.js",
     "ui/inventory-crafting.js",
     "ui/legacy-panels.js",
     "ui/loot-vitals.js",

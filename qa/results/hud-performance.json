@@ -1,0 +1,54 @@
+{
+  "patch": "hud-display-1",
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "dpr": 1
+    },
+    "mode": "VM DOM + native Canvas2D"
+  },
+  "monitor": {
+    "off": {
+      "samples": 16,
+      "p50Ms": 0.00009115606666666357,
+      "p95Ms": 0.00012272328333333462,
+      "meanMs": 0.00009281504583333298
+    },
+    "on": {
+      "samples": 16,
+      "p50Ms": 0.00047519278333333357,
+      "p95Ms": 0.0005199380999999979,
+      "meanMs": 0.00048256261770833264
+    },
+    "textWritesIn600SyntheticFrames": 2,
+    "displayIntervalMs": 250,
+    "newRAFLoops": 0,
+    "newTimers": 0,
+    "p50IncrementMs": 0.00038403671666667
+  },
+  "scene": {
+    "name": "same_surface_day_frozen_simulation",
+    "off": {
+      "samples": 180,
+      "p50Ms": 11.023602999999639,
+      "p95Ms": 13.919874000000164,
+      "meanMs": 11.325447894444396
+    },
+    "on": {
+      "samples": 180,
+      "p50Ms": 11.023003000000244,
+      "p95Ms": 12.90639900000042,
+      "meanMs": 11.18718532777775
+    },
+    "p50IncrementMs": -0.0005999999993946403
+  },
+  "errors": [],
+  "limitations": [
+    "Microbenchmark includes modeled text writes, not browser layout/paint/compositing.",
+    "Paired native Canvas scene timings are shared-host CPU measurements, NOT mobile FPS or Telegram performance.",
+    "Real mobile/PC/Telegram overhead still requires manual review."
+  ]
+}

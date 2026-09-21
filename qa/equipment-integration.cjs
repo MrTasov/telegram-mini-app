@@ -14,8 +14,8 @@ async function main(){
  function step(ms=1000/60,code='updatePlayer();'){for(const q of [b,r]){q.advance(ms);q.eval(code);}}
  await check('source.onlyPresentationAndCatchNotificationChanged',()=>{
   const hashes=require('./pre-equipment/source-hashes.json'),allowed=['src/render/actors.js','src/core/rendering.js','src/assets/manifest.js','src/world/fishing.js','src/ui/maps-windows.js','src/base/construction.js'];
-  for(const [file,h]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!allowed.includes(file))assert.equal(sha(fs.readFileSync(file)),h,file);
-  for(const file of ['src/save/format.js','src/save/envelope.js','src/config/gameplay.js','src/combat/monsters.js','src/combat/weapons-crafting.js','src/player/controls.js'])if(!require('./corrective-contract.cjs').sourceChanges.has(file))assert.equal(sha(fs.readFileSync(file)),hashes[file]);
+  for(const [file,h]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!allowed.includes(file))require('./hud-contract.cjs').assertSource(file,h);
+  for(const file of ['src/save/format.js','src/save/envelope.js','src/config/gameplay.js','src/combat/monsters.js','src/combat/weapons-crafting.js','src/player/controls.js'])if(!require('./corrective-contract.cjs').sourceChanges.has(file))require('./hud-contract.cjs').assertSource(file,hashes[file]);
  });
  await check('assets.sevenApprovedItemsTwelveWalkFrames',()=>{
   assert.deepEqual(Object.keys(mod.items),['rifle_ak74','axe','pickaxe','hammer','remote','flashlight','fishing_rod']);

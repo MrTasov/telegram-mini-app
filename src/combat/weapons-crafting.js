@@ -38,7 +38,7 @@ window.V010Combat=(() => {
   const shapes={helmet1:'<path d="M15 36C13 10 50 10 49 35L55 42H11Z" fill="#7c8b60"/><path d="M17 34H47V43H17Z" fill="#8ad1ce" stroke="#263d43" stroke-width="3"/>',advanced_parts:'<path d="M13 15H47V49H13Z" fill="#487984"/><path d="M20 22H40V42H20Z" fill="#d1c28b"/><path d="M8 22H13M8 31H13M8 40H13M47 22H54M47 31H54M47 40H54" stroke="#d1c28b" stroke-width="4"/>',magazine_module:'<path d="M19 8H36Q32 33 48 46L35 54Q14 32 19 8Z" fill="#728a91"/><path d="M24 14Q22 32 37 47M29 14Q27 32 42 44" fill="none" stroke="#283e45" stroke-width="3"/>'};
   const oldIcon=itemIconHTML;
   itemIconHTML=function(type){return shapes[type]?'<svg class="itemIcon" viewBox="0 0 64 64" aria-hidden="true">'+shapes[type]+'</svg>':oldIcon(type);};
-  let nextUid=1,reloading=null,burst=0,lastUid=null,practice=false,trainingRounds=30,practiceHits=0,practiceDamage=0,lastHud='',selectedWorkshopItem=null;
+  let nextUid=1,reloading=null,burst=0,lastUid=null,practice=false,trainingRounds=30,practiceHits=0,practiceDamage=0,selectedWorkshopItem=null;
   const practiceTarget={id:'v010PracticeTarget',kind:'v010practice',name:'Тренировочная мишень',x:1110,y:734,w:20,h:32,range:95};
   function initializeFields(item){
     if(!item)return null;
@@ -112,12 +112,10 @@ window.V010Combat=(() => {
     reloading={uid:item.uid,type:item.type,remainingMs:g.reloadMs,totalMs:g.reloadMs,practice};updateAmmoHud();return true;
   };
   updateAmmoHud=function(){
-    const item=currentWeapon(),g=item&&gunSpec(item),hud=el('ammoHud'),b=el('v010ReloadButton');
-    if(!g){if(hud)hud.style.display='none';if(b)b.style.display='none';return;}
-    if(hud)hud.style.display='block';if(b){b.style.display=menuOpen?'none':'block';b.disabled=!!reloading;}
-    const text=practice?`МИШЕНЬ · ${g.mag?Math.min(trainingRounds,g.mag):0}/${g.mag} · попадания ${practiceHits} · урон ${practiceDamage}`:`${g.name} +${item.level||0} · ${item.rounds||0}/${g.mag} · запас ${bagCount(g.ammo)}`;
-    const progress=reloading?' · '+I18n.numeric(reloading.remainingMs/1000,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' с':'';
-    if(hud&&text+progress!==lastHud){I18n.assign(hud,"textContent",text+progress);lastHud=text+progress;}
+    const item=currentWeapon(),g=item&&gunSpec(item),b=el('v010ReloadButton');
+    window.GameHUD?.refreshEquipped(item,g,practice?Math.min(trainingRounds,g?.mag||0):undefined);
+    if(!g){if(b)b.style.display='none';return;}
+    if(b){b.style.display=menuOpen?'none':'block';b.disabled=!!reloading;}
     if(b){I18n.assign(b,"textContent",reloading?'↻ '+I18n.numeric(reloading.remainingMs/1000,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false}):'↻');b.style.setProperty('--reload-progress',reloading?Math.round(100*(1-reloading.remainingMs/reloading.totalMs))+'%':'0%');}
     const stop=el('v010PracticeStop');if(stop)stop.style.display=practice&&!menuOpen?'block':'none';
   };
@@ -209,7 +207,7 @@ window.V010Combat=(() => {
   function validateItem(item){if(!item)return true;if(ITEM[item.type]?.turret&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==ITEM[item.type].drone?.instanceId||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,maxUpgradeLevel(item)))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.magazineType!==undefined&&(!GUNS[item.type]?.magazineTypes||(item.magazineType!==null&&!V09Craft.acceptsMagazine(item.type,item.magazineType))))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,gunSpec(item).mag)))return false;return true;}
   function capture(){migrateItems(null);return {schema:1,nextUid};}
   function validate(d){if(!d||d.schema!==1||!Number.isInteger(d.nextUid)||d.nextUid<1||d.nextUid>100000000)throw Error('Некорректные данные экипировки');return true;}
-  function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;lastHud='';const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();syncAmmo();updateAmmoHud();}
+  function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();syncAmmo();updateAmmoHud();}
   const api={upgradeRules,upgradeProfile,maxUpgradeLevel,equipmentStats,capture,restore,validate,validateItem,getItemStats,gunSpec,refreshStats,equipmentSnapshot,syncAmmo,ensure,itemView,rollFoundItem,currentWeapon,tick,cancelReload,upgrade,costs,install,detach,openWorkshop,renderWorkshop,practiceTarget,setPractice,practiceAllowed,modules:MODULES,get reloading(){return reloading?copy(reloading):null;},get practice(){return practice;}};
   if(window.V010?.modules)V010.register('combat',api);
   restore(null);return api;

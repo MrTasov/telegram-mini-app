@@ -4,8 +4,8 @@
   "patch": "hud-display-1",
   "stage6Started": true,
   "stage7Started": true,
-  "passed": true,
-  "automatedAssertions": 11325,
+  "passed": false,
+  "automatedAssertions": 11318,
   "historicalBaselineAssertions": 477,
   "ladderContractChanged": true,
   "runs": [
@@ -151,47 +151,27 @@
     },
     {
       "id": "master-unarmed",
-      "exitCode": 0,
-      "initialAttempt": {
-        "id": "master-unarmed",
-        "exitCode": 1,
-        "elapsedMs": 17652,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/master-unarmed.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "exitCode": 1,
+      "elapsedMs": 17652,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/master-unarmed.cjs\n"
     },
     {
       "id": "equipment-integration",
-      "exitCode": 0,
-      "initialAttempt": {
-        "id": "equipment-integration",
-        "exitCode": 1,
-        "elapsedMs": 25005,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/equipment-integration.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "exitCode": 1,
+      "elapsedMs": 25005,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/equipment-integration.cjs\n"
     },
     {
       "id": "player-visual-fix",
-      "exitCode": 0,
-      "initialAttempt": {
-        "id": "player-visual-fix",
-        "exitCode": 1,
-        "elapsedMs": 2187,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/player-visual-fix.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "exitCode": 1,
+      "elapsedMs": 2187,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/player-visual-fix.cjs\n"
     },
     {
       "id": "corrective-performance",
-      "exitCode": 0,
-      "initialAttempt": {
-        "id": "corrective-performance",
-        "exitCode": 1,
-        "elapsedMs": 5075,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/corrective-performance.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "exitCode": 1,
+      "elapsedMs": 5075,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/corrective-performance.cjs\n"
     },
     {
       "id": "corrective-visuals",
@@ -200,14 +180,9 @@
     },
     {
       "id": "polish",
-      "exitCode": 0,
-      "initialAttempt": {
-        "id": "polish",
-        "exitCode": 1,
-        "elapsedMs": 5595,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/polish.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "exitCode": 1,
+      "elapsedMs": 5595,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/polish.cjs\n"
     },
     {
       "id": "polish-visuals",
@@ -228,19 +203,5 @@
   "limitations": [
     "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
     "Six historical optional audio assets remain absent; three new WAV effects are included."
-  ],
-  "failedAssertions": 0,
-  "regressionGroups": 37,
-  "initialAttemptReport": "hud-initial-suite.json",
-  "targetedRechecks": [
-    "master-unarmed",
-    "equipment-integration",
-    "player-visual-fix",
-    "corrective-performance",
-    "polish"
-  ],
-  "notes": [
-    "Full 37-job suite executed. Six historical source-hash guards required the explicit, exact HUD transition contract; all five affected groups were rerun.",
-    "hud-display rerun after final responsive CSS clearance check: 113 PASS. No behavior assertion or frozen fixture was removed."
   ]
 }

@@ -26,7 +26,7 @@ async function main(){
  function advance(ms=1000/60,code='updateFootstepsAudio()'){
   r.advance(ms);for(const source of [...meter.active])if(source.end<=sandbox.performance.now()/1000){meter.active.delete(source);source.onended?.();}E(code);
  }
- check('scope.onlyDeclaredPresentationSourcesChanged',()=>{const hashes=require('./pre-polish/source-hashes.json'),allowed=require('./polish-contract.cjs').sourceChanges;for(const [f,h]of Object.entries(hashes))if(!allowed.has(f))assert.equal(sha(fs.readFileSync(f)),h,f);});
+ check('scope.onlyDeclaredPresentationSourcesChanged',()=>{const hashes=require('./pre-polish/source-hashes.json'),allowed=require('./polish-contract.cjs').sourceChanges;for(const [f,h]of Object.entries(hashes))if(!allowed.has(f))require('./hud-contract.cjs').assertSource(f,h);});
  check('assets.threeWavFilesDecodedOnce',()=>{assert.deepEqual([...meter.requests].sort(),['assets/audio/effects/chop_wood.wav','assets/audio/effects/footstep_soft_floor.wav','assets/audio/effects/mine_rock.wav']);assert.deepEqual(J('Object.keys(audioBuffers).sort()'),['chopWood','footsteps','mineRock']);});
  check('walk.cycleExactlyThreeTimesFasterWithoutChangingFramesOrOtherActions',()=>{
   const previous=require('./walk-sound-reference.json').actors;
@@ -47,7 +47,7 @@ async function main(){
   assert.ok(peak>1000&&peak<19000);assert.equal((data.length-44)/88200,.14);
  });
  check('assets.noDuplicateImages',()=>assert.equal(r.imageRequests.length,new Set(r.imageRequests).size));
- check('gameplay.definitionsAndMiningOwnersByteIdentical',()=>{const hashes=require('./pre-polish/source-hashes.json');for(const f of ['src/config/gameplay.js','src/crafting/manufacturing.js','src/world/resources.js','src/ui/context-map.js','src/save/legacy-progress.js','src/drones/companion.js'])assert.equal(sha(fs.readFileSync(f)),hashes[f]);});
+ check('gameplay.definitionsAndMiningOwnersByteIdentical',()=>{const hashes=require('./pre-polish/source-hashes.json');for(const f of ['src/config/gameplay.js','src/crafting/manufacturing.js','src/world/resources.js','src/ui/context-map.js','src/save/legacy-progress.js','src/drones/companion.js'])require('./hud-contract.cjs').assertSource(f,hashes[f]);});
  for(const material of ['tree','stone','iron_ore','copper_ore','coal'])check('gathering.'+material+'.twoCyclesAndSynchronizedHits',()=>{
   reset();const tree=material==='tree',item=tree?'axe':'pickaxe';
   E(`window.testResource=${tree?'worldTrees[0]':`V09World.ores.find(o=>o.type==='${material}')`};window.testJob=interactionObjects().find(o=>o.id===testResource.id);player.x=testResource.x+testResource.r+25;player.y=testResource.y;executeInteraction(testJob);updateFootstepsAudio();audioEvents=[];`);

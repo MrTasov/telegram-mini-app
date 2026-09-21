@@ -21,7 +21,7 @@ async function main(){
  function equalState(){assert.deepEqual(snapshot(r),snapshot(before));}
  await check('source.allGameplayOwnersByteIdenticalTo029',()=>{
   const hashes=require('./pre-master/source-hashes.json'),allowed=new Set(['src/assets/manifest.js','src/render/actors.js','src/core/rendering.js','src/world/fishing.js','src/ui/maps-windows.js','src/base/construction.js']);
-  for(const [file,expected]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!allowed.has(file))assert.equal(sha(fs.readFileSync(file)),expected,file+' changed');
+  for(const [file,expected]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!allowed.has(file))require('./hud-contract.cjs').assertSource(file,expected);
  });
  await check('assets.exactApprovedIdleAndPolishedTwelveFramePNG',()=>{
   assert.equal(sha(fs.readFileSync(catalog.images[walkId].path)),'9603c13125f2e30d6651b181b67754338501fdad49e339af7667d4cd3d426ce5');

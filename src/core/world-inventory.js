@@ -433,7 +433,7 @@ function renderQuickSlots(){
       button.addEventListener('click',()=>{if(window.V010Inventory?.clickSuppressed())return;if(name==='quickSlots'&&window.V0162Quick)V0162Quick.open(i);else GameActions.dispatch('SELECT_SLOT',{index:i});});holder.appendChild(button);
     });
   }
-  I18n.assign(el('heldItemName'),"textContent",heldItem()?ITEM[heldItem()].name+(heldItem()==='flashlight'&&!flashlightOn?' · выключен':''):'Руки свободны');
+  window.GameHUD?.refreshEquipped();
 }
 // The shared work bar follows the actor, including clamped cameras and zoom.
 function positionWorkProgress(bar,offset=58){

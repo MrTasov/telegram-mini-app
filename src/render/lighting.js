@@ -1,14 +1,14 @@
 /* 0.16: one bounded darkness mask; existing power circuits and light geometry. */
 window.V016Lighting=(()=>{
   const dayMs=WorldClock.dayMs,TAU=Math.PI*2;
-  let saveElapsed=0,lastHud='',mask=null,maskContext=null;
+  let saveElapsed=0,mask=null,maskContext=null;
   let fixturesCache=null,shadowRevision='',droneKey='',droneShape=null;
   const shadowShapes=new Map(),roomMasks=new Map(),sprites=new Map();
   const smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t);};
   function daylight(){const minute=WorldClock.minute;return smooth((minute-300)/180)*(1-smooth((minute-1020)/180));}
   const capture=WorldClock.capture,validate=WorldClock.validate;
-  function hud(){const day=WorldClock.day,minute=WorldClock.minute,hours=Math.floor(minute/60),mins=Math.floor(minute%60),raid=WorldEvents.isActive('day_x'),text=(raid?'ДЕНЬ X · ':'ДЕНЬ ')+day+' · '+String(hours).padStart(2,'0')+':'+String(mins).padStart(2,'0');if(text!==lastHud){const node=el('v016WorldClock');if(node){I18n.assign(node,"textContent",text);node.style.color=raid?'#d6a083':'';}lastHud=text;}}
-  function restore(d){WorldClock.restore(d);saveElapsed=0;lastHud='';shadowShapes.clear();droneKey='';hud();}
+  function hud(){window.GameHUD?.refreshClock();}
+  function restore(d){WorldClock.restore(d);saveElapsed=0;shadowShapes.clear();droneKey='';hud();}
   function tick(ms){if(document.hidden||playerDead)return;const dt=WorldClock.advance(ms);saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
   WorldEvents.onChange(hud);
   // Existing left/right yard circuits retain their save IDs, priority, battery

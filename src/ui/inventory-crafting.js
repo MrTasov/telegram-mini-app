@@ -71,6 +71,7 @@ window.V011UI=(()=>{
     const top=app?Math.max(56,Number(app.safeAreaInset?.top||0)+Number(app.contentSafeAreaInset?.top||0))+10:10;
     document.documentElement.style.setProperty('--v011-hud-top',top+'px');
     document.documentElement.style.setProperty('--v011-tg-extra',app?'56px':'0px');
+    for(const side of ['left','right','bottom'])document.documentElement.style.setProperty('--v011-safe-'+side,Math.max(0,Number(app?.safeAreaInset?.[side]||0)+Number(app?.contentSafeAreaInset?.[side]||0))+'px');
   }
   safeArea();window.addEventListener('resize',safeArea);
   try{for(const event of ['safeAreaChanged','contentSafeAreaChanged','viewportChanged','fullscreenChanged'])window.Telegram?.WebApp?.onEvent?.(event,safeArea);}catch(_){}

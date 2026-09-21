@@ -8,7 +8,7 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
  E('scene="surface";player.x=800;player.y=850;player.aimX=0;player.aimY=1;player.moving=false;equipment.body=null;equipment.head=null;');
  await check('source.gameplayOwnersByteIdenticalToDeliveredEquipmentBuild',()=>{
   const hashes=require('./pre-player-visual/source-hashes.json');
-  for(const [file,h]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!['src/render/actors.js','src/assets/manifest.js','src/core/rendering.js'].includes(file))assert.equal(sha(fs.readFileSync(file)),h,file);
+  for(const [file,h]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!['src/render/actors.js','src/assets/manifest.js','src/core/rendering.js'].includes(file))require('./hud-contract.cjs').assertSource(file,h);
   const oldBullets=fs.readFileSync('qa/pre-polish/js/game.js','utf8').match(/function drawBullets\(\)\{[\s\S]*?\n\}/)[0];
   const fallback=fs.readFileSync('src/core/rendering.js','utf8').replace('ctx.scale(AssetManifest.actors.visualScale||1,AssetManifest.actors.visualScale||1);','').replace(/function drawBullets\(\)\{[\s\S]*?\n\}/,oldBullets);
   assert.equal(sha(fallback),hashes['src/core/rendering.js'],'fallback changes must only scale the rendered character');

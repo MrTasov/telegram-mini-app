@@ -10,6 +10,7 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
 
 <link rel="stylesheet" href="styles/base.css?v=0.29.0">
 <link rel="stylesheet" href="styles/main-menu.css?v=0.29.0">
+<link rel="stylesheet" href="styles/hud.css?v=0.29.0-hud-display-1">
 </head>
 
 <body class="main-menu-active">
@@ -43,16 +44,17 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
 <canvas id="canvas"></canvas>
 
 <div id="hud">
-  <div class="hudBox">
-    <strong id="locationName">БАЗА</strong><br>
-    <span id="v016WorldClock">ДЕНЬ 1 · 08:00</span>
-  </div>
+  <div id="v016WorldClock"><span id="hudDayLabel">DAY</span><span id="hudDay">1</span><span id="hudTime">08:00</span></div>
+  <div id="hudPerformance" hidden><span id="hudFPSLabel">FPS</span><span id="hudFPS">—</span><span id="hudFrameTime">—</span><span id="hudFrameUnit">ms</span></div>
 
   <div class="hudBox">
     <span id="healthText">❤️ 100/100</span>
     &nbsp; 🍖 100
   </div>
 </div>
+
+<!-- Compatibility label for existing scene notifications; never part of the HUD. -->
+<span id="locationName" hidden aria-hidden="true"></span>
 
 <button id="settingsButton">⚙</button>
 
@@ -204,7 +206,7 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
 
 
 <button id="bagButton" aria-label="Рюкзак">🎒</button>
-<div id="ammoHud">🔫 30 / 60</div><div id="heldItemName"></div><div id="hotbar" aria-label="Предметы в руках"></div>
+<div id="heldItemName" hidden><span id="equippedItemName">—</span><span id="ammoHud" hidden>—</span><span id="hudReserve" hidden>—</span></div><div id="hotbar" aria-label="Предметы в руках"></div>
 <div id="searchBarWrap"><div id="searchBarFill"></div></div>
 
 <div id="inventoryOverlay" class="overlay"><div class="panel">
@@ -346,7 +348,7 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
 
 </div>
 
-<script src="js/game.js?v=0.29.0-walk-soft-steps-1"></script>
+<script src="js/game.js?v=0.29.0-hud-display-1"></script>
 
 </body>
 </html>
