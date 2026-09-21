@@ -462,7 +462,7 @@ const sounds = {
 ===================================================== */
 let audioCtx=null;
 const audioBuffers={};
-let audioLoadStarted=false;
+const audioLoads=new Map(),audioRetryAt=new Map();
 const animationVoices=new Map();
 let lastZombieBufferAt=0;
 
@@ -477,33 +477,47 @@ function ensureAudioContext(){
 }
 
 async function preloadGameAudio(){
-  if(audioLoadStarted) return;
   const ctx=ensureAudioContext();
   if(!ctx) return;
-  audioLoadStarted=true;
 
   await Promise.all(
-    Object.entries(AUDIO_FILES).map(async function([name,url]){
-      try{
-        const r=await fetch(url,{cache:"no-cache"});
-        if(!r.ok)throw Error("Audio request failed");
-        const data=await r.arrayBuffer();
-        audioBuffers[name]=await ctx.decodeAudioData(data);
-      }catch(e){}
+    Object.entries(AUDIO_FILES).map(function([name,url]){
+      if(audioBuffers[name])return;
+      if(audioLoads.has(name))return audioLoads.get(name);
+      if(performance.now()<(audioRetryAt.get(name)||0))return;
+      const loading=(async()=>{
+        try{
+          const r=await fetch(url,{cache:"no-cache"});
+          if(!r.ok)throw Error("Audio request failed");
+          const data=await r.arrayBuffer();
+          audioBuffers[name]=await ctx.decodeAudioData(data);
+          audioRetryAt.delete(name);
+        }catch(e){
+          // A failed first request must not mute this effect for the session.
+          // Retry only on later input, at most once per second per asset.
+          audioRetryAt.set(name,performance.now()+1000);
+        }
+      })().finally(()=>audioLoads.delete(name));
+      audioLoads.set(name,loading);return loading;
     })
   );
 }
 
-function unlockGameAudio(){
+function unlockGameAudio(event){
+  if(document.hidden||event?.isTrusted===false)return;
   const ctx=ensureAudioContext();
-  if(ctx && ctx.state==="suspended"){
-    ctx.resume().catch(function(){});
+  if(ctx && (ctx.state==="suspended"||ctx.state==="interrupted")){
+    // Call within the input handler, before any await consumes user activation.
+    try{Promise.resolve(ctx.resume()).catch(function(){});}catch(e){}
   }
   preloadGameAudio().catch(function(){});
 }
 
-window.addEventListener("pointerdown",unlockGameAudio,{once:true,passive:true});
-window.addEventListener("touchstart",unlockGameAudio,{once:true,passive:true});
+// Touch activation is available on release; mouse and keyboard have their own
+// activation events. Capture sees UI/joystick events even if they stop bubbling.
+// Keep the handlers: a rejected resume or mobile interruption needs another try.
+for(const type of ['pointerdown','pointerup','touchend','click','keydown'])
+  window.addEventListener(type,unlockGameAudio,{capture:true,passive:true});
 
 function playBuffer(name,volume=1){
   // 0.4.11: only short decoded WebAudio effects are allowed.

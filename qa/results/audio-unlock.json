@@ -1,0 +1,51 @@
+{
+  "patch": "audio-unlock-hotfix-1",
+  "testedRoot": "/workspace/scratch/b2a359e84e10/audio-hotfix-work",
+  "passed": 10,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "touch.releaseUnlocksAfterUnactivatedPress",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.stoppedBubblingStillUnlocks",
+      "status": "PASS"
+    },
+    {
+      "id": "keyboard.startsAudioWithoutPointer",
+      "status": "PASS"
+    },
+    {
+      "id": "click.startsAudioForMenuActivation",
+      "status": "PASS"
+    },
+    {
+      "id": "resume.rejectedFirstGestureCanRecover",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile.interruptionAndSuspensionRecoverWithoutReloadingBuffers",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.failedRequestRetriesOnlyMissingBuffer",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.failedDecodeCanRetry",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.concurrentGesturesDeduplicateLoadsAndRunningContext",
+      "status": "PASS"
+    },
+    {
+      "id": "preferences.savedMuteIsRespected",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Modeled browser user activation and WebAudio; no physical device audio output."
+  ]
+}

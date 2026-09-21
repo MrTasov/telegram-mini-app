@@ -1,12 +1,12 @@
 {
   "version": "0.29.0",
-  "patch": "visual-audio-polish-1",
-  "reference": "LAST_BASE_0.29.0_Corrective_Performance_1.zip",
+  "patch": "audio-unlock-hotfix-1",
+  "reference": "LAST_BASE_0.29.0_Visual_Audio_Polish_1.zip",
   "saveVersion": 3,
   "automatedGatePassed": true,
-  "automatedAssertions": 11172,
-  "regressionJobs": 35,
-  "manualAcceptance": "pending physical PC browser, phone, Telegram WebView and audio latency/timbre",
+  "automatedAssertions": 515,
+  "regressionJobs": 6,
+  "manualAcceptance": "pending physical PC browser, phone and Telegram WebView audio playback",
   "assets": {
     "revision": 4,
     "newAtlases": [
@@ -44,19 +44,10 @@
     ],
     "revisedToolWorkCount": 12,
     "workToolViews": 6,
-    "corpseScaleRelativeToPrevious": 1.2,
+    "corpseScaleRelativeToPrevious": 1,
     "livingZombieScaleChanged": false,
-    "newLoadedAssetsInThisPatch": 5,
+    "newLoadedAssetsInThisPatch": 0,
     "sharedShadowRgbaBytes": 16384,
-    "newIcons": [
-      "assets/icons/items/iron_ore_polish.png",
-      "assets/icons/items/copper_ore_polish.png"
-    ],
-    "newAudio": [
-      "assets/audio/effects/footstep_boot.wav",
-      "assets/audio/effects/chop_wood.wav",
-      "assets/audio/effects/mine_rock.wav"
-    ],
     "gatheringVisualPlaybackRate": 2,
     "movementScaleCorrection": {
       "unarmed": 0.94,
@@ -66,11 +57,23 @@
     },
     "corpseCacheVariants": 15,
     "corpseCacheRgbaBytesAtDensityOne": 172912,
-    "newDecodedPcmBytes": 105840
+    "corpseScaleRelativeToCorrective": 1.2,
+    "inheritedPolish_newAudio": [
+      "assets/audio/effects/footstep_boot.wav",
+      "assets/audio/effects/chop_wood.wav",
+      "assets/audio/effects/mine_rock.wav"
+    ],
+    "inheritedPolish_newIcons": [
+      "assets/icons/items/iron_ore_polish.png",
+      "assets/icons/items/copper_ore_polish.png"
+    ],
+    "inheritedPolish_newDecodedPcmBytes": 105840
   },
-  "finalBundleSha256": "984b24eac7d2d9f2dd714737f9c5c7e1abd0b1cb78f0bd5a1bfa313e3b1a1bf1",
+  "finalBundleSha256": "381468cd8350bdbe0caaa952b78f38338ff9637b141b4bab4b3d5abd364f4095",
   "files": {
     ".gitignore": "8ffe9de56bd30c1a95cd945262d6e3ac355ada4111551dde41f67851b9f1fc55",
+    "AUDIO_HOTFIX_CHANGESET.json": "1265b216e363c9aa7623b8425fed53ab649834784d2fe7dff0f4cd4c88e5cb49",
+    "AUDIO_HOTFIX_RU.md": "b24910720399501567f58ba7de125cb46090f77ca4872ad5856f639b34dce3f2",
     "CORRECTIVE_CHANGESET.json": "0257fac4f3723f625f751d4a934a7b904d02430df108b21d8e73c29ca8393ebf",
     "CORRECTIVE_PERFORMANCE_RU.md": "d279b3c0c95c3f820b1ff8169155aac4f4de862692fd3c303333fb4dfbd06ed2",
     "EQUIPMENT_CHANGESET.json": "e1634743ae86b40a1dea86a29e421dc5c0a75e6ea3e27b715465ca86125d0841",
@@ -81,8 +84,8 @@
     "PLAYER_VISUAL_FIX_RU.md": "92b73a71ca4cbe875fa9a41da35f2eaa1f6eebbd0a8f7ab0f1ebcfeb69e1122c",
     "POLISH_CHANGESET.json": "544adcf83a4a1e707543480adb498d99d2bc12d05355bdba6c730e4f6c6b577d",
     "POLISH_RU.md": "7dd216503bb8b2be29ce222824f0fd54cc31c0391616fd62a96d23547b064364",
-    "README.md": "10fe6ed225a592cf7116da25be547f414b5a8f4e4adbc3a5e5baed6553651d57",
-    "README_RU.md": "5751311ef9c8db1c459e060c986f7d340a3a5348b263a4f15edd4f1bd8d5b5ae",
+    "README.md": "69db9da75048c72eb585581ed6715e21ec148a02005496ef58c04f99ec20cb7a",
+    "README_RU.md": "536725c094990bacfd2f920ce341b0ee6b32971b175dd05f250d4b0a314cbb8e",
     "assets/atlases/corpses/bloater.webp": "62b20bec2e6c28bacf67154748f867f0185f3fba1b3538b4b23b61e96423acfa",
     "assets/atlases/corpses/brute.webp": "db8dbea52a69fce9c537e43568cc0875258850cfbc9385a974e36ec93983248b",
     "assets/atlases/corpses/leaper.webp": "f3d877178c3dc9943507bb5628c7bc49b08d0cb94f0dcdf406cef30ee65023cc",
@@ -281,10 +284,10 @@
     "docs/stage6-source.patch": "5f83c80a491ce7a62956553d0ac903fe69e1cf2e4b8c20bc04a0c64cb5ad4684",
     "docs/stage7-changed-sources.json": "2421a612566173f3d86d6290a90e6fbfe08b36ac7da448849751fbf672b101b6",
     "docs/stage7-source.patch": "f8b91ecefc9a7f8d3032b568465c151e02f40bf9b750cd923e99ad81a1e5f0e1",
-    "index.html": "b81f6d2d91a3ead4ecdb1e54d878a29d0acb3d548da351578c1028fed4e84dc3",
-    "js/build-info.json": "d776c1c7272755dfcb8578736dcc8c402f7dc16c69ca736fa353cd2a4e5c23aa",
-    "js/game.js": "984b24eac7d2d9f2dd714737f9c5c7e1abd0b1cb78f0bd5a1bfa313e3b1a1bf1",
-    "js/game.js.map": "aee7ef8248494447c3db42ce520da0546b5c167989c32d89cfc090dc69f528cc",
+    "index.html": "18a5262ef58c685d4b9c142f36386b4f0dd05928b0188bea70afcd6d4511f3be",
+    "js/build-info.json": "751f47dff45d59d30f38860cd91f16ec6717f3d23993231b5a6df46147ff1493",
+    "js/game.js": "381468cd8350bdbe0caaa952b78f38338ff9637b141b4bab4b3d5abd364f4095",
+    "js/game.js.map": "97c03b737b6fd97ed03c1a22a706519756d5b34f7f738ec71d2c1e639a8ec922",
     "locales/en.json": "7f44690bf229d55090e13d4f1b794dae0ca1ae887066ca06a10d2a28bbc848cd",
     "locales/legacy.json": "8eb472ee51cd8f73feb9f598e40f653c0ea3604a9c9df453390a400a9352226d",
     "locales/manifest.json": "e80f08907379fd740d4447fd9f2905c62cb12519cf5648e9d6a2a5dd9c09c30f",
@@ -299,6 +302,7 @@
     "qa/asset-migration.json": "97341e29a95c52ad860a362782e5490c8df47816261e937cf3c8a60a87e5a9d7",
     "qa/asset-rendering.cjs": "caca99141eb0e2c9ad12efa88569e5647bb990dce6d9ba1fb3e694c50d8385f2",
     "qa/assets.cjs": "da48f4e7afe14709edac742c52139513581953dadd2771eafa74e6f112ad71d7",
+    "qa/audio-unlock.cjs": "ecebea4357554bc3c6d174bb0c6de78bf096ba778752c47efd2ad41575fcd6b5",
     "qa/balance.cjs": "bc5793f64975edff00bae7f4d27b2c3d99e1aad85eb5c314ebe90cf33f7314a6",
     "qa/canvas-contract.cjs": "0e0f376293eb38c03d46abefdb267eb26501252bb9f0e57f34d250bec8dd4e42",
     "qa/capture-stage2.cjs": "3bc8697077699424cd4f247214f199411ff571197086279ee3df6a96a157e8a0",
@@ -403,6 +407,9 @@
     "qa/results/asset-rendering.log": "bedab312f9f635c143daa0762939497b1ff6af5677273606ba44e5be4623750f",
     "qa/results/assets.json": "b2371832c0221fc7dd97d223306c0aef058be99b128ddb4fb52d7f1c8d90f2c2",
     "qa/results/assets.log": "f3e6fce8722fa3071440f43d82eda4c1096aab2e9faef6769283ee40a8514e31",
+    "qa/results/audio-hotfix-summary.json": "13721b1d3aa3f3781b61be0af2360301580145d28f11fec1d8bcb312434c3a5e",
+    "qa/results/audio-unlock-before.json": "f768ff6bd96ada2d1a8b4f8bdefb2657f1f954b5c5e56bb255d965e4bf452c6f",
+    "qa/results/audio-unlock.json": "9749afe94bbf9af20150a881b3facb435e000e65ae5b5362fffb87fc9b570a55",
     "qa/results/balance.json": "a2be17bc27ce12495d00b2354a7b2b825499fa11291c89453e96fb29c6691c01",
     "qa/results/balance.log": "b23eab60653e2784377f368613cbd1bf22d8f2a9d0dd5940f2493c55e1260015",
     "qa/results/build.log": "f59defd0a18a51ac92782a7d38a8327eb74fb35d689a09e90219904d7bdb37a4",
@@ -671,7 +678,7 @@
     "qa/results/summary.json": "47aa59576051deeb102c76fb2ce70b829ac6bb72dae25dae8673b37baef8f2e9",
     "qa/results/systems.json": "ec2500fbbcd683553a5bb48899cfbd16eb6f2708780a620d04d800d080b34e93",
     "qa/results/systems.log": "fcaf765153ecc2fdbb74cdb895e51652f7b3bb4d947f385abab1a267e12d2900",
-    "qa/results/verification.json": "5c4bd50c98daaee9eaaee850d27c01f6085f30b40ae37affc30c20e05dd0bde5",
+    "qa/results/verification.json": "23960347fdd8f0d8dba8a75a2a6d38cc696f02842e7d15f6313b3866d072e692",
     "qa/results/verification.log": "a8881c2a6be82125a1a5b76ac34ac3930804db3a71ca286a07ab4cd5ec9189dc",
     "qa/results/world-events.json": "f960502e83af3f8873e9dd01505a0c425469a0c1eb0d30229c8d2058bfb941eb",
     "qa/results/world-events.log": "7d12b1c1d43521180f59bcc5b23b2af18d3a0d98fb914a6b2e515519033429c8",
@@ -681,7 +688,7 @@
     "qa/results/world-farm.json": "7d709c3a2f696ed484fedfc0ae51e0612d9880ca994c9ff6fb96a437f1d59f8c",
     "qa/results/world-farm.log": "fbb67011de5758b8fe1a24e9aa397553001cd7bfde346e95deeee761c7568dce",
     "qa/run-regressions.cjs": "8754ae2ecf110b52747aa13f5569e09942464e2f791bbc1c9f9aa387d16fa94c",
-    "qa/run.cjs": "7afb25d93a5eb8a9efd01335a2e75a9142fd2108257cfd768a5a5186d3503ddc",
+    "qa/run.cjs": "f7720a08ab26dd6ff453bb44db538d697c56b998847061d31eb91369e1cbbeb2",
     "qa/runtime.cjs": "d81b22fcc6b53115f620bbf14049f785be1dfd8bd21f8c400dff9bce3f629dfe",
     "qa/save-adapters.json": "ac8220d6a7b1195cf38cee83bffded881e3a20413eb77b8c15fd523d72c93a28",
     "qa/saves.cjs": "bfbe4dc87fdef40ceb251ebeaaded4af8b691ea88287e858b7bef4bbd568fb10",
@@ -809,7 +816,7 @@
     "qa/stage5-accepted/js/game.js": "1518533cdafa20c6965b035f03fa6d9048f3b41d974746befc01b56c71174989",
     "qa/stage5-accepted/js/game.js.map": "908e3baa399e2685684b9b8193c7feccc6847ad7aa41c2ac3517fe6bb0514dad",
     "qa/stage5-accepted/styles/base.css": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0",
-    "qa/stage5-reference.json": "8a7cc2e9099c07813449ce33a6d2ffbc45e1ef698014fd2fe3d34d0580b1294c",
+    "qa/stage5-reference.json": "b12020d6b57b712411bcf7c6dbbb1af47c5d2f931f6104b2e2959e5870aad90b",
     "qa/state-saves.cjs": "09f60cbe86177e5fa0e568aedd18ac2e4b2172dff64e1c8ddbcec23f7d4c6bb8",
     "qa/systems.cjs": "c02fb3f7e473fb48b33776df3f4ec35377ce44c738cd5ecebc6b03b36e33b35a",
     "qa/verify.cjs": "167adee4ce3121f82f3b66b1cbe56d712444c54611b97c24caeea02a8c51c139",
@@ -836,7 +843,7 @@
     "src/core/loop-viewport.js": "a20cfbccd0e52c7df36e78fa98933bc885d280e2f69a45c424d552c67c68d491",
     "src/core/loot-light-equipment.js": "819f42d83c5f4f97ae28a9b157eb9df23145fea34c2d9b58439949e4b7c2be8d",
     "src/core/rendering.js": "b4b3014d0ce670be853659cc6d55b47f97c7de99058b49783edf757ea6607613",
-    "src/core/runtime.js": "d8eacdff98881466e1ae8ed1e4a987a800dff83bc201aa833d79028d6f9732bc",
+    "src/core/runtime.js": "328f8ccc1f03cc8e9c4ee2f4df008d22f4ccf6c79d3e0e2e29d1365e364decd4",
     "src/core/world-inventory.js": "8e42ad9b3c0bfe2e2669cea5ef7f0d92ff206a5306ac99009e4e1bfa734a910f",
     "src/crafting/manufacturing.js": "469e4fd8257ee56f277bd651be7a34e6ebf932cecca8e0d5dab12c7b94b990ab",
     "src/drones/companion.js": "ff0ca089353f5204b1ede5b0ca399e4c3896507febb81a9afd839a21f135a167",
@@ -905,7 +912,7 @@
     "tools/pack-work-tool-views.cjs": "e7bf8cfbd11967440a18b873c647c218457d469c1e80793e1b437ee266a5b608",
     "tools/polish-audio.py": "789ce83638a08ab92b8d28c62e2e492f8986c9a1f822304e607ed3bcc1e597f2"
   },
-  "regressionScope": "Full existing suite plus visual/audio polish timing, muzzle, gameplay differential, scale, cache and visual checks",
+  "regressionScope": "Targeted audio unlock/recovery, polish timing and combat checks, controls, menu preferences, verification and build --check",
   "performanceComparison": "qa/results/polish-performance.json",
   "polishVisualAssertions": 12,
   "intentionalBalanceChangesInThisPatch": [],
@@ -919,5 +926,13 @@
     "stoneNodesBefore": 18,
     "stoneNodesAfter": 36,
     "stoneCapacityUnchanged": 150
-  }
+  },
+  "fullRegressionSuiteRerun": false,
+  "baselineFullRegression": {
+    "patch": "visual-audio-polish-1",
+    "passed": 11172,
+    "failed": 0,
+    "rerunForThisHotfix": false
+  },
+  "validationReport": "qa/results/audio-hotfix-summary.json"
 }

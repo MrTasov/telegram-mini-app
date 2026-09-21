@@ -1,0 +1,59 @@
+{
+  "patch": "audio-unlock-hotfix-1",
+  "testedRoot": "/workspace/scratch/b2a359e84e10/polish-restored",
+  "passed": 2,
+  "failed": 8,
+  "checks": [
+    {
+      "id": "touch.releaseUnlocksAfterUnactivatedPress",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'suspended'\n- 'running'\n"
+    },
+    {
+      "id": "ui.stoppedBubblingStillUnlocks",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'running'\n"
+    },
+    {
+      "id": "keyboard.startsAudioWithoutPointer",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'running'\n"
+    },
+    {
+      "id": "click.startsAudioForMenuActivation",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'running'\n"
+    },
+    {
+      "id": "resume.rejectedFirstGestureCanRecover",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'suspended'\n- 'running'\n"
+    },
+    {
+      "id": "mobile.interruptionAndSuspensionRecoverWithoutReloadingBuffers",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'interrupted'\n- 'running'\n"
+    },
+    {
+      "id": "assets.failedRequestRetriesOnlyMissingBuffer",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n\n2 !== 3\n"
+    },
+    {
+      "id": "assets.failedDecodeCanRetry",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n\n2 !== 3\n"
+    },
+    {
+      "id": "assets.concurrentGesturesDeduplicateLoadsAndRunningContext",
+      "status": "PASS"
+    },
+    {
+      "id": "preferences.savedMuteIsRespected",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Modeled browser user activation and WebAudio; no physical device audio output."
+  ]
+}
