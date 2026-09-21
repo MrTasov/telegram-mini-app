@@ -884,10 +884,10 @@
       }
     },
     "icon/copper_ore": {
-      "path": "assets/icons/items/copper_ore.png",
+      "path": "assets/icons/items/copper_ore_polish.png",
       "size": [
-        192,
-        192
+        384,
+        384
       ]
     },
     "icon/copper": {
@@ -919,10 +919,10 @@
       ]
     },
     "icon/iron_ore": {
-      "path": "assets/icons/items/iron_ore.png",
+      "path": "assets/icons/items/iron_ore_polish.png",
       "size": [
-        192,
-        192
+        384,
+        384
       ]
     },
     "icon/iron": {
@@ -3101,6 +3101,22 @@
           }
         }
       }
+    },
+    "historical/iron_ore_pre_polish": {
+      "path": "assets/icons/items/iron_ore.png",
+      "size": [
+        192,
+        192
+      ],
+      "historical": true
+    },
+    "historical/copper_ore_pre_polish": {
+      "path": "assets/icons/items/copper_ore.png",
+      "size": [
+        192,
+        192
+      ],
+      "historical": true
     }
   },
   "art": {
@@ -3233,8 +3249,8 @@
       "optional": true
     },
     "footsteps": {
-      "path": "assets/audio/effects/footsteps.mp3",
-      "optional": true
+      "path": "assets/audio/effects/footstep_boot.wav",
+      "optional": false
     },
     "chicken": {
       "path": "assets/audio/effects/chicken.mp3",
@@ -3243,6 +3259,14 @@
     "cow": {
       "path": "assets/audio/effects/cow.mp3",
       "optional": true
+    },
+    "chopWood": {
+      "path": "assets/audio/effects/chop_wood.wav",
+      "optional": false
+    },
+    "mineRock": {
+      "path": "assets/audio/effects/mine_rock.wav",
+      "optional": false
     }
   },
   "actors": {
@@ -3597,7 +3621,12 @@
       ],
       "bodyScale": 0.125,
       "walkCount": 12,
-      "cycleDistance": 226.8
+      "cycleDistance": 226.8,
+      "walkScale": 0.94,
+      "contactPhases": [
+        0,
+        0.5
+      ]
     },
     "modular": {
       "revision": 4,
@@ -11530,8 +11559,48 @@
       "fishWorldSize": [
         14,
         18
-      ]
+      ],
+      "walkScale": {
+        "firearm": 0.91,
+        "tool": 0.91,
+        "handheld": 0.9
+      }
     },
-    "visualScale": 1.65
+    "visualScale": 1.65,
+    "gathering": {
+      "playbackRate": 2,
+      "sounds": {
+        "wood": "chopWood",
+        "mineral": "mineRock"
+      }
+    },
+    "weaponVfx": {
+      "defaults": {
+        "flashMs": 42,
+        "flashLength": 10,
+        "flashWidth": 3.6,
+        "tracerLength": 9,
+        "tracerWidth": 1.05,
+        "joinDistance": 64
+      },
+      "weapons": {
+        "rifle_ak74": {
+          "muzzleOffset": [
+            44,
+            -0.5
+          ]
+        },
+        "rifle_m4": {
+          "muzzleOffset": [
+            46,
+            -0.5
+          ],
+          "flashLength": 8,
+          "flashWidth": 3,
+          "tracerLength": 8
+        }
+      }
+    },
+    "corpseScaleFromPrevious": 1.2
   }
 }

@@ -155,7 +155,6 @@ function gameLoop(timestamp=performance.now()){
   frameScale=lastFrameAt?clamp((timestamp-lastFrameAt)/16.667,.1,3):1;
   lastFrameAt=timestamp;
   window.GameInput?.refreshAim();
-  updateFootstepsAudio();
 
 
   if(rightAimActive && aimPower>JOY_DEAD && firing && !menuOpen && !playerDead){
@@ -164,6 +163,7 @@ function gameLoop(timestamp=performance.now()){
 
 
   if(document.hidden){
+    updateFootstepsAudio();
     requestAnimationFrame(gameLoop);
     return;
   }
@@ -172,6 +172,7 @@ function gameLoop(timestamp=performance.now()){
   try{
 
     if(!GameFlow.paused)update();
+    updateFootstepsAudio();
     draw();
 
   }catch(error){

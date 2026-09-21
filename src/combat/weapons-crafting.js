@@ -144,15 +144,15 @@ window.V010Combat=(() => {
     if((practice?trainingRounds:item.rounds)<=0){reloadWeapon();return;}
     if(lastUid!==item.uid||now-lastShot>420)burst=0;burst=Math.min(7,burst+1);lastUid=item.uid;lastShot=now;
     const base=Math.atan2(player.aimY,player.aimX),cone=g.spread+g.recoil*Math.max(0,burst-1),angle=base+(Math.random()*2-1)*cone;
-    const dx=Math.cos(angle),dy=Math.sin(angle),x=player.x+dx*43,y=player.y+dy*43;
+    const dx=Math.cos(angle),dy=Math.sin(angle),x=player.x+dx*43,y=player.y+dy*43;let projectile=null;
     if(practice){
       trainingRounds--;const tx=practiceTarget.x+10-player.x,ty=practiceTarget.y+16-player.y,dist=Math.hypot(tx,ty),along=tx*dx+ty*dy,across=Math.abs(tx*dy-ty*dx);
       if(along>0&&dist<g.range&&across<18&&lineClear(player.x,player.y,practiceTarget.x+10,practiceTarget.y+16,2,'surface')){practiceHits++;practiceDamage=g.damage;}
     }else{
-      item.rounds--;const contact=window.V014Controls?.contactTarget();if(contact)hitZombie(contact,g.damage);else if(muzzleClear(player.x,player.y,x,y,2))bullets.push({x,y,dx:dx*12,dy:dy*12,radius:3,life:g.range/12,damage:g.damage,weapon:item.type,wallLevel:!!window.V091Fortress?.isElevated?.()});
+      item.rounds--;const contact=window.V014Controls?.contactTarget();if(contact)hitZombie(contact,g.damage);else if(muzzleClear(player.x,player.y,x,y,2))bullets.push(projectile={x,y,dx:dx*12,dy:dy*12,radius:3,life:g.range/12,damage:g.damage,weapon:item.type,wallLevel:!!window.V091Fortress?.isElevated?.()});
       createNoise(player.x,player.y,g.noise);emit('combatshot',{weapon:item.type});queueGameSave();
     }
-    muzzleFlash.time=now;muzzleFlash.x=x;muzzleFlash.y=y;playGunshot();syncAmmo();updateAmmoHud();
+    muzzleFlash.time=now;muzzleFlash.x=x;muzzleFlash.y=y;window.ActorVisuals?.weaponShot(projectile,base,now,item.type);playGunshot();syncAmmo();updateAmmoHud();
     if((practice?trainingRounds:item.rounds)===0)reloadWeapon();
   };
   const oldSelectHand=selectHandSlot;

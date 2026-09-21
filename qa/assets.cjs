@@ -8,7 +8,7 @@ const plain=v=>JSON.parse(JSON.stringify(v)),sha=b=>crypto.createHash('sha256').
 async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.message.slice(0,2500)});}}
 const mutate=fn=>{const m=plain(catalog);fn(m);return m;};
 async function main(){
- await check('catalog.valid',()=>assert.equal(validate(catalog).images,135));
+ await check('catalog.valid',()=>assert.equal(validate(catalog).images,137));
  await check('catalog.generatedFresh',()=>generate(true));
  for(const f of migration.files)await check('migration.'+f.id,()=>{assert.equal(sha(fs.readFileSync(f.path)),f.sha256);assert.ok(!fs.existsSync(f.old));});
  await check('catalog.allShippedImagesRegistered',()=>{const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(x=>x.isDirectory()?walk(d+'/'+x.name):[d+'/'+x.name]);assert.deepEqual(walk('assets').filter(f=>/\.(png|webp|gif)$/.test(f)).sort(),Object.values(catalog.images).map(d=>d.path).sort());});
@@ -31,15 +31,15 @@ async function main(){
  await check('lazy.relatedCorpsePrefetch',()=>{E('V011Art.image("monster_walker017")');assert.ok(r.imageRequests.includes(catalog.images['art/corpse_walker019'].path));});
  await Promise.all(Object.keys(catalog.images).map(id=>E(`GameAssets.load(${JSON.stringify(id)})`)));
  for(const [id,d]of Object.entries(catalog.images))await check('decode.'+id,()=>{assert.equal(E(`GameAssets.ready(${JSON.stringify(id)})`),true);const im=E(`GameAssets.image(${JSON.stringify(id)})`);assert.deepEqual([im.naturalWidth,im.naturalHeight],imageSize(fs.readFileSync(d.path)));});
- await check('lazy.noDuplicateCanvasRequests',()=>{assert.equal(r.imageRequests.length,135);assert.equal(new Set(r.imageRequests).size,135);});
+ await check('lazy.noDuplicateCanvasRequests',()=>{assert.equal(r.imageRequests.length,137);assert.equal(new Set(r.imageRequests).size,137);});
  await check('references.activeCodeHasNoOldPaths',()=>assert.ok(!/assets\/v0(?:190|200)\//.test(source('index.html'))));
  await check('references.literalArtConsumers',()=>{const code=source('index.html');for(const match of code.matchAll(/V011Art\.(?:image|draw|ready|drawStretch|bounds|fit)\(\s*['"]([\w]+)['"]\s*[,)]/g))assert.ok(catalog.art[match[1]]||catalog.aliases[match[1]],match[1]);for(const match of code.matchAll(/V011Art\.sources\.([\w]+)/g))assert.ok(catalog.art[match[1]],match[1]);});
  await check('references.runtimeIcons',()=>{for(const p of Object.values(plain(E('V092_ICONS'))))assert.ok(fs.existsSync(p),p);});
  await check('references.staticHTMLCSS',()=>{for(const f of ['index.html','styles/base.css']){const content=fs.readFileSync(f,'utf8');for(const m of content.matchAll(/(?:src|href)=["']([^"']+)|url\(['"]?([^\s)'";]+)['"]?\)/g)){const url=m[1]||m[2];if(/^(?:https?:|data:|#)/.test(url))continue;assert.ok(fs.existsSync(path.resolve(path.dirname(f),url.split(/[?#]/)[0])),url);}}});
- await check('audio.optionalMissingExplicit',()=>{assert.equal(validate(catalog).optionalMissing.length,7);assert.deepEqual(plain(E('AUDIO_FILES')),{});assert.ok(E('Object.values(sounds).every(a=>!a.src&&a.preload==="none")'));});
- await check('audio.noMissingRequestsOrDuplicateUnlock',async()=>{let calls=0;let decoded=0;E('audioCtx={state:"running",decodeAudioData:async d=>d}');r.context.fetch=async()=>{calls++;return{ok:true,arrayBuffer:async()=>new ArrayBuffer(2)};};await E('preloadGameAudio()');await E('preloadGameAudio()');assert.equal(calls,0);
+ await check('audio.optionalMissingExplicit',()=>{assert.equal(validate(catalog).optionalMissing.length,6);assert.deepEqual(Object.keys(plain(E('AUDIO_FILES'))).sort(),['chopWood','footsteps','mineRock']);assert.ok(E('Object.entries(sounds).every(([key,a])=>(key==="footsteps"?!!a.src:!a.src)&&a.preload==="none")'));});
+ await check('audio.noMissingRequestsOrDuplicateUnlock',async()=>{let calls=0;let decoded=0;E('audioCtx={state:"running",decodeAudioData:async d=>d}');r.context.fetch=async()=>{calls++;return{ok:true,arrayBuffer:async()=>new ArrayBuffer(2)};};await E('preloadGameAudio()');await E('preloadGameAudio()');assert.equal(calls,3);
   E('audioLoadStarted=false;AUDIO_FILES.gunshot="assets/audio/effects/gunshot.mp3"');r.context.fetch=async(url,options)=>{calls++;assert.equal(options.cache,'no-cache');return{ok:true,arrayBuffer:async()=>new ArrayBuffer(2)};};r.context.audioCtx=undefined;
-  await E('preloadGameAudio()');await E('preloadGameAudio()');assert.equal(calls,1);assert.ok(E('!!audioBuffers.gunshot'));
+  await E('preloadGameAudio()');await E('preloadGameAudio()');assert.equal(calls,7);assert.ok(E('!!audioBuffers.gunshot'));
   E('audioLoadStarted=false;delete audioBuffers.gunshot');r.context.fetch=async()=>({ok:false,arrayBuffer:async()=>{decoded++;return new ArrayBuffer(2);}});await E('preloadGameAudio()');assert.equal(decoded,0);assert.equal(E('!!audioBuffers.gunshot'),false);
  });
  const server=http.createServer((req,res)=>{const prefix='/project/last-base/';if(!req.url.startsWith(prefix)){res.writeHead(404).end();return;}const p=req.url.slice(prefix.length);if(p.includes('..')||!fs.existsSync(p)){res.writeHead(404).end();return;}res.end(fs.readFileSync(p));});

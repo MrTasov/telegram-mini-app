@@ -21,7 +21,7 @@ async function main(){
  await check('walk.backwardsUsesSameAimAndPhase',()=>{E('player.moving=true;player.aimX=1;player.aimY=0;moveX=-1;moveY=0;ActorVisuals.pose("rifle_ak74");player.walkAnimation+=.21;player.x-=2;');assert.equal(E('ActorVisuals.pose("rifle_ak74").frame'),E('ActorVisuals.pose(null).frame'));assert.equal(E('player.aimX'),1);E('moveX=moveY=0');});
  await check('tools.sharedCarryBodyAndTwelveStrikePhases',()=>{
   E('player.moving=false;chopState={startedAt:Date.now(),duration:1200};');const frames=[];let elapsed=1;
-  for(const duration of cfg.modular.items.axe.action.durations){E(`chopState.startedAt=Date.now()-${elapsed}`);frames.push(E('ActorVisuals.pose("axe").frame'));elapsed+=duration;}
+  for(const duration of cfg.modular.items.axe.action.durations){E(`chopState.startedAt=Date.now()-${elapsed/cfg.gathering.playbackRate}`);frames.push(E('ActorVisuals.pose("axe").frame'));elapsed+=duration;}
   assert.deepEqual(frames,Array.from({length:12},(_,i)=>i));E('chopState=null');
   assert.equal(cfg.modular.items.axe.body,cfg.modular.items.pickaxe.body);assert.equal(cfg.modular.items.axe.body,cfg.modular.items.hammer.body);
  });

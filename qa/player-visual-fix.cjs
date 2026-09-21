@@ -9,7 +9,8 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
  await check('source.gameplayOwnersByteIdenticalToDeliveredEquipmentBuild',()=>{
   const hashes=require('./pre-player-visual/source-hashes.json');
   for(const [file,h]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!['src/render/actors.js','src/assets/manifest.js','src/core/rendering.js'].includes(file))assert.equal(sha(fs.readFileSync(file)),h,file);
-  const fallback=fs.readFileSync('src/core/rendering.js','utf8').replace('ctx.scale(AssetManifest.actors.visualScale||1,AssetManifest.actors.visualScale||1);','');
+  const oldBullets=fs.readFileSync('qa/pre-polish/js/game.js','utf8').match(/function drawBullets\(\)\{[\s\S]*?\n\}/)[0];
+  const fallback=fs.readFileSync('src/core/rendering.js','utf8').replace('ctx.scale(AssetManifest.actors.visualScale||1,AssetManifest.actors.visualScale||1);','').replace(/function drawBullets\(\)\{[\s\S]*?\n\}/,oldBullets);
   assert.equal(sha(fallback),hashes['src/core/rendering.js'],'fallback changes must only scale the rendered character');
  });
  E('window.visualCalls=[];window.originalVisualDraw=ctx.drawImage;ctx.drawImage=function(im,...args){const m=ctx.getTransform();visualCalls.push({args,m:[m.a,m.b,m.c,m.d,m.e,m.f],width:im.width,height:im.height});return originalVisualDraw.call(this,im,...args);};');
@@ -20,7 +21,8 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
    E(`visualCalls=[];ctx.setTransform(1,0,0,1,0,0);ActorVisuals.renderPose(${expr},200,200,.73);`);
    const calls=plain(E('visualCalls')),body=item?mod.items[item][mode==='work'?'action':mode]?.frames?.[i]?.body|| (mode==='walk'?mod.items[item].walk[i].body:mod.items[item].idle.body):{id:mode==='idle'?cfg.unarmed.idle:cfg.body.unarmed};
    const size=manifest.images[body.id].size,call=calls.find(c=>c.width===size[0]&&c.height===size[1]);assert.ok(call,item+' '+mode);
-   assert.ok(Math.abs(Math.hypot(call.m[0],call.m[1])-.125*1.65)<1e-6,item+' '+mode+' scale');
+   const correction=mode==='walk'?(item?mod.walkScale[mod.items[item].body]:cfg.unarmed.walkScale):1;
+   assert.ok(Math.abs(Math.hypot(call.m[0],call.m[1])-.125*1.65*correction)<1e-6,item+' '+mode+' scale');
   }
  });
  await check('scale.sleepExactly165percentSameFourBreathingFrames',()=>{
@@ -69,7 +71,7 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
  });
  await check('fallback.M4ScaleAndMuzzleRemainAligned',()=>{
   E("ActorVisuals.cancelRepair();ActorVisuals.cancelFishing();equipment.head=null;addItem('rifle_m4',1);V013Inventory.equip('rifle_m4');player.aimX=0;player.aimY=1;player.moving=false;window.fallbackScales=[];window.originalFallbackFill=ctx.fillRect;ctx.fillRect=function(...args){if(args[0]===37&&args[1]===-2&&args[2]===9){const m=ctx.getTransform();fallbackScales.push(Math.hypot(m.a,m.b));}return originalFallbackFill.apply(this,args)};ctx.setTransform(1,0,0,1,0,0);drawPlayer();ctx.fillRect=originalFallbackFill;");
-  const scales=plain(E('fallbackScales'));assert.equal(scales.length,1);assert.ok(Math.abs(scales[0]-1.65)<1e-6);const p=plain(E('ActorVisuals.muzzlePoint()'));assert.ok(Math.abs(p.x-800)<1e-7);assert.ok(Math.abs(p.y-850-46*1.65)<1e-6);
+  const scales=plain(E('fallbackScales'));assert.equal(scales.length,1);assert.ok(Math.abs(scales[0]-1.65)<1e-6);const p=plain(E('ActorVisuals.muzzlePoint()'));assert.ok(Math.abs(p.x-800-.5*1.65)<1e-7);assert.ok(Math.abs(p.y-850-46*1.65)<1e-6);
  });
  E('ctx.drawImage=originalVisualDraw');
  await check('console.clean',()=>assert.deepEqual(r.errors,[]));

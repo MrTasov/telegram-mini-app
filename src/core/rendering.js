@@ -726,68 +726,6 @@ function drawZombie(zombie){
 ===================================================== */
 
 function drawBullets(){
-
-  for(const bullet of bullets){
-
-    if(!visibleOnScreen(bullet.x,bullet.y,30)){
-      continue;
-    }
-
-    ctx.fillStyle =
-      "rgba(255,215,120,.25)";
-
-    ctx.beginPath();
-
-    ctx.arc(
-      bullet.x,
-      bullet.y,
-      8,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle =
-      "#ffd778";
-
-    ctx.beginPath();
-
-    ctx.arc(
-      bullet.x,
-      bullet.y,
-      3.5,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-
-  }
-
-  if(
-    performance.now() -
-    muzzleFlash.time
-    <
-    65
-  ){
-
-    ctx.fillStyle =
-      "rgba(255,220,100,.85)";
-
-    ctx.beginPath();
-
-    ctx.arc(
-      (window.ActorVisuals?.muzzlePoint()||muzzleFlash).x,
-      (window.ActorVisuals?.muzzlePoint()||muzzleFlash).y,
-      10,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-
-  }
-
+  window.ActorVisuals?.drawProjectiles(bullets);
 }
 

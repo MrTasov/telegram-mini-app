@@ -1,182 +1,192 @@
 {
   "version": "0.29.0",
   "stage": 7,
-  "patch": "corrective-performance-1",
+  "patch": "visual-audio-polish-1",
   "stage6Started": true,
   "stage7Started": true,
   "passed": true,
-  "automatedAssertions": 11132,
+  "automatedAssertions": 11172,
   "historicalBaselineAssertions": 477,
   "ladderContractChanged": true,
   "runs": [
     {
       "id": "build",
       "exitCode": 0,
-      "elapsedMs": 233
+      "elapsedMs": 247
     },
     {
       "id": "verification",
       "exitCode": 0,
-      "elapsedMs": 277
+      "elapsedMs": 322
     },
     {
       "id": "regressions",
       "exitCode": 0,
-      "elapsedMs": 20629
+      "elapsedMs": 26543
     },
     {
       "id": "interactions",
       "exitCode": 0,
-      "elapsedMs": 38060
+      "elapsedMs": 43937
     },
     {
       "id": "saves",
       "exitCode": 0,
-      "elapsedMs": 7806
+      "elapsedMs": 8269
     },
     {
       "id": "balance",
       "exitCode": 0,
-      "elapsedMs": 1459
+      "elapsedMs": 1521
     },
     {
       "id": "state-saves",
       "exitCode": 0,
-      "elapsedMs": 16605
+      "elapsedMs": 15191
     },
     {
       "id": "differential",
       "exitCode": 0,
-      "elapsedMs": 30698
+      "elapsedMs": 30065
     },
     {
       "id": "systems",
       "exitCode": 0,
-      "elapsedMs": 3189
+      "elapsedMs": 2850
     },
     {
       "id": "stage3-differential",
       "exitCode": 0,
-      "elapsedMs": 42245
+      "elapsedMs": 44273
     },
     {
       "id": "controls",
       "exitCode": 0,
-      "elapsedMs": 18091
+      "elapsedMs": 19007
     },
     {
       "id": "controls-differential",
       "exitCode": 0,
-      "elapsedMs": 41827
+      "elapsedMs": 44053
     },
     {
       "id": "assets",
       "exitCode": 0,
-      "elapsedMs": 5025
+      "elapsedMs": 5663
     },
     {
       "id": "asset-rendering",
       "exitCode": 0,
-      "elapsedMs": 2164
+      "elapsedMs": 2529
     },
     {
       "id": "stage4-differential",
       "exitCode": 0,
-      "elapsedMs": 43082
+      "elapsedMs": 44918
     },
     {
       "id": "map-workbar",
       "exitCode": 0,
-      "elapsedMs": 9230
+      "elapsedMs": 9202
     },
     {
       "id": "localization",
       "exitCode": 0,
-      "elapsedMs": 68898
+      "elapsedMs": 73858
     },
     {
       "id": "localization-rendering",
       "exitCode": 0,
-      "elapsedMs": 4067
+      "elapsedMs": 4151
     },
     {
       "id": "localization-controls",
       "exitCode": 0,
-      "elapsedMs": 61634
+      "elapsedMs": 67561
     },
     {
       "id": "main-menu",
       "exitCode": 0,
-      "elapsedMs": 113381
+      "elapsedMs": 123048
     },
     {
       "id": "menu-preferences",
       "exitCode": 0,
-      "elapsedMs": 15250
+      "elapsedMs": 15723
     },
     {
       "id": "world-events",
       "exitCode": 0,
-      "elapsedMs": 16485
+      "elapsedMs": 18487
     },
     {
       "id": "readiness",
       "exitCode": 0,
-      "elapsedMs": 16314
+      "elapsedMs": 17924
     },
     {
       "id": "corrective",
       "exitCode": 0,
-      "elapsedMs": 18964
+      "elapsedMs": 20364
     },
     {
       "id": "world-farm",
       "exitCode": 0,
-      "elapsedMs": 13621
+      "elapsedMs": 15568
     },
     {
       "id": "drone-return",
       "exitCode": 0,
-      "elapsedMs": 43510
+      "elapsedMs": 48701
     },
     {
       "id": "resource-access",
       "exitCode": 0,
-      "elapsedMs": 2654
+      "elapsedMs": 3128
     },
     {
       "id": "character-animation",
       "exitCode": 0,
-      "elapsedMs": 5605
+      "elapsedMs": 6524
     },
     {
       "id": "master-unarmed",
       "exitCode": 0,
-      "elapsedMs": 18101
+      "elapsedMs": 18649
     },
     {
       "id": "equipment-integration",
       "exitCode": 0,
-      "elapsedMs": 22982
+      "elapsedMs": 26381
     },
     {
       "id": "player-visual-fix",
       "exitCode": 0,
-      "elapsedMs": 1767
+      "elapsedMs": 1803
     },
     {
       "id": "corrective-performance",
       "exitCode": 0,
-      "elapsedMs": 4945
+      "elapsedMs": 6455
     },
     {
       "id": "corrective-visuals",
       "exitCode": 0,
-      "elapsedMs": 2817
+      "elapsedMs": 3630
+    },
+    {
+      "id": "polish",
+      "exitCode": 0,
+      "elapsedMs": 6059
+    },
+    {
+      "id": "polish-visuals",
+      "exitCode": 0,
+      "elapsedMs": 8522
     }
   ],
   "limitations": [
-    "VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.",
-    "Seven optional audio assets were already absent in Stage 0; absent sounds are not requested."
+    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "Six historical optional audio assets remain absent; three new WAV effects are included."
   ]
 }

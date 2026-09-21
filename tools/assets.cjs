@@ -54,6 +54,17 @@ function validate(m,base=root){
  }
  if(m.actors){
   if(m.actors.visualScale!==undefined&&!(m.actors.visualScale>0&&m.actors.visualScale<=3))problem('actors.visualScale','invalid presentation scale');
+  if(m.actors.unarmed?.walkScale!==undefined&&!(m.actors.unarmed.walkScale>0&&m.actors.unarmed.walkScale<=1))problem('actors.unarmed.walkScale','invalid movement correction');
+  if(m.actors.unarmed?.contactPhases?.some(p=>!Number.isFinite(p)||p<0||p>=1))problem('actors.unarmed.contactPhases','invalid contact phase');
+  if(m.actors.gathering&&!(m.actors.gathering.playbackRate>0&&m.actors.gathering.playbackRate<=4))problem('actors.gathering','invalid visual playback rate');
+  if(m.actors.corpseScaleFromPrevious!==undefined&&!(m.actors.corpseScaleFromPrevious>0))problem('actors.corpseScaleFromPrevious','invalid corpse scale');
+  if(m.actors.weaponVfx){
+   const v=m.actors.weaponVfx;
+   for(const [id,entry]of Object.entries(v.weapons)){
+    const d={...v.defaults,...entry};
+    if(!Array.isArray(d.muzzleOffset)||d.muzzleOffset.length!==2||!d.muzzleOffset.every(Number.isFinite)||['flashMs','flashLength','flashWidth','tracerLength','tracerWidth','joinDistance'].some(key=>!(d[key]>0&&Number.isFinite(d[key]))))problem('weaponVfx.'+id,'invalid muzzle/tracer definition');
+   }
+  }
   for(const [name,id]of Object.entries(m.actors.body))if(!m.images[id]?.atlas)problem('actor.'+name,'missing body atlas');
   for(const [name,item]of Object.entries(m.actors.items)){
    if(!m.actors.body[item.body]||!Number.isInteger(item.frame)||item.frame<0||item.frame>=m.images[m.actors.equipment]?.atlas?.frameCount||!item.grip?.every(Number.isFinite)||!(item.scale>0))problem('actor.'+name,'invalid equipment anchor');
@@ -61,6 +72,7 @@ function validate(m,base=root){
   for(const [key,count]of [['rifleHands',8],['toolHands',16]])if(m.actors[key]?.length!==count||m.actors[key].some(pair=>pair.length!==2||pair.some(p=>p.length!==2||!p.every(Number.isFinite))))problem(key,'invalid hand anchors');
   const mod=m.actors.modular;
   if(mod){
+   if(mod.walkScale&&Object.values(mod.walkScale).some(s=>!(s>0&&s<=1)))problem('actors.modular.walkScale','invalid movement correction');
    const point=p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite);
    const layer=(key,l)=>{if(!l||!m.images[l.id]?.atlas?.frames?.[l.key]||!point(l.offset)||!point(l.size)||l.size.some(v=>v<=0))problem(key,'invalid modular layer');};
    if(mod.walkCount!==12||!point(mod.pivot)||mod.scale!==.125)problem('actors.modular','invalid master scale/anchor');

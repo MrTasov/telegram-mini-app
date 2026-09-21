@@ -1,13 +1,13 @@
-> Актуальный патч: **corrective-performance-1** — движение с совместимыми действиями, расчёт маршрутов по частям, дерево → 10 Wood за 2,3 с, камни 18 → 36, corpses ×0,5, автоматическая защита в Drone Attack Target. Версия игры/сохранений: 0.29.0 / 3. Отчёт: [CORRECTIVE_PERFORMANCE_RU.md](CORRECTIVE_PERFORMANCE_RU.md). Прежние визуальные исправления персонажа, инструментов и рыбы сохранены.
+> Актуальный патч: **visual-audio-polish-1** — ускоренная визуальная добыча, синхронные звуки, muzzle VFX, новые иконки руды, исправление масштаба ходьбы, текущие corpses ×1,2. Версия игры/сохранений: 0.29.0 / 3. Отчёт: [POLISH_RU.md](POLISH_RU.md). Баланс и gameplay сохранены.
 
 # LAST BASE 0.29.0
 
-Отдельный corrective/performance patch поверх текущей 0.29.0 Player Visual Fix. Готовая сборка, исходники и полный regression suite включены.
+Отдельный Visual / Animation / Audio Polish поверх 0.29.0 Corrective Performance 1. Готовая сборка, исходники и полный regression suite включены.
 
 1. Распакуйте архив. Загрузите `index.html`, `js/`, `styles/`, `assets/` с сохранением структуры папок.
 2. Сохраните прежний адрес сайта (origin) и данные браузера — пять локальных слотов находятся в том же хранилище. Старые сохранения не требуют нового формата.
-3. Обновите страницу после загрузки всех файлов. Cache-tag JavaScript — `0.29.0-corrective-performance-1`.
-4. Проверьте игру на PC и телефоне по списку в `CORRECTIVE_PERFORMANCE_RU.md`.
+3. Обновите страницу после загрузки всех файлов. Cache-tag JavaScript — `0.29.0-visual-audio-polish-1`.
+4. Проверьте игру на PC и телефоне по списку в `POLISH_RU.md`.
 
 `character-preview.html` — дополнительный просмотр кадров, поворотов, инструментов и сна. Открывается через HTTP-сервер рядом с игрой. Он не читает и не меняет игровые сохранения.
 
@@ -15,4 +15,4 @@
 
 В архиве есть исходники, Asset Manifest, тесты, точная исполняемая база 0.28.0, визуальные контрольные изображения и отчёт. `dev.html` — прежний изолированный режим тестирования; не используйте его для обычной игры.
 
-Основной отчёт: `CORRECTIVE_PERFORMANCE_RU.md`. Список изменённых файлов: `CORRECTIVE_CHANGESET.json`. Результаты полного suite: `qa/results/summary.json`. Сравнение теней и corpses: `qa/results/corrective-zombies.png`. Замеры до/после: `node qa/corrective-bench.cjs`, запускать отдельно от тестов. Старые отчёты относятся к указанным в них этапам.
+Основной отчёт: `POLISH_RU.md`. Список изменённых файлов: `POLISH_CHANGESET.json`. Результаты полного suite: `qa/results/summary.json`. Сравнение теней и corpses: `qa/results/polish-visuals/corpses.png`. Замеры до/после: `node qa/polish-bench.cjs`, запускать отдельно от тестов. Старые отчёты относятся к указанным в них этапам.

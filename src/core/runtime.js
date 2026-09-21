@@ -107,8 +107,7 @@ const sounds = {
 let audioCtx=null;
 const audioBuffers={};
 let audioLoadStarted=false;
-let footstepsSource=null;
-let footstepsGain=null;
+const animationVoices=new Map();
 let lastZombieBufferAt=0;
 
 const AUDIO_FILES=GameAssets.audioSources();
@@ -181,79 +180,40 @@ function playBuffer(name,volume=1){
 }
 
 function stopFootsteps(){
-  if(footstepsSource){
-    const source=footstepsSource;
-    const gain=footstepsGain;
-
-    footstepsSource=null;
-    footstepsGain=null;
-
-    try{ source.stop(0); }catch(e){}
-    try{ source.disconnect(); }catch(e){}
-    try{ if(gain) gain.disconnect(); }catch(e){}
-  }
+  stopAnimationSound('step');
 }
 
 function startFootsteps(){
-  // 0.4.13 uses scheduled one-shot footsteps instead of MP3 looping.
+  // Contacts are emitted by the shared visual locomotion phase.
   return;
 }
 
+function stopAnimationSound(channel){
+  const voice=animationVoices.get(channel);if(!voice?.source)return;
+  const source=voice.source;voice.source=null;
+  try{source.stop(0);}catch(e){}try{source.disconnect();}catch(e){}
+}
+
+function playAnimationSound(name,channel,volume=1,rate=1){
+  // Only two bounded channels and two reusable GainNodes. BufferSource nodes
+  // are one-shot WebAudio objects: create on contact, disconnect on completion.
+  if(!['step','work'].includes(channel)||masterVolume<=0)return false;
+  const ctx=audioCtx,buffer=audioBuffers[name];
+  if(!ctx||!buffer||ctx.state!=='running')return false;
+  try{
+    let voice=animationVoices.get(channel);
+    if(!voice){const gain=ctx.createGain();gain.connect(ctx.destination);voice={gain,source:null};animationVoices.set(channel,voice);}
+    stopAnimationSound(channel);
+    const source=ctx.createBufferSource();source.buffer=buffer;source.loop=false;source.playbackRate.value=rate;
+    voice.gain.gain.value=clamp(volume*masterVolume,0,1);source.connect(voice.gain);voice.source=source;
+    source.onended=()=>{if(voice.source===source)voice.source=null;try{source.disconnect();}catch(e){}};
+    source.start(0);return true;
+  }catch(e){return false;}
+}
+
 function updateFootstepsAudio(){
-  if(GameFlow.paused || movePower<=JOY_DEAD){
-    stopFootsteps();
-    return;
-  }
-
-  const ctx=ensureAudioContext();
-  const buffer=audioBuffers.footsteps;
-  if(!ctx || !buffer || ctx.state!=="running") return;
-
-  const running=movePower>=RUN_THRESHOLD;
-
-  // Never create a second footsteps source while one is already playing.
-  if(!footstepsSource){
-    try{
-      const source=ctx.createBufferSource();
-      const gain=ctx.createGain();
-
-      source.buffer=buffer;
-      source.loop=true;
-      source.playbackRate.value=running?1.08:.94;
-
-      // Footsteps are intentionally much louder than before.
-      gain.gain.value=clamp(masterVolume*(running?.48:.42),0,1);
-
-      source.connect(gain);
-      gain.connect(ctx.destination);
-      source.start(0);
-
-      footstepsSource=source;
-      footstepsGain=gain;
-
-      source.onended=function(){
-        if(footstepsSource===source){
-          footstepsSource=null;
-          footstepsGain=null;
-        }
-        try{
-          source.disconnect();
-          gain.disconnect();
-        }catch(e){}
-      };
-    }catch(e){}
-  }else{
-    try{
-      footstepsGain.gain.setValueAtTime(
-        clamp(masterVolume*(running?.48:.42),0,1),
-        ctx.currentTime
-      );
-      footstepsSource.playbackRate.setValueAtTime(
-        running?1.08:.94,
-        ctx.currentTime
-      );
-    }catch(e){}
-  }
+  window.ActorVisuals?.updateAudio();
+  if(masterVolume<=0){stopAnimationSound('step');stopAnimationSound('work');}
 }
 
 const ZOMBIE_AUDIO_RADIUS=285;

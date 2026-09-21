@@ -31,7 +31,7 @@ async function main(){
  });
  await check('assets.approvedEquipmentPreservesUnarmedSleepAndZombies',()=>{
   const prior=plain(B('AssetManifest'));
-  assert.deepEqual(catalog.actors.unarmed,{idle:'actor/unarmed_idle',pivot:[192,192],bodyScale:.125,walkCount:12,cycleDistance:226.8});
+  assert.deepEqual(catalog.actors.unarmed,{idle:'actor/unarmed_idle',pivot:[192,192],bodyScale:.125,walkCount:12,cycleDistance:226.8,walkScale:.94,contactPhases:[0,.5]});
   assert.deepEqual(catalog.images[catalog.actors.body.sleep],prior.images[prior.actors.body.sleep]);
   for(const [id,d]of Object.entries(catalog.images))if(id.startsWith('art/monster_')||id.startsWith('art/corpse_'))assert.deepEqual(d,prior.images[id]);
   for(const d of Object.values(catalog.actors.modular.items))assert.equal(d.walk.length,12);
@@ -101,7 +101,7 @@ async function main(){
    E(`ctx.setTransform(1,0,0,1,0,0);ActorVisuals.renderPose({kind:'unarmed',id:'${id}',frame:${i},item:null,hands:null},150,150,${angle});`);
    const {m}=plain(E('masterMatrices.at(-1)')),pivot=[m[0]*192+m[2]*192+m[4],m[1]*192+m[3]*192+m[5]];
    assert.ok(Math.hypot(pivot[0]-150,pivot[1]-150)<1e-4,'rotation shifted ground anchor');
-   assert.ok(Math.abs(Math.hypot(m[0],m[1])-.125*catalog.actors.visualScale)<1e-6,'idle/walk scale differs from requested visual scale');
+   assert.ok(Math.abs(Math.hypot(m[0],m[1])-.125*catalog.actors.visualScale*(id===walkId?catalog.actors.unarmed.walkScale:1))<1e-6,'pose scale differs from requested visual correction');
   }}finally{E('ctx.drawImage=masterOriginalDraw');}
  });
  await check('legacy.M4RetainedAndApprovedItemsUseExistingMotion',()=>{

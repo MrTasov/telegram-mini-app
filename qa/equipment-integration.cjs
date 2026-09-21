@@ -44,8 +44,8 @@ async function main(){
   fresh();const action=mod.items[item].action;let elapsed=0;const seen=new Set();
   for(let i=0;i<12;i++){
    const t=elapsed+action.durations[i]/2;
-   if(item==='axe')E(`chopState={id:worldTrees[0].id,duration:${action.duration},startedAt:Date.now()-${t}}`);
-   if(item==='pickaxe')E(`V09World.resumeMining({id:V09World.ores[0].id,elapsed:${t},duration:${action.duration},at:Date.now()})`);
+   if(item==='axe')E(`chopState={id:worldTrees[0].id,duration:${action.duration},startedAt:Date.now()-${t/catalog.actors.gathering.playbackRate}}`);
+   if(item==='pickaxe')E(`V09World.resumeMining({id:V09World.ores[0].id,elapsed:${t/catalog.actors.gathering.playbackRate},duration:${action.duration},at:Date.now()})`);
    if(item==='hammer')E(`window.qaHammer=ActorVisuals.framePose('hammer','work',${i});qaHammer.localTime=${t};qaHammer.work={key:'qa',elapsed:${t},duration:${action.duration},material:'metal',target:{x:840,y:810,w:15,h:80}}`);
    const expr=item==='hammer'?'qaHammer':`ActorVisuals.pose('${item}')`,p=plain(E(expr));seen.add(p.frame);assert.equal(p.frame,i);
    const position=plain(E('({...player})'));E(`ActorVisuals.renderPose(${expr},player.x,player.y,Math.atan2(player.aimY,player.aimX))`);assert.deepEqual(plain(E('({...player})')),position);

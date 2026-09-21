@@ -8,6 +8,7 @@ exports.resourceProjection=value=>{
 };
 exports.snapshot=value=>{value=JSON.parse(JSON.stringify(value));value.save=exports.resourceProjection(value.save);return value;};
 exports.sourceChanges=new Set([
+ ...require('./polish-contract.cjs').sourceChanges,
  'src/config/gameplay.js','src/core/world-inventory.js','src/core/loop-viewport.js',
  'src/core/input-combat.js','src/ui/context-map.js','src/save/legacy-progress.js',
  'src/simulation/flow.js','src/base/fortress-navigation.js','src/world/camera.js',

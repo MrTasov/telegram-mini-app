@@ -34,7 +34,9 @@ const jobs=[
  ['equipment-integration','qa/equipment-integration.cjs',[]],
  ['player-visual-fix','qa/player-visual-fix.cjs',[]],
  ['corrective-performance','qa/corrective-performance.cjs',[]],
- ['corrective-visuals','qa/corrective-visuals.cjs',[]]
+ ['corrective-visuals','qa/corrective-visuals.cjs',[]],
+ ['polish','qa/polish.cjs',[]],
+ ['polish-visuals','qa/polish-visuals.cjs',[]]
 ],runs=[];
 async function run(index){
  const [id,file,args]=jobs[index];
@@ -50,7 +52,7 @@ async function run(index){
  await Promise.all(Array.from({length:concurrency},async()=>{while(next<jobs.length)await run(next++);}));
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
 const reports=[read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
-reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'),read('player-visual-fix.json'),read('corrective-performance.json'),read('corrective-visuals.json'));
-const summary={version:require('../package.json').version,stage:7,patch:"corrective-performance-1",stage6Started:true,stage7Started:true,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.','Seven optional audio assets were already absent in Stage 0; absent sounds are not requested.']};
+reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'),read('player-visual-fix.json'),read('corrective-performance.json'),read('corrective-visuals.json'),read('polish.json'),read('polish-visuals.json'));
+const summary={version:require('../package.json').version,stage:7,patch:"visual-audio-polish-1",stage6Started:true,stage7Started:true,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.','Six historical optional audio assets remain absent; three new WAV effects are included.']};
 fs.writeFileSync(path.join(out,'summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));if(!summary.passed)process.exitCode=1;
 })().catch(error=>{console.error(error);process.exitCode=1;});

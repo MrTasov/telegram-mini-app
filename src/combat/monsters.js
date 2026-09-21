@@ -232,6 +232,19 @@ window.V017Monsters=(()=>{
   }
   // One small cached soft shadow; no per-zombie gradients, filters or allocations.
   let groundShadow=null;
+  const corpseRasters=new Map();
+  function corpseRaster(key,im,b,w,h){
+    // At most one prepared raster per type/pose, shared by every matching corpse.
+    // Match current display density in half-step buckets; replace on zoom/DPR
+    // changes instead of retaining another texture for every zoom level.
+    const transform=ctx.getTransform(),density=Math.max(1,Math.ceil(Math.hypot(transform.a,transform.b)*2)/2);
+    const width=Math.ceil(w*density),height=Math.ceil(h*density),old=corpseRasters.get(key);
+    if(old&&old.width===width&&old.height===height)return old;
+    const image=typeof OffscreenCanvas==='function'?new OffscreenCanvas(width,height):document.createElement('canvas');image.width=width;image.height=height;
+    image.getContext('2d').drawImage(im,b.x,b.y,b.w,b.h,0,0,width,height);
+    corpseRasters.set(key,image);return image;
+  }
+  const visualCacheStats=()=>({corpseRasters:corpseRasters.size,corpseRgbaBytes:[...corpseRasters.values()].reduce((n,im)=>n+im.width*im.height*4,0)});
   function shadow(width,height,alpha){
     if(!groundShadow){groundShadow=document.createElement('canvas');groundShadow.width=groundShadow.height=64;const c=groundShadow.getContext('2d'),g=c.createRadialGradient(32,32,5,32,32,32);g.addColorStop(0,'rgba(7,18,17,.48)');g.addColorStop(.55,'rgba(7,18,17,.28)');g.addColorStop(1,'rgba(7,18,17,0)');c.fillStyle=g;c.fillRect(0,0,64,64);}
     ctx.save();ctx.globalAlpha*=alpha;ctx.drawImage(groundShadow,-width/2,-height/2,width,height);ctx.restore();
@@ -240,8 +253,9 @@ window.V017Monsters=(()=>{
     const r=prepare(z),age=Math.max(0,performance.now()-r.deadAt);if(r.retired||age>=CORPSE_MS)return;
     const s=specs[z.type],key='corpse_'+s.art+'019',im=V011Art.image(key);if(!V011Art.ready(key))return;
     const b=V011Art.frame(key,r.variant);if(!b)return;
-    const size=s.size*1.16*.5*(AssetManifest.images[GameAssets.artId('monster_'+s.art+'017')].visualScale||1),scale=size/Math.max(b.w,b.h),w=b.w*scale,h=b.h*scale;
-    ctx.save();ctx.translate(z.x,z.y);ctx.rotate(r.deathAngle);ctx.globalAlpha*=corpseOpacity(z);ctx.save();ctx.translate(1,2);shadow(w*1.12,h*.8,.8);ctx.restore();ctx.drawImage(im,b.x,b.y,b.w,b.h,-w/2,-h/2,w,h);ctx.restore();
+    const size=s.size*1.16*.5*AssetManifest.actors.corpseScaleFromPrevious*(AssetManifest.images[GameAssets.artId('monster_'+s.art+'017')].visualScale||1),scale=size/Math.max(b.w,b.h),w=b.w*scale,h=b.h*scale;
+    const raster=corpseRaster(key+':'+r.variant,im,b,w,h);
+    ctx.save();ctx.translate(z.x,z.y);ctx.rotate(r.deathAngle);ctx.globalAlpha*=corpseOpacity(z);ctx.save();ctx.translate(1,2);shadow(w*1.12,h*.8,.8);ctx.restore();ctx.drawImage(raster,0,0,raster.width,raster.height,-w/2,-h/2,w,h);ctx.restore();
   }
   drawZombie=function(z){
     if(!visibleOnScreen(z.x,z.y,120))return;if(!z.alive){drawCorpse(z);return;}const r=prepare(z),s=specs[z.type],now=performance.now();
@@ -284,5 +298,5 @@ window.V017Monsters=(()=>{
   });
   const reset=resetZombies;resetZombies=function(){reset();runtime=new WeakMap();effects=[];zombies.forEach((z,i)=>{z.type=typeAt(i);z.monster017=false;z.health=100;z.maxHealth=100;prepare(z);});};
   zombies.forEach((z,i)=>{z.type=typeAt(i);prepare(z);});
-  return{specs,stats,dayX,typeAt,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
+  return{specs,stats,dayX,typeAt,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,visualCacheStats,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
 })();

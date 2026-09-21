@@ -1,0 +1,117 @@
+{
+  "patch": "visual-audio-polish-1",
+  "passed": 26,
+  "failed": 0,
+  "audio": {
+    "requests": 3,
+    "maxActiveSources": 2,
+    "reusedGainNodes": 2,
+    "htmlAudioInstances": 11
+  },
+  "checks": [
+    {
+      "id": "scope.onlyDeclaredPresentationSourcesChanged",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.threeWavFilesDecodedOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.noDuplicateImages",
+      "status": "PASS"
+    },
+    {
+      "id": "gameplay.definitionsAndMiningOwnersByteIdentical",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.tree.twoCyclesAndSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.stone.twoCyclesAndSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.iron_ore.twoCyclesAndSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.copper_ore.twoCyclesAndSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.coal.twoCyclesAndSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.realTreeYieldAndCompletionUnchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.stepsFollowForwardAndBackwardContactPhases.1",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.stepsFollowForwardAndBackwardContactPhases.-1",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.blockedPlayerDoesNotPlaySteps",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.hiddenAndMutedStopAllVoices",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.1000ContactsBoundedSourcesAndReusableGains",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.resumeDoesNotReplayOldMiningHit",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.rifle_ak74.muzzleAndTrajectory.idle",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.rifle_ak74.muzzleAndTrajectory.walk",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.rifle_m4.muzzleAndTrajectory.idle",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.rifle_m4.muzzleAndTrajectory.walk",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.AKSpriteMuzzleAndWorldAnchorMatchAllWalkFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "scale.idleUnchangedMovementOnlySharedLayerTransform",
+      "status": "PASS"
+    },
+    {
+      "id": "scale.corpseExactly120percentOfPrevious",
+      "status": "PASS"
+    },
+    {
+      "id": "corpse.cacheSharedByTypeAndPoseAndReplacedOnZoom",
+      "status": "PASS"
+    },
+    {
+      "id": "console.noErrors",
+      "status": "PASS"
+    },
+    {
+      "id": "combat.seededShotsIdenticalDamageAmmoSpreadAndProjectileStates",
+      "status": "PASS"
+    }
+  ]
+}

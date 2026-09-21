@@ -18,10 +18,10 @@ async function main(){
   results.push(measurements);
  }
  c.globalCompositeOperation='destination-over';c.fillStyle='#46513f';c.fillRect(0,0,1000,780);c.globalCompositeOperation='source-over';c.fillStyle='#eceddd';c.font='22px sans-serif';c.fillText('BEFORE',20,35);c.fillText('AFTER',520,35);c.font='16px sans-serif';
- c.fillText('Living zombies — unchanged body scale',20,85);c.fillText('Corpses — 50% linear scale + soft shadow',20,435);
+ c.fillText('Living zombies — unchanged body scale',20,85);c.fillText('Corpses — 50% corrective scale × 1.2 polish',20,435);
  for(let col=0;col<2;col++)for(let i=0;i<5;i++){c.fillText(kinds[i],col*500+i*100+8,225);c.fillText(kinds[i],col*500+i*100+8,575);}
  c.fillStyle='#c9cbbd';c.fillText('Same camera, sprite poses and canvas scale. Native Canvas2D review.',20,730);
- for(let i=0;i<results[0].length;i++){const a=results[0][i],b=results[1][i],factor=a.dead?.5:1;const ok=Math.abs(b.width/a.width-factor)<1e-9&&Math.abs(b.height/a.height-factor)<1e-9;checks.push({id:(a.dead?'corpse50.':'livingUnchanged.')+a.type,status:ok?'PASS':'FAIL',before:a,after:b});}
+ for(let i=0;i<results[0].length;i++){const a=results[0][i],b=results[1][i],factor=a.dead?.5*require('../assets/manifest.json').actors.corpseScaleFromPrevious:1;const ok=Math.abs(b.width/a.width-factor)<1e-9&&Math.abs(b.height/a.height-factor)<1e-9;checks.push({id:(a.dead?'corpseCorrectiveThenPolish.':'livingUnchanged.')+a.type,status:ok?'PASS':'FAIL',before:a,after:b});}
  for(const r of runtimes)assert.deepEqual(r.errors,[]);
  fs.mkdirSync(path.join(root,'qa/results'),{recursive:true});fs.writeFileSync(path.join(root,'qa/results/corrective-zombies.png'),out.toBuffer('image/png'));
  const report={passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status==='FAIL').length,checks};fs.writeFileSync(path.join(root,'qa/results/corrective-visuals.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));if(report.failed)process.exitCode=1;

@@ -30,7 +30,7 @@ const refs=[...new Set([...body.matchAll(/["'`]((?:assets\/)[\w/.-]+\.(?:png|web
 const missing=refs.filter(p=>!fs.existsSync(path.join(root,p)));
 const optional=require('../tools/assets.cjs').validate(require('../assets/manifest.json')).optionalMissing;
 check('assets.noNewMissingPaths',()=>assert.deepEqual(missing.sort(),optional.sort()));
-check('assets.onlyHistoricalOptionalAudioMissing',()=>assert.deepEqual(optional.map(p=>path.basename(p)).sort(),[...oldAssets.missing].sort()));
+check('assets.onlyHistoricalOptionalAudioMissing',()=>assert.deepEqual(optional.map(p=>path.basename(p)).sort(),oldAssets.missing.filter(p=>p!=='footsteps.mp3').sort()));
 const map=JSON.parse(fs.readFileSync(path.join(root,'js/game.js.map')));
 check('debug.sourceMap',()=>{assert.deepEqual(map.sources,manifest.files);assert.deepEqual(map.sourcesContent,parts);assert.equal(map.mappings.split(';').length,body.split('\n').length-1);});
 const result={passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status!=='PASS').length,checks,knownMissingAudio:missing,notes:['Missing MP3 were already absent in Stage 0 and are not silently repaired or replaced.']};
