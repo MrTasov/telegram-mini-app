@@ -1,0 +1,37 @@
+{
+  "patch": "hud-compact-1",
+  "base": "LAST_BASE_0.29.0_HUD_Display_1.zip",
+  "runtimeSourceEdits": [
+    "src/ui/display.js"
+  ],
+  "unchangedAssetFiles": 143,
+  "newRuntimeAssets": 0,
+  "added": [
+    "HUD_COMPACT_CHANGESET.json",
+    "HUD_COMPACT_RU.md",
+    "qa/results/hud-compact-summary.json"
+  ],
+  "modified": [
+    "README.md",
+    "README_RU.md",
+    "dev.html",
+    "index.html",
+    "js/build-info.json",
+    "js/game.js",
+    "js/game.js.map",
+    "qa/hud-display.cjs",
+    "qa/results/hud-display.json",
+    "qa/results/verification.json",
+    "qa/run.cjs",
+    "qa/stage5-reference.json",
+    "release_manifest.json",
+    "src/ui/display.js",
+    "styles/hud.css"
+  ],
+  "removed": [],
+  "notes": [
+    "Only HUD presentation changes. Source, asset and save owners outside src/ui/display.js are byte-identical to the base.",
+    "Existing HUD checks updated for the requested name and three-digit day; all frozen fixtures retained.",
+    "Full previous suite retained as historical evidence; 514 targeted checks and build check passed for this follow-up."
+  ]
+}

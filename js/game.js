@@ -14224,11 +14224,11 @@ window.GameHUD=(()=>{
   for(const node of [day,time,fps,frameTime,name,ammo,reserve]){node.setAttribute('data-i18n-skip','');text.set(node,{node:node.childNodes[0],value:null});}
   function write(node,value){const entry=text.get(node);if(entry.value===value)return;entry.value=value;entry.node.nodeValue=String(value);}
   function show(node,visible){if(node.hidden!==!visible)node.hidden=!visible;}
-  let lastDay=-1,lastMinute=-1,lastType=null,lastLevel=-1,lastLanguage='',lastName='';
+  let lastDay=-1,lastMinute=-1,lastType=null,lastLanguage='',lastName='';
   function refreshClock(){
     if(!settings.dayTime)return;
     const d=WorldClock.day,m=Math.floor(WorldClock.minute);
-    if(d!==lastDay){write(day,d);lastDay=d;const digits=String(d).length;day.style.fontSize=digits>5?(5/digits)+'em':'';}
+    if(d!==lastDay){write(day,d);lastDay=d;const digits=String(d).length;day.style.fontSize=digits>3?(3/digits)+'em':'';}
     if(m!==lastMinute){write(time,String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'));lastMinute=m;}
   }
   function refreshEquipped(item,gun,practiceRounds){
@@ -14237,9 +14237,9 @@ window.GameHUD=(()=>{
     if(!type||!ITEM[type]){show(equipped,false);return;}
     if(item===undefined)item=V010Combat.currentWeapon();
     if(gun===undefined)gun=item&&V09Craft.weapons[item.type];
-    const firearm=!!gun,level=item?.level||0,source=firearm?gun.name:ITEM[type].name;
-    if(type!==lastType||level!==lastLevel||I18n.language!==lastLanguage||source!==lastName){
-      write(name,I18n.text(source)+(firearm?' +'+level:''));lastType=type;lastLevel=level;lastLanguage=I18n.language;lastName=source;
+    const firearm=!!gun,source=firearm?gun.name:ITEM[type].name;
+    if(type!==lastType||I18n.language!==lastLanguage||source!==lastName){
+      write(name,I18n.text(source));lastType=type;lastLanguage=I18n.language;lastName=source;
     }
     if(equipped.dataset.firearm!==String(firearm))equipped.dataset.firearm=String(firearm);
     show(ammo,firearm);show(reserve,firearm);show(equipped,true);

@@ -19,6 +19,7 @@ const valueNodes=['hudDay','hudTime','hudFPS','hudFrameTime','equippedItemName',
 for(const language of ['ru','en'])for(const day of [1,9,10,99,100,999,1000,1000000])check(`clock.${language}.${day}`,()=>{
  E(`I18n.setLanguage('${language}');V016Lighting.restore({schema:1,day:${day},minute:759});`);
  assert.equal(node('hudDay').textContent,String(day));assert.equal(node('hudDayLabel').textContent,language==='ru'?'ДЕНЬ':'DAY');assert.equal(node('hudTime').textContent,'12:39');assert.equal(E('WorldClock.day'),day);
+ assert.equal(node('hudDay').style.fontSize,day<=999?'':(3/String(day).length)+'em');
 });
 for(const [minute,expected]of [[0,'00:00'],[9,'00:09'],[599,'09:59'],[720,'12:00'],[1439,'23:59']])check('clock.time.'+expected,()=>{E(`V016Lighting.restore({schema:1,day:17,minute:${minute}})`);assert.equal(node('hudTime').textContent,expected);});
 for(let mask=0;mask<32;mask++)check('display.independentCombination.'+mask,()=>{
@@ -44,7 +45,7 @@ check('menu.sameSettingsNodesBeforeAndAfterLaunch',()=>{
 restore();E('GameHUD.set("equippedItem",true);GameHUD.set("dayTime",true);I18n.setLanguage("en");');
 for(const weapon of ['rifle_ak74','rifle_m4'])for(const capacity of [0,30,60])for(const rounds of [0,1,21,capacity].filter((n,i,a)=>n<=capacity&&a.indexOf(n)===i))check(`weapon.${weapon}.${rounds}/${capacity}`,()=>{
  equip(weapon);E(`window.hudWeapon=V010Combat.currentWeapon();hudWeapon.magazineType=${capacity===60?'"magazine_module"':capacity===30?'"magazine_standard"':'null'};hudWeapon.rounds=${rounds};hudWeapon.level=5;updateAmmoHud();`);
- assert.equal(node('ammoHud').textContent,rounds+'/'+capacity);assert.equal(node('equippedItemName').textContent,(weapon==='rifle_ak74'?'AK-74':'M4')+' +5');assert.equal(node('ammoHud').hidden,false);assert.equal(node('hudReserve').textContent,String(E(`bagCount(V09Craft.weapons.${weapon}.ammo)`)));
+ assert.equal(node('ammoHud').textContent,rounds+'/'+capacity);assert.equal(node('equippedItemName').textContent,weapon==='rifle_ak74'?'AK-74':'M4');assert.equal(E('hudWeapon.level'),5);assert.equal(node('ammoHud').hidden,false);assert.equal(node('hudReserve').textContent,String(E(`bagCount(V09Craft.weapons.${weapon}.ammo)`)));
 });
 for(const count of [0,9,120,999])check('weapon.reserve.'+count,()=>{
  equip('rifle_ak74');E(`removeItem('ammo',bagCount('ammo'));addItem('ammo',${count});updateAmmoHud();`);assert.equal(node('hudReserve').textContent,String(count));
@@ -96,7 +97,7 @@ check('safeArea.telegramInsetsShareExistingEventOwner',()=>{
  app.safeAreaInset.bottom=21;for(const fn of events.safeAreaChanged)fn();assert.equal(style['--v011-safe-bottom'],'26px');assert.deepEqual(q.errors,[]);
 });
 check('layout.fixedColumnsTabularNumbersNoPanelsOrImages',()=>{
- const css=fs.readFileSync('styles/hud.css','utf8');assert.ok(css.includes('grid-template-columns:3.6em 5ch 5ch 2ch'));assert.ok(css.includes('grid-template-columns:minmax(0,1fr) 7ch 5ch'));assert.ok(css.includes('tabular-nums lining-nums'));assert.ok(css.includes('text-shadow:0 1px 2px #000,0 0 1px #000'));assert.ok(css.includes('background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none'));assert.ok(!/url\(/.test(css));assert.ok(css.includes('#hud [hidden]'));assert.ok(css.includes('var(--hud-safe-bottom)'));assert.ok(css.includes('orientation:landscape'));assert.ok(css.includes('pointer-events:none'));
+ const css=fs.readFileSync('styles/hud.css','utf8');assert.ok(css.includes('grid-template-columns:3.2em 3ch 5ch 2ch'));assert.ok(css.includes('grid-template-columns:minmax(0,1fr) 5ch 4ch'));assert.ok(css.includes('tabular-nums lining-nums'));assert.ok(css.includes('text-shadow:0 1px 2px #000,0 0 1px #000'));assert.ok(css.includes('background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none'));assert.ok(!/url\(/.test(css));assert.ok(css.includes('#hud [hidden]'));assert.ok(css.includes('var(--hud-safe-bottom)'));assert.ok(css.includes('orientation:landscape'));assert.ok(css.includes('pointer-events:none'));
 });
 check('layout.defaultPortraitJoystickAndVerticalClearanceContract',()=>{
  const css=fs.readFileSync('styles/hud.css','utf8');
@@ -108,11 +109,11 @@ check('layout.defaultPortraitJoystickAndVerticalClearanceContract',()=>{
  assert.ok(itemBottom-vitalsBottom-vitalsHeight>=6,'item line must clear the existing vitals');
  assert.ok(stops[0]-itemBottom-lineHeight>=6,'route stop must clear the one-line item HUD');
  assert.ok(stops[1]-itemBottom-lineHeight*2>=6,'route stop must clear the narrow two-line item HUD');
- const rule=css.match(/width:min\(300px,calc\((\d+)vw - (\d+)px\)\)/);assert.ok(rule);
+ const rule=css.match(/width:min\((\d+)px,calc\((\d+)vw - (\d+)px\)\)/);assert.ok(rule);
  for(const width of [320,360,390,430,768]){
-  const hudWidth=Math.min(300,width*Number(rule[1])/100-Number(rule[2])),left=(width-hudWidth)/2,right=left+hudWidth;
+  const hudWidth=Math.min(Number(rule[1]),width*Number(rule[2])/100-Number(rule[3])),left=(width-hudWidth)/2,right=left+hudWidth;
   assert.ok(left-(width*.18+46)>=3.99,'left default joystick '+width);assert.ok((width*.82-46)-right>=3.99,'right default joystick '+width);
  }
 });
 check('console.noErrors',()=>assert.deepEqual(r.errors,[]));
-const result={patch:'hud-display-1',passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status==='FAIL').length,checks,limitations:['Modeled DOM/Pointer Events, real Canvas. Browser CSS layout, physical phone and Telegram require manual review.']};fs.writeFileSync('qa/results/hud-display.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({passed:result.passed,failed:result.failed,failures:checks.filter(c=>c.status==='FAIL')}));if(result.failed)process.exitCode=1;
+const result={patch:'hud-compact-1',passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status==='FAIL').length,checks,limitations:['Modeled DOM/Pointer Events, real Canvas. Browser CSS layout, physical phone and Telegram require manual review.']};fs.writeFileSync('qa/results/hud-display.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({passed:result.passed,failed:result.failed,failures:checks.filter(c=>c.status==='FAIL')}));if(result.failed)process.exitCode=1;

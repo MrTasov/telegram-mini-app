@@ -14,13 +14,13 @@
 }
 #hud{
   position:fixed;left:calc(var(--hud-safe-left) + 12px);right:auto;
-  top:var(--v011-game-top)!important;display:flex;flex-direction:column;gap:2px;
-  padding:0;margin:0;font-size:12px;line-height:18px;width:max-content;
+  top:var(--v011-game-top)!important;display:flex;flex-direction:column;gap:1px;
+  padding:0;margin:0;font-size:12px;line-height:17px;width:max-content;
 }
 #hud #v016WorldClock,#hudPerformance{
-  display:grid;grid-template-columns:3.6em 5ch 5ch 2ch;column-gap:.65em;align-items:baseline;
+  display:grid;grid-template-columns:3.2em 3ch 5ch 2ch;column-gap:.35em;align-items:baseline;
 }
-#hudDayLabel,#hudFPSLabel{grid-column:1;font-size:.9em;letter-spacing:.055em}
+#hudDayLabel,#hudFPSLabel{grid-column:1;font-size:.9em;letter-spacing:.03em}
 #hudDay,#hudFPS{grid-column:2;text-align:right;white-space:nowrap}
 #hudTime{grid-column:3/5;text-align:left;white-space:nowrap}
 #hudFrameTime{grid-column:3;text-align:right;white-space:nowrap}
@@ -29,8 +29,8 @@
 #hudPerformance[data-fps="false"] #hudFrameTime{grid-column:1;text-align:left}
 #hudPerformance[data-fps="false"] #hudFrameUnit{grid-column:2}
 body #heldItemName{
-  display:grid;grid-template-columns:minmax(0,1fr) 7ch 5ch;gap:10px;align-items:baseline;
-  width:min(300px,68vw);font-size:12px!important;line-height:18px;
+  display:grid;grid-template-columns:minmax(0,1fr) 5ch 4ch;gap:6px;align-items:baseline;
+  width:min(220px,62vw);font-size:12px!important;line-height:17px;
   bottom:calc(94px + var(--hud-safe-bottom))!important;z-index:115;
   left:calc(50% + (var(--hud-safe-left) - var(--hud-safe-right))/2);transform:translateX(-50%);
 }
@@ -58,13 +58,13 @@ body #v014RouteStop{bottom:calc(120px + var(--hud-safe-bottom))!important;left:c
 #displaySaveStatus{font-size:11px;line-height:1.4;color:#e1bc8c;margin:5px 0 0}
 #displaySaveStatus[hidden]{display:none}
 @media(orientation:landscape) and (max-height:550px){
-  #hud,body #heldItemName{font-size:11px!important;line-height:17px}
+  #hud,body #heldItemName{font-size:11px!important;line-height:16px}
 }
-@media(max-width:360px){body #heldItemName{width:72vw;gap:7px;font-size:11px!important}}
+@media(max-width:360px){body #heldItemName{width:min(220px,68vw);gap:5px;font-size:11px!important}}
 /* Portrait text fits between the existing .18w/.82w joystick centers (92px circles).
    Safe-area changes can move the bar vertically through those circles. */
 @media(orientation:portrait){
-  body[data-control-mode="MOBILE"] #heldItemName{width:min(300px,calc(64vw - 100px));grid-template-columns:minmax(0,1fr) 5ch 4ch;gap:6px;font-size:11px!important}
+  body[data-control-mode="MOBILE"] #heldItemName{width:min(180px,calc(64vw - 112px));grid-template-columns:minmax(0,1fr) 5ch 4ch;gap:4px;font-size:11px!important}
   body[data-control-mode="MOBILE"] #heldItemName[data-firearm="false"]{grid-template-columns:minmax(0,1fr)}
 }
 @media(orientation:portrait) and (max-width:360px){
