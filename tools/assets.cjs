@@ -56,6 +56,7 @@ function validate(m,base=root){
   if(m.actors.visualScale!==undefined&&!(m.actors.visualScale>0&&m.actors.visualScale<=3))problem('actors.visualScale','invalid presentation scale');
   if(m.actors.unarmed?.walkScale!==undefined&&!(m.actors.unarmed.walkScale>0&&m.actors.unarmed.walkScale<=1))problem('actors.unarmed.walkScale','invalid movement correction');
   if(m.actors.unarmed?.contactPhases?.some(p=>!Number.isFinite(p)||p<0||p>=1))problem('actors.unarmed.contactPhases','invalid contact phase');
+  if(m.actors.unarmed&&!(Number.isFinite(m.actors.unarmed.cycleDistance)&&m.actors.unarmed.cycleDistance>0))problem('actors.unarmed.cycleDistance','invalid gait distance');
   if(m.actors.gathering&&!(m.actors.gathering.playbackRate>0&&m.actors.gathering.playbackRate<=4))problem('actors.gathering','invalid visual playback rate');
   if(m.actors.corpseScaleFromPrevious!==undefined&&!(m.actors.corpseScaleFromPrevious>0))problem('actors.corpseScaleFromPrevious','invalid corpse scale');
   if(m.actors.weaponVfx){
@@ -93,7 +94,10 @@ function validate(m,base=root){
  }
  for(const id of Object.values(m.walls))for(const part of ['wall','corner','stairs'])if(!m.images[id]?.atlas?.frames?.[part])problem(id,'missing wall region '+part);
  for(const [key,target]of Object.entries(m.aliases))if(m.art[key]||!m.art[target])problem('alias.'+key,'invalid art alias');
- for(const [key,d]of Object.entries(m.audio))if(resourcePath('audio.'+key,d.path,/\.(mp3|ogg|wav)$/)&&!fs.existsSync(path.join(base,d.path))){if(d.optional===true)optionalMissing.push(d.path);else problem(key,'required audio missing');}
+ for(const [key,d]of Object.entries(m.audio)){
+  if(d.volumeScale!==undefined&&(!Number.isFinite(d.volumeScale)||d.volumeScale<0||d.volumeScale>1))problem('audio.'+key,'invalid relative volume');
+  if(resourcePath('audio.'+key,d.path,/\.(mp3|ogg|wav)$/)&&!fs.existsSync(path.join(base,d.path))){if(d.optional===true)optionalMissing.push(d.path);else problem(key,'required audio missing');}
+ }
  if(errors.length)throw Error(errors.join('\n'));
  return{images:Object.keys(m.images).length,optionalMissing,sizes};
 }

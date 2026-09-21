@@ -178,7 +178,7 @@ function playBuffer(name,volume=1){
     const gain=ctx.createGain();
 
     source.buffer=buffer;
-    gain.gain.value=clamp(volume*masterVolume,0,1);
+    gain.gain.value=clamp(volume*masterVolume*(AssetManifest.audio[name]?.volumeScale??1),0,1);
 
     source.connect(gain);
     gain.connect(ctx.destination);
@@ -219,7 +219,7 @@ function playAnimationSound(name,channel,volume=1,rate=1){
     if(!voice){const gain=ctx.createGain();gain.connect(ctx.destination);voice={gain,source:null};animationVoices.set(channel,voice);}
     stopAnimationSound(channel);
     const source=ctx.createBufferSource();source.buffer=buffer;source.loop=false;source.playbackRate.value=rate;
-    voice.gain.gain.value=clamp(volume*masterVolume,0,1);source.connect(voice.gain);voice.source=source;
+    voice.gain.gain.value=clamp(volume*masterVolume*(AssetManifest.audio[name]?.volumeScale??1),0,1);source.connect(voice.gain);voice.source=source;
     source.onended=()=>{if(voice.source===source)voice.source=null;try{source.disconnect();}catch(e){}};
     source.start(0);return true;
   }catch(e){return false;}

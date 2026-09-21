@@ -31,7 +31,7 @@ async function main(){
  });
  await check('assets.approvedEquipmentPreservesUnarmedSleepAndZombies',()=>{
   const prior=plain(B('AssetManifest'));
-  assert.deepEqual(catalog.actors.unarmed,{idle:'actor/unarmed_idle',pivot:[192,192],bodyScale:.125,walkCount:12,cycleDistance:226.8,walkScale:.94,contactPhases:[0,.5]});
+  assert.deepEqual(catalog.actors.unarmed,{idle:'actor/unarmed_idle',pivot:[192,192],bodyScale:.125,walkCount:12,cycleDistance:75.6,walkScale:.94,contactPhases:[0,.5]});
   assert.deepEqual(catalog.images[catalog.actors.body.sleep],prior.images[prior.actors.body.sleep]);
   for(const [id,d]of Object.entries(catalog.images))if(id.startsWith('art/monster_')||id.startsWith('art/corpse_'))assert.deepEqual(d,prior.images[id]);
   for(const d of Object.values(catalog.actors.modular.items))assert.equal(d.walk.length,12);
@@ -54,12 +54,13 @@ async function main(){
   assert.ok(seen.size>=4,'movement did not advance visual gait');assert.equal(E('player.radius'),10);
   assert.equal(E('player.aimX'),ax);assert.equal(E('player.aimY'),ay);
  });
- for(const fps of [60,30,20])await check('timing.'+fps+'fps.fullStickCycleNoMissingFrames',()=>{
+ for(const fps of [60,30,20])await check('timing.'+fps+'fps.fullStickDistanceBasedCadence',()=>{
   fresh(`moveX=1;moveY=0;movePower=1;frameScale=${60/fps};`);
   const frames=[],start=E('player.x');for(let i=0;i<Math.ceil(fps*1.22);i++){frames.push(step('updatePlayer();',1000/fps).frame);equalState();}
-  const sequence=compact(frames);assert.equal(new Set(sequence).size,12);
-  for(let i=1;i<sequence.length;i++)assert.equal((sequence[i]-sequence[i-1]+12)%12,1,'skipped or reversed frame');
-  assert.ok(sequence.some((f,i)=>i&&sequence[i-1]===11&&f===0),'12 to 01 seam never played');
+  const sequence=compact(frames),maxAdvance=Math.ceil(E('player.runSpeed')*.6*(60/fps)/catalog.actors.unarmed.cycleDistance*12);
+  assert.ok(new Set(sequence).size>=(fps>=30?12:8));
+  for(let i=1;i<sequence.length;i++){const advance=(sequence[i]-sequence[i-1]+12)%12;assert.ok(advance>=1&&advance<=maxAdvance,'frame advance exceeds distance-based cadence');}
+  assert.ok(sequence.some((f,i)=>i&&sequence[i-1]>f),'walk cycle never wrapped');
   const travelled=E('player.x')-start;rates.push({fps,distance:travelled,elapsedMs:frames.length*1000/fps,frames:sequence});
  });
  await check('timing.analogAndSneakFollowActualDistance',()=>{

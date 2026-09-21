@@ -27,7 +27,25 @@ async function main(){
   r.advance(ms);for(const source of [...meter.active])if(source.end<=sandbox.performance.now()/1000){meter.active.delete(source);source.onended?.();}E(code);
  }
  check('scope.onlyDeclaredPresentationSourcesChanged',()=>{const hashes=require('./pre-polish/source-hashes.json'),allowed=require('./polish-contract.cjs').sourceChanges;for(const [f,h]of Object.entries(hashes))if(!allowed.has(f))assert.equal(sha(fs.readFileSync(f)),h,f);});
- check('assets.threeWavFilesDecodedOnce',()=>{assert.deepEqual([...meter.requests].sort(),['assets/audio/effects/chop_wood.wav','assets/audio/effects/footstep_boot.wav','assets/audio/effects/mine_rock.wav']);assert.deepEqual(J('Object.keys(audioBuffers).sort()'),['chopWood','footsteps','mineRock']);});
+ check('assets.threeWavFilesDecodedOnce',()=>{assert.deepEqual([...meter.requests].sort(),['assets/audio/effects/chop_wood.wav','assets/audio/effects/footstep_soft_floor.wav','assets/audio/effects/mine_rock.wav']);assert.deepEqual(J('Object.keys(audioBuffers).sort()'),['chopWood','footsteps','mineRock']);});
+ check('walk.cycleExactlyThreeTimesFasterWithoutChangingFramesOrOtherActions',()=>{
+  const previous=require('./walk-sound-reference.json').actors;
+  assert.ok(Math.abs(previous.unarmed.cycleDistance/cfg.unarmed.cycleDistance-3)<1e-12);
+  assert.ok(Math.abs(previous.modular.cycleDistance/cfg.modular.cycleDistance-3)<1e-12);
+  const normalized=plain(cfg);normalized.unarmed.cycleDistance=previous.unarmed.cycleDistance;normalized.modular.cycleDistance=previous.modular.cycleDistance;
+  assert.deepEqual(normalized,previous);
+ });
+ check('audio.footstepGainHalvedAndWorkGainUnchanged',()=>{
+  reset();
+  for(const level of [.35,.44]){assert.equal(E(`playAnimationSound('footsteps','step',${level})`),true);assert.ok(Math.abs(E("animationVoices.get('step').gain.gain.value")-level*.7*.5)<1e-12);}
+  for(const name of ['chopWood','mineRock']){assert.equal(E(`playAnimationSound('${name}','work',.52)`),true);assert.ok(Math.abs(E("animationVoices.get('work').gain.gain.value")-.52*.7)<1e-12);}
+  E("stopFootsteps();stopAnimationSound('work')");
+ });
+ check('audio.softFootstepHasSmoothBoundariesAndNoClipping',()=>{
+  const data=fs.readFileSync('assets/audio/effects/footstep_soft_floor.wav');assert.equal(data.readUInt32LE(24),44100);assert.equal(data.readInt16LE(44),0);assert.equal(data.readInt16LE(data.length-2),0);
+  let peak=0;for(let i=44;i<data.length;i+=2)peak=Math.max(peak,Math.abs(data.readInt16LE(i)));
+  assert.ok(peak>1000&&peak<19000);assert.equal((data.length-44)/88200,.14);
+ });
  check('assets.noDuplicateImages',()=>assert.equal(r.imageRequests.length,new Set(r.imageRequests).size));
  check('gameplay.definitionsAndMiningOwnersByteIdentical',()=>{const hashes=require('./pre-polish/source-hashes.json');for(const f of ['src/config/gameplay.js','src/crafting/manufacturing.js','src/world/resources.js','src/ui/context-map.js','src/save/legacy-progress.js','src/drones/companion.js'])assert.equal(sha(fs.readFileSync(f)),hashes[f]);});
  for(const material of ['tree','stone','iron_ore','copper_ore','coal'])check('gathering.'+material+'.twoCyclesAndSynchronizedHits',()=>{
@@ -52,7 +70,7 @@ async function main(){
   reset();E(`player.moving=true;movePower=1;ActorVisuals.pose(null);`);
   const start=E('player.x');
   for(let i=0;i<150;i++)advance(1000/60,`player.x+=${direction*2};player.walkAnimation+=.21;player.moving=true;updateFootstepsAudio();`);
-  const steps=J('audioEvents').filter(e=>e.channel==='step');assert.ok(steps.length>=2&&steps.length<=3);assert.ok(steps.every(e=>[0,6].includes(e.pose)));assert.ok(Math.abs(E('player.x')-start)>290);
+  const steps=J('audioEvents').filter(e=>e.channel==='step'),expected=300/(cfg.unarmed.cycleDistance/2);assert.ok(steps.length>=Math.floor(expected)&&steps.length<=Math.ceil(expected));assert.ok(steps.every(e=>[0,6].includes(e.pose)));assert.ok(Math.abs(E('player.x')-start)>290);
   E('stopControls();player.moving=false;updateFootstepsAudio()');assert.equal(E("!!animationVoices.get('step')?.source"),false);
  });
  check('audio.blockedPlayerDoesNotPlaySteps',()=>{reset();E('player.moving=true;movePower=1');for(let i=0;i<180;i++)advance(1000/60,'player.walkAnimation+=.21;updateFootstepsAudio()');assert.equal(E('audioEvents.length'),0);});
