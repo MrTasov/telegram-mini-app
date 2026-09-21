@@ -1,0 +1,918 @@
+{
+  "version": "0.29.0",
+  "reference": "0.29.0 Character / Zombie Visual & Animation; exact 0.28 runtime and all earlier frozen baselines retained",
+  "sourceHash": "888f94212b0bd6f61a9e1727cbd65dc7a4643aa63b73942b805c6fdd9482ccc6",
+  "cssHash": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0",
+  "files": [
+    {
+      "file": "src/config/gameplay.js",
+      "sha256": "503d32ea1472de02c3fecf9beca6d8eaab4cf0d2337b895dee893bebecb6ffd3"
+    },
+    {
+      "file": "src/i18n/catalogs.js",
+      "sha256": "9be386d46534858fea9ae09552f1bff7572832ba40c21312bfdde7e54a67ff14"
+    },
+    {
+      "file": "src/i18n/runtime.js",
+      "sha256": "40247e8508d9ca70db4f668df6ce9cf3c5af5575deb01622fdbb22e8a5ce2f0d"
+    },
+    {
+      "file": "src/state/owners.js",
+      "sha256": "7f4c2efdc7d8c6bbaefca6c8dae6b7818d62c580d3e7312abeb0d9fc199ccda0"
+    },
+    {
+      "file": "src/save/format.js",
+      "sha256": "51e57f24f314fc9a32a9f13c82965bd386121e6e2ce6d244b1a3ec8391cb3270"
+    },
+    {
+      "file": "src/save/pipeline.js",
+      "sha256": "3fb6d9c22ac94165abe854bcb6216c61834ae4572d50cd72819a261fa2429092"
+    },
+    {
+      "file": "src/assets/manifest.js",
+      "sha256": "cf6391d82029adc80a49fce1d82404dec1cbafb56462e86940e3a6b975655d6d"
+    },
+    {
+      "file": "src/assets/resources.js",
+      "sha256": "d352b07c33fe61772caa94700ae8c8f11d8cad2ba772fa3a9c78596cdacd874e"
+    },
+    {
+      "file": "src/world/clock.js",
+      "sha256": "535b4b425babd5bdf81b13b3bc7814d9c5fc41ce0cf19e590eff375ce02f2756"
+    },
+    {
+      "file": "src/world/events.js",
+      "sha256": "9e191fa69e2fa1e8d2f0c25d8be8cfe76b23c01d944deb7f1fc5b4359a1973fa"
+    },
+    {
+      "file": "src/core/runtime.js",
+      "sha256": "bbe64a8f299ad8cae20b1694f43cce42dd0d95606355f5000414063e95404d5b"
+    },
+    {
+      "file": "src/core/world-inventory.js",
+      "sha256": "aa936c99ebb8dddac7eb6ddaa02403d11848b6df105a927d331558b4d5db3946"
+    },
+    {
+      "file": "src/state/identity.js",
+      "sha256": "04a2475ec25f9e997740520430f1877694ce052933a8adbb148caa3544c9d855"
+    },
+    {
+      "file": "src/simulation/flow.js",
+      "sha256": "7e40be53a1dbcb9d86cbe56c0bb3832b4ea75f3ee8506cde9546c926561f1683"
+    },
+    {
+      "file": "src/core/input-combat.js",
+      "sha256": "9e298e5950ae9fdd6563566ce217e246b8848115bc3b535d2ae4a22784dce2f9"
+    },
+    {
+      "file": "src/state/actors.js",
+      "sha256": "c06d8ae8ce4004e666bdc3e0c15de4150459abb34a8cef91707fa84c73e9729e"
+    },
+    {
+      "file": "src/simulation/commands.js",
+      "sha256": "c6b4fc81d040bcc56df519c3b4ba8b886b5630e4c23302860ee4f050e1b17b91"
+    },
+    {
+      "file": "src/input/actions.js",
+      "sha256": "22b754f38829bd05754cda63f6ddd3c7b2247d00d888901483bb2e90e3a48a93"
+    },
+    {
+      "file": "src/input/router.js",
+      "sha256": "96e2cfd99b4d72d33f594b3c5efdee2d021499dc003d5892ea7d1d4845e7b088"
+    },
+    {
+      "file": "src/core/interactions-farm-storage.js",
+      "sha256": "f93ca7c95d0f4bb94214d5b8f414ce6c2b325f3305eacf16439aa6e6b4d4d1a4"
+    },
+    {
+      "file": "src/core/rendering.js",
+      "sha256": "91f2eefe28660b2173ceefc0d3f4df4d2918f6a33a1ed8488d43e2196dbbc55f"
+    },
+    {
+      "file": "src/ui/legacy-panels.js",
+      "sha256": "afe66f7fe3e397c9efe43793db7a6c0e618218eb5284f228cb340ed41825c3b7"
+    },
+    {
+      "file": "src/core/loop-viewport.js",
+      "sha256": "b598693c0410e0db0287b5f38ccc3fc50c3396b3588cfac50590fc8d1429ea8f"
+    },
+    {
+      "file": "src/state/bindings.js",
+      "sha256": "97607ebe3572144318e95d19833dbc407e6f88301d9619ac1a752bd7e10ef258"
+    },
+    {
+      "file": "src/save/legacy-progress.js",
+      "sha256": "481845e3c7199c0f7dee02dd51af3f57f5dc32fd7956c5f4d269f3ab341c8ebf"
+    },
+    {
+      "file": "src/ui/shared.js",
+      "sha256": "0fc166adab56c376a797c1d4533eb68cbf21d9a66232343f8dd1de65a3fa3f59"
+    },
+    {
+      "file": "src/world/resources.js",
+      "sha256": "a078f12a51f0129b1983e61cd1b9be84a0e97637069dbc9c2036e43401383e38"
+    },
+    {
+      "file": "src/base/power.js",
+      "sha256": "a2d315111837ba505bc7841d01e7a7cb57cb32e3c92a4325faade4208842e47e"
+    },
+    {
+      "file": "src/world/passages.js",
+      "sha256": "6ece34bb8658ea2e53173650d09a2a640290027367b8adc518ad283332f79cd2"
+    },
+    {
+      "file": "src/crafting/manufacturing.js",
+      "sha256": "469e4fd8257ee56f277bd651be7a34e6ebf932cecca8e0d5dab12c7b94b990ab"
+    },
+    {
+      "file": "src/base/wall-art.js",
+      "sha256": "d86a587dd111f7052dc94602658cf10d013d63051e8413dedcf595965ea3d5d4"
+    },
+    {
+      "file": "src/base/fortress-navigation.js",
+      "sha256": "c867403d9d44ad47eb495f508c549483756d9d77958728f188dcd99680a86272"
+    },
+    {
+      "file": "src/core/loot-light-equipment.js",
+      "sha256": "819f42d83c5f4f97ae28a9b157eb9df23145fea34c2d9b58439949e4b7c2be8d"
+    },
+    {
+      "file": "src/save/slots.js",
+      "sha256": "77ea48f1582e4edefe29dcb8b10f363d847d802649d8238d21b4c0cc541d28a3"
+    },
+    {
+      "file": "src/inventory/registry-slots.js",
+      "sha256": "75a49a9fd0ae8b6b17d33671f4702c39565c5a86d11b43c6a5345da36ea2c630"
+    },
+    {
+      "file": "src/combat/weapons-crafting.js",
+      "sha256": "734ca4ccc97c3dc27831882c9c453eb07ee40b47229bc25f1ec4bddbcf363877"
+    },
+    {
+      "file": "src/world/districts.js",
+      "sha256": "addba037f39e6c361b2e9ff71d3c14d820bc1fa558c77f7f8fbce2a94e277392"
+    },
+    {
+      "file": "src/base/battery.js",
+      "sha256": "ecd9cc863b1ea7f88491610e8200e0143f8d2a85ab4861a343454fe43e639c67"
+    },
+    {
+      "file": "src/ui/progression.js",
+      "sha256": "f89b9bfcbb350591750bb1b1bdac7f06c957dcb6d07519f0a0d9c112c1b80b6f"
+    },
+    {
+      "file": "src/world/camera.js",
+      "sha256": "a2989c7e5f8f702179fe9ee27685afc13d3385044eba063f8db8de2446dbbdff"
+    },
+    {
+      "file": "src/save/envelope.js",
+      "sha256": "4ea7b4b5ad19d820c473852c715805238e3034a589f028942825463330d5b6cd"
+    },
+    {
+      "file": "src/ui/context-map.js",
+      "sha256": "fcb0080cf4cb0dcf82ab3d41860d0ab1c03e417d48e69a9d10463746c73d12bf"
+    },
+    {
+      "file": "src/assets/catalog.js",
+      "sha256": "ec4598211b750a8b9fa15a11f3da5acfcef925312b37328b2e57dc8a9e4943cd"
+    },
+    {
+      "file": "src/render/actors.js",
+      "sha256": "e9b8861fccac8b6e0ad6e00f8a2299945c9b046a2566aae7cd9433bf664ebdaa"
+    },
+    {
+      "file": "src/ui/inventory-crafting.js",
+      "sha256": "ba13389ac736fb0743086eb57d922b0885a5133a3c9fbe730ee717d1cbf92c8c"
+    },
+    {
+      "file": "src/farm/growth.js",
+      "sha256": "d172bfb2e3c1628d654f1f0d1cb2e39354bf532fbe1668f2dccb157b67180782"
+    },
+    {
+      "file": "src/world/interiors.js",
+      "sha256": "5b47c88135cffaa3200835a0fcd412feb3027d34bca85f116eab1611ef49b916"
+    },
+    {
+      "file": "src/base/rooms.js",
+      "sha256": "68073d25319544189673be520ed653d464949250507d9f39425a6cd7da0f7dec"
+    },
+    {
+      "file": "src/world/expansion.js",
+      "sha256": "eb319182ade765d438bf672609fb4c7fca3f26e77ebd4ef4e00fb8c4742892db"
+    },
+    {
+      "file": "src/ui/maps-windows.js",
+      "sha256": "1d44c2502909b2d331cfc10ead980132f842ea9ac78be9ae1cedfc62c77e3152"
+    },
+    {
+      "file": "src/world/fishing.js",
+      "sha256": "3a185ecfd161cc440df0bc3882277eb53d07e3e06a31b5f9a895e39aa03fe2a0"
+    },
+    {
+      "file": "src/inventory/physical-slots.js",
+      "sha256": "908e577b5bc8026d7ef95b7006e3e231ea98ca4a22181d7847e8543c05e45811"
+    },
+    {
+      "file": "src/world/lake-city.js",
+      "sha256": "caf02e969a5550b271bd62957f3794dcca139747440664acb1631f2e2857befe"
+    },
+    {
+      "file": "src/drones/navigation.js",
+      "sha256": "a367be6aab0c2671aca085ffb8ab898ff009730db7f68ca24314cd1df36c3855"
+    },
+    {
+      "file": "src/drones/companion.js",
+      "sha256": "4509515feb5ef1319b957ad56b489587d175d488b8ce8cf7d6c4f939c2c5301a"
+    },
+    {
+      "file": "src/player/controls.js",
+      "sha256": "d104e8972a055c5a2ae2366f26804d8150cf12537b79f384d0145672756853c8"
+    },
+    {
+      "file": "src/drones/interface-power.js",
+      "sha256": "278f39e2432f52d390c7aecf8cdc0c7440f0ab92cea477dd2580c72f4ffeee8d"
+    },
+    {
+      "file": "src/farm/manual.js",
+      "sha256": "ebcee53c8109a95d7848a1dbbf320cc3827098b610d40c5ca5e2007a3e30c8bb"
+    },
+    {
+      "file": "src/world/trees-minimap.js",
+      "sha256": "44fcf4ecdc3d55813568445f1e13a26fe7668365fa3124fafe7359a54a433580"
+    },
+    {
+      "file": "src/base/structures.js",
+      "sha256": "25f7e06d273d26b3dd2803d61b94838299a913d406bcc09d010780e1ce8881e5"
+    },
+    {
+      "file": "src/drones/station.js",
+      "sha256": "abbd0d997d678db6e480e571859d3fee1817d7f31d06d06752803783a866e5de"
+    },
+    {
+      "file": "src/render/lighting.js",
+      "sha256": "ea60cc74c74b794264d26822977f6f845a1bf8370dffae9e42cf81a50b94dfa6"
+    },
+    {
+      "file": "src/base/turrets.js",
+      "sha256": "f497771577a7f942337edf1e300eb3f6886e47cf2b4dfa3c3e47dc1fb6c7914c"
+    },
+    {
+      "file": "src/ui/modal-dragging.js",
+      "sha256": "005fa33163651b0772fcb8cf2d4da15160823512cc7711652f6ffe536788db63"
+    },
+    {
+      "file": "src/inventory/upgrades.js",
+      "sha256": "2ef3e83e533cba634e1fad91b771257b10bbdc663a8bfa09f9e5867b3255a5de"
+    },
+    {
+      "file": "src/inventory/picker-magazines.js",
+      "sha256": "5b37a76df040b4b9c468756bb77a08deab0ac4468b89eada20a3b3ae46612a3f"
+    },
+    {
+      "file": "src/ui/loot-vitals.js",
+      "sha256": "18b5394982c5e1b6159acb621b7e0d6edf08d78e3319105cef63152a3f3b73d3"
+    },
+    {
+      "file": "src/combat/monsters.js",
+      "sha256": "36a8abe5241b009f562992a80af72cb100057dfc84e63ad781d21af42f4b8dcd"
+    },
+    {
+      "file": "src/base/construction.js",
+      "sha256": "6ba7a4cebdb66c69c29c50d48564e232d4c8d797cc493aebfa028243d0c51d32"
+    },
+    {
+      "file": "src/world/resource-placement.js",
+      "sha256": "5df2745ee1c1703d6f4a0517610c2c38ce6112f8a24887608112190a20481257"
+    },
+    {
+      "file": "src/input/settings.js",
+      "sha256": "aac57a09764d18e5755749b1e25d28f1f30a7a43ce2d602b65f4f32cc1714797"
+    },
+    {
+      "file": "src/i18n/settings.js",
+      "sha256": "6ec0611e9548b7a4b0763f67ccc404e37799f12777e88a302d267010d721697a"
+    },
+    {
+      "file": "src/save/finalize.js",
+      "sha256": "306b578bacee5ad4b704cc8ea1bd0ae27cdf73f06c9618f321ea69931e30c4fe"
+    },
+    {
+      "file": "src/ui/main-menu.js",
+      "sha256": "7aa205bda35679eba48dcc12fc8cf3fc042564234cfa8572b4d21b454efc2f70"
+    },
+    {
+      "file": "src/bootstrap.js",
+      "sha256": "79cb84052cafdb5ced88d215bb79cae6f4dde054b4b2b23741fc1a5e9e651257"
+    }
+  ],
+  "baselineFiles": [
+    {
+      "file": "qa/stage2/fixtures/craft_in_progress.json",
+      "sha256": "c41d12c0308e8659d04be054817876b8339c8fca7e5cb25db2797e8231914bec"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_0.json",
+      "sha256": "d863bcecb00621079a114663ba3e057588ab3084c0cf5da6f748e85eb47f0247"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_1.json",
+      "sha256": "f827f087d092e9ef917f029bbd28e0ef9103615d4de839c43642820cf99b00ac"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_2.json",
+      "sha256": "617872deda506761ab4b23b57d39ad0fd0f3757641d801568124d77ab952e3b7"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_3.json",
+      "sha256": "6d3f6345575f6fa141132e8f9e5a09dc5c63f65657c23b83bd88189be952000b"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_4.json",
+      "sha256": "905313b0d4543cfa09b726b4e954b7380efc54769accff946d50c578b9fc5aad"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_5.json",
+      "sha256": "110a14b6b3215ab17a4c7a2724ee7f84b942d7a992c4bdf10ee1877b4ac0fc9e"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_6.json",
+      "sha256": "9405cc41682d2b959ef79204b6bd229339c8985d0c240095193a791ceae63408"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_7.json",
+      "sha256": "d4f3fa44cb8130d462cbe4ed90f431fe8eee2db96a25a2a4f49e3c33c657b8fb"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_8.json",
+      "sha256": "79cac98c79a46c7859e99725090ade904aeadcbc46a034c6967bcbe8599d08a0"
+    },
+    {
+      "file": "qa/stage2/fixtures/crop_9.json",
+      "sha256": "95777050878aa24428148cc4169da63c2a6c0c72e0c281b6e5b0965810e20993"
+    },
+    {
+      "file": "qa/stage2/fixtures/damaged_base_turret.json",
+      "sha256": "f083fc24cc6e06606dedae921aec32ec07f0d32e32673b6cf46898b44a89b246"
+    },
+    {
+      "file": "qa/stage2/fixtures/day_x.json",
+      "sha256": "c46bff4c919c633774107cfcf0563ec86c71179ca62b44dfd9ceac920a123666"
+    },
+    {
+      "file": "qa/stage2/fixtures/drone_charging.json",
+      "sha256": "55bcd60330e68e5e13ed0c5248cab4f2a9c9fef82d3eac4cca1dc71134103ad7"
+    },
+    {
+      "file": "qa/stage2/fixtures/drone_empty_far.json",
+      "sha256": "18175826cb64583d4a738a0b533ae7f50665e77e35693b53064930f257da88f9"
+    },
+    {
+      "file": "qa/stage2/fixtures/drone_packed.json",
+      "sha256": "fe46c3fa4248cf714bbaa3ce1fe8c0a52c85e79b28c0c2d1fbd940b11c584c3a"
+    },
+    {
+      "file": "qa/stage2/fixtures/equipment_storage.json",
+      "sha256": "33e4d9aa1994291ebd5a3a4009589b0139a22e10daf48d27722bd668d9c13ac2"
+    },
+    {
+      "file": "qa/stage2/fixtures/fish_instances.json",
+      "sha256": "17dca61baad27230f0a985e7657a20d37b55d619d078f05eb18bc38de8825006"
+    },
+    {
+      "file": "qa/stage2/fixtures/fresh_game.json",
+      "sha256": "4942eb37cd3dd3760684d0c3982b0ff850654fc87875137f32a54d75e08ab6c7"
+    },
+    {
+      "file": "qa/stage2/fixtures/full_backpack.json",
+      "sha256": "64cd9f0b8465e0e3eca2ed33295673c94ed17d23e45be941a31ff26671ba5c9b"
+    },
+    {
+      "file": "qa/stage2/fixtures/index.json",
+      "sha256": "ad26324dcee4bfebf971d9aa7252ac2ef6c3e4e42325d485ec9c8287097c70fb"
+    },
+    {
+      "file": "qa/stage2/fixtures/legacy_0.19.1.json",
+      "sha256": "4942eb37cd3dd3760684d0c3982b0ff850654fc87875137f32a54d75e08ab6c7"
+    },
+    {
+      "file": "qa/stage2/fixtures/rifle_ak74_37_60.json",
+      "sha256": "fc5d2b23214e7550d2df00eb73ba801f059dd3aecd964b8c39d431b85500f970"
+    },
+    {
+      "file": "qa/stage2/fixtures/rifle_ak74_no_magazine.json",
+      "sha256": "fc5d2b23214e7550d2df00eb73ba801f059dd3aecd964b8c39d431b85500f970"
+    },
+    {
+      "file": "qa/stage2/fixtures/rifle_m4_37_60.json",
+      "sha256": "0fb91d739838be0233ebbb0dcb4d090178aefd8de0bd2b75ad59511f1b797299"
+    },
+    {
+      "file": "qa/stage2/fixtures/rifle_m4_no_magazine.json",
+      "sha256": "0fb91d739838be0233ebbb0dcb4d090178aefd8de0bd2b75ad59511f1b797299"
+    },
+    {
+      "file": "qa/stage2/index.html",
+      "sha256": "5580bf1c5bc7adde7fd7ccb34ded5740ccdc3b7a8db176df9bf3ff2088af7c57"
+    },
+    {
+      "file": "qa/stage2/js/build-info.json",
+      "sha256": "088b546f5d6aafa23674109f4241082cecf96d3185e550864b3835a32110c5c3"
+    },
+    {
+      "file": "qa/stage2/js/game.js",
+      "sha256": "ded0315451a457dece143bdb74cbd3960dda7c277251be06d283cb32c21c6403"
+    },
+    {
+      "file": "qa/stage2/js/game.js.map",
+      "sha256": "91fd27f2ca616ff10c17b344639602b2d026ac3054f70ac608a98e963bd55a20"
+    },
+    {
+      "file": "qa/stage2/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/stage2/summary.json",
+      "sha256": "c2a69c42d680ac0f75332d272467f7659b304ee0f1822c690bb67d40744cf3f9"
+    },
+    {
+      "file": "qa/stage3/index.html",
+      "sha256": "fec59079d6b79eedb67d5aa2f82ab7aa0258641b194966951355c27344ff3770"
+    },
+    {
+      "file": "qa/stage3/js/build-info.json",
+      "sha256": "acc160b04d73ee9d3a1cb3946e9179633bd6cfe37de5c24c982582f41deb72ac"
+    },
+    {
+      "file": "qa/stage3/js/game.js",
+      "sha256": "d08cf805e75925c97edf3f2867bd0f09758698afd7c5d484bd2c3f202fa2a101"
+    },
+    {
+      "file": "qa/stage3/js/game.js.map",
+      "sha256": "d72e1067fcfc99658e7f7fdebede5abd57b424ec3475e15065a861de13df5c23"
+    },
+    {
+      "file": "qa/stage3/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/stage0/tools/behavior.cjs",
+      "sha256": "38d8ab20529bd4aef532ebab8200979841e51b7dd27bd1ba2d64594604e53304"
+    },
+    {
+      "file": "qa/stage0/reports/performance.json",
+      "sha256": "889f564fda002bcb2995163f06007412f28b1161c8797eabbf8bc62eb7f8b43c"
+    },
+    {
+      "file": "qa/stage0/audit/source_fingerprint.json",
+      "sha256": "8a9c48ec1ae8ef48288edb92400ab1b437941430380788502650cb9e4cd32156"
+    },
+    {
+      "file": "qa/stage0/audit/assets.json",
+      "sha256": "f5db4c25d6c0d59a0bc428aeb34949527c6975a756b291d0700006bbedf0fd50"
+    },
+    {
+      "file": "qa/stage0/audit/configurations.json",
+      "sha256": "0abc0458ebabf39f89e6a87675be48fb21d22fc01d13937a9017c28cc524c069"
+    },
+    {
+      "file": "qa/stage0/fixtures/rifle_ak74_37_60.json",
+      "sha256": "7e8560fff8acc3be5f5d8c466e8facf3cdab03157b95b26ed212c7f65196d8ab"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_7.json",
+      "sha256": "fcfc2d61149915ae6f056c021ba983ecc369f2997a31845b6737f9a38dd85ce5"
+    },
+    {
+      "file": "qa/stage0/fixtures/legacy_0.19.1.json",
+      "sha256": "39d2c1bee0ef1bf76af403d0fc28e0d72bfc4e3b2a2b40a8165ee5af5e9ac513"
+    },
+    {
+      "file": "qa/stage0/fixtures/rifle_m4_37_60.json",
+      "sha256": "e06721d570d4c4f21d8d8b4cfae15300ea4f7053da72dcdc9a5441d27de7aafa"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_1.json",
+      "sha256": "4dd3462e83c1c8a1ebed003a3d16c94fa02d2ae5a6deab100f4097363bda51c1"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_2.json",
+      "sha256": "3a4c4db995fa4783562d75a133bbcf6cab2723db6e47c346b37d7f3998fe41f5"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_4.json",
+      "sha256": "631339603778b820dfee6a34a0f4e23243cd2d6f0969324711c0208f4ecd6d26"
+    },
+    {
+      "file": "qa/stage0/fixtures/drone_packed.json",
+      "sha256": "f261b9e97ccc4f62b3ed06b52d4852d0bd8c8700bd93b2b25e0a5c78d528f8aa"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_9.json",
+      "sha256": "9159bb5590797eed13459885c8e0e90019d197603f45f8de61aee8605a0c0ff3"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_3.json",
+      "sha256": "0476bc287d216a909be8ca894b053d479927514088ce1a2bd33d9fcb2097154e"
+    },
+    {
+      "file": "qa/stage0/fixtures/damaged_base_turret.json",
+      "sha256": "87943f7a42a7fb254eb0577cc3b2c5e4a9f1f7924d45b0087fcb871c7829529b"
+    },
+    {
+      "file": "qa/stage0/fixtures/rifle_m4_no_magazine.json",
+      "sha256": "278a7fa4ee2865cee0d729b011b482d6994fae109af50d65ee40c922a29a16f0"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_5.json",
+      "sha256": "38128c42cdc01e6de0da52c21920cb902c03f924fb0831f0c1e50076b0c3e931"
+    },
+    {
+      "file": "qa/stage0/fixtures/rifle_ak74_no_magazine.json",
+      "sha256": "c64a4ea7415e842c138a0210503c6028389c8edcc58fa996b1b598f0264a5ed7"
+    },
+    {
+      "file": "qa/stage0/fixtures/day_x.json",
+      "sha256": "be1636a79c8b2d123a7524368ec060383a30df0e15bdeddb15ec74b48ee5b361"
+    },
+    {
+      "file": "qa/stage0/fixtures/full_backpack.json",
+      "sha256": "f13fe7984657c0d29d55a8ffc38964dce3c6799a17a481aa5f020c1303352e0f"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_6.json",
+      "sha256": "35fa170f840485175167b6c51318bad9d5cdce67a98cf12c2ac524e00fe2543b"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_8.json",
+      "sha256": "9450986adc2537db8b8cde4ca904176b5a492b26661a5ec3013999604cc4bb6f"
+    },
+    {
+      "file": "qa/stage0/fixtures/fish_instances.json",
+      "sha256": "e9ba99d9d5189a629e356de0c252f77d78ea84f608301743162e1cf3da41899c"
+    },
+    {
+      "file": "qa/stage0/fixtures/crop_0.json",
+      "sha256": "71338dd85063dd0b0de9b7f42a7ece2a2232bb5edd525f1b7d0fbf350012ac07"
+    },
+    {
+      "file": "qa/stage0/fixtures/craft_in_progress.json",
+      "sha256": "7cc84960b84d52008f7d5265998cd74b441278a83a75506de908be7a5846fe14"
+    },
+    {
+      "file": "qa/stage0/fixtures/equipment_storage.json",
+      "sha256": "028e4e6e7f4c04b6b148dd0ed923ddb1b1b7601c939f41e1f15efffe3a792d08"
+    },
+    {
+      "file": "qa/stage0/fixtures/index.json",
+      "sha256": "65654b49260bb4d69f9fa826c37ec9c2867bd9e97bfc6920f86ed9244b7cb086"
+    },
+    {
+      "file": "qa/stage0/fixtures/drone_charging.json",
+      "sha256": "992804cac9079629a464baf1d5c7a8c0324aa7899b332c4c594268eb0a1bcfdd"
+    },
+    {
+      "file": "qa/stage0/fixtures/drone_empty_far.json",
+      "sha256": "3f233e6dd2bcec4272dc7d35a20975788b37942d64798a277d7b5c1a33b8a989"
+    },
+    {
+      "file": "qa/stage0/fixtures/fresh_game.json",
+      "sha256": "9dffb3976399d5b3c3ca3607d4473f6bd843d4f1564754621196b432e16c024a"
+    },
+    {
+      "file": "qa/stage0/baseline_0.20.0/qa/perimeter020.cjs",
+      "sha256": "92b7d591a8027ce5d77de65dc9dd14e23417cc000fe0a663fb2111a07ce36cce"
+    },
+    {
+      "file": "qa/stage0/baseline_0.20.0/qa/wall_behaviors020.cjs",
+      "sha256": "1ed9de293152e7a066db3dd2700e92504e440211c74cbb768f108a1b1e7c40d7"
+    },
+    {
+      "file": "qa/stage0/baseline_0.20.0/qa/target0191.cjs",
+      "sha256": "ba9f7bb6fbdac0b7b5d2503e89f51a91d553bbfec3e7a788f6d82312bf5883e4"
+    },
+    {
+      "file": "qa/stage0/baseline_0.20.0/source/baseline_0.19.1.html",
+      "sha256": "0d4186042b80ec7f88470bd20ddad3dfbbaf7e444a57153aeba7e0cb52615455"
+    },
+    {
+      "file": "qa/stage1/performance.json",
+      "sha256": "7815ce70cb2bc79c3117c9b82179867ac8558f73bbad83f91f9aae137926b511"
+    },
+    {
+      "file": "qa/stage1/index.html",
+      "sha256": "af2ad96f451aaa0b18a4e5b223edaf21c907216fbc55b7c0c062df6c2083fce5"
+    },
+    {
+      "file": "qa/stage1/summary.json",
+      "sha256": "ce582479343b26e59784cf0964cea66b04fffbac882f512b181b9b36e1531423"
+    },
+    {
+      "file": "qa/stage1/js/game.js",
+      "sha256": "8f9559eec9b01def5b49594d66cc63e08dace9c64993475f58416c70c819427d"
+    },
+    {
+      "file": "qa/stage1/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/stage1/fixtures/rifle_ak74_37_60.json",
+      "sha256": "872c50249a812223215279d06acf12f6eef5bb775416dfd80a2d81284eb9986f"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_7.json",
+      "sha256": "ecb373819d9472fc564d184681cd648433c1a75c929e3ba4b261236016197573"
+    },
+    {
+      "file": "qa/stage1/fixtures/legacy_0.19.1.json",
+      "sha256": "3cbd4598c122febeebc957f20ea652a051e8375302d14c8260a216cbb1a1f058"
+    },
+    {
+      "file": "qa/stage1/fixtures/rifle_m4_37_60.json",
+      "sha256": "5c6909a02ee58a6d21237380155022dcb65ea86d80320b9464681d62edb670a9"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_1.json",
+      "sha256": "d8aee2f1a9db34694dbd0d6fdd12669494ae6079b65fc1f67c130a47935f3e44"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_2.json",
+      "sha256": "2ca5f32cdc8ba3ac7a5ce66e3bbc7989204f88dae5c93c202cf6a01bae688ac8"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_4.json",
+      "sha256": "5e8098b9c0bcaf196ac0fccda0b5b7a02f5ff1d67d4b0ae920dbff4882c2913e"
+    },
+    {
+      "file": "qa/stage1/fixtures/drone_packed.json",
+      "sha256": "f381ef0f3fac41ca94a455eed60324ccad1ea4d2a4dfd259b5354b84e5e14bc4"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_9.json",
+      "sha256": "ae7a780065c30f2bd22fc12214ecfb4bedefecfe32ad5c49b61d84c4965fca25"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_3.json",
+      "sha256": "15da25c58a5b2f6f27009be79e0ce7272e69bf499195da651be851b38fdca758"
+    },
+    {
+      "file": "qa/stage1/fixtures/damaged_base_turret.json",
+      "sha256": "0c0615723c21a0786215c8ceb2ccc2c62a025668fefd1ff2b6613dc2a7e809e6"
+    },
+    {
+      "file": "qa/stage1/fixtures/rifle_m4_no_magazine.json",
+      "sha256": "5c6909a02ee58a6d21237380155022dcb65ea86d80320b9464681d62edb670a9"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_5.json",
+      "sha256": "45d3fbc34f62b79d232081f3eced8d29f7e423d0d2d4bb2835f6a6b23aafbc4f"
+    },
+    {
+      "file": "qa/stage1/fixtures/rifle_ak74_no_magazine.json",
+      "sha256": "872c50249a812223215279d06acf12f6eef5bb775416dfd80a2d81284eb9986f"
+    },
+    {
+      "file": "qa/stage1/fixtures/day_x.json",
+      "sha256": "63d8b5f5e90049b165bd3373b3b1e211e6f32eeb0f0df5cdae72b3a9db8f1008"
+    },
+    {
+      "file": "qa/stage1/fixtures/full_backpack.json",
+      "sha256": "0d5b669aadaf2cc992edde972302bbadff0fd52909cd8a73274d623f6e9f9699"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_6.json",
+      "sha256": "3b2cb41be8cea473f7e4a88ff3623caa04427d0d4499f3802d8eeec39fba9ef8"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_8.json",
+      "sha256": "17cf218bc75b319e57deac3fd5130b500994b8f69fae0fe9707686a20ed491fc"
+    },
+    {
+      "file": "qa/stage1/fixtures/fish_instances.json",
+      "sha256": "85724486d454d45b1cb04583f882ae5d88ff896d61fbfbf83c48fec4c300a5d7"
+    },
+    {
+      "file": "qa/stage1/fixtures/crop_0.json",
+      "sha256": "0e78231f976dd4ebd28bc7049f53e27941e65fef04aad06bfc2e1f844888defc"
+    },
+    {
+      "file": "qa/stage1/fixtures/craft_in_progress.json",
+      "sha256": "f379576f0cd3aeffa09cb7f5b24793ab084a272bdb4c62019ead647108a35943"
+    },
+    {
+      "file": "qa/stage1/fixtures/equipment_storage.json",
+      "sha256": "fc5c665a455d49f302ad99eafae4a6a866ddba082f6c79a8664218e653999a1e"
+    },
+    {
+      "file": "qa/stage1/fixtures/index.json",
+      "sha256": "ec4bc8966aa5e3abe8df21878446e41bd0b3afaa9e0f86d67ec9c77a1a63f6e6"
+    },
+    {
+      "file": "qa/stage1/fixtures/drone_charging.json",
+      "sha256": "9c63b155e0c8240971f74ce9f6e747cec7649a9a12f161eb4bbf47ec7cf551c1"
+    },
+    {
+      "file": "qa/stage1/fixtures/drone_empty_far.json",
+      "sha256": "937fa6e064d6a3a9d826d3f3c4bcdcf8dd679e07f91c774511e7418a7174e526"
+    },
+    {
+      "file": "qa/stage1/fixtures/fresh_game.json",
+      "sha256": "3cbd4598c122febeebc957f20ea652a051e8375302d14c8260a216cbb1a1f058"
+    },
+    {
+      "file": "qa/controls-base/index.html",
+      "sha256": "4693763c9a94b832d1f880202f8c94ea030a39a5101e2408a79583962bbfb424"
+    },
+    {
+      "file": "qa/controls-base/summary.json",
+      "sha256": "3b3d2fb5850ab5fee83decfbd1858d5157ff63a59f85f71d6b7e8df403641a61"
+    },
+    {
+      "file": "qa/controls-base/js/game.js",
+      "sha256": "e3f15796e8814739f3fd3b2c349c7233605ef0e07957303481fdde83be440464"
+    },
+    {
+      "file": "qa/controls-base/js/game.js.map",
+      "sha256": "3c2db7b12e31c2a71857d2d7e93942d9c1e57e54176a4c7ae4fb1cb088164ba4"
+    },
+    {
+      "file": "qa/controls-base/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/stage4/index.html",
+      "sha256": "e0b995eb71fd29987135778a7f4c9b09ae1d7486fefca3373ff66e64240516b5"
+    },
+    {
+      "file": "qa/stage4/js/game.js",
+      "sha256": "7605e5958035e8497be9320e7fe353def03657930c6dfc162fef2dc60fe3b2e6"
+    },
+    {
+      "file": "qa/stage4/js/game.js.map",
+      "sha256": "adb0eeddb606155be7a3af576a20d463c4aae7bae5a6ac0d8f2cc3426840a522"
+    },
+    {
+      "file": "qa/stage4/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/stage4-fixed/index.html",
+      "sha256": "44b5344e0694ec332a0ca688e34bfc229677d569c23206ccca6e87fcd85f5123"
+    },
+    {
+      "file": "qa/stage4-fixed/js/game.js",
+      "sha256": "dc8c4d605ec6b7e4c4cec9cd5d461b5a81ad02fa0c5d72f89e99d9a128afda55"
+    },
+    {
+      "file": "qa/stage4-fixed/js/game.js.map",
+      "sha256": "89198956b3c1e3c6bce2b22ecced8ea04ba680ffb50c4cbef4e751aede195d34"
+    },
+    {
+      "file": "qa/stage4-fixed/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/stage5-accepted/index.html",
+      "sha256": "6d12b025f66e7bc03c1a3ec5f8af9f6dc6f78583cd1ef7cfeebcffa0b2ad668c"
+    },
+    {
+      "file": "qa/stage5-accepted/js/game.js",
+      "sha256": "1518533cdafa20c6965b035f03fa6d9048f3b41d974746befc01b56c71174989"
+    },
+    {
+      "file": "qa/stage5-accepted/js/game.js.map",
+      "sha256": "908e3baa399e2685684b9b8193c7feccc6847ad7aa41c2ac3517fe6bb0514dad"
+    },
+    {
+      "file": "qa/stage5-accepted/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/pre-stage6/index.html",
+      "sha256": "a12b697d5a6aab972a4324c2a5b5321468c5119ccaf91f340958dd6e720bf15f"
+    },
+    {
+      "file": "qa/pre-stage6/js/game.js",
+      "sha256": "0a272c258835448b60718efe2364699e604cf5f1f2d7c220eb6dbf7a9d1948bd"
+    },
+    {
+      "file": "qa/pre-stage6/js/game.js.map",
+      "sha256": "80c097e3ccf7260bf92012d15430ac2b307271029470ef0605822032dd47dfc7"
+    },
+    {
+      "file": "qa/pre-stage6/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/pre-stage7/index.html",
+      "sha256": "e5ef5bccbb45b1a06b1d84585df33ff156c25e7b717896c2c726a0499b1dc48b"
+    },
+    {
+      "file": "qa/pre-stage7/js/game.js",
+      "sha256": "67d048f429fd00a2db12937c1c9e191a995188d37184a25bb391eeef824556fa"
+    },
+    {
+      "file": "qa/pre-stage7/js/game.js.map",
+      "sha256": "2cf770b5aa5271f1004c0d4e9f8e7b554c824d0c31b0cfe3c0018a6c5101fd2a"
+    },
+    {
+      "file": "qa/pre-stage7/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/pre-character/index.html",
+      "sha256": "51b7e583441b5ddee59809cd44af3820c0424f11f262048917cc2d82ab6a527a"
+    },
+    {
+      "file": "qa/pre-character/js/game.js",
+      "sha256": "4796966d78ba9f2665ae7cb7539be24d3425cd7c6ba5362a1f5d5854f0fad5bc"
+    },
+    {
+      "file": "qa/pre-character/js/game.js.map",
+      "sha256": "ff0a55c3bf6420ee0f4ff172769927a3c2195b3fe26b1425879b2a5f78b0b34e"
+    },
+    {
+      "file": "qa/pre-character/styles/base.css",
+      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
+    },
+    {
+      "file": "qa/pre-character/styles/main-menu.css",
+      "sha256": "a2e90e9108eb5abd8bf60db0f26172743e070c52513ab8809d791096bac672ae"
+    }
+  ],
+  "unchangedStage2Sources": [],
+  "changedSources": [
+    "assets/catalog.js",
+    "assets/manifest.js",
+    "assets/resources.js",
+    "base/battery.js",
+    "base/construction.js",
+    "base/fortress-navigation.js",
+    "base/power.js",
+    "base/rooms.js",
+    "base/structures.js",
+    "base/turrets.js",
+    "base/wall-art.js",
+    "bootstrap.js",
+    "combat/monsters.js",
+    "combat/weapons-crafting.js",
+    "config/gameplay.js",
+    "core/input-combat.js",
+    "core/interactions-farm-storage.js",
+    "core/loop-viewport.js",
+    "core/loot-light-equipment.js",
+    "core/rendering.js",
+    "core/runtime.js",
+    "core/world-inventory.js",
+    "crafting/manufacturing.js",
+    "drones/companion.js",
+    "drones/interface-power.js",
+    "drones/navigation.js",
+    "drones/station.js",
+    "farm/growth.js",
+    "farm/manual.js",
+    "i18n/catalogs.js",
+    "i18n/runtime.js",
+    "i18n/settings.js",
+    "input/actions.js",
+    "input/router.js",
+    "input/settings.js",
+    "inventory/physical-slots.js",
+    "inventory/picker-magazines.js",
+    "inventory/registry-slots.js",
+    "inventory/upgrades.js",
+    "player/controls.js",
+    "render/actors.js",
+    "render/lighting.js",
+    "save/envelope.js",
+    "save/format.js",
+    "save/legacy-progress.js",
+    "save/pipeline.js",
+    "save/slots.js",
+    "simulation/commands.js",
+    "simulation/flow.js",
+    "state/actors.js",
+    "state/bindings.js",
+    "state/identity.js",
+    "ui/context-map.js",
+    "ui/inventory-crafting.js",
+    "ui/legacy-panels.js",
+    "ui/loot-vitals.js",
+    "ui/main-menu.js",
+    "ui/maps-windows.js",
+    "ui/modal-dragging.js",
+    "ui/progression.js",
+    "ui/shared.js",
+    "world/camera.js",
+    "world/clock.js",
+    "world/districts.js",
+    "world/events.js",
+    "world/expansion.js",
+    "world/fishing.js",
+    "world/interiors.js",
+    "world/lake-city.js",
+    "world/passages.js",
+    "world/resource-placement.js",
+    "world/resources.js",
+    "world/trees-minimap.js"
+  ]
+}

@@ -27,7 +27,7 @@ window.V012Fishing=(()=>{
     const target=best?{id:'fish_shore014',kind:'fishing0121',name:'Рыбалка · 6–15 сек.',x:player.x,y:player.y,r:1,range:6,waterX:best.waterX,waterY:best.waterY}:null;
     shoreCache={x:player.x,y:player.y,at:now,target};return target;
   }
-  function stop(){window.V013Lake?.release();state=null;}
+  function stop(){window.V013Lake?.release();state=null;window.ActorVisuals?.cancelFishing();}
   function delay(){return 6000+Math.floor((Math.random()+Math.random())/2*9001);}
   function cycle(spot){const fish=window.V013Lake?.choose(spot);if(window.V013Lake&&!fish){stop();message('Рыба пока не подходит к этому месту');return false;}state={spot,started:performance.now(),duration:fish?.duration||delay(),fishId:fish?.id,x:player.x,y:player.y};return true;}
   function start(target){
@@ -54,6 +54,9 @@ window.V012Fishing=(()=>{
     if(menuOpen)V010Inventory.render();
     // At most one catch per frame: returning from background never yields a burst of offline loot.
     if(space())cycle(spot);else stop();
+    // Presentation notification only: catch timing, inventory and RNG above
+    // remain authoritative, including the final catch into a full backpack.
+    window.ActorVisuals?.fishCaught(spot);
   }
   function phase(){
     if(!state)return {kind:'idle',p:0};
@@ -78,6 +81,7 @@ window.V012Fishing=(()=>{
     return {x:player.x+(s.waterX-player.x)*f,y:player.y+(s.waterY-player.y)*f-((ph.kind==='cast'||ph.kind==='reel')?Math.sin(f*Math.PI)*36:Math.sin(performance.now()/230)*1.5)};
   }
   function drawLine(){
+    if(window.ActorVisuals?.drawFishingLine())return;
     if(!state||scene!=='surface')return;face();
     const tip=rodTip(),a=Math.atan2(player.aimY,player.aimX),p=floatPoint(),ph=phase();
     const tx=player.x+tip.x*Math.cos(a)-tip.y*Math.sin(a),ty=player.y+tip.x*Math.sin(a)+tip.y*Math.cos(a);
@@ -102,7 +106,7 @@ window.V012Fishing=(()=>{
       if(Math.hypot(player.x-s.x,player.y-s.y)<210){ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillStyle='#e3e9ce';ctx.fillText(I18n.text('🎣 Рыбалка'),s.x,s.y-22);}
     }
     if(state){
-      const ph=phase(),s=state.spot;
+      const ph=window.ActorVisuals?.fishingVisualPhase()||phase(),s=state.spot;
       if(ph.kind!=='cast'||ph.p>.8){
         for(let i=0;i<3;i++){const p=((now/1100+i/3)%1);ctx.strokeStyle=`rgba(194,230,226,${(1-p)*.5})`;ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(s.waterX,s.waterY,3+p*17,2+p*10,0,0,Math.PI*2);ctx.stroke();}
         if(ph.kind==='reel'||(ph.kind==='cast'&&ph.p>.8))for(let i=0;i<7;i++){const p=(now/270+i*.17)%1,a=i*2.4;ctx.fillStyle=`rgba(206,241,239,${1-p})`;ctx.beginPath();ctx.arc(s.waterX+Math.cos(a)*p*19,s.waterY+Math.sin(a)*p*10-Math.sin(p*Math.PI)*17,1.6,0,Math.PI*2);ctx.fill();}

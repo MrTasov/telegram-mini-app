@@ -1,0 +1,228 @@
+{
+  "version": "0.29.0",
+  "reference": "frozen 0.29.0 before MASTER integration",
+  "passed": 33,
+  "failed": 0,
+  "rates": [
+    {
+      "fps": 60,
+      "distance": 233.09999999999854,
+      "elapsedMs": 1233.3333333333333,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        0
+      ]
+    },
+    {
+      "fps": 30,
+      "distance": 233.09999999999832,
+      "elapsedMs": 1233.3333333333333,
+      "frames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        0,
+        1
+      ]
+    },
+    {
+      "fps": 20,
+      "distance": 236.25000000000114,
+      "elapsedMs": 1250,
+      "frames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        0,
+        1
+      ]
+    },
+    {
+      "analog": [
+        {
+          "power": 1,
+          "sneak": false,
+          "distance": 132.29999999999905,
+          "changes": 7
+        },
+        {
+          "power": 0.5,
+          "sneak": false,
+          "distance": 70.76511627906848,
+          "changes": 4
+        },
+        {
+          "power": 1,
+          "sneak": true,
+          "distance": 66.15000000000191,
+          "changes": 3
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "source.allGameplayOwnersByteIdenticalTo029",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.exactApprovedIdleAndPolishedTwelveFramePNG",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.approvedEquipmentPreservesUnarmedSleepAndZombies",
+      "status": "PASS"
+    },
+    {
+      "id": "save.full029PayloadLoadsUnchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "save.roundtripAfterAnimationKeepsIdentityInventoryAndWorld",
+      "status": "PASS"
+    },
+    {
+      "id": "idle.timeAndRepeatedRenderingNeverAnimateOrMutateGame",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.forward.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.backward.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.strafeLeft.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.strafeRight.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.diagonal.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.forward.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.backward.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.strafeLeft.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.strafeRight.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.diagonal.sameGameplayAndTwelveValidFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "timing.60fps.fullStickCycleNoMissingFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "timing.30fps.fullStickCycleNoMissingFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "timing.20fps.fullStickCycleNoMissingFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "timing.analogAndSneakFollowActualDistance",
+      "status": "PASS"
+    },
+    {
+      "id": "collision.blockedInputUsesIdleWithoutChangingPhysicalMovement",
+      "status": "PASS"
+    },
+    {
+      "id": "transitions.startStopAndRepeatedPoseQueriesRemainStable",
+      "status": "PASS"
+    },
+    {
+      "id": "aim.fastTurnsAndCircularMovementKeepExistingPositionAndAim",
+      "status": "PASS"
+    },
+    {
+      "id": "rotation.idleAndAllTwelveFramesUseOneGroundAnchorAndScale",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy.M4RetainedAndApprovedItemsUseExistingMotion",
+      "status": "PASS"
+    },
+    {
+      "id": "doors.realManualDoorOpensAndPlayerCrossesUnchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "stairs.actualAscentDescentRetainsTimingPositionHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "sleep.sameRestOwnerHealthAndCollisionWithFourBreathingFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "viewport.pc.surfaceInteriorZoomAndAssets",
+      "status": "PASS"
+    },
+    {
+      "id": "viewport.portrait.surfaceInteriorZoomAndAssets",
+      "status": "PASS"
+    },
+    {
+      "id": "viewport.landscape.surfaceInteriorZoomAndAssets",
+      "status": "PASS"
+    },
+    {
+      "id": "cache.noRepeatedRequestsAfterMovementRestAndEquipmentChanges",
+      "status": "PASS"
+    },
+    {
+      "id": "console.allCandidateAndFrozenRuntimesClean",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "VM with modeled DOM and real Canvas2D; physical PC browser, phone and Telegram WebView are manual checks.",
+    "Pixel identity, frame order and state isolation tests do not prove artistic gait quality; use supplied visual previews."
+  ]
+}

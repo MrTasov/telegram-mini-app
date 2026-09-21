@@ -46,7 +46,7 @@ window.V018Build=(()=>{
     changed(r,!o.hp);return true;
   }
   function closedDoors(){return doorRecords.filter(r=>r.scene==='surface'&&r.object.hp>0&&r.kind==='house'&&r.owner.doorProgress<.88).map(r=>r.object);}
-  function stop(notice=''){job=null;hud.style.display='none';if(notice)message(notice);refresh();}
+  function stop(notice=''){window.ActorVisuals?.finishRepair(job,notice==='Ремонт завершён');job=null;hud.style.display='none';if(notice)message(notice);refresh();}
   function start(value){
     const r=record(value);if(!near(r)||!held())return false;
     if(r.object.hp>=r.object.maxHp){open(r.id);return false;}
@@ -55,6 +55,7 @@ window.V018Build=(()=>{
     if(credit<=0&&count(definition(r).repair.material)<1){message('Нужен бетон в рюкзаке · 2 камня → 1 бетон в печи');return false;}
     V014Controls.stopRoute();cancelNavigation();cancelChop();cancelSearch();V012Fishing.stop();firing=false;
     job={id:r.id,x:player.x,y:player.y,scene,ms:0};
+    window.ActorVisuals?.beginRepair(job,r.object);
     if(el('v018Structure')?.classList.contains('open'))closeOverlay(el('v018Structure'));
     refresh();return true;
   }
@@ -132,7 +133,7 @@ window.V018Build=(()=>{
       ctx.save();const active=job?.id===r.id;ctx.strokeStyle=active?'#c7ce9fbb':'#b5c6b477';ctx.lineWidth=1;ctx.setLineDash(o.hp?[]:[5,4]);ctx.strokeRect(o.x-1,o.y-1,o.w+2,o.h+2);ctx.setLineDash([]);
       ctx.fillStyle='#132421df';ctx.fillRect(cx-34,cy-15,68,25);ctx.fillStyle='#b9cbbf';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText(I18n.text('Ур. '+o.level+' · '+Math.round(o.hp).toLocaleString(I18n.locale)),cx,cy-4);ctx.fillStyle='#42514b';ctx.fillRect(cx-28,cy+2,56,3);ctx.fillStyle='#9abb93';ctx.fillRect(cx-28,cy+2,56*o.hp/o.maxHp,3);ctx.restore();
     }
-    if(job){const r=record(job.id);if(!r||r.scene!==scene)return;const p=contactPoint(r.object,player.x,player.y),t=performance.now()/70;ctx.save();ctx.fillStyle='#d0c5a699';for(let i=0;i<3;i++){const a=t+i*2;ctx.fillRect(p.x+Math.sin(a)*7,p.y+Math.cos(a)*5,2,2);}ctx.restore();}
+    if(job&&!AssetManifest.actors.modular){const r=record(job.id);if(!r||r.scene!==scene)return;const p=contactPoint(r.object,player.x,player.y),t=performance.now()/70;ctx.save();ctx.fillStyle='#d0c5a699';for(let i=0;i<3;i++){const a=t+i*2;ctx.fillRect(p.x+Math.sin(a)*7,p.y+Math.cos(a)*5,2,2);}ctx.restore();}
   }
   const surfaceDraw=drawSurface;drawSurface=function(...args){const out=surfaceDraw(...args);drawStructures();return out;};
   const bunkerDraw=drawBunker;drawBunker=function(...args){const out=bunkerDraw(...args);drawStructures();return out;};
@@ -162,7 +163,7 @@ window.V018Build=(()=>{
   const updateOld=update;update=function(...args){const out=updateOld(...args);repairStep(16.667*frameScale);uiElapsed+=16.667*frameScale;if(uiElapsed>=150){uiElapsed=0;refresh();}return out;};
   function capture(){return {schema:1,credit,doors:doorRecords.map(r=>({id:r.id,hp:r.object.hp,level:r.object.level}))};}
   function validate(d){if(d===undefined)return true;if(!d||d.schema!==1||!Number.isFinite(d.credit)||d.credit<0||d.credit>health.repair.hpPerUnit||!Array.isArray(d.doors)||d.doors.length!==doorRecords.length)throw Error('Некорректные данные строительства');const seen=new Set();for(const p of d.doors){if(!doorRecords.some(r=>r.id===p.id)||seen.has(p.id)||!Number.isInteger(p.level)||p.level<1||p.level>maxLevel(record(p.id))||!Number.isFinite(p.hp)||p.hp<0||p.hp>definition(record(p.id)).levels[p.level])throw Error('Некорректная прочность двери');seen.add(p.id);}return true;}
-  function restore(data){validate(data);job=null;credit=data?.credit||0;selected=null;const map=new Map((data?.doors||[]).map(o=>[o.id,o]));for(const r of doorRecords){const p=map.get(r.id),o=r.object;o.level=p?.level||1;o.maxHp=definition(r).levels[o.level];o.hp=p?p.hp:o.maxHp;if(!o.hp){if(r.kind==='automatic')o.open=1;if(r.owner){r.owner.doorOpen=true;r.owner.doorProgress=1;}}}invalidateGeometry();refresh();}
+  function restore(data){validate(data);job=null;window.ActorVisuals?.cancelRepair();credit=data?.credit||0;selected=null;const map=new Map((data?.doors||[]).map(o=>[o.id,o]));for(const r of doorRecords){const p=map.get(r.id),o=r.object;o.level=p?.level||1;o.maxHp=definition(r).levels[o.level];o.hp=p?p.hp:o.maxHp;if(!o.hp){if(r.kind==='automatic')o.open=1;if(r.owner){r.owner.doorOpen=true;r.owner.doorProgress=1;}}}invalidateGeometry();refresh();}
   GameSave.extend('capture','base.construction',function(oldCapture){const d=oldCapture();d.building018=capture();return d;});
   GameSave.extend('decode','base.construction',function(oldDecode,raw){const d=JSON.parse(raw);validate(d.building018);return oldDecode(raw);});
   GameSave.extend('restore','base.construction',function(oldRestore,d){validate(d.building018);restore(d.building018);oldRestore(d);restore(d.building018);});
@@ -178,4 +179,3 @@ window.V018Build=(()=>{
   invalidateGeometry();renderQuickSlots();renderBag();
   return{health,definition,maxLevel,LEVELS,COSTS,structures,stoneNodes,doorRecords,record,isBroken,closedDoors,damage,start,stop,repairStep,upgrade,open,near,occupied,consume,count,capture,restore,validate,drawHeld,drawStone,enemyDoorStep,refresh,get job(){return job;},get credit(){return credit;}};
 })();
-

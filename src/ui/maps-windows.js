@@ -188,8 +188,9 @@ window.V012Effects=(()=>{
     if(p<.70)return -1.35+(p-.52)/.18*2.15;
     return .8-(p-.70)/.30*1.5;
   }
-  function oreImpactTransform(m){const p=phase(m),force=p>=.7?Math.max(0,1-(p-.7)/.2):0;ctx.translate(Math.sin(p*95)*force*1.8,Math.cos(p*73)*force);}
+  function oreImpactTransform(m){const hit=window.ActorVisuals?.impactSample(ActorVisuals.pose('pickaxe'));if(AssetManifest.actors.modular){if(hit){const force=1-hit.age/240;ctx.translate(Math.sin(hit.age*.18)*force*1.8,Math.cos(hit.age*.14)*force);}return;}const p=phase(m),force=p>=.7?Math.max(0,1-(p-.7)/.2):0;ctx.translate(Math.sin(p*95)*force*1.8,Math.cos(p*73)*force);}
   function drawOreImpact(o,m){
+    if(AssetManifest.actors.modular)return; // World-space contact is drawn with the tool.
     const p=phase(m);if(p<.7)return;const t=(p-.7)/.3;
     // Local deposit coordinates; fragments stay small and fade before next blow.
     const angle=Math.atan2(player.y-o.y,player.x-o.x),ox=Math.cos(angle)*o.r*.7,oy=Math.sin(angle)*o.r*.7;
@@ -213,4 +214,3 @@ window.V012Effects=(()=>{
   drawParkedCars=function(){for(const o of scavenges)if(o.kind==='car')drawCar(o);};
   return{pickaxeSwing,oreImpactTransform,drawOreImpact,drawCar};
 })();
-

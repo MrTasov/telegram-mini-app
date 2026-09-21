@@ -58,6 +58,23 @@ function validate(m,base=root){
    if(!m.actors.body[item.body]||!Number.isInteger(item.frame)||item.frame<0||item.frame>=m.images[m.actors.equipment]?.atlas?.frameCount||!item.grip?.every(Number.isFinite)||!(item.scale>0))problem('actor.'+name,'invalid equipment anchor');
   }
   for(const [key,count]of [['rifleHands',8],['toolHands',16]])if(m.actors[key]?.length!==count||m.actors[key].some(pair=>pair.length!==2||pair.some(p=>p.length!==2||!p.every(Number.isFinite))))problem(key,'invalid hand anchors');
+  const mod=m.actors.modular;
+  if(mod){
+   const point=p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite);
+   const layer=(key,l)=>{if(!l||!m.images[l.id]?.atlas?.frames?.[l.key]||!point(l.offset)||!point(l.size)||l.size.some(v=>v<=0))problem(key,'invalid modular layer');};
+   if(mod.walkCount!==12||!point(mod.pivot)||mod.scale!==.125)problem('actors.modular','invalid master scale/anchor');
+   for(const [name,item]of Object.entries(mod.items)){
+    if(item.walk.length!==12)problem(name,'walk must have twelve phases');
+    for(const rec of [item.idle,...item.walk,...(item.action?.frames||[])]){
+     layer(name,rec.body);for(const key of ['equipment','cap'])if(rec[key])layer(name,rec[key]);
+     if(rec.gear){const g=rec.gear;if(!point(g.position)||!point(g.grip)||!Number.isFinite(g.angle)||!(g.scale>0))problem(name,'invalid mount');for(const key of ['rear','front'])if(g[key])layer(name,g[key]);}
+    }
+    if(item.action&&(item.action.frames.length!==12||item.action.durations.length!==12||item.action.durations.some(v=>!(v>0))||item.action.duration!==item.action.durations.reduce((s,v)=>s+v,0)))problem(name,'invalid work timing');
+    for(const id of item.preload)if(!m.images[id])problem(name,'missing equipment prefetch');
+   }
+   for(const [material,frames]of Object.entries(mod.effects)){if(frames.length!==6)problem(material,'invalid contact effect count');frames.forEach(l=>layer(material,l));}
+   layer('fishing',mod.fish);
+  }
  }
  for(const id of Object.values(m.walls))for(const part of ['wall','corner','stairs'])if(!m.images[id]?.atlas?.frames?.[part])problem(id,'missing wall region '+part);
  for(const [key,target]of Object.entries(m.aliases))if(m.art[key]||!m.art[target])problem('alias.'+key,'invalid art alias');

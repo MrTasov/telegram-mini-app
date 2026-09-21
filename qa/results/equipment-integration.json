@@ -1,0 +1,160 @@
+{
+  "reference": "0.29.0 MASTER integrated",
+  "revision": 4,
+  "passed": 37,
+  "failed": 0,
+  "newAtlasDecodedBytes": 16691200,
+  "checks": [
+    {
+      "id": "source.onlyPresentationAndCatchNotificationChanged",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.sevenApprovedItemsTwelveWalkFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.AKRevisionFourUnderhandGripFixedToRifle",
+      "status": "PASS"
+    },
+    {
+      "id": "save.full029PayloadAndRoundtripPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.rifle_ak74",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.axe",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.pickaxe",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.hammer",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.remote",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.flashlight",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.PC.fishing_rod",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.rifle_ak74",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.axe",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.pickaxe",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.hammer",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.remote",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.flashlight",
+      "status": "PASS"
+    },
+    {
+      "id": "movement.MOBILE.fishing_rod",
+      "status": "PASS"
+    },
+    {
+      "id": "collision.blockedAKUsesIdleAndKeepsOriginalHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "work.axe.allTwelvePhasesImpactAndNoSimulationChanges",
+      "status": "PASS"
+    },
+    {
+      "id": "work.pickaxe.allTwelvePhasesImpactAndNoSimulationChanges",
+      "status": "PASS"
+    },
+    {
+      "id": "work.hammer.allTwelvePhasesImpactAndNoSimulationChanges",
+      "status": "PASS"
+    },
+    {
+      "id": "work.realTreeYieldAndClockExactlyPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "work.realMiningYieldAndToolUpgradeRatePreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "work.realRepairHPAndConcreteConsumptionPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "work.oneTickRepairFinishesAllTwelveVisualFramesWithoutDelayingHP",
+      "status": "PASS"
+    },
+    {
+      "id": "work.repairVisualClearsOnCancelMovementAndSaveRestore",
+      "status": "PASS"
+    },
+    {
+      "id": "fishing.realCatchNotificationInventoryRNGAndStationaryWait",
+      "status": "PASS"
+    },
+    {
+      "id": "fishing.catchCancelledOnMovementDeathOrRestore",
+      "status": "PASS"
+    },
+    {
+      "id": "render.allStatesAnglesAndSharedAnchor",
+      "status": "PASS"
+    },
+    {
+      "id": "render.AKBarrelForwardAcrossAllFramesAndTurns",
+      "status": "PASS"
+    },
+    {
+      "id": "cache.lazyStartupAndNoRepeatedRequests",
+      "status": "PASS"
+    },
+    {
+      "id": "viewport.pc.renderAndSavedStateUnchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "viewport.portrait.renderAndSavedStateUnchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "viewport.landscape.renderAndSavedStateUnchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "memory.packedLayersUnder18MiBNoLargeTextures",
+      "status": "PASS"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "DOM model + native Canvas2D. Physical PC/Mobile/WebView manual acceptance remains."
+  ]
+}
