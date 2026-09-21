@@ -3,7 +3,7 @@ const fs=require('fs'),path=require('path'),assert=require('assert/strict'),cryp
 const root=path.resolve(__dirname,'..');process.chdir(root);const {setup}=require('./runtime.cjs'),checks=[];
 const plain=v=>JSON.parse(JSON.stringify(v)),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack});}}
-const capture=r=>{const d=plain(r.eval('captureGameProgress()'));d.gameVersion='metadata';return d;};
+const capture=r=>{const d=require('./corrective-contract.cjs').resourceProjection(r.eval('captureGameProgress()'));d.gameVersion='metadata';return d;};
 async function main(){
  const before=setup('qa/pre-character/index.html'),r=setup('index.html'),E=s=>r.eval(s),catalog=require('../assets/manifest.json'),cfg=catalog.actors;
  await E('Promise.all(Object.keys(AssetManifest.images).filter(id=>!AssetManifest.images[id].historical).map(id=>GameAssets.load(id)))');

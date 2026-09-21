@@ -126,7 +126,10 @@ function decodeGameProgressBase(raw){
      !Array.isArray(d.starterPending)||d.starterPending.length>8||
      !d.starterPending.every((t,i)=>[...HAND_TYPES,'gloves1'].includes(t)&&d.starterPending.indexOf(t)===i)||
      !Array.isArray(d.trees)||d.trees.length!==worldTrees.length||
-     !d.trees.every((t,i)=>t&&t.id===worldTrees[i].id&&typeof t.felled==='boolean'&&integer(t.wood,0,15)&&(t.felled||t.wood===15)))fail();
+     !d.trees.every((t,i)=>t&&t.id===worldTrees[i].id&&typeof t.felled==='boolean'&&integer(t.wood,0,15)&&(t.felled||t.wood===15||t.wood===GameplayBalance.resources.treeWood)))fail();
+  // Standing legacy trees adopt the new yield. Already felled partial pickups
+  // retain their exact remaining wood; inventory and stored resources are untouched.
+  for(const t of d.trees)if(!t.felled)t.wood=GameplayBalance.resources.treeWood;
   return d;
 }
 

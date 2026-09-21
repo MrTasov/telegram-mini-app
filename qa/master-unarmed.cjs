@@ -7,7 +7,7 @@ const plain=v=>JSON.parse(JSON.stringify(v)),sha=b=>crypto.createHash('sha256').
 const checks=[],runtimes=[],rates=[];
 async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack?.slice(0,4500)||String(e)});}}
 function make(file='index.html',options={}){const r=setup(file,{},options);runtimes.push(r);return r;}
-function snapshot(r){return plain(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,aimPower,rightAimActive,firing,scene,transitioning:V091Fortress.transitioning})'));}
+function snapshot(r){return require('./corrective-contract.cjs').snapshot(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,aimPower,rightAimActive,firing,scene,transitioning:V091Fortress.transitioning})'));}
 function compact(frames){return frames.filter((f,i)=>i===0||f!==frames[i-1]);}
 const walkId=catalog.actors.body.unarmed,idleId=catalog.actors.unarmed?.idle;
 async function load(r){await r.eval('Promise.all(Object.entries(AssetManifest.images).filter(([,d])=>!d.historical).map(([id])=>GameAssets.load(id)))');}
@@ -20,8 +20,8 @@ async function main(){
  function step(code='updatePlayer();',ms=1000/60){for(const q of [before,r]){q.advance(ms);q.eval(code);}return plain(E('ActorVisuals.pose(null)'));}
  function equalState(){assert.deepEqual(snapshot(r),snapshot(before));}
  await check('source.allGameplayOwnersByteIdenticalTo029',()=>{
-  const hashes=require('./pre-master/source-hashes.json'),allowed=new Set(['src/assets/manifest.js','src/render/actors.js','src/world/fishing.js','src/ui/maps-windows.js','src/base/construction.js']);
-  for(const [file,expected]of Object.entries(hashes))if(!allowed.has(file))assert.equal(sha(fs.readFileSync(file)),expected,file+' changed');
+  const hashes=require('./pre-master/source-hashes.json'),allowed=new Set(['src/assets/manifest.js','src/render/actors.js','src/core/rendering.js','src/world/fishing.js','src/ui/maps-windows.js','src/base/construction.js']);
+  for(const [file,expected]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!allowed.has(file))assert.equal(sha(fs.readFileSync(file)),expected,file+' changed');
  });
  await check('assets.exactApprovedIdleAndPolishedTwelveFramePNG',()=>{
   assert.equal(sha(fs.readFileSync(catalog.images[walkId].path)),'9603c13125f2e30d6651b181b67754338501fdad49e339af7667d4cd3d426ce5');
@@ -101,7 +101,7 @@ async function main(){
    E(`ctx.setTransform(1,0,0,1,0,0);ActorVisuals.renderPose({kind:'unarmed',id:'${id}',frame:${i},item:null,hands:null},150,150,${angle});`);
    const {m}=plain(E('masterMatrices.at(-1)')),pivot=[m[0]*192+m[2]*192+m[4],m[1]*192+m[3]*192+m[5]];
    assert.ok(Math.hypot(pivot[0]-150,pivot[1]-150)<1e-4,'rotation shifted ground anchor');
-   assert.ok(Math.abs(Math.hypot(m[0],m[1])-.125)<1e-6,'idle/walk scale changed');
+   assert.ok(Math.abs(Math.hypot(m[0],m[1])-.125*catalog.actors.visualScale)<1e-6,'idle/walk scale differs from requested visual scale');
   }}finally{E('ctx.drawImage=masterOriginalDraw');}
  });
  await check('legacy.M4RetainedAndApprovedItemsUseExistingMotion',()=>{

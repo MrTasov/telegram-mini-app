@@ -131,14 +131,20 @@ window.V0105=(()=>{
   }
   function liveTarget(){if(target&&(scene!=='surface'||playerDead||!target.alive||!zombies.includes(target)))target=null;return target;}
   function aim(){const z=liveTarget();if(!z||!isGun(heldItem()))return;const dx=z.x-player.x,dy=z.y-player.y,n=Math.hypot(dx,dy)||1;player.aimX=dx/n;player.aimY=dy/n;}
-  function tapWorld(x,y){
+  function hitTarget(x,y){
     const zoom=V010Camera.zoom||1;
-    const z=scene==='surface'?zombies.filter(z=>z.alive&&Math.hypot(z.x-x,z.y-y)<=Math.max(z.radius+8,18/zoom)).sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y))[0]:null;
+    let closest=null,best=Infinity;if(scene!=='surface')return null;
+    for(const z of zombies){if(!z.alive||z.health<=0)continue;const d=Math.hypot(z.x-x,z.y-y);if(d<best&&d<=Math.max(z.radius+8,18/zoom)){closest=z;best=d;}}
+    return closest;
+  }
+  function tapWorld(x,y){
+    const z=hitTarget(x,y);
     if(!z){target=null;return false;}
     const gun=[heldItem(),lastGun,...guns()].find(t=>isGun(t)&&bagCount(t)>0);
     if(!gun){message('В рюкзаке нет оружия');return true;}
     if(!equip(gun))return true;target=z;aim();return true;
   }
+  function selectTarget(z){if(!z?.alive||z.health<=0||!zombies.includes(z))return false;target=z;aim();return true;}
   const oldShoot=shoot;shoot=function(...args){aim();return oldShoot(...args);};
   const oldPlayer=updatePlayer;updatePlayer=function(...args){const out=oldPlayer(...args);aim();return out;};
   const oldDrawPlayer=drawPlayer;drawPlayer=function(...args){aim();return oldDrawPlayer(...args);};
@@ -189,7 +195,7 @@ window.V0105=(()=>{
     if(g!==undefined){
       const time=t=>Number.isFinite(t)&&t>0&&t<=Date.now()+60000;
       if(!g||g.schema!==1||(g.chop&&g.mining)||(g.hand!==null&&!['axe','pickaxe','fishing_rod','hammer',...guns].includes(g.hand)))throw Error('Некорректное сохранение добычи');
-      if(g.chop&&(!worldTrees.some(t=>t.id===g.chop.id)||g.chop.duration!==1800||!time(g.chop.startedAt)))throw Error('Некорректная рубка');
+      if(g.chop&&(!worldTrees.some(t=>t.id===g.chop.id)||![1800,1800+GameplayBalance.resources.treeChopExtraMs].includes(g.chop.duration)||!time(g.chop.startedAt)))throw Error('Некорректная рубка');
       if(g.mining&&(!V09World.ores.some(o=>o.id===g.mining.id)||g.mining.duration!==1800||!time(g.mining.at)||!Number.isFinite(g.mining.elapsed)||g.mining.elapsed<0||g.mining.elapsed>=1800))throw Error('Некорректная добыча');
     }
     return d;
@@ -219,5 +225,5 @@ window.V0105=(()=>{
   }
   const changes=v09Button('Что нового? · Version 0.21.0',showHistory);changes.id='v105ChangesButton';el('closeSettings').before(changes);
   v09Style('#v105Changes .panel{width:min(480px,94vw);padding:14px;font-size:12px;max-height:85dvh}#v105Changes details{border-bottom:1px solid #405452;padding:8px 0}#v105Changes summary{font-size:14px;cursor:pointer;color:#e2c58d}#v105Changes h3{font-size:12px;margin:12px 0 4px;color:#97cab5}#v105Changes ul{padding-left:18px;margin:4px 0;line-height:1.5}#v105Changes li{margin:5px 0}');
-  return {tapWorld,equip,markers,drawMapMarkers,showHistory,history,get target(){return liveTarget();},get contextHand(){return contextHand;}};
+  return {tapWorld,hitTarget,selectTarget,equip,markers,drawMapMarkers,showHistory,history,get target(){return liveTarget();},get contextHand(){return contextHand;}};
 })();

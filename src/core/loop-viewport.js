@@ -72,7 +72,7 @@ function updateTrees(){
     if(t.regrowMs>0)continue;
     const occupants=[...(scene==='surface'?[player]:[]),...zombies.filter(z=>z.alive)];
     if(occupants.some(p=>distance(p.x,p.y,t.x,t.y)<t.r+p.radius+4))continue;
-    t.felled=false;t.wood=15;invalidateGeometry();queueGameSave();
+    t.felled=false;t.wood=GameplayBalance.resources.treeWood;invalidateGeometry();queueGameSave();
   }
 }
 function update(){
@@ -188,4 +188,3 @@ function gameLoop(timestamp=performance.now()){
   );
 
 }
-

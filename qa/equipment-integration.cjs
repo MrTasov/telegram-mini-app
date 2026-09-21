@@ -5,7 +5,7 @@ const catalog=require('../assets/manifest.json'),mod=catalog.actors.modular,chec
 async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack});}}
 const make=(file='index.html',options={})=>{const r=setup(file,{},options);runtimes.push(r);return r;};
 const load=r=>r.eval('Promise.all(Object.entries(AssetManifest.images).filter(([,d])=>!d.historical).map(([id])=>GameAssets.load(id)))');
-const snapshot=r=>plain(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,firing,scene})'));
+const snapshot=r=>require('./corrective-contract.cjs').snapshot(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,firing,scene})'));
 async function main(){
  const b=make('qa/pre-equipment/index.html'),r=make(),E=s=>r.eval(s),B=s=>b.eval(s);await load(r);await load(b);
  const raw=B('JSON.stringify(captureGameProgress())');
@@ -13,9 +13,9 @@ async function main(){
  function pair(code){B(code);E(code);}function fresh(code=''){pair(init+code);E('ActorVisuals.pose(null)');}function same(){assert.deepEqual(snapshot(r),snapshot(b));}
  function step(ms=1000/60,code='updatePlayer();'){for(const q of [b,r]){q.advance(ms);q.eval(code);}}
  await check('source.onlyPresentationAndCatchNotificationChanged',()=>{
-  const hashes=require('./pre-equipment/source-hashes.json'),allowed=['src/render/actors.js','src/assets/manifest.js','src/world/fishing.js','src/ui/maps-windows.js','src/base/construction.js'];
-  for(const [file,h]of Object.entries(hashes))if(!allowed.includes(file))assert.equal(sha(fs.readFileSync(file)),h,file);
-  for(const file of ['src/save/format.js','src/save/envelope.js','src/config/gameplay.js','src/combat/monsters.js','src/combat/weapons-crafting.js','src/player/controls.js'])assert.equal(sha(fs.readFileSync(file)),hashes[file]);
+  const hashes=require('./pre-equipment/source-hashes.json'),allowed=['src/render/actors.js','src/core/rendering.js','src/assets/manifest.js','src/world/fishing.js','src/ui/maps-windows.js','src/base/construction.js'];
+  for(const [file,h]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!allowed.includes(file))assert.equal(sha(fs.readFileSync(file)),h,file);
+  for(const file of ['src/save/format.js','src/save/envelope.js','src/config/gameplay.js','src/combat/monsters.js','src/combat/weapons-crafting.js','src/player/controls.js'])if(!require('./corrective-contract.cjs').sourceChanges.has(file))assert.equal(sha(fs.readFileSync(file)),hashes[file]);
  });
  await check('assets.sevenApprovedItemsTwelveWalkFrames',()=>{
   assert.deepEqual(Object.keys(mod.items),['rifle_ak74','axe','pickaxe','hammer','remote','flashlight','fishing_rod']);
@@ -53,9 +53,12 @@ async function main(){
    elapsed+=action.durations[i];
   }assert.equal(seen.size,12);E('chopState=null;V09World.stopMining()');
  });
- await check('work.realTreeYieldAndClockExactlyPreserved',()=>{
+ await check('work.realTreeExplicitCorrectiveBalance',()=>{
   fresh("addItem('axe',1);V013Inventory.equip('axe');window.qaTree=worldTrees.find(t=>t.wood>0&&!t.felled);player.x=qaTree.x+50;player.y=qaTree.y;useTree(qaTree);");assert.ok(E('chopState'));
-  for(let i=0;i<115;i++){step(1000/60,'updateChop();');E('drawPlayer()');if(i%10===0)same();}same();assert.equal(E('qaTree.felled'),true);
+  assert.equal(B('chopState.duration'),1800);assert.equal(E('chopState.duration'),2300);
+  const oldWood=B("bagCount('wood')"),newWood=E("bagCount('wood')");
+  for(let i=0;i<139;i++){step(1000/60,'updateChop();');E('drawPlayer()');}
+  assert.equal(E('qaTree.felled'),true);assert.equal(B("bagCount('wood')")-oldWood,15);assert.equal(E("bagCount('wood')")-newWood,10);
  });
  await check('work.realMiningYieldAndToolUpgradeRatePreserved',()=>{
   fresh("addItem('pickaxe',1);V013Inventory.equip('pickaxe');window.qaOre=V09World.ores[0];player.x=qaOre.x+qaOre.r+20;player.y=qaOre.y;executeInteraction(interactionObjects('surface').find(o=>o.id===qaOre.id));");assert.ok(E('V09World.miningState()'));

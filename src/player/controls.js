@@ -29,7 +29,7 @@ window.V014Controls=(()=>{
   }
   function release(e){if(e.pointerId===lockedPress){lockedPress=null;aimControl.classList.remove('v014TargetFire');}}
   function releaseInput(){lockedPress=null;aimControl.classList.remove('v014TargetFire');}
-  function openDoors(fn){return GamePassages.plan(fn);}
+  function openDoors(fn){return GamePassages.plan(fn,scene);}
   function installPath(points,provisional=false){
     navigation={destination:route.destination,points,index:0,blockedMs:0,replans:0,scene,map014:true,provisional};
     const corners=[];
@@ -51,19 +51,8 @@ window.V014Controls=(()=>{
     pending={generator:v092PathSearch(player.x,player.y,dest,scene,player.radius),start:{x:player.x,y:player.y},scene,revision:geometryRevision,navCell};
   }
   function immediatePrefix(){
-    const dest=route.destination,angle=Math.atan2(dest.y-player.y,dest.x-player.x),limit=Math.min(200,distance(player.x,player.y,dest.x,dest.y));
-    // Bounded local sweep: begin on a safe edge while the global search yields.
-    // Collision checks include the player's radius, including narrow doorways.
-    let best=null,score=-Infinity;
-    for(const offset of [0,.45,-.45,.9,-.9,1.4,-1.4]){
-      const a=angle+offset;let last=null;
-      for(let n=8;n<=limit;n+=8){const p={x:player.x+Math.cos(a)*n,y:player.y+Math.sin(a)*n};
-        if(!openDoors(()=>lineClear(player.x,player.y,p.x,p.y,player.radius,scene)))break;last=p;
-      }
-      if(last){const value=distance(player.x,player.y,dest.x,dest.y)-distance(last.x,last.y,dest.x,dest.y);if(value>score){score=value;best=last;}}
-      if(offset===0&&best&&distance(player.x,player.y,best.x,best.y)>limit-10)break;
-    }
-    if(best&&score>1)installPath([best],true);
+    const point=V091Navigation.immediatePrefix(route.destination);
+    if(point)installPath([point],true);
   }
   function goTo(p){
     if(!p||playerDead)return false;
@@ -81,7 +70,7 @@ window.V014Controls=(()=>{
     if(playerDead||route?.scene!==scene){stopRoute();return;}
     if(pending.revision!==geometryRevision){beginPlan(pending.navCell===12);}
     const start=performance.now();let out;
-    for(let i=0;i<40;i++){out=openDoors(()=>pending.generator.next());if(out.done||performance.now()-start>3)break;}
+    openDoors(()=>{for(let i=0;i<40;i++){out=pending.generator.next();if(out.done||performance.now()-start>3)break;}});
     if(!out.done)return;
     const coarse=pending.navCell!==12;pending=null;
     if(!out.value){if(coarse){beginPlan(true);return;}stopRoute();message('Нет доступного пути');return;}
@@ -162,4 +151,3 @@ window.V014Controls=(()=>{
   window.addEventListener('resize',layout);window.visualViewport?.addEventListener('resize',layout);el('v010MapCorner').addEventListener('click',layout);layout();
   return {target,contactTarget,beginStick,moveStick:moveStick014,release,releaseInput,goTo,stopRoute,tickPath,advanceRoute,drawRoute,mapSelectedTarget,layout,get route(){return route;},get planning(){return !!pending;}};
 })();
-

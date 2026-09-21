@@ -3,9 +3,9 @@ window.GamePassages=(()=>{
   const entries=new Map();let permissions=null;
   function register(id,definition){entries.set(id,definition);}
   const available=d=>!!d&&!!d.canOpen();
-  function plan(fn){
+  function plan(fn,which=null){
     const previous=permissions,before=V09Power.pathfinding;
-    if(!permissions)permissions=new Map([...entries].map(([id,d])=>[id,available(d)]));
+    if(!permissions)permissions=new Map([...entries].map(([id,d])=>[id,(!which||d.scene===which)&&available(d)]));
     V09Power.pathfinding=true;try{return fn();}finally{permissions=previous;V09Power.pathfinding=before;}
   }
   function canPlanThrough(id){return V09Power.pathfinding&&!!(permissions?permissions.get(id):available(entries.get(id)));}

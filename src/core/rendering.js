@@ -396,7 +396,7 @@ function drawPlayer(){
   const bob=player.moving?Math.sin(player.walkAnimation)*3:0;
   const recoil=canFire()&&performance.now()-muzzleFlash.time<95?(typeof V09Craft!=='undefined'?(V09Craft.weapons[item]?.visualRecoil??-2.4):-2.4):0;
   if(!window.ActorVisuals?.drawPlayer(angle,item,recoil)){
-  ctx.save();ctx.translate(player.x,player.y);ctx.rotate(angle);
+  ctx.save();ctx.translate(player.x,player.y);ctx.rotate(angle);ctx.scale(AssetManifest.actors.visualScale||1,AssetManifest.actors.visualScale||1);
   ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.ellipse(-2,3,20,17,0,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='#222c2c';ctx.lineWidth=8;ctx.lineCap='round';
   ctx.beginPath();ctx.moveTo(-4,-8);ctx.lineTo(-12+bob,-9);ctx.moveTo(-4,8);ctx.lineTo(-12-bob,9);ctx.stroke();

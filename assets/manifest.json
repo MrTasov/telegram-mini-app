@@ -3052,6 +3052,55 @@
           }
         }
       }
+    },
+    "actor/work-tool-views": {
+      "path": "assets/atlases/player/work-tool-views.png",
+      "size": [
+        768,
+        512
+      ],
+      "atlas": {
+        "layout": "packed",
+        "frameCount": 6,
+        "frames": {
+          "axe0": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 270
+          },
+          "axe1": {
+            "x": 256,
+            "y": 0,
+            "w": 256,
+            "h": 270
+          },
+          "axe2": {
+            "x": 512,
+            "y": 0,
+            "w": 256,
+            "h": 270
+          },
+          "pickaxe0": {
+            "x": 0,
+            "y": 270,
+            "w": 256,
+            "h": 242
+          },
+          "pickaxe1": {
+            "x": 256,
+            "y": 270,
+            "w": 256,
+            "h": 242
+          },
+          "pickaxe2": {
+            "x": 512,
+            "y": 270,
+            "w": 256,
+            "h": 242
+          }
+        }
+      }
     }
   },
   "art": {
@@ -3220,7 +3269,7 @@
       "count": 4,
       "cycleMs": 4800,
       "worldHeight": 100.8,
-      "yOffset": -29,
+      "yOffset": -16,
       "xOffset": 3
     },
     "rifleHands": [
@@ -4967,23 +5016,23 @@
           "action": {
             "duration": 1200,
             "durations": [
-              150,
-              110,
               110,
               100,
-              150,
-              65,
-              50,
-              75,
-              70,
+              100,
+              130,
+              140,
               110,
+              60,
               110,
-              100
+              90,
+              90,
+              80,
+              80
             ],
             "impactFrame": 7,
             "impactPoint": [
-              464.3,
-              636
+              476.68696141462254,
+              648.0939152304072
             ],
             "frames": [
               {
@@ -4999,23 +5048,63 @@
                     330
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "0",
-                  "offset": [
-                    426,
-                    366
-                  ],
-                  "size": [
-                    70,
-                    280
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  477.4848484848485,
-                  640
-                ]
+                  442.84664639926,
+                  626.1998235530043
+                ],
+                "gear": {
+                  "position": [
+                    444.395,
+                    514.515
+                  ],
+                  "angle": 0.35,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.92
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    432.55,
+                    522.24
+                  ],
+                  [
+                    456.24,
+                    506.79
+                  ]
+                ],
+                "sourcePhase": 1
               },
               {
                 "body": {
@@ -5030,116 +5119,63 @@
                     268
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "1",
-                  "offset": [
-                    374,
-                    428
-                  ],
-                  "size": [
-                    88,
-                    216
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  428.3333333333333,
-                  638
-                ]
-              },
-              {
-                "body": {
-                  "id": "actor/v4/body-axe-work",
-                  "key": "2",
-                  "offset": [
-                    276,
-                    246
+                  492.09597769477415,
+                  587.2310681099498
+                ],
+                "gear": {
+                  "position": [
+                    421.22,
+                    510.91
                   ],
-                  "size": [
-                    360,
-                    334
-                  ]
-                },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "2",
-                  "offset": [
-                    378,
-                    222
+                  "angle": -0.38687571773102847,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.85
                   ],
-                  "size": [
-                    130,
-                    200
-                  ]
-                },
-                "equipmentInFront": false,
-                "tip": [
-                  486.7903225806452,
-                  415
-                ]
-              },
-              {
-                "body": {
-                  "id": "actor/v4/body-axe-work",
-                  "key": "3",
-                  "offset": [
-                    328,
-                    248
+                  "grip": [
+                    269.5,
+                    240
                   ],
-                  "size": [
-                    288,
-                    336
-                  ]
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "flipX": false
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "3",
-                  "offset": [
-                    404,
-                    230
+                "hands": [
+                  [
+                    409.89,
+                    483.1
                   ],
-                  "size": [
-                    182,
-                    194
+                  [
+                    432.55,
+                    538.72
                   ]
-                },
-                "equipmentInFront": false,
-                "tip": [
-                  565.6530612244898,
-                  417
-                ]
-              },
-              {
-                "body": {
-                  "id": "actor/v4/body-axe-work",
-                  "key": "4",
-                  "offset": [
-                    280,
-                    250
-                  ],
-                  "size": [
-                    348,
-                    296
-                  ]
-                },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "4",
-                  "offset": [
-                    384,
-                    278
-                  ],
-                  "size": [
-                    172,
-                    148
-                  ]
-                },
-                "equipmentInFront": false,
-                "tip": [
-                  404.1186440677966,
-                  419
-                ]
+                ],
+                "sourcePhase": 2
               },
               {
                 "body": {
@@ -5154,66 +5190,347 @@
                     294
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "5",
-                  "offset": [
-                    390,
-                    352
-                  ],
-                  "size": [
-                    160,
-                    202
-                  ]
-                },
-                "equipmentInFront": true,
                 "tip": [
-                  529.3478260869565,
-                  548
+                  427.79556303078294,
+                  469.0687043755492
                 ],
-                "cap": {
-                  "id": "actor/v4/axe-caps",
-                  "key": "5",
-                  "offset": [
-                    450,
-                    484
+                "gear": {
+                  "position": [
+                    491.0,
+                    512.5
                   ],
-                  "size": [
-                    64,
-                    76
+                  "angle": -3.510926311263419,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.56
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe1",
+                    "offset": [
+                      102.44999999999999,
+                      54.53488372093023
+                    ],
+                    "size": [
+                      332.8,
+                      439.5348837209302
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe1",
+                    "offset": [
+                      102.44999999999999,
+                      54.53488372093023
+                    ],
+                    "size": [
+                      332.8,
+                      439.5348837209302
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    485,
+                    497
+                  ],
+                  [
+                    497,
+                    528
                   ]
-                }
+                ],
+                "sourcePhase": 6
               },
               {
                 "body": {
                   "id": "actor/v4/body-axe-work",
-                  "key": "6",
+                  "key": "2",
                   "offset": [
-                    348,
-                    308
+                    276,
+                    246
                   ],
                   "size": [
-                    278,
+                    360,
+                    334
+                  ]
+                },
+                "tip": [
+                  378.47445215854515,
+                  264.7844233191034
+                ],
+                "gear": {
+                  "position": [
+                    467.055,
+                    336.325
+                  ],
+                  "angle": -3.7035142158466074,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.94
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    458.3,
+                    322.41999999999996
+                  ],
+                  [
+                    475.81,
+                    350.23
+                  ]
+                ],
+                "sourcePhase": 3
+              },
+              {
+                "body": {
+                  "id": "actor/v4/body-axe-work",
+                  "key": "3",
+                  "offset": [
+                    328,
+                    248
+                  ],
+                  "size": [
+                    288,
                     336
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "6",
+                "tip": [
+                  423.7227508516352,
+                  274.4789070754772
+                ],
+                "gear": {
+                  "position": [
+                    520.1,
+                    346.625
+                  ],
+                  "angle": -3.758784045130156,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    1
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    508.77,
+                    330.65999999999997
+                  ],
+                  [
+                    531.4300000000001,
+                    362.59000000000003
+                  ]
+                ],
+                "sourcePhase": 4
+              },
+              {
+                "body": {
+                  "id": "actor/v4/body-axe-work",
+                  "key": "4",
                   "offset": [
-                    428,
-                    398
+                    280,
+                    250
                   ],
                   "size": [
-                    46,
-                    242
+                    348,
+                    296
                   ]
                 },
-                "equipmentInFront": false,
                 "tip": [
-                  450.82608695652175,
-                  633
-                ]
+                  346.85449316104604,
+                  292.0084782223768
+                ],
+                "gear": {
+                  "position": [
+                    438.5,
+                    341.5
+                  ],
+                  "angle": -3.855683352201951,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.85
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    432,
+                    334
+                  ],
+                  [
+                    445,
+                    349
+                  ]
+                ],
+                "sourcePhase": 5
+              },
+              {
+                "body": {
+                  "id": "actor/v4/body-axe-work",
+                  "key": "5",
+                  "offset": [
+                    340,
+                    310
+                  ],
+                  "size": [
+                    270,
+                    294
+                  ]
+                },
+                "tip": [
+                  418.81570880148456,
+                  445.8707476165283
+                ],
+                "gear": {
+                  "position": [
+                    491.0,
+                    512.5
+                  ],
+                  "angle": -3.510926311263419,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.78
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe1",
+                    "offset": [
+                      102.44999999999999,
+                      54.53488372093023
+                    ],
+                    "size": [
+                      332.8,
+                      439.5348837209302
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe1",
+                    "offset": [
+                      102.44999999999999,
+                      54.53488372093023
+                    ],
+                    "size": [
+                      332.8,
+                      439.5348837209302
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    485,
+                    497
+                  ],
+                  [
+                    497,
+                    528
+                  ]
+                ],
+                "sourcePhase": 6
               },
               {
                 "body": {
@@ -5228,23 +5545,63 @@
                     304
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "7",
-                  "offset": [
-                    446,
-                    398
-                  ],
-                  "size": [
-                    44,
-                    244
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  464.3,
-                  636
-                ]
+                  476.68696141462254,
+                  648.0939152304072
+                ],
+                "gear": {
+                  "position": [
+                    463.45,
+                    544.385
+                  ],
+                  "angle": 0.35,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.78
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe2",
+                    "offset": [
+                      117.4,
+                      35.30434782608696
+                    ],
+                    "size": [
+                      332.8,
+                      493.04347826086956
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe2",
+                    "offset": [
+                      117.4,
+                      35.30434782608696
+                    ],
+                    "size": [
+                      332.8,
+                      493.04347826086956
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    455.21,
+                    554.17
+                  ],
+                  [
+                    471.69,
+                    534.6
+                  ]
+                ],
+                "sourcePhase": 8
               },
               {
                 "body": {
@@ -5259,23 +5616,63 @@
                     282
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "8",
-                  "offset": [
-                    414,
-                    424
-                  ],
-                  "size": [
-                    58,
-                    226
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  446.6190476190476,
-                  643
-                ]
+                  441.88031599638674,
+                  634.3661252833245
+                ],
+                "gear": {
+                  "position": [
+                    429.46000000000004,
+                    528.4200000000001
+                  ],
+                  "angle": 0.35,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.8
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe2",
+                    "offset": [
+                      117.4,
+                      35.30434782608696
+                    ],
+                    "size": [
+                      332.8,
+                      493.04347826086956
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe2",
+                    "offset": [
+                      117.4,
+                      35.30434782608696
+                    ],
+                    "size": [
+                      332.8,
+                      493.04347826086956
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    422.25,
+                    525.33
+                  ],
+                  [
+                    436.67,
+                    531.51
+                  ]
+                ],
+                "sourcePhase": 9
               },
               {
                 "body": {
@@ -5290,23 +5687,63 @@
                     330
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "9",
-                  "offset": [
-                    372,
-                    458
-                  ],
-                  "size": [
-                    142,
-                    186
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  412.7826086956522,
-                  637
-                ]
+                  445.80534786903286,
+                  628.9669403627005
+                ],
+                "gear": {
+                  "position": [
+                    434.61,
+                    519.665
+                  ],
+                  "angle": 0.35,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.83
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe2",
+                    "offset": [
+                      117.4,
+                      35.30434782608696
+                    ],
+                    "size": [
+                      332.8,
+                      493.04347826086956
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe2",
+                    "offset": [
+                      117.4,
+                      35.30434782608696
+                    ],
+                    "size": [
+                      332.8,
+                      493.04347826086956
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    427.4,
+                    516.06
+                  ],
+                  [
+                    441.82,
+                    523.27
+                  ]
+                ],
+                "sourcePhase": 10
               },
               {
                 "body": {
@@ -5321,23 +5758,63 @@
                     312
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "10",
-                  "offset": [
-                    420,
-                    416
-                  ],
-                  "size": [
-                    68,
-                    238
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  457.5,
-                  647
-                ]
+                  459.67221074475464,
+                  634.1490264226895
+                ],
+                "gear": {
+                  "position": [
+                    453.15,
+                    525.845
+                  ],
+                  "angle": 0.35,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.88
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe1",
+                    "offset": [
+                      102.44999999999999,
+                      54.53488372093023
+                    ],
+                    "size": [
+                      332.8,
+                      439.5348837209302
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe1",
+                    "offset": [
+                      102.44999999999999,
+                      54.53488372093023
+                    ],
+                    "size": [
+                      332.8,
+                      439.5348837209302
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    443.88,
+                    534.6
+                  ],
+                  [
+                    462.42,
+                    517.09
+                  ]
+                ],
+                "sourcePhase": 11
               },
               {
                 "body": {
@@ -5352,25 +5829,66 @@
                     336
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/axe-work",
-                  "key": "11",
-                  "offset": [
-                    442,
-                    418
-                  ],
-                  "size": [
-                    64,
-                    234
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  476.7586206896552,
-                  646
-                ]
+                  459.32664639926,
+                  639.0748235530044
+                ],
+                "gear": {
+                  "position": [
+                    460.875,
+                    527.3900000000001
+                  ],
+                  "angle": 0.35,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.92
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "axe0",
+                    "offset": [
+                      90.1,
+                      53.56164383561644
+                    ],
+                    "size": [
+                      332.8,
+                      443.8356164383561
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    452.12,
+                    537.69
+                  ],
+                  [
+                    469.63,
+                    517.09
+                  ]
+                ],
+                "sourcePhase": 12
               }
-            ]
+            ],
+            "motionRevision": 1
           },
           "preload": [
             "actor/v4/body-tool",
@@ -5379,7 +5897,8 @@
             "actor/v4/body-axe-work",
             "actor/v4/axe-work",
             "actor/v4/axe-caps",
-            "actor/v4/contact"
+            "actor/v4/contact",
+            "actor/work-tool-views"
           ]
         },
         "pickaxe": {
@@ -6052,23 +6571,23 @@
           "action": {
             "duration": 1200,
             "durations": [
-              150,
               110,
-              105,
-              110,
-              160,
-              60,
-              50,
-              75,
-              75,
               100,
+              100,
+              130,
+              140,
               110,
-              95
+              60,
+              110,
+              90,
+              90,
+              80,
+              80
             ],
             "impactFrame": 7,
             "impactPoint": [
-              449,
-              605
+              477.2902902838756,
+              620.0173277398526
             ],
             "frames": [
               {
@@ -6084,23 +6603,63 @@
                     272
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "0",
-                  "offset": [
-                    424,
-                    480
-                  ],
-                  "size": [
-                    46,
-                    166
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  451.7,
-                  641
-                ]
+                  466.8972778534047,
+                  611.6363505156662
+                ],
+                "gear": {
+                  "position": [
+                    445.94,
+                    512.97
+                  ],
+                  "angle": 0.6,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.92
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    436.67,
+                    521.21
+                  ],
+                  [
+                    455.21,
+                    504.73
+                  ]
+                ],
+                "sourcePhase": 1
               },
               {
                 "body": {
@@ -6115,116 +6674,63 @@
                     296
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "1",
-                  "offset": [
-                    388,
-                    448
-                  ],
-                  "size": [
-                    144,
-                    192
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  471.8305084745763,
-                  633
-                ]
-              },
-              {
-                "body": {
-                  "id": "actor/v4/body-pickaxe-work",
-                  "key": "2",
-                  "offset": [
-                    268,
-                    268
+                  530.1506025104942,
+                  554.0101784390682
+                ],
+                "gear": {
+                  "position": [
+                    437.185,
+                    525.3299999999999
                   ],
-                  "size": [
-                    348,
-                    280
-                  ]
-                },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "2",
-                  "offset": [
-                    366,
-                    232
+                  "angle": -0.4228539261329396,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.85
                   ],
-                  "size": [
-                    172,
-                    192
-                  ]
-                },
-                "equipmentInFront": false,
-                "tip": [
-                  493.51063829787233,
-                  418
-                ]
-              },
-              {
-                "body": {
-                  "id": "actor/v4/body-pickaxe-work",
-                  "key": "3",
-                  "offset": [
-                    328,
-                    238
+                  "grip": [
+                    269.5,
+                    240
                   ],
-                  "size": [
-                    258,
-                    340
-                  ]
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "flipX": false
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "3",
-                  "offset": [
-                    362,
-                    230
+                "hands": [
+                  [
+                    432.55,
+                    515.03
                   ],
-                  "size": [
-                    148,
-                    206
+                  [
+                    441.82,
+                    535.63
                   ]
-                },
-                "equipmentInFront": false,
-                "tip": [
-                  458.07142857142856,
-                  428
-                ]
-              },
-              {
-                "body": {
-                  "id": "actor/v4/body-pickaxe-work",
-                  "key": "4",
-                  "offset": [
-                    282,
-                    238
-                  ],
-                  "size": [
-                    342,
-                    328
-                  ]
-                },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "4",
-                  "offset": [
-                    358,
-                    262
-                  ],
-                  "size": [
-                    180,
-                    182
-                  ]
-                },
-                "equipmentInFront": false,
-                "tip": [
-                  448,
-                  437
-                ]
+                ],
+                "sourcePhase": 2
               },
               {
                 "body": {
@@ -6239,66 +6745,347 @@
                     292
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "5",
-                  "offset": [
-                    398,
-                    282
-                  ],
-                  "size": [
-                    140,
-                    192
-                  ]
-                },
-                "equipmentInFront": true,
                 "tip": [
-                  481,
-                  468
+                  403.45397998241214,
+                  427.08355482328056
                 ],
-                "cap": {
-                  "id": "actor/v4/pickaxe-caps",
-                  "key": "5",
-                  "offset": [
-                    446,
-                    408
+                "gear": {
+                  "position": [
+                    491.0,
+                    448.0
                   ],
-                  "size": [
-                    56,
-                    84
+                  "angle": -3.4125395039282136,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.56
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe1",
+                    "offset": [
+                      102.44999999999999,
+                      59.18032786885246
+                    ],
+                    "size": [
+                      332.8,
+                      476.06557377049177
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe1",
+                    "offset": [
+                      102.44999999999999,
+                      59.18032786885246
+                    ],
+                    "size": [
+                      332.8,
+                      476.06557377049177
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    486,
+                    430
+                  ],
+                  [
+                    496,
+                    466
                   ]
-                }
+                ],
+                "sourcePhase": 6
               },
               {
                 "body": {
                   "id": "actor/v4/body-pickaxe-work",
-                  "key": "6",
+                  "key": "2",
                   "offset": [
-                    300,
-                    312
+                    268,
+                    268
                   ],
                   "size": [
-                    320,
-                    314
+                    348,
+                    280
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "6",
-                  "offset": [
-                    430,
-                    436
-                  ],
-                  "size": [
-                    42,
-                    182
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  454,
-                  612
-                ]
+                  360.03521531200704,
+                  329.6104729749115
+                ],
+                "gear": {
+                  "position": [
+                    459.845,
+                    350.23
+                  ],
+                  "angle": -3.7101172013208332,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.94
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    448,
+                    331.69
+                  ],
+                  [
+                    471.69,
+                    368.77
+                  ]
+                ],
+                "sourcePhase": 3
+              },
+              {
+                "body": {
+                  "id": "actor/v4/body-pickaxe-work",
+                  "key": "3",
+                  "offset": [
+                    328,
+                    238
+                  ],
+                  "size": [
+                    258,
+                    340
+                  ]
+                },
+                "tip": [
+                  350.879413789595,
+                  309.4598059265432
+                ],
+                "gear": {
+                  "position": [
+                    449.03,
+                    347.14
+                  ],
+                  "angle": -3.5782198134033347,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    1
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    441.82,
+                    331.69
+                  ],
+                  [
+                    456.24,
+                    362.59000000000003
+                  ]
+                ],
+                "sourcePhase": 4
+              },
+              {
+                "body": {
+                  "id": "actor/v4/body-pickaxe-work",
+                  "key": "4",
+                  "offset": [
+                    282,
+                    238
+                  ],
+                  "size": [
+                    342,
+                    328
+                  ]
+                },
+                "tip": [
+                  345.28792228222744,
+                  342.1311718531623
+                ],
+                "gear": {
+                  "position": [
+                    442.5,
+                    346.0
+                  ],
+                  "angle": -3.823909208464541,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.85
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    436,
+                    338
+                  ],
+                  [
+                    449,
+                    354
+                  ]
+                ],
+                "sourcePhase": 5
+              },
+              {
+                "body": {
+                  "id": "actor/v4/body-pickaxe-work",
+                  "key": "5",
+                  "offset": [
+                    344,
+                    304
+                  ],
+                  "size": [
+                    274,
+                    292
+                  ]
+                },
+                "tip": [
+                  398.87125011853686,
+                  410.5857273133297
+                ],
+                "gear": {
+                  "position": [
+                    491.0,
+                    448.0
+                  ],
+                  "angle": -3.4125395039282136,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.78
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe1",
+                    "offset": [
+                      102.44999999999999,
+                      59.18032786885246
+                    ],
+                    "size": [
+                      332.8,
+                      476.06557377049177
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe1",
+                    "offset": [
+                      102.44999999999999,
+                      59.18032786885246
+                    ],
+                    "size": [
+                      332.8,
+                      476.06557377049177
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    486,
+                    430
+                  ],
+                  [
+                    496,
+                    466
+                  ]
+                ],
+                "sourcePhase": 6
               },
               {
                 "body": {
@@ -6313,23 +7100,63 @@
                     250
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "7",
-                  "offset": [
-                    430,
-                    428
-                  ],
-                  "size": [
-                    40,
-                    184
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  449,
-                  605
-                ]
+                  477.2902902838756,
+                  620.0173277398526
+                ],
+                "gear": {
+                  "position": [
+                    455.21000000000004,
+                    517.605
+                  ],
+                  "angle": 0.6,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.78
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe2",
+                    "offset": [
+                      110.9,
+                      39.856459330143544
+                    ],
+                    "size": [
+                      332.8,
+                      486.31578947368416
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe2",
+                    "offset": [
+                      110.9,
+                      39.856459330143544
+                    ],
+                    "size": [
+                      332.8,
+                      486.31578947368416
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    446.97,
+                    527.39
+                  ],
+                  [
+                    463.45,
+                    507.82
+                  ]
+                ],
+                "sourcePhase": 8
               },
               {
                 "body": {
@@ -6344,23 +7171,63 @@
                     332
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "8",
-                  "offset": [
-                    428,
-                    424
-                  ],
-                  "size": [
-                    40,
-                    180
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  447.25,
-                  598
-                ]
+                  478.3070471241318,
+                  626.177232038267
+                ],
+                "gear": {
+                  "position": [
+                    457.27,
+                    522.24
+                  ],
+                  "angle": 0.6,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.8
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe2",
+                    "offset": [
+                      110.9,
+                      39.856459330143544
+                    ],
+                    "size": [
+                      332.8,
+                      486.31578947368416
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe2",
+                    "offset": [
+                      110.9,
+                      39.856459330143544
+                    ],
+                    "size": [
+                      332.8,
+                      486.31578947368416
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    448,
+                    529.45
+                  ],
+                  [
+                    466.54,
+                    515.03
+                  ]
+                ],
+                "sourcePhase": 9
               },
               {
                 "body": {
@@ -6375,23 +7242,63 @@
                     376
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "9",
-                  "offset": [
-                    424,
-                    420
-                  ],
-                  "size": [
-                    44,
-                    180
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  446,
-                  593
-                ]
+                  476.2271823845162,
+                  626.9195884858884
+                ],
+                "gear": {
+                  "position": [
+                    456.755,
+                    520.6949999999999
+                  ],
+                  "angle": 0.6,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.83
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe2",
+                    "offset": [
+                      110.9,
+                      39.856459330143544
+                    ],
+                    "size": [
+                      332.8,
+                      486.31578947368416
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe2",
+                    "offset": [
+                      110.9,
+                      39.856459330143544
+                    ],
+                    "size": [
+                      332.8,
+                      486.31578947368416
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    448,
+                    528.42
+                  ],
+                  [
+                    465.51,
+                    512.97
+                  ]
+                ],
+                "sourcePhase": 10
               },
               {
                 "body": {
@@ -6406,23 +7313,63 @@
                     320
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "10",
-                  "offset": [
-                    412,
-                    420
-                  ],
-                  "size": [
-                    146,
-                    196
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  489,
-                  609
-                ]
+                  474.8411365266389,
+                  618.0850625547325
+                ],
+                "gear": {
+                  "position": [
+                    448.515,
+                    517.09
+                  ],
+                  "angle": 0.6,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.88
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe1",
+                    "offset": [
+                      102.44999999999999,
+                      59.18032786885246
+                    ],
+                    "size": [
+                      332.8,
+                      476.06557377049177
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe1",
+                    "offset": [
+                      102.44999999999999,
+                      59.18032786885246
+                    ],
+                    "size": [
+                      332.8,
+                      476.06557377049177
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    437.7,
+                    504.73
+                  ],
+                  [
+                    459.33,
+                    529.45
+                  ]
+                ],
+                "sourcePhase": 11
               },
               {
                 "body": {
@@ -6437,25 +7384,66 @@
                     326
                   ]
                 },
-                "equipment": {
-                  "id": "actor/v4/pickaxe-work",
-                  "key": "11",
-                  "offset": [
-                    428,
-                    414
-                  ],
-                  "size": [
-                    48,
-                    186
-                  ]
-                },
-                "equipmentInFront": false,
                 "tip": [
-                  457.1666666666667,
-                  594
-                ]
+                  475.6522778534047,
+                  620.9063505156662
+                ],
+                "gear": {
+                  "position": [
+                    454.695,
+                    522.24
+                  ],
+                  "angle": 0.6,
+                  "scale": 0.52,
+                  "axisScale": [
+                    1,
+                    0.92
+                  ],
+                  "grip": [
+                    269.5,
+                    240
+                  ],
+                  "splitY": 240,
+                  "rear": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "front": {
+                    "id": "actor/work-tool-views",
+                    "key": "pickaxe0",
+                    "offset": [
+                      91.4,
+                      60.32258064516129
+                    ],
+                    "size": [
+                      332.8,
+                      468.38709677419354
+                    ]
+                  },
+                  "flipX": false
+                },
+                "hands": [
+                  [
+                    445.94,
+                    528.42
+                  ],
+                  [
+                    463.45,
+                    516.06
+                  ]
+                ],
+                "sourcePhase": 12
               }
-            ]
+            ],
+            "motionRevision": 1
           },
           "preload": [
             "actor/v4/body-tool",
@@ -6464,7 +7452,8 @@
             "actor/v4/body-pickaxe-work",
             "actor/v4/pickaxe-work",
             "actor/v4/pickaxe-caps",
-            "actor/v4/contact"
+            "actor/v4/contact",
+            "actor/work-tool-views"
           ]
         },
         "hammer": {
@@ -10535,8 +11524,14 @@
         "actor/v4/caps-handheld",
         "actor/v4/body-fishing-work",
         "actor/v4/fishing-work",
-        "actor/v4/contact"
+        "actor/v4/contact",
+        "actor/work-tool-views"
+      ],
+      "fishWorldSize": [
+        14,
+        18
       ]
-    }
+    },
+    "visualScale": 1.65
   }
 }

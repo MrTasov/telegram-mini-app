@@ -97,6 +97,12 @@ window.V014Robots=(()=>{
   function changed(){queueGameSave();updateHUD();}
   const combatEnabled=()=>state.mode==='defense'||state.mode==='attack';
   const selectedTarget=()=>window.V014Controls?.target?.()||V0105.target||null;
+  let blockedAttack=null,attackFailures=0;
+  function unavailable(z){
+    return !z?.alive||z.health<=0||!zombies.includes(z)||scene!=='surface'||!!V013City.floor||
+      !!(blockedAttack?.id===z.instanceId&&blockedAttack.revision===geometryRevision&&distance(z.x,z.y,blockedAttack.x,blockedAttack.y)<48);
+  }
+  function rejectTarget(z){blockedAttack={id:z.instanceId,x:z.x,y:z.y,revision:geometryRevision};finishAttack();}
   function finishAttack(){
     if(state.task!=='attack')return;
     const task=state.resumeTask||'follow';
@@ -140,12 +146,13 @@ window.V014Robots=(()=>{
   function attack(z,quiet=false){
     const fail=text=>{if(!quiet)message(text);return false;};
     if(!combatEnabled())return fail('Включите боевой режим');
-    if(state.packed||state.hp<=0||state.battery<=0||scene!=='surface'||!z?.alive||z.health<=0||!zombies.includes(z))return fail('Дрон не готов к вылету');
+    if(state.packed||state.hp<=0||state.battery<=0||unavailable(z))return fail('Дрон не готов к вылету');
     if(['return','docking','docked'].includes(state.task)||state.autoReturn&&state.battery<=DOCK.returnThreshold)return fail('Сначала заберите дрон со станции командой «Следовать» и зарядите его');
     if(!state.ammo)return fail('Загрузите патроны 5,45 в дрона');
     const id=z.instanceId;if(state.task==='attack'&&state.targetId===id)return true;
     if(state.task!=='attack')state.resumeTask=['follow','guard','return','docked'].includes(state.task)?state.task:'follow';
-    state.mode=state.combatMode='attack';state.targetId=id;state.task='attack';clearRoute();changed();return true;
+    if(!quiet)V0105.selectTarget(z);
+    state.mode=state.combatMode='attack';state.targetId=id;state.task='attack';attackFailures=motion.metrics.failed;clearRoute();changed();return true;
   }
   function guard(){if(!follow())return false;state.task='guard';state.guard={x:player.x,y:player.y,scene};changed();return true;}
   function mode(value){
@@ -182,10 +189,11 @@ window.V014Robots=(()=>{
   function doorNear(d){return !state.packed&&state.scene==='bunker'&&state.hp>0&&state.battery>0&&state.task!=='docked'&&distance(state.x,state.y,d.x+d.w/2,d.y+d.h/2)<105;}
   function doorOccupies(d){return !state.packed&&state.scene==='bunker'&&rectHit(state.x,state.y,18,d);}
   function targetForDefense(){
-    if(state.mode!=='defense'||state.scene!=='surface'||scene!=='surface')return null;
+    if(!combatEnabled()||state.scene!=='surface'||scene!=='surface'||V013City.floor)return null;
     const selected=window.V014Controls?.target?.()||V0105.target,anchor=state.task==='guard'&&state.guard?state.guard:player;
-    if(selected?.alive&&distance(selected.x,selected.y,anchor.x,anchor.y)<=290)return selected;
-    return zombies.filter(z=>z.alive&&distance(z.x,z.y,anchor.x,anchor.y)<250).sort((a,b)=>distance(a.x,a.y,anchor.x,anchor.y)-distance(b.x,b.y,anchor.x,anchor.y))[0]||null;
+    const shootable=z=>z.alive&&z.health>0&&distance(z.x,z.y,state.x,state.y)<=combat.range&&lineClear(state.x,state.y,z.x,z.y,2,'surface');
+    if(selected&&distance(selected.x,selected.y,anchor.x,anchor.y)<=290&&!unavailable(selected)&&shootable(selected))return selected;
+    let best=null,range=250;for(const z of zombies){const d=distance(z.x,z.y,anchor.x,anchor.y);if(d<range&&shootable(z)){range=d;best=z;}}return best;
   }
   function shootAt(z){
     if(!combatEnabled()||!z?.alive||z.health<=0||shot>1e-9||state.ammo<=0||distance(state.x,state.y,z.x,z.y)>combat.range||!lineClear(state.x,state.y,z.x,z.y,2,'surface'))return false;
@@ -207,10 +215,10 @@ window.V014Robots=(()=>{
       state.lowWarn=true;returnToDock();message('Дрон: низкий заряд, возвращаюсь на станцию');
     }
     const selected=selectedTarget();
-    if(selected!==observedTarget){
-      const previous=observedTarget;observedTarget=selected;
-      if(state.mode==='attack'&&selected)attack(selected,true);
-      else if(state.task==='attack'&&previous===GameIdentity.enemy(state.targetId))finishAttack();
+    if(selected!==observedTarget){observedTarget=selected;blockedAttack=null;}
+    if(state.mode==='attack'){
+      if(selected&&!unavailable(selected))attack(selected,true);
+      else if(state.task==='attack')finishAttack();
     }
     if(!state.packed&&state.hp>0&&state.battery>0&&['follow','guard','attack','return'].includes(state.task)){
       const before={x:state.x,y:state.y};let z=null;
@@ -218,7 +226,7 @@ window.V014Robots=(()=>{
       else if(state.task==='attack'){
         z=GameIdentity.enemy(state.targetId);if(!combatEnabled()||!z?.alive||z.health<=0||scene!=='surface'||!state.ammo){finishAttack();}
         else{if(state.scene!=='surface')sceneTravel({x:800,y:690,scene:'surface'},dt);else if(distance(state.x,state.y,z.x,z.y)>225||!lineClear(state.x,state.y,z.x,z.y,2,'surface')){
-          let p=null;for(let i=0;i<12;i++){const a=Math.atan2(state.y-z.y,state.x-z.x)+i*Math.PI/6,q={x:z.x+Math.cos(a)*185,y:z.y+Math.sin(a)*185};if(!worldCollision(q.x,q.y,10,'surface')&&lineClear(q.x,q.y,z.x,z.y,2,'surface')){p=q;break;}}if(p)moveTo(p,dt);else{finishAttack();message('Дрон: нет позиции для атаки');}}
+          let p=null;for(let i=0;i<12;i++){const a=Math.atan2(state.y-z.y,state.x-z.x)+i*Math.PI/6,q={x:z.x+Math.cos(a)*185,y:z.y+Math.sin(a)*185};if(!worldCollision(q.x,q.y,10,'surface')&&lineClear(q.x,q.y,z.x,z.y,2,'surface')){p=q;break;}}if(p){moveTo(p,dt);if(motion.metrics.failed>attackFailures)rejectTarget(z);}else rejectTarget(z);}
           if(state.task==='attack'&&state.scene==='surface')shootAt(z);
           if(!z.alive||!state.ammo)finishAttack();}
       }else{
@@ -297,10 +305,13 @@ window.V014Robots=(()=>{
     clearRoute();resetReturn();undocking=false;shot=hurt=saveClock=0;observedTarget=selectedTarget();
     state.targetId=state.task==='attack'&&GameIdentity.enemy(state.targetId)?.alive?state.targetId:null;
     if(state.task==='attack'&&(state.targetId===null||!combatEnabled()))finishAttack();
+    // Reconnect an existing saved attack command to the shared player target;
+    // use its stable enemy ID, never the old array position or a new save field.
+    blockedAttack=null;if(state.task==='attack'&&state.targetId)V0105.selectTarget(GameIdentity.enemy(state.targetId));
+    observedTarget=selectedTarget();attackFailures=motion.metrics.failed;
     if(state.task==='docked'&&!state.packed)Object.assign(state,dockPosition());updateHUD();
   });
   v09Style('.v014DroneHUD{position:fixed;right:12px;top:calc(220px + env(safe-area-inset-top,0px));z-index:38;width:auto;min-height:28px!important;padding:5px 8px!important;border-radius:9px!important;font:11px Arial!important;background:#172c2cd9!important;color:#b7d5c8!important}.v014RobotActions{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.v014RobotActions .menuButton,#v014DronePanel details .menuButton{width:auto;min-height:30px!important;padding:6px 8px!important;font-size:11px!important;margin:0}.v014RobotActions .selected{background:#376351!important}.v014RobotGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.v014RobotGrid .menuButton{position:relative;min-height:45px;padding:4px;margin:0}.v014RobotGrid img{max-height:34px;max-width:100%}.v014RobotGrid small{position:absolute;bottom:2px;right:4px;font-size:10px}.v014DroneHeader{display:flex;align-items:center;gap:10px;padding:6px 0 9px;border-bottom:1px solid #58716a55}.v014DroneHeader img{width:64px;height:48px;object-fit:contain;border-radius:8px;background:#1a3436}.v014DroneStats{font-size:11px;line-height:1.55;color:#c7ddd3}.v014DroneStats b{color:#f0d892;font-size:12px}#v014DronePanel .panel{width:min(500px,94vw);max-height:83dvh;overflow-y:auto;padding:12px;min-height:420px}#v014DronePanel p{font-size:11px;line-height:1.5;margin:9px 0}#v014DronePanel input,#v014DronePanel select{max-width:100%;background:#203b3c;color:#deece5;border:1px solid #648178;border-radius:7px;padding:7px}#v014DroneLoot{font-size:11px;min-height:28px;padding:6px 10px}@media(max-height:520px){.v014DroneHUD{top:calc(110px + env(safe-area-inset-top,0px));right:65px}}');
   invalidateGeometry();
   return {type:TYPE,instanceId:INSTANCE_ID,definition,ownsToken,state,stationInfo,install,stationNear,returnProgress:()=>({...home}),setAutoReturn(on){state.autoReturn=!!on;changed();},combat,combatEnabled,setCombat,availableAmmo,dockPosition,station:DOCK,status:()=>({...state,maxHp:maxHp(),capacity:capacity(),atDock:atDock()}),capacity,maxHp,near,atDock,open,openStation,follow,recall,returnToDock,attack,guard,mode,pack,deploy,store,take,reload,upgrade,repair,repairCost,canRepair,cost,transfer,validate,tick,doorNear,doorOccupies,planningKey:motion.key,motion,statusText,changed,draw:drawDrone,setLootSelection:i=>{lootSelection=i;},dispatchLoot};
 })();
-

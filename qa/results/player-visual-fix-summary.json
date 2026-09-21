@@ -1,0 +1,49 @@
+{
+  "version": "0.29.0",
+  "patch": "player-visual-tuning-1",
+  "passed": true,
+  "scope": "focused visual, equipment, save and source regressions",
+  "automatedAssertions": 946,
+  "reports": [
+    {
+      "name": "verification",
+      "passed": 398,
+      "failed": 0
+    },
+    {
+      "name": "assets",
+      "passed": 368,
+      "failed": 0
+    },
+    {
+      "name": "equipment-integration",
+      "passed": 37,
+      "failed": 0
+    },
+    {
+      "name": "master-unarmed",
+      "passed": 33,
+      "failed": 0
+    },
+    {
+      "name": "character-animation",
+      "passed": 24,
+      "failed": 0
+    },
+    {
+      "name": "saves",
+      "passed": 75,
+      "failed": 0
+    },
+    {
+      "name": "player-visual-fix",
+      "passed": 11,
+      "failed": 0
+    }
+  ],
+  "approvedUnchangedArtComparisons": 115,
+  "limitations": [
+    "Canvas2D with modeled DOM; physical PC browser, phone and Telegram WebView remain manual checks.",
+    "Full historical 11067-assertion suite was not rerun for this rendering-only correction."
+  ]
+}

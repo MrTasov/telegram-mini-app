@@ -19,10 +19,10 @@ const items=['rifle_ak74','axe','pickaxe','hammer','remote','flashlight','fishin
  fs.copyFileSync(frames[7],out+'/equipment-in-game.png');
  if(approved){
   const m=JSON.parse(fs.readFileSync(path.join(approved,'prototype.json')));
-  for(const item of items)for(const mode of ['idle','walk',...(m.sequences[(item==='fishing_rod'?'fishing':item)+'_action']?['work']:[])])for(let i=0;i<(mode==='idle'?1:12);i++){
+  for(const item of items)for(const mode of ['idle','walk',...(m.sequences[(item==='fishing_rod'?'fishing':item)+'_action']&&!require('../assets/manifest.json').actors.modular.items[item]?.action?.motionRevision?['work']:[])])for(let i=0;i<(mode==='idle'?1:12);i++){
    const name=item==='rifle_ak74'?'ak':item,src=mode==='work'?m.sequences[(item==='fishing_rod'?'fishing':name)+'_action'].frames[i].composite:mode==='idle'?'composed/'+name+'/idle.png':m.sequences[name+'_walk'].frames[i].composite;
    const c=createCanvas(112,112),x=c.getContext('2d');x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(57,60,17,12,0,0,Math.PI*2);x.fill();x.drawImage(await loadImage(path.join(approved,src)),0,0,112,112);
-   E(`ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,1280,800);ActorVisuals.renderPose(ActorVisuals.framePose('${item}','${mode}',${i}),56,56,Math.PI/2);`);
+   E(`ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,1280,800);ctx.save();ctx.scale(1/ActorVisuals.config.visualScale,1/ActorVisuals.config.visualScale);ActorVisuals.renderPose(ActorVisuals.framePose('${item}','${mode}',${i}),56*ActorVisuals.config.visualScale,56*ActorVisuals.config.visualScale,Math.PI/2);ctx.restore();`);
    const a=c.getContext('2d').getImageData(0,0,112,112).data,b=r.canvas.getContext('2d').getImageData(0,0,112,112).data;let delta=0,n=0;
    for(let j=0;j<a.length;j+=4)if(a[j+3]||b[j+3]){for(let k=0;k<3;k++)delta+=Math.abs(a[j+k]*a[j+3]/255-b[j+k]*b[j+3]/255);delta+=Math.abs(a[j+3]-b[j+3]);n+=4;}
    metrics.push({item,mode,frame:i+1,meanPremultipliedError:delta/n});

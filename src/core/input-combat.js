@@ -199,16 +199,21 @@ function beginJoystick(e){
     GameActions.dispatch('AIM',v);
     if(v.power>JOY_DEAD)GameActions.dispatch('FIRE',{active:true,immediate:true});
   }else return;
+  try{canvas.setPointerCapture?.(e.pointerId);}catch(_){}
   e.preventDefault();
 }
 function handleWorldPointerDown(e){
   if(!GameActions.playable()||uiTouch(e.target)||e.button>0)return;
   if(joystickAt(e.clientX,e.clientY)){beginJoystick(e);return;}
-  if(objectPointer)return;
   const {x,y}=screenToWorld(e.clientX,e.clientY);
   if(GameActions.dispatch('WORLD_TARGET',{x,y})){e.preventDefault();return;}
-  if(leftPointerId!==null||rightPointerId!==null)return;
+  if(objectPointer||leftPointerId!==null||rightPointerId!==null){
+    const target=GameMovement.parallelTarget(x,y);
+    if(target){GameActions.dispatch('INTERACT',{id:target.id,kind:target.kind});e.preventDefault();}
+    return;
+  }
   objectPointer={id:e.pointerId,x:e.clientX,y:e.clientY,target:hitInteraction(x,y),point:{x,y},screenX:e.clientX,screenY:e.clientY,startedAt:performance.now(),following:false,nextPathAt:0,scene,pc:!GameInput.isMobile};
+  try{canvas.setPointerCapture?.(e.pointerId);}catch(_){}
   e.preventDefault();
 }
 function handleWorldPointerMove(e){
@@ -835,4 +840,3 @@ function useFarmBed(i){
   I18n.assign(el("farmTitle"),"textContent","🌱 Грядка "+(i+1));
   openOverlay(el("farmOverlay"));
 }
-

@@ -13,6 +13,10 @@ exports.project=(d,{fresh=false,droneMotion=false,growthClock=false}={})=>{
  if(d.player?.scene==='bunker'&&d.player.y<-250){delete d.player.x;delete d.player.y;if(d.v091?.fortress){delete d.v091.fortress.x;delete d.v091.fortress.y;}}
  if(growthClock){if(d.v09?.power)delete d.v09.power.fuel;for(const st of d.farm||[])delete st.elapsedMs;if(d.farmV011)delete d.farmV011.grown;for(const bed of d.farm014?.beds||[])for(const p of bed||[])delete p.elapsed;}
  if(d.v09?.world?.ores)d.v09.world.ores=d.v09.world.ores.filter(o=>!/^coal_(east|west|south|far_south)_\d+$/.test(o.id));
+ // Corrective patch's explicit resource changes. Legacy standing trees map to
+ // the new 10-unit yield; felled remainders, all inventory and old nodes still compare.
+ for(const t of d.trees||[])if(!t.felled&&t.wood===15)t.wood=10;
+ if(d.v09?.world?.ores)d.v09.world.ores=d.v09.world.ores.filter(o=>!/^stone_corrective_\d+$/.test(o.id));
  // Retired item Pin is intentionally ignored; recipe/goal pins remain compared.
  const walk=v=>{if(!v||typeof v!=='object')return;if(typeof v.type==='string')delete v.locked;for(const x of Object.values(v))walk(x);};walk(d);
  if(droneMotion&&d.robots014){delete d.robots014.x;delete d.robots014.y;}

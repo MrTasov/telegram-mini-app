@@ -30,7 +30,7 @@ window.V0141DroneUI=(()=>{
       toggle.addEventListener('click',()=>{if(key==='combat')robot.setCombat(!robot.combatEnabled());else{state.light=!state.light;robot.changed();}refresh();});ammo.append(toggle);
     }head.append(ammo);body.append(head);
     const commands=section(body,'Команды дрону'),row=node('div','droneCommandGrid');command(row,'follow','Следовать',robot.follow);command(row,'guard','Охранять здесь',robot.guard);command(row,'dock','На станцию',robot.returnToDock);commands.append(row);
-    const combat=node('div','droneCombatGrid');command(combat,'defense','Защищать',()=>robot.mode('defense'));command(combat,'attack','Атаковать цель',()=>{robot.mode('attack');const t=V014Controls.target()||V0105.target;if(t)robot.attack(t);else message('Выберите противника на экране или карте');});commands.append(combat);
+    const combat=node('div','droneCombatGrid');command(combat,'defense','Защищать',()=>robot.mode('defense'));command(combat,'attack','Атаковать цель',()=>{robot.mode('attack');const t=V014Controls.target()||V0105.target;if(t)robot.attack(t);});commands.append(combat);
     command(commands,'repair','Починить',()=>robot.repair());
     const rescue=node('div','droneRescue');command(rescue,'pack','Забрать дрон',()=>robot.pack());command(rescue,'launch','Запустить',()=>robot.deploy(bag.find(robot.ownsToken)));body.append(rescue);
     const inv=section(body,'Инвентарь дрона');refs.cargoTitle=inv.children[0];grids.drone=node('div','droneItemGrid');inv.append(grids.drone);
@@ -107,4 +107,3 @@ window.V0141DroneUI=(()=>{
   `);
   return {open,refresh,moveCell,transferSelected};
 })();
-

@@ -1,281 +1,182 @@
 {
   "version": "0.29.0",
-  "patch": "approved-equipment-v4-integrated",
+  "stage": 7,
+  "patch": "corrective-performance-1",
+  "stage6Started": true,
+  "stage7Started": true,
   "passed": true,
-  "automatedAssertions": 11067,
-  "regressionJobs": 30,
+  "automatedAssertions": 11132,
+  "historicalBaselineAssertions": 477,
+  "ladderContractChanged": true,
   "runs": [
-    {
-      "id": "regressions",
-      "exitCode": 0,
-      "elapsedMs": 19367
-    },
-    {
-      "id": "interactions",
-      "exitCode": 0,
-      "elapsedMs": 33743
-    },
-    {
-      "id": "saves",
-      "exitCode": 0,
-      "elapsedMs": 6468
-    },
-    {
-      "id": "balance",
-      "exitCode": 0,
-      "elapsedMs": 1568
-    },
-    {
-      "id": "state-saves",
-      "exitCode": 0,
-      "elapsedMs": 12841
-    },
-    {
-      "id": "differential",
-      "exitCode": 0,
-      "elapsedMs": 37682
-    },
-    {
-      "id": "systems",
-      "exitCode": 0,
-      "elapsedMs": 2635
-    },
-    {
-      "id": "stage3-differential",
-      "exitCode": 0,
-      "elapsedMs": 38081
-    },
-    {
-      "id": "controls",
-      "exitCode": 0,
-      "elapsedMs": 16393
-    },
-    {
-      "id": "controls-differential",
-      "exitCode": 0,
-      "elapsedMs": 38306
-    },
-    {
-      "id": "asset-rendering",
-      "exitCode": 0,
-      "elapsedMs": 2476
-    },
-    {
-      "id": "stage4-differential",
-      "exitCode": 0,
-      "elapsedMs": 39524
-    },
-    {
-      "id": "map-workbar",
-      "exitCode": 0,
-      "elapsedMs": 8361
-    },
-    {
-      "id": "localization",
-      "exitCode": 0,
-      "elapsedMs": 61894
-    },
-    {
-      "id": "localization-rendering",
-      "exitCode": 0,
-      "elapsedMs": 3983
-    },
-    {
-      "id": "localization-controls",
-      "exitCode": 0,
-      "elapsedMs": 63139
-    },
-    {
-      "id": "main-menu",
-      "exitCode": 0,
-      "elapsedMs": 113071
-    },
-    {
-      "id": "menu-preferences",
-      "exitCode": 0,
-      "elapsedMs": 15458
-    },
-    {
-      "id": "world-events",
-      "exitCode": 0,
-      "elapsedMs": 19942
-    },
-    {
-      "id": "readiness",
-      "exitCode": 0,
-      "elapsedMs": 14852
-    },
-    {
-      "id": "corrective",
-      "exitCode": 0,
-      "elapsedMs": 19326
-    },
-    {
-      "id": "world-farm",
-      "exitCode": 0,
-      "elapsedMs": 13077
-    },
-    {
-      "id": "drone-return",
-      "exitCode": 0,
-      "elapsedMs": 43101
-    },
-    {
-      "id": "resource-access",
-      "exitCode": 0,
-      "elapsedMs": 3087
-    },
     {
       "id": "build",
       "exitCode": 0,
-      "validation": "separate direct command"
+      "elapsedMs": 233
     },
     {
       "id": "verification",
       "exitCode": 0,
-      "validation": "separate direct command"
+      "elapsedMs": 277
+    },
+    {
+      "id": "regressions",
+      "exitCode": 0,
+      "elapsedMs": 20629
+    },
+    {
+      "id": "interactions",
+      "exitCode": 0,
+      "elapsedMs": 38060
+    },
+    {
+      "id": "saves",
+      "exitCode": 0,
+      "elapsedMs": 7806
+    },
+    {
+      "id": "balance",
+      "exitCode": 0,
+      "elapsedMs": 1459
+    },
+    {
+      "id": "state-saves",
+      "exitCode": 0,
+      "elapsedMs": 16605
+    },
+    {
+      "id": "differential",
+      "exitCode": 0,
+      "elapsedMs": 30698
+    },
+    {
+      "id": "systems",
+      "exitCode": 0,
+      "elapsedMs": 3189
+    },
+    {
+      "id": "stage3-differential",
+      "exitCode": 0,
+      "elapsedMs": 42245
+    },
+    {
+      "id": "controls",
+      "exitCode": 0,
+      "elapsedMs": 18091
+    },
+    {
+      "id": "controls-differential",
+      "exitCode": 0,
+      "elapsedMs": 41827
     },
     {
       "id": "assets",
       "exitCode": 0,
-      "validation": "separate direct command"
+      "elapsedMs": 5025
+    },
+    {
+      "id": "asset-rendering",
+      "exitCode": 0,
+      "elapsedMs": 2164
+    },
+    {
+      "id": "stage4-differential",
+      "exitCode": 0,
+      "elapsedMs": 43082
+    },
+    {
+      "id": "map-workbar",
+      "exitCode": 0,
+      "elapsedMs": 9230
+    },
+    {
+      "id": "localization",
+      "exitCode": 0,
+      "elapsedMs": 68898
+    },
+    {
+      "id": "localization-rendering",
+      "exitCode": 0,
+      "elapsedMs": 4067
+    },
+    {
+      "id": "localization-controls",
+      "exitCode": 0,
+      "elapsedMs": 61634
+    },
+    {
+      "id": "main-menu",
+      "exitCode": 0,
+      "elapsedMs": 113381
+    },
+    {
+      "id": "menu-preferences",
+      "exitCode": 0,
+      "elapsedMs": 15250
+    },
+    {
+      "id": "world-events",
+      "exitCode": 0,
+      "elapsedMs": 16485
+    },
+    {
+      "id": "readiness",
+      "exitCode": 0,
+      "elapsedMs": 16314
+    },
+    {
+      "id": "corrective",
+      "exitCode": 0,
+      "elapsedMs": 18964
+    },
+    {
+      "id": "world-farm",
+      "exitCode": 0,
+      "elapsedMs": 13621
+    },
+    {
+      "id": "drone-return",
+      "exitCode": 0,
+      "elapsedMs": 43510
+    },
+    {
+      "id": "resource-access",
+      "exitCode": 0,
+      "elapsedMs": 2654
     },
     {
       "id": "character-animation",
       "exitCode": 0,
-      "validation": "separate direct command"
+      "elapsedMs": 5605
     },
     {
       "id": "master-unarmed",
       "exitCode": 0,
-      "validation": "separate direct command"
+      "elapsedMs": 18101
     },
     {
       "id": "equipment-integration",
       "exitCode": 0,
-      "validation": "separate direct command"
+      "elapsedMs": 22982
+    },
+    {
+      "id": "player-visual-fix",
+      "exitCode": 0,
+      "elapsedMs": 1767
+    },
+    {
+      "id": "corrective-performance",
+      "exitCode": 0,
+      "elapsedMs": 4945
+    },
+    {
+      "id": "corrective-visuals",
+      "exitCode": 0,
+      "elapsedMs": 2817
     }
   ],
-  "reports": {
-    "regressions": {
-      "passed": 417,
-      "failed": false
-    },
-    "interactions": {
-      "passed": 835,
-      "failed": 0
-    },
-    "saves": {
-      "passed": 75,
-      "failed": 0
-    },
-    "balance": {
-      "passed": 1,
-      "failed": 0
-    },
-    "state-saves": {
-      "passed": 58,
-      "failed": 0
-    },
-    "differential": {
-      "passed": 161,
-      "failed": 0
-    },
-    "systems": {
-      "passed": 64,
-      "failed": 0
-    },
-    "stage3-differential": {
-      "passed": 996,
-      "failed": 0
-    },
-    "controls": {
-      "passed": 64,
-      "failed": 0
-    },
-    "controls-differential": {
-      "passed": 996,
-      "failed": 0
-    },
-    "asset-rendering": {
-      "passed": 60,
-      "failed": 0
-    },
-    "stage4-differential": {
-      "passed": 996,
-      "failed": 0
-    },
-    "map-workbar": {
-      "passed": 55,
-      "failed": 0
-    },
-    "localization": {
-      "passed": 3492,
-      "failed": 0
-    },
-    "localization-rendering": {
-      "passed": 74,
-      "failed": 0
-    },
-    "localization-controls": {
-      "passed": 954,
-      "failed": 0
-    },
-    "main-menu": {
-      "passed": 106,
-      "failed": 0
-    },
-    "menu-preferences": {
-      "passed": 17,
-      "failed": 0
-    },
-    "world-events": {
-      "passed": 118,
-      "failed": 0
-    },
-    "readiness": {
-      "passed": 60,
-      "failed": 0
-    },
-    "corrective": {
-      "passed": 96,
-      "failed": 0
-    },
-    "world-farm": {
-      "passed": 49,
-      "failed": 0
-    },
-    "drone-return": {
-      "passed": 37,
-      "failed": 0
-    },
-    "resource-access": {
-      "passed": 427,
-      "failed": 0
-    },
-    "verification": {
-      "passed": 398,
-      "failed": 0
-    },
-    "assets": {
-      "passed": 367,
-      "failed": 0
-    },
-    "character-animation": {
-      "passed": 24,
-      "failed": 0
-    },
-    "master-unarmed": {
-      "passed": 33,
-      "failed": 0
-    },
-    "equipment-integration": {
-      "passed": 37,
-      "failed": 0
-    }
-  },
-  "followup": "37 equipment integration checks and 398 source/build checks rerun after short-repair completion refinement.",
   "limitations": [
-    "VM DOM model and native Canvas2D; no physical browser/phone/WebView result."
+    "VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "Seven optional audio assets were already absent in Stage 0; absent sounds are not requested."
   ]
 }

@@ -53,6 +53,7 @@ function validate(m,base=root){
   }
  }
  if(m.actors){
+  if(m.actors.visualScale!==undefined&&!(m.actors.visualScale>0&&m.actors.visualScale<=3))problem('actors.visualScale','invalid presentation scale');
   for(const [name,id]of Object.entries(m.actors.body))if(!m.images[id]?.atlas)problem('actor.'+name,'missing body atlas');
   for(const [name,item]of Object.entries(m.actors.items)){
    if(!m.actors.body[item.body]||!Number.isInteger(item.frame)||item.frame<0||item.frame>=m.images[m.actors.equipment]?.atlas?.frameCount||!item.grip?.every(Number.isFinite)||!(item.scale>0))problem('actor.'+name,'invalid equipment anchor');
@@ -67,13 +68,15 @@ function validate(m,base=root){
     if(item.walk.length!==12)problem(name,'walk must have twelve phases');
     for(const rec of [item.idle,...item.walk,...(item.action?.frames||[])]){
      layer(name,rec.body);for(const key of ['equipment','cap'])if(rec[key])layer(name,rec[key]);
-     if(rec.gear){const g=rec.gear;if(!point(g.position)||!point(g.grip)||!Number.isFinite(g.angle)||!(g.scale>0))problem(name,'invalid mount');for(const key of ['rear','front'])if(g[key])layer(name,g[key]);}
+     if(rec.gear){const g=rec.gear;if(!point(g.position)||!point(g.grip)||!Number.isFinite(g.angle)||!(g.scale>0))problem(name,'invalid mount');if(g.axisScale&&(!point(g.axisScale)||g.axisScale.some(v=>v<=0)))problem(name,'invalid projected tool scale');if(g.splitY!==undefined&&!(g.splitY>0&&g.splitY<512))problem(name,'invalid shaft split');for(const key of ['rear','front'])if(g[key])layer(name,g[key]);}
+     if(rec.hands&&(!rec.hands.every(point)||rec.hands.length!==2))problem(name,'invalid work palm anchors');
     }
     if(item.action&&(item.action.frames.length!==12||item.action.durations.length!==12||item.action.durations.some(v=>!(v>0))||item.action.duration!==item.action.durations.reduce((s,v)=>s+v,0)))problem(name,'invalid work timing');
     for(const id of item.preload)if(!m.images[id])problem(name,'missing equipment prefetch');
    }
    for(const [material,frames]of Object.entries(mod.effects)){if(frames.length!==6)problem(material,'invalid contact effect count');frames.forEach(l=>layer(material,l));}
    layer('fishing',mod.fish);
+   if(mod.fishWorldSize&&(!point(mod.fishWorldSize)||mod.fishWorldSize.some(v=>v<=0)))problem('fishing','invalid fish display size');
   }
  }
  for(const id of Object.values(m.walls))for(const part of ['wall','corner','stairs'])if(!m.images[id]?.atlas?.frames?.[part])problem(id,'missing wall region '+part);

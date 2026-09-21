@@ -31,16 +31,26 @@ const jobs=[
  ['resource-access','qa/resource-access.cjs',[]],
  ['character-animation','qa/character-animation.cjs',[]],
  ['master-unarmed','qa/master-unarmed.cjs',[]],
- ['equipment-integration','qa/equipment-integration.cjs',[]]
+ ['equipment-integration','qa/equipment-integration.cjs',[]],
+ ['player-visual-fix','qa/player-visual-fix.cjs',[]],
+ ['corrective-performance','qa/corrective-performance.cjs',[]],
+ ['corrective-visuals','qa/corrective-visuals.cjs',[]]
 ],runs=[];
-for(const [id,file,args]of jobs){
+async function run(index){
+ const [id,file,args]=jobs[index];
  console.log('Running '+id+'…');const start=Date.now();
- const r=cp.spawnSync(process.execPath,[path.join(root,file),...args],{cwd:root,env,encoding:'utf8',timeout:300000,maxBuffer:8e6});
+ const r=await new Promise(resolve=>cp.execFile(process.execPath,[path.join(root,file),...args],{cwd:root,env,encoding:'utf8',timeout:300000,maxBuffer:8e6},(error,stdout,stderr)=>resolve({status:error?(typeof error.code==='number'?error.code:1):0,stdout,stderr,error})));
  fs.writeFileSync(path.join(out,id+'.log'),r.stdout+'\n'+r.stderr);if(r.stdout)console.log(r.stdout.trim());if(r.stderr)console.error(r.stderr.trim());
- runs.push({id,exitCode:r.status,elapsedMs:Date.now()-start,error:r.error?.message});
+ runs[index]={id,exitCode:r.status,elapsedMs:Date.now()-start,error:r.error?.message};
 }
+(async()=>{
+ // Independent suites own separate report files. Default remains serial; CI
+ // may opt into a small process pool. Performance measurements run separately.
+ const concurrency=Math.max(1,Math.min(3,Number(process.env.LAST_BASE_TEST_JOBS)||1));let next=0;
+ await Promise.all(Array.from({length:concurrency},async()=>{while(next<jobs.length)await run(next++);}));
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
 const reports=[read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
-reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'));
-const summary={version:require('../package.json').version,stage:7,patch:"approved-equipment-v4-integrated",stage6Started:true,stage7Started:true,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.','Seven optional audio assets were already absent in Stage 0; absent sounds are not requested.']};
+reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'),read('player-visual-fix.json'),read('corrective-performance.json'),read('corrective-visuals.json'));
+const summary={version:require('../package.json').version,stage:7,patch:"corrective-performance-1",stage6Started:true,stage7Started:true,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM and real Canvas2D. No native browser/WebView/phone result is implied.','Seven optional audio assets were already absent in Stage 0; absent sounds are not requested.']};
 fs.writeFileSync(path.join(out,'summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));if(!summary.passed)process.exitCode=1;
+})().catch(error=>{console.error(error);process.exitCode=1;});

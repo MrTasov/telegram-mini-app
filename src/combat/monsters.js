@@ -230,12 +230,18 @@ window.V017Monsters=(()=>{
     const r=prepare(z);if(r.retired)return 0;
     return .6*clamp((CORPSE_MS-Math.max(0,now-r.deadAt))/15000,0,1);
   }
+  // One small cached soft shadow; no per-zombie gradients, filters or allocations.
+  let groundShadow=null;
+  function shadow(width,height,alpha){
+    if(!groundShadow){groundShadow=document.createElement('canvas');groundShadow.width=groundShadow.height=64;const c=groundShadow.getContext('2d'),g=c.createRadialGradient(32,32,5,32,32,32);g.addColorStop(0,'rgba(7,18,17,.48)');g.addColorStop(.55,'rgba(7,18,17,.28)');g.addColorStop(1,'rgba(7,18,17,0)');c.fillStyle=g;c.fillRect(0,0,64,64);}
+    ctx.save();ctx.globalAlpha*=alpha;ctx.drawImage(groundShadow,-width/2,-height/2,width,height);ctx.restore();
+  }
   function drawCorpse(z){
     const r=prepare(z),age=Math.max(0,performance.now()-r.deadAt);if(r.retired||age>=CORPSE_MS)return;
     const s=specs[z.type],key='corpse_'+s.art+'019',im=V011Art.image(key);if(!V011Art.ready(key))return;
     const b=V011Art.frame(key,r.variant);if(!b)return;
-    const size=s.size*1.16*(AssetManifest.images[GameAssets.artId('monster_'+s.art+'017')].visualScale||1),scale=size/Math.max(b.w,b.h),w=b.w*scale,h=b.h*scale;
-    ctx.save();ctx.translate(z.x,z.y);ctx.rotate(r.deathAngle);ctx.globalAlpha*=corpseOpacity(z);ctx.drawImage(im,b.x,b.y,b.w,b.h,-w/2,-h/2,w,h);ctx.restore();
+    const size=s.size*1.16*.5*(AssetManifest.images[GameAssets.artId('monster_'+s.art+'017')].visualScale||1),scale=size/Math.max(b.w,b.h),w=b.w*scale,h=b.h*scale;
+    ctx.save();ctx.translate(z.x,z.y);ctx.rotate(r.deathAngle);ctx.globalAlpha*=corpseOpacity(z);ctx.save();ctx.translate(1,2);shadow(w*1.12,h*.8,.8);ctx.restore();ctx.drawImage(im,b.x,b.y,b.w,b.h,-w/2,-h/2,w,h);ctx.restore();
   }
   drawZombie=function(z){
     if(!visibleOnScreen(z.x,z.y,120))return;if(!z.alive){drawCorpse(z);return;}const r=prepare(z),s=specs[z.type],now=performance.now();
@@ -244,7 +250,7 @@ window.V017Monsters=(()=>{
     const frame=attack?anim.attack.start+Math.min(anim.attack.count-1,Math.max(0,Math.floor(progress*anim.attack.count))):anim.walk.start+Math.floor(r.walk/(anim.walk.distance/anim.walk.count))%anim.walk.count;
     const im=V011Art.image(key),jump=r.jump?Math.sin(clamp((now-r.jump.start-(r.jump.windup??255))/(r.jump.duration-(r.jump.windup??255)),0,1)*Math.PI)*24:0;
     ctx.save();ctx.translate(z.x,z.y);
-    ctx.fillStyle='#07121155';ctx.beginPath();ctx.ellipse(3,7,s.radius*1.05,s.radius*.65,0,0,Math.PI*2);ctx.fill();ctx.translate(0,-jump);ctx.rotate(r.angle-Math.PI/2);
+    ctx.save();ctx.translate(3,7);shadow(s.radius*2.65,s.radius*1.75,1);ctx.restore();ctx.translate(0,-jump);ctx.rotate(r.angle-Math.PI/2);
     if(V011Art.ready(key)){const b=V011Art.frame(key,frame);ctx.drawImage(im,b.x,b.y,b.w,b.h,-size*.375,-size*.5,size*.75,size);}
     else {ctx.fillStyle=s.color;ctx.beginPath();ctx.ellipse(0,0,s.radius,s.radius*1.2,0,0,Math.PI*2);ctx.fill();}
     ctx.restore();

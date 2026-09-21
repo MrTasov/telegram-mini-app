@@ -38,7 +38,14 @@ window.WorldResourcePlacement=(()=>{
   ores.forEach((o,i)=>locate(o,oreZones,i%7));
   V09World.ores.filter(o=>o.type==='stone').forEach((o,i)=>locate(o,stoneZones,Math.floor(i/3)));
   worldTrees.forEach((o,i)=>locate(o,treeZones,Math.floor(i/8)));
+  for(const tree of worldTrees)if(!tree.felled)tree.wood=config.treeWood;
+  // Append after the complete original pass: tree/ore/coal positions and RNG
+  // consumption are preserved. Existing ID-based save migration adds only new IDs.
+  const stones=V09World.ores.filter(o=>o.type==='stone'),extraCount=Math.round(stones.length*(config.stoneDensity-1));
+  for(let i=0;i<extraCount;i++){
+    const original=stones[i%stones.length],o={id:'stone_corrective_'+i,type:'stone',x:0,y:0,r:original.r,capacity:original.capacity,remaining:original.capacity,regrowMs:0};
+    locate(o,stoneZones,Math.floor(i/3));V09World.ores.push(o);V018Build.stoneNodes.push(o);resources.push(o);
+  }
   invalidateGeometry();
   return {coalZones,oreZones,stoneZones,treeZones,resources,staticClear,radius,config};
 })();
-

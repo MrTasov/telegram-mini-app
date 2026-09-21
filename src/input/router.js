@@ -19,9 +19,9 @@ window.GameInput=(()=>{
     if(press){try{canvas.releasePointerCapture?.(press.id);}catch(_){} }
     window.V014Controls?.releaseInput();
   }
-  function apply(){
+  function apply(preserveMovement=false){
     const next=preference==='AUTO'?(observed||detect()):preference;
-    if(next!==mode&&mounted){stopControls(true);window.V010Camera?.resetTouch();}
+    if(next!==mode&&mounted){if(preserveMovement)GameMovement.openUI();else stopControls(true);window.V010Camera?.resetTouch();}
     mode=next;
     if(mounted&&(shownMode!==mode||shownPreference!==preference)){
       shownMode=mode;shownPreference=preference;
@@ -37,11 +37,11 @@ window.GameInput=(()=>{
   function observe(e){
     if(preference!=='AUTO'||active())return;
     const next=e.pointerType==='touch'||e.pointerType==='pen'?'MOBILE':e.pointerType==='mouse'?'PC':null;
-    if(next){observed=next;apply();}
+    if(next){observed=next;apply(true);}
   }
   // No width or user-agent guesses. A hybrid can use either actual input.
   window.addEventListener('pointerdown',observe,true);
-  function capabilitiesChanged(){if(preference!=='AUTO')return;observed=null;if(!active())apply();}
+  function capabilitiesChanged(){if(preference!=='AUTO')return;observed=null;if(!active())apply(true);}
   for(const q of queries){if(q?.addEventListener)q.addEventListener('change',capabilitiesChanged);else q?.addListener?.(capabilitiesChanged);}
   const world=e=>e.target===canvas;
   function aim(){
@@ -118,7 +118,7 @@ window.GameInput=(()=>{
     const slot=/^Digit[1-5]$/.test(key)?Number(key.slice(-1))-1:null;
     if(!command&&slot===null)return;
     if(e.repeat){e.preventDefault();return;}
-    if(preference==='AUTO'&&!active()){observed='PC';apply();}
+    if(preference==='AUTO'&&!active()){observed='PC';apply(true);}
     if(mode!=='PC')return;
     const top=topOverlay(),toggle=command==='INVENTORY'?'inventoryOverlay':command==='MAP'?'v010MapOverlay':null;
     if(top){if(top.id===toggle){e.preventDefault();closeOverlay(top);}return;}

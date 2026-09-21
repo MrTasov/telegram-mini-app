@@ -432,7 +432,7 @@ const V091Navigation=(()=>{
     return oldGeometry(x,y,0)||walls.some(o=>rectHit(x,y,r,o))||penBlocked(x,y,r);
   };
   const fortress=()=>typeof V091Fortress==='object'?V091Fortress:null;
-  function withOpenDoors(fn){return GamePassages.plan(fn);}
+  function withOpenDoors(fn){return GamePassages.plan(fn,scene);}
   let pending=null;
   function queuePath(destination){
     if(pending&&!pending.onResult){pending.latest=destination;return;}
@@ -448,7 +448,7 @@ const V091Navigation=(()=>{
     if(GameFlow.paused||pending.scene!==scene||leftPointerId!==null){pending=null;return;}
     if(pending.revision!==geometryRevision){pending.revision=geometryRevision;pending.g=v092PathSearch(player.x,player.y,pending.destination,scene,player.radius+1);}
     const task=pending,start=performance.now();let out,steps=0;
-    do{out=withOpenDoors(()=>task.g.next());if(out.done)break;}while(++steps<8&&performance.now()-start<1.5);
+    withOpenDoors(()=>{do{out=task.g.next();if(out.done)break;}while(++steps<8&&performance.now()-start<1.5);});
     if(!out.done)return;
     pending=null;
     if(task.onResult){task.onResult(out.value);return;}
@@ -470,6 +470,38 @@ const V091Navigation=(()=>{
       return findWalkPath(player.x,player.y,target,scene,player.radius+1)||findWalkPath(player.x,player.y,target,scene,player.radius);
     });
   }
+  function immediatePrefix(destination){
+    const angle=Math.atan2(destination.y-player.y,destination.x-player.x),distanceToGoal=distance(player.x,player.y,destination.x,destination.y),limit=Math.min(200,distanceToGoal);
+    return withOpenDoors(()=>{
+      let best=null,score=-Infinity;
+      for(const offset of [0,.45,-.45,.9,-.9,1.4,-1.4]){
+        const a=angle+offset;let last={x:player.x,y:player.y};
+        // Check each new edge once, not the whole growing segment on every step.
+        for(let n=8;n<=limit;n+=8){const p={x:player.x+Math.cos(a)*n,y:player.y+Math.sin(a)*n};
+          if(!lineClear(last.x,last.y,p.x,p.y,player.radius,scene))break;last=p;
+        }
+        const gain=distanceToGoal-distance(last.x,last.y,destination.x,destination.y);
+        if(gain>score){score=gain;best=last;}
+        if(offset===0&&best&&distance(player.x,player.y,best.x,best.y)>limit-10)break;
+      }
+      return best&&score>1?best:null;
+    });
+  }
+  // Player requests use the same cancellable job as held-pointer release and
+  // stairs. Never drain a generator inside pointerup or a blocked movement tick.
+  function requestMove(destination,following=false,targetId=null,replans=0){
+    const startX=player.x,startY=player.y;
+    const task=requestPath(destination,points=>{
+      if(!points){if(!following)message('К этой точке нет свободного прохода');return;}
+      let join=-1;for(let i=Math.min(points.length-1,3);i>=0;i--)if(withOpenDoors(()=>lineClear(player.x,player.y,points[i].x,points[i].y,player.radius,scene))){join=i;break;}
+      if(join<0){if(replans<4)requestMove(destination,following,targetId,replans+1);else cancelNavigation();return;}
+      navigation={...(targetId?{targetId}:{destination}),points:points.slice(join),index:0,blockedMs:0,replans,scene,following};
+    });
+    // Retain the established radius fallback for narrow passages.
+    task.g=(function*(){return (yield* v092PathSearch(startX,startY,destination,scene,player.radius+1))||(yield* v092PathSearch(startX,startY,destination,scene,player.radius));})();
+    const prefix=immediatePrefix(destination);
+    if(prefix)navigation={...(targetId?{targetId}:{destination}),points:[prefix],index:0,blockedMs:0,replans,scene,following,provisional:true};
+  }
   function clippedPoint(x,y){
     const dx=x-player.x,dy=y-player.y,length=Math.hypot(dx,dy);
     if(length<.2)return null;
@@ -488,9 +520,7 @@ const V091Navigation=(()=>{
     if(!target)return;
     if(canInteract(target,player.x,player.y)){executeInteraction(target);return;}
     stopControls();cancelSearch();cancelChop();
-    const points=plan(target);
-    if(!points){message('К объекту нет свободного прохода');return;}
-    navigation={targetId:target.id,points,index:0,blockedMs:0,replans:0,scene};
+    requestMove(target,false,target.id);
   };
   approachPoint=function(x,y,following=false){
     if(!Number.isFinite(x)||!Number.isFinite(y))return;
@@ -510,13 +540,9 @@ const V091Navigation=(()=>{
       if(withOpenDoors(()=>lineClear(player.x,player.y,destination.x,destination.y,player.radius+1,scene))){pending=null;navigation={destination,points:[{x:destination.x,y:destination.y}],index:0,blockedMs:0,replans:0,scene,following};return;}
       queuePath(destination);return;
     }
-    let points=plan(destination);
-    if(!points&&following){
-      const fallback=clippedPoint(x,y);
-      if(fallback){Object.assign(destination,fallback);points=plan(destination);}
-    }
-    if(!points){if(!following)message('К этой точке нет свободного прохода');return;}
-    navigation={destination,points,index:0,blockedMs:0,replans:0,scene,following};
+    if(withOpenDoors(()=>lineClear(player.x,player.y,destination.x,destination.y,player.radius+1,scene)))
+      navigation={destination,points:[goal],index:0,blockedMs:0,replans:0,scene,following};
+    else requestMove(destination,following);
   };
   function steerHeldPointer(){
       const target=navigation.destination,dx=target.x-player.x,dy=target.y-player.y,d=Math.hypot(dx,dy);
@@ -525,7 +551,7 @@ const V091Navigation=(()=>{
       if(!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
   }
   updatePointerFollow=function(){
-    const p=objectPointer;if(!p||menuOpen||playerDead)return;
+    const p=objectPointer;if(!p||GameFlow.paused||playerDead||menuOpen&&!p.following)return;
     if(!p.following&&!p.target&&performance.now()-p.startedAt>=180)startPointerFollow();
     if(!p.following||fortress()?.transitioning)return;
     // A held gesture is direct steering, sampled once per rendered frame.
@@ -555,10 +581,12 @@ const V091Navigation=(()=>{
       finishMovement();if(target.kind!=='ground')executeInteraction(target);return;
     }
     if(nav.blockedMs>180){
+      if(nav.provisional&&pending){navigation=null;moveX=moveY=movePower=0;return;}
       if(nav.following){queuePath(target);nav.blockedMs=0;return;}
-      const points=plan(target);
-      if(points&&(nav.replans||0)<4){nav.points=points;nav.index=0;nav.blockedMs=0;nav.replans=(nav.replans||0)+1;}
-      else {cancelNavigation();message('Проход закрыт. Откройте дверь или выберите другой путь');return;}
+      const replans=(nav.replans||0)+1;cancelNavigation();
+      if(replans<=4)requestMove(target,false,nav.targetId,replans);
+      else message('Проход закрыт. Откройте дверь или выберите другой путь');
+      return;
     }
     let p=nav.points[nav.index];
     while(p&&distance(player.x,player.y,p.x,p.y)<(nav.index===nav.points.length-1?.35:3)){
@@ -573,7 +601,7 @@ const V091Navigation=(()=>{
     if(!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
   };
   invalidateGeometry();
-  return {walls,clippedPoint,plan,tickPath,requestPath,isPending:task=>pending===task,get pending(){return !!pending;}};
+  return {walls,clippedPoint,plan,tickPath,requestPath,immediatePrefix,isPending:task=>pending===task,get pending(){return !!pending;}};
 })();
 
 

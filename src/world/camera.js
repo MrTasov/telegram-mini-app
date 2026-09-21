@@ -56,7 +56,7 @@ const V010Camera=(()=>{
   window.addEventListener('wheel',e=>{if(!worldInput(e)||menuOpen)return;e.preventDefault();const unit=e.deltaMode===1?16:e.deltaMode===2?screenHeight:1;const delta=clamp(e.deltaY*unit,-400,400),direction=Math.sign(delta);if(direction&&wheelDirection&&direction!==wheelDirection)targetZoom=zoom;if(direction)wheelDirection=direction;setZoom(targetZoom*Math.exp(-delta*.0012));queueGameSave();},{passive:false,capture:true});
   // Joysticks are transparent overlays, so their touches also target canvas.
   // Reserve those contacts for controls before considering a map pinch.
-  window.addEventListener('pointerdown',e=>{if(!GameInput.isMobile||e.pointerType!=='touch'||!worldInput(e)||menuOpen)return;if(joystickAt(e.clientX,e.clientY)||leftPointerId!==null||rightPointerId!==null)return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(touches.size===2){const [a,b]=[...touches.values()];pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),zoom};stopControls(true);e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
+  window.addEventListener('pointerdown',e=>{if(!GameInput.isMobile||e.pointerType!=='touch'||!worldInput(e)||menuOpen)return;if(joystickAt(e.clientX,e.clientY)||leftPointerId!==null||rightPointerId!==null)return;const p=screenToWorld(e.clientX,e.clientY);if(touches.size&&(window.V0105?.hitTarget(p.x,p.y)||GameMovement.parallelTarget(p.x,p.y)))return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(touches.size===2){const [a,b]=[...touches.values()];pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),zoom};stopControls(true);e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
   window.addEventListener('pointermove',e=>{if(!touches.has(e.pointerId))return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch&&touches.size>=2){const [a,b]=[...touches.values()];setZoom(pinch.zoom*Math.hypot(a.x-b.x,a.y-b.y)/Math.max(1,pinch.distance));e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
   function endTouch(e){if(!touches.has(e.pointerId))return;touches.delete(e.pointerId);if(pinch||performance.now()<suppressTouchUntil){e.preventDefault();e.stopImmediatePropagation();objectPointer=null;cancelNavigation();moveX=moveY=movePower=0;suppressTouchUntil=performance.now()+250;if(!touches.size){pinch=null;queueGameSave();}}}
   window.addEventListener('pointerup',endTouch,{passive:false,capture:true});window.addEventListener('pointercancel',endTouch,{passive:false,capture:true});
@@ -150,4 +150,3 @@ function worldToScreen(x,y){return V010Camera.point(x,y);}
 function screenToWorld(x,y){return V010Camera.inverse(x,y);}
 function viewWidth(){return V010Camera.view().w;}
 function viewHeight(){return V010Camera.view().h;}
-

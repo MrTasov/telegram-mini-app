@@ -447,7 +447,7 @@ function useTree(tree){
   if(freeItemSpace(bag,'wood',BAG_SLOTS)<=0){message('🎒 Освободите место для древесины');return;}
   if(tree.felled){collectTreeWood(tree);return;}
   if(chopState)return;
-  chopState={id:tree.id,startedAt:Date.now(),duration:1800};
+  chopState={id:tree.id,startedAt:Date.now(),duration:1800+GameplayBalance.resources.treeChopExtraMs};
   player.aimX=tree.x-player.x;player.aimY=tree.y-player.y;
   const n=Math.hypot(player.aimX,player.aimY)||1;player.aimX/=n;player.aimY/=n;
 }
@@ -606,4 +606,3 @@ function nearestScavenge(){
   }
   return best;
 }
-
