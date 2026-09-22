@@ -113,7 +113,7 @@ function powerTick(dt){
     if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
     if(d.away>=4)d.manual=false;
     const shouldOpen=occupied||(near&&powered)||d.manual||(d.open>0&&d.away<4);
-    d.open=clamp(d.open+(shouldOpen?1:-1)*dt*2.2,0,1);
+    window.GameAudioWorld?.door(d,shouldOpen,'bunker',!!window.V018Build?.isBroken(d.id));d.open=clamp(d.open+(shouldOpen?1:-1)*dt*2.2,0,1);
   }
   V09Power.uiClock+=dt;
   if(V09Power.uiClock>.25){V09Power.uiClock=0;v09RefreshPowerUI();}
@@ -213,7 +213,7 @@ function v09Refuel(amount){
   // Do not consume a whole unit for a fractional gap at the top of the tank.
   const whole=Math.min(n,Math.floor(V09Power.capacity-V09Power.fuel));
   if(whole<=0){message('Бак почти полный');return;}
-  removeFromSlots(bag,'fuel',whole);V09Power.fuel+=whole;message('Заправлено: '+whole+' топлива');renderBag();v09PowerChanged();
+  removeFromSlots(bag,'fuel',whole);V09Power.fuel+=whole;GameAudio.play('refuel');message('Заправлено: '+whole+' топлива');renderBag();v09PowerChanged();
 }
 function v09OpenDevice(id){
   const d=V09Power.devices[id];if(!d)return;const overlay=v09Overlay('v09PowerDeviceOverlay',d.name),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());body.appendChild(renderDeviceSwitch(id));

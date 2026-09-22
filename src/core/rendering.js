@@ -73,6 +73,7 @@ function transition(title,callback){
 }
 
 function enterBunker(){
+  GameAudio.play('hatchOpen');
 
   transition(
     "ПОДЗЕМНАЯ БАЗА",
@@ -100,6 +101,7 @@ function enterBunker(){
 }
 
 function leaveBunker(){
+  GameAudio.play('hatchOpen');
 
   transition(
     "ПОВЕРХНОСТЬ",

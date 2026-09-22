@@ -201,7 +201,7 @@ window.ActorVisuals=(()=>{
         playAnimationSound('footsteps','step',player.running?.44:.35,Math.floor(motion.phase*2)%2?1.02:.98);
     }else stopFootsteps();
     stepPhase=motion.phase;
-    const p=pose(heldItem()),work=p?.work,name=work&&cfg.gathering.sounds[work.material];
+    const p=pose(heldItem()),work=p?.work,name=work&&(cfg.gathering.sounds[work.material]||(work.material==='metal'?'impactMetal':null));
     if(!name){stopAnimationSound('work');workSound=null;return;}
     const action=mod.items[p.item].action,hitPhase=action.durations.slice(0,action.impactFrame).reduce((s,n)=>s+n,0)/action.duration;
     const hit=Math.floor(work.elapsed/work.cycleMs-hitPhase);

@@ -95,7 +95,7 @@ window.V017Monsters=(()=>{
   function canHurt(z,range){return sameLevel()&&!playerDead&&!V091Fortress.isElevated()&&dist(z,player)<=range&&lineClear(z.x,z.y,player.x,player.y,0,'surface');}
   function armFuse(r,now,ms){r.fuse=now+ms;r.fuseAt=now;r.fuseDuration=ms;}
   function explode(z){
-    const r=prepare(z),boost=factor(),blast=stats(z,false).blast||specs.bloater.blast;if(r.exploded)return false;r.exploded=true;r.fuse=0;
+    const r=prepare(z),boost=factor(),blast=stats(z,false).blast||specs.bloater.blast;if(r.exploded)return false;r.exploded=true;r.fuse=0;GameAudio.play('explosion',{x:z.x,y:z.y,scene:'surface',radius:700});
     effects.push({x:z.x,y:z.y,at:performance.now(),seed:r.id,boost});if(effects.length>24)effects.shift();
     // A distant kill is harmless; a point-blank kill has the same contact blast.
     if(canHurt(z,blast.playerRange*boost)){
@@ -172,11 +172,11 @@ window.V017Monsters=(()=>{
       // Until its own front is breached a raider keeps that front, even when
       // the player becomes visible through a distant opening on another side.
       const holdFront=raid&&!insideOuter(z)&&(scene==='bunker'||sameLevel()&&insideOuter(player));
-      if(r.sees&&!holdFront){z.state='chase';target=player;r.target=null;
-        if(s.behavior==='explosive'&&canHurt(z,s.blast.triggerRange*boost)){armFuse(r,now,s.blast.fuseMs/boost);continue;}
-        if(s.behavior==='leap'&&d>s.leap.minRange&&d<s.leap.maxRange*boost&&now-z.lastAttack>s.leap.cooldown/boost){const speed=s.leap.speed*boost,windup=s.leap.windup/boost;r.jump={start:now,windup,duration:windup+Math.max(1,d-z.radius-player.radius)/speed/60*1000,speed,angle:Math.atan2(player.y-z.y,player.x-z.x)};z.lastAttack=now;continue;}
+      if(r.sees&&!holdFront){if(z.state!=='chase')GameAudio.play('zombieAggro',{x:z.x,y:z.y,scene:'surface',owner:z});z.state='chase';target=player;r.target=null;
+        if(s.behavior==='explosive'&&canHurt(z,s.blast.triggerRange*boost)){GameAudio.play('bloaterFuse',{x:z.x,y:z.y,scene:'surface',owner:z});armFuse(r,now,s.blast.fuseMs/boost);continue;}
+        if(s.behavior==='leap'&&d>s.leap.minRange&&d<s.leap.maxRange*boost&&now-z.lastAttack>s.leap.cooldown/boost){const speed=s.leap.speed*boost,windup=s.leap.windup/boost;GameAudio.play('leaperJump',{x:z.x,y:z.y,scene:'surface',owner:z});r.jump={start:now,windup,duration:windup+Math.max(1,d-z.radius-player.radius)/speed/60*1000,speed,angle:Math.atan2(player.y-z.y,player.x-z.x)};z.lastAttack=now;continue;}
         if(s.behavior!=='explosive'&&canHurt(z,z.radius+player.radius+9)&&now-z.lastAttack>s.cooldown){
-          z.lastAttack=now;r.attack=now+400;damagePlayer(s.damage*V010World.settings.enemyStrength);
+          z.lastAttack=now;r.attack=now+400;GameAudio.play('zombieAttack',{x:z.x,y:z.y,scene:'surface',owner:z});damagePlayer(s.damage*V010World.settings.enemyStrength);
         }
       }else if(raid){
         z.state='chase';wall=chooseWall(z,now);if(wall)target=wallApproach(z,wall);
@@ -188,7 +188,7 @@ window.V017Monsters=(()=>{
         const obstruction=V015Base.blocker(z,target,z.radius+2);
         if(obstruction&&obstruction.wall!==wall){wall=obstruction.wall;target=wallApproach(z,wall);}
         if(wall&&dist(z,point(z,wall))<z.radius+13){
-          if(s.behavior==='explosive'){armFuse(r,now,s.blast.wallFuseMs/boost);continue;}
+          if(s.behavior==='explosive'){GameAudio.play('bloaterFuse',{x:z.x,y:z.y,scene:'surface',owner:z});armFuse(r,now,s.blast.wallFuseMs/boost);continue;}
           if(now-z.lastAttack>s.cooldown){V015Base.damage(wall,s.damage*2*V010World.settings.enemyStrength);z.lastAttack=now;r.attack=now+400;}
           r.angle=Math.atan2(wall.y+wall.h/2-z.y,wall.x+wall.w/2-z.x);continue;
         }

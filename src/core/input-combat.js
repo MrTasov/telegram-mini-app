@@ -342,10 +342,7 @@ function hitZombie(zombie,damage=25){
   zombie.state =
     "chase";
 
-  playSound(
-    sounds.hit,
-    .65
-  );
+  if(zombie.health>0)GameAudio.play('hit',{x:zombie.x,y:zombie.y,scene:'surface',owner:zombie});
 
   if(zombie.health <= 0){
 
@@ -355,6 +352,7 @@ function hitZombie(zombie,damage=25){
 
     // A dead zombie must never keep growling.
     stopZombieAudio(zombie);
+    GameAudio.play('zombieDeath',{x:zombie.x,y:zombie.y,scene:'surface',rate:zombie.type==='heavy'?.8:1});
 
     zombie.deathTime =
       performance.now();
@@ -369,7 +367,7 @@ function updateBullets(){
     const b=bullets[i],vx=b.dx*frameScale,vy=b.dy*frameScale,steps=Math.max(1,Math.ceil(Math.hypot(vx,vy)/3));let removed=false;
     for(let n=0;n<steps;n++){
       const x=b.x+vx/steps,y=b.y+vy/steps;
-      if(worldCollision(x,y,b.radius,scene)){removed=true;break;}
+      if(worldCollision(x,y,b.radius,scene)){GameAudio.play('impactStone',{x,y,scene});removed=true;break;}
       b.x=x;b.y=y;
       if(scene==='surface'){
         const hit=zombies.find(z=>z.alive&&distance(x,y,z.x,z.y)<z.radius+b.radius);

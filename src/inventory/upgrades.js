@@ -25,7 +25,7 @@ window.V0161Upgrade=(()=>{
     if(!devicePowered(station.id)){message('Станку нужно питание · 2 кВт');return false;}
     const input=cost(s,key);if(!inv.consumeMaterials(input)){for(const b of overlay?.querySelectorAll('[data-upgrade-material]')||[])if(inv.materialCount(b.dataset.upgradeMaterial)<input[b.dataset.upgradeMaterial]){b.classList.remove('v013Missing');void b.offsetWidth;b.classList.add('v013Missing');}message('Не хватает материалов для усиления');return false;}
     if(isDrone(s))robot.state.modules[key]++;else if(isTurret(s))s.turretData.level=level(s)+1;else{combat.ensure(s);s.level++;}
-    pulseUntil=performance.now()+1000;V010.emit('equipmentupgrade',{type:s.type,level:level(s,key)});combat.refreshStats();robot.changed();changed();message((isDrone(s)?labels[key]:ITEM[s.type].name)+' · усилено до +'+level(s,key));return true;
+    GameAudio.play('upgrade');pulseUntil=performance.now()+1000;V010.emit('equipmentupgrade',{type:s.type,level:level(s,key)});combat.refreshStats();robot.changed();changed();message((isDrone(s)?labels[key]:ITEM[s.type].name)+' · усилено до +'+level(s,key));return true;
   }
   function upgradeDrone(key){return isDrone(slots[0])&&upgrade(slots[0],key);}
   function text(parent,tag,cls,value){const e=document.createElement(tag);e.className=cls;if(value!==undefined)I18n.assign(e,"textContent",value);parent.append(e);return e;}

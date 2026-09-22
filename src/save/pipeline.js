@@ -49,6 +49,7 @@ const GameSave=(()=>{
     // Weak keys do not retain slot previews or imports after callers release them.
     const prepared=validated.get(data)===raw?JSON.parse(raw):decode(raw);
     const was=GameState.session.transaction;
+    window.GameAudio?.reset();
     restoring=true;GameState.session.transaction=true;
     try{return chains.restore(prepared);}
     finally{GameState.session.transaction=was;restoring=false;}

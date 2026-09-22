@@ -7,7 +7,7 @@ window.V0141Farm=(()=>{
     if(!Number.isInteger(index)||!Number.isInteger(crop)||!farmCrops[crop]||!closeEnough(index)||farmState[index]?.crop!==null)return false;
     if(!V011Farm.beginBed(index,crop))return false;
     const now=Date.now();for(let i=0;i<50;i++)V011Farm.plantOne(index,i,now);
-    queueGameSave();renderBag();closeOverlay(el('farmOverlay'));message('Посажено: '+farmCrops[crop].name);return true;
+    GameAudio.play('plant');queueGameSave();renderBag();closeOverlay(el('farmOverlay'));message('Посажено: '+farmCrops[crop].name);return true;
   }
   function harvest(index){
     V011Farm.settle();if(!closeEnough(index)||!V011Farm.ready(index))return 0;
@@ -16,7 +16,7 @@ window.V0141Farm=(()=>{
     const left=addItem(type,total),moved=total-left;let remaining=moved;
     for(const p of plants){if(!remaining)break;if(p.planted&&!p.harvested){const n=Math.min(remaining,p.qty);remaining-=n;if(n===p.qty)p.harvested=true;else p.qty-=n;}}
     if(!left)farmState[index]={crop:null,plantedAt:0};else st.harvestLeft=left;
-    if(moved){V010.emit('harvested',{type,qty:moved});queueGameSave();renderBag();message('Собрано: '+ITEM[type].name+' × '+moved+(left?' · осталось '+left:''));}else message('В рюкзаке нет места');return moved;
+    if(moved){GameAudio.play('farmHarvest');V010.emit('harvested',{type,qty:moved});queueGameSave();renderBag();message('Собрано: '+ITEM[type].name+' × '+moved+(left?' · осталось '+left:''));}else message('В рюкзаке нет места');return moved;
   }
   function refresh(){
     for(const b of document.querySelectorAll('.farmCropBtn')){const n=Number(b.dataset.crop);b.classList.toggle('selected',n===selected);b.setAttribute('aria-pressed',String(n===selected));}

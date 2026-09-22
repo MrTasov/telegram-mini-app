@@ -84,7 +84,7 @@ window.V0162Magazines=(()=>{
     }
     combat.cancelReload();firing=false;
     if(weaponIndex>=0)next[weaponIndex]=s;
-    bag.splice(0,bag.length,...next);s.magazineType=newType;s.rounds=0;delete s.modules.magazine;
+    bag.splice(0,bag.length,...next);GameAudio.play(newType?'magazineLoad':'magazineUnload');s.magazineType=newType;s.rounds=0;delete s.modules.magazine;
     inv.render();updateAmmoHud();queueGameSave();return true;
   }
   const remove=s=>change(s);

@@ -3232,41 +3232,240 @@
     "craft_bench": "workbench"
   },
   "audio": {
-    "gunshot": {
-      "path": "assets/audio/effects/gunshot.mp3",
-      "optional": true
-    },
-    "zombie": {
-      "path": "assets/audio/effects/zombie.mp3",
-      "optional": true
-    },
-    "hit": {
-      "path": "assets/audio/effects/hit.mp3",
-      "optional": true
-    },
-    "playerHit": {
-      "path": "assets/audio/effects/player_hit.mp3",
-      "optional": true
-    },
-    "footsteps": {
-      "path": "assets/audio/effects/footstep_soft_floor.wav",
-      "optional": false,
-      "volumeScale": 0.5
-    },
-    "chicken": {
-      "path": "assets/audio/effects/chicken.mp3",
-      "optional": true
-    },
-    "cow": {
-      "path": "assets/audio/effects/cow.mp3",
-      "optional": true
-    },
     "chopWood": {
       "path": "assets/audio/effects/chop_wood.wav",
       "optional": false
     },
     "mineRock": {
       "path": "assets/audio/effects/mine_rock.wav",
+      "optional": false
+    },
+    "footsteps": {
+      "path": "assets/audio/full/footsteps.wav",
+      "optional": false,
+      "volumeScale": 0.5
+    },
+    "footstep2": {
+      "path": "assets/audio/full/footstep2.wav",
+      "optional": false,
+      "volumeScale": 0.5
+    },
+    "footstep3": {
+      "path": "assets/audio/full/footstep3.wav",
+      "optional": false,
+      "volumeScale": 0.5
+    },
+    "footstep4": {
+      "path": "assets/audio/full/footstep4.wav",
+      "optional": false,
+      "volumeScale": 0.5
+    },
+    "gunshot": {
+      "path": "assets/audio/full/gunshot.wav",
+      "optional": false
+    },
+    "shotM4": {
+      "path": "assets/audio/full/shot_m4.wav",
+      "optional": false
+    },
+    "turretFire": {
+      "path": "assets/audio/full/turret_fire.wav",
+      "optional": false
+    },
+    "droneFire": {
+      "path": "assets/audio/full/drone_fire.wav",
+      "optional": false
+    },
+    "dryFire": {
+      "path": "assets/audio/full/dry_fire.wav",
+      "optional": false
+    },
+    "reloadOut": {
+      "path": "assets/audio/full/reload_out.wav",
+      "optional": false
+    },
+    "reloadIn": {
+      "path": "assets/audio/full/reload_in.wav",
+      "optional": false
+    },
+    "reloadBolt": {
+      "path": "assets/audio/full/reload_bolt.wav",
+      "optional": false
+    },
+    "impactMetal": {
+      "path": "assets/audio/full/impact_metal.wav",
+      "optional": false
+    },
+    "hit": {
+      "path": "assets/audio/full/hit.wav",
+      "optional": false
+    },
+    "playerHit": {
+      "path": "assets/audio/full/player_hit.wav",
+      "optional": false
+    },
+    "impactStone": {
+      "path": "assets/audio/full/impact_stone.wav",
+      "optional": false
+    },
+    "treeBreak": {
+      "path": "assets/audio/full/tree_break.wav",
+      "optional": false
+    },
+    "rockBreak": {
+      "path": "assets/audio/full/rock_break.wav",
+      "optional": false
+    },
+    "doorOpen": {
+      "path": "assets/audio/full/door_open.wav",
+      "optional": false
+    },
+    "doorClose": {
+      "path": "assets/audio/full/door_close.wav",
+      "optional": false
+    },
+    "pickup": {
+      "path": "assets/audio/full/pickup.wav",
+      "optional": false
+    },
+    "cloth": {
+      "path": "assets/audio/full/cloth.wav",
+      "optional": false
+    },
+    "lootOpen": {
+      "path": "assets/audio/full/loot_open.wav",
+      "optional": false
+    },
+    "lootClose": {
+      "path": "assets/audio/full/loot_close.wav",
+      "optional": false
+    },
+    "metalPlace": {
+      "path": "assets/audio/full/metal_place.wav",
+      "optional": false
+    },
+    "switch": {
+      "path": "assets/audio/full/switch.wav",
+      "optional": false
+    },
+    "liquid": {
+      "path": "assets/audio/full/liquid.wav",
+      "optional": false
+    },
+    "plant": {
+      "path": "assets/audio/full/plant.wav",
+      "optional": false
+    },
+    "fishCast": {
+      "path": "assets/audio/full/fish_cast.wav",
+      "optional": false
+    },
+    "fishCatch": {
+      "path": "assets/audio/full/fish_catch.wav",
+      "optional": false
+    },
+    "powerStart": {
+      "path": "assets/audio/full/power_start.wav",
+      "optional": false
+    },
+    "powerStop": {
+      "path": "assets/audio/full/power_stop.wav",
+      "optional": false
+    },
+    "zombie": {
+      "path": "assets/audio/full/zombie.wav",
+      "optional": false
+    },
+    "zombie2": {
+      "path": "assets/audio/full/zombie2.wav",
+      "optional": false
+    },
+    "zombie3": {
+      "path": "assets/audio/full/zombie3.wav",
+      "optional": false
+    },
+    "zombieAttack": {
+      "path": "assets/audio/full/zombie_attack.wav",
+      "optional": false
+    },
+    "zombieDeath": {
+      "path": "assets/audio/full/zombie_death.wav",
+      "optional": false
+    },
+    "leaperJump": {
+      "path": "assets/audio/full/leaper_jump.wav",
+      "optional": false
+    },
+    "bloaterFuse": {
+      "path": "assets/audio/full/bloater_fuse.wav",
+      "optional": false
+    },
+    "explosion": {
+      "path": "assets/audio/full/explosion.wav",
+      "optional": false
+    },
+    "chicken": {
+      "path": "assets/audio/full/chicken.wav",
+      "optional": false
+    },
+    "cow": {
+      "path": "assets/audio/full/cow.wav",
+      "optional": false
+    },
+    "slaughter": {
+      "path": "assets/audio/full/slaughter.wav",
+      "optional": false
+    },
+    "day": {
+      "path": "assets/audio/full/day.wav",
+      "optional": false
+    },
+    "night": {
+      "path": "assets/audio/full/night.wav",
+      "optional": false
+    },
+    "bunker": {
+      "path": "assets/audio/full/bunker.wav",
+      "optional": false
+    },
+    "generator": {
+      "path": "assets/audio/full/generator.wav",
+      "optional": false
+    },
+    "machine": {
+      "path": "assets/audio/full/machine.wav",
+      "optional": false
+    },
+    "water": {
+      "path": "assets/audio/full/water.wav",
+      "optional": false
+    },
+    "menu": {
+      "path": "assets/audio/full/menu.wav",
+      "optional": false
+    },
+    "uiClick": {
+      "path": "assets/audio/full/ui_click.wav",
+      "optional": false
+    },
+    "uiConfirm": {
+      "path": "assets/audio/full/ui_confirm.wav",
+      "optional": false
+    },
+    "complete": {
+      "path": "assets/audio/full/complete.wav",
+      "optional": false
+    },
+    "uiError": {
+      "path": "assets/audio/full/ui_error.wav",
+      "optional": false
+    },
+    "dayX": {
+      "path": "assets/audio/full/day_x.wav",
+      "optional": false
+    },
+    "rotor": {
+      "path": "assets/audio/full/rotor.wav",
       "optional": false
     }
   },

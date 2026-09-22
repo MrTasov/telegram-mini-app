@@ -43,10 +43,10 @@ window.V018Build=(()=>{
     const o=r.object;if(o.hp<=0)return false;
     if(!health.damage(o,amount,r.kind,damageType))return false;
     if(!o.hp){if(r.kind==='automatic'){o.open=1;o.away=0;}if(r.owner){r.owner.doorOpen=true;r.owner.doorProgress=1;}}
-    changed(r,!o.hp);return true;
+    GameAudio.play(o.hp?'constructionHit':'constructionBreak',{x:o.x,y:o.y,scene:r.scene});changed(r,!o.hp);return true;
   }
   function closedDoors(){return doorRecords.filter(r=>r.scene==='surface'&&r.object.hp>0&&r.kind==='house'&&r.owner.doorProgress<.88).map(r=>r.object);}
-  function stop(notice=''){window.ActorVisuals?.finishRepair(job,notice==='Ремонт завершён');job=null;hud.style.display='none';if(notice)message(notice);refresh();}
+  function stop(notice=''){if(notice==='Ремонт завершён')GameAudio.play('repair');window.ActorVisuals?.finishRepair(job,notice==='Ремонт завершён');job=null;hud.style.display='none';if(notice)message(notice);refresh();}
   function start(value){
     const r=record(value);if(!near(r)||!held())return false;
     if(r.object.hp>=r.object.maxHp){open(r.id);return false;}
@@ -82,7 +82,7 @@ window.V018Build=(()=>{
       for(const cell of el('v018Structure')?.querySelectorAll('[data-build-material]')||[])if(count(cell.dataset.buildMaterial)<input[cell.dataset.buildMaterial])V0162Quick.flash(cell);
       message('Не хватает бетона или железа в рюкзаке');return false;
     }
-    o.level++;o.maxHp=definition(r).levels[o.level];o.hp=o.maxHp;changed(r,true);refresh(true);message(title(r)+' · уровень '+o.level);return true;
+    GameAudio.play('upgrade');o.level++;o.maxHp=definition(r).levels[o.level];o.hp=o.maxHp;changed(r,true);refresh(true);message(title(r)+' · уровень '+o.level);return true;
   }
   const hud=document.createElement('div');hud.id='v018RepairHUD';const hudText=document.createElement('span'),hudStop=v09Button('Стоп',()=>stop());hud.append(hudText,hudStop);document.body.append(hud);
   function open(value){

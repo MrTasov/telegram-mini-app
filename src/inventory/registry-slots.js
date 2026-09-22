@@ -52,7 +52,7 @@ window.V010Inventory=(()=>{
     const wanted=Math.max(0,Math.min(s.qty,Math.floor(amount??s.qty)));
     if(!wanted)return 0;
     const moved=wanted-insert(b,s.type==='fish'?V014Fish.portion(s,wanted):{...copy(s),qty:wanted},capacity(to));
-    if(moved){if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)a[index]=null;notifyChange();}return moved;
+    if(moved){GameAudio.play('inventoryMove');if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)a[index]=null;notifyChange();}return moved;
   }
   function move(from,index,to,targetIndex,amount){
     const a=list(from),b=list(to),s=a?.[index];
@@ -61,10 +61,10 @@ window.V010Inventory=(()=>{
     if(window.V0161UI&&!V0161UI.allowMove(from,index,to,targetIndex))return false;
     const target=b[targetIndex];
     const wanted=Math.max(0,Math.min(s.qty,Math.floor(amount??s.qty)));if(!wanted)return false;
-    if(target&&!matches(s,target)){if(amount!==undefined||!window.V0161UI?.allowMove(to,targetIndex,from,index))return false;a[index]=target;b[targetIndex]=s;notifyChange();return true;}
+    if(target&&!matches(s,target)){if(amount!==undefined||!window.V0161UI?.allowMove(to,targetIndex,from,index))return false;a[index]=target;b[targetIndex]=s;GameAudio.play('inventoryMove');notifyChange();return true;}
     const n=Math.min(wanted,stackMax(s.type)-(target?.qty||0));if(n<=0)return false;
     if(target){if(s.type==='fish')V014Fish.append(target,s,n);target.qty+=n;}else b[targetIndex]=s.type==='fish'?V014Fish.portion(s,n):{...copy(s),qty:n};if(s.type==='fish')V014Fish.remove(s,n);
-    s.qty-=n;if(!s.qty)a[index]=null;notifyChange();return true;
+    s.qty-=n;if(!s.qty)a[index]=null;GameAudio.play('inventoryMove');notifyChange();return true;
   }
   function split(where,index,n){
     const a=list(where),s=a?.[index];if(!s||!Number.isInteger(n)||n<1||n>=s.qty)return false;
@@ -86,14 +86,14 @@ window.V010Inventory=(()=>{
     const overflow=next.slice(newCapacity).filter(Boolean);next.length=Math.min(next.length,newCapacity);
     for(const item of overflow)if(insert(next,item,newCapacity)>0){message('Освободите место перед сменой рюкзака');return false;}
     if(equipment[slot]&&insert(next,{...copy(equipment[slot]),qty:1},newCapacity)>0){message('Нет места для снятой экипировки');return false;}
-    bag=next;equipment[slot]=wearing;BAG_SLOTS=newCapacity;notifyChange();message('Надето: '+def.name);return true;
+    GameAudio.play('equip');bag=next;equipment[slot]=wearing;BAG_SLOTS=newCapacity;notifyChange();message('Надето: '+def.name);return true;
   }
   equipFromBag=index=>equip(index);
   function unequip(slot){
     const item=equipment[slot];if(!item)return false;
     if(slot==='backpack'){message('Выберите другой рюкзак для замены');return false;}
     const next=copy(bag);if(insert(next,{...copy(item),qty:1},BAG_SLOTS)>0){message('Освободите место в рюкзаке');return false;}
-    bag=next;equipment[slot]=null;notifyChange();return true;
+    GameAudio.play('unequip');bag=next;equipment[slot]=null;notifyChange();return true;
   }
   v091Unequip=unequip;
   if(window.V091Equipment)V091Equipment.unequip=unequip;

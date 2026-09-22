@@ -117,7 +117,7 @@ window.V011World=(()=>{
   function toggleDoor(b){
     const d=doorRect(b);
     if(b.doorOpen&&[player,...zombies.filter(z=>z.alive)].some(p=>rectHit(p.x,p.y,p.radius+5,d))){message('Освободите дверной проём');return false;}
-    b.doorOpen=!b.doorOpen;queueGameSave();return true;
+    b.doorOpen=!b.doorOpen;GameAudio.play(b.doorOpen?'doorOpen':'doorClose',{x:b.x,y:b.y,scene:'surface'});queueGameSave();return true;
   }
   const oldExecute=executeInteraction;
   executeInteraction=function(t,...args){

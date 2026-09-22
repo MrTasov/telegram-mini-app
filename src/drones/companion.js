@@ -117,14 +117,14 @@ window.V014Robots=(()=>{
     const s=source?.[i];if(!s||source===destination||ITEM[s.type]?.robot)return 0;
     const n=Math.min(s.qty,Math.max(0,Math.floor(amount??s.qty)));if(!n)return 0;
     const part=portion(s,n),left=addToSlots(destination,s.type,n,max,part),moved=n-left;
-    if(moved){removePart(s,moved);if(!s.qty)source[i]=null;changed();renderBag();}return moved;
+    if(moved){GameAudio.play('pickup');removePart(s,moved);if(!s.qty)source[i]=null;changed();renderBag();}return moved;
   }
   function store(i,n){if(!near()){message('Дрон должен быть рядом');return 0;}return transfer(bag,i,state.cargo,capacity(),n);}
   function take(i,n){if(!near()){message('Дрон должен быть рядом');return 0;}return transfer(state.cargo,i,bag,BAG_SLOTS,n);}
   function pack(){
     if(state.packed)return false;
     if(addItem(TYPE,1,{robotId:state.id})){message('Нужна свободная ячейка');return false;}
-    state.packed=true;state.task='packed';state.targetId=null;state.guard=null;undocking=false;resetReturn();primaryCommand();clearRoute();changed();renderBag();return true;
+    GameAudio.play('dronePack');GameAudio.loop('rotor',null);state.packed=true;state.task='packed';state.targetId=null;state.guard=null;undocking=false;resetReturn();primaryCommand();clearRoute();changed();renderBag();return true;
   }
   function deploy(item){
     if(!state.packed||!ownsToken(item))return false;
@@ -134,7 +134,7 @@ window.V014Robots=(()=>{
       if(!worldCollision(x,y,10,scene)&&lineClear(player.x,player.y,x,y,10,scene)){p={x,y,scene};break;}}if(p)break;}
 
     if(!p){message('Недостаточно места');return false;}
-    bag[index]=null;Object.assign(state,p,{packed:false,task:state.hp>0&&state.battery>0?'follow':'disabled'});undocking=false;resetReturn();primaryCommand();clearRoute();changed();renderBag();return true;
+    GameAudio.play('droneDeploy');bag[index]=null;Object.assign(state,p,{packed:false,task:state.hp>0&&state.battery>0?'follow':'disabled'});undocking=false;resetReturn();primaryCommand();clearRoute();changed();renderBag();return true;
   }
   function follow(){
     if(state.packed||state.hp<=0||state.battery<=0){message('Разместите, зарядите и отремонтируйте дрона');return false;}
@@ -173,7 +173,7 @@ window.V014Robots=(()=>{
       const n=Math.min(need,s.qty);s.qty-=n;need-=n;used+=n;if(!s.qty)source[i]=null;
     }
     if(!used){message(state.ammo>=combat.capacity?'Боезапас полный':'Нужны патроны 5,45');return false;}
-    state.ammo+=used;if(state.mode==='attack')observedTarget=null;changed();renderBag();return true;
+    GameAudio.play('magazineLoad');state.ammo+=used;if(state.mode==='attack')observedTarget=null;changed();renderBag();return true;
   }
   function cost(key){if(window.V0161Upgrade)return V0161Upgrade.droneCost(key);const l=state.modules[key]??5;return {metal:8*(l+1),parts:3*(l+1),...(l>=3?{copper:5*(l-1)}:{})};}
   function upgrade(key){return window.V0161Upgrade?.upgradeDrone(key)||false;}
@@ -182,7 +182,7 @@ window.V014Robots=(()=>{
   function repair(atStation=false){
     if(!canRepair(atStation)){message(atStation?'Доставьте дрона на станцию':'Для ремонта подойдите к исправному дрону. Сломанный дрон доставьте на станцию.');return false;}
     const price=repairCost();if(!V010Inventory.consumeMaterials(price,1)){message('Недостаточно материалов для ремонта');return false;}
-    state.hp=maxHp();changed();renderBag();updateHUD();return true;
+    state.hp=maxHp();GameAudio.play('repair');changed();renderBag();updateHUD();return true;
   }
   function moveTo(p,dt){const result=motion.move(p,dt);angle=motion.heading;return result;}
   function sceneTravel(p,dt){const result=motion.travel(p,dt);angle=motion.heading;return result;}
@@ -197,7 +197,7 @@ window.V014Robots=(()=>{
   }
   function shootAt(z){
     if(!combatEnabled()||!z?.alive||z.health<=0||shot>1e-9||state.ammo<=0||distance(state.x,state.y,z.x,z.y)>combat.range||!lineClear(state.x,state.y,z.x,z.y,2,'surface'))return false;
-    state.ammo--;state.battery=Math.max(0,state.battery-definition.battery.shotCost/batteryFactor());shot+=combat.intervalMs/1000;angle=Math.atan2(z.y-state.y,z.x-state.x);flash=.07;tracer={x:z.x,y:z.y};hitZombie(z,combat.damage,{fixedDamage:true});createNoise(state.x,state.y,280);changed();return true;
+    GameAudio.play('droneFire',{x:state.x,y:state.y,scene:state.scene,radius:500});state.ammo--;state.battery=Math.max(0,state.battery-definition.battery.shotCost/batteryFactor());shot+=combat.intervalMs/1000;angle=Math.atan2(z.y-state.y,z.x-state.x);flash=.07;tracer={x:z.x,y:z.y};hitZombie(z,combat.damage,{fixedDamage:true});createNoise(state.x,state.y,280);changed();return true;
   }
   function collectLoose(){
     if(!['follow','carry'].includes(state.mode)||!state.autoCollect||state.scene!==scene||state.economy&&state.battery<20)return;

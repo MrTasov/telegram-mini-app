@@ -2,7 +2,7 @@
   "name": "last-base",
   "version": "0.29.0",
   "private": true,
-  "description": "LAST BASE Character / Zombie Visual & Animation patch.",
+  "description": "LAST BASE 0.29.0 Full Audio Pass recovery on HUD Compact 1.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -12,7 +12,9 @@
     "locales": "node tools/locales.cjs",
     "bench:stages": "node qa/compare-readiness-performance.cjs",
     "bench:ux": "node qa/compare-corrective-performance.cjs",
-    "bench:world-farm": "node qa/compare-world-farm-performance.cjs"
+    "bench:world-farm": "node qa/compare-world-farm-performance.cjs",
+    "bench:audio": "node qa/audio-performance.cjs",
+    "test:audio": "node qa/audio-pass.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

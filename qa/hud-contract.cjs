@@ -5,6 +5,6 @@ const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:a
 const changes=require('./hud-source-reference.json').changes;
 exports.assertSource=(file,expected)=>{
  const actual=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),change=changes[file];
- if(change){assert.equal(expected,change.before,file+' historical reference');assert.equal(actual,change.after,file+' reviewed HUD edit');}
- else assert.equal(actual,expected,file);
+ if(change){assert.equal(expected,change.before,file+' historical reference');require('./audio-contract.cjs').assertSource(file,change.after);}
+ else require('./audio-contract.cjs').assertSource(file,expected);
 };

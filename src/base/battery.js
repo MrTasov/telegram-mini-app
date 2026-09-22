@@ -8,7 +8,7 @@ const V010Energy=(()=>{
   const roomRank=id=>roomPriority[id]??defaultRoom(id);
   const deviceRank=id=>devicePriority[id]??defaultDevice(id);
   const log=text=>{if(typeof V010!=='undefined'&&typeof V010.log==='function')V010.log(text);};
-  function edge(key,value,text){if(value&&!warnings[key])log(text);warnings[key]=!!value;}
+  function edge(key,value,text){if(value&&!warnings[key]){log(text);GameAudio.play('warning');}warnings[key]=!!value;}
   const fmt=n=>I18n.numeric(n,{maximumFractionDigits:2,useGrouping:false});
   function remainingTime(a=V09Power.allocation()){
     const kw=a.batteryOutput;
@@ -149,7 +149,7 @@ const V010Energy=(()=>{
       if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
       if(d.away>=4)d.manual=false;
       const shouldOpen=occupied||(near&&powered)||d.manual||(d.open>0&&d.away<4);
-      d.open=clamp(d.open+(shouldOpen?1:-1)*dt*2.2,0,1);
+      window.GameAudioWorld?.door(d,shouldOpen,'bunker',!!window.V018Build?.isBroken(d.id));d.open=clamp(d.open+(shouldOpen?1:-1)*dt*2.2,0,1);
     }
     clock+=dt;if(clock>=2){clock=0;monitor(a);}
     V09Power.uiClock+=dt;if(V09Power.uiClock>.25){V09Power.uiClock=0;v09RefreshPowerUI();}

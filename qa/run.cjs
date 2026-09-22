@@ -38,10 +38,12 @@ const jobs=[
  ['polish','qa/polish.cjs',[]],
  ['polish-visuals','qa/polish-visuals.cjs',[]],
  ['audio-unlock','qa/audio-unlock.cjs',['.','qa/results/audio-unlock.json']],
- ['hud-display','qa/hud-display.cjs',[]]
+ ['hud-display','qa/hud-display.cjs',[]],
+ ['audio-pass','qa/audio-pass.cjs',[]]
 ],runs=[];
 async function run(index){
  const [id,file,args]=jobs[index];
+ if(process.env.LAST_BASE_TEST_FILTER&&!process.env.LAST_BASE_TEST_FILTER.split(',').includes(id)){const old=fs.existsSync(path.join(out,'summary.json'))?JSON.parse(fs.readFileSync(path.join(out,'summary.json'))):null;runs[index]=old?.runs?.find(r=>r.id===id)||{id,exitCode:1,error:'No previous result for skipped group'};return;}
  console.log('Running '+id+'…');const start=Date.now();
  const r=await new Promise(resolve=>cp.execFile(process.execPath,[path.join(root,file),...args],{cwd:root,env,encoding:'utf8',timeout:300000,maxBuffer:8e6},(error,stdout,stderr)=>resolve({status:error?(typeof error.code==='number'?error.code:1):0,stdout,stderr,error})));
  fs.writeFileSync(path.join(out,id+'.log'),r.stdout+'\n'+r.stderr);if(r.stdout)console.log(r.stdout.trim());if(r.stderr)console.error(r.stderr.trim());
@@ -55,6 +57,7 @@ async function run(index){
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
 const reports=[read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
 reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'),read('player-visual-fix.json'),read('corrective-performance.json'),read('corrective-visuals.json'),read('polish.json'),read('polish-visuals.json'),read('audio-unlock.json'),read('hud-display.json'));
-const summary={version:require('../package.json').version,stage:7,patch:"hud-compact-1",stage6Started:true,stage7Started:true,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.','Six historical optional audio assets remain absent; three new WAV effects are included.']};
+reports.push(read('audio-pass.json'));
+const summary={version:require('../package.json').version,stage:7,patch:"audio-pass-recovered-1",stage6Started:true,stage7Started:true,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.','All audio paths are included and decoded; subjective mix requires physical device listening.']};
 fs.writeFileSync(path.join(out,'summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));if(!summary.passed)process.exitCode=1;
 })().catch(error=>{console.error(error);process.exitCode=1;});

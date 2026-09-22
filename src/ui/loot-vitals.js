@@ -50,7 +50,7 @@ window.V0163Loot=(()=>{
     render();renderBag();updateAmmoHud();V014Robots.changed();queueGameSave();
     if(!activeLoot.some(s=>s&&s.qty>0))closeOverlay(el('lootOverlay'));
     if(left)message(drone?'Недостаточно места в дроне':'Рюкзак заполнен');
-    return moved>0;
+    if(moved)GameAudio.play('lootTake');return moved>0;
   }
   renderLoot=render;
   V014Robots.dispatchLoot=()=>take('drone');

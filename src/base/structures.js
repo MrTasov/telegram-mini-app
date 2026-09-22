@@ -75,14 +75,14 @@ window.V015Base=(()=>{
   function changed(){revision++;invalidateGeometry();queueGameSave();}
   function damage(id,amount,damageType='physical'){
     const o=typeof id==='string'?byId.get(id):id;if(!o||!byId.has(o.id)||!Number.isFinite(amount)||amount<=0||o.hp<=0||isOpen(o))return false;
-    if(!health.damage(o,amount,o.gate?'gate':'wall',damageType))return false;
+    if(!health.damage(o,amount,o.gate?'gate':'wall',damageType))return false;GameAudio.play(o.hp?'constructionHit':'constructionBreak',{x:o.x,y:o.y,scene:'surface'});
     if(o.hp===0){changed();if(scene==='surface'&&player.wallLevel&&!V091Fortress.transitioning&&V091Fortress.elevatedCollision(player.x,player.y,player.radius)){player.wallLevel=false;V091Fortress.cancelRoute();const landing=V020Walls.inwardSafePoint(player.x,player.y,player.radius);if(landing)Object.assign(player,landing);else settle(player);}
       if(scene==='surface'&&distance(player.x,player.y,o.x+o.w/2,o.y+o.h/2)<800)message('Пролом в '+(o.group==='outer'?'периметре':o.group==='room'?'стене помещения':'укреплении'));
     }else queueGameSave();return true;
   }
   function toggle(o){if(!o?.gate||o.hp<=0)return false;if(o.gate==='south'){toggleGate();return true;}if(o.gate==='airlock'){V091Fortress.toggleInnerGate();return true;}
     if(isOpen(o)&&((scene==='surface'&&rectHit(player.x,player.y,player.radius+3,o))||zombies.some(z=>z.alive&&rectHit(z.x,z.y,z.radius+3,o))||(!V014Robots.state.packed&&V014Robots.state.scene==='surface'&&rectHit(V014Robots.state.x,V014Robots.state.y,14,o)))){message('Проход занят');return false;}
-    if(o.gate==='north')northOpen=!northOpen;else if(o.gate==='commandN')commandNorthOpen=!commandNorthOpen;else commandSouthOpen=!commandSouthOpen;changed();updateAction();return true;
+    if(o.gate==='north')northOpen=!northOpen;else if(o.gate==='commandN')commandNorthOpen=!commandNorthOpen;else commandSouthOpen=!commandSouthOpen;GameAudio.play(isOpen(o)?'gateOpen':'gateClose',{x:o.x,y:o.y,scene:'surface'});changed();updateAction();return true;
   }
   // Bound the new AI to nearby surface walls. The existing distant-world AI,
   // enemy movement speeds, damage and attack cooldowns are retained.

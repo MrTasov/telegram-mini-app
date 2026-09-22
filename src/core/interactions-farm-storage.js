@@ -188,15 +188,10 @@ function getChestPositions(){
 // =====================================================
 // Chickens: continuous quiet loop with a deliberately small hearing radius.
 // Cows: short moo at random 3–15 second intervals, also only audible nearby.
-let chickenAmbientSource=null;
-let chickenAmbientGain=null;
+// Keep both the initialization and every due-time Math.random call exactly as
+// released: this legacy clock shares gameplay RNG. Audible rarity belongs to
+// GameAudio's animal limiter, not to a replacement clock.
 let nextCowMooAt=Date.now()+3000+Math.random()*12000;
-
-const CHICKEN_AUDIO_RADIUS=285;
-const COW_AUDIO_RADIUS=310;
-const CHICKEN_MAX_GAIN=0.24;
-const COW_MAX_GAIN=0.34;
-
 function livestockAudioCenter(kind){
   const f=bunker.farm;
   const left=f.left+18, right=(f.cropLeft??90)-12;
@@ -207,77 +202,12 @@ function livestockAudioCenter(kind){
     : {x:(left+right)/2,y:(mid+bottom)/2};
 }
 
-function distanceGain(px,py,target,radius,maxGain){
-  const d=Math.hypot(px-target.x,py-target.y);
-  if(d>=radius)return 0;
-  const n=1-d/radius;
-  return maxGain*n*n; // quick falloff: corridor becomes effectively silent
-}
-
-function stopChickenAmbient(){
-  if(chickenAmbientSource){
-    try{chickenAmbientSource.stop();}catch(e){}
-    try{chickenAmbientSource.disconnect();}catch(e){}
-    chickenAmbientSource=null;
-  }
-  if(chickenAmbientGain){
-    try{chickenAmbientGain.disconnect();}catch(e){}
-    chickenAmbientGain=null;
-  }
-}
-
-function ensureChickenAmbient(){
-  if(!audioCtx || !audioBuffers.chicken || chickenAmbientSource)return;
-  const source=audioCtx.createBufferSource();
-  const gain=audioCtx.createGain();
-  source.buffer=audioBuffers.chicken;
-  source.loop=true;
-  gain.gain.value=0;
-  source.connect(gain);
-  gain.connect(audioCtx.destination);
-  source.start(0);
-  source.onended=()=>{ if(chickenAmbientSource===source) chickenAmbientSource=null; };
-  chickenAmbientSource=source;
-  chickenAmbientGain=gain;
-}
-
-function playCowMoo(gainValue){
-  if(!audioCtx || !audioBuffers.cow || gainValue<=0.002)return;
-  const source=audioCtx.createBufferSource();
-  const gain=audioCtx.createGain();
-  source.buffer=audioBuffers.cow;
-  gain.gain.value=gainValue*masterVolume;
-  source.connect(gain);
-  gain.connect(audioCtx.destination);
-  source.start(0);
-  source.onended=()=>{
-    try{source.disconnect();gain.disconnect();}catch(e){}
-  };
-}
-
+function stopChickenAmbient(){GameAudio.loop('animals',null);}
 function updateLivestockAudio(){
-  // Animals are underground: never leak their sounds to the surface.
-  if(scene!=="bunker" || !livestockAlive){
-    if(chickenAmbientGain && audioCtx){
-      chickenAmbientGain.gain.setTargetAtTime(0,audioCtx.currentTime,.08);
-    }
-    return;
-  }
-
-  const chickenPos=livestockAudioCenter("chicken");
-  const cowPos=livestockAudioCenter("cow");
-  const chickenGain=distanceGain(player.x,player.y,chickenPos,CHICKEN_AUDIO_RADIUS,CHICKEN_MAX_GAIN);
-  const cowGain=distanceGain(player.x,player.y,cowPos,COW_AUDIO_RADIUS,COW_MAX_GAIN);
-
-  ensureChickenAmbient();
-  if(chickenAmbientGain && audioCtx){
-    chickenAmbientGain.gain.setTargetAtTime(chickenGain*masterVolume,audioCtx.currentTime,.10);
-  }
-
+  if(scene!=="bunker"||!livestockAlive)return;
   const now=Date.now();
   if(now>=nextCowMooAt){
-    playCowMoo(cowGain);
-    // Every moo schedules a fresh random delay: 3–15 sec.
+    GameAudio.play('cow',{...livestockAudioCenter('cow'),scene:'bunker',radius:310});
     nextCowMooAt=now+3000+Math.random()*12000;
   }
 }

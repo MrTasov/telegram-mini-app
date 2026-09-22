@@ -1,246 +1,207 @@
 {
   "version": "0.29.0",
   "stage": 7,
-  "patch": "hud-display-1",
+  "patch": "audio-pass-recovered-1",
   "stage6Started": true,
   "stage7Started": true,
   "passed": true,
-  "automatedAssertions": 11325,
+  "automatedAssertions": 11365,
   "historicalBaselineAssertions": 477,
   "ladderContractChanged": true,
   "runs": [
     {
       "id": "build",
       "exitCode": 0,
-      "elapsedMs": 198
+      "elapsedMs": 246
     },
     {
       "id": "verification",
       "exitCode": 0,
-      "elapsedMs": 230
+      "elapsedMs": 307
     },
     {
       "id": "regressions",
       "exitCode": 0,
-      "elapsedMs": 21083
+      "elapsedMs": 23188
     },
     {
       "id": "interactions",
       "exitCode": 0,
-      "elapsedMs": 33853
+      "elapsedMs": 35884
     },
     {
       "id": "saves",
       "exitCode": 0,
-      "elapsedMs": 6994
+      "elapsedMs": 7735
     },
     {
       "id": "balance",
       "exitCode": 0,
-      "elapsedMs": 1534
+      "elapsedMs": 1533
     },
     {
       "id": "state-saves",
       "exitCode": 0,
-      "elapsedMs": 14663
+      "elapsedMs": 17389
     },
     {
       "id": "differential",
       "exitCode": 0,
-      "elapsedMs": 28126
+      "elapsedMs": 29829
     },
     {
       "id": "systems",
       "exitCode": 0,
-      "elapsedMs": 2534
+      "elapsedMs": 2500
     },
     {
       "id": "stage3-differential",
       "exitCode": 0,
-      "elapsedMs": 41673
+      "elapsedMs": 43418
     },
     {
       "id": "controls",
       "exitCode": 0,
-      "elapsedMs": 18722
+      "elapsedMs": 19654
     },
     {
       "id": "controls-differential",
       "exitCode": 0,
-      "elapsedMs": 42214
+      "elapsedMs": 41887
     },
     {
       "id": "assets",
       "exitCode": 0,
-      "elapsedMs": 5817
+      "elapsedMs": 5945
     },
     {
       "id": "asset-rendering",
       "exitCode": 0,
-      "elapsedMs": 2349
+      "elapsedMs": 2690
     },
     {
       "id": "stage4-differential",
       "exitCode": 0,
-      "elapsedMs": 41869
+      "elapsedMs": 40396
     },
     {
       "id": "map-workbar",
       "exitCode": 0,
-      "elapsedMs": 8952
+      "elapsedMs": 8548
     },
     {
       "id": "localization",
       "exitCode": 0,
-      "elapsedMs": 67618
+      "elapsedMs": 68035
     },
     {
       "id": "localization-rendering",
       "exitCode": 0,
-      "elapsedMs": 4154
+      "elapsedMs": 4013
     },
     {
       "id": "localization-controls",
       "exitCode": 0,
-      "elapsedMs": 63190
+      "elapsedMs": 62562
     },
     {
       "id": "main-menu",
       "exitCode": 0,
-      "elapsedMs": 117836
+      "elapsedMs": 118733
     },
     {
       "id": "menu-preferences",
       "exitCode": 0,
-      "elapsedMs": 15372
+      "elapsedMs": 15816
     },
     {
       "id": "world-events",
       "exitCode": 0,
-      "elapsedMs": 17841
+      "elapsedMs": 17344
     },
     {
       "id": "readiness",
       "exitCode": 0,
-      "elapsedMs": 16202
+      "elapsedMs": 15561
     },
     {
       "id": "corrective",
       "exitCode": 0,
-      "elapsedMs": 20227
+      "elapsedMs": 18670
     },
     {
       "id": "world-farm",
       "exitCode": 0,
-      "elapsedMs": 14457
+      "elapsedMs": 13730
     },
     {
       "id": "drone-return",
       "exitCode": 0,
-      "elapsedMs": 45598
+      "elapsedMs": 45259
     },
     {
       "id": "resource-access",
       "exitCode": 0,
-      "elapsedMs": 2379
+      "elapsedMs": 2484
     },
     {
       "id": "character-animation",
       "exitCode": 0,
-      "elapsedMs": 5720
+      "elapsedMs": 5804
     },
     {
       "id": "master-unarmed",
       "exitCode": 0,
-      "initialAttempt": {
-        "id": "master-unarmed",
-        "exitCode": 1,
-        "elapsedMs": 17652,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/master-unarmed.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "elapsedMs": 18700
     },
     {
       "id": "equipment-integration",
       "exitCode": 0,
-      "initialAttempt": {
-        "id": "equipment-integration",
-        "exitCode": 1,
-        "elapsedMs": 25005,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/equipment-integration.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "elapsedMs": 23945
     },
     {
       "id": "player-visual-fix",
       "exitCode": 0,
-      "initialAttempt": {
-        "id": "player-visual-fix",
-        "exitCode": 1,
-        "elapsedMs": 2187,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/player-visual-fix.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "elapsedMs": 2123
     },
     {
       "id": "corrective-performance",
       "exitCode": 0,
-      "initialAttempt": {
-        "id": "corrective-performance",
-        "exitCode": 1,
-        "elapsedMs": 5075,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/corrective-performance.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "elapsedMs": 4996
     },
     {
       "id": "corrective-visuals",
       "exitCode": 0,
-      "elapsedMs": 3009
+      "elapsedMs": 2963
     },
     {
       "id": "polish",
       "exitCode": 0,
-      "initialAttempt": {
-        "id": "polish",
-        "exitCode": 1,
-        "elapsedMs": 5595,
-        "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/polish.cjs\n"
-      },
-      "recheck": "PASS; exact before/after HUD source contract, no behavior test removed"
+      "elapsedMs": 5933
     },
     {
       "id": "polish-visuals",
       "exitCode": 0,
-      "elapsedMs": 8004
+      "elapsedMs": 8043
     },
     {
       "id": "audio-unlock",
       "exitCode": 0,
-      "elapsedMs": 8741
+      "elapsedMs": 9204
     },
     {
       "id": "hud-display",
       "exitCode": 0,
-      "elapsedMs": 10257
+      "elapsedMs": 11157
+    },
+    {
+      "id": "audio-pass",
+      "exitCode": 0,
+      "elapsedMs": 5442
     }
   ],
   "limitations": [
     "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
-    "Six historical optional audio assets remain absent; three new WAV effects are included."
-  ],
-  "failedAssertions": 0,
-  "regressionGroups": 37,
-  "initialAttemptReport": "hud-initial-suite.json",
-  "targetedRechecks": [
-    "master-unarmed",
-    "equipment-integration",
-    "player-visual-fix",
-    "corrective-performance",
-    "polish"
-  ],
-  "notes": [
-    "Full 37-job suite executed. Six historical source-hash guards required the explicit, exact HUD transition contract; all five affected groups were rerun.",
-    "hud-display rerun after final responsive CSS clearance check: 113 PASS. No behavior assertion or frozen fixture was removed."
+    "All audio paths are included and decoded; subjective mix requires physical device listening."
   ]
 }

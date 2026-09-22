@@ -116,7 +116,7 @@ el("cowMilkBtn").addEventListener("click",function(){
   if(qty<=0){ message("🥛 Молока пока нет."); return; }
   const left=addItem("milk",qty);
   const taken=qty-left;
-  if(taken>0) removeFromSlots(storageChests[11].items,"milk",taken);
+  if(taken>0){GameAudio.play('milk');removeFromSlots(storageChests[11].items,"milk",taken);}
   message(taken>0 ? `🥛 Забрано молока: ${taken}` : "🎒 В рюкзаке нет места.");
   renderCowMenu();
 });
@@ -126,7 +126,7 @@ el("animalEggBtn").addEventListener("click",function(){
   if(qty<=0){ message("🥚 Яиц пока нет."); return; }
   const left=addItem("eggs",qty);
   const taken=qty-left;
-  if(taken>0) removeFromSlots(storageChests[10].items,"eggs",taken);
+  if(taken>0){GameAudio.play('eggs');removeFromSlots(storageChests[10].items,"eggs",taken);}
   message(taken>0 ? `🥚 Забрано яиц: ${taken}` : "🎒 В рюкзаке нет места.");
   renderCowMenu();
 });
@@ -147,7 +147,7 @@ function refillLivestockNeed(storageIndex,type,label,icon){
   const wanted=Math.min(need,available);
   const left=addToSlots(storageChests[storageIndex].items,type,wanted,60);
   const added=wanted-left;
-  if(added>0) removeItem(type,added);
+  if(added>0){GameAudio.play(type==='water'?'waterRefill':'feed');removeItem(type,added);}
   message(`${icon} Добавлено: ${added}. Теперь ${storageCount(storageIndex,type)} / ${capacity}.`);
   renderCowMenu();
 }
@@ -174,7 +174,7 @@ el("cowSlaughterBtn").addEventListener("click",function(){
     return;
   }
   const idx=livestockAnimals.indexOf(victim);
-  if(idx>=0) livestockAnimals.splice(idx,1);
+  if(idx>=0){GameAudio.play('slaughter');livestockAnimals.splice(idx,1);}
   const left=addItem("beef",meat);
   if(left>0) addToSlots(storageChests[4].items,"beef",left,60);
   message("🥩 Корова переработана. Получено мяса: "+meat);

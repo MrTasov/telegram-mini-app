@@ -165,7 +165,7 @@ window.V011Living=(()=>{
   }
   function stop(){
     if(!mode)return;
-    mode=null;anchor=null;elapsed=0;player.moving=false;refresh();queueGameSave();
+    if(mode==='rest')GameAudio.play('wake');GameAudio.loop('shower',null);mode=null;anchor=null;elapsed=0;player.moving=false;refresh();queueGameSave();
   }
   function start(kind){
     if(playerDead||scene!=='bunker'||!['rest','shower'].includes(kind))return false;
@@ -177,14 +177,14 @@ window.V011Living=(()=>{
       // Enter through the open southern edge; actual position stays collision-safe.
       if(!worldCollision(955,195,player.radius,'bunker')){player.x=955;player.y=195;}
     }
-    mode=kind;anchor={x:player.x,y:player.y};elapsed=0;lastSave=0;
+    mode=kind;anchor={x:player.x,y:player.y};elapsed=0;lastSave=0;if(kind==='rest')GameAudio.play('sleep');
     player.moving=false;player.running=false;firing=false;
     refresh();queueGameSave();return true;
   }
   function tick(ms){
     const near=(scene==='bunker'&&Math.hypot(player.x-1029,player.y-104)<105)||!!window.V014Robots?.doorNear(BATH_DOOR)||!!window.V014Robots?.doorOccupies(BATH_DOOR);
     const broken=window.V018Build?.isBroken(BATH_DOOR.id);if(broken)doorProgress=1;
-    const open=broken||doorManual||near,was=doorProgress>.9;
+    const open=broken||doorManual||near,was=doorProgress>.9;window.GameAudioWorld?.door(BATH_DOOR,open,'bunker',broken);
     doorProgress=clamp(doorProgress+(open?1:-1)*clamp(Number(ms)||0,0,100)/360,0,1);
     if(was!==(doorProgress>.9))invalidateGeometry();
     if(!mode){refresh();return;}

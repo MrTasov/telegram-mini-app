@@ -159,7 +159,7 @@
     while(mining&&mining.elapsed>=mining.duration){
       mining.elapsed-=mining.duration;
       const amount=Math.min(10,o.remaining,freeItemSpace(bag,o.type,BAG_SLOTS));
-      const received=amount-addItem(o.type,amount);o.remaining-=received;
+      const received=amount-addItem(o.type,amount);o.remaining-=received;if(received>0)GameAudio.play(o.remaining?'pickup':'rockBreak',{x:o.x,y:o.y,scene:'surface'});
       if(!o.remaining)o.regrowMs=600000;
       if(received>0&&typeof V010!=='undefined')V010.emit('mined',{type:o.type,qty:received});
       if(!received||!o.remaining||freeItemSpace(bag,o.type,BAG_SLOTS)<1){stopMining();message(!o.remaining?'Месторождение исчерпано · восстановление через 10 минут игры':'🎒 Рюкзак заполнен');}

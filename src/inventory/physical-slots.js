@@ -9,9 +9,9 @@ window.V013Inventory=(()=>{
       const item=V010Inventory.selectedItem(type),index=bag.indexOf(item);if(index<0)return false;
       const previous=items[i];items[i]=item;bag[index]=previous||null;
     }
-    activeHandSlot=i;closeOverlay(el('handAssignOverlay'));sync();selectHandSlot(i);renderBag();return true;
+    GameAudio.play('quickslot');activeHandSlot=i;closeOverlay(el('handAssignOverlay'));sync();selectHandSlot(i);renderBag();return true;
   };
-  function returnItem(i){const item=items[i];if(!item)return false;if(V010Inventory.insertItem(item)){message('Нет места в рюкзаке');return false;}items[i]=null;sync();renderBag();return true;}
+  function returnItem(i){const item=items[i];if(!item)return false;if(V010Inventory.insertItem(item)){message('Нет места в рюкзаке');return false;}items[i]=null;GameAudio.play('unequip');sync();renderBag();return true;}
   const oldAssign=openHandAssignment;openHandAssignment=function(type){oldAssign(type);const i=items.findIndex(s=>s?.type===type);if(i>=0)el('handAssignChoices').append(v09Button('Убрать в рюкзак',()=>{if(returnItem(i))closeOverlay(el('handAssignOverlay'));}));};
   const oldRender=renderQuickSlots;renderQuickSlots=function(){oldRender();for(const id of ['hotbar','quickSlots'])for(const [i,b]of [...el(id).children].entries()){b.oncontextmenu=e=>{e.preventDefault();if(items[i])openHandAssignment(items[i].type);};}};
   const tools=el('inventoryGrid').previousElementSibling||el('inventoryGrid').parentNode;

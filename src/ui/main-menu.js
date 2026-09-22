@@ -43,7 +43,7 @@ window.MainMenu=(()=>{
   function sessionSelected(){
     if(!active||!start||!GameState.session.activeSlot||GameState.session.blocked)return false;
     active=false;busy=false;pending=null;closePanels();root().hidden=true;document.body.classList.remove('main-menu-active');MenuBackground.release();
-    V0161UI.sync();start();canvas.focus?.();return true;
+    window.GameAudio?.reset();V0161UI.sync();start();window.GameAudioWorld?.tick(true);canvas.focus?.();return true;
   }
   function run(fn){
     if(!active||busy)return false;busy=true;status(null);

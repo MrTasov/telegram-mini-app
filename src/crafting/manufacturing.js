@@ -100,7 +100,7 @@ const V09Craft = (() => {
     const j=makeJob(recipe,batches);
     if(getJob(id))queueExtra[id].push(j);else setJob(id,j);
     if(id==='feed_craft'){syncFeed(getJob(id));feedCraftLoaded=0;}
-    quantity[id]=0;render();renderQuickSlots();queueGameSave();return true;
+    GameAudio.play('craftStart');quantity[id]=0;render();renderQuickSlots();queueGameSave();return true;
   }
   function finishAndPromote(id){
     const j=getJob(id);
@@ -118,7 +118,7 @@ const V09Craft = (() => {
     if(id==='feed_craft')syncFeed(job);
     if(job?.remainingMs===0)finishAndPromote(id);
     message(collected?`Забрано: ${collected} шт.`:'Освободите место в рюкзаке');
-    render();renderQuickSlots();updateAmmoHud();queueGameSave();return collected;
+    if(collected)GameAudio.play('craftCollect');render();renderQuickSlots();updateAmmoHud();queueGameSave();return collected;
   }
   // Keep output ownership in the existing save pools; selection never creates another copy.
   let readySelected={furnace:null,craft_bench:null,feed_craft:null};
@@ -326,7 +326,7 @@ const V09Craft = (() => {
       const newlyMade=completed-job.completedBatches;
       if(newlyMade>0){const r=RECIPES[job.recipe],qty=newlyMade*r.qty;job.outputQty+=qty;job.completedBatches=completed;craftEvent('produced',{type:r.output,qty,station:id});queueGameSave();}
       if(id==='feed_craft')syncFeed(job);if(id==='craft_bench')benchPhase+=ms/700;
-      if(job.remainingMs===0){craftEvent('productionFinished',{station:id,recipe:job.recipe});if(typeof V010!=='undefined')V010.log(labels[id]+': готово — '+RECIPES[job.recipe].name,'craft');finishAndPromote(id);changed=true;queueGameSave();}
+      if(job.remainingMs===0){GameAudio.play('craftFinish',{scene:'bunker'});craftEvent('productionFinished',{station:id,recipe:job.recipe});if(typeof V010!=='undefined')V010.log(labels[id]+': готово — '+RECIPES[job.recipe].name,'craft');finishAndPromote(id);changed=true;queueGameSave();}
     }
     uiClock+=ms;const refreshDue=uiClock>=200;if(refreshDue)uiClock=0;
     if(overlay.classList.contains('open')){if(changed)render();else if(refreshDue)refreshProgress();}

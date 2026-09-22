@@ -23,7 +23,7 @@ async function main(){
   ['frameSize',m=>m.images['art/monster_walker017'].atlas.frameSize=[12,12]],['frameCount',m=>m.images['art/monster_walker017'].atlas.frameCount=7],
   ['dimensions',m=>m.images['art/monster_walker017'].size=[4096,2048]],['cropOutside',m=>m.images['art/bed'].crop.w=10000],
   ['cropCount',m=>m.images['art/corpse_walker019'].atlas.crops.pop()],['cropCell',m=>m.images['art/corpse_walker019'].atlas.crops[0].x=1000],
-  ['packedCount',m=>m.images['wall/1'].atlas.frameCount=2],['packedRegion',m=>delete m.images['wall/1'].atlas.frames.stairs],['requiredAudio',m=>m.audio.gunshot.optional=false]
+  ['packedCount',m=>m.images['wall/1'].atlas.frameCount=2],['packedRegion',m=>delete m.images['wall/1'].atlas.frames.stairs],['requiredAudio',m=>m.audio.gunshot.path='assets/audio/missing.wav']
  ])await check('reject.'+id,()=>assert.throws(()=>validate(mutate(fn))));
  const r=setup('index.html'),initialRequests=[...r.imageRequests],E=s=>r.eval(s);
  await check('lazy.initialArtSubset',()=>{assert.ok(initialRequests.length<15);assert.ok(!initialRequests.includes(catalog.images['wall/5'].path));assert.ok(!initialRequests.includes(catalog.images['art/monster_walker017'].path));});
@@ -36,11 +36,11 @@ async function main(){
  await check('references.literalArtConsumers',()=>{const code=source('index.html');for(const match of code.matchAll(/V011Art\.(?:image|draw|ready|drawStretch|bounds|fit)\(\s*['"]([\w]+)['"]\s*[,)]/g))assert.ok(catalog.art[match[1]]||catalog.aliases[match[1]],match[1]);for(const match of code.matchAll(/V011Art\.sources\.([\w]+)/g))assert.ok(catalog.art[match[1]],match[1]);});
  await check('references.runtimeIcons',()=>{for(const p of Object.values(plain(E('V092_ICONS'))))assert.ok(fs.existsSync(p),p);});
  await check('references.staticHTMLCSS',()=>{for(const f of ['index.html','styles/base.css']){const content=fs.readFileSync(f,'utf8');for(const m of content.matchAll(/(?:src|href)=["']([^"']+)|url\(['"]?([^\s)'";]+)['"]?\)/g)){const url=m[1]||m[2];if(/^(?:https?:|data:|#)/.test(url))continue;assert.ok(fs.existsSync(path.resolve(path.dirname(f),url.split(/[?#]/)[0])),url);}}});
- await check('audio.optionalMissingExplicit',()=>{assert.equal(validate(catalog).optionalMissing.length,6);assert.deepEqual(Object.keys(plain(E('AUDIO_FILES'))).sort(),['chopWood','footsteps','mineRock']);assert.ok(E('Object.entries(sounds).every(([key,a])=>(key==="footsteps"?!!a.src:!a.src)&&a.preload==="none")'));});
- await check('audio.noMissingRequestsOrDuplicateUnlock',async()=>{let calls=0;let decoded=0;E('audioCtx={state:"running",decodeAudioData:async d=>d}');r.context.fetch=async()=>{calls++;return{ok:true,arrayBuffer:async()=>new ArrayBuffer(2)};};await E('preloadGameAudio()');await E('preloadGameAudio()');assert.equal(calls,3);
-  E('AUDIO_FILES.gunshot="assets/audio/effects/gunshot.mp3"');r.context.fetch=async(url,options)=>{calls++;assert.equal(options.cache,'no-cache');return{ok:true,arrayBuffer:async()=>new ArrayBuffer(2)};};r.context.audioCtx=undefined;
-  await E('preloadGameAudio()');await E('preloadGameAudio()');assert.equal(calls,4);assert.ok(E('!!audioBuffers.gunshot'));
-  E('delete audioBuffers.gunshot');r.context.fetch=async()=>({ok:false,arrayBuffer:async()=>{decoded++;return new ArrayBuffer(2);}});await E('preloadGameAudio()');assert.equal(decoded,0);assert.equal(E('!!audioBuffers.gunshot'),false);
+ await check('audio.allRequiredAndAvailable',()=>{assert.equal(validate(catalog).optionalMissing.length,0);assert.deepEqual(Object.keys(plain(E('AUDIO_FILES'))).sort(),Object.keys(catalog.audio).sort());assert.ok(E('Object.values(sounds).every(a=>typeof a.name==="string")'));});
+ await check('audio.noMissingRequestsOrDuplicateUnlock',async()=>{let calls=0,decoded=0;const expected=Object.keys(catalog.audio).length;E('audioCtx={state:"running",decodeAudioData:async d=>d}');r.context.fetch=async()=>{calls++;return{ok:true,arrayBuffer:async()=>new ArrayBuffer(2)};};await E('preloadGameAudio()');await E('preloadGameAudio()');assert.equal(calls,expected);
+  E('AUDIO_FILES.testExtra="assets/audio/full/gunshot.wav"');r.context.fetch=async(url,options)=>{calls++;assert.equal(options.cache,'no-cache');return{ok:true,arrayBuffer:async()=>new ArrayBuffer(2)};};
+  await E('preloadGameAudio()');await E('preloadGameAudio()');assert.equal(calls,expected+1);assert.ok(E('!!audioBuffers.testExtra'));
+  E('delete audioBuffers.testExtra');r.context.fetch=async()=>({ok:false,arrayBuffer:async()=>{decoded++;return new ArrayBuffer(2);}});await E('preloadGameAudio()');assert.equal(decoded,0);assert.equal(E('!!audioBuffers.testExtra'),false);
  });
  const server=http.createServer((req,res)=>{const prefix='/project/last-base/';if(!req.url.startsWith(prefix)){res.writeHead(404).end();return;}const p=req.url.slice(prefix.length);if(p.includes('..')||!fs.existsSync(p)){res.writeHead(404).end();return;}res.end(fs.readFileSync(p));});
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));

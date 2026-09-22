@@ -29,7 +29,7 @@ window.V012Fishing=(()=>{
   }
   function stop(){window.V013Lake?.release();state=null;window.ActorVisuals?.cancelFishing();}
   function delay(){return 6000+Math.floor((Math.random()+Math.random())/2*9001);}
-  function cycle(spot){const fish=window.V013Lake?.choose(spot);if(window.V013Lake&&!fish){stop();message('Рыба пока не подходит к этому месту');return false;}state={spot,started:performance.now(),duration:fish?.duration||delay(),fishId:fish?.id,x:player.x,y:player.y};return true;}
+  function cycle(spot){const fish=window.V013Lake?.choose(spot);if(window.V013Lake&&!fish){stop();message('Рыба пока не подходит к этому месту');return false;}state={spot,started:performance.now(),duration:fish?.duration||delay(),fishId:fish?.id,x:player.x,y:player.y};GameAudio.play('fishCast');return true;}
   function start(target){
     const spot=target?.id==='fish_shore014'?shoreTarget(true):spots.find(s=>s.id===target?.id);
     if(!spot||scene!=='surface'||menuOpen||playerDead||!canInteract(spot,player.x,player.y))return false;
@@ -56,7 +56,7 @@ window.V012Fishing=(()=>{
     if(space())cycle(spot);else stop();
     // Presentation notification only: catch timing, inventory and RNG above
     // remain authoritative, including the final catch into a full backpack.
-    window.ActorVisuals?.fishCaught(spot);
+    window.ActorVisuals?.fishCaught(spot);GameAudio.play('fishCatch');
   }
   function phase(){
     if(!state)return {kind:'idle',p:0};

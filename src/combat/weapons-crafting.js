@@ -102,14 +102,14 @@ window.V010Combat=(() => {
   equippedArmor=function(){return Math.min(80,getItemStats(equipment.body)?.armor||0);};
   const oldRenderEquipment=renderEquipment;
   renderEquipment=function(){oldRenderEquipment();const st=equipmentSnapshot(),node=el('characterStats');if(node)I18n.assign(node,"innerHTML",'HP <b>'+Math.round(player.health)+'/'+Math.round(st.hp)+'</b> · Защита <b>'+st.armor+'%</b><br>Скорость <b>+'+Math.round(st.speed*100)+'%</b> · Точность <b>+'+Math.round(st.accuracy*100)+'%</b><br>Рюкзак: '+BAG_SLOTS+' мест');};
-  function cancelReload(){if(!reloading)return false;reloading=null;updateAmmoHud();return true;}
+  function cancelReload(){if(!reloading)return false;GameAudio.stopOwner(reloading);reloading=null;updateAmmoHud();return true;}
   function practiceAllowed(){return scene==='surface'&&player.x>=930&&player.x<=1280&&player.y>=650&&player.y<=790&&!window.V091Fortress?.isElevated?.();}
   function setPractice(on){if(on&&!practiceAllowed()){message('Подойдите к тренировочной площадке');return false;}cancelReload();practice=!!on;trainingRounds=30;practiceHits=0;practiceDamage=0;updateAmmoHud();return true;}
   canFire=function(){const s=currentWeapon();return !!s&&gunSpec(s).mag>0;};
   reloadWeapon=function(){
     const item=ensure(currentWeapon());if(!item||menuOpen||playerDead||document.hidden||reloading)return false;const g=gunSpec(item),rounds=practice?trainingRounds:item.rounds;
     if(!g.mag||rounds>=g.mag)return false;if(!practice&&bagCount(g.ammo)<=0){message('Нет патронов '+g.caliber);return false;}
-    reloading={uid:item.uid,type:item.type,remainingMs:g.reloadMs,totalMs:g.reloadMs,practice};updateAmmoHud();return true;
+    reloading={uid:item.uid,type:item.type,remainingMs:g.reloadMs,totalMs:g.reloadMs,practice};GameAudio.reload(reloading,true);updateAmmoHud();return true;
   };
   updateAmmoHud=function(){
     const item=currentWeapon(),g=item&&gunSpec(item),b=el('v010ReloadButton');
@@ -124,7 +124,7 @@ window.V010Combat=(() => {
     if(practice&&!practiceAllowed())setPractice(false);
     if(reloading&&(!item||item.uid!==reloading.uid||practice!==reloading.practice||playerDead))cancelReload();
     if(reloading&&!GameFlow.paused){
-      reloading.remainingMs=Math.max(0,reloading.remainingMs-Math.max(0,ms));
+      reloading.remainingMs=Math.max(0,reloading.remainingMs-Math.max(0,ms));GameAudio.reload(reloading);
       if(reloading.remainingMs===0){const g=gunSpec(item),need=Math.max(0,g.mag-(practice?trainingRounds:item.rounds));if(practice)trainingRounds=g.mag;else item.rounds+=removeItem(g.ammo,Math.min(need,bagCount(g.ammo)));reloading=null;queueGameSave();}
     }
     syncAmmo();updateAmmoHud();
@@ -139,13 +139,13 @@ window.V010Combat=(() => {
   shoot=function(){
     if(menuOpen||playerDead||document.hidden||window.V091Fortress?.transitioning)return;const item=ensure(currentWeapon());if(!item||reloading)return;const g=gunSpec(item),now=performance.now();
     if(!g.mag||now-lastShot<g.delay)return;
-    if((practice?trainingRounds:item.rounds)<=0){reloadWeapon();return;}
+    if((practice?trainingRounds:item.rounds)<=0){GameAudio.play('dryFire');reloadWeapon();return;}
     if(lastUid!==item.uid||now-lastShot>420)burst=0;burst=Math.min(7,burst+1);lastUid=item.uid;lastShot=now;
     const base=Math.atan2(player.aimY,player.aimX),cone=g.spread+g.recoil*Math.max(0,burst-1),angle=base+(Math.random()*2-1)*cone;
     const dx=Math.cos(angle),dy=Math.sin(angle),x=player.x+dx*43,y=player.y+dy*43;let projectile=null;
     if(practice){
       trainingRounds--;const tx=practiceTarget.x+10-player.x,ty=practiceTarget.y+16-player.y,dist=Math.hypot(tx,ty),along=tx*dx+ty*dy,across=Math.abs(tx*dy-ty*dx);
-      if(along>0&&dist<g.range&&across<18&&lineClear(player.x,player.y,practiceTarget.x+10,practiceTarget.y+16,2,'surface')){practiceHits++;practiceDamage=g.damage;}
+      if(along>0&&dist<g.range&&across<18&&lineClear(player.x,player.y,practiceTarget.x+10,practiceTarget.y+16,2,'surface')){practiceHits++;practiceDamage=g.damage;GameAudio.play('impactMetal',{x:practiceTarget.x,y:practiceTarget.y,scene:'surface'});}
     }else{
       item.rounds--;const contact=window.V014Controls?.contactTarget();if(contact)hitZombie(contact,g.damage);else if(muzzleClear(player.x,player.y,x,y,2))bullets.push(projectile={x,y,dx:dx*12,dy:dy*12,radius:3,life:g.range/12,damage:g.damage,weapon:item.type,wallLevel:!!window.V091Fortress?.isElevated?.()});
       createNoise(player.x,player.y,g.noise);emit('combatshot',{weapon:item.type});queueGameSave();

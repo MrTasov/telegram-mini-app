@@ -174,6 +174,7 @@ function gameLoop(timestamp=performance.now()){
 
     if(!GameFlow.paused)update();
     updateFootstepsAudio();
+    window.GameAudioWorld?.tick();
     draw();
 
   }catch(error){

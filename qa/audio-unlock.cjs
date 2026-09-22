@@ -4,6 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(process.argv[2]||path.join(__dirname,'..'));
 process.env.LAST_BASE_ASSETS=root;
 const {setup}=require('./runtime.cjs'),checks=[];
+const audioCount=Object.keys(require('../assets/manifest.json').audio).length;
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 function boot(config={}){
  const meter={active:false,contexts:0,resumes:0,requests:[],decodes:0,starts:0,rejects:config.rejects||0,failed:false};
@@ -42,7 +43,7 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
 (async()=>{
  await check('touch.releaseUnlocksAfterUnactivatedPress',async()=>{
   const {E,input}=boot();input('pointerdown');await settle();input('pointerup');input('touchend');await settle();
-  assert.equal(E('audioCtx?.state'),'running');assert.equal(E('Object.keys(audioBuffers).length'),3);
+  assert.equal(E('audioCtx?.state'),'running');assert.equal(E('Object.keys(audioBuffers).length'),audioCount);
   for(const [name,channel]of [['footsteps','step'],['chopWood','work'],['mineRock','work']])assert.equal(E(`playAnimationSound('${name}','${channel}')`),true);
  });
  await check('ui.stoppedBubblingStillUnlocks',async()=>{
@@ -62,20 +63,20 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
  await check('mobile.interruptionAndSuspensionRecoverWithoutReloadingBuffers',async()=>{
   const {E,input,meter}=boot();input('pointerdown','menuNew',{pointerType:'mouse'});await settle();
   for(const state of ['interrupted','suspended']){E(`audioCtx.state='${state}';document.hidden=true`);input('pointerup');assert.equal(E('audioCtx.state'),state);E('document.hidden=false');input('pointerup');await settle();assert.equal(E('audioCtx.state'),'running');}
-  assert.equal(meter.contexts,1);assert.equal(meter.requests.length,3);assert.equal(meter.decodes,3);
+  assert.equal(meter.contexts,1);assert.equal(meter.requests.length,audioCount);assert.equal(meter.decodes,audioCount);
  });
  await check('assets.failedRequestRetriesOnlyMissingBuffer',async()=>{
   const {r,E,input,meter}=boot({networkFailure:true});input('pointerdown','menuNew',{pointerType:'mouse'});await settle();
-  assert.equal(E('Object.keys(audioBuffers).length'),2);for(let i=0;i<20;i++)input('click');await settle();assert.equal(meter.requests.length,3);
-  r.advance(1001);input('click');await settle();assert.equal(E('Object.keys(audioBuffers).length'),3);assert.equal(meter.requests.length,4);
+  assert.equal(E('Object.keys(audioBuffers).length'),audioCount-1);for(let i=0;i<20;i++)input('click');await settle();assert.equal(meter.requests.length,audioCount);
+  r.advance(1001);input('click');await settle();assert.equal(E('Object.keys(audioBuffers).length'),audioCount);assert.equal(meter.requests.length,audioCount+1);
  });
  await check('assets.failedDecodeCanRetry',async()=>{
   const {r,E,input,meter}=boot({decodeFailure:true});input('pointerdown','menuNew',{pointerType:'mouse'});await settle();
-  assert.equal(E('Object.keys(audioBuffers).length'),2);r.advance(1001);input('click');await settle();assert.equal(E('Object.keys(audioBuffers).length'),3);assert.equal(meter.requests.length,4);
+  assert.equal(E('Object.keys(audioBuffers).length'),audioCount-1);r.advance(1001);input('click');await settle();assert.equal(E('Object.keys(audioBuffers).length'),audioCount);assert.equal(meter.requests.length,audioCount+1);
  });
  await check('assets.concurrentGesturesDeduplicateLoadsAndRunningContext',async()=>{
   const {E,input,meter}=boot();for(let i=0;i<100;i++)input('pointerdown','menuNew',{pointerType:'mouse'});await settle();
-  for(let i=0;i<100;i++)input('click');await settle();assert.equal(meter.requests.length,3);assert.equal(meter.decodes,3);assert.equal(meter.contexts,1);assert.equal(meter.resumes,1);assert.equal(E('Object.keys(audioBuffers).length'),3);
+  for(let i=0;i<100;i++)input('click');await settle();assert.equal(meter.requests.length,audioCount);assert.equal(meter.decodes,audioCount);assert.equal(meter.contexts,1);assert.equal(meter.resumes,1);assert.equal(E('Object.keys(audioBuffers).length'),audioCount);
  });
  await check('preferences.savedMuteIsRespected',async()=>{
   const {E,input,meter}=boot({storage:{base_sound:'0'}});input('pointerdown','menuNew',{pointerType:'mouse'});await settle();

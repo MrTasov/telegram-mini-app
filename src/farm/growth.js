@@ -99,7 +99,7 @@ window.V011Farm=(()=>{
   function refill(amount=100){
     settle();const wanted=Math.min(Math.max(0,Math.floor(amount)),Math.floor(CAPACITY-state.water),bagCount('water'));
     if(wanted<=0){message(state.water>CAPACITY-1?'Бачок почти заполнен':'В рюкзаке нет воды');return 0;}
-    removeItem('water',wanted);state.water=Math.min(CAPACITY,state.water+wanted);renderWater();queueGameSave();return wanted;
+    GameAudio.play('waterRefill');removeItem('water',wanted);state.water=Math.min(CAPACITY,state.water+wanted);renderWater();queueGameSave();return wanted;
   }
   function renderWater(){
     const box=el('v011WaterStatus');if(!box)return;

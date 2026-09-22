@@ -1,0 +1,191 @@
+{
+  "patch": "audio-pass-recovered-1",
+  "passed": 36,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "assets.everyRequiredClipExistsAndDecodes",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.everyCueHasAvailableBuffers",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.wavBoundariesAndNoSourceClipping",
+      "status": "PASS"
+    },
+    {
+      "id": "steps.fourRecordedVariantsSameScale",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.loadingConcurrencyTwo",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.secondPreloadDoesNotRequestAgain",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.singleContext",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.noNewRafOrIntervals",
+      "status": "PASS"
+    },
+    {
+      "id": "crowd.zombieAndAnimalVoicesBounded",
+      "status": "PASS"
+    },
+    {
+      "id": "combat.prioritySurvivesAmbientCrowd",
+      "status": "PASS"
+    },
+    {
+      "id": "loops.repeatedDesiredStateIsIdempotent",
+      "status": "PASS"
+    },
+    {
+      "id": "loops.budgetAndStop",
+      "status": "PASS"
+    },
+    {
+      "id": "loops.crossfadeTailsBounded",
+      "status": "PASS"
+    },
+    {
+      "id": "voices.completedNodesCleaned",
+      "status": "PASS"
+    },
+    {
+      "id": "lifecycle.hiddenStopsLoopsAndContacts",
+      "status": "PASS"
+    },
+    {
+      "id": "lifecycle.resume.suspended",
+      "status": "PASS"
+    },
+    {
+      "id": "lifecycle.resume.interrupted",
+      "status": "PASS"
+    },
+    {
+      "id": "lifecycle.muteStopsAndSuppresses",
+      "status": "PASS"
+    },
+    {
+      "id": "lifecycle.saveRestoreClearsNonpersistentVoices",
+      "status": "PASS"
+    },
+    {
+      "id": "distance.sceneAndRangeRejectInaudibleSounds",
+      "status": "PASS"
+    },
+    {
+      "id": "distance.groundZombiesSilentOnUpperCityFloor",
+      "status": "PASS"
+    },
+    {
+      "id": "zombie.killedOwnerStopsGroan",
+      "status": "PASS"
+    },
+    {
+      "id": "combat.actualShotAndMuzzleShareFrame",
+      "status": "PASS"
+    },
+    {
+      "id": "combat.reloadStagesFollowProgressWithoutTimers",
+      "status": "PASS"
+    },
+    {
+      "id": "combat.cancelReloadStopsItsSound",
+      "status": "PASS"
+    },
+    {
+      "id": "combat.restoredReloadDoesNotReplayPassedStages",
+      "status": "PASS"
+    },
+    {
+      "id": "world.machineOnlyWhenPoweredAndActive",
+      "status": "PASS"
+    },
+    {
+      "id": "world.mergedIrrigationFiveBedsOneLoop",
+      "status": "PASS"
+    },
+    {
+      "id": "world.droneRotorFollowsFlightState",
+      "status": "PASS"
+    },
+    {
+      "id": "world.droneChargeCueRequiresActualBatteryIncrease",
+      "status": "PASS"
+    },
+    {
+      "id": "world.dayXEndsExactlyAtSix",
+      "status": "PASS"
+    },
+    {
+      "id": "world.sceneChangeStopsAnimalAndMachineVoices",
+      "status": "PASS"
+    },
+    {
+      "id": "rng.cowTimerAndGameplaySequenceMatchStableInput",
+      "status": "PASS"
+    },
+    {
+      "id": "rng.audioVariationsDoNotConsumeGameplayRandom",
+      "status": "PASS"
+    },
+    {
+      "id": "scope.saveVersionBalanceAndActorManifestUnchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.noErrors",
+      "status": "PASS"
+    }
+  ],
+  "limits": {
+    "oneShots": 16,
+    "loops": 6,
+    "animation": 2,
+    "tails": 2,
+    "combat": 8,
+    "enemy": 3,
+    "groan": 2,
+    "animal": 1,
+    "world": 4,
+    "ui": 2
+  },
+  "audio": {
+    "peakOneShots": 16,
+    "peakLoops": 6,
+    "requests": 58,
+    "decodes": 58,
+    "dropped": 1482,
+    "stolen": 4,
+    "activeLoads": 0,
+    "peakLoads": 2,
+    "oneShots": 3,
+    "loops": 0,
+    "tails": 0,
+    "animation": 1,
+    "buffers": 58,
+    "families": {
+      "combat": 2,
+      "enemy": 0,
+      "groan": 1,
+      "animal": 0,
+      "world": 0,
+      "ui": 0
+    },
+    "loopKeys": [],
+    "context": "running"
+  },
+  "limitations": [
+    "Modeled DOM/WebAudio, real WAV files and native Canvas. No physical device listening."
+  ]
+}

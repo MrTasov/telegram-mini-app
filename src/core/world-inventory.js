@@ -249,7 +249,7 @@ function toggleGate(){
     const occupants=[player,...zombies.filter(z=>z.alive)];
     if(occupants.some(p=>rectHit(p.x,p.y,p.radius+3,gateRect))){message('Отойдите от проёма, чтобы закрыть ворота');return;}
   }
-  gateOpen=!gateOpen;invalidateGeometry();queueGameSave();
+  gateOpen=!gateOpen;GameAudio.play(gateOpen?'gateOpen':'gateClose',{x:gateRect.x,y:gateRect.y,scene:'surface'});invalidateGeometry();queueGameSave();
   message(gateOpen?'🔓 Ворота открыты':'🔒 Ворота закрыты');
 }
 
@@ -452,7 +452,7 @@ function useTree(tree){
   const n=Math.hypot(player.aimX,player.aimY)||1;player.aimX/=n;player.aimY/=n;
 }
 function collectTreeWood(tree){
-  const before=tree.wood;tree.wood=addItem('wood',before);
+  const before=tree.wood;tree.wood=addItem('wood',before);if(before>tree.wood)GameAudio.play('pickup');
   message(`🪵 Древесина: +${before-tree.wood}`+(tree.wood?` · осталось ${tree.wood}`:''));
   if(tree.wood===0)message(`🪵 Древесина: +${before} · дерево вырастет через 10 минут игры`);
   queueGameSave();
@@ -465,7 +465,7 @@ function updateChop(){
   if(freeItemSpace(bag,'wood',BAG_SLOTS)<=0){cancelChop();message('Рюкзак заполнен');return;}
   const p=clamp((Date.now()-chopState.startedAt)/chopState.duration,0,1);
   const bar=el('searchBarWrap');bar.style.display=menuOpen?'none':'block';positionWorkProgress(bar,58);el('searchBarFill').style.width=(p*100)+'%';
-  if(p>=1){tree.felled=true;tree.regrowMs=600000;invalidateGeometry();cancelChop();collectTreeWood(tree);}
+  if(p>=1){GameAudio.play('treeBreak',{x:tree.x,y:tree.y,scene:'surface'});tree.felled=true;tree.regrowMs=600000;invalidateGeometry();cancelChop();collectTreeWood(tree);}
 }
 
 

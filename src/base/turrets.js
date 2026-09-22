@@ -96,25 +96,25 @@ window.V016Turret=(()=>{
     if(index<0||!validItem(item)){cancelPlacement();return false;}
     if(problem){message(problem);return false;}
     if(guns.some(t=>t.id===item.turretData.id))return false;
-    guns.push({...copy(item.turretData),...point,fallen:false});bag[index]=null;cancelPlacement();changed();message('Пулемёт установлен · '+guns.at(-1).ammo+' патронов');return true;
+    GameAudio.play('turretPlace');guns.push({...copy(item.turretData),...point,fallen:false});bag[index]=null;cancelPlacement();changed();message('Пулемёт установлен · '+guns.at(-1).ammo+' патронов');return true;
   }
   function pack(t){
     if(!guns.includes(t)||!reachable(t))return false;
     if(addItem(typeOf(t),1,{turretData:gunData(t)})){message('Нужна свободная ячейка в рюкзаке');return false;}
-    guns.splice(guns.indexOf(t),1);runtime.delete(t.id);selected=null;const panel=el('v016TurretPanel');if(panel)closeOverlay(panel);changed();return true;
+    GameAudio.play('turretPack');guns.splice(guns.indexOf(t),1);runtime.delete(t.id);selected=null;const panel=el('v016TurretPanel');if(panel)closeOverlay(panel);changed();return true;
   }
   function ammoAvailable(t){return bag.reduce((n,s)=>n+(s?.type===combatFor(t).ammoType?s.qty:0),0);}
   function reload(t,amount=combatFor(t).capacity){
     if(!guns.includes(t)||!reachable(t))return 0;
     let need=Math.min(Math.max(0,Math.floor(amount)),combatFor(t).capacity-t.ammo),used=0;
     for(let i=0;i<bag.length&&need;i++){const s=bag[i];if(s?.type!==combatFor(t).ammoType)continue;const n=Math.min(s.qty,need);s.qty-=n;need-=n;used+=n;if(!s.qty)bag[i]=null;}
-    t.ammo+=used;if(used)changed();else message('В рюкзаке нет свободных патронов 5,45');return used;
+    t.ammo+=used;if(used){GameAudio.play('magazineLoad');changed();}else message('В рюкзаке нет свободных патронов 5,45');return used;
   }
-  function unload(t){if(!guns.includes(t)||!reachable(t)||!t.ammo)return 0;const left=addItem(combatFor(t).ammoType,t.ammo),moved=t.ammo-left;t.ammo=left;if(moved)changed();else message('Нет места для патронов');return moved;}
+  function unload(t){if(!guns.includes(t)||!reachable(t)||!t.ammo)return 0;const left=addItem(combatFor(t).ammoType,t.ammo),moved=t.ammo-left;t.ammo=left;if(moved){GameAudio.play('magazineUnload');changed();}else message('Нет места для патронов');return moved;}
   function setEnabled(t,on){if(!guns.includes(t)||!reachable(t))return false;t.enabled=!!on;changed();return true;}
   function settleUnsupported(){for(const t of guns)if(!t.fallen&&!support(t)){
     const a=Math.atan2(600-t.y,800-t.x),p=V015Base.freePoint(t.x+Math.cos(a)*72,t.y+Math.sin(a)*72,10);
-    if(p)Object.assign(t,p);t.fallen=true;t.wallId=null;runtime.delete(t.id);queueGameSave();
+    if(p)Object.assign(t,p);GameAudio.play('constructionBreak',{x:t.x,y:t.y,scene:'surface'});t.fallen=true;t.wallId=null;runtime.delete(t.id);queueGameSave();
   }}
   function stateFor(t){if(!runtime.has(t.id))runtime.set(t.id,{target:null,search:0,cursor:0,shot:0,flash:0,tracer:null});return runtime.get(t.id);}
   const wrapAngle=a=>Math.atan2(Math.sin(a),Math.cos(a));
@@ -131,7 +131,7 @@ window.V016Turret=(()=>{
   function shootAt(t,z){
     const s=stateFor(t);if(!t.enabled||!support(t)||t.ammo<=0||!z?.alive||z.health<=0||distance(t.x,t.y,z.x,z.y)>combatFor(t).range||!clear(t,z))return false;
     let first=z,at=1;for(const q of zombies)if(q.alive&&q.health>0){const n=ray(t,z,{x:q.x,y:q.y,r:q.radius||16},1);if(n!==null&&n<at){at=n;first=q;}}
-    t.ammo--;s.shot+=combatFor(t).intervalMs/1000;s.flash=.08;s.tracer={x:t.x+(z.x-t.x)*at,y:t.y+(z.y-t.y)*at};
+    GameAudio.play('turretFire',{x:t.x,y:t.y,scene:'surface',radius:660});t.ammo--;s.shot+=combatFor(t).intervalMs/1000;s.flash=.08;s.tracer={x:t.x+(z.x-t.x)*at,y:t.y+(z.y-t.y)*at};
     hitZombie(first,damage(t),{fixedDamage:true});createNoise(t.x,t.y,600);queueGameSave();return true;
   }
   function tick(ms){

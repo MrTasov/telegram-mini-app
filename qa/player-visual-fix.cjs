@@ -10,7 +10,8 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
   const hashes=require('./pre-player-visual/source-hashes.json');
   for(const [file,h]of Object.entries(hashes))if(!require('./corrective-contract.cjs').sourceChanges.has(file)&&!['src/render/actors.js','src/assets/manifest.js','src/core/rendering.js'].includes(file))require('./hud-contract.cjs').assertSource(file,h);
   const oldBullets=fs.readFileSync('qa/pre-polish/js/game.js','utf8').match(/function drawBullets\(\)\{[\s\S]*?\n\}/)[0];
-  const fallback=fs.readFileSync('src/core/rendering.js','utf8').replace('ctx.scale(AssetManifest.actors.visualScale||1,AssetManifest.actors.visualScale||1);','').replace(/function drawBullets\(\)\{[\s\S]*?\n\}/,oldBullets);
+  require('./audio-contract.cjs').assertSource('src/core/rendering.js',require('./audio-source-reference.json').changes['src/core/rendering.js'].before);
+  const fallback=fs.readFileSync('src/core/rendering.js','utf8').replaceAll("  GameAudio.play('hatchOpen');\n",'').replace('ctx.scale(AssetManifest.actors.visualScale||1,AssetManifest.actors.visualScale||1);','').replace(/function drawBullets\(\)\{[\s\S]*?\n\}/,oldBullets);
   assert.equal(sha(fallback),hashes['src/core/rendering.js'],'fallback changes must only scale the rendered character');
  });
  E('window.visualCalls=[];window.originalVisualDraw=ctx.drawImage;ctx.drawImage=function(im,...args){const m=ctx.getTransform();visualCalls.push({args,m:[m.a,m.b,m.c,m.d,m.e,m.f],width:im.width,height:im.height});return originalVisualDraw.call(this,im,...args);};');

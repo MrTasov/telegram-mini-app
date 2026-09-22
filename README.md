@@ -1,17 +1,13 @@
-> Current patch: **hud-compact-1**. Compact day/time, FPS/frame time and weapon/ammo HUD; item upgrade level hidden only in the bottom label. [Report](HUD_COMPACT_RU.md).
+# LAST BASE 0.29.0 — Full Audio Pass Recovery 1
 
-# LAST BASE 0.29.0 — Visual / Animation / Audio Polish 1
+Restored Full Audio Pass on the supplied **LAST_BASE_0.29.0_HUD_Compact_1.zip**. Ready-built game, editable sources, 58 required audio clips, source credits and regression tests are included. See [Russian report](AUDIO_PASS_RECOVERY_RU.md), [setup](README_RU.md), and [audio coverage](AUDIO_AUDIT_RU.md).
 
-Visual integration on the current **0.29.0 MASTER UNARMED** build. See [Russian setup](README_RU.md) and the [integration report](EQUIPMENT_INTEGRATION_RU.md).
+Deploy `index.html`, `js/`, `styles/` and `assets/` together, preserving paths. No Node.js is needed to play. Keep the same HTTP(S) origin and browser storage to retain local save slots. Save format remains **3**. JavaScript cache tag: `0.29.0-audio-pass-recovery-1`. Audio starts after a real user gesture.
 
-Upload the archive contents with the directory structure intact. The ready-built game uses `index.html`, `js/`, `styles/`, and `assets/`. Keep the existing HTTP(S) origin and existing browser storage to retain local save slots.
+Development: Node.js 20+, `npm ci`, `npm run build`, `npm run check`, `npm test`. Audio checks: `npm run test:audio`. Paired performance measurement: `npm run bench:audio`, separately from tests. Optional concurrency: `LAST_BASE_TEST_JOBS=3 npm test`. Local server: `python -m http.server 8000`.
 
-Seven carry states have twelve walk phases and a separate idle: AK, axe, pickaxe, hammer, remote, flashlight and fishing rod. The AK uses the approved underarm pose with fixed palms below the weapon. Three tools have twelve work phases and contact ripples. Fishing has a stationary wait and twelve-phase catch. Body and equipment remain separate. Unarmed, sleep and all five zombie types retain the previous approved assets.
+One AudioContext manages bounded voices, cached buffers and state-driven loops. Existing walk/work contact clocks and the old cow timer's gameplay RNG cadence are preserved. No image, actor scale, save schema, control system, resource balance or weapon statistics were changed. Audio files are local; no runtime requests to sound-source websites.
 
-Save format remains **3**. The existing M4 keeps its previous renderer. No new gameplay weapon or tool is registered.
+Sources and licenses: `assets/audio/CREDITS.md`, `tools/audio-sources.json`, `tools/audio-preparation.json`. Optional offline preparation: `tools/build-audio.py --source-dir <source-root>` with FFmpeg, numpy and scipy. Ready WAV files are included; preparation is unnecessary for deployment. Keep attribution for the chicken (CC BY 3.0) and adapted cow (CC BY-SA 3.0) recordings.
 
-For a visual review, open `character-preview.html` through the same HTTP server. It uses the shared actor renderer, not game saves. `qa/results/equipment-visuals/` contains native Canvas renders at PC/mobile viewport sizes. Native browser and phone checks are still required.
-
-Development: `npm ci`, `npm run build`, `npm run check`, `npm test`. Current HUD monitor overhead: `node qa/hud-performance.cjs` (run separately from tests). Optional parallel test workers: `LAST_BASE_TEST_JOBS=2 npm test`. JavaScript cache tag: `0.29.0-hud-compact-1`. Runtime assets are included; `tools/pack-actors.cjs` is an optional offline packer requiring the original generated PNG files named in `tools/actor-sources.json`. Full ImageGen prompts are in `docs/CHARACTER_ASSET_PROMPTS.json`.
-
-`dev.html` remains the isolated Day X testing entry. Omit development/QA material from public deployment if desired. Historical reports concern their named releases. No deployment or subsequent gameplay patch is included.
+`character-preview.html` remains the shared-renderer visual review entry. `dev.html` retains isolated development saves. QA contains historical frozen fixtures and reports; the current aggregate is `qa/results/summary.json`. This patch has `qa/results/audio-pass.json` and `qa/results/audio-performance.json`. Native Canvas and modeled WebAudio tests do not replace physical phone/PC listening. No deployment or subsequent patch is included.

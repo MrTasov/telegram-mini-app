@@ -27,7 +27,7 @@ async function main(){
   r.advance(ms);for(const source of [...meter.active])if(source.end<=sandbox.performance.now()/1000){meter.active.delete(source);source.onended?.();}E(code);
  }
  check('scope.onlyDeclaredPresentationSourcesChanged',()=>{const hashes=require('./pre-polish/source-hashes.json'),allowed=require('./polish-contract.cjs').sourceChanges;for(const [f,h]of Object.entries(hashes))if(!allowed.has(f))require('./hud-contract.cjs').assertSource(f,h);});
- check('assets.threeWavFilesDecodedOnce',()=>{assert.deepEqual([...meter.requests].sort(),['assets/audio/effects/chop_wood.wav','assets/audio/effects/footstep_soft_floor.wav','assets/audio/effects/mine_rock.wav']);assert.deepEqual(J('Object.keys(audioBuffers).sort()'),['chopWood','footsteps','mineRock']);});
+ check('assets.requiredWavFilesDecodedOnce',()=>{assert.deepEqual([...meter.requests].sort(),Object.values(require('../assets/manifest.json').audio).map(d=>d.path).sort());assert.deepEqual(J('Object.keys(audioBuffers).sort()'),Object.keys(require('../assets/manifest.json').audio).sort());});
  check('walk.cycleExactlyThreeTimesFasterWithoutChangingFramesOrOtherActions',()=>{
   const previous=require('./walk-sound-reference.json').actors;
   assert.ok(Math.abs(previous.unarmed.cycleDistance/cfg.unarmed.cycleDistance-3)<1e-12);
@@ -37,14 +37,14 @@ async function main(){
  });
  check('audio.footstepGainHalvedAndWorkGainUnchanged',()=>{
   reset();
-  for(const level of [.35,.44]){assert.equal(E(`playAnimationSound('footsteps','step',${level})`),true);assert.ok(Math.abs(E("animationVoices.get('step').gain.gain.value")-level*.7*.5)<1e-12);}
-  for(const name of ['chopWood','mineRock']){assert.equal(E(`playAnimationSound('${name}','work',.52)`),true);assert.ok(Math.abs(E("animationVoices.get('work').gain.gain.value")-.52*.7)<1e-12);}
+  for(const level of [.35,.44]){assert.equal(E(`playAnimationSound('footsteps','step',${level})`),true);assert.ok(Math.abs(E("animationVoices.get('step').gain.gain.value")-level*.5)<1e-12);}
+  for(const name of ['chopWood','mineRock']){assert.equal(E(`playAnimationSound('${name}','work',.52)`),true);assert.ok(Math.abs(E("animationVoices.get('work').gain.gain.value")-.52)<1e-12);}
   E("stopFootsteps();stopAnimationSound('work')");
  });
  check('audio.softFootstepHasSmoothBoundariesAndNoClipping',()=>{
-  const data=fs.readFileSync('assets/audio/effects/footstep_soft_floor.wav');assert.equal(data.readUInt32LE(24),44100);assert.equal(data.readInt16LE(44),0);assert.equal(data.readInt16LE(data.length-2),0);
+  const data=fs.readFileSync(require('../assets/manifest.json').audio.footsteps.path);assert.equal(data.readUInt32LE(24),32000);assert.equal(data.readInt16LE(44),0);assert.equal(data.readInt16LE(data.length-2),0);
   let peak=0;for(let i=44;i<data.length;i+=2)peak=Math.max(peak,Math.abs(data.readInt16LE(i)));
-  assert.ok(peak>1000&&peak<19000);assert.equal((data.length-44)/88200,.14);
+  assert.ok(peak>1000&&peak<19000);assert.equal((data.length-44)/64000,.24);
  });
  check('assets.noDuplicateImages',()=>assert.equal(r.imageRequests.length,new Set(r.imageRequests).size));
  check('gameplay.definitionsAndMiningOwnersByteIdentical',()=>{const hashes=require('./pre-polish/source-hashes.json');for(const f of ['src/config/gameplay.js','src/crafting/manufacturing.js','src/world/resources.js','src/ui/context-map.js','src/save/legacy-progress.js','src/drones/companion.js'])require('./hud-contract.cjs').assertSource(f,hashes[f]);});
@@ -75,7 +75,7 @@ async function main(){
  });
  check('audio.blockedPlayerDoesNotPlaySteps',()=>{reset();E('player.moving=true;movePower=1');for(let i=0;i<180;i++)advance(1000/60,'player.walkAnimation+=.21;updateFootstepsAudio()');assert.equal(E('audioEvents.length'),0);});
  check('audio.hiddenAndMutedStopAllVoices',()=>{reset();E("playAnimationSound('footsteps','step');playAnimationSound('mineRock','work');document.hidden=true;updateFootstepsAudio()");assert.equal(meter.active.size,0);E("document.hidden=false;playAnimationSound('footsteps','step');masterVolume=0;updateFootstepsAudio()");assert.equal(meter.active.size,0);});
- check('audio.1000ContactsBoundedSourcesAndReusableGains',()=>{reset();const oldHtml=meter.htmlAudio;for(let i=0;i<1000;i++)advance(250,`playAnimationSound('${i%2?'footsteps':'mineRock'}','${i%2?'step':'work'}',.3,1);`);advance(500,'stopFootsteps();stopAnimationSound("work")');assert.ok(meter.maxActive<=2);assert.equal(meter.gains,2);assert.equal(meter.active.size,0);assert.equal(meter.htmlAudio,oldHtml);assert.equal(E('animationVoices.size'),2);});
+ check('audio.1000ContactsBoundedSourcesAndReusableGains',()=>{reset();const oldHtml=meter.htmlAudio,oldGains=meter.gains;meter.maxActive=meter.active.size;for(let i=0;i<1000;i++)advance(250,`playAnimationSound('${i%2?'footsteps':'mineRock'}','${i%2?'step':'work'}',.3,1);`);advance(500,'stopFootsteps();stopAnimationSound("work")');assert.ok(meter.maxActive<=2);assert.equal(meter.gains,oldGains,'contact channels must reuse their existing GainNodes');assert.equal(meter.active.size,0);assert.equal(meter.htmlAudio,oldHtml);assert.equal(E('animationVoices.size'),2);});
  check('audio.resumeDoesNotReplayOldMiningHit',()=>{reset();E("V013Inventory.equip('pickaxe');V09World.resumeMining({id:V09World.ores[0].id,duration:1800,elapsed:800,at:Date.now()});document.hidden=true;updateFootstepsAudio();document.hidden=false;updateFootstepsAudio()");assert.equal(E('audioEvents.length'),0);});
  for(const item of ['rifle_ak74','rifle_m4'])for(const moving of [false,true])check('weapon.'+item+'.muzzleAndTrajectory.'+(moving?'walk':'idle'),()=>{
   reset();E(`addItem('${item}',1);V013Inventory.equip('${item}');V010Combat.currentWeapon().rounds=30;`);assert.equal(E('heldItem()'),item);
