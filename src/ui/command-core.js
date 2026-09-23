@@ -112,7 +112,7 @@ window.CommandCoreUI=(()=>{
     const cards=new Map();let locale='';
     return ()=>{
       const groups=GameBaseOverview.snapshot();
-      if(locale!==I18n.language){locale=I18n.language;const top=scroll.scrollTop||0;scroll.replaceChildren();cards.clear();
+      const shape=I18n.language+'|'+GameEquipment.ids.join();if(locale!==shape){locale=shape;const top=scroll.scrollTop||0;scroll.replaceChildren();cards.clear();
         const intro=node('div',null,'coreBaseIntro');intro.append(node('h3','core.base.title'),node('p','core.base.description'));scroll.append(intro);
         for(const g of groups){const section=node('section',null,'coreBaseGroup');section.append(node('h4',null,'coreGroupTitle'));put(section.firstChild||section.children[0],g.title);const grid=node('div',null,'campaignBaseGrid');section.append(grid);scroll.append(section);
           for(const row of g.rows){const card=node('div',null,'coreSystem');card.dataset.system=row.id;const title=node('h5'),value=node('strong'),detail=node('p');card.append(title,value,detail);grid.append(card);cards.set(g.id+'/'+row.id,{title,value,detail});}
@@ -135,8 +135,8 @@ window.CommandCoreUI=(()=>{
     if(!readOnly){const a=GameCampaign.access(GameActors.local,BunkerLayout.core.id,false);if(!a.available){message(t(a.reason));return false;}}
     syncLocation();remote=readOnly;if(!remote)window.GameChapterOne?.visit(GameActors.localId,BunkerLayout.core.id);GameCampaign.refresh(true);GameMovement.openUI();openOverlay(overlay);select(sections.has(which)?which:sections.get(tab)?.available()?tab:'base');return true;
   }
-  function tick(){syncLocation();renderTracker();if(overlay.classList.contains('open'))render();}
-  function reset(){closeOverlay(overlay);remote=false;dirty=true;lastTracker='';trackerExpanded=!!window.GameChapterOne?.active&&GameCampaign.view().chapter==='chapter_1';tab='base';previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values()){s.route.reset();s.scroll.scrollTop=0;}renderTracker();}
+  function tick(){window.GamePlacementUI?.tick();syncLocation();renderTracker();if(overlay.classList.contains('open'))render();}
+  function reset(){window.GamePlacementUI?.cancel();closeOverlay(overlay);remote=false;dirty=true;lastTracker='';trackerExpanded=!!window.GameChapterOne?.active&&GameCampaign.view().chapter==='chapter_1';tab='base';previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values()){s.route.reset();s.scroll.scrollTop=0;}renderTracker();}
   GameCampaign.subscribe(()=>{dirty=true;renderTracker();});
   I18n.onChange(()=>{lastTracker='';dirty=true;V09Power.devices[GameCampaign.powerId].name=t('bunker.core.name');renderTracker();render();});
   v09Style(`

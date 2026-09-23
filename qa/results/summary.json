@@ -1,275 +1,283 @@
 {
-  "version": "0.34.0",
-  "stage": 7,
-  "patch": "stage-c2",
-  "stageAStarted": true,
-  "stageAStatus": "accepted-in-general",
-  "stageBStarted": true,
-  "stageBStatus": "accepted-in-general",
-  "stageC1Started": true,
-  "stageC1Status": "accepted-by-user",
-  "stageC2Started": true,
-  "stageDStarted": false,
-  "level2Started": false,
+  "version": "0.35.1",
+  "patch": "stage-d-clean-restart",
   "passed": true,
-  "automatedAssertions": 11866,
+  "stageDStarted": true,
+  "nextStageStarted": false,
+  "level2Started": false,
+  "runtimeSha256": "7f47d8b939c1c0e522a984e6f8a88b217ab057a52e6e78d2c724349f04132a38",
+  "execution": "All 53 qa/run.cjs groups, split into three checkpointed independent partitions",
+  "filtered": false,
+  "automatedAssertions": 12008,
   "historicalBaselineAssertions": 477,
-  "ladderContractChanged": true,
-  "filtered": true,
   "runs": [
+    {
+      "id": "stage-d",
+      "exitCode": 0,
+      "elapsedMs": 12566
+    },
     {
       "id": "stage-c2",
       "exitCode": 0,
-      "elapsedMs": 19994
-    },
-    {
-      "id": "stage-c2-prerequisites",
-      "exitCode": 0,
-      "elapsedMs": 6476
-    },
-    {
-      "id": "stage-c1-light-modules",
-      "exitCode": 0,
-      "elapsedMs": 7037
+      "elapsedMs": 21576
     },
     {
       "id": "stage-c1-recovery",
       "exitCode": 0,
-      "elapsedMs": 9441
-    },
-    {
-      "id": "build",
-      "exitCode": 0,
-      "elapsedMs": 204
-    },
-    {
-      "id": "stage-ab-corrective",
-      "exitCode": 0,
-      "elapsedMs": 6962
+      "elapsedMs": 9357
     },
     {
       "id": "stage-ab-light-audio",
       "exitCode": 0,
-      "elapsedMs": 3948
-    },
-    {
-      "id": "stage-b",
-      "exitCode": 0,
-      "elapsedMs": 8907
-    },
-    {
-      "id": "campaign",
-      "exitCode": 0,
-      "elapsedMs": 5159
+      "elapsedMs": 3161
     },
     {
       "id": "stage-a-corrective",
       "exitCode": 0,
-      "elapsedMs": 6666
-    },
-    {
-      "id": "verification",
-      "exitCode": 0,
-      "elapsedMs": 265
-    },
-    {
-      "id": "regressions",
-      "exitCode": 0,
-      "elapsedMs": 18851
+      "elapsedMs": 6093
     },
     {
       "id": "interactions",
       "exitCode": 0,
-      "elapsedMs": 25835
-    },
-    {
-      "id": "saves",
-      "exitCode": 0,
-      "elapsedMs": 7218
-    },
-    {
-      "id": "balance",
-      "exitCode": 0,
-      "elapsedMs": 1370
+      "elapsedMs": 27775
     },
     {
       "id": "state-saves",
       "exitCode": 0,
-      "elapsedMs": 14607
-    },
-    {
-      "id": "differential",
-      "exitCode": 0,
-      "elapsedMs": 27804
-    },
-    {
-      "id": "systems",
-      "exitCode": 0,
-      "elapsedMs": 2613
+      "elapsedMs": 15319
     },
     {
       "id": "stage3-differential",
       "exitCode": 0,
-      "elapsedMs": 40078
-    },
-    {
-      "id": "controls",
-      "exitCode": 0,
-      "elapsedMs": 17626
-    },
-    {
-      "id": "controls-differential",
-      "exitCode": 0,
-      "elapsedMs": 42002
+      "elapsedMs": 41551
     },
     {
       "id": "assets",
       "exitCode": 0,
-      "elapsedMs": 5060
-    },
-    {
-      "id": "asset-rendering",
-      "exitCode": 0,
-      "elapsedMs": 2498
-    },
-    {
-      "id": "stage4-differential",
-      "exitCode": 0,
-      "elapsedMs": 39987
+      "elapsedMs": 5657
     },
     {
       "id": "map-workbar",
       "exitCode": 0,
-      "elapsedMs": 9398
-    },
-    {
-      "id": "localization",
-      "exitCode": 0,
-      "elapsedMs": 65903
-    },
-    {
-      "id": "localization-rendering",
-      "exitCode": 0,
-      "elapsedMs": 3711
+      "elapsedMs": 10941
     },
     {
       "id": "localization-controls",
       "exitCode": 0,
-      "elapsedMs": 56798
-    },
-    {
-      "id": "main-menu",
-      "exitCode": 0,
-      "elapsedMs": 110993
-    },
-    {
-      "id": "menu-preferences",
-      "exitCode": 0,
-      "elapsedMs": 16762
+      "elapsedMs": 57426
     },
     {
       "id": "world-events",
       "exitCode": 0,
-      "elapsedMs": 17236
-    },
-    {
-      "id": "readiness",
-      "exitCode": 0,
-      "elapsedMs": 15439
-    },
-    {
-      "id": "corrective",
-      "exitCode": 0,
-      "elapsedMs": 16362
+      "elapsedMs": 18432
     },
     {
       "id": "world-farm",
       "exitCode": 0,
-      "elapsedMs": 20229
-    },
-    {
-      "id": "drone-return",
-      "exitCode": 0,
-      "elapsedMs": 29764
-    },
-    {
-      "id": "resource-access",
-      "exitCode": 0,
-      "elapsedMs": 2412
+      "elapsedMs": 16956
     },
     {
       "id": "character-animation",
       "exitCode": 0,
-      "elapsedMs": 5220
-    },
-    {
-      "id": "master-unarmed",
-      "exitCode": 0,
-      "elapsedMs": 17697
-    },
-    {
-      "id": "equipment-integration",
-      "exitCode": 0,
-      "elapsedMs": 24264
+      "elapsedMs": 5781
     },
     {
       "id": "player-visual-fix",
       "exitCode": 0,
-      "elapsedMs": 1717
-    },
-    {
-      "id": "corrective-performance",
-      "exitCode": 0,
-      "elapsedMs": 5468
-    },
-    {
-      "id": "corrective-visuals",
-      "exitCode": 0,
-      "elapsedMs": 3116
+      "elapsedMs": 1832
     },
     {
       "id": "polish",
       "exitCode": 0,
-      "elapsedMs": 7124
-    },
-    {
-      "id": "polish-visuals",
-      "exitCode": 0,
-      "elapsedMs": 7989
-    },
-    {
-      "id": "audio-unlock",
-      "exitCode": 0,
-      "elapsedMs": 8932
+      "elapsedMs": 7885
     },
     {
       "id": "hud-display",
       "exitCode": 0,
-      "elapsedMs": 9443
-    },
-    {
-      "id": "audio-pass",
-      "exitCode": 0,
-      "elapsedMs": 5658
-    },
-    {
-      "id": "bunker-level1",
-      "exitCode": 0,
-      "elapsedMs": 7654
+      "elapsedMs": 10315
     },
     {
       "id": "bunker-floor-cache",
       "exitCode": 0,
-      "elapsedMs": 2721
+      "elapsedMs": 2672
+    },
+    {
+      "id": "stage-d-repair",
+      "exitCode": 0,
+      "elapsedMs": 5159
+    },
+    {
+      "id": "stage-c2-prerequisites",
+      "exitCode": 0,
+      "elapsedMs": 6989
+    },
+    {
+      "id": "build",
+      "exitCode": 0,
+      "elapsedMs": 242
+    },
+    {
+      "id": "stage-b",
+      "exitCode": 0,
+      "elapsedMs": 8669
+    },
+    {
+      "id": "verification",
+      "exitCode": 0,
+      "elapsedMs": 254
+    },
+    {
+      "id": "saves",
+      "exitCode": 0,
+      "elapsedMs": 7706
+    },
+    {
+      "id": "differential",
+      "exitCode": 0,
+      "elapsedMs": 28479
+    },
+    {
+      "id": "controls",
+      "exitCode": 0,
+      "elapsedMs": 18974
+    },
+    {
+      "id": "asset-rendering",
+      "exitCode": 0,
+      "elapsedMs": 2543
+    },
+    {
+      "id": "localization",
+      "exitCode": 0,
+      "elapsedMs": 74630
+    },
+    {
+      "id": "main-menu",
+      "exitCode": 0,
+      "elapsedMs": 121461
+    },
+    {
+      "id": "readiness",
+      "exitCode": 0,
+      "elapsedMs": 17878
+    },
+    {
+      "id": "drone-return",
+      "exitCode": 0,
+      "elapsedMs": 30916
+    },
+    {
+      "id": "master-unarmed",
+      "exitCode": 0,
+      "elapsedMs": 16810
+    },
+    {
+      "id": "corrective-performance",
+      "exitCode": 0,
+      "elapsedMs": 5490
+    },
+    {
+      "id": "polish-visuals",
+      "exitCode": 0,
+      "elapsedMs": 7905
+    },
+    {
+      "id": "audio-pass",
+      "exitCode": 0,
+      "elapsedMs": 6526
     },
     {
       "id": "bunker-r2",
       "exitCode": 0,
-      "elapsedMs": 4512
+      "elapsedMs": 4454
+    },
+    {
+      "id": "stage-d-visuals",
+      "exitCode": 0,
+      "elapsedMs": 2223
+    },
+    {
+      "id": "stage-c1-light-modules",
+      "exitCode": 0,
+      "elapsedMs": 7098
+    },
+    {
+      "id": "stage-ab-corrective",
+      "exitCode": 0,
+      "elapsedMs": 6858
+    },
+    {
+      "id": "campaign",
+      "exitCode": 0,
+      "elapsedMs": 4811
+    },
+    {
+      "id": "regressions",
+      "exitCode": 0,
+      "elapsedMs": 19338
+    },
+    {
+      "id": "balance",
+      "exitCode": 0,
+      "elapsedMs": 1489
+    },
+    {
+      "id": "systems",
+      "exitCode": 0,
+      "elapsedMs": 2671
+    },
+    {
+      "id": "controls-differential",
+      "exitCode": 0,
+      "elapsedMs": 43335
+    },
+    {
+      "id": "stage4-differential",
+      "exitCode": 0,
+      "elapsedMs": 42699
+    },
+    {
+      "id": "localization-rendering",
+      "exitCode": 0,
+      "elapsedMs": 4043
+    },
+    {
+      "id": "menu-preferences",
+      "exitCode": 0,
+      "elapsedMs": 15776
+    },
+    {
+      "id": "corrective",
+      "exitCode": 0,
+      "elapsedMs": 17287
+    },
+    {
+      "id": "resource-access",
+      "exitCode": 0,
+      "elapsedMs": 2416
+    },
+    {
+      "id": "equipment-integration",
+      "exitCode": 0,
+      "elapsedMs": 26004
+    },
+    {
+      "id": "corrective-visuals",
+      "exitCode": 0,
+      "elapsedMs": 3185
+    },
+    {
+      "id": "audio-unlock",
+      "exitCode": 0,
+      "elapsedMs": 10252
+    },
+    {
+      "id": "bunker-level1",
+      "exitCode": 0,
+      "elapsedMs": 8438
     }
   ],
   "limitations": [
-    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
-    "All audio paths are included and decoded; subjective mix requires physical device listening."
+    "Modeled DOM/WebAudio and native Canvas2D; no physical browser/WebView/phone test implied."
   ]
 }

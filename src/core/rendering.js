@@ -173,7 +173,7 @@ function drawBunker(){
   // Workshop follows its semantic room after the Level 1 room swap.
   drawSideRoom(bunker.workshop,"left",I18n.t('core.room.workshop'),"#343a3c");
 
-  BunkerLayout.withArt('workshop',()=>V09Craft.drawWorkshop());
+
 
   // №3 — STORAGE: 8 independent functional chests, 4 on top wall + 4 on bottom wall
   drawSideRoom(bunker.storage,"right","СКЛАД","#303638");
@@ -306,6 +306,7 @@ function drawBunker(){
 
 
   drawSideRoom(bunker.reserve_l1,'right','РЕЗЕРВНАЯ КОМНАТА','#394447');
+  V09Craft.drawWorkshop();
   for(const s of BunkerLayout.wallSegments)V011Rooms.wall(s.x1,s.y1,s.x2,s.y2);
   window.BunkerState?.draw();
 

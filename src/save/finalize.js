@@ -23,7 +23,8 @@ GameSave.seal({
     "equipment.instances",
     "inventory.head-modules",
     "base.recovery",
-    "campaign.chapter-one"
+    "campaign.chapter-one",
+    "equipment.placement"
   ],
   "decode": [
     "save.slots",
@@ -50,7 +51,8 @@ GameSave.seal({
     "equipment.instances",
     "inventory.head-modules",
     "base.recovery",
-    "campaign.chapter-one"
+    "campaign.chapter-one",
+    "equipment.placement"
   ],
   "restore": [
     "save.slots",
@@ -78,7 +80,8 @@ GameSave.seal({
     "equipment.instances",
     "inventory.head-modules",
     "base.recovery",
-    "campaign.chapter-one"
+    "campaign.chapter-one",
+    "equipment.placement"
   ]
 });
 GameState.seal();

@@ -3,7 +3,7 @@ const V010Energy=(()=>{
   const battery={charge:0,capacity:1.5,enabled:true,maxCharge:3,maxDischarge:6};
   let roomPriority={},devicePriority={},warnings={},harvestSeen={},clock=0,lastFlow={charge:0,discharge:0};
   const defaultRoom=id=>['corridor','room4'].includes(id)?3:2;
-  const defaultDevice=id=>id.startsWith('light_')||id.startsWith('door_')?3:id==='furnace'?1:2;
+  const defaultDevice=id=>id.startsWith('light_')||id.startsWith('door_')?3:GameEquipment.recipeStation(id)==='furnace'?1:2;
   const priorityName=n=>['','Низкий','Обычный','Высокий'][n];
   const roomRank=id=>roomPriority[id]??defaultRoom(id);
   const deviceRank=id=>devicePriority[id]??defaultDevice(id);
@@ -24,7 +24,7 @@ const V010Energy=(()=>{
     const batterySupply=battery.enabled&&battery.charge>0?Math.min(battery.maxDischarge,battery.charge*3600/dt):0;
     const supply=generator+batterySupply,served=new Set(),shed=[];
     let demand=0,load=0;
-    const devices=Object.values(V09Power.devices).filter(d=>BunkerLayout.roomActive(d.room)).map((d,i)=>({d,i,active:!!d.active()}));
+    const devices=Object.values(V09Power.devices).filter(d=>(!d.present||d.present())&&BunkerLayout.roomActive(d.room)).map((d,i)=>({d,i,active:!!d.active()}));
     devices.sort((a,b)=>roomRank(b.d.room)-roomRank(a.d.room)||deviceRank(b.d.id)-deviceRank(a.d.id)||a.i-b.i);
     for(const {d,active} of devices){
       if(!d.enabled||!V09Power.roomEnabled[d.room])continue;
@@ -53,6 +53,7 @@ const V010Energy=(()=>{
     message(V09Power.rooms[id]+(V09Power.roomEnabled[id]?' — питание включено':' — питание отключено'));v09PowerChanged();
   };
   v09DeviceStatus=function(d){
+    if(d.present&&!d.present())return I18n.t('placement.packed');
     if(!d.enabled)return 'Выключен';
     if(!V09Power.roomEnabled[d.room])return 'Комната обесточена';
     const a=allocation();
@@ -170,7 +171,7 @@ const V010Energy=(()=>{
   function capture(){return {schema:1,battery:{charge:battery.charge,enabled:battery.enabled},roomPriority:{...roomPriority},devicePriority:{...devicePriority},warnings:{...warnings},harvestSeen:{...harvestSeen}};}
   function validate(s){
     if(!s||s.schema!==1||!s.battery||!Number.isFinite(s.battery.charge)||s.battery.charge<0||s.battery.charge>battery.capacity||typeof s.battery.enabled!=='boolean')throw Error('Неверное сохранение резервной батареи');
-    for(const [key,known] of [['roomPriority',V09Power.rooms],['devicePriority',V09Power.devices]])if(!s[key]||typeof s[key]!=='object'||Array.isArray(s[key])||Object.entries(s[key]).some(([id,n])=>!Object.hasOwn(known,id)||![1,2,3].includes(n)))throw Error('Неверное сохранение приоритетов питания');
+    for(const [key,known] of [['roomPriority',V09Power.rooms],['devicePriority',Object.fromEntries(equipmentPowerKeys().map(id=>[id,true]))]])if(!s[key]||typeof s[key]!=='object'||Array.isArray(s[key])||Object.entries(s[key]).some(([id,n])=>!Object.hasOwn(known,id)||![1,2,3].includes(n)))throw Error('Неверное сохранение приоритетов питания');
     for(const key of ['warnings','harvestSeen'])if(s[key]!==undefined&&(!s[key]||typeof s[key]!=='object'||Array.isArray(s[key])||Object.keys(s[key]).length>32||Object.values(s[key]).some(v=>typeof v!=='boolean')))throw Error('Неверное сохранение уведомлений');
     return true;
   }

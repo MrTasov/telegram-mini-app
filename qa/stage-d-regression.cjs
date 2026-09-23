@@ -1,0 +1,12 @@
+// The API worker may terminate a very long parent process. Split the exact full
+// runner list into three independent parts and checkpoint after every child.
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),vm=require('node:vm'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'..'),out=path.join(__dirname,'results');process.chdir(root);
+const source=fs.readFileSync('qa/run.cjs','utf8'),start=source.indexOf('const jobs=[')+11,end=source.indexOf('],runs=[];',start)+1;
+const jobs=vm.runInNewContext(source.slice(start,end),{path,root,out}),part=Number(process.argv[2]);if(![0,1,2].includes(part))throw Error('Part must be 0..2');
+let report={version:require('../package.json').version,runtimeSha256:crypto.createHash('sha256').update(fs.readFileSync('js/game.js')).digest('hex'),part,startedAt:new Date().toISOString(),complete:false,runs:[]};
+const dest='qa/results/stage-d-regression-'+part+'.json',save=()=>fs.writeFileSync(dest,JSON.stringify(report,null,2)+'\n');if(process.argv.includes('--retry-failed')){const old=JSON.parse(fs.readFileSync(dest));if(old.runtimeSha256!==report.runtimeSha256)throw Error('Stale retry');report={...old,complete:false,previousAttempts:[...(old.previousAttempts||[]),...old.runs.filter(r=>r.exitCode!==0)]};}else save();
+const retryIds=process.argv.includes('--retry-failed')?new Set(report.runs.filter(r=>r.exitCode!==0).map(r=>r.id)):null;
+const env={...process.env,LAST_BASE_TEST_LANGUAGE:'ru',LAST_BASE_ASSETS:root,LAST_BASE_BASELINE:path.join(__dirname,'stage0'),NODE_PATH:[process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,path.join(root,'node_modules'),process.env.NODE_PATH].filter(Boolean).join(path.delimiter)};
+for(const [index,[id,file,args]]of jobs.entries()){if(index%3!==part||retryIds&&!retryIds.has(id))continue;console.log('Running '+id);const at=Date.now(),r=cp.spawnSync(process.execPath,[file,...args],{cwd:root,env,encoding:'utf8',timeout:300000,maxBuffer:8e6,stdio:['ignore','pipe','pipe']});fs.writeFileSync(path.join(out,id+'.log'),(r.stdout||'')+'\n'+(r.stderr||''));const record={id,exitCode:r.status??1,elapsedMs:Date.now()-at,error:r.error?.message};const previous=report.runs.findIndex(r=>r.id===id);if(previous<0)report.runs.push(record);else report.runs[previous]=record;save();console.log(id+': '+r.status);}
+report.complete=true;report.finishedAt=new Date().toISOString();report.passed=report.runs.every(r=>r.exitCode===0);save();if(!report.passed)process.exitCode=1;

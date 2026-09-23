@@ -27,9 +27,9 @@ const V09Craft = (() => {
     const type=Object.hasOwn(item,'magazineType')?item.magazineType:item.modules?.magazine?g.extendedMagazine:g.defaultMagazine;
     return acceptsMagazine(item.type,type)?magazineTypes[type]:0;
   }
-  const STATIONS=GameEquipment.productionIds,MAX_BATCHES=6000;
-  const stationType=id=>GameEquipment.recipeStation(id),byStation=fn=>Object.fromEntries(STATIONS.map(id=>[id,fn(id)]));
-  const emptyJobs=()=>Object.fromEntries(STATIONS.filter(id=>id!=='feed_craft').map(id=>[id,null]));
+  const stations=()=>GameEquipment.productionIds,MAX_BATCHES=6000;
+  const stationType=id=>GameEquipment.recipeStation(id),byStation=fn=>Object.fromEntries(stations().map(id=>[id,fn(id)]));
+  const emptyJobs=(ids=stations())=>Object.fromEntries(ids.filter(id=>id!=='feed_craft').map(id=>[id,null]));
   let jobs=emptyJobs();
   let magazines={rifle_ak74:magazine,rifle_m4:0};
   const defaultSelection=()=>byStation(id=>({furnace:'iron',craft_bench:'ammo',feed_craft:'feed'})[stationType(id)]);
@@ -42,14 +42,14 @@ const V09Craft = (() => {
   const materialCount=type=>typeof V010Inventory!=='undefined'?V010Inventory.materialCount(type):bagCount(type);
   const sumReady=id=>Object.values(readyExtra[id]).reduce((a,n)=>a+n,0)+(getJob(id)?.outputQty||0);
   const mix=(target,type,qty)=>{if(qty>0)target[type]=(target[type]||0)+qty;};
-  const fixtures=STATIONS.filter(id=>stationType(id)!=='feed_craft').map(id=>GameEquipment.fixture(id));
+  const fixtures=()=>stations().filter(id=>stationType(id)!=='feed_craft'&&GameEquipment.present(id)).map(id=>GameEquipment.fixture(id));
   const labels=byStation(id=>GameEquipment.definition(id).name);
   const deep=o=>JSON.parse(JSON.stringify(o));
   const powered=id=>devicePowered(GameEquipment.get(id)?.refs.device);
   const getJob=id=>id==='feed_craft'?pendingFeedCraft:jobs[id];
   function setJob(id,j){if(id==='feed_craft'){pendingFeedCraft=j;feedCraftBusy=!!j;}else jobs[id]=j;}
   const active=id=>(stationType(id)!=='feed_craft'||AgricultureTime.available)&&!!getJob(id)&&getJob(id).remainingMs>0&&!pauseExtra[id];
-  for(const id of STATIONS)registerEquipmentPowerDevice(id,()=>active(id));
+  for(const id of stations())registerEquipmentPowerDevice(id,()=>active(id));
   for(const type of Object.keys(GUNS))if(!HAND_TYPES.includes(type))HAND_TYPES.push(type);
   handSvg.rifle_m4='<path fill="#465152" d="M3 25h21v13H4z"/><path fill="#1c292c" d="M22 21h48v18H22z"/><path fill="#657477" d="M48 23h27v11H48z"/><path stroke="#172528" stroke-width="4" d="M72 26h24m-23 6h23"/><path fill="#2c393d" d="M38 36h10l5 21-11 3zM25 37h9l-2 15h-8z"/><path stroke="#a0ada9" stroke-width="2" d="M25 20h46"/><path fill="#263333" d="M40 15h17v7H40zM84 17h5v10h-5z"/>';
 
@@ -98,7 +98,7 @@ const V09Craft = (() => {
   function start(id,recipe=selected[id],batches=selectedBatches(id)){
     if(stationType(id)==='feed_craft'&&!AgricultureTime.available)return false;
     const r=RECIPES[recipe];
-    if(!STATIONS.includes(id)||!r||r.station!==stationType(id)||!availableRecipe(r)||!Number.isInteger(batches)||batches<1||batches>MAX_BATCHES||queueExtra[id].length>=30)return false;
+    if(!GameEquipment.present(id)||!stations().includes(id)||!r||r.station!==stationType(id)||!availableRecipe(r)||!Number.isInteger(batches)||batches<1||batches>MAX_BATCHES||queueExtra[id].length>=30)return false;
     if(!commitIngredients(r.input,batches)){message('Не хватает доступных материалов в рюкзаке и на складе');render();return false;}
     const j=makeJob(recipe,batches);
     if(getJob(id))queueExtra[id].push(j);else setJob(id,j);
@@ -113,7 +113,7 @@ const V09Craft = (() => {
   }
   function collect(id){
     if(stationType(id)==='feed_craft'&&!AgricultureTime.available)return 0;
-    if(!STATIONS.includes(id))return 0;
+    if(!stations().includes(id))return 0;
     let collected=0;
     const put=(type,qty)=>{let left=addItem(type,qty);if(id==='feed_craft'&&left>0)left=addToSlots(storageChests[12].items,type,left,60);collected+=qty-left;return left;};
     for(const type of Object.keys(readyExtra[id])){const left=put(type,readyExtra[id][type]);if(left)readyExtra[id][type]=left;else delete readyExtra[id][type];}
@@ -128,13 +128,13 @@ const V09Craft = (() => {
   let readySelected=byStation(()=>null);
   let readyOrder=byStation(()=>[]);
   function readyItems(id){
-    if(!STATIONS.includes(id))return {};
+    if(!stations().includes(id))return {};
     const out={...readyExtra[id]},j=getJob(id);
     if(j?.outputQty)mix(out,RECIPES[j.recipe].output,j.outputQty);
     return out;
   }
   function collectType(id,type,limit){
-    if(!STATIONS.includes(id)||!ITEM[type])return 0;
+    if(!stations().includes(id)||!ITEM[type])return 0;
     const available=readyItems(id)[type]||0;
     const stack=itemStackLimit(type);
     const requested=Math.min(available,limit===undefined?stack:Math.max(0,Math.floor(limit)));
@@ -175,7 +175,7 @@ const V09Craft = (() => {
     const total=el('v091CraftReady');if(total)I18n.assign(total,"textContent",String(sumReady(id)));
   }
   function collectRefund(id){
-    if(!STATIONS.includes(id))return false;
+    if(!stations().includes(id))return false;
     const before=Object.values(refundExtra[id]).reduce((a,n)=>a+n,0);
     if(typeof V010Inventory!=='undefined')refundExtra[id]=V010Inventory.putMaterials(refundExtra[id]);
     else for(const t of Object.keys(refundExtra[id])){const left=addItem(t,refundExtra[id][t]);if(left)refundExtra[id][t]=left;else delete refundExtra[id][t];}
@@ -188,7 +188,7 @@ const V09Craft = (() => {
   function validPaid(j){const p=j.paidInput;if(p===undefined)return true;return p&&typeof p==='object'&&!Array.isArray(p)&&Object.keys(p).length>0&&Object.entries(p).every(([t,n])=>ITEM[t]&&Number.isSafeInteger(n)&&n>0&&n<=10000);}
   function reserveRefund(id,r,batches){for(const [type,n] of Object.entries(r.input))mix(refundExtra[id],type,n*batches);}
   function cancelQueued(id,index){
-    if(!STATIONS.includes(id)||!Number.isInteger(index)||index<0||index>=queueExtra[id].length)return false;
+    if(!stations().includes(id)||!Number.isInteger(index)||index<0||index>=queueExtra[id].length)return false;
     const j=queueExtra[id].splice(index,1)[0];reserveRefund(id,{input:jobInput(j)},j.batches);collectRefund(id);queueGameSave();render();return true;
   }
   function cancelUnstarted(id){
@@ -200,7 +200,7 @@ const V09Craft = (() => {
     else{j.batches=keep;j.totalMs=keep*unit;j.remainingMs=Math.max(0,j.totalMs-elapsed);}
     finishAndPromote(id);collectRefund(id);render();queueGameSave();return cancelled;
   }
-  function setPaused(id,value){if(!STATIONS.includes(id))return false;pauseExtra[id]=!!value;render();queueGameSave();return true;}
+  function setPaused(id,value){if(!stations().includes(id))return false;pauseExtra[id]=!!value;render();queueGameSave();return true;}
 
   function duration(ms){const sec=Math.ceil(ms/1000);return sec<60?`${sec} сек.`:sec<3600?`${Math.floor(sec/60)} мин. ${sec%60} сек.`:`${Math.floor(sec/3600)} ч. ${Math.floor(sec%3600/60)} мин.`;}
   let craftView=null;
@@ -307,9 +307,9 @@ const V09Craft = (() => {
 
   }
 
-  function open(id){if(!STATIONS.includes(id))return;activeStation=id;render();openOverlay(overlay);}
+  function open(id){if(!GameEquipment.present(id)||!stations().includes(id))return;activeStation=id;render();openOverlay(overlay);}
   const oldInteractions=interactionObjects;
-  interactionObjects=function(which=scene){return [...oldInteractions(which).filter(o=>o.kind!=='workshop'),...(which==='bunker'?fixtures.map(o=>({...o,kind:'v09craft',name:labels[o.id],range:48})):[])];};
+  interactionObjects=function(which=scene){return [...oldInteractions(which).filter(o=>o.kind!=='workshop'),...(which==='bunker'?fixtures().map(o=>({...o,kind:'v09craft',name:labels[o.id],range:48})):[])];};
   const oldExecute=executeInteraction;
   executeInteraction=function(target){
     if(target?.kind!=='v09craft')return oldExecute(target);
@@ -323,7 +323,7 @@ const V09Craft = (() => {
   function collectFeed(){return collect('feed_craft');}
   function tick(ms){
     if(document.hidden||playerDead)return;ms=clamp(ms,0,100);let changed=false;
-    for(const id of STATIONS){
+    for(const id of stations()){
       if(stationType(id)==='feed_craft'&&!AgricultureTime.available)continue;
       if(getJob(id)?.remainingMs===0||(!getJob(id)&&queueExtra[id].length)){finishAndPromote(id);changed=true;}
       const job=getJob(id);if(!job||job.remainingMs<=0||pauseExtra[id]||!powered(id))continue;
@@ -421,10 +421,10 @@ const V09Craft = (() => {
     const fail=()=>{throw new Error('Некорректное сохранение производства');};
     const num=(v,min,max)=>Number.isFinite(v)&&v>=min&&v<=max,int=(v,min,max)=>Number.isInteger(v)&&num(v,min,max);
     if(!data||!data.jobs||!data.magazines||(data.schema!==undefined&&data.schema!==2))fail();
-    const out={schema:2,jobs:emptyJobs(),magazines:deep(data.magazines),feed:null};
+    const out={schema:2,jobs:emptyJobs(GameEquipment.validationProductionIds),magazines:deep(data.magazines),feed:null};
     function normalJob(src,id,legacy){
       if(src===null)return null;const j=deep(src),r=j&&RECIPES[j.recipe];
-      if(!r||!validPaid(j)||r.station!==stationType(id)||!int(j.batches,1,legacy?100:MAX_BATCHES)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs))fail();
+      if(!r||!validPaid(j)||r.station!==GameEquipment.validationType(id)||!int(j.batches,1,legacy?100:MAX_BATCHES)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs))fail();
       if(legacy){
         if(!int(j.outputQty,1,r.qty*j.batches)||(j.remainingMs>0&&j.outputQty!==r.qty*j.batches))fail();
         j.completedBatches=completedAt(j);j.collectedQty=j.remainingMs===0?r.qty*j.batches-j.outputQty:0;j.outputQty=j.completedBatches*r.qty-j.collectedQty;
@@ -460,10 +460,10 @@ const V09Craft = (() => {
     if(data==null)return true;
     const fail=()=>{throw new Error('Некорректная очередь производства');};
     if(!data||data.version!==1||!data.queues||!data.ready||!data.refunds||!data.paused)fail();
-    for(const field of ['queues','ready','refunds','paused'])if(Object.keys(data[field]).sort().join()!==[...STATIONS].sort().join())fail();
-    for(const id of STATIONS){
+    for(const field of ['queues','ready','refunds','paused'])if(Object.keys(data[field]).sort().join()!==GameEquipment.validationProductionIds.slice().sort().join())fail();
+    for(const id of GameEquipment.validationProductionIds){
       const list=data.queues[id];if(!Array.isArray(list)||list.length>30||typeof data.paused[id]!=='boolean')fail();
-      for(const j of list){const r=RECIPES[j?.recipe];if(!r||!validPaid(j)||r.station!==stationType(id)||!Number.isInteger(j.batches)||j.batches<1||j.batches>MAX_BATCHES||j.totalMs!==r.ms*j.batches||j.remainingMs!==j.totalMs||j.completedBatches!==0||j.outputQty!==0||j.collectedQty!==0)fail();}
+      for(const j of list){const r=RECIPES[j?.recipe];if(!r||!validPaid(j)||r.station!==GameEquipment.validationType(id)||!Number.isInteger(j.batches)||j.batches<1||j.batches>MAX_BATCHES||j.totalMs!==r.ms*j.batches||j.remainingMs!==j.totalMs||j.completedBatches!==0||j.outputQty!==0||j.collectedQty!==0)fail();}
       for(const field of ['ready','refunds']){const pool=data[field][id];if(!pool||typeof pool!=='object'||Array.isArray(pool)||Object.keys(pool).length>200)fail();for(const [t,n] of Object.entries(pool))if(!ITEM[t]||!Number.isSafeInteger(n)||n<1||n>100000000)fail();}
     }
     if(data.pin!==null&&(!data.pin||!RECIPES[data.pin.recipe]||!Number.isInteger(data.pin.batches)||data.pin.batches<1||data.pin.batches>MAX_BATCHES))fail();
@@ -480,9 +480,21 @@ const V09Craft = (() => {
     if(!commitIngredients(input,1)){message('Не хватает материалов для улучшения');return false;}
     craftUpgrades[key]=true;craftEvent('equipmentImproved',{kind:key});render();renderQuickSlots();queueGameSave();message(key==='workshop'?'Скорость производства увеличена на 20%':'Скорость добычи увеличена на 20%');return true;
   }
+  function syncInstances(){
+    const ids=stations();
+    for(const pool of [jobs,selected,quantity,queueExtra,readyExtra,refundExtra,pauseExtra,readySelected,readyOrder,labels])for(const id of Object.keys(pool))if(!ids.includes(id))delete pool[id];
+    for(const id of Object.keys(V09Power.devices))if(id.startsWith('build:')&&!ids.includes(id))delete V09Power.devices[id];
+    for(const id of ids){
+      if(id!=='feed_craft'&&!Object.hasOwn(jobs,id))jobs[id]=null;
+      selected[id]??=({furnace:'iron',craft_bench:'ammo',feed_craft:'feed'})[stationType(id)];quantity[id]??=0;
+      queueExtra[id]??=[];readyExtra[id]??={};refundExtra[id]??={};pauseExtra[id]??=false;readySelected[id]??=null;readyOrder[id]??=[];
+      labels[id]=GameEquipment.definition(id).name;registerEquipmentPowerDevice(id,()=>active(id));
+    }
+    if(activeStation&&!GameEquipment.present(activeStation)){activeStation=null;closeOverlay(overlay);}
+  }
   const craftQueue={capture:queueCapture,validate:queueValidate,restore:queueRestore,cancelQueued,cancelUnstarted,setPaused,collectRefund,collectType,readyItems,improve,
     get queues(){return queueExtra;},get ready(){return readyExtra;},get refunds(){return refundExtra;},get paused(){return pauseExtra;},get pin(){return pinnedRecipe;},get upgrades(){return craftUpgrades;},
     setPin(recipe,batches=1){pinnedRecipe=recipe&&RECIPES[recipe]?{recipe,batches:Math.max(1,Math.min(MAX_BATCHES,Math.floor(batches)))}:null;queueGameSave();},render, getJob};
 
-  return {visualState:id=>({working:active(id)&&powered(id),powered:powered(id),status:state(id),progress:getJob(id)?1-getJob(id).remainingMs/getJob(id).totalMs:0}),craftQueue,materialCount,capture,restore,validate,normalizeSave,open,start,collect,tick,startFeed,collectFeed,drawWorkshop,drawM4Held,recipes:RECIPES,weapons:GUNS,magazineTypes,weaponsForAmmo,acceptsMagazine,magazineCapacity,fixtures,gunStats,maximum};
+  return {visualState:id=>({working:active(id)&&powered(id),powered:powered(id),status:state(id),progress:getJob(id)?1-getJob(id).remainingMs/getJob(id).totalMs:0}),craftQueue,materialCount,capture,restore,validate,normalizeSave,open,start,collect,tick,startFeed,collectFeed,drawWorkshop,drawM4Held,recipes:RECIPES,weapons:GUNS,magazineTypes,weaponsForAmmo,acceptsMagazine,magazineCapacity,get fixtures(){return fixtures();},gunStats,maximum,syncInstances};
 })();

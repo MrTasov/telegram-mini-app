@@ -1,0 +1,7 @@
+// Re-run only gates affected by the declared D schema/UI contracts and the final
+// order-independent save validation. Independent workers write separate files.
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');process.chdir(path.resolve(__dirname,'..'));
+const groups={a:['stage-d','stage-d-repair','stage-d-visuals','stage-b','state-saves','saves'],b:['stage-c1-light-modules','stage-c1-recovery','stage-c2','stage-c2-prerequisites'],c:['campaign','stage-a-corrective','stage-ab-corrective','verify']},key=process.argv[2];if(!groups[key])throw Error('Unknown worker');
+const runs=[],hash=crypto.createHash('sha256').update(fs.readFileSync('js/game.js')).digest('hex');
+for(const id of groups[key]){const start=Date.now(),run=cp.spawnSync(process.execPath,['qa/'+id+'.cjs'],{encoding:'utf8',timeout:300000,maxBuffer:8e6,env:{...process.env,LAST_BASE_TEST_LANGUAGE:'ru'}}),name=id==='verify'?'verification':id;fs.writeFileSync('qa/results/'+name+'.log',run.stdout+'\n'+run.stderr);runs.push({id:name,exitCode:run.status??1,elapsedMs:Date.now()-start,error:run.error?.message});console.log(name,run.status);}
+const result={runtimeSha256:hash,reason:'Declared placement schema/UI expectations and final save validation',runs};fs.writeFileSync('qa/results/stage-d-followups-'+key+'.json',JSON.stringify(result,null,2)+'\n');if(runs.some(r=>r.exitCode!==0))process.exitCode=1;

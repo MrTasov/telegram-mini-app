@@ -4,7 +4,7 @@ window.GameRecovery=(()=>{
   let sequence=0;
   const protectedIds=new Set([BunkerLayout.core.id,BunkerLayout.up.id,BunkerLayout.down.id,...BunkerLayout.stairs.map(s=>s.id),...BunkerLayout.solids.map(s=>s.id),...GameEquipment.ids,'bunker','bunker_hatch']);
   function classify(id){
-    if(protectedIds.has(id))return {mode:'protected',reason:'critical_base_fixture'};
+    if(protectedIds.has(id)||GameEquipment.get(id))return {mode:'protected',reason:'critical_base_fixture'};
     const r=V018Build.record(id);return r?{mode:'recoverable',typeId:V018Build.definition(r).typeId,family:V018Build.definition(r).family}:null;
   }
   function status(id){const policy=classify(id);if(!policy)return null;const o=V018Build.record(id)?.object;return {...policy,...(o?{hp:o.hp,maxHp:o.maxHp,level:o.level}:{} )};}

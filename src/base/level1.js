@@ -4,9 +4,9 @@ window.BunkerState=(()=>{
   const layout=BunkerLayout,copy=v=>JSON.parse(JSON.stringify(v));
   let dormantMarkers=[];
   const oldSolids=solidObjects;
-  solidObjects=function(which){const list=oldSolids(which);return which==='bunker'?list.filter(o=>!layout.agricultureId(o.id)).concat(layout.solids).map(o=>GameFootprints.body(o.id)||o):list;};
+  solidObjects=function(which){const list=oldSolids(which);return which==='bunker'?list.filter(o=>!layout.agricultureId(o.id)&&GameEquipment.present(o.id)).concat(layout.solids).map(o=>GameFootprints.body(o.id)||o):list;};
   const oldObjects=interactionObjects;
-  interactionObjects=function(which=scene){const list=oldObjects(which);if(which!=='bunker')return list;return list.filter(o=>!layout.agricultureId(o.id)).map(o=>o.id==='exit'?{
+  interactionObjects=function(which=scene){const list=oldObjects(which);if(which!=='bunker')return list;return list.filter(o=>!layout.agricultureId(o.id)&&GameEquipment.present(o.id)).map(o=>o.id==='exit'?{
     ...o,...layout.stairs[0],id:o.id,kind:o.kind,r:undefined,pickBounds:layout.stairs[0]
   }:GameEquipment.get(o.id)&&GameEquipment.get(o.id).typeId!=='drone_station'?{...o,...GameFootprints.body(o.id),pickBounds:o.pickBounds||o}:o).concat(
     {...layout.core,...GameFootprints.body(layout.core.id),pickBounds:layout.core,name:I18n.t('bunker.core.name')},

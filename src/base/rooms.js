@@ -3,7 +3,7 @@ window.V011Rooms=(()=>{
   const patterns=new Map(),lidState=new Map();
   const palette={corridor:['#3b494c','#4b595c','#263539'],workshop:['#424b4c','#4b5455','#303a3c'],storage:['#454e4b','#4c5653','#333f3c'],room4:['#56635f','#606e69','#3c4d49'],room5:['#36464c','#405258','#25363e'],room6:['#615e51','#6d695b','#454b44'],room7:['#635d50','#6e6758','#47483f']};
   let frameAt=performance.now(),frameMs=16,phase=0,generatorPhase=0,furnacePhase=0,benchPhase=0;
-  const machines=GameEquipment.productionIds.filter(id=>['furnace','craft_bench'].includes(GameEquipment.recipeStation(id))),machinePhases=Object.fromEntries(machines.map(id=>[id,0]));
+  const machines=()=>GameEquipment.productionIds.filter(id=>GameEquipment.present(id)&&['furnace','craft_bench'].includes(GameEquipment.recipeStation(id))),machinePhases={};
   const art=(key,x,y,w,h)=>!!window.V011Art?.draw(key,x,y,w,h);
   const rect=(x,y,w,h,fill,stroke=null,r=4)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.4;ctx.stroke();}};
   const line=(x1,y1,x2,y2,color,width=1)=>{ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();};
@@ -36,7 +36,7 @@ window.V011Rooms=(()=>{
     ctx.strokeStyle='#0d1b1c3d';ctx.lineWidth=9;ctx.strokeRect(r.left+14,r.top+14,r.right-r.left-28,r.bottom-r.top-28);
     if(key==='corridor'){line(r.left+22,r.top,r.left+22,r.bottom,'#a4b8ae28',2);line(r.right-22,r.top,r.right-22,r.bottom,'#a4b8ae28',2);for(let y=r.top+100;y<r.bottom;y+=180){rect((r.left+r.right)/2-17,y,34,6,'#9cac9e2b',null,2);}}
     if(key==='room7'){ctx.fillStyle=tile('room4');const p=BunkerLayout.point('room7',900,95);ctx.fillRect(p.x,p.y,235,150);}
-    if(key==='workshop'){ctx.strokeStyle='#c8b37a55';ctx.lineWidth=2;ctx.setLineDash([10,7]);const f=GameEquipment.point('furnace',-12,-12),b=GameEquipment.point('craft_bench',-12,-12);ctx.strokeRect(f.x,f.y,154,219);ctx.strokeRect(b.x,b.y,284,197);ctx.setLineDash([]);}
+    // Placement footprints are shown only by the Construction preview.
     if(key==='storage'){for(const y of [r.top+96,r.bottom-96])line(r.left+35,y,r.right-35,y,'#aab2a22b',2);}
     ctx.restore();
   }
@@ -57,7 +57,7 @@ window.V011Rooms=(()=>{
     for(let i=5;i>=1;i--){const t=i/5;rect(x+sx*t+2,y+sy*t+2,Math.max(1,w-4),Math.max(1,h-4),on?'rgba(4,14,17,.035)':'rgba(4,14,17,.02)',null,Math.min(10,w/4,h/4));}
     rect(x+3,y+3,Math.max(1,w-6),Math.max(1,h-6),'rgba(3,12,14,.12)',null,Math.min(8,w/4,h/4));ctx.restore();
   }
-  function beginFrame(){const now=performance.now();frameMs=clamp(now-frameAt,0,60);frameAt=now;phase+=frameMs/1000;if(V09Power.running&&V09Power.fuel>0)generatorPhase+=frameMs/130;for(const id of machines)if(V09Craft.visualState(id).working)machinePhases[id]+=frameMs/(GameEquipment.recipeStation(id)==='furnace'?150:600);furnacePhase=machinePhases.furnace;benchPhase=machinePhases.craft_bench;}
+  function beginFrame(){const now=performance.now();frameMs=clamp(now-frameAt,0,60);frameAt=now;phase+=frameMs/1000;if(V09Power.running&&V09Power.fuel>0)generatorPhase+=frameMs/130;for(const id of machines())if(V09Craft.visualState(id).working)machinePhases[id]=(machinePhases[id]||0)+frameMs/(GameEquipment.recipeStation(id)==='furnace'?150:600);furnacePhase=machinePhases.furnace||0;benchPhase=machinePhases.craft_bench||0;}
   const oldBunker=drawBunker;drawBunker=function(){beginFrame();oldBunker();};
   function chest(id,p,ch){
     const target=activeStorage===id&&el('storageOverlay')?.classList.contains('open')?1:0,previous=lidState.get(id)||0,opening=clamp(previous+Math.sign(target-previous)*Math.min(Math.abs(target-previous),frameMs/420),0,1);lidState.set(id,opening);const e=opening*opening*(3-2*opening),x=p.x-40,y=p.y-28,w=80,h=56;
@@ -85,15 +85,16 @@ window.V011Rooms=(()=>{
     ctx.fillStyle='#6b7a72';ctx.beginPath();ctx.arc(0,0,r*.23,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#b0b9a777';ctx.lineWidth=1;ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();ctx.restore();
   }
   function imagePart(key,sx,sy,sw,sh,x,y,w,h){const im=window.V011Art?.image?.(key);if(!im||!window.V011Art.ready(key))return false;const iw=im.naturalWidth||im.width,ih=im.naturalHeight||im.height;ctx.drawImage(im,sx/340*iw,sy/510*ih,sw/340*iw,sh/510*ih,x,y,w,h);return true;}
+  function equipmentShadow(id,height){const b=GameFootprints.body(id),p=BunkerLayout.artPoint(b);shadow(p.x,p.y,b.w,b.h,height,b.room);}
   function workshop(){
-    ctx.save();for(const id of machines.filter(id=>GameEquipment.recipeStation(id)==='furnace')){const f=V09Craft.visualState(id),furnacePhase=machinePhases[id];GameEquipment.withArt(id,()=>{shadow(154,794,130,195,24,'workshop');
+    ctx.save();for(const id of machines().filter(id=>GameEquipment.recipeStation(id)==='furnace')){const f=V09Craft.visualState(id),furnacePhase=machinePhases[id]||0;equipmentShadow(id,24);GameEquipment.withArt(id,()=>{
     if(!art('furnace',154,794,130,195)){const g=ctx.createLinearGradient(154,794,284,989);g.addColorStop(0,'#78877d');g.addColorStop(.5,'#3e5455');g.addColorStop(1,'#233943');rect(154,794,130,195,g,'#9caba0',9);rect(185,806,69,24,'#142a2e','#748e84',3);rect(181,929,76,35,'#193137','#81968d',3);}
     // Cover the artwork's hot aperture so an idle furnace never contains painted fire.
     const cx=219,cy=878,r=24;const fire=ctx.createRadialGradient(cx,cy+4,1,cx,cy,r);fire.addColorStop(0,f.working?'#ffecc1':'#293735');fire.addColorStop(.5,f.working?'#ed943a':'#1d2e2d');fire.addColorStop(1,f.working?'#793d22':'#111f24');ctx.fillStyle=fire;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
     if(f.working){ctx.globalAlpha=.3+.15*Math.sin(furnacePhase);ctx.fillStyle='#ffedb4';ctx.beginPath();ctx.ellipse(cx+Math.sin(furnacePhase)*4,cy+4,13,8,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;}
     // Motor-driven extraction fan occupies the vent already present in the sprite.
     rect(197,805,44,26,'#16292c',null,2);fan(219,818,11,furnacePhase*2,f.working);for(let i=0;i<5;i++)line(198,809+i*4,240,809+i*4,'#87958c66',.7);rect(235,939,3,9,f.working?'#a6d78b':f.powered?'#648b67':'#354b43',null,1);
-    });}for(const id of machines.filter(id=>GameEquipment.recipeStation(id)==='craft_bench')){const b=V09Craft.visualState(id),benchPhase=machinePhases[id];GameEquipment.withArt(id,()=>{shadow(163,1085,248,126,12,'workshop');
+    });}for(const id of machines().filter(id=>GameEquipment.recipeStation(id)==='craft_bench')){const b=V09Craft.visualState(id),benchPhase=machinePhases[id]||0;equipmentShadow(id,12);GameEquipment.withArt(id,()=>{
     if(!art('workbench',157,1061,260,173)){rect(157,1061,260,173,'#5a706f','#9eaca1',8);rect(200,1120,120,62,'#2a4043','#788f87',3);}
     // Horizontal rail follows the new mostly-overhead artwork. Motor phase freezes
     // on pause or power loss, so the mechanism only travels while crafting.
@@ -106,7 +107,7 @@ window.V011Rooms=(()=>{
     rect(armX+7,1126,11,18,metal,'#7e928e',2);for(let k=0;k<4;k++)line(armX+8,1130+k*3,armX+17,1130+k*3,'#304a4e',1);
     rect(armX+11,1142,3,8,'#c3cfbf',null,1);rect(armX+5,1101,15,3,b.working?'#71dbd5':'#345f67',null,1);
     if(b.working){ctx.globalAlpha=.35+.2*Math.sin(benchPhase*3);rect(armX+9,1150,7,2,'#a6eee8',null,1);ctx.globalAlpha=1;}
-    });}ctx.fillStyle='#d9e3d4';ctx.font='10px Arial';ctx.textAlign='center';for(const id of machines)GameEquipment.withArt(id,()=>{if(GameEquipment.recipeStation(id)==='furnace')ctx.fillText(I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ'),219,1008);else ctx.fillText(I18n.text('ЭЛЕКТРОСТАНОК'),287,1250);});ctx.restore();
+    });}ctx.fillStyle='#d9e3d4';ctx.font='10px Arial';ctx.textAlign='center';for(const id of machines())GameEquipment.withArt(id,()=>{if(GameEquipment.recipeStation(id)==='furnace')ctx.fillText(I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ'),219,1008);else ctx.fillText(I18n.text('ЭЛЕКТРОСТАНОК'),287,1250);});ctx.restore();
   }
   function energy(){
     ctx.save();const running=V09Power.running&&V09Power.fuel>0;GameEquipment.withArt('tank',()=>shadow(887,316,123,181,24,'room5'));GameEquipment.withArt('generator',()=>shadow(1052,315,130,195,23,'room5'));GameEquipment.withArt('battery',()=>shadow(1237,302,101,212,20,'room5'));

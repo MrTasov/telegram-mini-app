@@ -15,7 +15,7 @@ window.GameEquipmentRuntime=(()=>{
   }
   function power(instanceId){const r=GameEquipment.get(instanceId);return r?.refs.device?Object.freeze({instanceId,id:r.refs.device,get device(){return V09Power.devices[r.refs.device];},get powered(){return devicePowered(r.refs.device);}}):null;}
   function access(actor,instance){
-    if(actor.dead||actor.scene!==instance.transform.scene||!BunkerLayout.roomActive(instance.transform.room))return false;
+    if(!GameEquipment.present(instance.id)||actor.dead||actor.scene!==instance.transform.scene||!BunkerLayout.roomActive(instance.transform.room))return false;
     const p=actor.entity,target={...GameFootprints.body(instance.id),range:GameEquipment.definition(instance.id).range};
     const contact=contactPoint(target,p.x,p.y);
     return distance(p.x,p.y,contact.x,contact.y)<=target.range&&lineClear(p.x,p.y,contact.x,contact.y,0,actor.scene,instance.id);
@@ -46,7 +46,7 @@ window.GameEquipmentRuntime=(()=>{
     const result=execute({instanceId,actorId:GameActors.localId,action,payload,expectedRevision:commands.revision,requestId:'equipment-ui:'+commands.revision+':'+(++sequence)});
     if(!result.ok&&result.reason==='out_of_reach')message('Подойдите ближе или нажмите на объект');return result;
   }
-  function fresh(){return {schema:1,instances:GameEquipment.capture(),commands:{revision:0,receipts:[]}};}
+  function fresh(){return {schema:1,instances:JSON.parse(JSON.stringify(EquipmentInstances.defaults)),commands:{revision:0,receipts:[]}};}
   function migrate(d){
     if(d.equipment032)return;
     d.equipment032=fresh();
@@ -56,13 +56,13 @@ window.GameEquipmentRuntime=(()=>{
   }
   function migrateLayout(d){
     if(!d.equipment032)return;
-    const previous=GameEquipment.capture();
+    const previous=JSON.parse(JSON.stringify(EquipmentInstances.defaults));
     for(const r of previous)if(r.transform.room==='workshop')r.transform.y+=1000;
-    EquipmentInstances.createRegistry(previous).validate(d.equipment032.instances);
+    EquipmentInstances.createRegistry(previous).validate(d.equipment032.instances,true);
     for(const r of d.equipment032.instances)if(r.transform.room==='workshop')r.transform.y-=1000;
   }
   function validate(data){
-    const e=data.equipment032;if(!e||e.schema!==1||Object.keys(e).sort().join()!=='commands,instances,schema')throw Error('Missing equipment state');
+    const e=data.equipment032;if(!e||e.schema!==2||Object.keys(e).sort().join()!=='commands,instances,schema')throw Error('Missing equipment state');
     GameEquipment.validate(e.instances);commands.validate(e.commands);
     for(const r of e.instances){const refs=r.refs;
       if(refs.device&&!Object.hasOwn(data.v09.power.deviceEnabled,refs.device))throw Error('Missing equipment power reference');
@@ -73,10 +73,10 @@ window.GameEquipmentRuntime=(()=>{
       if(refs.container?.startsWith('storage:')&&!data.storage[Number(refs.container.slice(8))])throw Error('Missing equipment storage reference');
     }return true;
   }
-  const capture=()=>({schema:1,instances:GameEquipment.capture(),commands:commands.capture()});
+  const capture=()=>({schema:2,instances:GameEquipment.capture(),commands:commands.capture()});
   GameSave.extend('capture','equipment.instances',function(previous){const d=previous();d.equipment032=capture();return d;});
   GameSave.extend('decode','equipment.instances',function(previous,raw){const d=previous(raw);validate(d);return d;});
-  GameSave.extend('restore','equipment.instances',function(previous,d){validate(d);const result=previous(d);commands.restore(d.equipment032.commands);return result;});
+  GameSave.extend('restore','equipment.instances',function(previous,d){validate(d);GameEquipment.restore(d.equipment032.instances);V09Craft.syncInstances();const result=previous(d);invalidateGeometry();commands.restore(d.equipment032.commands);return result;});
   GameState.register('equipment',{capture,instances:GameEquipment,job,container,power},{source:'equipment/runtime.js',saved:['equipment032'],transient:['local request sequence','adapter views']});
   return Object.freeze({job,container,power,access,execute,request,capture,migrate,migrateLayout,validate,get revision(){return commands.revision;}});
 })();

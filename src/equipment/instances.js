@@ -1,4 +1,4 @@
-/* Stage B: fixed equipment, not a placement system. Existing spellings remain
+/* Stage B identity extended by Stage D placement. Existing spellings remain
    stable instance IDs; recipe/presentation capabilities belong to typeId.
    The registry owns identity and transforms ONLY. Jobs, items and energy retain
    their historical owners and are referenced, never copied into this table. */
@@ -27,35 +27,61 @@ const EquipmentInstances=(()=>{
     if(typeId==='reserve_battery')refs.energy='v010.energy.battery';
     return {id,typeId,transform:{x:f.x,y:f.y,rotation:0,scene:'bunker',room:f.room},refs};
   }));
+  const placement=freeze({
+    furnace:{limit:2,cost:{iron:20,parts:6,concrete:8},rooms:['workshop','reserve_l1']},
+    craft_bench:{limit:2,cost:{iron:16,wood:12,parts:4},rooms:['workshop','reserve_l1']}
+  });
+  const turns=Object.freeze([0,Math.PI/2,Math.PI,Math.PI*1.5]);
+  function aabb(t,b){
+    const c=Math.round(Math.cos(t.rotation)),s=Math.round(Math.sin(t.rotation));
+    const points=[[b.x,b.y],[b.x+b.w,b.y],[b.x,b.y+b.h],[b.x+b.w,b.y+b.h]].map(([x,y])=>({x:t.x+x*c-y*s,y:t.y+x*s+y*c}));
+    const x=Math.min(...points.map(p=>p.x)),y=Math.min(...points.map(p=>p.y));return {x,y,w:Math.max(...points.map(p=>p.x))-x,h:Math.max(...points.map(p=>p.y))-y};
+  }
+  const equalFields=(a,b)=>!!a&&!!b&&Object.keys(a).sort().join()===Object.keys(b).sort().join()&&Object.keys(b).every(k=>a[k]===b[k]);
   function createRegistry(records){
-    // A world factory also supports isolated test worlds. The live registry has
-    // no add/remove/move API and accepts only its fixed authored transforms.
-    const expected=copy(records),index=new Map(),bounds=new Map();
-    for(const source of expected){
-      const def=definitions[source.typeId],t=source.transform;
-      if(!def||!/^\w[\w:-]{0,79}$/.test(source.id)||index.has(source.id)||!t||![t.x,t.y].every(Number.isFinite)||t.rotation!==0||t.scene!=='bunker'||!BunkerLayout.authoredRooms[t.room]&&!BunkerLayout.rooms[t.room])throw Error('Invalid equipment instance');
-      const r=freeze(copy(source));index.set(r.id,r);bounds.set(r.id,Object.freeze({id:r.id,x:t.x,y:t.y,...def.footprint,room:t.room}));
-    }
-    const ids=Object.freeze([...index.keys()]),productionIds=Object.freeze(ids.filter(id=>definitions[index.get(id).typeId].recipeStation));
-    for(const role of ['job','queue','output','refund','container','device']){const refs=ids.map(id=>index.get(id).refs[role]).filter(v=>v!==undefined);if(refs.some(v=>typeof v!=='string'||!v)||new Set(refs).size!==refs.length)throw Error('Duplicate equipment '+role+' reference');}
-    function fixture(id){
-      if(id==='robots014_dock_body'){const r=index.get('robots014_dock');if(!r)return undefined;const b=definitions[r.typeId].body;return {id,x:r.transform.x+b.x,y:r.transform.y+b.y,w:b.w,h:b.h,room:r.transform.room};}
-      return bounds.get(id);
-    }
-    function point(id,x,y){const t=index.get(id)?.transform;if(!t)return null;const c=Math.cos(t.rotation),s=Math.sin(t.rotation);return {x:t.x+x*c-y*s,y:t.y+x*s+y*c};}
-    function center(id){const def=definitions[index.get(id)?.typeId];return def?point(id,def.footprint.w/2,def.footprint.h/2):null;}
-    function withArt(id,fn){const r=index.get(id),authored=BunkerLayout.authored(id)||BunkerLayout.authored(definitions[r?.typeId]?.recipeStation);if(!r||!authored)throw Error('Unknown equipment art');const p=BunkerLayout.artPoint(r.transform);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(r.transform.rotation);ctx.translate(-authored.x,-authored.y);try{return fn();}finally{ctx.restore();}}
-    function validate(records){
-      if(!Array.isArray(records)||records.length!==ids.length||new Set(records.map(r=>r?.id)).size!==ids.length)throw Error('Invalid equipment IDs');
-      // First establish identities; then validate transforms and owner links.
-      const incoming=new Map(records.map(r=>[r.id,r]));
-      for(const id of ids){const got=incoming.get(id),want=index.get(id);if(!got||got.typeId!==want.typeId||Object.keys(got).sort().join()!=='id,refs,transform,typeId')throw Error('Invalid equipment type');
-        for(const field of ['transform','refs']){const a=got[field],b=want[field];if(!a||Object.keys(a).sort().join()!==Object.keys(b).sort().join()||Object.keys(b).some(k=>a[k]!==b[k]))throw Error('Invalid equipment '+field);}}
+    const seeds=copy(records),seedIndex=new Map(seeds.map(r=>[r.id,r]));let index=new Map(),validation=null,epoch=0;
+    const productionRefs=id=>({job:id,queue:id,output:id,refund:id,device:id});
+    function validate(list,legacy=false){
+      if(!Array.isArray(list)||list.length<seeds.length||list.length>seeds.length+2||new Set(list.map(r=>r?.id)).size!==list.length)throw Error('Invalid equipment IDs');
+      const incoming=new Map(list.map(r=>[r?.id,r]));
+      if(seeds.some(r=>!incoming.has(r.id)))throw Error('Missing authored equipment');
+      for(const r of list){
+        const seed=seedIndex.get(r.id),def=definitions[r.typeId],rule=placement[r.typeId],t=r.transform;
+        if(!def||!/^\w[\w:-]{0,79}$/.test(r.id)||!r.refs||!t||![t.x,t.y].every(Number.isFinite)||Math.abs(t.x)>10000||Math.abs(t.y)>10000||!turns.includes(t.rotation)||t.scene!=='bunker'||Object.keys(t).sort().join()!=='room,rotation,scene,x,y')throw Error('Invalid equipment transform');
+        if(legacy){if(!seed||Object.keys(r).sort().join()!=='id,refs,transform,typeId'||r.typeId!==seed.typeId||!equalFields(r.transform,seed.transform)||!equalFields(r.refs,seed.refs))throw Error('Invalid legacy equipment');continue;}
+        if(Object.keys(r).sort().join()!=='id,placement,refs,transform,typeId'||!['installed','packed'].includes(r.placement))throw Error('Invalid equipment presence');
+        const refs=seed?.refs||productionRefs(r.id);
+        if(seed?r.typeId!==seed.typeId:!rule||r.id!=='build:'+r.typeId+':1')throw Error('Invalid equipment type');
+        if(Object.keys(refs).sort().join()!==Object.keys(r.refs).sort().join()||Object.keys(refs).some(k=>r.refs[k]!==refs[k]))throw Error('Invalid equipment references');
+        if(!rule){if(!seed||!equalFields(t,seed.transform)||r.placement!=='installed')throw Error('Protected equipment');}
+        else if(!rule.rooms.includes(t.room))throw Error('Invalid placement room');
+      }
+      if(!legacy)for(const [type,rule]of Object.entries(placement))if(list.filter(r=>r.typeId===type).length>Math.max(rule.limit,seeds.filter(r=>r.typeId===type).length))throw Error('Equipment limit');
+      for(const role of ['job','queue','output','refund','container','device']){const refs=list.map(r=>r.refs[role]).filter(v=>v!==undefined);if(refs.some(v=>typeof v!=='string'||!v)||new Set(refs).size!==refs.length)throw Error('Duplicate equipment '+role+' reference');}
       return true;
     }
-    return Object.freeze({ids,productionIds,definitions,get:id=>index.get(id),fixture,point,center,withArt,definition:id=>definitions[index.get(id)?.typeId],recipeStation:id=>definitions[index.get(id)?.typeId]?.recipeStation,capture:()=>copy(expected),validate});
+    function restore(list){validate(list);index=new Map(list.map(r=>[r.id,freeze(copy(r))]));epoch++;}
+    restore(records.map(r=>({...r,placement:r.placement||'installed'})));
+    const ids=()=>[...index.keys()],productionIds=()=>ids().filter(id=>definitions[index.get(id).typeId].recipeStation);
+    function fixture(id){
+      if(id==='robots014_dock_body'){const r=index.get('robots014_dock');if(!r)return undefined;return {id,...aabb(r.transform,definitions[r.typeId].body),room:r.transform.room};}
+      const r=index.get(id);if(!r)return undefined;return {id,...aabb(r.transform,{x:0,y:0,...definitions[r.typeId].footprint}),room:r.transform.room};
+    }
+    function point(id,x,y){const t=index.get(id)?.transform;if(!t)return null;const c=Math.round(Math.cos(t.rotation)),s=Math.round(Math.sin(t.rotation));return {x:t.x+x*c-y*s,y:t.y+x*s+y*c};}
+    function center(id){const def=definitions[index.get(id)?.typeId];return def?point(id,def.footprint.w/2,def.footprint.h/2):null;}
+    function withArt(id,fn){const r=index.get(id),authored=BunkerLayout.authored(id)||BunkerLayout.authored(definitions[r?.typeId]?.recipeStation);if(!r||!authored)throw Error('Unknown equipment art');if(r.placement==='packed')return;const p=BunkerLayout.artPoint(r.transform);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(r.transform.rotation);ctx.translate(-authored.x,-authored.y);try{return fn();}finally{ctx.restore();}}
+    const capture=()=>copy([...index.values()]);
+    function change(record){const next=capture(),i=next.findIndex(r=>r.id===record.id);if(i<0)next.push(record);else next[i]=record;restore(next);}
+    function withValidation(list,fn){validate(list);const was=validation;validation=new Map(list.map(r=>[r.id,r]));try{return fn();}finally{validation=was;}}
+    return Object.freeze({get:id=>index.get(id),definition:id=>definitions[index.get(id)?.typeId],recipeStation:id=>definitions[index.get(id)?.typeId]?.recipeStation,
+      get ids(){return ids();},get productionIds(){return productionIds();},get epoch(){return epoch;},
+      present:id=>!index.has(id)||index.get(id).placement==='installed',fixture,point,center,withArt,capture,validate,restore,change,withValidation,
+      get validationRecords(){return [...(validation||index).values()];},get validationProductionIds(){return [...(validation||index).values()].filter(r=>definitions[r.typeId].recipeStation).map(r=>r.id);},
+      validationType:id=>definitions[(validation||index).get(id)?.typeId]?.recipeStation,
+      create(typeId,transform){const id='build:'+typeId+':1';return {id,typeId,transform:copy(transform),refs:productionRefs(id),placement:'installed'};}
+    });
   }
-  return Object.freeze({definitions,defaults,createRegistry});
+  return Object.freeze({definitions,defaults,placement,turns,aabb,createRegistry});
 })();
 const GameEquipment=EquipmentInstances.createRegistry(EquipmentInstances.defaults);
 window.GameEquipment=GameEquipment;

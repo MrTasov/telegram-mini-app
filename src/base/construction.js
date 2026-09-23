@@ -65,14 +65,14 @@ window.V018Build=(()=>{
     if(job.actorId!==GameActors.localId||!GameActors.get(job.actorId)){stop();return;}
     if(!held()||!near(r)||scene!==job.scene||movePower>JOY_DEAD||navigation||Math.hypot(player.x-job.x,player.y-job.y)>.8){stop();return;}
     if(document.hidden)return;
-    if(r.object.hp>=r.object.maxHp){stop('Ремонт завершён');return;}
+    if(r.object.hp>=r.object.maxHp){window.GameChapterOne?.confirmRepair(r.id);stop('Ремонт завершён');return;}
     if(!r.object.hp&&occupied(r)){stop('Проход занят · ремонт остановлен');return;}
     const p=contactPoint(r.object,player.x,player.y),dx=p.x-player.x,dy=p.y-player.y,n=Math.hypot(dx,dy)||1;player.aimX=dx/n;player.aimY=dy/n;
     const repair=definition(r).repair;job.ms+=Math.max(0,Math.min(repair.maxTickMs,Number(ms)||0))*repair.hpPerMs;let amount=Math.floor(job.ms);job.ms-=amount;
     while(amount>0&&job){
       if(credit===0){if(!consume({[repair.material]:1})){stop('Бетон закончился · выполненный ремонт сохранён');break;}credit=repair.hpPerUnit;}
       const o=r.object,wasBroken=o.hp===0,n=health.restoreHP(o,Math.min(amount,credit));credit-=n;amount-=n;changed(r,wasBroken);
-      if(o.hp>=o.maxHp){stop('Ремонт завершён');break;}
+      if(o.hp>=o.maxHp){window.GameChapterOne?.confirmRepair(r.id);window.GameCampaign?.refresh(true);stop('Ремонт завершён');break;}
     }
   }
   function upgrade(value,actorId=GameActors.localId){

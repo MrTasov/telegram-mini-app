@@ -7,7 +7,7 @@ const V09Power = {
   allocation(){
     let demand=0,load=0;const served=new Set();
     for(const d of Object.values(this.devices)){
-      const wanted=BunkerLayout.roomActive(d.room)&&d.enabled&&this.roomEnabled[d.room];
+      const wanted=(!d.present||d.present())&&BunkerLayout.roomActive(d.room)&&d.enabled&&this.roomEnabled[d.room];
       const active=wanted&&!!d.active();
       if(active)demand+=d.watts;
       if(!wanted||!this.running||this.fuel<=0)continue;
@@ -23,7 +23,7 @@ const V09Power = {
     for(const key of ['roomEnabled','deviceEnabled']){
       if(!data[key]||typeof data[key]!=='object'||Array.isArray(data[key]))throw new Error('Неверное сохранение выключателей');
       if(Object.values(data[key]).some(v=>typeof v!=='boolean'))throw new Error('Неверное состояние выключателя');
-      const expected=Object.keys(key==='roomEnabled'?this.rooms:this.devices);
+      const expected=key==='roomEnabled'?Object.keys(this.rooms):equipmentPowerKeys();
       if(Object.keys(data[key]).length!==expected.length||expected.some(id=>!Object.hasOwn(data[key],id)))throw new Error('Неполное сохранение электрических контуров');
     }
     if(!Array.isArray(data.doors)||data.doors.length!==v09Doors.length||new Set(data.doors.map(d=>d?.id)).size!==v09Doors.length||data.doors.some(d=>!d||!v09Doors.some(door=>door.id===d.id)||!Number.isFinite(d.open)||d.open<0||d.open>1||!Number.isFinite(d.away)||d.away<0||d.away>4||typeof d.manual!=='boolean'))throw new Error('Неверное сохранение дверей');
@@ -44,11 +44,12 @@ function registerPowerDevice(id,room,watts,isActiveCallback=()=>true,label){
   const names={furnace:'Плавильная печь',craft_bench:'Станок для крафта',feed_craft:'Кормодробилка'};
   return V09Power.devices[id]={id,room,watts,active:isActiveCallback,enabled:previous?previous.enabled:true,name:label||names[id]||id};
 }
+function equipmentPowerKeys(){return [...new Set([...Object.keys(V09Power.devices).filter(id=>!GameEquipment.get(id)?.refs.device),...GameEquipment.validationRecords.map(r=>r.refs.device).filter(Boolean)])];}
 function devicePowered(id){return !!V09Power.devices[id]&&V09Power.allocation().served.has(id);}
 function registerEquipmentPowerDevice(instanceId,active){
   const instance=GameEquipment.get(instanceId),def=GameEquipment.definition(instanceId);
   if(!instance?.refs.device||!Number.isFinite(def.powerKW))throw Error('Equipment has no power adapter');
-  return registerPowerDevice(instance.refs.device,instance.transform.room,def.powerKW,active,def.name);
+  const device=registerPowerDevice(instance.refs.device,instance.transform.room,def.powerKW,active,def.name);device.present=()=>GameEquipment.present(instanceId);return device;
 }
 V09Power.powered=devicePowered;
 function v09PowerChanged(){V09Power.allocation();queueGameSave();v09RefreshPowerUI();}

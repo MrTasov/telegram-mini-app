@@ -125,7 +125,7 @@ window.V016Lighting=(()=>{
     roomMasks.set(key,v);return v;
   }
   function bunkerMask(c,served){c.fillStyle='rgba(2,5,12,.63)';const view=V010Camera.view();c.fillRect(camera.x,camera.y,view.w,view.h);for(const room of Object.keys(V09Power.rooms)){const r=bunker[room];if(!BunkerLayout.roomActive(room)||!r||!visibleOnScreen((r.left+r.right)/2,(r.top+r.bottom)/2,Math.hypot(r.right-r.left,r.bottom-r.top)/2))continue;c.clearRect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.drawImage(roomMask(room,r,served.has('light_'+room)),r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);}
-    if(V09Craft.visualState('furnace').working){c.save();const r=bunker.workshop,p=BunkerLayout.point('workshop',49,708);c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.globalCompositeOperation='destination-out';c.globalAlpha=.9;c.drawImage(sprite('white'),p.x,p.y,340,340);c.restore();}}
+    for(const id of GameEquipment.productionIds)if(GameEquipment.present(id)&&GameEquipment.recipeStation(id)==='furnace'&&V09Craft.visualState(id).working){c.save();const r=bunker[GameEquipment.get(id).transform.room],center=GameEquipment.point(id,65,84),p={x:center.x-170,y:center.y-170};c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.globalCompositeOperation='destination-out';c.globalAlpha=.9;c.drawImage(sprite('white'),p.x,p.y,340,340);c.restore();}}
   function doorLeaks(served=supplied()){
     if(scene!=='bunker')return [];const hall=served.has('light_corridor'),out=[];
     for(const d of v09Doors){const open=window.V018Build?.isBroken(d.id)?1:d.open;if(!BunkerLayout.roomActive(d.room)||open<=.001)continue;const lit=served.has('light_'+d.room);if(lit===hall)continue;

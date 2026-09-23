@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>0.34.0 · Survival Base</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<link rel="stylesheet" href="styles/base.css?v=0.34.0">
+<link rel="stylesheet" href="styles/main-menu.css?v=0.34.0">
+<link rel="stylesheet" href="styles/hud.css?v=0.34.0-stage-b">
+</head>
+
+<body class="main-menu-active">
+
+<div id="versionBadge">VERSION 0.34.0</div>
+
+<div id="game">
+<!-- The menu and Settings must share this stacking context. -->
+<main id="mainMenu" aria-label="LAST BASE">
+  <div id="mainMenuMedia" aria-hidden="true"><picture>
+    <source media="(orientation: portrait)" srcset="assets/images/menu/background-portrait.png">
+    <img src="assets/images/menu/background-landscape.png" alt="" decoding="async" fetchpriority="high">
+  </picture></div>
+  <div class="mainMenuTone" aria-hidden="true"></div><div class="mainMenuMist" aria-hidden="true"></div>
+  <nav id="mainMenuButtons" aria-label="Main menu">
+    <button id="menuContinue" type="button" disabled>CONTINUE</button>
+    <button id="menuNew" type="button" disabled>NEW GAME</button>
+    <button id="menuLoad" type="button" disabled>LOAD GAME</button>
+    <button id="menuSettings" type="button" disabled>SETTINGS</button>
+    <button id="menuExit" type="button" disabled>EXIT</button>
+  </nav>
+  <section id="mainMenuPanel" role="region" aria-labelledby="mainMenuTitle" hidden>
+    <h1 id="mainMenuTitle"></h1><p id="mainMenuDescription"></p><div id="mainMenuSlots"></div>
+    <div id="mainMenuConfirm" hidden><p id="mainMenuConfirmText"></p><button id="mainMenuReplace" type="button"></button><button id="mainMenuCancel" type="button"></button></div>
+    <button id="mainMenuBack" type="button"></button>
+  </section>
+  <p id="mainMenuStatus" role="status" aria-live="polite"></p>
+  <small id="mainMenuVersion">0.34.0</small>
+</main>
+
+<canvas id="canvas"></canvas>
+
+<div id="hud">
+  <div id="v016WorldClock"><span id="hudDayLabel">DAY</span><span id="hudDay">1</span><span id="hudTime">08:00</span></div>
+  <div id="hudPerformance" hidden><span id="hudFPSLabel">FPS</span><span id="hudFPS">—</span><span id="hudFrameTime">—</span><span id="hudFrameUnit">ms</span></div>
+
+  <div class="hudBox">
+    <span id="healthText">❤️ 100/100</span>
+    &nbsp; 🍖 100
+  </div>
+</div>
+
+<!-- Compatibility label for existing scene notifications; never part of the HUD. -->
+<span id="locationName" hidden aria-hidden="true"></span>
+
+<button id="settingsButton">⚙</button>
+
+<div id="moveControl" class="gameControl joystick floatingJoystick hiddenJoystick">
+  <div class="joystickBase"></div>
+  <div id="moveStick" class="joystickStick">●</div>
+</div>
+
+<div id="aimControl" class="gameControl joystick floatingJoystick hiddenJoystick">
+  <div class="joystickBase"></div>
+  <div id="aimStick" class="joystickStick">●</div>
+</div>
+
+<button id="actionButton" class="gameControl controlButton inactive">✋</button>
+
+<div id="damageFlash"></div>
+<div id="message"></div>
+<div id="fade">ПОДЗЕМНАЯ БАЗА</div>
+
+
+<div id="farmOverlay" class="overlay">
+  <div class="panel" style="max-width:420px;max-height:82vh;overflow-y:auto">
+    <h2 id="farmTitle">🌱 Посадка</h2>
+    <div class="subtitle">Выбери, что посадить</div>
+    <button class="menuButton farmCropBtn" data-crop="0">🥔 Картофель</button>
+    <button class="menuButton farmCropBtn" data-crop="1">🥕 Морковь</button>
+    <button class="menuButton farmCropBtn" data-crop="2">🍅 Помидоры</button>
+    <button class="menuButton farmCropBtn" data-crop="3">🌽 Кукуруза</button>
+    <button class="menuButton farmCropBtn" data-crop="4">🌾 Зерно</button>
+    <button class="menuButton farmCropBtn" data-crop="5">🫘 Фасоль</button>
+    <button class="menuButton farmCropBtn" data-crop="6">🧅 Лук</button>
+    <button class="menuButton farmCropBtn" data-crop="7">🍓 Ягоды</button>
+    <button class="menuButton farmCropBtn" data-crop="8">🌿 Лекарственные растения</button>
+    <button class="menuButton farmCropBtn" data-crop="9">🌻 Техническая культура</button>
+    <button id="farmClose" class="menuButton">Закрыть</button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+
+<div id="settingsOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>⚙️ Настройки</h2>
+    <div class="subtitle">LAST BASE 0.34.0</div><div class="subtitle" style="margin-top:10px">Нажмите на свободное место — персонаж пойдёт туда. Удерживайте палец или кнопку мыши и перемещайте указатель — персонаж будет следовать за ним. После отпускания он дойдёт до последней точки. Нажмите на объект — подойдёт и выполнит действие. Джойстики включаются только при касании круга или рядом с ним. Левый джойстик отменяет подход. Правый направляет оружие или фонарик. Нажмите на дерево или руду — инструмент выберется автоматически. Нажмите на зомби, чтобы зафиксировать цель.</div>
+
+    <div class="settingBox">
+      <div id="saveStatus" role="status" style="font-size:12px;line-height:1.4">Автосохранение</div>
+      <button id="saveGameButton" class="menuButton">💾 Сохранить игру</button>
+      <div class="subtitle" style="margin:0">Прогресс хранится на этом устройстве. Урожай растёт и после закрытия игры.</div>
+    </div>
+
+    <button id="openControlSettings" class="menuButton">
+      🎮 Настройка управления
+    </button>
+
+    <button id="fullscreenButton" class="menuButton">
+      ⛶ Полноэкранный режим
+    </button>
+
+    <div class="settingBox">
+      <div class="settingTitle">
+        <span>🔊 Звук</span>
+        <span id="soundValue">70%</span>
+      </div>
+
+      <input id="soundVolume" type="range" min="0" max="100" value="70">
+    </div>
+
+    <button id="closeSettings" class="menuButton">
+      Закрыть
+    </button>
+
+  </div>
+</div>
+
+<!-- CONTROL EDITOR -->
+
+<div id="controlOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>🎮 Управление</h2>
+
+    <div class="subtitle">
+      Перетащи элементы туда, где тебе удобно.
+    </div>
+
+    <div class="orientationTabs">
+
+      <button id="portraitTab" class="orientationTab active">
+        📱 Вертикально
+      </button>
+
+      <button id="landscapeTab" class="orientationTab">
+        ↔ Горизонтально
+      </button>
+
+    </div>
+
+    <div class="editorWrap">
+
+      <div id="editorStage" class="portrait">
+
+        <div id="previewMove" class="preview joy">●</div>
+        <div id="previewAim" class="preview joy">●</div>
+        <div id="previewAction" class="preview btn">✋</div>
+
+      </div>
+
+    </div>
+
+    <button id="saveControls" class="menuButton primary">
+      Сохранить
+    </button>
+
+    <button id="resetControls" class="menuButton">
+      ↺ Сбросить раскладку
+    </button>
+
+    <button id="backControls" class="menuButton">
+      Назад
+    </button>
+
+  </div>
+</div>
+
+<!-- WORKSHOP -->
+
+<div id="workshopOverlay" class="overlay">
+  <div class="panel">
+
+    <h2>🔧 Мастерская</h2>
+
+    <div class="subtitle">
+      Тест мастерской.
+    </div>
+
+    <div class="workshopItem">🔫 Оружие</div>
+    <div class="workshopItem">📦 Патроны</div>
+    <div class="workshopItem">🛡 Оборона</div>
+    <div class="workshopItem">🔩 Детали</div>
+
+    <button id="closeWorkshop" class="menuButton">
+      Закрыть
+    </button>
+
+  </div>
+</div>
+
+
+<button id="bagButton" aria-label="Рюкзак">🎒</button>
+<div id="heldItemName" hidden><span id="equippedItemName">—</span><span id="ammoHud" hidden>—</span><span id="hudReserve" hidden>—</span></div><div id="hotbar" aria-label="Предметы в руках"></div>
+<div id="searchBarWrap"><div id="searchBarFill"></div></div>
+
+<div id="inventoryOverlay" class="overlay"><div class="panel">
+  <h2>👤 Персонаж</h2>
+  <div class="subtitle">ЭКИПИРОВКА · ИНВЕНТАРЬ</div>
+
+  <div class="characterInventory">
+    <div id="equipmentSlots" class="equipColumn"></div>
+    <div class="characterCard">
+      <div class="characterFigure">🧍</div>
+      <div id="characterStats" class="characterStats"></div>
+    </div>
+  </div>
+
+  <div class="sectionTitle">🔫 Быстрые слоты</div>
+  <div id="quickSlots" class="quickSlots"></div><div class="subtitle">Установленный фонарь: кнопка 🔦 или F. Модуль изготавливается на верстаке и устанавливается в головное снаряжение.</div>
+
+  <div id="bagCapacityText" class="sectionTitle">🎒 Рюкзак</div>
+  <div id="inventoryGrid" class="inventoryGrid"></div>
+  <div class="subtitle">Листайте пальцем по ячейкам. Для переноса удерживайте вещь и перетащите.</div>
+  <button id="closeInventory" class="menuButton">Закрыть</button>
+</div></div>
+
+<div id="chestSettingsOverlay" class="overlay"><div class="panel">
+  <h2>⚙️ Настройки ящика</h2>
+  <div class="subtitle">Выбери значок, чтобы сразу понимать, что ты здесь хранишь.</div>
+  <div id="chestIconChoices" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0"></div>
+  <input id="chestNameInput" maxlength="18" placeholder="Название ящика"
+    style="width:100%;box-sizing:border-box;padding:11px;border-radius:9px;border:1px solid #666;background:#222;color:#fff;margin-bottom:10px">
+  <button id="saveChestSettings" class="menuButton primary">Сохранить</button>
+  <button id="closeChestSettings" class="menuButton">Отмена</button>
+</div></div>
+
+<div id="lootOverlay" class="overlay"><div class="panel">
+  <h2 id="lootTitle">🔎 Найдено</h2>
+  <div id="lootList"></div>
+  <button id="takeAllLoot" class="menuButton primary">Забрать всё</button>
+  <button id="closeLoot" class="menuButton">Закрыть</button>
+</div></div>
+
+<div id="storageOverlay" class="overlay"><div class="panel">
+  <h2 id="storageTitle">📦 Склад</h2>
+  <div class="subtitle">РЮКЗАК ↔ ХРАНИЛИЩЕ</div>
+  <div style="display:flex;gap:8px;margin:10px 0">
+    <button id="storageSettings" class="smallBtn">⚙️ Настройки ящика</button>
+  </div>
+  <div class="sectionTitle">Ящик</div>
+  <div id="storageContents" class="inventoryGrid"></div>
+  <div class="sectionTitle">Рюкзак</div>
+  <div id="storageBag" class="inventoryGrid"></div>
+  <div class="subtitle">Нажатие — переложить. Перетаскивание — выбрать ячейку. Удержание — сведения.</div>
+  <button id="closeStorage" class="menuButton">Закрыть</button>
+</div></div>
+
+<!-- COW MANAGEMENT -->
+<div id="feedCraftOverlay" class="overlay"><div class="panel">
+  <h2>🌾 КОРМОДРОБИЛКА</h2>
+  <div class="subtitle">КРАФТ</div>
+
+  <div id="feedCraftList">
+    <div style="margin:14px 0 8px;opacity:.72">Что изготовить:</div>
+    <button id="feedRecipeGrain" class="menuButton">🌾 Корм из зерна</button>
+  </div>
+
+  <div id="feedCraftRecipe" style="display:none">
+    <div style="margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px">
+      <b>🌾 Корм из зерна</b>
+      <div style="margin-top:10px">Рецепт: <b>10 🌾 → 20 корма</b></div>
+      <div id="feedCraftAvailable" style="margin-top:5px;opacity:.68"></div>
+    </div>
+
+    <div style="padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px">
+      <div style="font-size:12px;opacity:.7;margin-bottom:7px">ЗАГРУЖЕНО ЗЕРНА</div>
+      <div id="feedCraftLoaded" style="font-size:25px;font-weight:800;margin-bottom:9px">🌾 0</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+        <button id="feedAll" class="menuButton" style="margin:0;padding:10px 3px">MAX</button>
+        <button id="feedPlusTen" class="menuButton" style="margin:0;padding:10px 3px">+10</button>
+        <button id="feedPlusOne" class="menuButton" style="margin:0;padding:10px 3px">+1</button>
+
+        <button id="feedClear" class="menuButton" style="margin:0;padding:10px 3px">0</button>
+        <button id="feedMinusTen" class="menuButton" style="margin:0;padding:10px 3px">−10</button>
+        <button id="feedMinusOne" class="menuButton" style="margin:0;padding:10px 3px">−1</button>
+      </div>
+    </div>
+
+    <div id="feedCraftOutput" style="margin:10px 0;opacity:.8"></div>
+    <button id="feedCraftBtn" class="menuButton primary">⚙️ Скрафтить</button>
+    <button id="feedCraftBack" class="menuButton">← К списку</button>
+  </div>
+
+  <div id="feedCraftProgress" style="display:none;margin:18px 0">
+    <div id="feedCraftProgressText" style="margin-bottom:9px">⚙️ Изготовление...</div>
+    <div style="height:10px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden">
+      <div id="feedCraftBar" style="height:100%;width:0%;background:rgba(255,255,255,.75)"></div>
+    </div>
+  </div>
+
+  <button id="feedCraftClose" class="menuButton">Закрыть</button>
+</div></div>
+
+<div id="cowOverlay" class="overlay"><div class="panel">
+  <h2>🐄🐔 ЖИВОТНЫЕ</h2>
+  <div class="subtitle">ЕДИНЫЙ ЦЕНТР УПРАВЛЕНИЯ</div>
+  <div id="cowStatus" style="margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px"></div>
+  <button id="cowMilkBtn" class="menuButton">🥛 Забрать молоко</button>
+  <button id="animalEggBtn" class="menuButton">🥚 Забрать яйца</button>
+  <button id="animalFeedBtn" class="menuButton">🌾 Положить корм</button>
+  <button id="animalWaterBtn" class="menuButton">💧 Налить воду</button>
+  <button id="cowSlaughterBtn" class="menuButton">🥩 Зарезать корову</button>
+  <div class="subtitle" style="margin-top:10px">Минимум 2 коровы сохраняются для размножения.</div>
+  <button id="cowClose" class="menuButton">Закрыть</button>
+</div></div>
+
+<div id="handAssignOverlay" class="overlay"><div class="panel">
+<h2 id="handAssignTitle"></h2><div id="handAssignArt"></div><div class="subtitle">Назначить предмет в быстрый слот</div>
+<div id="handAssignChoices"></div><button id="handAssignClose" class="menuButton">Закрыть</button>
+</div></div>
+<!-- DEATH -->
+
+<div id="deathOverlay" class="overlay">
+
+  <div class="panel">
+
+    <div class="deathTitle">
+      ВЫ ПОГИБЛИ
+    </div>
+
+    <div class="deathText">
+      Заражённые добрались до вас.
+    </div>
+
+    <button id="respawnButton" class="menuButton primary">
+      ВОЗРОДИТЬСЯ НА БАЗЕ
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+
+<script src="js/game.js?v=0.34.0-stage-b"></script>
+
+</body>
+</html>
+>

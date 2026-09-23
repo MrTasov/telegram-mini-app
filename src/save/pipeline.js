@@ -22,7 +22,8 @@ const GameSave=(()=>{
   function capture(){const data=chains.capture();data.identity027=GameIdentity.capture();return SaveFormat.stamp(data);}
   function decode(raw){
     const migration={};
-    const data=SaveFormat.stamp(chains.decode(SaveFormat.prepare(raw,migration)));
+    const prepared=SaveFormat.prepare(raw,migration),incoming=JSON.parse(prepared).equipment032;
+    const data=GameEquipment.withValidation(incoming.instances,()=>SaveFormat.stamp(chains.decode(prepared)));
     // Identity migration follows historical owner migrations, which can expand
     // the enemy array. Validation is still complete before touching live state.
     SaveFormat.complete(data,migration.sourceVersion);GameIdentity.validate(data);

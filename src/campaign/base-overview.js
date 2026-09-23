@@ -16,11 +16,12 @@ window.GameBaseOverview=(()=>{
     add(g,'grid',t('grid'),t('grid.load',{load:num(a.load,2),supply:num(a.supply,2)}),t('grid.demand',{demand:num(a.demand,2),waiting:num(a.shed.length)}));
     add(g,'core',I18n.t('bunker.core.name'),t(deviceStatus(GameCampaign.powerId)),t('core.demand'));
     g=group('workshop');
-    for(const [id,key]of [['furnace','furnace'],['craft_bench','bench']]){
+    for(const id of GameEquipment.productionIds.filter(id=>['furnace','craft_bench'].includes(GameEquipment.recipeStation(id)))){
+      const key=GameEquipment.recipeStation(id)==='furnace'?'furnace':'bench';
       const q=V09Craft.craftQueue,j=q.getJob(id),ready=Object.values(q.readyItems(id)).reduce((n,v)=>n+v,0),queued=q.queues[id].length;
       const status=q.paused[id]?'paused':deviceStatus(id)==='working'?'working':j?deviceStatus(id):ready?'outputReady':deviceStatus(id);
       const progress=j&&j.totalMs>0?pct(j.totalMs-j.remainingMs,j.totalMs):'';
-      add(g,id,t(key),t(status)+(j?' · '+progress:''),(j?I18n.text(V09Craft.recipes[j.recipe].name)+' · ':'')+t('production.detail',{queued:num(queued),ready:num(ready)}));
+      add(g,id,t(key),(GameEquipment.present(id)?t(status):I18n.t('placement.packed'))+(j?' · '+progress:''),(j?I18n.text(V09Craft.recipes[j.recipe].name)+' · ':'')+t('production.detail',{queued:num(queued),ready:num(ready)}));
     }
     add(g,'upgrade',t('upgrade'),t(deviceStatus('upgrade0161')),t('upgrade.detail'));
     g=group('support');

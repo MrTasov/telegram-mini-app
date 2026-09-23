@@ -43,6 +43,15 @@ window.GameInput=(()=>{
   window.addEventListener('pointerdown',observe,true);
   function capabilitiesChanged(){if(preference!=='AUTO')return;observed=null;if(!active())apply(true);}
   for(const q of queries){if(q?.addEventListener)q.addEventListener('change',capabilitiesChanged);else q?.addListener?.(capabilitiesChanged);}
+  const surfaces=new Map();let surfacePress=null;
+  function routeSurface(kind,e){
+    if(surfacePress&&!surfacePress.port.active()){surfacePress.port.cancel?.();surfacePress=null;}
+    const hovered=[...surfaces].find(([node,port])=>node===e.target&&port.active())?.[1];
+    if(surfacePress&&surfacePress.id!==e.pointerId){if(!hovered)return false;e.preventDefault();e.stopPropagation();return true;}
+    const port=surfacePress?.port||hovered;if(!port)return false;
+    if(kind==='down')surfacePress={port,id:e.pointerId};port[kind]?.(e);
+    if(kind==='up'||kind==='cancel')surfacePress=null;e.preventDefault();e.stopPropagation();return true;
+  }
   const world=e=>e.target===canvas;
   function aim(){
     if(!pcPress)return;
@@ -56,6 +65,7 @@ window.GameInput=(()=>{
     if(movePower>JOY_DEAD){player.aimX=moveX;player.aimY=moveY;}
   }
   function down(e){
+    if(routeSurface('down',e))return;
     if(!GameActions.playable()||!world(e)||uiTouch(e.target))return;
     if(mode==='PC'){
       if(e.button===2&&e.pointerType==='mouse'){
@@ -69,6 +79,7 @@ window.GameInput=(()=>{
     handleWorldPointerDown(e);
   }
   function move(e){
+    if(routeSurface('move',e))return;
     if(pcPress){
       if(e.pointerId===pcPress.id){
         // With mouse chords, releasing RMB may be pointermove, not pointerup.
@@ -80,10 +91,12 @@ window.GameInput=(()=>{
     if(objectPointer||leftPointerId!==null||rightPointerId!==null)handleWorldPointerMove(e);
   }
   function up(e){
+    if(routeSurface('up',e))return;
     if(pcPress?.id===e.pointerId){stopPC();e.preventDefault();return;}
     handleWorldPointerUp(e);releaseFixedStick(e);window.V014Controls?.release(e);
   }
   function cancel(e){
+    if(routeSurface('cancel',e))return;
     if(pcPress?.id===e.pointerId)stopPC();
     cancelWorldPointer(e);releaseFixedStick(e);window.V014Controls?.release(e);
   }
@@ -92,7 +105,7 @@ window.GameInput=(()=>{
   window.addEventListener('pointerup',up,{passive:false,capture:true});
   window.addEventListener('pointercancel',cancel,{passive:false,capture:true});
   window.addEventListener('lostpointercapture',cancel,true);
-  window.addEventListener('blur',()=>{stopControls(true);window.V010Camera?.resetTouch();});
+  window.addEventListener('blur',()=>{surfacePress?.port.cancel?.();surfacePress=null;stopControls(true);window.V010Camera?.resetTouch();});
   window.addEventListener('contextmenu',e=>{if(mode==='PC'&&world(e))e.preventDefault();});
   function editable(node){return !!node?.closest?.('input,textarea,select,[contenteditable=""],[contenteditable="true"],[role="textbox"]');}
   function topOverlay(){return [...document.querySelectorAll('.overlay.open')].sort((a,b)=>Number(b.style.zIndex||getComputedStyle(b).zIndex||0)-Number(a.style.zIndex||getComputedStyle(a).zIndex||0))[0];}
@@ -109,6 +122,7 @@ window.GameInput=(()=>{
   }
   function keydown(e){
     if(e.defaultPrevented||e.isComposing||e.ctrlKey||e.metaKey||e.altKey)return;
+    if(!editable(e.target)&&!editable(document.activeElement))for(const port of surfaces.values())if(port.active()&&port.key?.(e)){e.preventDefault();return;}
     if(e.key==='Escape'){
       if(!e.repeat){e.preventDefault();escape();}return;
     }
@@ -127,7 +141,7 @@ window.GameInput=(()=>{
   }
   // Bubble phase lets focused fields consume Escape (e.g. save-slot rename).
   document.addEventListener('keydown',keydown);
-  return Object.freeze({setMode,release,refreshAim:aim,
+  return Object.freeze({setMode,release,refreshAim:aim,registerSurface(node,port){if(surfaces.has(node)||typeof port.active!=='function')throw Error('Invalid input surface');surfaces.set(node,port);},
     mount(fn){if(mounted)return;mounted=true;onModeChange=fn;apply();},
     get preference(){return preference;},get mode(){return mode;},get isMobile(){return mode==='MOBILE';},
     get pcFiring(){return pcPress!==null;},get storageKey(){return KEY;}});

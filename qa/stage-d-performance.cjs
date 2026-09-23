@@ -1,0 +1,70 @@
+// Immutable delivered 0.34.0 vs fresh Stage D. Run separately from regression suites.
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict'),{performance}=require('node:perf_hooks');
+const root=path.resolve(__dirname,'..');process.chdir(root);process.env.LAST_BASE_ASSETS=root;
+const {boot}=require('./audio-harness.cjs');
+const stats=a=>{const s=[...a].sort((a,b)=>a-b);return {samples:s.length,p50Ms:s[Math.floor(s.length*.5)],p95Ms:s[Math.floor(s.length*.95)],meanMs:s.reduce((a,b)=>a+b,0)/s.length};};
+(async()=>{
+ const runtimeSha256=require('node:crypto').createHash('sha256').update(fs.readFileSync('js/game.js')).digest('hex');
+ const checkpoint='qa/results/stage-d-performance-progress.json';
+ const retained=process.env.STAGE_D_PERF_RESUME?JSON.parse(fs.readFileSync(checkpoint)):null;
+ if(retained&&retained.runtimeSha256!==runtimeSha256)throw Error('Stale performance checkpoint');
+ const pair=[boot(path.join(__dirname,'stage-d-base')),boot(root)],rows=retained?.rows||[];
+ for(const h of pair){await h.load();await h.E('Promise.all(Object.entries(AssetManifest.images).filter(([,d])=>!d.historical).map(([id])=>GameAssets.load(id)))');}
+ const saves=pair.map(h=>h.E('JSON.stringify(captureGameProgress())'));
+ for(const [width,height,mode]of (process.env.STAGE_D_SHORT?[[390,844,'MOBILE']]:[[390,844,'MOBILE'],[1280,800,'PC']]))for(const sceneName of (process.env.STAGE_D_SHORT?['bunker_moving_lights','night_combined_lights','bunker_door_spill']:['quiet_surface','stress_surface','bunker_hall','bunker_moving_lights','night_combined_lights','bunker_door_spill'])){
+  if(rows.some(r=>r.viewport===width+'x'+height&&r.scene===sceneName))continue;
+  const moving=sceneName.endsWith('lights'),outside=sceneName==='night_combined_lights';
+  for(const [index,h]of pair.entries()){
+   h.E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(saves[index])}));menuOpen=false;playerDead=false;document.hidden=false;GameFlow.resume();stopControls(true);frameScale=1;window.innerWidth=${width};window.innerHeight=${height};GameInput.setMode('${mode}');resizeCanvas();V010Camera.restore({...V010Camera.capture(),zoom:.65});WorldClock.restore({schema:1,day:1,minute:759});zombies=[];scene='surface';player.x=800;player.y=850;V09Power.running=true;V09Power.fuel=100;V014Robots.state.packed=true;activeHandSlot=null;`);
+   if(sceneName.startsWith('bunker'))h.E("scene='bunker';player.x=1210;player.y=790;");
+   if(sceneName==='stress_surface')h.E("zombies=Array.from({length:200},(_,i)=>{const z=makeZombie(250+(i%20)*52,350+Math.floor(i/20)*78);if(i>=100){z.alive=false;z.hp=0;z.deathAt=Date.now();}return z;});");
+   if(sceneName==='bunker_door_spill')h.E("V09Power.devices.light_workshop.enabled=false;V09Power.devices.light_storage.enabled=false;for(const d of v09Doors)d.open=1;");
+   if(moving){
+    h.E("equipment.head={type:'head_mount',qty:1};addItem('flashlight',1);var qaBenchLight=bag.find(i=>i?.type==='flashlight');V010Combat.ensure(qaBenchLight);GameHeadModules.request('install',{moduleId:qaBenchLight.uid});addItem('flashlight',1);");
+    h.E(`V013Inventory.equip('flashlight');flashlightOn=true;player.aimX=-.3;player.aimY=-1;player.x=${outside?330:1210};player.y=${outside?40:750};V09Power.running=${outside};V010Energy.battery.charge=${outside?1.5:0};WorldClock.restore({schema:1,day:1,minute:${outside?0:759}});Object.assign(V014Robots.state,{scene,packed:false,task:'guard',hp:100,battery:100,light:true,economy:false,x:${outside?460:1160},y:${outside?60:710},guard:{scene,x:${outside?460:1160},y:${outside?60:710}}});`);
+    assert.equal(h.E('V016Lighting.droneActive()'),true);assert.ok(h.E('V091Light.cone()'));
+    if(outside)assert.equal(h.E('V016Lighting.fixtures().filter(f=>f.kind==="flood"&&V016Lighting.active(f)).length'),8);
+   }
+   h.E('updateCamera();');
+  }
+  const samples=[[],[]],frames=pair.map(h=>h.E(`n=>{update();${moving?`player.aimX=Math.sin(n*.035)*.65;player.aimY=-1;V014Robots.state.x=${outside?460:1160}+Math.sin(n*.045)*20;V014Robots.state.y=${outside?60:710}+Math.cos(n*.045)*12;`:''}GameAudioWorld.tick();draw();}`));
+  for(let pass=0;pass<4;pass++)for(const index of (pass%2?[1,0]:[0,1])){
+   const h=pair[index];h.E(`window.innerWidth=${width};window.innerHeight=${height};resizeCanvas();`);
+   for(let n=0;n<45;n++){h.advance(17);const at=performance.now();frames[index](pass*45+n);h.r.canvas.getContext('2d').getImageData(0,0,1,1);if(n>=15)samples[index].push(performance.now()-at);}
+  }
+  const before=stats(samples[0]),after=stats(samples[1]);rows.push({viewport:width+'x'+height,scene:sceneName,before,after,deltaMs:after.p50Ms-before.p50Ms,percent:(after.p50Ms/before.p50Ms-1)*100});console.log(JSON.stringify(rows.at(-1)));fs.writeFileSync(checkpoint,JSON.stringify({runtimeSha256,rows},null,2)+'\n');
+  if(outside&&width===1280)fs.mkdirSync('qa/results/stage-d-visuals',{recursive:true});if(outside&&width===1280)fs.writeFileSync('qa/results/stage-d-visuals/night-combined.png',pair[1].r.canvas.toBuffer('image/png'));
+ }
+ const navigation=[],commands=[],serialization=[],heaps=[];
+ for(const [index,h]of pair.entries()){
+  const version=index?require('../package.json').version:'0.34.0';
+  h.E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(saves[index])}));menuOpen=false;playerDead=false;document.hidden=false;GameFlow.resume();scene='bunker';player.x=1120;player.y=-120;for(const d of v09Doors)d.open=1;invalidateGeometry();`);
+  const nav=[],input=[];let reachable=0;
+  for(const [x,y]of [[600,30],[590,510],[650,1050],[1870,90],[1870,510],[1870,1010],[1260,1460],[2034,195]])for(let n=0;n<10;n++){const at=performance.now(),p=h.E(`findWalkPath(1120,-120,{id:'ground',kind:'ground',x:${x+n*.07},y:${y},r:0,range:1},'bunker',15)`);nav.push(performance.now()-at);if(p?.length)reachable++;}
+  navigation.push({version,reachable,...stats(nav)});
+  const inputFn=h.E("()=>GameActions.dispatch('MOVE',{kind:'vector',x:1,y:0,power:.4})");for(let n=0;n<500;n++){const at=performance.now();inputFn();if(n>=100)input.push(performance.now()-at);}commands.push({version,...stats(input)});
+  const serialize=h.E('()=>JSON.stringify(captureGameProgress())'),times=[];let raw;
+  global.gc?.();const beforeHeap=process.memoryUsage().heapUsed;
+  for(let n=0;n<100;n++){const at=performance.now();raw=serialize();times.push(performance.now()-at);}
+  const transientHeap=process.memoryUsage().heapUsed-beforeHeap;global.gc?.();const retainedHeap=process.memoryUsage().heapUsed-beforeHeap;
+  serialization.push({version,characters:raw.length,utf8Bytes:Buffer.byteLength(raw),...stats(times)});heaps.push({version,snapshots:100,transientHeapDeltaBytes:transientHeap,postGcHeapDeltaBytes:retainedHeap,gcAvailable:!!global.gc});
+ }
+ const after=pair[1];after.E("restoreGameProgress(GameNewGame.create());GameFlow.resume();menuOpen=false;playerDead=false;document.hidden=false;stopControls(true);scene='bunker';player.x=1210;player.y=675;V09Power.running=true;GameCampaign.refresh(true);");
+ const closed=[],opened=[],refresh=after.E('()=>GameCampaign.tick(250)');
+ for(const [which,out]of [['closed',closed],['open',opened]]){if(which==='open')after.E("V09Power.fuel=10;CommandCoreUI.show('chapters')");for(let n=0;n<500;n++){const at=performance.now();refresh();if(n>=100)out.push(performance.now()-at);}}
+ // Exercise the bounded moving-drone cache even when resuming only a static
+ // final scene. These warm frames are diagnostics, outside timed samples.
+ after.E("closeOverlay(el('commandCoreOverlay'));scene='bunker';player.x=1210;player.y=750;V09Power.running=false;V010Energy.battery.charge=0;Object.assign(V014Robots.state,{scene,packed:false,task:'guard',hp:100,battery:100,light:true,economy:false,x:1160,y:710,guard:{scene,x:1160,y:710}});updateCamera()");
+ for(let n=0;n<12;n++){after.advance(17);after.E(`V014Robots.state.x=1160+${n*.23};draw()`);}
+ const placement=[],preview=[];
+ after.E("scene='bunker';player.x=1210;player.y=675;V09Power.running=true;V09Power.fuel=100;for(const type of ['iron','parts','wood','concrete'])addItem(type,100);CommandCoreUI.show('construction');GamePlacementUI.choose('catalog:furnace')");
+ const checkPlacement=after.E("()=>GamePlacement.check('catalog:furnace',GamePlacement.centered('furnace','reserve_l1',1950,400,1))"),paintPreview=after.E("()=>GamePlacementUI.tick()");
+ for(let n=0;n<160;n++){let at=performance.now();assert.equal(checkPlacement().ok,true);if(n>=40)placement.push(performance.now()-at);at=performance.now();paintPreview();if(n>=40)preview.push(performance.now()-at);}
+ after.E("closeOverlay(el('commandCoreOverlay'));GamePlacementUI.tick()");const idleBefore=after.E('GamePlacement.metrics().checks');for(let n=0;n<120;n++)after.E('update();GamePlacementUI.tick()');assert.equal(after.E('GamePlacement.metrics().checks'),idleBefore);
+ const maxEquipment=[];
+ after.E("menuOpen=false;scene='bunker';player.x=1210;player.y=675;V09Power.running=true;V09Power.fuel=100;for(const d of v09Doors)d.open=1;GamePlacement.request('catalog:furnace','place',GamePlacement.centered('furnace','reserve_l1',1950,400,1));GamePlacement.request('catalog:craft_bench','place',GamePlacement.centered('craft_bench','reserve_l1',1950,650,0));addItem('iron_ore',100);V09Craft.start('build:furnace:1','iron',10);V09Craft.start('build:craft_bench:1','hammer',5);player.x=1810;player.y=510;V014Robots.state.packed=true;updateCamera()");assert.equal(after.E('GameEquipment.ids.length'),20);
+ for(const [width,height]of [[390,844],[1280,800]]){after.E(`window.innerWidth=${width};window.innerHeight=${height};resizeCanvas();updateCamera()`);const times=[],frame=after.E('()=>{update();GameAudioWorld.tick();draw()}');for(let n=0;n<160;n++){after.advance(17);const at=performance.now();frame();after.r.canvas.getContext('2d').getImageData(0,0,1,1);if(n>=40)times.push(performance.now()-at);}maxEquipment.push({viewport:width+'x'+height,instances:20,...stats(times)});}
+ const report={resumed:!!retained,version:require('../package.json').version,runtimeSha256:require('node:crypto').createHash('sha256').update(fs.readFileSync('js/game.js')).digest('hex'),baseline:'immutable accepted 0.34.0 Stage C2',environment:{node:process.version,cpu:os.cpus()[0]?.model,mode:'Modeled DOM/WebAudio, native Canvas2D, DPR 1, zoom .65, 120 measured frames per scene/version; alternating AB/BA'},rows,navigation,commands,serialization,heaps,placementCheck:stats(placement),placementPreview:stats(preview),idlePlacementChecks:0,maxEquipment,campaignPoll:{closed:stats(closed),open:stats(opened)},droneMetrics:after.J('V016Lighting.droneMetrics()'),lightingCache:after.J('V016Lighting.cacheInfo()'),errors:pair.flatMap(h=>h.r.errors),limitations:['CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.','Moving-light scenes include continuously changing drone positions and player aim; night scene runs all eight searchlights.','Command dispatch excludes OS/browser delivery. Navigation covers complete path queries.','Heap deltas include harness and serialization allocations, not a browser/device memory budget.']};
+ report.passed=!report.errors.length&&navigation.every(n=>n.reachable===80)&&report.droneMetrics.rayCasts===0&&report.lightingCache.droneBytes>0&&report.lightingCache.droneBytes<=1048576;
+ fs.writeFileSync('qa/results/stage-d-performance.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));if(!report.passed)process.exitCode=1;
+})().catch(e=>{console.error(e);process.exitCode=1;});
