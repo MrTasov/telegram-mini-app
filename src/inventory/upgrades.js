@@ -1,6 +1,6 @@
 /* One physical enhancement cradle. The item is either here or in an inventory. */
 window.V0161Upgrade=(()=>{
-  const slots=[null],station={id:'upgrade0161',kind:'upgrade0161',name:'Станок усиления',x:443,y:794,w:139,h:110,range:70};
+  const slots=[null],station={id:'upgrade0161',kind:'upgrade0161',name:'Станок усиления',...BunkerLayout.fixture('upgrade0161'),range:70};
   const inv=V010Inventory,combat=V010Combat,robot=V014Robots,copy=x=>JSON.parse(JSON.stringify(x));
   const labels=robot.definition.modules,isDrone=s=>!!ITEM[s?.type]?.drone,isTurret=s=>V016Turret.isType(s?.type),maxLevel=s=>combat.maxUpgradeLevel(s);
   let overlay=null,refs={},selectedModule='body',pulseUntil=0,lastSignature='';

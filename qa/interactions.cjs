@@ -31,7 +31,7 @@ function outside(pointerType='mouse'){
  gesture(E('({x:player.x+240,y:player.y-180})'),pointerType);
 }
 try{
- const cases=[['craft_bench','v09CraftOverlay'],['furnace','v09CraftOverlay'],...Array.from({length:10},(_,i)=>['chest'+i,'storageOverlay']),['generator','v09GeneratorOverlay'],['tank','v09GeneratorOverlay'],['battery','v010BatteryOverlay'],['robots014_dock','v0151Station'],['upgrade0161','v0161UpgradePanel'],['garden_tank','v011Irrigation'],['livestock','cowOverlay'],['feed_craft','v09CraftOverlay'],['hmg016_1','v016TurretPanel']];
+ const cases=[['craft_bench','v09CraftOverlay'],['furnace','v09CraftOverlay'],...Array.from({length:8},(_,i)=>['chest'+i,'storageOverlay']),['generator','v09GeneratorOverlay'],['tank','v09GeneratorOverlay'],['battery','v010BatteryOverlay'],['robots014_dock','v0151Station'],['upgrade0161','v0161UpgradePanel'],['hmg016_1','v016TurretPanel']];
  for(const pointerType of ['mouse','touch'])for(const [id,expected]of cases){
   fresh(id==='hmg016_1'?'surface':'bunker');
   // Test the station's uncovered pad; the drone itself has its own panel.

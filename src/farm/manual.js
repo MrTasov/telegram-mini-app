@@ -2,7 +2,7 @@
 window.V0141Farm=(()=>{
   const copy=x=>JSON.parse(JSON.stringify(x)),cropTypes=new Set(farmCrops.map(c=>c.itemType));
   let selected=0,recovery=[],plantingStock=false,bound=false;
-  function closeEnough(index){const b=getFarmBeds()[index];return scene==='bunker'&&b&&rectHit(player.x,player.y,75,b);}
+  function closeEnough(index){const b=getFarmBeds()[index];return AgricultureTime.available&&scene==='bunker'&&b&&rectHit(player.x,player.y,75,b);}
   function plant(index,crop){
     if(!Number.isInteger(index)||!Number.isInteger(crop)||!farmCrops[crop]||!closeEnough(index)||farmState[index]?.crop!==null)return false;
     if(!V011Farm.beginBed(index,crop))return false;
@@ -28,7 +28,7 @@ window.V0141Farm=(()=>{
     if(st.crop!==null){if(V011Farm.ready(index))harvest(index);else{const wait=Math.max(...V011Farm.plants(st).filter(p=>p.planted&&!p.harvested).map(p=>p.duration-p.elapsed),0);message('До урожая '+farmTimeLabel(wait/(V011Farm.state.water>0&&devicePowered('irrigation014')?1:.35)));}return;}
     window.activeFarmBed=index;I18n.assign(el('farmTitle'),"textContent",'Грядка '+(index+1));refresh();openOverlay(el('farmOverlay'));
   }
-  function recover(){for(const s of recovery)s.qty=addItem(s.type,s.qty);recovery=recovery.filter(s=>s.qty);refresh();renderBag();queueGameSave();if(recovery.length)message('Освободите место в рюкзаке');}
+  function recover(){if(!AgricultureTime.available)return;for(const s of recovery)s.qty=addItem(s.type,s.qty);recovery=recovery.filter(s=>s.qty);refresh();renderBag();queueGameSave();if(recovery.length)message('Освободите место в рюкзаке');}
   function bindMenu(){
     if(bound){refresh();return;}
     if(!plantingStock){const d=captureGameProgress();provideStock(d);recovery=d.farmRecovery0141;plantingStock=true;deliverRecovery();}
@@ -64,11 +64,11 @@ window.V0141Farm=(()=>{
     function strip(value){if(!value||typeof value!=='object')return;for(const k of Object.keys(value)){if(value[k]?.type==='tractor014')value[k]=null;else strip(value[k]);}}
     strip(d);if(d.v09?.power?.deviceEnabled)delete d.v09.power.deviceEnabled.robot_tractor_charge;
     if(d.v010?.modules?.energy?.devicePriority)delete d.v010.modules.energy.devicePriority.robot_tractor_charge;
-    provideStock(d);if(d.farmRecovery0141)validateRecovery(d.farmRecovery0141);return d;
+    if(AgricultureTime.available||d.farmPlantingStock0141===undefined)provideStock(d);if(d.farmRecovery0141)validateRecovery(d.farmRecovery0141);return d;
   }
   GameSave.extend('capture','farm.manual',function(capture){const d=capture();d.farmRecovery0141=copy(recovery);d.farmPlantingStock0141=plantingStock;return d;});
   GameSave.extend('decode','farm.manual',function(decode,raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));});
-  GameSave.extend('restore','farm.manual',function(restore,data){const d=migrate(copy(data));restore(d);recovery=copy(d.farmRecovery0141||[]);plantingStock=true;deliverRecovery();});
+  GameSave.extend('restore','farm.manual',function(restore,data){const d=migrate(copy(data));restore(d);recovery=copy(d.farmRecovery0141||[]);plantingStock=!!d.farmPlantingStock0141;if(AgricultureTime.available)deliverRecovery();});
   v09Style('#farmOverlay .panel{width:min(430px,94vw);max-height:80dvh}#farmOverlay .farmPlantGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}#farmOverlay .farmCropBtn{display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0!important;min-height:68px!important;font-size:11px!important;padding:6px!important}#farmOverlay .farmCropBtn .itemIcon{width:36px!important;height:36px!important}#farmOverlay .farmCropBtn.selected{border-color:#c7ae6d;background:#344c43}#farmPlantInfo{font-size:11px;color:#abc0b5;line-height:1.5;grid-column:1/-1;margin:8px 0}#farmPlantConfirm,#farmRecovery{grid-column:1/-1;font-size:12px;min-height:44px;padding:7px}');
   return {plant,harvest,use,bindMenu,migrate,recover,get recovery(){return recovery;}};
 })();

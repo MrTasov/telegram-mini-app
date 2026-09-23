@@ -1,13 +1,13 @@
 /* 0.9 — room circuits, power controller, lights and automatic sliding doors. */
 const V09Power = {
-  rooms:{workshop:'Мастерская',storage:'Склад',room4:'Медблок',room5:'Энергоблок',room6:'Кухня',room7:'Жилая комната',farm:'Ферма',corridor:'Коридор',yard:'Двор'},
-  roomEnabled:{workshop:true,storage:true,room4:true,room5:true,room6:true,room7:true,farm:true,corridor:true,yard:true},
+  rooms:{workshop:'Мастерская',storage:'Склад',room4:'Медблок',room5:'Энергоблок',room6:'Кухня',room7:'Жилая комната',farm:'Ферма',corridor:'Центральный зал',reserve_l1:'Резервная комната',yard:'Двор'},
+  roomEnabled:{workshop:true,storage:true,room4:true,room5:true,room6:true,room7:true,farm:true,corridor:true,reserve_l1:true,yard:true},
   devices:{},running:false,fuel:10,capacity:100,supply:10,pathfinding:false,
   selectedRoom:'workshop',tab:'bunker',uiClock:0,load:0,demand:0,
   allocation(){
     let demand=0,load=0;const served=new Set();
     for(const d of Object.values(this.devices)){
-      const wanted=d.enabled&&this.roomEnabled[d.room];
+      const wanted=BunkerLayout.roomActive(d.room)&&d.enabled&&this.roomEnabled[d.room];
       const active=wanted&&!!d.active();
       if(active)demand+=d.watts;
       if(!wanted||!this.running||this.fuel<=0)continue;
@@ -82,18 +82,13 @@ function v09UpdateDeviceRow(row){
   const b=row.querySelector('button');I18n.assign(b,"textContent",d.enabled?'Вкл.':'Выкл.');b.classList.toggle('on',d.enabled);b.setAttribute('aria-pressed',String(d.enabled));
 }
 for(const room of Object.keys(V09Power.rooms))if(room!=='yard')registerPowerDevice('light_'+room,room,room==='farm'?.24:room==='corridor'?.18:.12,()=>true,'Освещение');
-const v09Doors=['workshop','storage','room4','room5','room6','room7','farm'].map(room=>{
-  const r=bunker[room],horizontal=room==='farm',x=horizontal?r.doorLeft:(r.right===610?r.right-10:r.left-10),y=horizontal?r.bottom-10:r.doorTop;
-  registerPowerDevice('door_'+room,room,.06,()=>true,'Раздвижная дверь');
-  return {id:'v09door_'+room,room,x,y,w:horizontal?r.doorRight-r.doorLeft:20,h:horizontal?20:r.doorBottom-r.doorTop,horizontal,open:0,away:0,manual:false};
+const v09Doors=BunkerLayout.doorDefinitions.map(def=>{
+  registerPowerDevice('door_'+def.room,def.room,.06,()=>true,'Раздвижная дверь');
+  return {...def,open:0,away:0,manual:false};
 });
 const v09Spotlights=[{id:'spot_left',x:696,y:1010,angle:1.78},{id:'spot_right',x:904,y:1010,angle:1.36}];
 for(const s of v09Spotlights)registerPowerDevice(s.id,'yard',.45,()=>true,s.id==='spot_left'?'Левый прожектор':'Правый прожектор');
-const v09RoomSwitches=Object.keys(V09Power.rooms).filter(r=>r!=='yard').map(room=>{
-  if(room==='farm')return {room,x:815,y:-202};
-  if(room==='corridor')return {room,x:812,y:1220};
-  const r=bunker[room];return {room,x:r.right===610?638:812,y:r.doorTop-32};
-});
+const v09RoomSwitches=Object.keys(BunkerLayout.rooms).map(BunkerLayout.switchPoint).filter(Boolean);
 function v09DoorPanels(d){
   if(window.V018Build?.isBroken(d.id))return [];
   const closed=1-d.open;
@@ -105,10 +100,12 @@ function powerTick(dt){
   dt=clamp(Number(dt)||0,0,.1);
   if(V09Power.running){V09Power.fuel=Math.max(0,V09Power.fuel-dt/60);if(V09Power.fuel<=0){V09Power.running=false;message('Генератор остановился: закончилось топливо');queueGameSave();}}
   V09Power.allocation();
+  const occupants=BunkerLayout.occupants('bunker');
   for(const d of v09Doors){
+    if(!BunkerLayout.roomActive(d.room))continue;
     if(window.V018Build?.isBroken(d.id)){d.open=1;d.away=0;continue;}
-    const near=(scene==='bunker'&&distance(player.x,player.y,d.x+d.w/2,d.y+d.h/2)<116.25)||!!window.V014Robots?.doorNear(d);
-    const occupied=d.open>.2&&((scene==='bunker'&&rectHit(player.x,player.y,player.radius+8,d))||!!window.V014Robots?.doorOccupies(d));
+    const near=occupants.some(a=>distance(a.x,a.y,d.x+d.w/2,d.y+d.h/2)<116.25);
+    const occupied=d.open>.2&&occupants.some(a=>rectHit(a.x,a.y,(a.radius||10)+8,d));
     const powered=devicePowered('door_'+d.room);
     if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
     if(d.away>=4)d.manual=false;
@@ -124,7 +121,7 @@ update=function(){powerTick(frameScale/60);v09PowerOldUpdate();};
 const v09PowerOldCollision=worldCollision;
 worldCollision=function(x,y,r=15,which=scene,ignoreId=null){
   if(v09PowerOldCollision(x,y,r,which,ignoreId))return true;
-  if(which==='bunker')for(const d of v09Doors){if(d.id===ignoreId||window.GamePassages?.canPlanThrough(d.id))continue;for(const panel of v09DoorPanels(d))if(rectHit(x,y,r,panel))return true;}
+  if(which==='bunker')for(const d of v09Doors){if(!BunkerLayout.roomActive(d.room)||d.id===ignoreId||window.GamePassages?.canPlanThrough(d.id))continue;for(const panel of v09DoorPanels(d))if(rectHit(x,y,r,panel))return true;}
   return false;
 };
 const v09PowerOldPath=findWalkPath;
@@ -134,10 +131,10 @@ interactionObjects=function(which=scene){
   const base=v09PowerOldInteractions(which);
   if(which==='surface')return [...base,...v09Spotlights.map(s=>({id:s.id,kind:'v09power_device',device:s.id,name:'Прожектор',x:s.x,y:s.y,r:19,range:58}))];
   return [...v09RoomSwitches.map(s=>({id:'switch_'+s.room,kind:'v09room_switch',room:s.room,name:'Питание: '+V09Power.rooms[s.room],x:s.x,y:s.y,r:10,range:48})),...base,
-    ...v09Doors.map(d=>({...d,kind:'v09door',name:devicePowered('door_'+d.room)?'Раздвижная дверь':'Открыть дверь вручную',range:68})),
-    {id:'tank',kind:'v09fuel',name:'Топливный бак',x:885,y:315,w:125,h:185,range:50},
-    {id:'generator',kind:'v09generator',name:'Генератор',x:1052,y:315,w:130,h:195,range:50},
-    {id:'battery',kind:'v09battery',name:'Резервная батарея',x:1235,y:300,w:105,h:215,range:50},
+    ...v09Doors.filter(d=>BunkerLayout.roomActive(d.room)).map(d=>({...d,kind:'v09door',name:devicePowered('door_'+d.room)?'Раздвижная дверь':'Открыть дверь вручную',range:68})),
+    {id:'tank',kind:'v09fuel',name:'Топливный бак',...BunkerLayout.fixture('tank'),range:50},
+    {id:'generator',kind:'v09generator',name:'Генератор',...BunkerLayout.fixture('generator'),range:50},
+    {id:'battery',kind:'v09battery',name:'Резервная батарея',...BunkerLayout.fixture('battery'),range:50},
     ...Object.keys(V09Power.rooms).filter(room=>room!=='yard').flatMap(room=>v09LightPoints(room).map((p,i)=>({id:'lamp_'+room+'_'+i,kind:'v09power_device',device:'light_'+room,name:'Освещение: '+V09Power.rooms[room],x:p.x,y:p.y,r:20,range:65})))];
 };
 const v09PowerOldExecute=executeInteraction;
@@ -170,9 +167,9 @@ function v09OpenPowerRemote(){
   for(const [key,title] of [['surface','Двор'],['bunker','Бункер']]){const b=v09Button(title,()=>{V09Power.tab=key;v09OpenPowerRemote();});b.classList.toggle('selected',V09Power.tab===key);tabs.appendChild(b);}body.appendChild(tabs);
   const map=document.createElement('div');map.className='v09BaseMap';I18n.setAttr(map,'aria-label','План базы: '+(V09Power.tab==='bunker'?'бункер':'двор'));body.appendChild(map);
   if(V09Power.tab==='bunker'){
-    const positions={farm:[5,4,90,24],corridor:[44,30,12,65],room6:[7,32,33,18],room7:[60,32,33,18],room4:[7,54,33,18],room5:[60,54,33,18],workshop:[7,76,33,18],storage:[60,76,33,18]};
+    const b=BunkerLayout.bounds,positions=Object.fromEntries(BunkerLayout.roomData.map(r=>[r.id,[(r.x-b.x)/b.w*94+3,(r.y-b.y)/b.h*94+3,r.w/b.w*94,r.h/b.h*94]]));
     for(const [room,p] of Object.entries(positions)){const b=document.createElement('button');b.className='v09MapRoom';b.dataset.powerRoom=room;b.style.cssText=`left:${p[0]}%;top:${p[1]}%;width:${p[2]}%;height:${p[3]}%`;I18n.assign(b,"innerHTML",'<span></span><small></small>');I18n.assign(b.querySelector('span'),"textContent",room==='corridor'?'↕':V09Power.rooms[room]);I18n.setAttr(b,'aria-label',V09Power.rooms[room]);b.onclick=()=>{V09Power.selectedRoom=room;v09RenderCircuit();v09RefreshPowerUI();};map.appendChild(b);}
-    if(V09Power.selectedRoom==='yard')V09Power.selectedRoom='workshop';
+    if(V09Power.selectedRoom==='yard'||!BunkerLayout.roomActive(V09Power.selectedRoom))V09Power.selectedRoom='workshop';
   }else{
     V09Power.selectedRoom='yard';I18n.assign(map,"innerHTML",'<div style="position:absolute;inset:10% 13% 15%;border:6px solid #697b77;border-radius:8px"></div><div class="v09MapHatch">Бункер ↓</div><div class="v09YardGate">ВОРОТА</div>');
     for(let i=0;i<2;i++){const b=document.createElement('button');b.className='v09MapRoom';b.dataset.powerSpot=v09Spotlights[i].id;b.style.cssText=`left:${i?64:15}%;top:61%;width:21%;height:18%`;I18n.assign(b,"textContent",i?'Правый\nпрожектор':'Левый\nпрожектор');b.onclick=()=>v09OpenDevice(v09Spotlights[i].id);map.appendChild(b);}
@@ -256,11 +253,7 @@ function v09DrawDoor(d){
   if(!powered&&scene==='bunker'&&distance(player.x,player.y,cx,cy)<120&&d.open<.2){ctx.font='10px Arial';ctx.textAlign='center';ctx.fillStyle='#e0c48e';ctx.fillText(I18n.text('ОТКРЫТЬ ВРУЧНУЮ'),cx,cy-23);}
   ctx.restore();
 }
-function v09LightPoints(room){
-  const r=bunker[room];if(room==='corridor')return [120,620,1100].map(y=>({x:725,y}));
-  if(room==='farm')return [{x:430,y:r.top+24},{x:1040,y:r.top+24}];
-  return [{x:(r.left+r.right)/2,y:r.top+17}];
-}
+function v09LightPoints(room){return BunkerLayout.lights(room);}
 function v09DrawRoomLight(room){
   const r=bunker[room];if(!r)return;const lit=devicePowered('light_'+room);
   ctx.save();ctx.beginPath();ctx.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);ctx.clip();
@@ -291,9 +284,9 @@ function v09DrawEnergyReadouts(){
 const v09PowerOldDrawBunker=drawBunker;
 drawBunker=function(){
   v09PowerOldDrawBunker();v09DrawEnergyReadouts();
-  for(const room of Object.keys(V09Power.rooms))if(room!=='yard')v09DrawRoomLight(room);
-  for(const d of v09Doors)v09DrawDoor(d);
-  for(const room of Object.keys(V09Power.rooms))if(room!=='yard')v09DrawRoomSwitch(room);
+  for(const room of Object.keys(V09Power.rooms))if(room!=='yard'&&BunkerLayout.roomActive(room))v09DrawRoomLight(room);
+  for(const d of v09Doors)if(BunkerLayout.roomActive(d.room))v09DrawDoor(d);
+  for(const room of Object.keys(V09Power.rooms))if(room!=='yard'&&BunkerLayout.roomActive(room))v09DrawRoomSwitch(room);
 };
 let v09SpotCacheRevision=-1,v09SpotCache={};
 function v09SpotPolygon(s){

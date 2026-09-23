@@ -1,17 +1,17 @@
 {
   "version": "0.20.0",
   "summary": {
-    "passed": 195,
+    "passed": 134,
     "observedFailures": 0,
     "errors": 0,
-    "fixtures": 25
+    "fixtures": 15
   },
   "checks": [
     {
       "id": "launch.version",
       "status": "PASS",
-      "expected": "0.29.0",
-      "actual": "0.29.0"
+      "expected": "0.30.0",
+      "actual": "0.30.0"
     },
     {
       "id": "launch.ready",
@@ -398,610 +398,244 @@
       "actual": true
     },
     {
-      "id": "farm.0.plant",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.0.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.0.cropType",
+      "id": "farm.0.savedCropRetained",
       "status": "PASS",
       "expected": 0,
       "actual": 0
     },
     {
-      "id": "farm.0.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_0.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_0.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.0.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.0.harvest",
+      "id": "farm.0.plantsRetained",
       "status": "PASS",
       "expected": 50,
       "actual": 50
     },
     {
-      "id": "farm.0.emptyAfterHarvest",
+      "id": "farm.0.fullPause",
       "status": "PASS",
       "expected": true,
       "actual": true
     },
     {
-      "id": "farm.0.replant",
+      "id": "farm.0.harvestBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": 0,
+      "actual": 0
     },
     {
-      "id": "farm.1.plant",
+      "id": "farm.0.plantBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": false,
+      "actual": false
     },
     {
-      "id": "farm.1.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.1.cropType",
+      "id": "farm.1.savedCropRetained",
       "status": "PASS",
       "expected": 1,
       "actual": 1
     },
     {
-      "id": "farm.1.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_1.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_1.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.1.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.1.harvest",
+      "id": "farm.1.plantsRetained",
       "status": "PASS",
       "expected": 50,
       "actual": 50
     },
     {
-      "id": "farm.1.emptyAfterHarvest",
+      "id": "farm.1.fullPause",
       "status": "PASS",
       "expected": true,
       "actual": true
     },
     {
-      "id": "farm.1.replant",
+      "id": "farm.1.harvestBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": 0,
+      "actual": 0
     },
     {
-      "id": "farm.2.plant",
+      "id": "farm.1.plantBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": false,
+      "actual": false
     },
     {
-      "id": "farm.2.produceNotConsumed",
+      "id": "farm.2.savedCropRetained",
       "status": "PASS",
       "expected": 2,
       "actual": 2
     },
     {
-      "id": "farm.2.cropType",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.2.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_2.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_2.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.2.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.2.harvest",
+      "id": "farm.2.plantsRetained",
       "status": "PASS",
       "expected": 50,
       "actual": 50
     },
     {
-      "id": "farm.2.emptyAfterHarvest",
+      "id": "farm.2.fullPause",
       "status": "PASS",
       "expected": true,
       "actual": true
     },
     {
-      "id": "farm.2.replant",
+      "id": "farm.2.harvestBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": 0,
+      "actual": 0
     },
     {
-      "id": "farm.3.plant",
+      "id": "farm.2.plantBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": false,
+      "actual": false
     },
     {
-      "id": "farm.3.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.3.cropType",
+      "id": "farm.3.savedCropRetained",
       "status": "PASS",
       "expected": 3,
       "actual": 3
     },
     {
-      "id": "farm.3.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_3.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_3.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.3.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.3.harvest",
+      "id": "farm.3.plantsRetained",
       "status": "PASS",
       "expected": 50,
       "actual": 50
     },
     {
-      "id": "farm.3.emptyAfterHarvest",
+      "id": "farm.3.fullPause",
       "status": "PASS",
       "expected": true,
       "actual": true
     },
     {
-      "id": "farm.3.replant",
+      "id": "farm.3.harvestBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": 0,
+      "actual": 0
     },
     {
-      "id": "farm.4.plant",
+      "id": "farm.3.plantBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": false,
+      "actual": false
     },
     {
-      "id": "farm.4.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.4.cropType",
+      "id": "farm.4.savedCropRetained",
       "status": "PASS",
       "expected": 4,
       "actual": 4
     },
     {
-      "id": "farm.4.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_4.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_4.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.4.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.4.harvest",
+      "id": "farm.4.plantsRetained",
       "status": "PASS",
       "expected": 50,
       "actual": 50
     },
     {
-      "id": "farm.4.emptyAfterHarvest",
+      "id": "farm.4.fullPause",
       "status": "PASS",
       "expected": true,
       "actual": true
     },
     {
-      "id": "farm.4.replant",
+      "id": "farm.4.harvestBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": 0,
+      "actual": 0
     },
     {
-      "id": "farm.5.plant",
+      "id": "farm.4.plantBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": false,
+      "actual": false
     },
     {
-      "id": "farm.5.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.5.cropType",
+      "id": "farm.5.savedCropRetained",
       "status": "PASS",
       "expected": 5,
       "actual": 5
     },
     {
-      "id": "farm.5.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_5.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_5.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.5.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.5.harvest",
+      "id": "farm.5.plantsRetained",
       "status": "PASS",
       "expected": 50,
       "actual": 50
     },
     {
-      "id": "farm.5.emptyAfterHarvest",
+      "id": "farm.5.fullPause",
       "status": "PASS",
       "expected": true,
       "actual": true
     },
     {
-      "id": "farm.5.replant",
+      "id": "farm.5.harvestBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": 0,
+      "actual": 0
     },
     {
-      "id": "farm.6.plant",
+      "id": "farm.5.plantBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": false,
+      "actual": false
     },
     {
-      "id": "farm.6.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.6.cropType",
+      "id": "farm.6.savedCropRetained",
       "status": "PASS",
       "expected": 6,
       "actual": 6
     },
     {
-      "id": "farm.6.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_6.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_6.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.6.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.6.harvest",
+      "id": "farm.6.plantsRetained",
       "status": "PASS",
       "expected": 50,
       "actual": 50
     },
     {
-      "id": "farm.6.emptyAfterHarvest",
+      "id": "farm.6.fullPause",
       "status": "PASS",
       "expected": true,
       "actual": true
     },
     {
-      "id": "farm.6.replant",
+      "id": "farm.6.harvestBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": 0,
+      "actual": 0
     },
     {
-      "id": "farm.7.plant",
+      "id": "farm.6.plantBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": false,
+      "actual": false
     },
     {
-      "id": "farm.7.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.7.cropType",
+      "id": "farm.7.savedCropRetained",
       "status": "PASS",
       "expected": 7,
       "actual": 7
     },
     {
-      "id": "farm.7.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_7.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_7.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.7.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.7.harvest",
+      "id": "farm.7.plantsRetained",
       "status": "PASS",
       "expected": 50,
       "actual": 50
     },
     {
-      "id": "farm.7.emptyAfterHarvest",
+      "id": "farm.7.fullPause",
       "status": "PASS",
       "expected": true,
       "actual": true
     },
     {
-      "id": "farm.7.replant",
+      "id": "farm.7.harvestBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": 0,
+      "actual": 0
     },
     {
-      "id": "farm.8.plant",
+      "id": "farm.7.plantBlocked",
       "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.8.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.8.cropType",
-      "status": "PASS",
-      "expected": 8,
-      "actual": 8
-    },
-    {
-      "id": "farm.8.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_8.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_8.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.8.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.8.harvest",
-      "status": "PASS",
-      "expected": 50,
-      "actual": 50
-    },
-    {
-      "id": "farm.8.emptyAfterHarvest",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.8.replant",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.9.plant",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.9.produceNotConsumed",
-      "status": "PASS",
-      "expected": 2,
-      "actual": 2
-    },
-    {
-      "id": "farm.9.cropType",
-      "status": "PASS",
-      "expected": 9,
-      "actual": 9
-    },
-    {
-      "id": "farm.9.individualGrowth",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_9.roundtrip",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "save.crop_9.decoder",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.9.grows",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.9.harvest",
-      "status": "PASS",
-      "expected": 50,
-      "actual": 50
-    },
-    {
-      "id": "farm.9.emptyAfterHarvest",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.9.replant",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
-    },
-    {
-      "id": "farm.noSeedRequired",
-      "status": "PASS",
-      "expected": true,
-      "actual": true
+      "expected": false,
+      "actual": false
     },
     {
       "id": "save.drone_empty_far.roundtrip",
@@ -1217,5 +851,5 @@
   "consoleErrors": [],
   "scope": "Real game JS in deterministic VM, modeled DOM and real Canvas2D. No physical mobile/browser claims.",
   "suiteBaselineVersion": "0.20.0",
-  "testedVersion": "0.29.0"
+  "testedVersion": "0.30.0"
 }

@@ -52,14 +52,19 @@ for(const type of gear)for(let level=0;level<=5;level++)for(const variant of ['b
 });
 for(const day of [1,10,11])check('simulation.allEnemyBehaviors.day'+day,()=>{
  restore(fixture('fresh_game'));
+ // Isolate enemy entropy from the deliberately suspended livestock simulation.
+ // Both real runtimes receive identical entropy; all enemy outcomes still compare.
+ for(const runtime of [a,b])runtime.eval('window.oracleRandom=Math.random;Math.random=()=>.5;');
+ try{
  both(`scene='surface';player.x=800;player.y=850;player.health=player.maxHealth;menuOpen=false;stopControls(true);V016Lighting.restore({schema:1,day:${day},minute:180});zombies=['normal','heavy','fast','leaper','bloater'].map((type,i)=>{const z=makeZombie(760+i*30,800);z.type=type;V017Monsters.prepare(z);return z;});`);
  for(let i=0;i<180;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
  compare();
+ }finally{for(const runtime of [a,b])runtime.eval('Math.random=oracleRandom;');}
 });
 check('dayX.transitionsPreserveHealthRatios',()=>{
  restore(fixture('day_x'));
  for(const day of [11,20,21]){both(`V016Lighting.restore({schema:1,day:${day},minute:180});zombies.forEach(z=>V017Monsters.prepare(z));`);compare();}
 });
 check('console.noErrors',()=>{assert.deepEqual(a.errors,[]);assert.deepEqual(b.errors,[]);});
-const result={reference:'0.23.1 manually accepted',candidate:require('../package.json').version,ignoredFields:['gameVersion (release metadata)','identity027/saveVersion (new identity envelope only); no gameplay fields normalized'],passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status!=='PASS').length,checks};
+const result={reference:'0.23.1 manually accepted',candidate:require('../package.json').version,ignoredFields:['gameVersion (release metadata)','Approved patch contracts: world-farm-contract.cjs and bunker-contract.cjs; current R1 migration tested separately'],passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status!=='PASS').length,checks};
 fs.writeFileSync(path.join(__dirname,'results/stage4-differential.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({passed:result.passed,failed:result.failed,failures:checks.filter(c=>c.status!=='PASS')}));if(result.failed)process.exitCode=1;

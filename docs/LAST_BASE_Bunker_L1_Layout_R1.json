@@ -1,0 +1,850 @@
+{
+  "status": "PROPOSAL_REQUIRES_LAYOUT_APPROVAL",
+  "source": "LAST_BASE_0.29.0_Audio_Pass_Recovery_1",
+  "coordinateConvention": "world units, origin unchanged, +Y down",
+  "activeScene": "bunker",
+  "rooms": [
+    {
+      "id": "corridor",
+      "label": "Центральный зал",
+      "x": 610,
+      "y": -240,
+      "w": 1200,
+      "h": 1500
+    },
+    {
+      "id": "room6",
+      "label": "Кухня",
+      "num": "01",
+      "x": 90,
+      "y": -240,
+      "w": 520,
+      "h": 500,
+      "side": "left",
+      "door": [
+        -70,
+        90
+      ]
+    },
+    {
+      "id": "room4",
+      "label": "Медблок",
+      "num": "02",
+      "x": 90,
+      "y": 260,
+      "w": 520,
+      "h": 500,
+      "side": "left",
+      "door": [
+        430,
+        590
+      ]
+    },
+    {
+      "id": "workshop",
+      "label": "Мастерская",
+      "num": "03",
+      "x": 90,
+      "y": 760,
+      "w": 520,
+      "h": 500,
+      "side": "left",
+      "door": [
+        930,
+        1090
+      ]
+    },
+    {
+      "id": "room5",
+      "label": "Энергосектор",
+      "num": "04",
+      "x": 1810,
+      "y": -240,
+      "w": 520,
+      "h": 500,
+      "side": "right",
+      "door": [
+        -70,
+        90
+      ]
+    },
+    {
+      "id": "reserve_l1",
+      "label": "Резервная комната",
+      "num": "05",
+      "x": 1810,
+      "y": 260,
+      "w": 520,
+      "h": 500,
+      "side": "right",
+      "door": [
+        430,
+        590
+      ]
+    },
+    {
+      "id": "storage",
+      "label": "Склад",
+      "num": "06",
+      "x": 1810,
+      "y": 760,
+      "w": 520,
+      "h": 500,
+      "side": "right",
+      "door": [
+        930,
+        1090
+      ]
+    },
+    {
+      "id": "room7",
+      "label": "Жилая + санузел",
+      "num": "07",
+      "x": 950,
+      "y": 1260,
+      "w": 520,
+      "h": 500,
+      "side": "bottom",
+      "door": [
+        1130,
+        1290
+      ]
+    }
+  ],
+  "doors": [
+    {
+      "id": "v09door_room6",
+      "room": "room6",
+      "x": 600,
+      "y": -70,
+      "w": 20,
+      "h": 160
+    },
+    {
+      "id": "v09door_room4",
+      "room": "room4",
+      "x": 600,
+      "y": 430,
+      "w": 20,
+      "h": 160
+    },
+    {
+      "id": "v09door_workshop",
+      "room": "workshop",
+      "x": 600,
+      "y": 930,
+      "w": 20,
+      "h": 160
+    },
+    {
+      "id": "v09door_room5",
+      "room": "room5",
+      "x": 1800,
+      "y": -70,
+      "w": 20,
+      "h": 160
+    },
+    {
+      "id": "v09door_reserve_l1",
+      "room": "reserve_l1",
+      "x": 1800,
+      "y": 430,
+      "w": 20,
+      "h": 160
+    },
+    {
+      "id": "v09door_storage",
+      "room": "storage",
+      "x": 1800,
+      "y": 930,
+      "w": 20,
+      "h": 160
+    },
+    {
+      "id": "v09door_room7",
+      "room": "room7",
+      "x": 1130,
+      "y": 1250,
+      "w": 160,
+      "h": 20
+    }
+  ],
+  "portals": [
+    {
+      "id": "exit",
+      "label": "STAIRS / EXIT UP",
+      "x": 980,
+      "y": -480,
+      "w": 180,
+      "h": 240,
+      "active": true,
+      "interaction": {
+        "x": 1070,
+        "y": -300,
+        "r": 28,
+        "range": 48
+      },
+      "arrival": {
+        "x": 1070,
+        "y": -120
+      },
+      "actorLandingCandidates": [
+        {
+          "x": 1030,
+          "y": -130
+        },
+        {
+          "x": 1110,
+          "y": -130
+        },
+        {
+          "x": 1030,
+          "y": -50
+        },
+        {
+          "x": 1110,
+          "y": -50
+        }
+      ]
+    },
+    {
+      "id": "stairs_down_locked",
+      "label": "LEVEL 2 — LOCKED",
+      "x": 1260,
+      "y": -480,
+      "w": 180,
+      "h": 240,
+      "active": false,
+      "interaction": {
+        "x": 1350,
+        "y": -240,
+        "range": 68
+      },
+      "lock": {
+        "x": 1260,
+        "y": -252,
+        "w": 180,
+        "h": 24
+      }
+    }
+  ],
+  "core": {
+    "id": "command_core_reservation",
+    "x": 1030,
+    "y": 370,
+    "w": 360,
+    "h": 280,
+    "walkableNow": true,
+    "futureClearance": 120,
+    "hasGameplay": false
+  },
+  "fixtures": [
+    {
+      "id": "furnace",
+      "x": 154,
+      "y": 794,
+      "w": 130,
+      "h": 195,
+      "room": "workshop"
+    },
+    {
+      "id": "craft_bench",
+      "x": 157,
+      "y": 1061,
+      "w": 260,
+      "h": 173,
+      "room": "workshop"
+    },
+    {
+      "id": "medical_table",
+      "x": 145,
+      "y": 300,
+      "w": 245,
+      "h": 78,
+      "room": "room4"
+    },
+    {
+      "id": "medical_bed",
+      "x": 145,
+      "y": 650,
+      "w": 225,
+      "h": 58,
+      "room": "room4"
+    },
+    {
+      "id": "cabinet",
+      "x": 110,
+      "y": 430,
+      "w": 58,
+      "h": 130,
+      "room": "room4"
+    },
+    {
+      "id": "sink",
+      "x": 455,
+      "y": 315,
+      "w": 100,
+      "h": 58,
+      "room": "room4"
+    },
+    {
+      "id": "medical_crate1",
+      "x": 430,
+      "y": 650,
+      "w": 55,
+      "h": 52,
+      "room": "room4"
+    },
+    {
+      "id": "medical_crate2",
+      "x": 500,
+      "y": 650,
+      "w": 55,
+      "h": 52,
+      "room": "room4"
+    },
+    {
+      "id": "tank",
+      "x": 1855,
+      "y": -185,
+      "w": 125,
+      "h": 185,
+      "room": "room5"
+    },
+    {
+      "id": "generator",
+      "x": 2022,
+      "y": -185,
+      "w": 130,
+      "h": 195,
+      "room": "room5"
+    },
+    {
+      "id": "battery",
+      "x": 2205,
+      "y": -200,
+      "w": 105,
+      "h": 215,
+      "room": "room5"
+    },
+    {
+      "id": "kitchen",
+      "x": 145,
+      "y": -205,
+      "w": 330,
+      "h": 92,
+      "room": "room6"
+    },
+    {
+      "id": "fridge",
+      "x": 110,
+      "y": -75,
+      "w": 72,
+      "h": 165,
+      "room": "room6"
+    },
+    {
+      "id": "dining",
+      "x": 225,
+      "y": 135,
+      "w": 190,
+      "h": 70,
+      "room": "room6"
+    },
+    {
+      "id": "shelf",
+      "x": 110,
+      "y": 145,
+      "w": 72,
+      "h": 78,
+      "room": "room6"
+    },
+    {
+      "id": "chair1",
+      "x": 245,
+      "y": 110,
+      "w": 42,
+      "h": 22,
+      "room": "room6"
+    },
+    {
+      "id": "chair2",
+      "x": 352,
+      "y": 110,
+      "w": 42,
+      "h": 22,
+      "room": "room6"
+    },
+    {
+      "id": "chair3",
+      "x": 245,
+      "y": 208,
+      "w": 42,
+      "h": 22,
+      "room": "room6"
+    },
+    {
+      "id": "chair4",
+      "x": 352,
+      "y": 208,
+      "w": 42,
+      "h": 22,
+      "room": "room6"
+    },
+    {
+      "id": "chest0",
+      "x": 1861,
+      "y": 793,
+      "w": 68,
+      "h": 50,
+      "room": "storage"
+    },
+    {
+      "id": "chest1",
+      "x": 1976,
+      "y": 793,
+      "w": 68,
+      "h": 50,
+      "room": "storage"
+    },
+    {
+      "id": "chest2",
+      "x": 2096,
+      "y": 793,
+      "w": 68,
+      "h": 50,
+      "room": "storage"
+    },
+    {
+      "id": "chest3",
+      "x": 2211,
+      "y": 793,
+      "w": 68,
+      "h": 50,
+      "room": "storage"
+    },
+    {
+      "id": "chest4",
+      "x": 1861,
+      "y": 1177,
+      "w": 68,
+      "h": 50,
+      "room": "storage"
+    },
+    {
+      "id": "chest5",
+      "x": 1976,
+      "y": 1177,
+      "w": 68,
+      "h": 50,
+      "room": "storage"
+    },
+    {
+      "id": "chest6",
+      "x": 2096,
+      "y": 1177,
+      "w": 68,
+      "h": 50,
+      "room": "storage"
+    },
+    {
+      "id": "chest7",
+      "x": 2211,
+      "y": 1177,
+      "w": 68,
+      "h": 50,
+      "room": "storage"
+    },
+    {
+      "id": "wardrobe",
+      "x": 995,
+      "y": 1295,
+      "w": 155,
+      "h": 64,
+      "room": "room7"
+    },
+    {
+      "id": "nightstand",
+      "x": 1220,
+      "y": 1305,
+      "w": 58,
+      "h": 58,
+      "room": "room7"
+    },
+    {
+      "id": "bed",
+      "kind": "living_bed",
+      "name": "Отдыхать",
+      "x": 1342,
+      "y": 1295,
+      "w": 99,
+      "h": 198,
+      "range": 46,
+      "room": "room7"
+    },
+    {
+      "id": "living_desk",
+      "x": 1300,
+      "y": 1616,
+      "w": 145,
+      "h": 105,
+      "room": "room7"
+    },
+    {
+      "id": "living_chair",
+      "x": 1350,
+      "y": 1724,
+      "w": 45,
+      "h": 25,
+      "room": "room7"
+    },
+    {
+      "id": "bath_wall1",
+      "x": 1008,
+      "y": 1599,
+      "w": 92,
+      "h": 6,
+      "room": "room7"
+    },
+    {
+      "id": "bath_wall3",
+      "x": 1178,
+      "y": 1599,
+      "w": 69,
+      "h": 6,
+      "room": "room7"
+    },
+    {
+      "id": "bath_wall2",
+      "x": 1241,
+      "y": 1599,
+      "w": 6,
+      "h": 148,
+      "room": "room7"
+    },
+    {
+      "id": "bath_wall4",
+      "x": 1008,
+      "y": 1599,
+      "w": 6,
+      "h": 148,
+      "room": "room7"
+    },
+    {
+      "id": "toilet",
+      "x": 1185,
+      "y": 1663,
+      "w": 35,
+      "h": 70,
+      "room": "room7"
+    },
+    {
+      "id": "living_sink",
+      "x": 1193,
+      "y": 1617,
+      "w": 36,
+      "h": 29,
+      "room": "room7"
+    },
+    {
+      "id": "shower_rim_n",
+      "x": 1026,
+      "y": 1656,
+      "w": 74,
+      "h": 4,
+      "room": "room7"
+    },
+    {
+      "id": "shower_rim_w",
+      "x": 1026,
+      "y": 1660,
+      "w": 4,
+      "h": 78,
+      "room": "room7"
+    },
+    {
+      "id": "shower_rim_s",
+      "x": 1026,
+      "y": 1734,
+      "w": 74,
+      "h": 4,
+      "room": "room7"
+    },
+    {
+      "id": "living_bath_door",
+      "kind": "living_bath_door",
+      "name": "Дверь санузла",
+      "x": 1100,
+      "y": 1600,
+      "w": 78,
+      "h": 5,
+      "range": 70,
+      "level": 1,
+      "maxHp": 10000,
+      "hp": 10000,
+      "room": "room7"
+    },
+    {
+      "id": "robots014_dock_body",
+      "x": 2167,
+      "y": 157,
+      "w": 26,
+      "h": 72,
+      "room": "room5"
+    },
+    {
+      "id": "upgrade0161",
+      "kind": "upgrade0161",
+      "name": "Станок усиления",
+      "x": 443,
+      "y": 794,
+      "w": 139,
+      "h": 110,
+      "range": 70,
+      "room": "workshop"
+    }
+  ],
+  "functional": [
+    {
+      "id": "chest0",
+      "kind": "storage",
+      "name": "Топливо",
+      "x": 1861,
+      "y": 793,
+      "w": 68,
+      "h": 50,
+      "range": 44,
+      "room": "storage"
+    },
+    {
+      "id": "chest1",
+      "kind": "storage",
+      "name": "Оружие",
+      "x": 1976,
+      "y": 793,
+      "w": 68,
+      "h": 50,
+      "range": 44,
+      "room": "storage"
+    },
+    {
+      "id": "chest2",
+      "kind": "storage",
+      "name": "Железо",
+      "x": 2096,
+      "y": 793,
+      "w": 68,
+      "h": 50,
+      "range": 44,
+      "room": "storage"
+    },
+    {
+      "id": "chest3",
+      "kind": "storage",
+      "name": "Материалы",
+      "x": 2211,
+      "y": 793,
+      "w": 68,
+      "h": 50,
+      "range": 44,
+      "room": "storage"
+    },
+    {
+      "id": "chest4",
+      "kind": "storage",
+      "name": "Еда",
+      "x": 1861,
+      "y": 1177,
+      "w": 68,
+      "h": 50,
+      "range": 44,
+      "room": "storage"
+    },
+    {
+      "id": "chest5",
+      "kind": "storage",
+      "name": "Напитки",
+      "x": 1976,
+      "y": 1177,
+      "w": 68,
+      "h": 50,
+      "range": 44,
+      "room": "storage"
+    },
+    {
+      "id": "chest6",
+      "kind": "storage",
+      "name": "Медицина",
+      "x": 2096,
+      "y": 1177,
+      "w": 68,
+      "h": 50,
+      "range": 44,
+      "room": "storage"
+    },
+    {
+      "id": "chest7",
+      "kind": "storage",
+      "name": "Разное",
+      "x": 2211,
+      "y": 1177,
+      "w": 68,
+      "h": 50,
+      "range": 44,
+      "room": "storage"
+    },
+    {
+      "id": "tank",
+      "kind": "v09fuel",
+      "name": "Топливный бак",
+      "x": 1855,
+      "y": -185,
+      "w": 125,
+      "h": 185,
+      "range": 50,
+      "room": "room5"
+    },
+    {
+      "id": "generator",
+      "kind": "v09generator",
+      "name": "Генератор",
+      "x": 2022,
+      "y": -185,
+      "w": 130,
+      "h": 195,
+      "range": 50,
+      "room": "room5"
+    },
+    {
+      "id": "battery",
+      "kind": "v09battery",
+      "name": "Резервная батарея",
+      "x": 2205,
+      "y": -200,
+      "w": 105,
+      "h": 215,
+      "range": 50,
+      "room": "room5"
+    },
+    {
+      "id": "furnace",
+      "x": 154,
+      "y": 794,
+      "w": 130,
+      "h": 195,
+      "kind": "v09craft",
+      "name": "Плавильная печь",
+      "range": 48,
+      "room": "workshop"
+    },
+    {
+      "id": "craft_bench",
+      "x": 157,
+      "y": 1061,
+      "w": 260,
+      "h": 173,
+      "kind": "v09craft",
+      "name": "Универсальный станок",
+      "range": 48,
+      "room": "workshop"
+    },
+    {
+      "id": "bed",
+      "kind": "living_bed",
+      "name": "Отдыхать",
+      "x": 1342,
+      "y": 1295,
+      "w": 99,
+      "h": 198,
+      "range": 46,
+      "room": "room7"
+    },
+    {
+      "id": "shower",
+      "kind": "living_shower",
+      "name": "Принять душ",
+      "x": 1026,
+      "y": 1656,
+      "w": 74,
+      "h": 82,
+      "range": 34,
+      "room": "room7"
+    },
+    {
+      "id": "living_bath_door",
+      "kind": "living_bath_door",
+      "name": "Открыть дверь санузла",
+      "x": 1100,
+      "y": 1600,
+      "w": 78,
+      "h": 5,
+      "range": 70,
+      "level": 1,
+      "maxHp": 10000,
+      "hp": 10000,
+      "room": "room7"
+    },
+    {
+      "id": "robots014_dock",
+      "kind": "robots014_dock",
+      "name": "Станция дрона",
+      "x": 2160,
+      "y": 150,
+      "w": 148,
+      "h": 86,
+      "range": 65,
+      "detectionRadius": 52,
+      "watts": 1,
+      "returnThreshold": 15,
+      "room": "room5"
+    },
+    {
+      "id": "upgrade0161",
+      "kind": "upgrade0161",
+      "name": "Станок усиления",
+      "x": 443,
+      "y": 794,
+      "w": 139,
+      "h": 110,
+      "range": 70,
+      "room": "workshop"
+    }
+  ],
+  "dormant": {
+    "key": "farm",
+    "buildLevel2": false,
+    "policy": "Preserve state; proposed suspension of agricultural production, growth, breeding, starvation and demand; keep Cow Timer RNG cadence"
+  },
+  "bounds": {
+    "x": 90,
+    "y": -480,
+    "w": 2240,
+    "h": 2240
+  },
+  "shifts": {
+    "room6": [
+      0,
+      0
+    ],
+    "room4": [
+      0,
+      0
+    ],
+    "workshop": [
+      0,
+      0
+    ],
+    "room5": [
+      970,
+      -500
+    ],
+    "storage": [
+      970,
+      0
+    ],
+    "room7": [
+      110,
+      1500
+    ]
+  }
+}

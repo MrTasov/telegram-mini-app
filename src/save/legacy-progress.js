@@ -16,7 +16,7 @@ function saveElapsed(now,then){
 
 function captureGameProgressBase(){
   reconcileHands();
-  const now=Date.now();
+  const now=Date.now(),farmNow=AgricultureTime.now();
   return {
     schema:2,gameVersion:'0.8.4',savedAt:now,
     gateOpen,handSlots:clone(handSlots),activeHandSlot,flashlightOn,starterPending:clone(starterPending),
@@ -28,7 +28,7 @@ function captureGameProgressBase(){
     farmClock:1,
     farm:GameState.farm.beds.map(st=>({
       crop:st.crop,
-      elapsedMs:st.crop===null?0:saveElapsed(now,st.plantedAt),
+      elapsedMs:st.crop===null?0:saveElapsed(farmNow,st.plantedAt),
       harvestLeft:st.harvestLeft??null
     })),
     loot:scavenges.map(o=>({id:o.id,searched:o.searched,loot:clone(o.loot||[])})),
@@ -36,13 +36,13 @@ function captureGameProgressBase(){
     livestock:{
       animals:clone(livestockAnimals),schema:2,nextCow:GameLivestock.nextCow,reserve:clone(GameLivestock.reserve),alive:livestockAlive,
       warned:livestockWarned,
-      emptyMs:livestockEmptySince===null?null:saveElapsed(now,livestockEmptySince),
-      eggMs:saveElapsed(now,lastEggProduction),milkMs:saveElapsed(now,lastMilkProduction),
-      needMs:saveElapsed(now,lastLivestockNeed),breedMs:saveElapsed(now,lastCowBreed)
+      emptyMs:livestockEmptySince===null?null:saveElapsed(farmNow,livestockEmptySince),
+      eggMs:saveElapsed(farmNow,lastEggProduction),milkMs:saveElapsed(farmNow,lastMilkProduction),
+      needMs:saveElapsed(farmNow,lastLivestockNeed),breedMs:saveElapsed(farmNow,lastCowBreed)
     },
     feedCraft:pendingFeedCraft?{
       qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,
-      remainingMs:clamp(pendingFeedCraft.readyAt-now,0,2500)
+      remainingMs:clamp(pendingFeedCraft.readyAt-farmNow,0,2500)
     }:null
   };
 }
@@ -135,7 +135,7 @@ function decodeGameProgressBase(raw){
 
 function restoreGameProgressBase(d){
   GameIdentity.restore(d);
-  const now=Date.now();
+  const now=Date.now(),farmNow=AgricultureTime.now();
   bag=clone(d.bag);
   for(const slot of Object.keys(equipment)){
     equipment[slot]=d.equipment[slot]?clone(d.equipment[slot]):null;
@@ -153,12 +153,12 @@ function restoreGameProgressBase(d){
   // A stale position cannot leave the player trapped inside a wall.
   const collision=scene==="surface"?surfaceCollision:bunkerCollision;
   if(collision(player.x,player.y)){
-    player.x=scene==="surface"?800:bunker.entrance.x;
-    player.y=scene==="surface"?860:bunker.entrance.y-70;
+    player.x=scene==="surface"?800:BunkerLayout.arrivals[0].x;
+    player.y=scene==="surface"?860:BunkerLayout.arrivals[0].y;
   }
   playerDead=d.player.dead;
   window.farmState=d.farm.map(st=>({crop:st.crop,
-    plantedAt:st.crop===null?0:now-farmElapsed(st,d,now),
+    plantedAt:st.crop===null?0:farmNow-farmElapsed(st,d,farmNow),
     ...(st.harvestLeft===null?{}:{harvestLeft:st.harvestLeft})}));
   d.loot.forEach((o,i)=>{
     scavenges[i].searched=o.searched;
@@ -175,13 +175,13 @@ function restoreGameProgressBase(d){
   livestockAlive=l.alive;
   GameLivestock.nextCow=d.livestock.nextCow;GameLivestock.reserve=clone(d.livestock.reserve);
   livestockWarned=l.warned;
-  livestockEmptySince=l.emptyMs===null?null:now-l.emptyMs;
-  lastEggProduction=now-l.eggMs;
-  lastMilkProduction=now-l.milkMs;
-  lastLivestockNeed=now-l.needMs;
-  lastCowBreed=now-l.breedMs;
+  livestockEmptySince=l.emptyMs===null?null:farmNow-l.emptyMs;
+  lastEggProduction=farmNow-l.eggMs;
+  lastMilkProduction=farmNow-l.milkMs;
+  lastLivestockNeed=farmNow-l.needMs;
+  lastCowBreed=farmNow-l.breedMs;
   pendingFeedCraft=d.feedCraft?{qty:d.feedCraft.qty,total:d.feedCraft.total,
-    readyAt:now+d.feedCraft.remainingMs}:null;
+    readyAt:farmNow+d.feedCraft.remainingMs}:null;
   feedCraftBusy=!!pendingFeedCraft;
   feedCraftLoaded=0;
   activeLoot=null;activeLootObject=null;

@@ -8,7 +8,7 @@ function projection(){return json(E(`(()=>{const d=captureGameProgress();return 
 for(const fixture of index.fixtures){
  const raw=fs.readFileSync(path.join(fixtureDir,fixture.id+'.json'),'utf8');
  check(fixture.id+'.oldSaveLoads',()=>{assert.ok(E(`decodeGameProgress(${JSON.stringify(raw)})`));E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(raw)}));`);});
- check(fixture.id+'.oldInventoryAndStatePreserved',()=>assert.deepEqual(projection(),fixture.expected));
+ check(fixture.id+'.oldInventoryAndStatePreserved',()=>assert.deepEqual(require('./bunker-contract.cjs').legacyProjection(projection()),require('./bunker-contract.cjs').legacyProjection(fixture.expected)));
  check(fixture.id+'.newSaveRoundtrip',()=>{const before=projection(),saved=E('JSON.stringify(captureGameProgress())');E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(saved)}));`);assert.deepEqual(projection(),before);});
 }
 check('legacy.0.19.1.migration',()=>{

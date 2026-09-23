@@ -88,49 +88,7 @@ const surface = {
 
 };
 
-const bunker = {
-
-  width:1450,
-  height:1450,
-
-  // №1 — central corridor: 230 × 1500
-  corridor:{
-    left:610,
-    right:840,
-    top:-240,
-    bottom:1260
-  },
-
-  entrance:{
-    x:725,
-    y:1180
-  },
-
-  // All six side rooms are exactly 520 × 500.
-  // №2 — existing workshop
-  workshop:{
-    left:90,right:610,top:760,bottom:1260,doorTop:930,doorBottom:1090
-  },
-
-  // №3 — existing storage room with the same six functional chests
-  storage:{
-    left:840,right:1360,top:760,bottom:1260,doorTop:930,doorBottom:1090
-  },
-
-  // №4–7 — empty rooms for future systems
-  room4:{left:90,right:610,top:260,bottom:760,doorTop:430,doorBottom:590},
-  room5:{left:840,right:1360,top:260,bottom:760,doorTop:430,doorBottom:590},
-  room6:{left:90,right:610,top:-240,bottom:260,doorTop:-70,doorBottom:90},
-  room7:{left:840,right:1360,top:-240,bottom:260,doorTop:-70,doorBottom:90},
-
-  // №8 — large farm, directly at the end of the corridor
-  farm:{
-    left:-150,right:1360,top:-940,bottom:-240,
-    doorLeft:650,doorRight:800,
-    cropLeft:90
-  }
-
-};
+const bunker = BunkerLayout.createBunker();
 
 
 /* =====================================================
@@ -178,16 +136,7 @@ function solidObjects(which){
     // Trees remain visible and harvestable, but are not solid.
   ];
   const chests=getChestPositions();
-  const fixtures=[
-    ['furnace',154,794,130,195],['craft_bench',157,1061,260,173],
-    ['medical_table',145,300,245,78],['medical_bed',145,650,225,58],['cabinet',110,430,58,130],['sink',455,315,100,58],
-    ['medical_crate1',430,650,55,52],['medical_crate2',500,650,55,52],
-    ['tank',885,315,125,185],['generator',1052,315,130,195],['battery',1235,300,105,215],
-    ['kitchen',145,-205,330,92],['fridge',110,-75,72,165],['dining',225,135,190,70],['shelf',110,145,72,78],
-    ['chair1',245,110,42,22],['chair2',352,110,42,22],['chair3',245,208,42,22],['chair4',352,208,42,22],
-    ['wardrobe',885,-205,155,72],['nightstand',1080,-190,82,62],['bed',1240,-205,95,225],['dresser',1190,125,145,92],
-    ['bath_wall1',916,61,208,8],['bath_wall2',1116,65,8,184],['toilet',930,130,62,105],['shower',1020,88,90,145]
-  ].map(a=>({id:a[0],x:a[1],y:a[2],w:a[3],h:a[4]}));
+  const fixtures=["furnace", "craft_bench", "medical_table", "medical_bed", "cabinet", "sink", "medical_crate1", "medical_crate2", "tank", "generator", "battery", "kitchen", "fridge", "dining", "shelf", "chair1", "chair2", "chair3", "chair4"].map(id=>BunkerLayout.fixture(id));
   const feed=feedCraftStationPos();
   return [
     ...fixtures,

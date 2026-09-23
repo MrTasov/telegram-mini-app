@@ -379,75 +379,7 @@ function updateBullets(){
 }
 
 
-function bunkerGeometryBlocked(x,y,r){
-  const c=bunker.corridor;
-
-  const inside=(o)=>
-    x>=o.left+r && x<=o.right-r &&
-    y>=o.top+r && y<=o.bottom-r;
-
-  const sideDoor=(o,side)=>{
-    if(side==="left"){
-      return x>=o.right-30 && x<=c.left+30 &&
-             y>=o.doorTop && y<=o.doorBottom;
-    }
-    return x>=c.right-30 && x<=o.left+30 &&
-           y>=o.doorTop && y<=o.doorBottom;
-  };
-
-  const inCorridor=
-    x>=c.left+r && x<=c.right-r &&
-    y>=c.top+r && y<=c.bottom-r;
-
-  const inWorkshop=inside(bunker.workshop);
-  const inStorage=inside(bunker.storage);
-  const in4=inside(bunker.room4);
-  const in5=inside(bunker.room5);
-  const in6=inside(bunker.room6);
-  const in7=inside(bunker.room7);
-
-  const d2=sideDoor(bunker.workshop,"left");
-  const d3=sideDoor(bunker.storage,"right");
-  const d4=sideDoor(bunker.room4,"left");
-  const d5=sideDoor(bunker.room5,"right");
-  const d6=sideDoor(bunker.room6,"left");
-  const d7=sideDoor(bunker.room7,"right");
-
-  const f=bunker.farm;
-  const inFarm=
-    x>=f.left+r && x<=f.right-r &&
-    y>=f.top+r && y<=f.bottom-r;
-
-  const farmDoor=
-    y>=f.bottom-30 && y<=f.bottom+30 &&
-    x>=f.doorLeft && x<=f.doorRight;
-
-  // Livestock pens are fenced and cannot be crossed except through two open gates.
-  const penLeft=f.left+18, penRight=(f.cropLeft??90)-12;
-  const penTop=f.top+42, penBottom=f.bottom-42;
-  const penMid=(penTop+penBottom)/2;
-  const insidePen=x>penLeft+r && x<penRight-r && y>penTop+r && y<penBottom-r;
-  const cowGate=x>=penRight-34 && x<=penRight+34 &&
-                y>=penTop+112 && y<=penTop+182;
-  const chickenGate=x>=penRight-34 && x<=penRight+34 &&
-                    y>=penMid+105 && y<=penMid+175;
-
-  // Player may be inside a pen, but cannot cross its fence except at its gate.
-  const crossingPenFence=
-    (
-      (x>=penLeft-r && x<=penLeft+r && y>=penTop && y<=penBottom) ||
-      (x>=penRight-r && x<=penRight+r && y>=penTop && y<=penBottom &&
-       !cowGate && !chickenGate) ||
-      (y>=penTop-r && y<=penTop+r && x>=penLeft && x<=penRight) ||
-      (y>=penBottom-r && y<=penBottom+r && x>=penLeft && x<=penRight) ||
-      (y>=penMid-r && y<=penMid+r && x>=penLeft && x<=penRight)
-    );
-
-  if(crossingPenFence) return true;
-
-  return !(inCorridor||inWorkshop||inStorage||in4||in5||in6||in7||
-           d2||d3||d4||d5||d6||d7||inFarm||farmDoor);
-}
+function bunkerGeometryBlocked(x,y,r){return !BunkerLayout.containsFloor(x,y);}
 
 /* =====================================================
    MOVEMENT / FOOTSTEPS
@@ -751,7 +683,7 @@ const FARM_GROW_TIME = 15*60000;
 // Game balance, not a universal agricultural calendar; berries use established seedlings.
 const FARM_CROP_MINUTES=[18,13,16,15,19,10,17,12.5,9.5,20];
 function farmGrowMs(crop){return (FARM_CROP_MINUTES[crop]??15)*60000;}
-function farmElapsed(st,d,now){const total=farmGrowMs(st.crop);const elapsed=d.farmClock===1?st.elapsedMs:Math.min(1,st.elapsedMs/45000)*total;return Math.min(total,elapsed+Math.max(0,now-d.savedAt));}
+function farmElapsed(st,d,now){const total=farmGrowMs(st.crop);const elapsed=d.farmClock===1?st.elapsedMs:Math.min(1,st.elapsedMs/45000)*total;return Math.min(total,elapsed+(AgricultureTime.available?Math.max(0,now-d.savedAt):0));}
 function farmTimeLabel(ms){const sec=Math.max(0,Math.ceil(ms/1000));return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
 
 function getFarmBeds(){

@@ -24,7 +24,7 @@ const V010Energy=(()=>{
     const batterySupply=battery.enabled&&battery.charge>0?Math.min(battery.maxDischarge,battery.charge*3600/dt):0;
     const supply=generator+batterySupply,served=new Set(),shed=[];
     let demand=0,load=0;
-    const devices=Object.values(V09Power.devices).map((d,i)=>({d,i,active:!!d.active()}));
+    const devices=Object.values(V09Power.devices).filter(d=>BunkerLayout.roomActive(d.room)).map((d,i)=>({d,i,active:!!d.active()}));
     devices.sort((a,b)=>roomRank(b.d.room)-roomRank(a.d.room)||deviceRank(b.d.id)-deviceRank(a.d.id)||a.i-b.i);
     for(const {d,active} of devices){
       if(!d.enabled||!V09Power.roomEnabled[d.room])continue;
@@ -125,12 +125,12 @@ const V010Energy=(()=>{
     edge('fuelLow',V09Power.running&&V09Power.fuel>0&&V09Power.fuel<=2,'Топливо заканчивается: заправьте генератор.');
     edge('batteryLow',a.batteryOutput>0&&battery.charge/battery.capacity<=.1,'Низкий заряд резервной батареи.');
     edge('shed',a.shed.length>0&&a.supply>0,'Не хватает мощности: часть приборов ожидает питания по приоритету.');
-    if(typeof livestockAlive!=='undefined'&&livestockAlive){
+    if(AgricultureTime.available&&typeof livestockAlive!=='undefined'&&livestockAlive){
       const count=(i,type)=>(storageChests[i]?.items||[]).reduce((n,s)=>n+(s?.type===type?s.qty:0),0);
       edge('feed',count(12,'animal_feed')===0,'Ферма: у животных закончился корм.');
       edge('water',count(13,'water')===0,'Ферма: у животных закончилась вода.');
     }
-    if(Array.isArray(window.farmState))window.farmState.forEach((s,i)=>{const ready=s?.crop!==null&&s?.crop!==undefined&&Date.now()-s.plantedAt>=farmGrowMs(s.crop);if(ready&&!harvestSeen[i])log('Ферма: урожай на грядке '+(i+1)+' созрел.');harvestSeen[i]=ready;});
+    if(AgricultureTime.available&&Array.isArray(window.farmState))window.farmState.forEach((s,i)=>{const ready=s?.crop!==null&&s?.crop!==undefined&&Date.now()-s.plantedAt>=farmGrowMs(s.crop);if(ready&&!harvestSeen[i])log('Ферма: урожай на грядке '+(i+1)+' созрел.');harvestSeen[i]=ready;});
   }
   powerTick=function(dt){
     if(document.hidden||playerDead)return;dt=clamp(Number(dt)||0,0,.1);if(!dt)return;
@@ -142,9 +142,11 @@ const V010Energy=(()=>{
     const a=allocation(dt),before=battery.charge;lastFlow={charge:a.chargeInput,discharge:a.batteryOutput};
     battery.charge=clamp(battery.charge+(a.chargeInput-a.batteryOutput)*dt/3600,0,battery.capacity);
     if(before>0&&battery.charge<=.000000001&&a.batteryOutput>0){battery.charge=0;log('Резервная батарея разряжена.');queueGameSave();}
+    const occupants=BunkerLayout.occupants('bunker');
     for(const d of v09Doors){
-      const near=(scene==='bunker'&&distance(player.x,player.y,d.x+d.w/2,d.y+d.h/2)<116.25)||!!window.V014Robots?.doorNear(d);
-      const occupied=d.open>.2&&((scene==='bunker'&&rectHit(player.x,player.y,player.radius+8,d))||!!window.V014Robots?.doorOccupies(d));
+      if(!BunkerLayout.roomActive(d.room))continue;
+      const near=occupants.some(a=>distance(a.x,a.y,d.x+d.w/2,d.y+d.h/2)<116.25);
+      const occupied=d.open>.2&&occupants.some(a=>rectHit(a.x,a.y,(a.radius||10)+8,d));
       const powered=a.served.has('door_'+d.room);
       if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
       if(d.away>=4)d.manual=false;

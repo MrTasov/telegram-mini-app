@@ -36,7 +36,7 @@ async function main(){
   for(const [id,d]of Object.entries(catalog.images))if(id.startsWith('art/monster_')||id.startsWith('art/corpse_'))assert.deepEqual(d,prior.images[id]);
   for(const d of Object.values(catalog.actors.modular.items))assert.equal(d.walk.length,12);
  });
- await check('save.full029PayloadLoadsUnchanged',()=>{fresh();equalState();assert.equal(E('captureGameProgress().saveVersion'),3);});
+ await check('save.full029PayloadLoadsUnchanged',()=>{fresh();equalState();assert.equal(E('captureGameProgress().saveVersion'),4);});
  await check('save.roundtripAfterAnimationKeepsIdentityInventoryAndWorld',()=>{
   fresh('movePower=1;moveX=1;moveY=0;');for(let i=0;i<35;i++)step();
   pair('restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())))');equalState();
@@ -111,11 +111,11 @@ async function main(){
   equalState();
  });
  await check('doors.realManualDoorOpensAndPlayerCrossesUnchanged',()=>{
-  fresh("scene='bunker';player.x=802;player.y=1010;player.aimX=1;player.aimY=0;window.masterDoor=interactionObjects().find(o=>o.id==='v09door_storage');executeInteraction(masterDoor);");
+  fresh("scene='bunker';player.x=bunker.storage.left-38;player.y=1010;player.aimX=1;player.aimY=0;window.masterDoor=interactionObjects().find(o=>o.id==='v09door_storage');executeInteraction(masterDoor);");
   assert.equal(E("v09Doors.find(d=>d.id==='v09door_storage').manual"),true);
   for(let i=0;i<32;i++){pair('V09Power.tick(1/60)');step();}pair('moveX=1;moveY=0;movePower=.8;');
   const frames=new Set();for(let i=0;i<32;i++){pair('V09Power.tick(1/60)');frames.add(step().frame);equalState();}
-  assert.ok(E('player.x>860'),'player did not cross open doorway');assert.ok(frames.size>=3);
+  assert.ok(E('player.x>bunker.storage.left+20'),'player did not cross open doorway');assert.ok(frames.size>=3);
  });
  await check('stairs.actualAscentDescentRetainsTimingPositionHitbox',()=>{
   fresh("window.masterStair=V091Fortress.stairs[0];player.x=masterStair.foot.x;player.y=masterStair.foot.y;window.masterTarget=interactionObjects().find(o=>o.id==='v091stairs_'+masterStair.id);executeInteraction(masterTarget);");
@@ -126,7 +126,7 @@ async function main(){
   assert.equal(E('V091Fortress.transitioning'),true);for(let i=0;i<45;i++){step();equalState();}assert.equal(E('V091Fortress.isElevated()'),false);
  });
  await check('sleep.sameRestOwnerHealthAndCollisionWithFourBreathingFrames',()=>{
-  fresh("scene='bunker';player.x=1210;player.y=-115;player.health=50;");pair("V011Living.start('rest')");equalState();
+  fresh("scene='bunker';player.x=V011Living.bed.x-22;player.y=V011Living.bed.y+90;player.health=50;");pair("V011Living.start('rest')");equalState();
   const location=plain(E('({x:player.x,y:player.y,radius:player.radius})'));
   const pixels=ms=>{E(`ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,1280,800);ActorVisuals.drawSleep({x:80,y:20,w:99,h:198},${ms});`);return Buffer.from(r.canvas.getContext('2d').getImageData(0,0,320,320).data);};
   const frames=[0,1200,2400,3600].map(ms=>sha(pixels(ms)));assert.equal(new Set(frames).size,4);assert.ok(pixels(0).equals(pixels(4800)));

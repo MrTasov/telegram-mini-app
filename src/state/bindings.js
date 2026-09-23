@@ -30,8 +30,8 @@ GameState.register('world',{
 GameState.register('base',{
   get sections(){return window.V015Base?.sections;},get doors(){return v09Doors;},
   get system(){return window.V015Base;},get construction(){return window.V018Build;},
-  get fortress(){return window.V091Fortress;}
-},{source:'base/structures.js',saved:['gateOpen','v091','base015','building018','living011'],transient:['geometry revision','door interpolation','room patterns','rest/shower action']});
+  get fortress(){return window.V091Fortress;},get bunker(){return window.BunkerState;}
+},{source:'base/structures.js',saved:['gateOpen','v091','base015','building018','living011','bunker030'],transient:['geometry revision','door interpolation','room patterns','rest/shower action']});
 
 GameState.register('drones',{
   get companion(){return window.V014Robots?.state;},get system(){return window.V014Robots;}

@@ -46,27 +46,13 @@ const V091Light = (()=>{
       return V091Fortress.lightCollision(x,y,r,which);
     return worldCollision(x,y,r,which);
   }
-  function bunkerWalls(){
-    if(typeof V091Navigation!=='undefined')return V091Navigation.walls;
-    // Also permits isolated lighting tests against the previous game version.
-    const out=[];
-    for(const key of ['workshop','storage','room4','room5','room6','room7']){
-      const r=bunker[key],inside=r.right===610?r.right:r.left,outside=inside===r.right?r.left:r.right;
-      out.push({x:r.left-8,y:r.top-8,w:r.right-r.left+16,h:16},{x:r.left-8,y:r.bottom-8,w:r.right-r.left+16,h:16},
-        {x:outside-8,y:r.top,w:16,h:r.bottom-r.top},{x:inside-8,y:r.top,w:16,h:r.doorTop-r.top},{x:inside-8,y:r.doorBottom,w:16,h:r.bottom-r.doorBottom});
-    }
-    const f=bunker.farm,c=bunker.corridor;
-    out.push({x:f.left-8,y:f.top-8,w:f.right-f.left+16,h:16},{x:f.left-8,y:f.top,w:16,h:f.bottom-f.top},
-      {x:f.right-8,y:f.top,w:16,h:f.bottom-f.top},{x:f.left,y:f.bottom-8,w:f.doorLeft-f.left,h:16},
-      {x:f.doorRight,y:f.bottom-8,w:f.right-f.doorRight,h:16},{x:c.left,y:c.bottom-8,w:c.right-c.left,h:16});
-    return out;
-  }
+  function bunkerWalls(){return []; /* shared walls are indexed solids */}
   function obstacles(ox,oy,distanceLimit){
     let all;
     if(scene==='surface'&&typeof V091Fortress!=='undefined'&&typeof V091Fortress.lightObstacles==='function')all=V091Fortress.lightObstacles(scene);
     if(!all){
       const g=geometryFor(scene);
-      all=scene==='bunker'?[...g.objects,...bunkerWalls(),...v09Doors.flatMap(v09DoorPanels)]:[...g.walls,...g.objects];
+      all=scene==='bunker'?[...g.objects,...bunkerWalls(),...v09Doors.filter(d=>BunkerLayout.roomActive(d.room)).flatMap(v09DoorPanels)]:[...g.walls,...g.objects];
     }
     return all.filter(o=>o.r!==undefined?Math.hypot(o.x-ox,o.y-oy)<distanceLimit+o.r:
       o.x<ox+distanceLimit&&o.x+o.w>ox-distanceLimit&&o.y<oy+distanceLimit&&o.y+o.h>oy-distanceLimit);
@@ -152,7 +138,7 @@ const V091Light = (()=>{
       c.fillStyle='rgba(2,5,10,.61)';c.fillRect(0,0,mask.width,mask.height);
       const supplied=V09Power.allocation().served;
       for(const room of Object.keys(V09Power.rooms)){
-        if(room==='yard')continue;
+        if(room==='yard'||!BunkerLayout.roomActive(room))continue;
         const r=bunker[room];if(!r)continue;
         const x=r.left+9-camera.x,y=r.top+9-camera.y,w=r.right-r.left-18,h=r.bottom-r.top-18;
         c.clearRect(x,y,w,h);c.fillStyle=supplied.has('light_'+room)?'rgba(2,5,10,.035)':'rgba(2,5,10,.76)';c.fillRect(x,y,w,h);

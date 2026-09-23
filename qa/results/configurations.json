@@ -1,5 +1,5 @@
 {
-  "version": "0.29.0",
+  "version": "0.30.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -1810,8 +1810,8 @@
       "schema": 1,
       "id": "drone014",
       "name": "Спутник",
-      "x": 1264,
-      "y": 695,
+      "x": 2234,
+      "y": 195,
       "scene": "bunker",
       "battery": 100,
       "hp": 100,
@@ -1841,10 +1841,11 @@
       "id": "robots014_dock",
       "kind": "robots014_dock",
       "name": "Станция дрона",
-      "x": 1190,
-      "y": 650,
+      "x": 2160,
+      "y": 150,
       "w": 148,
       "h": 86,
+      "room": "room5",
       "range": 65,
       "detectionRadius": 52,
       "watts": 1,
@@ -1879,7 +1880,8 @@
       "room6": "Кухня",
       "room7": "Жилая комната",
       "farm": "Ферма",
-      "corridor": "Коридор",
+      "corridor": "Центральный зал",
+      "reserve_l1": "Резервная комната",
       "yard": "Двор"
     },
     "devices": [
@@ -1932,14 +1934,14 @@
         "enabled": true
       },
       {
-        "id": "door_workshop",
-        "room": "workshop",
-        "watts": 0.06,
+        "id": "light_reserve_l1",
+        "room": "reserve_l1",
+        "watts": 0.12,
         "enabled": true
       },
       {
-        "id": "door_storage",
-        "room": "storage",
+        "id": "door_room6",
+        "room": "room6",
         "watts": 0.06,
         "enabled": true
       },
@@ -1950,14 +1952,26 @@
         "enabled": true
       },
       {
+        "id": "door_workshop",
+        "room": "workshop",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
         "id": "door_room5",
         "room": "room5",
         "watts": 0.06,
         "enabled": true
       },
       {
-        "id": "door_room6",
-        "room": "room6",
+        "id": "door_reserve_l1",
+        "room": "reserve_l1",
+        "watts": 0.06,
+        "enabled": true
+      },
+      {
+        "id": "door_storage",
+        "room": "storage",
         "watts": 0.06,
         "enabled": true
       },
@@ -2530,6 +2544,7 @@
       "upgrade0161",
       "monsters017",
       "building018",
+      "bunker030",
       "identity027",
       "saveVersion"
     ],
@@ -2553,6 +2568,7 @@
       "upgrade0161": 1,
       "monsters017": 2,
       "building018": 1,
+      "bunker030": 1,
       "identity027": 1
     },
     "registeredModules": [

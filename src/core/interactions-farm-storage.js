@@ -65,7 +65,7 @@ function cancelNavigation(){navigation=null;movePower=0;moveX=0;moveY=0;}
 // A* on a 24 px grid; each edge is swept with the actor's radius.
 const v092PathCache=new Map();
 function* v092PathSearch(startX,startY,target,which=scene,radius=player.radius,fullSearch=false){
-  let bounds=which==='surface'?{x:surface.minX??0,y:surface.minY??0,w:surface.width,h:surface.height}:{x:-150,y:-940,w:1510,h:2200};
+  let bounds=which==='surface'?{x:surface.minX??0,y:surface.minY??0,w:surface.width,h:surface.height}:BunkerLayout.bounds;
   if(which==='surface'&&!fullSearch){const tx=target.x+(target.w||0)/2,ty=target.y+(target.h||0)/2,pad=600;
     const x=Math.max(bounds.x,Math.floor((Math.min(startX,tx)-pad)/12)*12),y=Math.max(bounds.y,Math.floor((Math.min(startY,ty)-pad)/12)*12),right=Math.min(bounds.x+bounds.w,Math.ceil((Math.max(startX,tx)+pad)/12)*12),bottom=Math.min(bounds.y+bounds.h,Math.ceil((Math.max(startY,ty)+pad)/12)*12);bounds={x,y,w:right-x,h:bottom-y};}
 
@@ -207,7 +207,7 @@ function updateLivestockAudio(){
   if(scene!=="bunker"||!livestockAlive)return;
   const now=Date.now();
   if(now>=nextCowMooAt){
-    GameAudio.play('cow',{...livestockAudioCenter('cow'),scene:'bunker',radius:310});
+    if(AgricultureTime.available)GameAudio.play('cow',{...livestockAudioCenter('cow'),scene:'bunker',radius:310});
     nextCowMooAt=now+3000+Math.random()*12000;
   }
 }
@@ -219,9 +219,9 @@ const LIVESTOCK_EGG_MS=30000;        // test: eggs slowly accumulate
 const LIVESTOCK_MILK_MS=45000;       // test: milk slowly accumulates
 const LIVESTOCK_NEED_MS=300000;      // test: consume once every 5 minutes
 const LIVESTOCK_STARVE_MS=48*60*60*1000; // ~2 real days without either need
-let lastEggProduction=Date.now();
-let lastMilkProduction=Date.now();
-let lastLivestockNeed=Date.now();
+let lastEggProduction=AgricultureTime.now();
+let lastMilkProduction=AgricultureTime.now();
+let lastLivestockNeed=AgricultureTime.now();
 let livestockEmptySince=null;
 let livestockWarned=false;
 let livestockAlive=true;
@@ -232,8 +232,9 @@ function storageCount(index,type){
 }
 
 function updateLivestockNeeds(){
+  if(!AgricultureTime.available)return;
   if(!livestockAlive) return;
-  const now=Date.now();
+  const now=AgricultureTime.now();
 
   if(now-lastLivestockNeed>=LIVESTOCK_NEED_MS){
     const ticks=Math.floor((now-lastLivestockNeed)/LIVESTOCK_NEED_MS);
@@ -269,6 +270,7 @@ function updateLivestockNeeds(){
 }
 
 function updateLivestockProduction(){
+  if(!AgricultureTime.available)return;
   updateLivestockNeeds();
   updateCowBreeding();
   if(!livestockAlive) return;
@@ -276,7 +278,7 @@ function updateLivestockProduction(){
   // Production pauses if either food or water is empty.
   if(storageCount(12,"animal_feed")<=0 || storageCount(13,"water")<=0) return;
 
-  const now=Date.now();
+  const now=AgricultureTime.now();
   if(now-lastEggProduction>=LIVESTOCK_EGG_MS){
     const ticks=Math.floor((now-lastEggProduction)/LIVESTOCK_EGG_MS);
     addToSlots(storageChests[10].items,"eggs",ticks*2,60);
@@ -322,7 +324,7 @@ const GameLivestock={nextCow:1,reserve:[],
   restoreReserve(){if(!this.reserve.length||cowCount()>=COW_MAX)return false;const a=this.reserve.shift();a.stallId=this.slot();livestockAnimals.push(a);renderCowMenu();queueGameSave();return true;}
 };
 for(const a of livestockAnimals)if(a.kind==='cow'){a.instanceId='cow:'+GameLivestock.nextCow++;a.typeId='cow';a.stallId='cow_slot_'+(Number(a.instanceId.slice(4)));}
-let lastCowBreed=Date.now();
+let lastCowBreed=AgricultureTime.now();
 
 function cowCount(){
   return livestockAnimals.filter(a=>a.kind==="cow").length;
@@ -341,9 +343,10 @@ function addCow(){
   return true;
 }
 function updateCowBreeding(){
+  if(!AgricultureTime.available)return;
   if(!livestockAlive || cowCount()<2) return;
   if(storageCount(12,"animal_feed")<=0 || storageCount(13,"water")<=0) return;
-  const now=Date.now();
+  const now=AgricultureTime.now();
   if(now-lastCowBreed>=COW_BREED_MS){
     if(addCow()) message("🐄 В стаде появилась новая корова.");
     lastCowBreed=now;
@@ -373,6 +376,7 @@ function openCowMenu(){
 }
 
 function updateLivestockAnimals(){
+  if(!AgricultureTime.available)return;
   if(!livestockAlive || scene!=="bunker") return;
   const f=bunker.farm;
   const left=f.left+38, right=(f.cropLeft??90)-32;
@@ -454,7 +458,7 @@ function openFeedCraftMenu(){
 
 function renderPendingFeedCraft(){
   if(!pendingFeedCraft)return;
-  const remaining=Math.max(0,pendingFeedCraft.readyAt-Date.now());
+  const remaining=Math.max(0,pendingFeedCraft.readyAt-AgricultureTime.now());
   el("feedCraftList").style.display="none";
   el("feedCraftRecipe").style.display="none";
   el("feedCraftProgress").style.display="";
@@ -465,9 +469,10 @@ function renderPendingFeedCraft(){
 }
 
 function updateFeedCraft(){
+  if(!AgricultureTime.available)return;
   if(!pendingFeedCraft)return;
   if(el("feedCraftOverlay").classList.contains("open"))renderPendingFeedCraft();
-  if(Date.now()<pendingFeedCraft.readyAt)return;
+  if(AgricultureTime.now()<pendingFeedCraft.readyAt)return;
   const before=pendingFeedCraft.qty;
   let left=addItem("animal_feed",before);
   if(left>0)left=addToSlots(storageChests[12].items,"animal_feed",left,60);

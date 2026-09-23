@@ -1,7 +1,7 @@
 // Explicit 0.28 differences only. Frozen fixtures and gameplay files are untouched.
 // New behaviors are asserted directly by world-farm.cjs and drone-return.cjs.
 exports.project=(d,{fresh=false,droneMotion=false,growthClock=false}={})=>{
- d=JSON.parse(JSON.stringify(d));
+ d=require('./bunker-contract.cjs').project(d);
  delete d.identity027;delete d.saveVersion;d.gameVersion='release-metadata';
  if(d.farm014){delete d.farm014.schema;delete d.farm014.next;delete d.farm014.end;delete d.farm014.irrigation;}
  if(d.farmV011){delete d.farmV011.schema;delete d.farmV011.at;if(fresh&&d.farmV011.water===500)d.farmV011.water=100;}

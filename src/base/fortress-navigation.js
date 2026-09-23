@@ -406,31 +406,8 @@
 
 // 0.9.2: swept room geometry and continuous, obstacle-aware point following.
 const V091Navigation=(()=>{
-  const oldGeometry=bunkerGeometryBlocked;
+  // R1 walls are already indexed by geometryFor; lighting uses the same solids.
   const walls=[];
-  function segment(x1,y1,x2,y2,width=16){walls.push({x:Math.min(x1,x2)-width/2,y:Math.min(y1,y2)-width/2,w:Math.abs(x2-x1)+width,h:Math.abs(y2-y1)+width});}
-  for(const key of ['workshop','storage','room4','room5','room6','room7']){
-    const o=bunker[key],left=o.right===bunker.corridor.left;
-    segment(o.left,o.top,o.right,o.top);segment(o.left,o.bottom,o.right,o.bottom);
-    const outside=left?o.left:o.right,inside=left?o.right:o.left;
-    segment(outside,o.top,outside,o.bottom);
-    // Stop horizontal wall caps at the door edge; actor radius supplies clearance.
-    walls.push({x:inside-8,y:o.top,w:16,h:o.doorTop-o.top});
-    walls.push({x:inside-8,y:o.doorBottom,w:16,h:o.bottom-o.doorBottom});
-  }
-  const f=bunker.farm,c=bunker.corridor;
-  segment(f.left,f.top,f.right,f.top);segment(f.left,f.top,f.left,f.bottom);segment(f.right,f.top,f.right,f.bottom);
-  walls.push({x:f.left,y:f.bottom-8,w:f.doorLeft-f.left,h:16},{x:f.doorRight,y:f.bottom-8,w:f.right-f.doorRight,h:16});
-  segment(c.left,c.bottom,c.right,c.bottom);
-  function penBlocked(x,y,r){
-    const left=f.left+18,right=(f.cropLeft??90)-12,top=f.top+42,bottom=f.bottom-42,mid=(top+bottom)/2;
-    const segments=[{x:left-2,y:top,w:4,h:bottom-top},{x:left,y:top-2,w:right-left,h:4},{x:left,y:bottom-2,w:right-left,h:4},{x:left,y:mid-2,w:right-left,h:4},
-      {x:right-2,y:top,w:4,h:112},{x:right-2,y:top+182,w:4,h:mid+105-(top+182)},{x:right-2,y:mid+175,w:4,h:bottom-(mid+175)}];
-    return segments.some(o=>rectHit(x,y,r,o));
-  }
-  bunkerGeometryBlocked=function(x,y,r){
-    return oldGeometry(x,y,0)||walls.some(o=>rectHit(x,y,r,o))||penBlocked(x,y,r);
-  };
   const fortress=()=>typeof V091Fortress==='object'?V091Fortress:null;
   function withOpenDoors(fn){return GamePassages.plan(fn,scene);}
   let pending=null;

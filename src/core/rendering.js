@@ -82,12 +82,7 @@ function enterBunker(){
       scene =
         "bunker";
 
-      player.x =
-        bunker.entrance.x;
-
-      player.y =
-        bunker.entrance.y -
-        70;
+      Object.assign(player,BunkerLayout.arrival(player));
 
       bullets.length =
         0;
@@ -143,7 +138,7 @@ function drawSurface(){window.V015Base?.drawGround();}
 function drawBunker(){
 
   ctx.fillStyle="#101417";
-  ctx.fillRect(-300,-1100,2050,2600);
+  const bounds=BunkerLayout.bounds;ctx.fillRect(bounds.x-120,bounds.y-120,bounds.w+240,bounds.h+240);
 
   const c=bunker.corridor;
 
@@ -168,19 +163,6 @@ function drawBunker(){
     ctx.fillRect(o.left,o.top,o.right-o.left,o.bottom-o.top);
     V011Rooms.floor(Object.keys(bunker).find(k=>bunker[k]===o)||"storage",o);
 
-    ctx.strokeStyle="#747878";
-    ctx.lineWidth=16;
-    ctx.strokeRect(o.left,o.top,o.right-o.left,o.bottom-o.top);
-
-    // Open doorway toward corridor
-    ctx.fillStyle=fill;
-    if(side==="left"){
-      ctx.fillRect(o.right-18,o.doorTop,40,o.doorBottom-o.doorTop);
-    }else{
-      ctx.fillRect(o.left-22,o.doorTop,40,o.doorBottom-o.doorTop);
-    }
-
-    V011Rooms.walls(o,side);
     ctx.fillStyle="rgba(255,255,255,.64)";
     ctx.font="12px Arial";
     ctx.textAlign="center";
@@ -250,7 +232,7 @@ function drawBunker(){
   // №5 — POWER ROOM: FUEL -> GENERATOR -> BATTERY
   drawSideRoom(bunker.room5,"right","ЭНЕРГОБЛОК","#303739");
 
-  V011Rooms.energy();
+  BunkerLayout.withArt('room5',()=>V011Rooms.energy());
 
   // The room center and the corridor/door side intentionally remain empty.
   // №6 — KITCHEN / FOOD BLOCK
@@ -313,80 +295,15 @@ function drawBunker(){
 
   // Door side and central approach remain unobstructed.
   // №7 — LIVING ROOM, matched to the latest approved screenshot
-  drawSideRoom(bunker.room7,"right","ЖИЛАЯ КОМНАТА","#393837");
+  drawSideRoom(bunker.room7,"bottom","ЖИЛАЯ КОМНАТА","#393837");
 
-  window.V011Living?.drawRoom();
+  BunkerLayout.withArt('room7',()=>window.V011Living?.drawRoom());
 
 
-  // Corridor side walls, drawn in separate segments so every doorway stays open.
-  const wall="#747878";
-  ctx.strokeStyle=wall;
-  ctx.lineWidth=18;
+  drawSideRoom(bunker.reserve_l1,'right','РЕЗЕРВНАЯ КОМНАТА','#394447');
+  for(const s of BunkerLayout.wallSegments)V011Rooms.wall(s.x1,s.y1,s.x2,s.y2);
+  window.BunkerState?.draw();
 
-  const leftDoors=[
-    [bunker.room6.doorTop,bunker.room6.doorBottom],
-    [bunker.room4.doorTop,bunker.room4.doorBottom],
-    [bunker.workshop.doorTop,bunker.workshop.doorBottom]
-  ];
-  const rightDoors=[
-    [bunker.room7.doorTop,bunker.room7.doorBottom],
-    [bunker.room5.doorTop,bunker.room5.doorBottom],
-    [bunker.storage.doorTop,bunker.storage.doorBottom]
-  ];
-
-  function drawWallWithDoors(x,doors){
-    let y=c.top;
-    for(const d of doors){
-      if(d[0]>y){
-        ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,d[0]);ctx.stroke();
-      }
-      y=d[1];
-    }
-    if(y<c.bottom){
-      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,c.bottom);ctx.stroke();
-    }
-  }
-  drawWallWithDoors(c.left,leftDoors);
-  drawWallWithDoors(c.right,rightDoors);
-  V011Rooms.corridorWalls(c,leftDoors,rightDoors);
-
-  // №8 — LARGE UNDERGROUND FARM, directly connected to corridor end
-  const f=bunker.farm;
-  ctx.fillStyle="#29352c";
-  ctx.fillRect(f.left,f.top,f.right-f.left,f.bottom-f.top);
-  window.V011Farm?.floor();
-  ctx.strokeStyle="#68766b";
-  ctx.lineWidth=18;
-  ctx.strokeRect(f.left,f.top,f.right-f.left,f.bottom-f.top);
-
-  // Wide doorway from corridor into farm
-  ctx.fillStyle="#29352c";
-  ctx.fillRect(f.doorLeft,f.bottom-22,f.doorRight-f.doorLeft,44);
-
-  if(window.V011Farm)window.V011Farm.draw();
-
-  ctx.fillStyle="#fff";
-  ctx.font="20px Arial";
-  ctx.textAlign="center";
-  ctx.fillText(I18n.text("ПОДЗЕМНАЯ ФЕРМА"),(f.left+f.right)/2,f.top+22);
-
-  // Rear wall and exit/hatch
-  ctx.strokeStyle="#747878";
-  ctx.lineWidth=18;
-  ctx.beginPath();
-  ctx.moveTo(c.left,c.bottom);
-  ctx.lineTo(c.right,c.bottom);
-  ctx.stroke();
-
-  ctx.fillStyle="#17191a";
-  ctx.fillRect(690,1145,70,70);
-  ctx.strokeStyle="#aaaaaa";
-  ctx.lineWidth=4;
-  ctx.strokeRect(690,1145,70,70);
-  ctx.fillStyle="white";
-  ctx.font="12px Arial";
-  ctx.textAlign="center";
-  ctx.fillText(I18n.text("ВЫХОД"),725,1187);
 }
 
 /* =====================================================

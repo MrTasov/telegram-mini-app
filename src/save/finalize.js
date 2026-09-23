@@ -17,7 +17,8 @@ GameSave.seal({
     "base.turrets",
     "inventory.upgrades",
     "combat.monsters",
-    "base.construction"
+    "base.construction",
+    "bunker.level1"
   ],
   "decode": [
     "save.slots",
@@ -38,7 +39,8 @@ GameSave.seal({
     "inventory.upgrades",
     "inventory.picker-magazines",
     "combat.monsters",
-    "base.construction"
+    "base.construction",
+    "bunker.level1"
   ],
   "restore": [
     "save.slots",
@@ -60,7 +62,8 @@ GameSave.seal({
     "inventory.upgrades",
     "inventory.picker-magazines",
     "combat.monsters",
-    "base.construction"
+    "base.construction",
+    "bunker.level1"
   ]
 });
 GameState.seal();

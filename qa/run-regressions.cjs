@@ -29,6 +29,7 @@ for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs'])
  if(name==='target0191.cjs')code=code.replace('alphas.push(ctx.globalAlpha);','if(a.length===9)alphas.push(ctx.globalAlpha);');
  // UX patch intentionally replaces 16 ladders with 4. Frozen files stay intact.
  if(name==='perimeter020.cjs')code=code.replace('three spans and four ladders','three spans and one ladder').replace("stairs.filter(t=>t.side==='${side}').length===4","stairs.filter(t=>t.side==='${side}').length===1").replace('for(let i=0;i<16;i++)','for(let i=0;i<4;i++)').replace('ladder on destroyed section becomes unavailable','removed ladder remains absent on destroyed section').replace('!V020Walls.usable(V091Fortress.stairs[0])',"!V091Fortress.stairs.some(t=>t.id==='n_0')");
+ if(name==='perimeter020.cjs')code=code.replace("JSON.stringify(raw.robots014)===JSON.stringify(legacy.robots014)","JSON.stringify({...raw.robots014,x:0,y:0})===JSON.stringify({...legacy.robots014,x:0,y:0})");
  fs.writeFileSync(path.join(game,'qa',name),adaptAssetWaits(code));
 }
 let character=fs.readFileSync(path.join(baseline,'tools/behavior.cjs'),'utf8');
@@ -37,6 +38,23 @@ character=character.replace("check('launch.version',\"captureGameProgress().game
 character=character.replace(/V0141Farm\.seedType\(([^)]+)\)/g,'farmCrops[$1].itemType')
  .replace("'.seedConsumed','bagCount(seedType)',1", "'.produceNotConsumed','bagCount(seedType)',2")
  .replace("'farm.noSeedRefuses','!V0141Farm.plant(0,2)&&farmState[0].crop===null'", "'farm.noSeedRequired','V0141Farm.plant(0,2)&&farmState[0].crop===2'");
+// R1 replaces active farm work with save-preservation checks in the disposable
+// historical runner. Frozen source and original fixture bytes remain unchanged.
+const farmCases=JSON.stringify(Array.from({length:8},(_,crop)=>JSON.parse(fs.readFileSync(path.join(baseline,'fixtures','crop_'+crop+'.json'),'utf8'))));
+const farmStart=character.indexOf(' for(let crop=0;crop<'),farmEnd=character.indexOf(' fresh();clearBag();power(false)',farmStart);
+character=character.slice(0,farmStart)+` const farmCases=${farmCases};
+ for(let crop=0;crop<farmCases.length;crop++){
+  E('restoreGameProgress('+JSON.stringify(farmCases[crop])+');');
+  check('farm.'+crop+'.savedCropRetained','farmState[0].crop',crop);
+  check('farm.'+crop+'.plantsRetained','V011Farm.plants(farmState[0]).length',50);
+  const before=E('JSON.stringify(captureGameProgress().farm014)');r.advance(4000);E('V011Farm.settle();updateLivestockProduction();');
+  check('farm.'+crop+'.fullPause',JSON.stringify(E('JSON.stringify(captureGameProgress().farm014)'))+'==='+JSON.stringify(before));
+  check('farm.'+crop+'.harvestBlocked','V0141Farm.harvest(0)',0);
+  check('farm.'+crop+'.plantBlocked','V0141Farm.plant(1,0)',false);
+ }
+`+character.slice(farmEnd);
+character=character.replace("executeInteraction(interactionObjects().find(o=>o.id==='exit'));","player.x=bunker.entrance.x;player.y=bunker.entrance.y+45;executeInteraction(interactionObjects().find(o=>o.id==='exit'));");
+character=character.replace('player.x=1264;player.y=740;','player.x=V014Robots.dockPosition().x;player.y=V014Robots.dockPosition().y+35;');
 fs.writeFileSync(path.join(work,'tools/behavior.cjs'),adaptAssetWaits(character));
 const results=[];
 for(const [name,script,report]of [

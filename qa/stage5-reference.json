@@ -1,7 +1,7 @@
 {
-  "version": "0.29.0",
-  "reference": "0.29.0 HUD Compact 1 plus exact reviewed Audio Pass recovery; historical gameplay fixtures retained",
-  "sourceHash": "8afc9fc2107463cf924b025c51776aea4162d0cf08ae9f7b944ca60230974331",
+  "version": "0.30.0",
+  "reference": "R1 Bunker Level 1 rework; exact reviewed delta from immutable Full Audio Pass",
+  "sourceHash": "8d6558522e005ed4acd2e9ff0c144d705ace9472d899a34bb37c7ca15102d9b3",
   "cssHash": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0",
   "files": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "file": "src/i18n/catalogs.js",
-      "sha256": "237db1a3a868a5f40f0d3fa2c63fb043b504b6c030e722af6832ef08d595034d"
+      "sha256": "ae2ac3d4b18c18d014b691db7d18e3a215c0f587317c98e1e53087f09446397d"
     },
     {
       "file": "src/i18n/runtime.js",
@@ -22,7 +22,7 @@
     },
     {
       "file": "src/save/format.js",
-      "sha256": "51e57f24f314fc9a32a9f13c82965bd386121e6e2ce6d244b1a3ec8391cb3270"
+      "sha256": "21a89e1634965e6eb2a8ce1278fe5f1c9b0462f1c419e721df2199059e0fe3c2"
     },
     {
       "file": "src/save/pipeline.js",
@@ -30,7 +30,7 @@
     },
     {
       "file": "src/assets/manifest.js",
-      "sha256": "b2fba3a54d0dad30cc08c9f46bf80d839201b81cd37a4fbc259a613f01ace4ec"
+      "sha256": "e1b49429137deac67352dfcdb9e2a6d7d3b193727c6e78826ccb291afcb0e159"
     },
     {
       "file": "src/assets/resources.js",
@@ -53,8 +53,12 @@
       "sha256": "c9d89ee423f54b5da42c5c8cbaddc00d1ec1cf52dbf826065f8d47f42654021f"
     },
     {
+      "file": "src/base/layout.js",
+      "sha256": "a78e00e8714bb3394a33edc0c076260d691d44a39e3543beaf2235a7c789c4a2"
+    },
+    {
       "file": "src/core/world-inventory.js",
-      "sha256": "fa2868df76c6c7f60eb94dc14adfee130e4c33f676756a6190a7d4d7982da5ef"
+      "sha256": "114b179238fdb8ce236dc57e57ee5c8b076f9f0b7d0a52318e9f583870e8097c"
     },
     {
       "file": "src/state/identity.js",
@@ -66,7 +70,7 @@
     },
     {
       "file": "src/core/input-combat.js",
-      "sha256": "a5b6db67ce3e600c5f4334d20f09b53ee84e292f0171af0ff341f3027c940c42"
+      "sha256": "0a2a907dd833164ea4f88c26ec29e00c90610c2826d8514f95eba4e2dcf2308e"
     },
     {
       "file": "src/state/actors.js",
@@ -86,11 +90,11 @@
     },
     {
       "file": "src/core/interactions-farm-storage.js",
-      "sha256": "9f5b9bf4e5110d89ca8a90eb96ee9804fc1f7c0d165c61a6c55f3ff97881bf7b"
+      "sha256": "1c11dbffc38e337d52081796722fc9af191ec9d652e0fd66cdeb2fee9b1bc22f"
     },
     {
       "file": "src/core/rendering.js",
-      "sha256": "eeecb8f46188fdbbd4873ef2525e486118edc6efbbc404fcbb9feb0481acafa7"
+      "sha256": "5cb3e789d90906e569d87ffbad0198d3d213ebe5644d865bc60f2ac44ececf2d"
     },
     {
       "file": "src/ui/legacy-panels.js",
@@ -102,11 +106,11 @@
     },
     {
       "file": "src/state/bindings.js",
-      "sha256": "97607ebe3572144318e95d19833dbc407e6f88301d9619ac1a752bd7e10ef258"
+      "sha256": "18092efaae4585294121e0b91db085a58dee3336106ebcc05fe4bf613773ad9a"
     },
     {
       "file": "src/save/legacy-progress.js",
-      "sha256": "91b95d4e4f0e9d8ba29a1a02965d58746b1d4a2379f33b90976ca31f346ec388"
+      "sha256": "f29620e886232926d262671bc9f72dd7e72d2adecb9e5ec9fc82de5a232bae32"
     },
     {
       "file": "src/ui/shared.js",
@@ -118,15 +122,15 @@
     },
     {
       "file": "src/base/power.js",
-      "sha256": "f7de1d22402c5729e106d10c227f4aa9bf49056845a1959ec5bc26feffb5bae0"
+      "sha256": "6c646a7b58bdf0aa9010b4c1e235ea4d9ca77c59e467e27f365372ac9ac1d0c4"
     },
     {
       "file": "src/world/passages.js",
-      "sha256": "e13df04918d6583d9e3f46d650901aeb4989f691bf9e0a3f5e64807e8b608ce9"
+      "sha256": "cd7cce1f20b8a891b2f79dfe4f1b98d4fde5bbdbfa993c9d656c452a426b8230"
     },
     {
       "file": "src/crafting/manufacturing.js",
-      "sha256": "6b9f8d9918323c1add94323863daf5ab48bd0ed84fbd23677533e023900592ff"
+      "sha256": "d000c772638212f01d35a52b1af49df6dc1e62fd1874055caeb72209fe6110e8"
     },
     {
       "file": "src/base/wall-art.js",
@@ -134,15 +138,15 @@
     },
     {
       "file": "src/base/fortress-navigation.js",
-      "sha256": "6908fce962eba7d44694819da73425fabb77f5ee64a55d043a7d9a7a26a141a2"
+      "sha256": "49f35fd5d28610c19f930ac5dcd28267b73c4550b70127f2e1b6b94859fd18cc"
     },
     {
       "file": "src/core/loot-light-equipment.js",
-      "sha256": "819f42d83c5f4f97ae28a9b157eb9df23145fea34c2d9b58439949e4b7c2be8d"
+      "sha256": "58d1046c6b8938311cf93d6f6bb32037f44f0cecf8a0a82c55c5251ecfa28855"
     },
     {
       "file": "src/save/slots.js",
-      "sha256": "77ea48f1582e4edefe29dcb8b10f363d847d802649d8238d21b4c0cc541d28a3"
+      "sha256": "c8427da93e1c6ed1ea29edfd6d1db1c117ebf3ff5ca55cf1b0f7b7b6bc27b975"
     },
     {
       "file": "src/inventory/registry-slots.js",
@@ -158,7 +162,7 @@
     },
     {
       "file": "src/base/battery.js",
-      "sha256": "4a0c5efc81e8ae589b5de7f48dba7c2de209c37cbac9f00a746d60997b71bd43"
+      "sha256": "2da0a45bc159062b2fdefd8294be330c1618f161ce8b4b0fa617b9b6adeb1de2"
     },
     {
       "file": "src/ui/progression.js",
@@ -166,11 +170,11 @@
     },
     {
       "file": "src/world/camera.js",
-      "sha256": "82328129ec2694d04a5a5ea1815c2d3d501d65f10de4f30c0ee0ea54118a3e72"
+      "sha256": "4de61991933050cc09599aebcf2a3f0a1274db9e8a4abd877d570e53dbd326ef"
     },
     {
       "file": "src/save/envelope.js",
-      "sha256": "4ea7b4b5ad19d820c473852c715805238e3034a589f028942825463330d5b6cd"
+      "sha256": "5f6616b97de215af07559989bc380c41880b43315d4cdadceeae84006001261b"
     },
     {
       "file": "src/ui/context-map.js",
@@ -190,7 +194,7 @@
     },
     {
       "file": "src/farm/growth.js",
-      "sha256": "d61b1a4151b76a2de22e19cf1a18b71b2ca94c51c3569ff8527874adbbde6ff0"
+      "sha256": "f8a3c9cd594bc90182df9cf3e8b2c23d3341db5424cb021b26489d2acd6c0ed8"
     },
     {
       "file": "src/world/interiors.js",
@@ -198,7 +202,7 @@
     },
     {
       "file": "src/base/rooms.js",
-      "sha256": "fae2775e5b7f99e1d3808b4e67ea2042aa1a59c5c8fcf14a095e3e7bdf634bb7"
+      "sha256": "b3d27ed686d03f1705e0bf8bf2d8ee678e63084248faf762c5b0a4f08190cdaf"
     },
     {
       "file": "src/world/expansion.js",
@@ -222,11 +226,11 @@
     },
     {
       "file": "src/drones/navigation.js",
-      "sha256": "a367be6aab0c2671aca085ffb8ab898ff009730db7f68ca24314cd1df36c3855"
+      "sha256": "fdf479b8bdb043f657e4d12f489a01655a49fae48f9f37e11d079030e9c72adb"
     },
     {
       "file": "src/drones/companion.js",
-      "sha256": "a237ea91d11d7b676792a66107ff452a7761251d25c499f175639c2643d377bf"
+      "sha256": "f34a77e12a352863c12e26374ec7b4d3f2d7d4faceb6e7736a04fb9d05eb067b"
     },
     {
       "file": "src/player/controls.js",
@@ -238,7 +242,7 @@
     },
     {
       "file": "src/farm/manual.js",
-      "sha256": "46db415514fb0bb9ffc183dfbb6ff504a4d000fcb189475b2378df6afaede152"
+      "sha256": "0da3512b066022f17771c20b282ea5c3dd84c26e80ddb7034fab0e4d0da339da"
     },
     {
       "file": "src/world/trees-minimap.js",
@@ -254,7 +258,7 @@
     },
     {
       "file": "src/render/lighting.js",
-      "sha256": "dcf1a9ee54ed5779486f9dc59e267da2844aa82a468f369fd14d26bd821536bb"
+      "sha256": "ee25d016f4693ae900e0c9aa0c7ce9bb4c1bfb325eaf0e5613b67a567bc401e6"
     },
     {
       "file": "src/base/turrets.js",
@@ -266,7 +270,7 @@
     },
     {
       "file": "src/inventory/upgrades.js",
-      "sha256": "aa800ade5464df75d2e02170526b6c6558d7c69c1888d4a538e793f05a6838c5"
+      "sha256": "15a6f65b52095fbc739c680b24bda8f687001d90f3d094c12eb70b1087256d7b"
     },
     {
       "file": "src/inventory/picker-magazines.js",
@@ -301,8 +305,12 @@
       "sha256": "04da9b96fd247722b028ebaddb0c2cee98b1b18ccdf558e1d0b99d1ed163ec66"
     },
     {
+      "file": "src/base/level1.js",
+      "sha256": "bc20f5057ff92a0da3c1f56ee8b2d29bca0283ded6ed3a7f3a35ba5aeee41c98"
+    },
+    {
       "file": "src/save/finalize.js",
-      "sha256": "306b578bacee5ad4b704cc8ea1bd0ae27cdf73f06c9618f321ea69931e30c4fe"
+      "sha256": "08d58fe99f076c5d7a860d7a745300857baab12b4b18a462ef8b929da07423da"
     },
     {
       "file": "src/ui/main-menu.js",
@@ -310,11 +318,31 @@
     },
     {
       "file": "src/audio/world.js",
-      "sha256": "587999e36c21a517625e7810988760ade4d73c77d0fc9c87e51b85aaa0a9510a"
+      "sha256": "f981750d6b9c5ca5d2aa6848ad664ac7def3b79175b4b11b73249a7e8feb77e6"
     },
     {
       "file": "src/bootstrap.js",
       "sha256": "79cb84052cafdb5ced88d215bb79cae6f4dde054b4b2b23741fc1a5e9e651257"
+    },
+    {
+      "file": "locales/en.json",
+      "sha256": "ba12c523d776e17fb7783c6ca5ea002a5ddc843f49e13299cb2abba0e4ad49e0"
+    },
+    {
+      "file": "locales/legacy.json",
+      "sha256": "430718a5731bf46ea1d62dda2f92d7e29d89172c04b8520f1d4ead029e51e5fc"
+    },
+    {
+      "file": "locales/manifest.json",
+      "sha256": "e80f08907379fd740d4447fd9f2905c62cb12519cf5648e9d6a2a5dd9c09c30f"
+    },
+    {
+      "file": "locales/ru.json",
+      "sha256": "cc38028e0763195ce51d9df16a35f38ad4247eb2237fda1dbf4f5a3b77cbb021"
+    },
+    {
+      "file": "locales/sources.json",
+      "sha256": "18512e7773f297e3fcfa83604f97ef91a58e2dc6bbc75da38b2b8c5b49e99cb3"
     }
   ],
   "baselineFiles": [
@@ -861,6 +889,8 @@
     "base/battery.js",
     "base/construction.js",
     "base/fortress-navigation.js",
+    "base/layout.js",
+    "base/level1.js",
     "base/power.js",
     "base/rooms.js",
     "base/structures.js",
@@ -898,6 +928,7 @@
     "render/actors.js",
     "render/lighting.js",
     "save/envelope.js",
+    "save/finalize.js",
     "save/format.js",
     "save/legacy-progress.js",
     "save/pipeline.js",

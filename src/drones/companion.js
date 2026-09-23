@@ -17,7 +17,7 @@ window.V014Robots=(()=>{
   // `carry` was the old label in early saves.  Keep it as a migration alias,
   // but show the clearer user-facing mode "Преследование".
   const modes={follow:'Следовать',carry:'Следовать',defense:'Защита',attack:'Атака'};
-  const DOCK={id:'robots014_dock',kind:'robots014_dock',name:'Станция дрона',x:1190,y:650,w:148,h:86,range:65,detectionRadius:52,watts:1,returnThreshold:15};
+  const DOCK={id:'robots014_dock',kind:'robots014_dock',name:'Станция дрона',...BunkerLayout.fixture('robots014_dock'),range:65,detectionRadius:52,watts:1,returnThreshold:15};
   const combat=Object.freeze({get ammoType(){return definition.combat.ammoType;},get capacity(){return definition.combat.capacity;},get damage(){return Math.round(definition.combat.damage*(1+state.modules.weapon*definition.combat.damagePerLevel));},get intervalMs(){return definition.combat.intervalMs;},get range(){return definition.combat.range;}});
   function dockPosition(){return {x:DOCK.x+74,y:DOCK.y+45,scene:'bunker'};}
   function defaults(){return {schema:1,id:INSTANCE_ID,name:'Спутник',...dockPosition(),battery:100,hp:100,ammo:30,packed:false,mode:'defense',combatMode:'defense',resumeTask:null,task:'docked',modules:{body:0,battery:0,cargo:0,weapon:0,engine:0},cargo:[],light:false,autoCollect:true,economy:true,guard:null,targetIndex:null,lowWarn:false,autoReturn:true};}

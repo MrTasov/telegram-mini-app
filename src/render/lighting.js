@@ -40,7 +40,7 @@ window.V016Lighting=(()=>{
     const stops=kind==='flashlight'?[[0,'#ffffffff'],[.32,'#ffffffff'],[.68,'#fffffffc'],[.88,'#ffffff94'],[1,'#ffffff00']]:kind==='warm'?[[0,'#ffe7b544'],[.2,'#ffe7b525'],[.65,'#ffe7b510'],[1,'#ffe7b500']]:kind==='drone'?[[0,'#ffffffff'],[.18,'#fffffff7'],[.48,'#ffffffac'],[.78,'#ffffff32'],[1,'#ffffff00']]:[[0,'#fffffffc'],[.15,'#fffffff0'],[.45,'#ffffffad'],[.76,'#ffffff42'],[1,'#ffffff00']];
     for(const [at,color]of stops)g.addColorStop(at,color);c.fillStyle=g;c.fillRect(0,0,256,256);sprites.set(kind,v);return v;
   }
-  function nearSolids(x,y,range,which=scene){const g=geometryFor(which);let all=which==='surface'?[...g.walls,...g.objects]:[...g.objects,...V091Navigation.walls,...v09Doors.flatMap(v09DoorPanels)];
+  function nearSolids(x,y,range,which=scene){const g=geometryFor(which);let all=which==='surface'?[...g.walls,...g.objects]:[...g.objects,...V091Navigation.walls,...v09Doors.filter(d=>BunkerLayout.roomActive(d.room)).flatMap(v09DoorPanels)];
     return all.filter(o=>o.r!==undefined?Math.hypot(o.x-x,o.y-y)<range+o.r:o.x<x+range&&o.x+o.w>x-range&&o.y<y+range&&o.y+o.h>y-range);
   }
   function shape(s,dynamic=false){
@@ -77,7 +77,7 @@ window.V016Lighting=(()=>{
     if(on){c.globalCompositeOperation='destination-out';const radius=(room==='farm'?385:room==='corridor'?225:300)*scale;for(const p of V011Rooms.lights(room)){const x=(p.x-r.left-9)*scale,y=(p.y-r.top-9)*scale,g=c.createRadialGradient(x,y,0,x,y,radius);for(const [at,a]of [[0,.99],[.14,.92],[.4,.52],[.72,.14],[1,0]])g.addColorStop(at,'rgba(255,255,255,'+a+')');c.fillStyle=g;c.fillRect(x-radius,y-radius,radius*2,radius*2);}}
     roomMasks.set(key,v);return v;
   }
-  function bunkerMask(c,served){c.fillStyle='rgba(2,5,12,.63)';const view=V010Camera.view();c.fillRect(camera.x,camera.y,view.w,view.h);for(const room of Object.keys(V09Power.rooms)){const r=bunker[room];if(!r||!visibleOnScreen((r.left+r.right)/2,(r.top+r.bottom)/2,Math.hypot(r.right-r.left,r.bottom-r.top)/2))continue;c.clearRect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.drawImage(roomMask(room,r,served.has('light_'+room)),r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);}
+  function bunkerMask(c,served){c.fillStyle='rgba(2,5,12,.63)';const view=V010Camera.view();c.fillRect(camera.x,camera.y,view.w,view.h);for(const room of Object.keys(V09Power.rooms)){const r=bunker[room];if(!BunkerLayout.roomActive(room)||!r||!visibleOnScreen((r.left+r.right)/2,(r.top+r.bottom)/2,Math.hypot(r.right-r.left,r.bottom-r.top)/2))continue;c.clearRect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.drawImage(roomMask(room,r,served.has('light_'+room)),r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);}
     if(V09Craft.visualState('furnace').working){c.save();const r=bunker.workshop;c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.globalCompositeOperation='destination-out';c.globalAlpha=.9;c.drawImage(sprite('white'),49,708,340,340);c.restore();}}
   function droneActive(){const s=window.V014Robots?.state;return !!(s&&s.scene===scene&&!s.packed&&s.task!=='docked'&&s.hp>0&&s.battery>0&&s.light&&!(s.economy&&s.battery<20));}
   function flashlight(c,beam){if(!beam)return;c.save();c.globalCompositeOperation='destination-out';let previous=0;const half=(beam.points.length-1)/2;

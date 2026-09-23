@@ -17,7 +17,7 @@ const V010Camera=(()=>{
   el('v010ViewMode').onclick=()=>{tilt=tilt===1?.76:1;updateSettings();queueGameSave();};
   el('v010MapCorner').onclick=()=>{corner=corner==='left'?'right':'left';updateSettings();queueGameSave();};
   el('v010OpenMap').onclick=()=>showMap();el('v010MapClose').onclick=()=>{mapOpen=false;closeOverlay(overlay);};
-  function showMap(){mapOpen=true;selected=null;mapPan=scene==='surface'?{x:800,y:3600}:{x:600,y:170};mapZoom=1;openOverlay(overlay);drawFull();}
+  function showMap(){mapOpen=true;selected=null;mapPan=scene==='surface'?{x:800,y:3600}:{x:BunkerLayout.bounds.x+BunkerLayout.bounds.w/2,y:BunkerLayout.bounds.y+BunkerLayout.bounds.h/2};mapZoom=1;openOverlay(overlay);drawFull();}
   let miniDown=null,miniTimer=null;
   const MINI_HOLD_MS=1500;
   function cycleMiniOpacity(){
@@ -60,7 +60,7 @@ const V010Camera=(()=>{
   window.addEventListener('pointermove',e=>{if(!touches.has(e.pointerId))return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch&&touches.size>=2){const [a,b]=[...touches.values()];setZoom(pinch.zoom*Math.hypot(a.x-b.x,a.y-b.y)/Math.max(1,pinch.distance));e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
   function endTouch(e){if(!touches.has(e.pointerId))return;touches.delete(e.pointerId);if(pinch||performance.now()<suppressTouchUntil){e.preventDefault();e.stopImmediatePropagation();objectPointer=null;cancelNavigation();moveX=moveY=movePower=0;suppressTouchUntil=performance.now()+250;if(!touches.size){pinch=null;queueGameSave();}}}
   window.addEventListener('pointerup',endTouch,{passive:false,capture:true});window.addEventListener('pointercancel',endTouch,{passive:false,capture:true});
-  function bounds(){return scene==='surface'?{x:-2800,y:-2400,w:7200,h:12000}:{x:-220,y:-1000,w:1660,h:2350};}
+  function bounds(){return scene==='surface'?{x:-2800,y:-2400,w:7200,h:12000}:BunkerLayout.bounds;}
   const point=(x,y)=>({x:(x-camera.x)*zoom,y:(y-camera.y)*zoom});
   const inverse=(x,y)=>({x:x/zoom+camera.x,y:y/zoom+camera.y});
   function view(){return {w:screenWidth/zoom,h:screenHeight/zoom};}
@@ -95,7 +95,7 @@ const V010Camera=(()=>{
       for(const o of scavenges){if(!seen(o.x,o.y)||window.V011World&&!V011World.filters.buildings)continue;c.fillStyle=o.kind==='car'?'#8e9e97':'#a6997e';c.fillRect(o.x,o.y,o.w,o.h);}
       // Resource and threat markers are drawn together below for both map modes.
       const n=window.V010World?.noise;if(n&&performance.now()-n.at<1800){c.strokeStyle='#e9c08880';c.lineWidth=1/scale;c.beginPath();c.globalAlpha=Math.min(1,(1800-(performance.now()-n.at))/500);c.arc(n.followPlayer?player.x:n.x,n.followPlayer?player.y:n.y,n.radius,0,Math.PI*2);c.globalAlpha=1;c.stroke();}
-    }else for(const [id,r] of Object.entries(bunker)){if(!r?.left)continue;c.fillStyle=!V09Power.roomEnabled[id]?'#2d3937':V09Power.allocation().served.has('light_'+id)?'#607566':'#746f48';c.fillRect(r.left,r.top,r.right-r.left,r.bottom-r.top);c.strokeStyle='#a0b9a8';c.lineWidth=8;c.strokeRect(r.left,r.top,r.right-r.left,r.bottom-r.top);}
+    }else for(const [id,r] of Object.entries(bunker)){if(!r?.left||!BunkerLayout.roomActive(id))continue;c.fillStyle=!V09Power.roomEnabled[id]?'#2d3937':V09Power.allocation().served.has('light_'+id)?'#607566':'#746f48';c.fillRect(r.left,r.top,r.right-r.left,r.bottom-r.top);c.strokeStyle='#a0b9a8';c.lineWidth=8;c.strokeRect(r.left,r.top,r.right-r.left,r.bottom-r.top);}
     if(!miniMode)window.V0141Map?.drawRange(c,scale);window.V0105?.drawMapMarkers(c,scale,miniMode,{x:-ox/scale,y:-oy/scale,w:w/scale,h:h/scale});
     window.V014Controls?.drawRoute(c,scale);
     for(const m of markers){if(m.scene!==scene)continue;circle(c,m.x,m.y,Math.max(22,3/scale),'#ddb979');if(!miniMode){c.fillStyle='#e6dbba';c.font=`${11/scale}px Arial`;c.textAlign='center';c.fillText(m.name,m.x,m.y-30);}}
@@ -135,7 +135,7 @@ const V010Camera=(()=>{
   let mask=null,maskContext=null;
   V091Light.illuminate=function(){const beam=V091Light.cone();if(scene==='bunker'){
     if(!mask){mask=typeof OffscreenCanvas==='function'?new OffscreenCanvas(1,1):document.createElement('canvas');maskContext=mask.getContext('2d');}if(mask.width!==Math.ceil(screenWidth)||mask.height!==Math.ceil(screenHeight)){mask.width=Math.ceil(screenWidth);mask.height=Math.ceil(screenHeight);}const c=maskContext;c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,mask.width,mask.height);c.fillStyle='rgba(2,5,10,.61)';c.fillRect(0,0,mask.width,mask.height);c.setTransform(zoom,0,0,zoom,-camera.x*zoom,-camera.y*zoom);
-    const supplied=V09Power.allocation().served;for(const room of Object.keys(V09Power.rooms)){const r=bunker[room];if(!r)continue;V011Rooms.paintDarkness(c,room,r,supplied.has('light_'+room));}
+    const supplied=V09Power.allocation().served;for(const room of Object.keys(V09Power.rooms)){const r=bunker[room];if(!r||!BunkerLayout.roomActive(room))continue;V011Rooms.paintDarkness(c,room,r,supplied.has('light_'+room));}
     if(beam){c.globalCompositeOperation='destination-out';let previous=0;for(let inset=0;inset<48;inset+=2){const desired=.99*Math.sin((inset+2)/48*Math.PI/2)**2,strength=(desired-previous)/(1-previous);previous=desired;const g=c.createRadialGradient(beam.ox,beam.oy,0,beam.ox,beam.oy,beam.range);g.addColorStop(0,`rgba(255,255,255,${strength})`);g.addColorStop(.3,`rgba(255,255,255,${strength})`);g.addColorStop(.65,`rgba(255,255,255,${strength*.96})`);g.addColorStop(.86,`rgba(255,255,255,${strength*.5})`);g.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=g;c.beginPath();c.moveTo(beam.ox,beam.oy);for(let i=inset;i<beam.points.length-inset;i++)c.lineTo(beam.points[i].x,beam.points[i].y);c.closePath();c.fill();}}
     c.setTransform(1,0,0,1,0,0);ctx.save();ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;const v=view();ctx.drawImage(mask,camera.x,camera.y,v.w,v.h);ctx.restore();
   }else if(beam){ctx.save();const g=ctx.createRadialGradient(beam.ox,beam.oy,0,beam.ox,beam.oy,beam.range);g.addColorStop(0,'rgba(255,245,210,.10)');g.addColorStop(.65,'rgba(255,245,210,.055)');g.addColorStop(1,'rgba(255,245,210,0)');ctx.fillStyle=g;for(let i=0;i<48;i+=2){ctx.globalAlpha=.08;ctx.beginPath();ctx.moveTo(beam.ox,beam.oy);for(let j=i;j<beam.points.length-i;j++)ctx.lineTo(beam.points[j].x,beam.points[j].y);ctx.closePath();ctx.fill();}ctx.restore();}};

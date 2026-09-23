@@ -17,9 +17,10 @@ window.GameAudioWorld=(()=>{
     const ambience=place==='bunker'||place==='interior'?'bunker':WorldEvents.isActive('day_x')?'dayX':WorldClock.minute>=360&&WorldClock.minute<1200?'day':'night';
     if(lastPlace!==null&&lastPlace!==place){GameAudio.reset();}lastPlace=place;
     GameAudio.loop('ambience',ambience);
+    const gen=BunkerLayout.fixture('generator'),shower=V011Living.shower;
     const power=!!(V09Power.running&&V09Power.fuel>0);
-    if(lastPower!==null&&lastPower!==power)GameAudio.play(power?'powerStart':'powerStop',{x:945,y:403,scene:'bunker',radius:480});lastPower=power;
-    GameAudio.loop('generator',power?'generator':null,{x:945,y:403,scene:'bunker',radius:430});
+    if(lastPower!==null&&lastPower!==power)GameAudio.play(power?'powerStart':'powerStop',{x:gen.x+gen.w/2,y:gen.y+gen.h/2,scene:'bunker',radius:480});lastPower=power;
+    GameAudio.loop('generator',power?'generator':null,{x:gen.x+gen.w/2,y:gen.y+gen.h/2,scene:'bunker',radius:430});
     let machine=null,closest=Infinity;
     if(scene==='bunker'&&!GameFlow.paused)for(const id of ['furnace','craft_bench','feed_craft']){
       const q=V09Craft.craftQueue,j=q.getJob(id);if(!j||j.remainingMs<=0||q.paused[id]||!devicePowered(id))continue;
@@ -30,15 +31,15 @@ window.GameAudioWorld=(()=>{
     GameAudio.loop('machine',machine?'machine':null,machine||{});
     // Read the irrigation state directly: do not invoke mutating farm getters.
     const farm=V011Farm.state;let farmPoint=null,farmDistance=Infinity;
-    if(!GameFlow.paused&&scene==='bunker'&&farm.water>=V011Farm.config.waterPerCycle&&devicePowered('irrigation014')){
+    if(AgricultureTime.available&&!GameFlow.paused&&scene==='bunker'&&farm.water>=V011Farm.config.waterPerCycle&&devicePowered('irrigation014')){
       const beds=getFarmBeds();for(let i=0;i<farmState.length;i++)if(farmState[i].crop!==null&&farmState[i].irrigation028?.phase==='spray'){
         const b=beds[i],x=b.x+b.w/2,y=b.y+b.h/2,d=(x-player.x)**2+(y-player.y)**2;
         if(d<farmDistance){farmDistance=d;farmPoint={x,y,scene:'bunker',radius:360};}
       }
     }
     GameAudio.loop('water',farmPoint?'water':null,farmPoint||{});
-    const living=V011Living.state();GameAudio.loop('shower',living.mode==='shower'?'shower':null,{x:953,y:197,scene:'bunker',radius:240});
-    if(scene==='bunker'&&livestockAlive&&now-lastChicken>=17000){const p=livestockAudioCenter('chicken');if(GameAudio.play('chicken',{...p,scene:'bunker',radius:285}))lastChicken=now;}
+    const living=V011Living.state();GameAudio.loop('shower',living.mode==='shower'?'shower':null,{x:shower.x+shower.w/2,y:shower.y+shower.h/2,scene:'bunker',radius:240});
+    if(AgricultureTime.available&&scene==='bunker'&&livestockAlive&&now-lastChicken>=17000){const p=livestockAudioCenter('chicken');if(GameAudio.play('chicken',{...p,scene:'bunker',radius:285}))lastChicken=now;}
     const d=V014Robots.state,flight=!d.packed&&d.hp>0&&d.battery>0&&!['docked','docking','disabled'].includes(d.task);
     GameAudio.loop('rotor',flight?'rotor':null,{x:d.x,y:d.y,scene:d.scene,radius:360});
     if(lastDrone){

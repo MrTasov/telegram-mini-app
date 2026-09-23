@@ -13,7 +13,7 @@ window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.mov
   function key(){return planning?navKey:'';}
   function brake(dt){speed=Math.max(0,speed-movement.brake*dt);}
   function pathBounds(to){
-    if(state.scene==='bunker')return {x:-150,y:-940,w:1510,h:2200};
+    if(state.scene==='bunker')return BunkerLayout.bounds;
     const b={x:surface.minX??0,y:surface.minY??0,w:surface.width,h:surface.height},pad=300;
     const x=Math.max(b.x,Math.floor((Math.min(state.x,to.x)-pad)/128)*128),y=Math.max(b.y,Math.floor((Math.min(state.y,to.y)-pad)/128)*128);
     const right=Math.min(b.x+b.w,Math.ceil((Math.max(state.x,to.x)+pad)/128)*128),bottom=Math.min(b.y+b.h,Math.ceil((Math.max(state.y,to.y)+pad)/128)*128);
@@ -24,8 +24,10 @@ window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.mov
     // Long return trips use bounded legs, avoiding arrays for the entire map.
     if(state.scene==='surface'&&dist>1300){const a=Math.atan2(to.y-state.y,to.x-state.x);let found=null;
       for(const delta of [0,.3,-.3,.6,-.6,1,-1]){const q={x:state.x+Math.cos(a+delta)*850,y:state.y+Math.sin(a+delta)*850};if(!worldCollision(q.x,q.y,R,state.scene)){found=q;break;}}if(found)to={...to,...found};}
+    // Planning clearance prevents sampled paths from grazing a solid corner.
+    // Physical movement retains the existing radius and speed.
     const bounds=pathBounds(to);navKey='drone:'+Math.round(state.x/24)+','+Math.round(state.y/24)+':'+Object.values(bounds).join(',')+':'+v09Doors.map(d=>devicePowered('door_'+d.room)?1:d.open>.95?2:0).join('');
-    search=v092PathSearch(state.x,state.y,{...to,kind:'ground',id:'drone_goal',range:7,r:0,navBounds:bounds,navWeight:1.2},state.scene,R);
+    search=v092PathSearch(state.x,state.y,{...to,kind:'ground',id:'drone_goal',range:7,r:0,navBounds:bounds,navWeight:1.2},state.scene,state.scene==='bunker'?R+2:R);
     goal={...destination};searchAge=0;path=null;retry=.7;metrics.searches++;
   }
   function move(destination,dt){
@@ -34,7 +36,7 @@ window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.mov
     let waypoint=null;
     // A long line is checked only while choosing a leg; every actual step is
     // still swept against current geometry, including moving door panels.
-    if(d<1300&&lineClear(state.x,state.y,destination.x,destination.y,R,state.scene)){clear();waypoint=destination;}
+    if(d<1300&&lineClear(state.x,state.y,destination.x,destination.y,state.scene==='bunker'?R+2:R,state.scene)){clear();waypoint=destination;}
     else{
       if(!search&&retry<=0&&(!path?.length||!goal||distance(goal.x,goal.y,destination.x,destination.y)>85))startSearch(destination);
       if(search){const started=performance.now();searchAge+=dt;
@@ -42,7 +44,7 @@ window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.mov
         metrics.maxSliceMs=Math.max(metrics.maxSliceMs,performance.now()-started);
         if(searchAge>20){search=null;retry=2;metrics.failed++;}
       }
-      while(path?.length&&distance(state.x,state.y,path[0].x,path[0].y)<3)path.shift();
+      while(path?.length&&distance(state.x,state.y,path[0].x,path[0].y)<(state.scene==='bunker'?.5:3))path.shift();
       if(path?.length)waypoint=path[0];
     }
     if(!waypoint){brake(dt);return false;}
@@ -59,14 +61,14 @@ window.V0141DroneMotion={create(state,movement=window.V014Robots?.definition.mov
     else{brake(dt);blockedTime+=dt;
       // Keep the path while a powered automatic door is opening. Never issue a
       // manual door action. Other obstructions trigger a delayed path rebuild.
-      const waitingDoor=state.scene==='bunker'&&(v09Doors.some(q=>devicePowered('door_'+q.room)&&rectHit(x,y,R+8,q))||rectHit(x,y,R+8,{x:990,y:100,w:78,h:5}));
+      const waitingDoor=state.scene==='bunker'&&(v09Doors.some(q=>BunkerLayout.roomActive(q.room)&&devicePowered('door_'+q.room)&&rectHit(x,y,R+8,q))||rectHit(x,y,R+8,V011Living.bathDoor));
       if(blockedTime>(waitingDoor?2.5:.6)){path=null;search=null;retry=Math.max(retry,.45);blockedTime=0;}}
     return distance(state.x,state.y,destination.x,destination.y)<3;
   }
   function travel(destination,dt){
     if(state.scene===destination.scene)return move(destination,dt);
-    const entry=state.scene==='surface'?{x:800,y:690}:{x:bunker.entrance.x,y:bunker.entrance.y-70};
-    if(move(entry,dt)){state.scene=destination.scene;const p=state.scene==='bunker'?{x:bunker.entrance.x,y:bunker.entrance.y-70}:{x:800,y:690};state.x=p.x;state.y=p.y;clear();speed=0;}
+    const entry=state.scene==='surface'?{x:800,y:690}:BunkerLayout.arrival(state);
+    if(move(entry,dt)){state.scene=destination.scene;const p=state.scene==='bunker'?BunkerLayout.arrival(state):{x:800,y:690};state.x=p.x;state.y=p.y;clear();speed=0;}
     return false;
   }
   function observe(dt){

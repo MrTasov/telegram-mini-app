@@ -38,13 +38,13 @@ const V09Craft = (() => {
   const materialCount=type=>typeof V010Inventory!=='undefined'?V010Inventory.materialCount(type):bagCount(type);
   const sumReady=id=>Object.values(readyExtra[id]).reduce((a,n)=>a+n,0)+(getJob(id)?.outputQty||0);
   const mix=(target,type,qty)=>{if(qty>0)target[type]=(target[type]||0)+qty;};
-  const fixtures=[{id:'furnace',x:154,y:794,w:130,h:195},{id:'craft_bench',x:157,y:1061,w:260,h:173}];
+  const fixtures=['furnace','craft_bench'].map(id=>BunkerLayout.fixture(id));
   const labels={furnace:'Плавильная печь',craft_bench:'Универсальный станок',feed_craft:'Кормодробилка'};
   const deep=o=>JSON.parse(JSON.stringify(o));
   const powered=id=>devicePowered(id);
   const getJob=id=>id==='feed_craft'?pendingFeedCraft:jobs[id];
   function setJob(id,j){if(id==='feed_craft'){pendingFeedCraft=j;feedCraftBusy=!!j;}else jobs[id]=j;}
-  const active=id=>!!getJob(id)&&getJob(id).remainingMs>0&&!pauseExtra[id];
+  const active=id=>(id!=='feed_craft'||AgricultureTime.available)&&!!getJob(id)&&getJob(id).remainingMs>0&&!pauseExtra[id];
   registerPowerDevice('furnace','workshop',6,()=>active('furnace'),'Плавильная печь');
   registerPowerDevice('craft_bench','workshop',2,()=>active('craft_bench'),'Универсальный станок');
   registerPowerDevice('feed_craft','farm',1,()=>active('feed_craft'),'Кормодробилка');
@@ -91,9 +91,10 @@ const V09Craft = (() => {
     bag=next;return true;
   }
   function makeJob(recipe,batches){const r=RECIPES[recipe];return {recipe,batches,paidInput:deep(r.input),totalMs:r.ms*batches,remainingMs:r.ms*batches,completedBatches:0,outputQty:0,collectedQty:0};}
-  function syncFeed(j){if(j){j.total=RECIPES.feed.qty*j.batches;j.qty=j.total-j.collectedQty;j.readyAt=Date.now()+j.remainingMs;}feedCraftBusy=!!j;}
+  function syncFeed(j){if(j){j.total=RECIPES.feed.qty*j.batches;j.qty=j.total-j.collectedQty;j.readyAt=AgricultureTime.now()+j.remainingMs;}feedCraftBusy=!!j;}
   function completedAt(j){if(j.remainingMs<=0)return j.batches;return Math.min(j.batches-1,Math.floor(((j.totalMs-j.remainingMs)*j.batches/j.totalMs)+1e-8));}
   function start(id,recipe=selected[id],batches=selectedBatches(id)){
+    if(id==='feed_craft'&&!AgricultureTime.available)return false;
     const r=RECIPES[recipe];
     if(!STATIONS.includes(id)||!r||r.station!==id||!availableRecipe(r)||!Number.isInteger(batches)||batches<1||batches>MAX_BATCHES||queueExtra[id].length>=30)return false;
     if(!commitIngredients(r.input,batches)){message('Не хватает доступных материалов в рюкзаке и на складе');render();return false;}
@@ -109,6 +110,7 @@ const V09Craft = (() => {
     if(id==='feed_craft')syncFeed(getJob(id));
   }
   function collect(id){
+    if(id==='feed_craft'&&!AgricultureTime.available)return 0;
     if(!STATIONS.includes(id))return 0;
     let collected=0;
     const put=(type,qty)=>{let left=addItem(type,qty);if(id==='feed_craft'&&left>0)left=addToSlots(storageChests[12].items,type,left,60);collected+=qty-left;return left;};
@@ -320,6 +322,7 @@ const V09Craft = (() => {
   function tick(ms){
     if(document.hidden||playerDead)return;ms=clamp(ms,0,100);let changed=false;
     for(const id of STATIONS){
+      if(id==='feed_craft'&&!AgricultureTime.available)continue;
       if(getJob(id)?.remainingMs===0||(!getJob(id)&&queueExtra[id].length)){finishAndPromote(id);changed=true;}
       const job=getJob(id);if(!job||job.remainingMs<=0||pauseExtra[id]||!powered(id))continue;
       job.remainingMs=Math.max(0,job.remainingMs-ms*(craftUpgrades.workshop?1.2:1));const completed=completedAt(job);
@@ -446,7 +449,7 @@ const V09Craft = (() => {
   function validate(data){normalizeSave(data);return true;}
   function restore(data){
     if(data){const d=normalizeSave(data);jobs=deep(d.jobs);magazines=deep(d.magazines);pendingFeedCraft=d.feed?deep(d.feed):null;}
-    else{jobs={furnace:null,craft_bench:null};magazines={rifle_ak74:clamp(magazine,0,30),rifle_m4:0};if(pendingFeedCraft){const f={qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,remainingMs:clamp(Number.isFinite(pendingFeedCraft.remainingMs)?pendingFeedCraft.remainingMs:pendingFeedCraft.readyAt-Date.now(),0,2500)};pendingFeedCraft=normalizeSave({jobs,magazines,feed:f}).feed;}}
+    else{jobs={furnace:null,craft_bench:null};magazines={rifle_ak74:clamp(magazine,0,30),rifle_m4:0};if(pendingFeedCraft){const f={qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,remainingMs:clamp(Number.isFinite(pendingFeedCraft.remainingMs)?pendingFeedCraft.remainingMs:pendingFeedCraft.readyAt-AgricultureTime.now(),0,2500)};pendingFeedCraft=normalizeSave({jobs,magazines,feed:f}).feed;}}
     syncFeed(pendingFeedCraft);feedCraftLoaded=0;burst=0;lastWeapon=null;benchPhase=0;selected={furnace:'iron',craft_bench:'ammo',feed_craft:'feed'};quantity={furnace:0,craft_bench:0,feed_craft:0};syncMagazine();updateAmmoHud();
   }
   function queueCapture(){return {version:1,queues:deep(queueExtra),ready:deep(readyExtra),refunds:deep(refundExtra),paused:deep(pauseExtra),pin:deep(pinnedRecipe),upgrades:{...craftUpgrades}};}

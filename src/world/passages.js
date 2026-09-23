@@ -19,7 +19,7 @@ window.GamePassages=(()=>{
       if(distance(actor.x,actor.y,p.x,p.y)<90&&crosses(actor,next,o,actor.radius||10))d.openNear();
     }
   }
-  for(const d of v09Doors)register(d.id,{scene:'bunker',bounds:()=>d,canOpen:()=>(window.V014Robots?.planningKey()?V014Robots.motion.doorPowered(d.room):devicePowered('door_'+d.room))||d.manual||!!window.V018Build?.isBroken(d.id)});
+  for(const d of v09Doors.filter(d=>BunkerLayout.roomActive(d.room)))register(d.id,{scene:'bunker',bounds:()=>d,canOpen:()=>(window.V014Robots?.planningKey()?V014Robots.motion.doorPowered(d.room):devicePowered('door_'+d.room))||d.manual||!!window.V018Build?.isBroken(d.id)});
   // The old main gate has a binary manual actuator, no sliding animation.
   // Reuse it only when a player route actually reaches its proximity zone.
   register('gate',{scene:'surface',canOpen:()=>true,bounds:()=>gateRect,openNear:()=>{if(!gateOpen)toggleGate();}});

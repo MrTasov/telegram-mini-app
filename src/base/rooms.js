@@ -16,11 +16,25 @@ window.V011Rooms=(()=>{
     else{p.strokeStyle='#eaf5e509';p.beginPath();p.moveTo(3,3);p.lineTo(size-3,3);p.moveTo(3,3);p.lineTo(3,size-3);p.stroke();if(metal){p.fillStyle='#9dafae35';for(const x of [5,59])for(const y of [5,59]){p.beginPath();p.arc(x,y,1.1,0,Math.PI*2);p.fill();}p.strokeStyle='#bdcaca0a';for(let i=12;i<55;i+=7){p.beginPath();p.moveTo(i,16);p.lineTo(i+5,21);p.stroke();}}}
     const pattern=ctx.createPattern(c,'repeat');patterns.set(key,pattern);return pattern;
   }
+  // R1's larger central hall exposes far more repeated floor pixels. Rasterize
+  // only that static fill once at the original world resolution. One replaceable
+  // buffer (~6.7 MiB); furnishings, shadows, seams and lighting remain dynamic.
+  let hallFloor=null,hallFloorKey='';
+  function hallTile(r){
+    const key=[r.left,r.top,r.right,r.bottom].join(':');
+    if(hallFloor&&hallFloorKey===key)return hallFloor;
+    const w=Math.max(1,Math.round(r.right-r.left-14)),h=Math.max(1,Math.round(r.bottom-r.top-14));
+    const v=typeof OffscreenCanvas==='function'?new OffscreenCanvas(w,h):document.createElement('canvas');v.width=w;v.height=h;
+    const c=v.getContext('2d');c.translate(-r.left-7,-r.top-7);c.fillStyle=tile('corridor');c.fillRect(r.left+7,r.top+7,w,h);
+    hallFloor=v;hallFloorKey=key;return v;
+  }
   function floor(key,r){
-    ctx.save();ctx.fillStyle=tile(key);ctx.fillRect(r.left+7,r.top+7,r.right-r.left-14,r.bottom-r.top-14);
+    ctx.save();
+    if(key==='corridor')ctx.drawImage(hallTile(r),r.left+7,r.top+7);
+    else{ctx.fillStyle=tile(key);ctx.fillRect(r.left+7,r.top+7,r.right-r.left-14,r.bottom-r.top-14);}
     ctx.strokeStyle='#0d1b1c3d';ctx.lineWidth=9;ctx.strokeRect(r.left+14,r.top+14,r.right-r.left-28,r.bottom-r.top-28);
-    if(key==='corridor'){line(r.left+22,r.top,r.left+22,r.bottom,'#a4b8ae28',2);line(r.right-22,r.top,r.right-22,r.bottom,'#a4b8ae28',2);for(let y=r.top+100;y<r.bottom;y+=180){rect(708,y,34,6,'#9cac9e2b',null,2);}}
-    if(key==='room7'){ctx.fillStyle=tile('room4');ctx.fillRect(900,95,235,150);}
+    if(key==='corridor'){line(r.left+22,r.top,r.left+22,r.bottom,'#a4b8ae28',2);line(r.right-22,r.top,r.right-22,r.bottom,'#a4b8ae28',2);for(let y=r.top+100;y<r.bottom;y+=180){rect((r.left+r.right)/2-17,y,34,6,'#9cac9e2b',null,2);}}
+    if(key==='room7'){ctx.fillStyle=tile('room4');const p=BunkerLayout.point('room7',900,95);ctx.fillRect(p.x,p.y,235,150);}
     if(key==='workshop'){ctx.strokeStyle='#c8b37a55';ctx.lineWidth=2;ctx.setLineDash([10,7]);ctx.strokeRect(142,782,154,219);ctx.strokeRect(145,1049,284,197);ctx.setLineDash([]);}
     if(key==='storage'){for(const y of [r.top+96,r.bottom-96])line(r.left+35,y,r.right-35,y,'#aab2a22b',2);}
     ctx.restore();
@@ -33,7 +47,7 @@ window.V011Rooms=(()=>{
   function walls(r,side){wall(r.left,r.top,r.right,r.top);wall(r.left,r.bottom,r.right,r.bottom);const outer=side==='left'?r.left:r.right,inner=side==='left'?r.right:r.left;wall(outer,r.top,outer,r.bottom);wall(inner,r.top,inner,r.doorTop);wall(inner,r.doorBottom,inner,r.bottom);}
   function corridorWalls(r,left,right){for(const [x,doors] of [[r.left,left],[r.right,right]]){let from=r.top;for(const d of doors){if(d[0]>from)wall(x,from,x,d[0]);from=d[1];}if(from<r.bottom)wall(x,from,x,r.bottom);}wall(r.left,r.bottom,r.right,r.bottom);}
   function shadow(x,y,w,h,height=22,room='storage'){
-    const points=v09LightPoints(room),cx=x+w/2,cy=y+h/2;
+    const points=v09LightPoints(room).map(BunkerLayout.artPoint),cx=x+w/2,cy=y+h/2;
     const p=points.reduce((a,b)=>Math.hypot(b.x-cx,b.y-cy)<Math.hypot(a.x-cx,a.y-cy)?b:a,points[0]||{x:cx-120,y:cy-160});
     const dx=cx-p.x,dy=cy-p.y,d=Math.hypot(dx,dy)||1,sx=dx/d*height,sy=dy/d*height;
     // Tight contact shadow and feathered displacement away from the lamp,
@@ -105,7 +119,7 @@ window.V011Rooms=(()=>{
     const charge=clamp(V010Energy.battery.charge/V010Energy.battery.capacity,0,1);const bg=ctx.createLinearGradient(1235,0,1340,0);bg.addColorStop(0,'#58797b');bg.addColorStop(.5,'#36565f');bg.addColorStop(1,'#203b47');rect(1237,302,101,212,bg,'#90aaa3',7);rect(1255,331,65,105,'#1b3440','#698c8d',4);for(let i=0;i<7;i++)rect(1264,418-i*12,46,7,charge>(i+.5)/7?(V010Energy.battery.enabled?'#8cc7a5':'#829792'):'#36545b',null,1);rect(1252,466,72,23,'#203943','#627f83',3);
     ctx.textAlign='center';ctx.font='10px Arial';ctx.fillStyle='#d4dfcc';ctx.fillText(I18n.text(Math.round(V09Power.fuel)+' / '+V09Power.capacity),942,479);ctx.fillText(I18n.text('ТОПЛИВО'),947,532);ctx.fillText(I18n.text('ГЕНЕРАТОР'),1117,532);ctx.fillText(I18n.text(Math.round(charge*100)+'%'),1287,482);ctx.fillText(I18n.text('РЕЗЕРВ'),1287,534);ctx.restore();
   }
-  function lights(room){const r=bunker[room];if(!r)return[];if(room==='corridor')return[-100,220,560,900,1200].map(y=>({x:725,y}));if(room==='farm')return[{x:430,y:r.top+22},{x:1040,y:r.top+22},{x:430,y:r.bottom-22},{x:1040,y:r.bottom-22}];if(room==='storage')return[{x:1020,y:r.top+17},{x:1240,y:r.top+17},{x:1020,y:r.bottom-17},{x:1240,y:r.bottom-17}];if(room==='room7')return[{x:1100,y:r.top+18},{x:1200,y:r.bottom-25}];return[{x:(r.left+r.right)/2,y:r.top+18},{x:(r.left+r.right)/2,y:r.bottom-18}];}
+  function lights(room){return BunkerLayout.lights(room);}
   v09LightPoints=lights;
   function lightRadius(room){return room==='farm'?440:room==='corridor'?250:350;}
   function paintDarkness(c,room,r,on){
@@ -144,15 +158,15 @@ window.V011Rooms=(()=>{
     const source=data?.player?.scene==='bunker'?{x:data.player.x,y:data.player.y}:null;
     lidState.clear();frameAt=performance.now();const result=oldRestore(data);safeRestoredPosition(source);return result;
   });
-  return{floor,walls,corridorWalls,wall,shadow,storage,chest,energy,workshop,paintDarkness,lights,fan,lidState,safeRestoredPosition,animation:()=>({generator:generatorPhase,furnace:furnacePhase,bench:benchPhase}),cacheSize:()=>patterns.size};
+  return{floor,walls,corridorWalls,wall,shadow,storage,chest,energy,workshop,paintDarkness,lights,fan,lidState,safeRestoredPosition,animation:()=>({generator:generatorPhase,furnace:furnacePhase,bench:benchPhase}),cacheSize:()=>patterns.size,floorCacheInfo:()=>({entries:hallFloor?1:0,bytes:hallFloor?hallFloor.width*hallFloor.height*4:0})};
 })();
 
 /* 0.11: living room, active rest, shower and bounded cosmetic combat dirt. */
 window.V011Living=(()=>{
-  const BED={id:'bed',kind:'living_bed',name:'Отдыхать',x:1232,y:-205,w:99,h:198,range:46};
-  const SHOWER={id:'shower',kind:'living_shower',name:'Принять душ',x:916,y:156,w:74,h:82,range:34};
-  const BATH_DOOR={id:'living_bath_door',kind:'living_bath_door',name:'Дверь санузла',x:990,y:100,w:78,h:5,range:70};
-  const fixtures=[{id:'wardrobe',x:885,y:-205,w:155,h:64},{id:'nightstand',x:1110,y:-195,w:58,h:58},{...BED},{id:'living_desk',x:1190,y:116,w:145,h:105},{id:'living_chair',x:1240,y:224,w:45,h:25},{id:'bath_wall1',x:898,y:99,w:92,h:6},{id:'bath_wall3',x:1068,y:99,w:69,h:6},{id:'bath_wall2',x:1131,y:99,w:6,h:148},{id:'bath_wall4',x:898,y:99,w:6,h:148},{id:'toilet',x:1075,y:163,w:35,h:70},{id:'living_sink',x:1083,y:117,w:36,h:29},{id:'shower_rim_n',x:916,y:156,w:74,h:4},{id:'shower_rim_w',x:916,y:160,w:4,h:78},{id:'shower_rim_s',x:916,y:234,w:74,h:4}];
+  const BED={id:'bed',kind:'living_bed',name:'Отдыхать',...BunkerLayout.fixture('bed'),range:46};
+  const SHOWER={id:'shower',kind:'living_shower',name:'Принять душ',...BunkerLayout.fixture('shower'),range:34};
+  const BATH_DOOR={id:'living_bath_door',kind:'living_bath_door',name:'Дверь санузла',...BunkerLayout.fixture('living_bath_door'),range:70};
+  const fixtures=["wardrobe", "nightstand", "bed", "living_desk", "living_chair", "bath_wall1", "bath_wall3", "bath_wall2", "bath_wall4", "toilet", "living_sink", "shower_rim_n", "shower_rim_w", "shower_rim_s"].map(id=>BunkerLayout.fixture(id));
   let dirt=0,mode=null,anchor=null,elapsed=0,lastSave=0,doorProgress=0,doorManual=false;
   const care=document.createElement('div');care.id='v011Care';
   const careText=document.createElement('span'),careStop=v09Button('Встать',()=>stop());
@@ -175,14 +189,14 @@ window.V011Living=(()=>{
     stopControls();cancelChop();cancelSearch();
     if(kind==='shower'){
       // Enter through the open southern edge; actual position stays collision-safe.
-      if(!worldCollision(955,195,player.radius,'bunker')){player.x=955;player.y=195;}
+      const p=BunkerLayout.point('room7',955,195);if(!worldCollision(p.x,p.y,player.radius,'bunker'))Object.assign(player,p);
     }
     mode=kind;anchor={x:player.x,y:player.y};elapsed=0;lastSave=0;if(kind==='rest')GameAudio.play('sleep');
     player.moving=false;player.running=false;firing=false;
     refresh();queueGameSave();return true;
   }
   function tick(ms){
-    const near=(scene==='bunker'&&Math.hypot(player.x-1029,player.y-104)<105)||!!window.V014Robots?.doorNear(BATH_DOOR)||!!window.V014Robots?.doorOccupies(BATH_DOOR);
+    const near=BunkerLayout.occupants('bunker').some(a=>Math.hypot(a.x-(BATH_DOOR.x+BATH_DOOR.w/2),a.y-(BATH_DOOR.y+BATH_DOOR.h/2))<105);
     const broken=window.V018Build?.isBroken(BATH_DOOR.id);if(broken)doorProgress=1;
     const open=broken||doorManual||near,was=doorProgress>.9;window.GameAudioWorld?.door(BATH_DOOR,open,'bunker',broken);
     doorProgress=clamp(doorProgress+(open?1:-1)*clamp(Number(ms)||0,0,100)/360,0,1);
@@ -240,6 +254,7 @@ window.V011Living=(()=>{
   function shadow(x,y,w,h){if(window.V011Rooms?.shadow){V011Rooms.shadow(x,y,w,h,14,'room7');return;}box(x+6,y+7,w,h,'rgba(0,0,0,.23)',7);}
   function art(key,x,y,w,h){return !!window.V011Art?.draw?.(key,x,y,w,h);}
   function drawRoom(){
+    const BED=BunkerLayout.authored('bed'),SHOWER=BunkerLayout.authored('shower'),BATH_DOOR=BunkerLayout.authored('living_bath_door');
     ctx.save();
     // Furnishings are top-down and share their existing physical footprints.
     box(1000,-95,183,100,'#817969',6);box(1006,-89,171,88,'#a59b8350',4);

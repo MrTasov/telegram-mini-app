@@ -40,7 +40,7 @@ async function main(){
   }
  });
  await check('sleep.liveRestOwnerFourFramesLoop',()=>{
-  E('scene="bunker";player.x=1210;player.y=-115;player.health=50;movePower=0;navigation=null;');assert.equal(E('V011Living.start("rest")'),true);
+  E('scene="bunker";player.x=V011Living.bed.x-30;player.y=V011Living.bed.y+90;player.health=50;movePower=0;navigation=null;');assert.equal(E('V011Living.start("rest")'),true);
   const location=plain(E('({x:player.x,y:player.y,radius:player.radius})')),frames=new Set();
   for(let i=0;i<4;i++)frames.add(hash(shot(`ActorVisuals.drawSleep({x:90,y:20,w:99,h:198},${i*1200});`)));assert.equal(frames.size,4);
   assert.ok(shot('ActorVisuals.drawSleep({x:90,y:20,w:99,h:198},0);').equals(shot('ActorVisuals.drawSleep({x:90,y:20,w:99,h:198},4800);')));
