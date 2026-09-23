@@ -35,7 +35,7 @@ window.V011Rooms=(()=>{
     ctx.strokeStyle='#0d1b1c3d';ctx.lineWidth=9;ctx.strokeRect(r.left+14,r.top+14,r.right-r.left-28,r.bottom-r.top-28);
     if(key==='corridor'){line(r.left+22,r.top,r.left+22,r.bottom,'#a4b8ae28',2);line(r.right-22,r.top,r.right-22,r.bottom,'#a4b8ae28',2);for(let y=r.top+100;y<r.bottom;y+=180){rect((r.left+r.right)/2-17,y,34,6,'#9cac9e2b',null,2);}}
     if(key==='room7'){ctx.fillStyle=tile('room4');const p=BunkerLayout.point('room7',900,95);ctx.fillRect(p.x,p.y,235,150);}
-    if(key==='workshop'){ctx.strokeStyle='#c8b37a55';ctx.lineWidth=2;ctx.setLineDash([10,7]);ctx.strokeRect(142,782,154,219);ctx.strokeRect(145,1049,284,197);ctx.setLineDash([]);}
+    if(key==='workshop'){ctx.strokeStyle='#c8b37a55';ctx.lineWidth=2;ctx.setLineDash([10,7]);const f=BunkerLayout.point('workshop',142,782),b=BunkerLayout.point('workshop',145,1049);ctx.strokeRect(f.x,f.y,154,219);ctx.strokeRect(b.x,b.y,284,197);ctx.setLineDash([]);}
     if(key==='storage'){for(const y of [r.top+96,r.bottom-96])line(r.left+35,y,r.right-35,y,'#aab2a22b',2);}
     ctx.restore();
   }
@@ -125,7 +125,7 @@ window.V011Rooms=(()=>{
   function paintDarkness(c,room,r,on){
     c.save();c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.clearRect(r.left,r.top,r.right-r.left,r.bottom-r.top);c.fillStyle=on?'rgba(3,13,19,.46)':'rgba(2,7,15,.79)';c.fillRect(r.left,r.top,r.right-r.left,r.bottom-r.top);
     if(on){c.globalCompositeOperation='destination-out';for(const p of lights(room)){const radius=lightRadius(room),g=c.createRadialGradient(p.x,p.y,5,p.x,p.y,radius);g.addColorStop(0,'rgba(255,255,255,.96)');g.addColorStop(.25,'rgba(255,255,255,.81)');g.addColorStop(.65,'rgba(255,255,255,.40)');g.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=g;c.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);}}
-    if(room==='workshop'&&V09Craft.visualState('furnace').working){c.globalCompositeOperation='destination-out';const g=c.createRadialGradient(219,878,0,219,878,180);g.addColorStop(0,'#ffffffff');g.addColorStop(.4,'#ffffff66');g.addColorStop(1,'#ffffff00');c.fillStyle=g;c.fillRect(39,698,360,360);}c.restore();
+    if(room==='workshop'&&V09Craft.visualState('furnace').working){c.globalCompositeOperation='destination-out';const p=BunkerLayout.point('workshop',219,878),g=c.createRadialGradient(p.x,p.y,0,p.x,p.y,180);g.addColorStop(0,'#ffffffff');g.addColorStop(.4,'#ffffff66');g.addColorStop(1,'#ffffff00');c.fillStyle=g;c.fillRect(p.x-180,p.y-180,360,360);}c.restore();
   }
   v09DrawRoomLight=function(room){const r=bunker[room];if(!r)return;const on=devicePowered('light_'+room);ctx.save();ctx.beginPath();ctx.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);ctx.clip();if(on)for(const p of lights(room)){const radius=lightRadius(room),g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,radius);g.addColorStop(0,'#ffefd224');g.addColorStop(.45,'#f6edc810');g.addColorStop(1,'#f4e9c800');ctx.fillStyle=g;ctx.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);}ctx.restore();for(const p of lights(room)){ctx.save();ctx.globalAlpha=on?1:.55;if(!art('lamp',p.x-33,p.y-9,66,18)){rect(p.x-35,p.y-6,70,12,'#253f46','#799791',3);rect(p.x-27,p.y-2,54,4,on?'#f3e8c3':'#647a79',null,1);}if(on){ctx.fillStyle='#fff4da';ctx.fillRect(p.x-21,p.y-1,42,2);}ctx.restore();}};
   v09DrawDoor=function(d){ctx.save();const on=devicePowered('door_'+d.room),cx=d.x+d.w/2,cy=d.y+d.h/2;rect(d.x-5,d.y-5,d.w+10,d.h+10,'#142c34','#78918c',3);rect(d.x,d.y,d.w,d.h,'#32484b',null,1);for(const panel of v09DoorPanels(d)){if(panel.w<.1||panel.h<.1)continue;const g=d.horizontal?ctx.createLinearGradient(0,panel.y,0,panel.y+panel.h):ctx.createLinearGradient(panel.x,0,panel.x+panel.w,0);g.addColorStop(0,'#506c70');g.addColorStop(.4,'#a4b5aa');g.addColorStop(1,'#405e66');rect(panel.x,panel.y,panel.w,panel.h,g,'#b5c5b7',1);if(d.horizontal){line(panel.x+3,panel.y+panel.h*.5,panel.x+panel.w-3,panel.y+panel.h*.5,'#2b4b53',1.6);}else line(panel.x+panel.w*.5,panel.y+3,panel.x+panel.w*.5,panel.y+panel.h-3,'#2b4b53',1.6);}
@@ -350,4 +350,3 @@ window.V011Living=(()=>{
   const oldDrawPlayer=drawPlayer;drawPlayer=function(){if(mode==='rest'&&scene==='bunker')drawRest();else{oldDrawPlayer();stains();}showerDrops();};
   return {drawRoom,start,stop,tick,state:()=>({dirt,mode,elapsed,doorProgress}),bed:BED,shower:SHOWER,fixtures,bathDoor:BATH_DOOR};
 })();
-

@@ -1,8 +1,8 @@
 {
-  "version": "0.30.0",
+  "version": "0.30.1",
   "baseline": "LAST_BASE_0.29.0_Audio_Pass_Recovery_1",
   "archiveSha256": "438d2e75607235ca48280abbfebd196d22462a228297b3a8fba62f7b0ac28307",
-  "scope": "R1 shared geometry, fixed Core, locked stairs, equipment dependencies, farm pause and position migration",
+  "scope": "R1 plus R2: 800x1500 hall, closer 140x200 stairs, replacement Core, synchronous room relocation and R1 position migration",
   "changes": {
     "src/i18n/catalogs.js": {
       "before": "237db1a3a868a5f40f0d3fa2c63fb043b504b6c030e722af6832ef08d595034d",
@@ -10,15 +10,15 @@
     },
     "src/save/format.js": {
       "before": "51e57f24f314fc9a32a9f13c82965bd386121e6e2ce6d244b1a3ec8391cb3270",
-      "after": "21a89e1634965e6eb2a8ce1278fe5f1c9b0462f1c419e721df2199059e0fe3c2"
+      "after": "667a06f276bb696cb99538ca061c2b3c633735208053241d89f07bbcac389dce"
     },
     "src/assets/manifest.js": {
       "before": "b2fba3a54d0dad30cc08c9f46bf80d839201b81cd37a4fbc259a613f01ace4ec",
-      "after": "e1b49429137deac67352dfcdb9e2a6d7d3b193727c6e78826ccb291afcb0e159"
+      "after": "41430dc82b6c0d11bcfd316563afa757eab4248052cf2c99ea38149ab0647e36"
     },
     "src/base/layout.js": {
       "before": null,
-      "after": "a78e00e8714bb3394a33edc0c076260d691d44a39e3543beaf2235a7c789c4a2"
+      "after": "c06b0594aaa101ab64fe892a714f3494e9472ad56cf8ff4438749f154cce9422"
     },
     "src/core/world-inventory.js": {
       "before": "fa2868df76c6c7f60eb94dc14adfee130e4c33f676756a6190a7d4d7982da5ef",
@@ -34,7 +34,7 @@
     },
     "src/core/rendering.js": {
       "before": "eeecb8f46188fdbbd4873ef2525e486118edc6efbbc404fcbb9feb0481acafa7",
-      "after": "5cb3e789d90906e569d87ffbad0198d3d213ebe5644d865bc60f2ac44ececf2d"
+      "after": "9b61869683a8820d96da9bdbbf60dea1b00f56754c3ddfdd632862b5d1ebe1f7"
     },
     "src/state/bindings.js": {
       "before": "97607ebe3572144318e95d19833dbc407e6f88301d9619ac1a752bd7e10ef258",
@@ -66,7 +66,7 @@
     },
     "src/save/slots.js": {
       "before": "77ea48f1582e4edefe29dcb8b10f363d847d802649d8238d21b4c0cc541d28a3",
-      "after": "c8427da93e1c6ed1ea29edfd6d1db1c117ebf3ff5ca55cf1b0f7b7b6bc27b975"
+      "after": "847778d405cf546a1e1d007c1a6e5273ef7b30cb9e769e4aee78e7437542dab0"
     },
     "src/base/battery.js": {
       "before": "4a0c5efc81e8ae589b5de7f48dba7c2de209c37cbac9f00a746d60997b71bd43",
@@ -78,7 +78,7 @@
     },
     "src/save/envelope.js": {
       "before": "4ea7b4b5ad19d820c473852c715805238e3034a589f028942825463330d5b6cd",
-      "after": "5f6616b97de215af07559989bc380c41880b43315d4cdadceeae84006001261b"
+      "after": "95ea505d553aef9a41cfd723195f25b3b8c7bf5c6272542f8c43cc40bed20bae"
     },
     "src/farm/growth.js": {
       "before": "d61b1a4151b76a2de22e19cf1a18b71b2ca94c51c3569ff8527874adbbde6ff0",
@@ -86,7 +86,7 @@
     },
     "src/base/rooms.js": {
       "before": "fae2775e5b7f99e1d3808b4e67ea2042aa1a59c5c8fcf14a095e3e7bdf634bb7",
-      "after": "b3d27ed686d03f1705e0bf8bf2d8ee678e63084248faf762c5b0a4f08190cdaf"
+      "after": "97fa5a613a7bf4972e66dc65bc18c42373c2e4825b26f5bb1f5bec067bab12a8"
     },
     "src/drones/navigation.js": {
       "before": "a367be6aab0c2671aca085ffb8ab898ff009730db7f68ca24314cd1df36c3855",
@@ -102,7 +102,7 @@
     },
     "src/render/lighting.js": {
       "before": "dcf1a9ee54ed5779486f9dc59e267da2844aa82a468f369fd14d26bd821536bb",
-      "after": "ee25d016f4693ae900e0c9aa0c7ce9bb4c1bfb325eaf0e5613b67a567bc401e6"
+      "after": "31f143ffba68d1b94cf080d455e36b702717db72bcb2bac151ffc335f018318b"
     },
     "src/inventory/upgrades.js": {
       "before": "aa800ade5464df75d2e02170526b6c6558d7c69c1888d4a538e793f05a6838c5",
@@ -110,7 +110,7 @@
     },
     "src/base/level1.js": {
       "before": null,
-      "after": "bc20f5057ff92a0da3c1f56ee8b2d29bca0283ded6ed3a7f3a35ba5aeee41c98"
+      "after": "dc04684baa33455e2389f9a27f48affe68fab088a3b72800d3262b4867f3fc10"
     },
     "src/save/finalize.js": {
       "before": "306b578bacee5ad4b704cc8ea1bd0ae27cdf73f06c9618f321ea69931e30c4fe",
@@ -122,19 +122,19 @@
     },
     "src/manifest.json": {
       "before": "14b8bb87b1f9b5e3a95b2c82848d548a7842251da0161c0a0eff0ea98dc1f742",
-      "after": "85fabe24bb101c90b1c46842415baf4a62c2329ff94862801a64b55c54384c84"
+      "after": "fbaa700efb411c30e9e109905e5e49b41383c949d94b1ede136486429827a8e6"
     },
     "assets/manifest.json": {
       "before": "8516cc472b92824175e49c9aae0de59638ce4ea437ede9d4a505fd70193647bc",
-      "after": "4af1a286131d5bc1f1b40acd8137750b9a715b74f55d548fdb76f32e93ac748b"
+      "after": "007c864dc65ab240a89276c034ab05cae7f9b638cc78df1ba76d617b24cbaf3b"
     },
     "index.html": {
       "before": "32036943f8b615f3d9b5c9b98a572c7dda06a2b767a351c5a75bd227b8bc51c5",
-      "after": "be1352c05699a7043135de0595d4007f24d61b3c521c47be830e6f946f22048f"
+      "after": "029fc4235c0f717b158532d5bf2b6c1b07ff42e8272ad93dfe02e5fd1655aab6"
     },
     "package.json": {
       "before": "4689f2a019d30adfbef88735848d8b9a5c8da9ee7a0b23578487b208aba5933e",
-      "after": "03bd1b7b04eb0421e6835e9b80a6ba10116a632f736de8ca3a7822d57bc11276"
+      "after": "d702355d43886f13eb9359d7fc4092afd0426381546d0be53d5ec45711df2268"
     },
     "locales/en.json": {
       "before": "8d8916b1f0e8c9957423402a2d8bafcf4d94b41fc6ced4a0a7d4a8d3e078f2b2",
@@ -150,7 +150,7 @@
     },
     "package-lock.json": {
       "before": "cd8f5db0d583ba663a08a71ec27d642d09f2c6da390ee04a4ebecca580053257",
-      "after": "1f55a85ced40aafe4cc5e75dfc15c225e1e41ceff35c52a6bbba1b4ee3d454cd"
+      "after": "afbb7b9ae8c7e8edb68a1bf0a826cf7265147777ef923e12a1745aa2f3e95a0f"
     }
   }
 }

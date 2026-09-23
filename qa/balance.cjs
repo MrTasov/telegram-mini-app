@@ -19,7 +19,7 @@ configs.environmentAssumptions={equipment:'starter gear; balanced variant and sp
 const expected=JSON.parse(fs.readFileSync(path.join(__dirname,'stage0/audit/configurations.json'))),actual=JSON.parse(JSON.stringify(configs));
 const version=actual.version;actual.version=expected.version; // Release metadata and the explicitly versioned envelope are the only additions.
 assert.equal(actual.save.topKeys.filter(k=>k==='saveVersion').length,1);
-assert.equal(E('captureGameProgress().saveVersion'),4);
+assert.equal(E('captureGameProgress().saveVersion'),5);
 actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='saveVersion'&&k!=='identity027'&&k!=='bunker030');
 delete actual.save.schemas.identity027;delete actual.save.schemas.bunker030;
 actual.drone.defaults.x=expected.drone.defaults.x;actual.drone.defaults.y=expected.drone.defaults.y;actual.drone.station.x=expected.drone.station.x;actual.drone.station.y=expected.drone.station.y;delete actual.drone.station.room;delete actual.power.rooms.reserve_l1;actual.power.rooms.corridor=expected.power.rooms.corridor;actual.power.devices=actual.power.devices.filter(d=>d.room!=='reserve_l1').sort((a,b)=>expected.power.devices.findIndex(d=>d.id===a.id)-expected.power.devices.findIndex(d=>d.id===b.id));

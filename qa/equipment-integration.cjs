@@ -30,7 +30,7 @@ async function main(){
   assert.deepEqual(frames.map(f=>f.gear.position),[[399.75,546.25],[396.875,545.75],[397.125,546],[397.375,546.75],[398.125,546.75],[398.5,546.25],[397.25,546.25],[396.625,546.5],[396.625,546.25],[397.5,546],[400.875,546],[402.875,546.25]]);
   for(const f of [mod.items.rifle_ak74.idle,...frames]){assert.equal(f.gear.angle,0);assert.equal(f.gear.scale,.60);assert.equal(f.cap,null);assert.ok(f.gear.front&&f.gear.rear);assert.deepEqual(f.gear.muzzle.map((v,i)=>v-f.gear.position[i]),[0,120]);}
  });
- await check('save.full029PayloadAndRoundtripPreserved',()=>{fresh();same();pair('restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())))');same();assert.equal(E('captureGameProgress().saveVersion'),4);});
+ await check('save.full029PayloadAndRoundtripPreserved',()=>{fresh();same();pair('restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())))');same();assert.equal(E('captureGameProgress().saveVersion'),5);});
  for(const mode of ['PC','MOBILE'])for(const item of Object.keys(mod.items))await check('movement.'+mode+'.'+item,()=>{
   fresh(`GameInput.setMode('${mode}');addItem('${item}',1);V013Inventory.equip('${item}');moveX=1;moveY=0;movePower=1;`);const frames=new Set();
   for(let i=0;i<78;i++){step();const p=plain(E(`ActorVisuals.pose('${item}')`));assert.equal(p.mode,'walk');frames.add(p.frame);E('drawPlayer()');if(i%13===0)same();}

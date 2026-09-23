@@ -16,7 +16,9 @@ function place(id){
  E(`window.testObject=interactionObjects().find(o=>o.id===${JSON.stringify(id)});if(!testObject)throw Error('Missing interaction '+${JSON.stringify(id)});window.testPosition=false;
  if(testObject.kind==='hmg016'){player.wallLevel=true;player.x=testObject.x;player.y=testObject.y+22;testPosition=true;}else{
  outer:for(let dy=-100;dy<=(testObject.h||0)+100;dy+=5)for(let dx=-100;dx<=(testObject.w||0)+100;dx+=5){const x=testObject.x+dx,y=testObject.y+dy;if(!worldCollision(x,y,player.radius,scene)&&canInteract(testObject,x,y)){player.x=x;player.y=y;testPosition=true;break outer;}}}
- updateCamera();`);
+ // Teleporting a test fixture must settle the following camera before a tap.
+ // Otherwise the stale view can put the world object underneath a fixed stick.
+ for(let n=0;n<60;n++)updateCamera();`);
  if(!E('testPosition'))throw Error('No reachable test point: '+id);
  return E('({x:testObject.x+(testObject.w||0)/2,y:testObject.y+(testObject.h||0)/2})');
 }

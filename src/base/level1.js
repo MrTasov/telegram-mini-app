@@ -1,4 +1,4 @@
-/* Bunker Level 1 R1: static world ownership, dormant agriculture and save migration.
+/* Bunker Level 1 R2: static world ownership, dormant agriculture and save migration.
    The Core and sealed lower stair are not damageable/buildable records. */
 window.BunkerState=(()=>{
   const layout=BunkerLayout,copy=v=>JSON.parse(JSON.stringify(v));
@@ -27,8 +27,32 @@ window.BunkerState=(()=>{
     if(room==='corridor'){const old=layout.authoredRooms.corridor,r=layout.rooms.corridor;p.x=r.left+(p.x-old.left)/(old.right-old.left)*(r.right-r.left);}
     else Object.assign(p,layout.point(room,p.x,p.y));
   }
+  // Revision 1 coordinates are migration input only. Runtime owners use layout.
+  function moveR1(p){
+    if(!p||p.scene!=='bunker'||!Number.isFinite(p.x)||!Number.isFinite(p.y))return;
+    const oldStairs=[{x:980,y:-480,w:180,h:240},{x:1260,y:-480,w:180,h:240}];
+    for(let i=0;i<oldStairs.length;i++){const s=oldStairs[i],n=layout.stairs[i];if(p.x>=s.x&&p.x<=s.x+s.w&&p.y>=s.y&&p.y<=s.y+s.h){p.x=n.x+(p.x-s.x)/s.w*n.w;p.y=n.y+(p.y-s.y)/s.h*n.h;return;}}
+    for(const r of layout.roomData){
+      if(r.id==='corridor')continue;
+      const dx=r.side==='left'?200:r.side==='right'?-200:0,left=r.x-dx;
+      if(p.x>=left&&p.x<=left+r.w&&p.y>=r.y&&p.y<=r.y+r.h){p.x+=dx;return;}
+    }
+    if(p.x>=610&&p.x<=1810&&p.y>=-240&&p.y<=1260)p.x=layout.rooms.corridor.left+(p.x-610)*800/1200;
+  }
+  function moveActorsAndMap(d,move){
+    move(d.player);move(d.robots014);move(d.robots014?.guard);
+    if(d.player?.scene==='bunker'&&d.v091?.fortress){d.v091.fortress.x=d.player.x;d.v091.fortress.y=d.player.y;d.v091.fortress.wallLevel=false;}
+    const map=d.v010?.modules?.camera;
+    if(Array.isArray(map?.markers))map.markers.forEach(move);
+    move(map?.goal);
+  }
   function migrate(d){
-    if(d.bunker030)return; // idempotent when exporting an already migrated save
+    if(d.bunker030){
+      if(d.bunker030.schema!==1)throw Error('Unsupported bunker schema');
+      if(d.bunker030.layout===layout.revision)return; // no double translation
+      if(d.bunker030.layout!==1)throw Error('Unsupported bunker layout');
+      moveActorsAndMap(d,moveR1);d.bunker030.layout=layout.revision;return;
+    }
     const held=Number.isFinite(d.savedAt)?d.savedAt:Date.now();
     d.bunker030={schema:1,layout:layout.revision,agricultureAt:held,dormantMarkers:[]};
     const power=d.v09?.power;
@@ -83,12 +107,14 @@ window.BunkerState=(()=>{
   GameSave.extend('restore','bunker.level1',function(restore,d){validate(d);AgricultureTime.restore(d.bunker030.agricultureAt);dormantMarkers=copy(d.bunker030.dormantMarkers);const result=restore(d);restorePositions(d);return result;});
   function draw(){
     ctx.save();
-    for(const [x,up] of [[980,true],[1260,false]]){
-      ctx.fillStyle='#15242a';ctx.fillRect(x+10,-470,160,222);
-      for(let n=0;n<10;n++){const y=-456+n*19;ctx.fillStyle=n%2?'#566363':'#465454';ctx.fillRect(x+18,y,144,13);ctx.fillStyle='#9baba080';ctx.fillRect(x+18,y,144,2);}
-      ctx.strokeStyle=up?'#92c3b1':'#b69b69';ctx.lineWidth=3;ctx.strokeRect(x+13,-467,154,219);
-      if(!up){ctx.fillStyle='#293b3c';ctx.fillRect(x+9,-281,162,30);ctx.strokeStyle='#b4a477';ctx.lineWidth=4;for(let n=0;n<7;n++){ctx.beginPath();ctx.moveTo(x+17+n*23,-256);ctx.lineTo(x+32+n*23,-278);ctx.stroke();}}
-      ctx.fillStyle=up?'#cee5da':'#d8c69e';ctx.textAlign='center';ctx.font='13px Arial';ctx.fillText(I18n.t(up?'bunker.up.label':'bunker.down.label'),x+90,-213);ctx.font='10px Arial';ctx.fillText(I18n.t(up?'bunker.up.destination':'bunker.down.locked'),x+90,-194);
+    for(const s of layout.stairs){
+      const {x,y,w,h}=s,up=s.id==='up',bottom=y+h;
+      ctx.fillStyle='#15242a';ctx.fillRect(x+10,y+10,w-20,h-18);
+      const step=(h-50)/9;
+      for(let n=0;n<9;n++){const sy=y+22+n*step;ctx.fillStyle=n%2?'#566363':'#465454';ctx.fillRect(x+18,sy,w-36,step-5);ctx.fillStyle='#9baba080';ctx.fillRect(x+18,sy,w-36,2);}
+      ctx.strokeStyle=up?'#92c3b1':'#b69b69';ctx.lineWidth=3;ctx.strokeRect(x+13,y+13,w-26,h-21);
+      if(!up){ctx.fillStyle='#293b3c';ctx.fillRect(x+9,bottom-41,w-18,30);ctx.strokeStyle='#b4a477';ctx.lineWidth=4;for(let n=0;n<5;n++){ctx.beginPath();ctx.moveTo(x+17+n*21,bottom-16);ctx.lineTo(x+32+n*21,bottom-38);ctx.stroke();}}
+      ctx.fillStyle=up?'#cee5da':'#d8c69e';ctx.textAlign='center';ctx.font='12px Arial';ctx.fillText(I18n.t(up?'bunker.up.label':'bunker.down.label'),x+w/2,bottom+27,w+24);ctx.font='10px Arial';ctx.fillText(I18n.t(up?'bunker.up.destination':'bunker.down.locked'),x+w/2,bottom+46,w+24);
     }
     const c=layout.core;V011Rooms.shadow(c.x+12,c.y+15,c.w-24,c.h-28,15,'corridor');
     if(!V011Art.draw('command_core',c.x,c.y,c.w,c.h)){

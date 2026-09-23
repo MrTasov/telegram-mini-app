@@ -78,7 +78,7 @@ window.V016Lighting=(()=>{
     roomMasks.set(key,v);return v;
   }
   function bunkerMask(c,served){c.fillStyle='rgba(2,5,12,.63)';const view=V010Camera.view();c.fillRect(camera.x,camera.y,view.w,view.h);for(const room of Object.keys(V09Power.rooms)){const r=bunker[room];if(!BunkerLayout.roomActive(room)||!r||!visibleOnScreen((r.left+r.right)/2,(r.top+r.bottom)/2,Math.hypot(r.right-r.left,r.bottom-r.top)/2))continue;c.clearRect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.drawImage(roomMask(room,r,served.has('light_'+room)),r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);}
-    if(V09Craft.visualState('furnace').working){c.save();const r=bunker.workshop;c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.globalCompositeOperation='destination-out';c.globalAlpha=.9;c.drawImage(sprite('white'),49,708,340,340);c.restore();}}
+    if(V09Craft.visualState('furnace').working){c.save();const r=bunker.workshop,p=BunkerLayout.point('workshop',49,708);c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.globalCompositeOperation='destination-out';c.globalAlpha=.9;c.drawImage(sprite('white'),p.x,p.y,340,340);c.restore();}}
   function droneActive(){const s=window.V014Robots?.state;return !!(s&&s.scene===scene&&!s.packed&&s.task!=='docked'&&s.hp>0&&s.battery>0&&s.light&&!(s.economy&&s.battery<20));}
   function flashlight(c,beam){if(!beam)return;c.save();c.globalCompositeOperation='destination-out';let previous=0;const half=(beam.points.length-1)/2;
     for(let inset=0;inset<half;inset+=3){const desired=.997*Math.sin(Math.min(1,(inset+3)/half)*Math.PI/2)**2,strength=(desired-previous)/Math.max(.00001,1-previous);previous=desired;c.save();c.globalAlpha=strength;c.beginPath();c.moveTo(beam.ox,beam.oy);for(let i=inset;i<beam.points.length-inset;i++)c.lineTo(beam.points[i].x,beam.points[i].y);c.closePath();c.clip();c.drawImage(sprite('flashlight'),beam.ox-beam.range,beam.oy-beam.range,beam.range*2,beam.range*2);c.restore();}c.restore();}
@@ -95,4 +95,3 @@ window.V016Lighting=(()=>{
   GameSave.extend('restore','render.lighting',function(oldRestore,d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);});
   hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,get day(){return WorldClock.day;},maskImage:()=>mask,cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:4,droneShapes:droneShape?1:0,droneLimit:1,width:mask?.width||0,height:mask?.height||0})};
 })();
-

@@ -1,5 +1,5 @@
 {
-  "patch": "bunker-level1-rework-r1",
+  "patch": "bunker-level1-rework-r2",
   "environment": {
     "node": "v24.19.0",
     "cpu": "AMD EPYC 9V74 80-Core Processor",
@@ -7,184 +7,148 @@
     "zoom": 0.65,
     "mode": "Alternating warmed update + audio observer + real Canvas2D draw, 180 measured frames per scene/version"
   },
-  "baseline": "Immutable LAST_BASE_0.29.0_Audio_Pass_Recovery_1",
-  "reusedUnchangedSurfaceAndNavigation": true,
+  "baseline": "Immutable delivered LAST_BASE_0.30.0_Bunker_Level_1_Rework_R1",
+  "reusedUnchangedSurfaceAndNavigation": false,
   "rows": [
     {
       "viewport": "390x844",
       "scene": "bunker_hall",
       "before": {
         "samples": 180,
-        "p50Ms": 28.90009800000007,
-        "p95Ms": 33.64818799999921,
-        "meanMs": 29.59879289444446
+        "p50Ms": 18.314658999999665,
+        "p95Ms": 22.96673699999883,
+        "meanMs": 18.857397633333235
       },
       "after": {
         "samples": 180,
-        "p50Ms": 18.237184000001434,
-        "p95Ms": 23.004001000000244,
-        "meanMs": 18.86376817777776
+        "p50Ms": 19.25817300000017,
+        "p95Ms": 24.871023000001514,
+        "meanMs": 19.864504138888858
       },
-      "p50DeltaMs": -10.662913999998636,
-      "p50Percent": -36.89577108007942
+      "p50DeltaMs": 0.9435140000005049,
+      "p50Percent": 5.151687508899405
     },
     {
       "viewport": "390x844",
       "scene": "bunker_energy",
       "before": {
         "samples": 180,
-        "p50Ms": 31.401147000000492,
-        "p95Ms": 36.96551400000317,
-        "meanMs": 31.927746533333366
+        "p50Ms": 21.919917000001078,
+        "p95Ms": 26.409206999996968,
+        "meanMs": 22.514264877777837
       },
       "after": {
         "samples": 180,
-        "p50Ms": 22.218941000002815,
-        "p95Ms": 27.62303199999951,
-        "meanMs": 22.9971698444445
+        "p50Ms": 21.64052400000037,
+        "p95Ms": 25.520850999997492,
+        "meanMs": 22.078202122222187
       },
-      "p50DeltaMs": -9.182205999997677,
-      "p50Percent": -29.24162611001927
+      "p50DeltaMs": -0.27939300000070943,
+      "p50Percent": -1.2746079284912226
     },
     {
       "viewport": "1280x800",
       "scene": "bunker_hall",
       "before": {
         "samples": 180,
-        "p50Ms": 44.88537200000428,
-        "p95Ms": 54.99831400000403,
-        "meanMs": 45.97935593333312
+        "p50Ms": 41.55171200000041,
+        "p95Ms": 50.388810000004014,
+        "meanMs": 42.23147403888866
       },
       "after": {
         "samples": 180,
-        "p50Ms": 42.73541400000249,
-        "p95Ms": 49.15176999999676,
-        "meanMs": 43.175317888888905
+        "p50Ms": 44.985796000000846,
+        "p95Ms": 50.02417499999865,
+        "meanMs": 45.349328349999915
       },
-      "p50DeltaMs": -2.1499580000017886,
-      "p50Percent": -4.789885666986526
+      "p50DeltaMs": 3.434084000000439,
+      "p50Percent": 8.264602912150544
     },
     {
       "viewport": "1280x800",
       "scene": "bunker_energy",
       "before": {
         "samples": 180,
-        "p50Ms": 47.99766299998737,
-        "p95Ms": 54.54222699999809,
-        "meanMs": 48.73912510000025
+        "p50Ms": 32.50263600000471,
+        "p95Ms": 40.523073999996996,
+        "meanMs": 32.922527700000096
       },
       "after": {
         "samples": 180,
-        "p50Ms": 28.47908499999903,
-        "p95Ms": 34.58329000000231,
-        "meanMs": 29.155059288888555
+        "p50Ms": 29.00319699999818,
+        "p95Ms": 34.754533999999694,
+        "meanMs": 29.644034777777577
       },
-      "p50DeltaMs": -19.518577999988338,
-      "p50Percent": -40.66568407714658
-    },
-    {
-      "viewport": "390x844",
-      "scene": "quiet_surface",
-      "before": {
-        "samples": 180,
-        "p50Ms": 17.197074999999586,
-        "p95Ms": 20.908693000000312,
-        "meanMs": 17.73291145555556
-      },
-      "after": {
-        "samples": 180,
-        "p50Ms": 16.499283000001014,
-        "p95Ms": 21.622788000000583,
-        "meanMs": 17.074793755555586
-      },
-      "p50DeltaMs": -0.6977919999985716,
-      "p50Percent": -4.05762026390295
-    },
-    {
-      "viewport": "1280x800",
-      "scene": "quiet_surface",
-      "before": {
-        "samples": 180,
-        "p50Ms": 33.96370300000126,
-        "p95Ms": 39.0458890000009,
-        "meanMs": 34.56288286666685
-      },
-      "after": {
-        "samples": 180,
-        "p50Ms": 33.25937200000044,
-        "p95Ms": 37.67084600000089,
-        "meanMs": 33.75223876666645
-      },
-      "p50DeltaMs": -0.7043310000008205,
-      "p50Percent": -2.0737756421930653
+      "p50DeltaMs": -3.4994390000065323,
+      "p50Percent": -10.76663135877971
     }
   ],
   "navigation": [
     {
       "to": {
-        "x": 400,
+        "x": 600,
         "y": 30
       },
       "reachable": 20,
       "samples": 20,
-      "p50Ms": 2.900988999987021,
-      "p95Ms": 21.329224000000977,
-      "meanMs": 4.310516300000745
+      "p50Ms": 2.3610910000134027,
+      "p95Ms": 16.758265000011306,
+      "meanMs": 3.2471611000008123
     },
     {
       "to": {
-        "x": 390,
+        "x": 590,
         "y": 510
       },
       "reachable": 20,
       "samples": 20,
-      "p50Ms": 6.881523999996716,
-      "p95Ms": 41.897272000001976,
-      "meanMs": 9.033353649998753
+      "p50Ms": 6.992738000000827,
+      "p95Ms": 51.47391800000332,
+      "meanMs": 9.359689650000655
     },
     {
       "to": {
-        "x": 450,
+        "x": 650,
         "y": 1050
       },
       "reachable": 20,
       "samples": 20,
-      "p50Ms": 13.205512999993516,
-      "p95Ms": 75.6366929999931,
-      "meanMs": 16.49065000000046
+      "p50Ms": 10.465963000009651,
+      "p95Ms": 59.24508700000297,
+      "meanMs": 13.033215049998399
     },
     {
       "to": {
-        "x": 2070,
+        "x": 1870,
         "y": 90
       },
       "reachable": 20,
       "samples": 20,
-      "p50Ms": 5.1332689999981085,
-      "p95Ms": 35.24126199999591,
-      "meanMs": 6.679470550001133
+      "p50Ms": 4.215852999986964,
+      "p95Ms": 25.208968999999342,
+      "meanMs": 5.463712499998655
     },
     {
       "to": {
-        "x": 2070,
+        "x": 1870,
         "y": 510
       },
       "reachable": 20,
       "samples": 20,
-      "p50Ms": 8.487397999997484,
-      "p95Ms": 48.008096000005025,
-      "meanMs": 10.512957500002084
+      "p50Ms": 7.404968000002555,
+      "p95Ms": 42.12756100000115,
+      "meanMs": 9.180668500001776
     },
     {
       "to": {
-        "x": 2070,
+        "x": 1870,
         "y": 1010
       },
       "reachable": 20,
       "samples": 20,
-      "p50Ms": 16.780138000001898,
-      "p95Ms": 86.10879499999282,
-      "meanMs": 20.245795849996647
+      "p50Ms": 16.433564999999362,
+      "p95Ms": 77.42200999999477,
+      "meanMs": 19.553519149997737
     },
     {
       "to": {
@@ -193,37 +157,37 @@
       },
       "reachable": 20,
       "samples": 20,
-      "p50Ms": 10.131649000002653,
-      "p95Ms": 46.56367099999625,
-      "meanMs": 12.070122149999225
+      "p50Ms": 13.421872999999323,
+      "p95Ms": 53.62588000000687,
+      "meanMs": 15.553985950001515
     },
     {
       "to": {
-        "x": 2234,
+        "x": 2034,
         "y": 195
       },
       "reachable": 20,
       "samples": 20,
-      "p50Ms": 8.053416000009747,
-      "p95Ms": 27.046046000003116,
-      "meanMs": 9.188287950000085
+      "p50Ms": 6.669970999995712,
+      "p95Ms": 19.998394999987795,
+      "meanMs": 7.403736599998956
     }
   ],
   "errors": [],
   "floorCache": {
     "entries": 1,
-    "bytes": 7049584
+    "bytes": 4671984
   },
   "additionalImage": {
-    "path": "assets/images/props/command_core.png",
-    "compressedBytes": 1855483,
-    "width": 1422,
-    "height": 1106,
-    "decodedRgbaBytes": 6290928
+    "path": "assets/images/props/command_core_r2.png",
+    "compressedBytes": 1945110,
+    "width": 1421,
+    "height": 1107,
+    "decodedRgbaBytes": 6292188
   },
   "limitations": [
     "Modeled DOM/WebAudio; no physical browser, WebView, phone GPU or subjective audio measurement.",
-    "Room cameras compare corresponding relocated rooms. New hall intentionally includes the additional Command Core. Shared-host p95 includes scheduling noise.",
+    "Room cameras compare corresponding relocated rooms. Both halls include their respective Command Core sprites. Shared-host p95 includes scheduling noise.",
     "Navigation queries use open doors; closed-door behavior is covered separately by player and drone integration tests."
   ]
 }

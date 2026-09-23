@@ -172,7 +172,7 @@ function drawBunker(){
   // №2 — WORKSHOP (visual redesign; existing interaction preserved)
   drawSideRoom(bunker.workshop,"left","","#343a3c");
 
-  V09Craft.drawWorkshop();
+  BunkerLayout.withArt('workshop',()=>V09Craft.drawWorkshop());
 
   // №3 — STORAGE: 8 independent functional chests, 4 on top wall + 4 on bottom wall
   drawSideRoom(bunker.storage,"right","СКЛАД","#303638");
@@ -184,6 +184,7 @@ function drawBunker(){
   drawSideRoom(bunker.room4,"left","МЕДБЛОК","#343b3c");
 
   // Main medical crafting station — placed on the far/top wall, away from doorway
+  BunkerLayout.withArt('room4',()=>{
   ctx.fillStyle="#46575a";
   ctx.fillRect(145,300,245,78);
   ctx.strokeStyle="#83999d"; ctx.lineWidth=3; ctx.strokeRect(145,300,245,78);
@@ -227,6 +228,7 @@ function drawBunker(){
   ctx.fillStyle="#fff"; ctx.font="9px Arial";
   ctx.fillText(I18n.text("БИНТЫ"),457,681);
   ctx.fillText(I18n.text("МЕД."),527,681);
+  });
 
   // Door side and the central approach remain clear for movement.
   // №5 — POWER ROOM: FUEL -> GENERATOR -> BATTERY
@@ -239,6 +241,7 @@ function drawBunker(){
   drawSideRoom(bunker.room6,"left","КУХНЯ","#3a3732");
 
   // TOP WALL — long main kitchen counter, the future functional cooking point
+  BunkerLayout.withArt('room6',()=>{
   ctx.fillStyle="#66513d";
   ctx.fillRect(145,-205,330,92);
   ctx.strokeStyle="#9a7b59"; ctx.lineWidth=4; ctx.strokeRect(145,-205,330,92);
@@ -292,6 +295,7 @@ function drawBunker(){
   ctx.fillText(I18n.text("🥫"),128,175);
   ctx.fillText(I18n.text("🍞"),161,175);
   ctx.fillText(I18n.text("🥣"),145,207);
+  });
 
   // Door side and central approach remain unobstructed.
   // №7 — LIVING ROOM, matched to the latest approved screenshot
@@ -647,4 +651,3 @@ function drawZombie(zombie){
 function drawBullets(){
   window.ActorVisuals?.drawProjectiles(bullets);
 }
-

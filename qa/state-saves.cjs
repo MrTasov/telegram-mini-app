@@ -29,9 +29,9 @@ check('registry.singleSharedModuleRegistry',()=>assert.equal(E('V010.modules===G
 check('registry.moduleRestoreOrder',()=>assert.deepEqual(copy(E('GameSave.moduleOrder')),['world','inventory','craft','combat','energy','progression','camera']));
 check('registry.rejectDuplicateOrLateHooks',()=>assert.throws(()=>E(`GameSave.extend('capture','save.slots',next=>next())`)));
 check('registry.rejectDuplicateOrLateModules',()=>assert.throws(()=>E(`V010.register('inventory',V010Inventory)`)));
-check('format.explicitVersion',()=>assert.equal(snap().saveVersion,4));
+check('format.explicitVersion',()=>assert.equal(snap().saveVersion,5));
 check('format.versionSeparatedFromPayloadSchemas',()=>{const d=snap();assert.equal(d.schema,2);assert.equal(d.base015.schema,4);assert.equal(d.gameVersion,require('../package.json').version);});
-check('format.legacyMigratesWithoutChangingInput',()=>{const before=JSON.stringify(fixture);restore(fixture);assert.equal(JSON.stringify(fixture),before);assert.equal(snap().saveVersion,4);});
+check('format.legacyMigratesWithoutChangingInput',()=>{const before=JSON.stringify(fixture);restore(fixture);assert.equal(JSON.stringify(fixture),before);assert.equal(snap().saveVersion,5);});
 check('format.migrationIsIdempotent',()=>{
  const once=E(`decodeGameProgress(${JSON.stringify(frozen)})`),twice=E(`decodeGameProgress(${JSON.stringify(JSON.stringify(once))})`);assert.deepEqual(copy(twice),copy(once));
 });
@@ -73,7 +73,7 @@ check('restore.subsequentAutosaveWorksOnce',()=>{
  let writes=0;const write=r.context.localStorage.setItem;
  r.context.localStorage.setItem=(k,v)=>{if(k==='survival_base_v09_slot_1')writes++;return write(k,v);};
  E('queueGameSave();queueGameSave();queueGameSave()');r.flushTimers(100);r.context.localStorage.setItem=write;
- assert.equal(writes,1);assert.equal(JSON.parse(r.storage.get('survival_base_v09_slot_1')).saveVersion,4);
+ assert.equal(writes,1);assert.equal(JSON.parse(r.storage.get('survival_base_v09_slot_1')).saveVersion,5);
 });
 check('slots.continueAcceptedStage1',()=>{
  const s=setup('index.html',{'survival_base_v09_active_slot':'2','survival_base_v09_slot_2':frozen});
@@ -107,7 +107,7 @@ check('slots.AtoBtoAAndNoPendingTimerWritesWrongSlot',()=>{
 check('slots.importAllocatesFreeSlotAndRetainsSource',()=>{
  const s=setup('index.html',{'survival_base_v09_active_slot':'1','survival_base_v09_slot_1':frozen});
  assert.equal(s.eval(`V09Saves.importRaw(${JSON.stringify(rawFixture('drone_packed'))})`),true);
- assert.equal(s.eval('v09ActiveSlot'),2);assert.equal(s.eval('V014Robots.state.packed'),true);assert.ok(s.storage.has('survival_base_v09_slot_1'));assert.equal(JSON.parse(s.storage.get('survival_base_v09_slot_2')).saveVersion,4);
+ assert.equal(s.eval('v09ActiveSlot'),2);assert.equal(s.eval('V014Robots.state.packed'),true);assert.ok(s.storage.has('survival_base_v09_slot_1'));assert.equal(JSON.parse(s.storage.get('survival_base_v09_slot_2')).saveVersion,5);
 });
 check('slots.invalidImportDoesNotAllocateOrOverwrite',()=>{
  const before=storage(r);assert.equal(E(`V09Saves.importRaw('invalid')`),false);assert.deepEqual(storage(r),before);
@@ -143,7 +143,7 @@ check('slots.fullSlotsPreserved',()=>{
 });
 check('slots.currentFormatSurvivesFullRestart',()=>{
  const s=setup('index.html',{'survival_base_v09_active_slot':'1','survival_base_v09_slot_1':frozen});assert.equal(s.eval('saveGameProgress()'),true);
- const raw=s.storage.get('survival_base_v09_slot_1');assert.equal(JSON.parse(raw).saveVersion,4);
+ const raw=s.storage.get('survival_base_v09_slot_1');assert.equal(JSON.parse(raw).saveVersion,5);
  const again=setup('index.html',storage(s));assert.equal(again.eval('gameSaveBlocked'),false);
  assert.equal(again.eval('V013Inventory.items[0].rounds'),37);assert.equal(again.eval('V013Inventory.items[0].magazineType'),'magazine_module');
  assert.equal(again.eval('V013Inventory.items[0].uid'),s.eval('V013Inventory.items[0].uid'));assert.deepEqual(again.errors,[]);
