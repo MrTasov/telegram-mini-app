@@ -136,7 +136,7 @@ function solidObjects(which){
     // Trees remain visible and harvestable, but are not solid.
   ];
   const chests=getChestPositions();
-  const fixtures=["furnace", "craft_bench", "medical_table", "medical_bed", "cabinet", "sink", "medical_crate1", "medical_crate2", "tank", "generator", "battery", "kitchen", "fridge", "dining", "shelf", "chair1", "chair2", "chair3", "chair4"].map(id=>BunkerLayout.fixture(id));
+  const fixtures=[...GameEquipment.productionIds.filter(id=>GameEquipment.recipeStation(id)!=='feed_craft'),"medical_table", "medical_bed", "cabinet", "sink", "medical_crate1", "medical_crate2", "tank", "generator", "battery", "kitchen", "fridge", "dining", "shelf", "chair1", "chair2", "chair3", "chair4"].map(id=>BunkerLayout.fixture(id));
   const feed=feedCraftStationPos();
   return [
     ...fixtures,

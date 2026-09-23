@@ -3,7 +3,7 @@
 const copy=v=>JSON.parse(JSON.stringify(v));
 exports.project=value=>{
  const d=copy(value);if(!d||typeof d!=='object')return d;
- delete d.campaign031;if(d.v09?.power)delete d.v09.power.deviceEnabled.command_core_l1;delete d.bunker030;delete d.saveVersion;d.gameVersion='release-metadata';
+ delete d.equipment032;delete d.campaign031;if(d.v09?.power)delete d.v09.power.deviceEnabled.command_core_l1;delete d.bunker030;delete d.saveVersion;d.gameVersion='release-metadata';
  const doors=list=>list?.filter(o=>o.id!=='v09door_reserve_l1').sort((a,b)=>a.id.localeCompare(b.id));
  if(d.building018)d.building018.doors=doors(d.building018.doors);
  const power=d.v09?.power;if(power){delete power.roomEnabled.reserve_l1;delete power.deviceEnabled.light_reserve_l1;delete power.deviceEnabled.door_reserve_l1;power.doors=doors(power.doors);}

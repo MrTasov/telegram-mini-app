@@ -19,9 +19,9 @@ configs.environmentAssumptions={equipment:'starter gear; balanced variant and sp
 const expected=JSON.parse(fs.readFileSync(path.join(__dirname,'stage0/audit/configurations.json'))),actual=JSON.parse(JSON.stringify(configs));
 const version=actual.version;actual.version=expected.version; // Release metadata and the explicitly versioned envelope are the only additions.
 assert.equal(actual.save.topKeys.filter(k=>k==='saveVersion').length,1);
-assert.equal(E('captureGameProgress().saveVersion'),6);
-actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='saveVersion'&&k!=='identity027'&&k!=='bunker030'&&k!=='campaign031');
-delete actual.save.schemas.identity027;delete actual.save.schemas.bunker030;delete actual.save.schemas.campaign031;
+assert.equal(E('captureGameProgress().saveVersion'),7);
+actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='saveVersion'&&k!=='identity027'&&k!=='bunker030'&&k!=='campaign031'&&k!=='equipment032');
+delete actual.save.schemas.identity027;delete actual.save.schemas.bunker030;delete actual.save.schemas.campaign031;delete actual.save.schemas.equipment032;
 actual.drone.defaults.x=expected.drone.defaults.x;actual.drone.defaults.y=expected.drone.defaults.y;actual.drone.station.x=expected.drone.station.x;actual.drone.station.y=expected.drone.station.y;delete actual.drone.station.room;delete actual.power.rooms.reserve_l1;actual.power.rooms.corridor=expected.power.rooms.corridor;actual.power.devices=actual.power.devices.filter(d=>d.room!=='reserve_l1'&&d.id!=='command_core_l1').sort((a,b)=>expected.power.devices.findIndex(d=>d.id===a.id)-expected.power.devices.findIndex(d=>d.id===b.id));
 const definitionFields={items:['ammo','stackMax','caliber','drone','turret'],weapons:['category','reloadMs','noise','heldStyle','visualRecoil','recoilLabel','magazineTypes','defaultMagazine','extendedMagazine']};
 for(const [group,keys] of Object.entries(definitionFields))for(const [id,def] of Object.entries(actual[group]))for(const key of keys)if(!Object.hasOwn(expected[group][id]||{},key))delete def[key];

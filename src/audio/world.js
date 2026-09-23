@@ -22,10 +22,10 @@ window.GameAudioWorld=(()=>{
     if(lastPower!==null&&lastPower!==power)GameAudio.play(power?'powerStart':'powerStop',{x:gen.x+gen.w/2,y:gen.y+gen.h/2,scene:'bunker',radius:480});lastPower=power;
     GameAudio.loop('generator',power?'generator':null,{x:gen.x+gen.w/2,y:gen.y+gen.h/2,scene:'bunker',radius:430});
     let machine=null,closest=Infinity;
-    if(scene==='bunker'&&!GameFlow.paused)for(const id of ['furnace','craft_bench','feed_craft']){
-      const q=V09Craft.craftQueue,j=q.getJob(id);if(!j||j.remainingMs<=0||q.paused[id]||!devicePowered(id))continue;
-      const p=id==='feed_craft'?feedCraftStationPos():V09Craft.fixtures.find(o=>o.id===id);if(!p)continue;
-      const x=p.x+(p.w||0)/2,y=p.y+(p.h||0)/2,d=(x-player.x)**2+(y-player.y)**2;
+    if(scene==='bunker'&&!GameFlow.paused)for(const id of GameEquipment.productionIds){
+      const q=V09Craft.craftQueue,j=q.getJob(id);if(!j||j.remainingMs<=0||q.paused[id]||!devicePowered(GameEquipment.get(id).refs.device))continue;
+      const p=GameEquipment.center(id);if(!p)continue;
+      const {x,y}=p,d=(x-player.x)**2+(y-player.y)**2;
       if(d<closest){closest=d;machine={x,y,scene:'bunker',radius:260};}
     }
     GameAudio.loop('machine',machine?'machine':null,machine||{});

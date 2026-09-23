@@ -14,8 +14,9 @@ window.V010Inventory=(()=>{
   const selectedUid={};
   let preset={ammo:90,ammo556:90,meds:2,water:5},drag=null,suppressClick=0,batchDepth=0;
   const stackMax=itemStackLimit;
-  const list=where=>where==='bag'?bag:where==='quick'?window.V013Inventory?.items:where==='drone'?window.V014Robots?.state.cargo:where==='upgrade'?window.V0161Upgrade?.slots:Number.isInteger(where)&&storageChests[where]?storageChests[where].items:null;
-  const capacity=where=>where==='bag'?BAG_SLOTS:where==='quick'?5:where==='drone'?V014Robots.capacity():where==='upgrade'?1:60;
+  const list=where=>where&&typeof where==='object'&&typeof where.instanceId==='string'?window.GameEquipmentRuntime?.container(where.instanceId)?.slots||null:where==='bag'?bag:where==='quick'?window.V013Inventory?.items:where==='drone'?window.V014Robots?.state.cargo:where==='upgrade'?window.V0161Upgrade?.slots:Number.isInteger(where)&&storageChests[where]?storageChests[where].items:null;
+  const address=where=>where&&typeof where==='object'?window.GameEquipmentRuntime?.container(where.instanceId)?.where:where;
+  const capacity=where=>{where=address(where);return where==='bag'?BAG_SLOTS:where==='quick'?5:where==='drone'?V014Robots.capacity():where==='upgrade'?1:60;};
   const occupied=slots=>slots.filter(Boolean).length;
   const signature=s=>JSON.stringify(Object.keys(s).filter(k=>k!=='qty'&&k!=='locked'&&k!=='fishGrams'&&k!=='fishEntries').sort().map(k=>[k,s[k]]));
   const matches=(a,b)=>a&&b&&a.type===b.type&&stackMax(a.type)>1&&signature(a)===signature(b);
@@ -47,6 +48,7 @@ window.V010Inventory=(()=>{
   function selectedItem(type){const quick=window.V013Inventory?.items.find(s=>s?.type===type);if(quick)return quick;return bag.find(s=>s?.type===type&&s.uid===selectedUid[type])||bag.find(s=>s?.type===type)||null;}
   function selectUid(type,uid){if(typeof uid==='string')selectedUid[type]=uid;}
   function transfer(from,index,to,amount){
+    from=address(from);to=address(to);
     const a=list(from),b=list(to),s=a?.[index];if(!s||!b||a===b)return 0;
     if(window.V0161UI&&!V0161UI.allowMove(from,index,to))return 0;
     const wanted=Math.max(0,Math.min(s.qty,Math.floor(amount??s.qty)));
@@ -55,6 +57,7 @@ window.V010Inventory=(()=>{
     if(moved){GameAudio.play('inventoryMove');if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)a[index]=null;notifyChange();}return moved;
   }
   function move(from,index,to,targetIndex,amount){
+    from=address(from);to=address(to);
     const a=list(from),b=list(to),s=a?.[index];
     if(!s||!b||!Number.isInteger(targetIndex)||targetIndex<0||targetIndex>=capacity(to))return false;
     if(a===b&&index===targetIndex)return true;

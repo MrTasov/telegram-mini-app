@@ -4,7 +4,7 @@
   const snapshot=()=>GameSave.snapshotModules();
   V010.initialModules=clone(snapshot());
   
-  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.31.0';d.v010={schema:1,modules:snapshot()};return d;});
+  GameSave.extend('capture','save.envelope',function(oldCapture){const d=oldCapture();d.gameVersion='0.32.0';d.v010={schema:1,modules:snapshot()};return d;});
   GameSave.extend('decode','save.envelope',function(oldDecode,raw){
     let d=oldDecode(raw);
     if(d.v010!==undefined){
@@ -13,7 +13,7 @@
     }
     const checkItem=s=>{if(s&&window.V010Combat&&V010Combat.validateItem(s)===false)throw Error('Некорректные характеристики предмета');};
     d.bag.forEach(checkItem);d.storage.forEach(c=>c.items.forEach(checkItem));Object.values(d.equipment||{}).forEach(checkItem);
-    d.gameVersion='0.31.0';return d;
+    d.gameVersion='0.32.0';return d;
   });
   GameSave.extend('restore','save.envelope',function(oldRestore,d){
     const was=GameState.session.transaction;GameState.session.transaction=true;
@@ -22,8 +22,8 @@
   });
   const oldUpdate=update;update=function(){oldUpdate();if(!GameFlow.paused)V010.modules.progression?.tick(16.667*frameScale);};
   const oldMessage=message;message=function(text){oldMessage(text);V010.log(I18n.canonical(text));};
-  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.31.0'}));
-  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.31.0');
+  const label=document.querySelector('#settingsOverlay .subtitle');if(label)I18n.assign(label,"textContent",I18n.message('game.subtitle',{version:'0.32.0'}));
+  for(const el of document.querySelectorAll('#versionBadge,.versionBadge,#versionLabel'))I18n.assign(el,"textContent",'VERSION 0.32.0');
   const trackers=document.createElement('div');trackers.id='v010Trackers';document.body.append(trackers);
   for(const id of ['v010PinnedRecipe','v010PinnedGoal']){const item=el(id);if(item)trackers.append(item);}
   v09Style('#versionBadge{opacity:.45!important}#v010Trackers{position:fixed;left:max(12px,env(safe-area-inset-left));top:145px;display:flex;flex-direction:column;gap:6px;max-width:220px;z-index:36;pointer-events:none}#v010Trackers>#v010PinnedRecipe,#v010Trackers>#v010PinnedGoal{position:static;margin:0;max-width:100%;box-sizing:border-box;pointer-events:auto}@media(max-height:550px){#v010Trackers{top:100px;max-width:170px;max-height:135px;overflow:auto}}');

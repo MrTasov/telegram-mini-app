@@ -1,0 +1,30 @@
+{
+  "name": "last-base",
+  "version": "0.31.1",
+  "private": true,
+  "description": "LAST BASE 0.31.1 — Stage A corrective patch: stairs, Command Core UI and objectives.",
+  "scripts": {
+    "build": "node tools/build.cjs",
+    "check": "node tools/build.cjs --check && node qa/verify.cjs",
+    "test": "node qa/run.cjs",
+    "bench": "node qa/performance.cjs",
+    "assets": "node tools/assets.cjs",
+    "locales": "node tools/locales.cjs",
+    "bench:stages": "node qa/compare-readiness-performance.cjs",
+    "bench:ux": "node qa/compare-corrective-performance.cjs",
+    "bench:world-farm": "node qa/compare-world-farm-performance.cjs",
+    "bench:audio": "node qa/audio-performance.cjs",
+    "test:audio": "node qa/audio-pass.cjs",
+    "test:bunker": "node qa/bunker-level1.cjs",
+    "test:campaign": "node qa/campaign.cjs",
+    "bench:campaign": "node qa/campaign-performance.cjs",
+    "test:campaign:patch": "node qa/stage-a-corrective.cjs",
+    "bench:campaign:patch": "node qa/stage-a-corrective-performance.cjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

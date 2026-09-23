@@ -19,7 +19,8 @@ GameSave.seal({
     "combat.monsters",
     "base.construction",
     "bunker.level1",
-    "campaign.foundation"
+    "campaign.foundation",
+    "equipment.instances"
   ],
   "decode": [
     "save.slots",
@@ -42,7 +43,8 @@ GameSave.seal({
     "combat.monsters",
     "base.construction",
     "bunker.level1",
-    "campaign.foundation"
+    "campaign.foundation",
+    "equipment.instances"
   ],
   "restore": [
     "save.slots",
@@ -66,7 +68,8 @@ GameSave.seal({
     "combat.monsters",
     "base.construction",
     "bunker.level1",
-    "campaign.foundation"
+    "campaign.foundation",
+    "equipment.instances"
   ]
 });
 GameState.seal();

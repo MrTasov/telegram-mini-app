@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "private": true,
-  "description": "LAST BASE 0.31.0 \u2014 Stage A: Campaign foundation and Command Core on accepted Bunker R2.",
+  "description": "LAST BASE 0.32.0 — Stage B: fixed equipment instances, shared transforms and authority adapters.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -17,7 +17,11 @@
     "test:audio": "node qa/audio-pass.cjs",
     "test:bunker": "node qa/bunker-level1.cjs",
     "test:campaign": "node qa/campaign.cjs",
-    "bench:campaign": "node qa/campaign-performance.cjs"
+    "bench:campaign": "node qa/campaign-performance.cjs",
+    "test:campaign:patch": "node qa/stage-a-corrective.cjs",
+    "bench:campaign:patch": "node qa/stage-a-corrective-performance.cjs",
+    "test:equipment": "node qa/stage-b.cjs",
+    "bench:equipment": "node --expose-gc qa/stage-b-performance.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

@@ -3,6 +3,7 @@ window.V011Rooms=(()=>{
   const patterns=new Map(),lidState=new Map();
   const palette={corridor:['#3b494c','#4b595c','#263539'],workshop:['#424b4c','#4b5455','#303a3c'],storage:['#454e4b','#4c5653','#333f3c'],room4:['#56635f','#606e69','#3c4d49'],room5:['#36464c','#405258','#25363e'],room6:['#615e51','#6d695b','#454b44'],room7:['#635d50','#6e6758','#47483f']};
   let frameAt=performance.now(),frameMs=16,phase=0,generatorPhase=0,furnacePhase=0,benchPhase=0;
+  const machines=GameEquipment.productionIds.filter(id=>['furnace','craft_bench'].includes(GameEquipment.recipeStation(id))),machinePhases=Object.fromEntries(machines.map(id=>[id,0]));
   const art=(key,x,y,w,h)=>!!window.V011Art?.draw(key,x,y,w,h);
   const rect=(x,y,w,h,fill,stroke=null,r=4)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.4;ctx.stroke();}};
   const line=(x1,y1,x2,y2,color,width=1)=>{ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();};
@@ -35,7 +36,7 @@ window.V011Rooms=(()=>{
     ctx.strokeStyle='#0d1b1c3d';ctx.lineWidth=9;ctx.strokeRect(r.left+14,r.top+14,r.right-r.left-28,r.bottom-r.top-28);
     if(key==='corridor'){line(r.left+22,r.top,r.left+22,r.bottom,'#a4b8ae28',2);line(r.right-22,r.top,r.right-22,r.bottom,'#a4b8ae28',2);for(let y=r.top+100;y<r.bottom;y+=180){rect((r.left+r.right)/2-17,y,34,6,'#9cac9e2b',null,2);}}
     if(key==='room7'){ctx.fillStyle=tile('room4');const p=BunkerLayout.point('room7',900,95);ctx.fillRect(p.x,p.y,235,150);}
-    if(key==='workshop'){ctx.strokeStyle='#c8b37a55';ctx.lineWidth=2;ctx.setLineDash([10,7]);const f=BunkerLayout.point('workshop',142,782),b=BunkerLayout.point('workshop',145,1049);ctx.strokeRect(f.x,f.y,154,219);ctx.strokeRect(b.x,b.y,284,197);ctx.setLineDash([]);}
+    if(key==='workshop'){ctx.strokeStyle='#c8b37a55';ctx.lineWidth=2;ctx.setLineDash([10,7]);const f=GameEquipment.point('furnace',-12,-12),b=GameEquipment.point('craft_bench',-12,-12);ctx.strokeRect(f.x,f.y,154,219);ctx.strokeRect(b.x,b.y,284,197);ctx.setLineDash([]);}
     if(key==='storage'){for(const y of [r.top+96,r.bottom-96])line(r.left+35,y,r.right-35,y,'#aab2a22b',2);}
     ctx.restore();
   }
@@ -56,7 +57,7 @@ window.V011Rooms=(()=>{
     for(let i=5;i>=1;i--){const t=i/5;rect(x+sx*t+2,y+sy*t+2,Math.max(1,w-4),Math.max(1,h-4),on?'rgba(4,14,17,.035)':'rgba(4,14,17,.02)',null,Math.min(10,w/4,h/4));}
     rect(x+3,y+3,Math.max(1,w-6),Math.max(1,h-6),'rgba(3,12,14,.12)',null,Math.min(8,w/4,h/4));ctx.restore();
   }
-  function beginFrame(){const now=performance.now();frameMs=clamp(now-frameAt,0,60);frameAt=now;phase+=frameMs/1000;if(V09Power.running&&V09Power.fuel>0)generatorPhase+=frameMs/130;if(V09Craft.visualState('furnace').working)furnacePhase+=frameMs/150;if(V09Craft.visualState('craft_bench').working)benchPhase+=frameMs/600;}
+  function beginFrame(){const now=performance.now();frameMs=clamp(now-frameAt,0,60);frameAt=now;phase+=frameMs/1000;if(V09Power.running&&V09Power.fuel>0)generatorPhase+=frameMs/130;for(const id of machines)if(V09Craft.visualState(id).working)machinePhases[id]+=frameMs/(GameEquipment.recipeStation(id)==='furnace'?150:600);furnacePhase=machinePhases.furnace;benchPhase=machinePhases.craft_bench;}
   const oldBunker=drawBunker;drawBunker=function(){beginFrame();oldBunker();};
   function chest(id,p,ch){
     const target=activeStorage===id&&el('storageOverlay')?.classList.contains('open')?1:0,previous=lidState.get(id)||0,opening=clamp(previous+Math.sign(target-previous)*Math.min(Math.abs(target-previous),frameMs/420),0,1);lidState.set(id,opening);const e=opening*opening*(3-2*opening),x=p.x-40,y=p.y-28,w=80,h=56;
@@ -85,14 +86,14 @@ window.V011Rooms=(()=>{
   }
   function imagePart(key,sx,sy,sw,sh,x,y,w,h){const im=window.V011Art?.image?.(key);if(!im||!window.V011Art.ready(key))return false;const iw=im.naturalWidth||im.width,ih=im.naturalHeight||im.height;ctx.drawImage(im,sx/340*iw,sy/510*ih,sw/340*iw,sh/510*ih,x,y,w,h);return true;}
   function workshop(){
-    ctx.save();const f=V09Craft.visualState('furnace'),b=V09Craft.visualState('craft_bench');shadow(154,794,130,195,24,'workshop');
+    ctx.save();for(const id of machines.filter(id=>GameEquipment.recipeStation(id)==='furnace')){const f=V09Craft.visualState(id),furnacePhase=machinePhases[id];GameEquipment.withArt(id,()=>{shadow(154,794,130,195,24,'workshop');
     if(!art('furnace',154,794,130,195)){const g=ctx.createLinearGradient(154,794,284,989);g.addColorStop(0,'#78877d');g.addColorStop(.5,'#3e5455');g.addColorStop(1,'#233943');rect(154,794,130,195,g,'#9caba0',9);rect(185,806,69,24,'#142a2e','#748e84',3);rect(181,929,76,35,'#193137','#81968d',3);}
     // Cover the artwork's hot aperture so an idle furnace never contains painted fire.
     const cx=219,cy=878,r=24;const fire=ctx.createRadialGradient(cx,cy+4,1,cx,cy,r);fire.addColorStop(0,f.working?'#ffecc1':'#293735');fire.addColorStop(.5,f.working?'#ed943a':'#1d2e2d');fire.addColorStop(1,f.working?'#793d22':'#111f24');ctx.fillStyle=fire;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
     if(f.working){ctx.globalAlpha=.3+.15*Math.sin(furnacePhase);ctx.fillStyle='#ffedb4';ctx.beginPath();ctx.ellipse(cx+Math.sin(furnacePhase)*4,cy+4,13,8,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;}
     // Motor-driven extraction fan occupies the vent already present in the sprite.
     rect(197,805,44,26,'#16292c',null,2);fan(219,818,11,furnacePhase*2,f.working);for(let i=0;i<5;i++)line(198,809+i*4,240,809+i*4,'#87958c66',.7);rect(235,939,3,9,f.working?'#a6d78b':f.powered?'#648b67':'#354b43',null,1);
-    shadow(163,1085,248,126,12,'workshop');
+    });}for(const id of machines.filter(id=>GameEquipment.recipeStation(id)==='craft_bench')){const b=V09Craft.visualState(id),benchPhase=machinePhases[id];GameEquipment.withArt(id,()=>{shadow(163,1085,248,126,12,'workshop');
     if(!art('workbench',157,1061,260,173)){rect(157,1061,260,173,'#5a706f','#9eaca1',8);rect(200,1120,120,62,'#2a4043','#788f87',3);}
     // Horizontal rail follows the new mostly-overhead artwork. Motor phase freezes
     // on pause or power loss, so the mechanism only travels while crafting.
@@ -105,19 +106,21 @@ window.V011Rooms=(()=>{
     rect(armX+7,1126,11,18,metal,'#7e928e',2);for(let k=0;k<4;k++)line(armX+8,1130+k*3,armX+17,1130+k*3,'#304a4e',1);
     rect(armX+11,1142,3,8,'#c3cfbf',null,1);rect(armX+5,1101,15,3,b.working?'#71dbd5':'#345f67',null,1);
     if(b.working){ctx.globalAlpha=.35+.2*Math.sin(benchPhase*3);rect(armX+9,1150,7,2,'#a6eee8',null,1);ctx.globalAlpha=1;}
-    ctx.fillStyle='#d9e3d4';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ'),219,1008);ctx.fillText(I18n.text('ЭЛЕКТРОСТАНОК'),287,1250);ctx.restore();
+    });}ctx.fillStyle='#d9e3d4';ctx.font='10px Arial';ctx.textAlign='center';for(const id of machines)GameEquipment.withArt(id,()=>{if(GameEquipment.recipeStation(id)==='furnace')ctx.fillText(I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ'),219,1008);else ctx.fillText(I18n.text('ЭЛЕКТРОСТАНОК'),287,1250);});ctx.restore();
   }
   function energy(){
-    ctx.save();const running=V09Power.running&&V09Power.fuel>0;shadow(887,316,123,181,24,'room5');shadow(1052,315,130,195,23,'room5');shadow(1237,302,101,212,20,'room5');
-    line(994,441,1055,441,'#1a2e34',12);line(994,439,1055,439,'#81918a',6);line(1172,426,1250,426,'#132c37',10);line(1172,425,1250,425,'#618388',4);
+    ctx.save();const running=V09Power.running&&V09Power.fuel>0;GameEquipment.withArt('tank',()=>shadow(887,316,123,181,24,'room5'));GameEquipment.withArt('generator',()=>shadow(1052,315,130,195,23,'room5'));GameEquipment.withArt('battery',()=>shadow(1237,302,101,212,20,'room5'));
+    const pipe=(a,ax,ay,b,bx,by,color,width)=>{const p=BunkerLayout.artPoint(GameEquipment.point(a,ax,ay)),q=BunkerLayout.artPoint(GameEquipment.point(b,bx,by));line(p.x,p.y,q.x,q.y,color,width);};
+    pipe('tank',109,126,'generator',3,126,'#1a2e34',12);pipe('tank',109,124,'generator',3,124,'#81918a',6);pipe('generator',120,111,'battery',15,126,'#132c37',10);pipe('generator',120,110,'battery',15,125,'#618388',4);
+    GameEquipment.withArt('tank',()=>{
     if(!art('tank',880,304,140,208)){const g=ctx.createLinearGradient(885,0,1010,0);g.addColorStop(0,'#56686b');g.addColorStop(.24,'#aab5a8');g.addColorStop(.7,'#617978');g.addColorStop(1,'#30494e');rect(889,316,120,182,g,'#9eafa1',18);for(const y of [342,473])rect(887,y,124,8,'#3a5355','#879b93',2);rect(933,307,32,17,'#354d52','#a0b1a4',3);}
     const glass={x:977,y:364,w:7,h:67},fill=clamp(V09Power.fuel/V09Power.capacity,0,1);rect(glass.x-4,glass.y-4,glass.w+8,glass.h+8,'#1a2d33','#a1b9ae',4);rect(glass.x,glass.y,glass.w,glass.h,'#10303e',null,2);ctx.fillStyle='#c7ad65';ctx.fillRect(glass.x+1,glass.y+glass.h*(1-fill),glass.w-2,glass.h*fill);ctx.fillStyle='#eff8e459';ctx.fillRect(glass.x+3,glass.y,3,glass.h);for(let i=0;i<=4;i++)line(glass.x-5,glass.y+i*glass.h/4,glass.x+2,glass.y+i*glass.h/4,'#dce3cc',1);
-    const vibration=running?Math.sin(generatorPhase*5)*.25:0;ctx.save();ctx.translate(vibration,0);if(!art('generator',1052,315,130,195)){const g=ctx.createLinearGradient(1052,315,1182,510);g.addColorStop(0,'#8b9e93');g.addColorStop(.4,'#405f61');g.addColorStop(1,'#263f49');rect(1052,315,130,195,g,'#9fb2a5',8);rect(1083,405,60,69,'#364e46','#859687',4);rect(1077,480,79,18,'#1b343a','#71887d',3);}
+    });GameEquipment.withArt('generator',()=>{const vibration=running?Math.sin(generatorPhase*5)*.25:0;ctx.save();ctx.translate(vibration,0);if(!art('generator',1052,315,130,195)){const g=ctx.createLinearGradient(1052,315,1182,510);g.addColorStop(0,'#8b9e93');g.addColorStop(.4,'#405f61');g.addColorStop(1,'#263f49');rect(1052,315,130,195,g,'#9fb2a5',8);rect(1083,405,60,69,'#364e46','#859687',4);rect(1077,480,79,18,'#1b343a','#71887d',3);}
     // This rotor precisely covers the single fan in the generated top-down sprite.
     fan(1117,365,30,generatorPhase,running);rect(1110,492,16,3,running?'#8bded5':'#355b5e',null,1);ctx.restore();
     if(running){for(let i=0;i<4;i++){const t=(phase*.6+i*.25)%1;ctx.fillStyle=`rgba(181,202,196,${.09*(1-t)})`;ctx.beginPath();ctx.ellipse(1149+Math.sin(t*5+i)*3,406-t*21,2+t*6,2+t*4,0,0,Math.PI*2);ctx.fill();}}
-    const charge=clamp(V010Energy.battery.charge/V010Energy.battery.capacity,0,1);const bg=ctx.createLinearGradient(1235,0,1340,0);bg.addColorStop(0,'#58797b');bg.addColorStop(.5,'#36565f');bg.addColorStop(1,'#203b47');rect(1237,302,101,212,bg,'#90aaa3',7);rect(1255,331,65,105,'#1b3440','#698c8d',4);for(let i=0;i<7;i++)rect(1264,418-i*12,46,7,charge>(i+.5)/7?(V010Energy.battery.enabled?'#8cc7a5':'#829792'):'#36545b',null,1);rect(1252,466,72,23,'#203943','#627f83',3);
-    ctx.textAlign='center';ctx.font='10px Arial';ctx.fillStyle='#d4dfcc';ctx.fillText(I18n.text(Math.round(V09Power.fuel)+' / '+V09Power.capacity),942,479);ctx.fillText(I18n.text('ТОПЛИВО'),947,532);ctx.fillText(I18n.text('ГЕНЕРАТОР'),1117,532);ctx.fillText(I18n.text(Math.round(charge*100)+'%'),1287,482);ctx.fillText(I18n.text('РЕЗЕРВ'),1287,534);ctx.restore();
+    });const charge=clamp(V010Energy.battery.charge/V010Energy.battery.capacity,0,1);GameEquipment.withArt('battery',()=>{const bg=ctx.createLinearGradient(1235,0,1340,0);bg.addColorStop(0,'#58797b');bg.addColorStop(.5,'#36565f');bg.addColorStop(1,'#203b47');rect(1237,302,101,212,bg,'#90aaa3',7);rect(1255,331,65,105,'#1b3440','#698c8d',4);for(let i=0;i<7;i++)rect(1264,418-i*12,46,7,charge>(i+.5)/7?(V010Energy.battery.enabled?'#8cc7a5':'#829792'):'#36545b',null,1);rect(1252,466,72,23,'#203943','#627f83',3);});
+    ctx.textAlign='center';ctx.font='10px Arial';ctx.fillStyle='#d4dfcc';GameEquipment.withArt('tank',()=>{ctx.fillText(I18n.text(Math.round(V09Power.fuel)+' / '+V09Power.capacity),942,479);ctx.fillText(I18n.text('ТОПЛИВО'),947,532);});GameEquipment.withArt('generator',()=>ctx.fillText(I18n.text('ГЕНЕРАТОР'),1117,532));GameEquipment.withArt('battery',()=>{ctx.fillText(I18n.text(Math.round(charge*100)+'%'),1287,482);ctx.fillText(I18n.text('РЕЗЕРВ'),1287,534);});ctx.restore();
   }
   function lights(room){return BunkerLayout.lights(room);}
   v09LightPoints=lights;
@@ -125,7 +128,7 @@ window.V011Rooms=(()=>{
   function paintDarkness(c,room,r,on){
     c.save();c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.clearRect(r.left,r.top,r.right-r.left,r.bottom-r.top);c.fillStyle=on?'rgba(3,13,19,.46)':'rgba(2,7,15,.79)';c.fillRect(r.left,r.top,r.right-r.left,r.bottom-r.top);
     if(on){c.globalCompositeOperation='destination-out';for(const p of lights(room)){const radius=lightRadius(room),g=c.createRadialGradient(p.x,p.y,5,p.x,p.y,radius);g.addColorStop(0,'rgba(255,255,255,.96)');g.addColorStop(.25,'rgba(255,255,255,.81)');g.addColorStop(.65,'rgba(255,255,255,.40)');g.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=g;c.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);}}
-    if(room==='workshop'&&V09Craft.visualState('furnace').working){c.globalCompositeOperation='destination-out';const p=BunkerLayout.point('workshop',219,878),g=c.createRadialGradient(p.x,p.y,0,p.x,p.y,180);g.addColorStop(0,'#ffffffff');g.addColorStop(.4,'#ffffff66');g.addColorStop(1,'#ffffff00');c.fillStyle=g;c.fillRect(p.x-180,p.y-180,360,360);}c.restore();
+    if(room==='workshop'&&V09Craft.visualState('furnace').working){c.globalCompositeOperation='destination-out';const p=GameEquipment.point('furnace',65,84),g=c.createRadialGradient(p.x,p.y,0,p.x,p.y,180);g.addColorStop(0,'#ffffffff');g.addColorStop(.4,'#ffffff66');g.addColorStop(1,'#ffffff00');c.fillStyle=g;c.fillRect(p.x-180,p.y-180,360,360);}c.restore();
   }
   v09DrawRoomLight=function(room){const r=bunker[room];if(!r)return;const on=devicePowered('light_'+room);ctx.save();ctx.beginPath();ctx.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);ctx.clip();if(on)for(const p of lights(room)){const radius=lightRadius(room),g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,radius);g.addColorStop(0,'#ffefd224');g.addColorStop(.45,'#f6edc810');g.addColorStop(1,'#f4e9c800');ctx.fillStyle=g;ctx.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);}ctx.restore();for(const p of lights(room)){ctx.save();ctx.globalAlpha=on?1:.55;if(!art('lamp',p.x-33,p.y-9,66,18)){rect(p.x-35,p.y-6,70,12,'#253f46','#799791',3);rect(p.x-27,p.y-2,54,4,on?'#f3e8c3':'#647a79',null,1);}if(on){ctx.fillStyle='#fff4da';ctx.fillRect(p.x-21,p.y-1,42,2);}ctx.restore();}};
   v09DrawDoor=function(d){ctx.save();const on=devicePowered('door_'+d.room),cx=d.x+d.w/2,cy=d.y+d.h/2;rect(d.x-5,d.y-5,d.w+10,d.h+10,'#142c34','#78918c',3);rect(d.x,d.y,d.w,d.h,'#32484b',null,1);for(const panel of v09DoorPanels(d)){if(panel.w<.1||panel.h<.1)continue;const g=d.horizontal?ctx.createLinearGradient(0,panel.y,0,panel.y+panel.h):ctx.createLinearGradient(panel.x,0,panel.x+panel.w,0);g.addColorStop(0,'#506c70');g.addColorStop(.4,'#a4b5aa');g.addColorStop(1,'#405e66');rect(panel.x,panel.y,panel.w,panel.h,g,'#b5c5b7',1);if(d.horizontal){line(panel.x+3,panel.y+panel.h*.5,panel.x+panel.w-3,panel.y+panel.h*.5,'#2b4b53',1.6);}else line(panel.x+panel.w*.5,panel.y+3,panel.x+panel.w*.5,panel.y+panel.h-3,'#2b4b53',1.6);}

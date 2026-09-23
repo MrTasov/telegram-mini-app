@@ -27,27 +27,29 @@ const V09Craft = (() => {
     const type=Object.hasOwn(item,'magazineType')?item.magazineType:item.modules?.magazine?g.extendedMagazine:g.defaultMagazine;
     return acceptsMagazine(item.type,type)?magazineTypes[type]:0;
   }
-  const STATIONS=['furnace','craft_bench','feed_craft'],MAX_BATCHES=6000;
-  let jobs={furnace:null,craft_bench:null};
+  const STATIONS=GameEquipment.productionIds,MAX_BATCHES=6000;
+  const stationType=id=>GameEquipment.recipeStation(id),byStation=fn=>Object.fromEntries(STATIONS.map(id=>[id,fn(id)]));
+  const emptyJobs=()=>Object.fromEntries(STATIONS.filter(id=>id!=='feed_craft').map(id=>[id,null]));
+  let jobs=emptyJobs();
   let magazines={rifle_ak74:magazine,rifle_m4:0};
-  let selected={furnace:'iron',craft_bench:'ammo',feed_craft:'feed'};
-  let quantity={furnace:0,craft_bench:0,feed_craft:0};
+  const defaultSelection=()=>byStation(id=>({furnace:'iron',craft_bench:'ammo',feed_craft:'feed'})[stationType(id)]);
+  let selected=defaultSelection();
+  let quantity=byStation(()=>0);
   let activeStation=null,uiClock=0,burst=0,lastWeapon=null,benchPhase=0;
-  let queueExtra={furnace:[],craft_bench:[],feed_craft:[]},readyExtra={furnace:{},craft_bench:{},feed_craft:{}},refundExtra={furnace:{},craft_bench:{},feed_craft:{}},pauseExtra={furnace:false,craft_bench:false,feed_craft:false},pinnedRecipe=null,craftUpgrades={workshop:false,tools:false};
+  let queueExtra=byStation(()=>[]),readyExtra=byStation(()=>({})),refundExtra=byStation(()=>({})),pauseExtra=byStation(()=>false),pinnedRecipe=null,craftUpgrades={workshop:false,tools:false};
+  const request=(instanceId,action,payload)=>GameEquipmentRuntime.request(instanceId,action,payload);
   const craftEvent=(type,data)=>{if(typeof V010!=='undefined')V010.emit(type,data);};
   const materialCount=type=>typeof V010Inventory!=='undefined'?V010Inventory.materialCount(type):bagCount(type);
   const sumReady=id=>Object.values(readyExtra[id]).reduce((a,n)=>a+n,0)+(getJob(id)?.outputQty||0);
   const mix=(target,type,qty)=>{if(qty>0)target[type]=(target[type]||0)+qty;};
-  const fixtures=['furnace','craft_bench'].map(id=>BunkerLayout.fixture(id));
-  const labels={furnace:'Плавильная печь',craft_bench:'Универсальный станок',feed_craft:'Кормодробилка'};
+  const fixtures=STATIONS.filter(id=>stationType(id)!=='feed_craft').map(id=>GameEquipment.fixture(id));
+  const labels=byStation(id=>GameEquipment.definition(id).name);
   const deep=o=>JSON.parse(JSON.stringify(o));
-  const powered=id=>devicePowered(id);
+  const powered=id=>devicePowered(GameEquipment.get(id)?.refs.device);
   const getJob=id=>id==='feed_craft'?pendingFeedCraft:jobs[id];
   function setJob(id,j){if(id==='feed_craft'){pendingFeedCraft=j;feedCraftBusy=!!j;}else jobs[id]=j;}
-  const active=id=>(id!=='feed_craft'||AgricultureTime.available)&&!!getJob(id)&&getJob(id).remainingMs>0&&!pauseExtra[id];
-  registerPowerDevice('furnace','workshop',6,()=>active('furnace'),'Плавильная печь');
-  registerPowerDevice('craft_bench','workshop',2,()=>active('craft_bench'),'Универсальный станок');
-  registerPowerDevice('feed_craft','farm',1,()=>active('feed_craft'),'Кормодробилка');
+  const active=id=>(stationType(id)!=='feed_craft'||AgricultureTime.available)&&!!getJob(id)&&getJob(id).remainingMs>0&&!pauseExtra[id];
+  for(const id of STATIONS)registerEquipmentPowerDevice(id,()=>active(id));
   for(const type of Object.keys(GUNS))if(!HAND_TYPES.includes(type))HAND_TYPES.push(type);
   handSvg.rifle_m4='<path fill="#465152" d="M3 25h21v13H4z"/><path fill="#1c292c" d="M22 21h48v18H22z"/><path fill="#657477" d="M48 23h27v11H48z"/><path stroke="#172528" stroke-width="4" d="M72 26h24m-23 6h23"/><path fill="#2c393d" d="M38 36h10l5 21-11 3zM25 37h9l-2 15h-8z"/><path stroke="#a0ada9" stroke-width="2" d="M25 20h46"/><path fill="#263333" d="M40 15h17v7H40zM84 17h5v10h-5z"/>';
 
@@ -94,9 +96,9 @@ const V09Craft = (() => {
   function syncFeed(j){if(j){j.total=RECIPES.feed.qty*j.batches;j.qty=j.total-j.collectedQty;j.readyAt=AgricultureTime.now()+j.remainingMs;}feedCraftBusy=!!j;}
   function completedAt(j){if(j.remainingMs<=0)return j.batches;return Math.min(j.batches-1,Math.floor(((j.totalMs-j.remainingMs)*j.batches/j.totalMs)+1e-8));}
   function start(id,recipe=selected[id],batches=selectedBatches(id)){
-    if(id==='feed_craft'&&!AgricultureTime.available)return false;
+    if(stationType(id)==='feed_craft'&&!AgricultureTime.available)return false;
     const r=RECIPES[recipe];
-    if(!STATIONS.includes(id)||!r||r.station!==id||!availableRecipe(r)||!Number.isInteger(batches)||batches<1||batches>MAX_BATCHES||queueExtra[id].length>=30)return false;
+    if(!STATIONS.includes(id)||!r||r.station!==stationType(id)||!availableRecipe(r)||!Number.isInteger(batches)||batches<1||batches>MAX_BATCHES||queueExtra[id].length>=30)return false;
     if(!commitIngredients(r.input,batches)){message('Не хватает доступных материалов в рюкзаке и на складе');render();return false;}
     const j=makeJob(recipe,batches);
     if(getJob(id))queueExtra[id].push(j);else setJob(id,j);
@@ -110,7 +112,7 @@ const V09Craft = (() => {
     if(id==='feed_craft')syncFeed(getJob(id));
   }
   function collect(id){
-    if(id==='feed_craft'&&!AgricultureTime.available)return 0;
+    if(stationType(id)==='feed_craft'&&!AgricultureTime.available)return 0;
     if(!STATIONS.includes(id))return 0;
     let collected=0;
     const put=(type,qty)=>{let left=addItem(type,qty);if(id==='feed_craft'&&left>0)left=addToSlots(storageChests[12].items,type,left,60);collected+=qty-left;return left;};
@@ -123,8 +125,8 @@ const V09Craft = (() => {
     if(collected)GameAudio.play('craftCollect');render();renderQuickSlots();updateAmmoHud();queueGameSave();return collected;
   }
   // Keep output ownership in the existing save pools; selection never creates another copy.
-  let readySelected={furnace:null,craft_bench:null,feed_craft:null};
-  let readyOrder={furnace:[],craft_bench:[],feed_craft:[]};
+  let readySelected=byStation(()=>null);
+  let readyOrder=byStation(()=>[]);
   function readyItems(id){
     if(!STATIONS.includes(id))return {};
     const out={...readyExtra[id]},j=getJob(id);
@@ -198,7 +200,7 @@ const V09Craft = (() => {
     else{j.batches=keep;j.totalMs=keep*unit;j.remainingMs=Math.max(0,j.totalMs-elapsed);}
     finishAndPromote(id);collectRefund(id);render();queueGameSave();return cancelled;
   }
-  function setPaused(id,value){if(!STATIONS.includes(id))return;pauseExtra[id]=!!value;render();queueGameSave();}
+  function setPaused(id,value){if(!STATIONS.includes(id))return false;pauseExtra[id]=!!value;render();queueGameSave();return true;}
 
   function duration(ms){const sec=Math.ceil(ms/1000);return sec<60?`${sec} сек.`:sec<3600?`${Math.floor(sec/60)} мин. ${sec%60} сек.`:`${Math.floor(sec/3600)} ч. ${Math.floor(sec%3600/60)} мин.`;}
   let craftView=null;
@@ -215,7 +217,7 @@ const V09Craft = (() => {
   }
   function render(){
     if(!activeStation)return;const id=activeStation,job=getJob(id);
-    if(!RECIPES[selected[id]]||RECIPES[selected[id]].station!==id)selected[id]=Object.keys(RECIPES).find(k=>RECIPES[k].station===id);
+    if(!RECIPES[selected[id]]||RECIPES[selected[id]].station!==stationType(id))selected[id]=Object.keys(RECIPES).find(k=>RECIPES[k].station===stationType(id));
     // Keep the recipe list mounted: replacing it drops scroll position, pointer capture and keyboard focus.
     const focus=document.activeElement,focusControl=focus?.dataset?.craftControl;
     I18n.setAttr(overlay.querySelector('.panel'),'aria-label',labels[id]);I18n.assign(overlay.querySelector('.v09Title'),"textContent",labels[id]);
@@ -231,7 +233,7 @@ const V09Craft = (() => {
     const {device,list,scroll,actions}=craftView;
     const leftScroll=list.scrollTop||0,rightScroll=craftView.detailRecipe===selected[id]?(scroll.scrollTop||0):0;
     v09UpdateDeviceRow(device);
-    const recipes=Object.entries(RECIPES).filter(([,r])=>r.station===id),recipeKeys=recipes.map(([key,r])=>key+':'+r.category).join('|');
+    const recipes=Object.entries(RECIPES).filter(([,r])=>r.station===stationType(id)),recipeKeys=recipes.map(([key,r])=>key+':'+r.category).join('|');
     if(craftView.recipeKeys!==recipeKeys){
       list.replaceChildren();craftView.buttons.clear();let category='';
       for(const [key,r] of recipes){
@@ -248,7 +250,7 @@ const V09Craft = (() => {
       if(I18n.source(node.detail)!==detail)I18n.assign(node.detail,"textContent",detail);
     }
     scroll.replaceChildren();if(!craftView.output)actions.replaceChildren();craftView.detailRecipe=selected[id];
-    quantity[id]=clamp(quantity[id],0,6000);const r=RECIPES[selected[id]],count=selectedBatches(id),watts=id==='furnace'?6:id==='craft_bench'?2:1;
+    quantity[id]=clamp(quantity[id],0,6000);const r=RECIPES[selected[id]],count=selectedBatches(id),watts=GameEquipment.definition(id).powerKW;
     const info=document.createElement('div');info.className='v092RecipeDetails';scroll.append(info);
     const flow=document.createElement('div');flow.className='v011RecipeFlow';info.append(flow);
     const materials=document.createElement('div');materials.className='v092Materials';flow.append(materials);
@@ -271,21 +273,21 @@ const V09Craft = (() => {
     const controls=document.createElement('div');controls.className='v011BatchControls';scroll.append(controls);
     const amount=document.createElement('div');amount.className='v091QuantityCount';I18n.assign(amount,"textContent",`Количество: ${r.qty*count}`);controls.append(amount);
     const q=document.createElement('div');q.className='v09CraftQuantity';for(const [label,value] of [['+1',quantity[id]+1],['+10',quantity[id]+10],['MAX',maxSelection(id)],['0',0]]){const b=v09Button(label,()=>{quantity[id]=clamp(value,0,6000);render();});b.dataset.craftControl='quantity-'+label;q.append(b);}controls.append(q);
-    const make=v09Button((job?'В очередь':'Изготовить')+' · '+r.qty*count,()=>{const missing=Object.entries(r.input).filter(([t,n])=>materialCount(t)<n*Math.max(1,count));if(missing.length){for(const b of materials.children)if(missing.some(([t])=>I18n.source(b,'title')===ITEM[t].name)){b.classList.remove('v013Missing');void b.offsetWidth;b.classList.add('v013Missing');}return;}if(!count)quantity[id]=1;start(id);},'primary');make.classList.add('v011CraftMake');make.dataset.craftControl='make';make.disabled=!availableRecipe(r)||queueExtra[id].length>=30;scroll.append(make);
+    const make=v09Button((job?'В очередь':'Изготовить')+' · '+r.qty*count,()=>{const missing=Object.entries(r.input).filter(([t,n])=>materialCount(t)<n*Math.max(1,count));if(missing.length){for(const b of materials.children)if(missing.some(([t])=>I18n.source(b,'title')===ITEM[t].name)){b.classList.remove('v013Missing');void b.offsetWidth;b.classList.add('v013Missing');}return;}if(!count)quantity[id]=1;request(id,'start',{recipe:selected[id],batches:selectedBatches(id)});},'primary');make.classList.add('v011CraftMake');make.dataset.craftControl='make';make.disabled=!availableRecipe(r)||queueExtra[id].length>=30;scroll.append(make);
     const pin=v09Button(pinnedRecipe?.recipe===selected[id]?'Открепить рецепт':'Закрепить рецепт',()=>{pinnedRecipe=pinnedRecipe?.recipe===selected[id]?null:{recipe:selected[id],batches:Math.max(1,count)};render();queueGameSave();});pin.className='v010CraftSmall v011PinRecipe';pin.dataset.craftControl='pin';scroll.append(pin);
     const progress=document.createElement('div');progress.className='v092Production';I18n.assign(progress,"innerHTML",'<span id="v091CraftStatus"></span><div id="v091CraftTime"></div><div class="v09CraftProgress"><div id="v091CraftBar"></div></div><div class="v092ProductionCounts"><strong id="v091CraftMade"></strong> изготовлено</div>');scroll.append(progress);
-    if(job){const jobControls=document.createElement('div');jobControls.className='v010CraftControls';const p=v09Button(pauseExtra[id]?'Продолжить':'Пауза',()=>setPaused(id,!pauseExtra[id]));p.className='v010CraftSmall';p.dataset.craftControl='pause';jobControls.append(p);const cancel=v09Button('Отменить остаток',()=>cancelUnstarted(id));cancel.className='v010CraftSmall';cancel.dataset.craftControl='cancel';I18n.assign(cancel,'title','Начатая партия сохранится, материалы следующих вернутся');jobControls.append(cancel);scroll.append(jobControls);}
+    if(job){const jobControls=document.createElement('div');jobControls.className='v010CraftControls';const p=v09Button(pauseExtra[id]?'Продолжить':'Пауза',()=>request(id,'pause',{value:!pauseExtra[id]}));p.className='v010CraftSmall';p.dataset.craftControl='pause';jobControls.append(p);const cancel=v09Button('Отменить остаток',()=>request(id,'cancelUnstarted'));cancel.className='v010CraftSmall';cancel.dataset.craftControl='cancel';I18n.assign(cancel,'title','Начатая партия сохранится, материалы следующих вернутся');jobControls.append(cancel);scroll.append(jobControls);}
     const queue=document.createElement('div');queue.className='v010CraftQueue';
     if(queueExtra[id].length){const h=document.createElement('div');h.className='v092Category';I18n.assign(h,"textContent",'Далее · '+queueExtra[id].length);queue.append(h);}
-    queueExtra[id].forEach((j,index)=>{const line=document.createElement('div');line.className='v010QueueRow';I18n.assign(line,"innerHTML",`${itemIconHTML(RECIPES[j.recipe].output)}<span>${RECIPES[j.recipe].name}<small> × ${j.batches*RECIPES[j.recipe].qty}</small></span>`);const x=v09Button('×',()=>cancelQueued(id,index));I18n.assign(x,'title','Отменить заказ и вернуть материалы');I18n.setAttr(x,'aria-label',I18n.source(x,'title'));line.append(x);queue.append(line);});scroll.append(queue);
-    const refunds=Object.values(refundExtra[id]).reduce((a,n)=>a+n,0);if(refunds){const b=v09Button('Вернуть материалы · '+refunds,()=>collectRefund(id));b.className='v010CraftSmall';scroll.append(b);}
-    if(id==='craft_bench'){
+    queueExtra[id].forEach((j,index)=>{const line=document.createElement('div');line.className='v010QueueRow';I18n.assign(line,"innerHTML",`${itemIconHTML(RECIPES[j.recipe].output)}<span>${RECIPES[j.recipe].name}<small> × ${j.batches*RECIPES[j.recipe].qty}</small></span>`);const x=v09Button('×',()=>request(id,'cancelQueued',{index}));I18n.assign(x,'title','Отменить заказ и вернуть материалы');I18n.setAttr(x,'aria-label',I18n.source(x,'title'));line.append(x);queue.append(line);});scroll.append(queue);
+    const refunds=Object.values(refundExtra[id]).reduce((a,n)=>a+n,0);if(refunds){const b=v09Button('Вернуть материалы · '+refunds,()=>request(id,'collectRefund'));b.className='v010CraftSmall';scroll.append(b);}
+    if(stationType(id)==='craft_bench'){
       const extra=document.createElement('details');extra.className='v011CraftMore';const summary=document.createElement('summary');I18n.assign(summary,"textContent",'Мастерская · оборудование');extra.append(summary);
       const mods=document.createElement('div');mods.className='v010CraftExtras';extra.append(mods);
       if(typeof V010Combat!=='undefined'){const b=v09Button('Экипировка и модули',()=>V010Combat.openWorkshop());b.className='v010CraftSmall';mods.append(b);}
       for(const [key,name,cost] of [['workshop','Станки +20%',{iron:30,copper:10,parts:10}],['tools','Кирка +20%',{iron:15,copper:5,parts:4}]]){
         const unlock=key==='workshop'?'workshop_efficiency':'tools_upgrade',unlocked=typeof V010Progression!=='undefined'&&V010Progression.isUnlocked(unlock),wrap=document.createElement('div');wrap.className='v010CraftUpgrade';
-        const b=v09Button(craftUpgrades[key]?name+' ✓':name+(unlocked?'':' 🔒'),()=>improve(key));b.className='v010CraftSmall';b.disabled=craftUpgrades[key]||!unlocked;wrap.append(b);
+        const b=v09Button(craftUpgrades[key]?name+' ✓':name+(unlocked?'':' 🔒'),()=>request(id,'improve',{key}));b.className='v010CraftSmall';b.disabled=craftUpgrades[key]||!unlocked;wrap.append(b);
         const costLine=document.createElement('small');I18n.assign(costLine,"textContent",craftUpgrades[key]?'Установлено':Object.entries(cost).map(([t,n])=>ITEM[t].name+' '+n).join(' · '));wrap.append(costLine);mods.append(wrap);
       }scroll.append(extra);
     }
@@ -296,8 +298,8 @@ const V09Craft = (() => {
       const grid=document.createElement('div');grid.id='v010ReadyList';I18n.setAttr(grid,'aria-label','Готовые предметы станка');output.append(grid);
       const label=document.createElement('div');label.id='v011OutputLabel';output.append(label);
       const buttons=document.createElement('div');buttons.className='v011OutputActions';
-      const selectedTake=v09Button('Забрать стопку',()=>collectType(id,readySelected[id]));selectedTake.id='v011CollectSelected';buttons.append(selectedTake);
-      const take=v09Button('Забрать всё',()=>collect(id));take.id='v091CraftCollect';take.dataset.craftControl='collect';buttons.append(take);output.append(buttons);craftView.output=output;
+      const selectedTake=v09Button('Забрать стопку',()=>request(id,'collectType',{type:readySelected[id]}));selectedTake.id='v011CollectSelected';buttons.append(selectedTake);
+      const take=v09Button('Забрать всё',()=>request(id,'collect'));take.id='v091CraftCollect';take.dataset.craftControl='collect';buttons.append(take);output.append(buttons);craftView.output=output;
     }
     if(craftView.output.parentNode!==actions)actions.append(craftView.output);refreshProgress();
     if(focusControl){const next=Array.from(body.querySelectorAll('[data-craft-control]')).find(b=>b.dataset.craftControl===focusControl);if(next&&!next.disabled)next.focus({preventScroll:true});}
@@ -322,13 +324,13 @@ const V09Craft = (() => {
   function tick(ms){
     if(document.hidden||playerDead)return;ms=clamp(ms,0,100);let changed=false;
     for(const id of STATIONS){
-      if(id==='feed_craft'&&!AgricultureTime.available)continue;
+      if(stationType(id)==='feed_craft'&&!AgricultureTime.available)continue;
       if(getJob(id)?.remainingMs===0||(!getJob(id)&&queueExtra[id].length)){finishAndPromote(id);changed=true;}
       const job=getJob(id);if(!job||job.remainingMs<=0||pauseExtra[id]||!powered(id))continue;
       job.remainingMs=Math.max(0,job.remainingMs-ms*(craftUpgrades.workshop?1.2:1));const completed=completedAt(job);
       const newlyMade=completed-job.completedBatches;
       if(newlyMade>0){const r=RECIPES[job.recipe],qty=newlyMade*r.qty;job.outputQty+=qty;job.completedBatches=completed;craftEvent('produced',{type:r.output,qty,station:id});queueGameSave();}
-      if(id==='feed_craft')syncFeed(job);if(id==='craft_bench')benchPhase+=ms/700;
+      if(id==='feed_craft')syncFeed(job);if(stationType(id)==='craft_bench')benchPhase+=ms/700;
       if(job.remainingMs===0){GameAudio.play('craftFinish',{scene:'bunker'});craftEvent('productionFinished',{station:id,recipe:job.recipe});if(typeof V010!=='undefined')V010.log(labels[id]+': готово — '+RECIPES[job.recipe].name,'craft');finishAndPromote(id);changed=true;queueGameSave();}
     }
     uiClock+=ms;const refreshDue=uiClock>=200;if(refreshDue)uiClock=0;
@@ -419,10 +421,10 @@ const V09Craft = (() => {
     const fail=()=>{throw new Error('Некорректное сохранение производства');};
     const num=(v,min,max)=>Number.isFinite(v)&&v>=min&&v<=max,int=(v,min,max)=>Number.isInteger(v)&&num(v,min,max);
     if(!data||!data.jobs||!data.magazines||(data.schema!==undefined&&data.schema!==2))fail();
-    const out={schema:2,jobs:{furnace:null,craft_bench:null},magazines:deep(data.magazines),feed:null};
+    const out={schema:2,jobs:emptyJobs(),magazines:deep(data.magazines),feed:null};
     function normalJob(src,id,legacy){
       if(src===null)return null;const j=deep(src),r=j&&RECIPES[j.recipe];
-      if(!r||!validPaid(j)||r.station!==id||!int(j.batches,1,legacy?100:MAX_BATCHES)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs))fail();
+      if(!r||!validPaid(j)||r.station!==stationType(id)||!int(j.batches,1,legacy?100:MAX_BATCHES)||j.totalMs!==r.ms*j.batches||!num(j.remainingMs,0,j.totalMs))fail();
       if(legacy){
         if(!int(j.outputQty,1,r.qty*j.batches)||(j.remainingMs>0&&j.outputQty!==r.qty*j.batches))fail();
         j.completedBatches=completedAt(j);j.collectedQty=j.remainingMs===0?r.qty*j.batches-j.outputQty:0;j.outputQty=j.completedBatches*r.qty-j.collectedQty;
@@ -432,7 +434,8 @@ const V09Craft = (() => {
     function checkQueue(j,r){
       if(!int(j.completedBatches,0,j.batches)||j.completedBatches!==completedAt(j)||!int(j.collectedQty,0,j.completedBatches*r.qty)||!int(j.outputQty,0,j.batches*r.qty)||j.outputQty+j.collectedQty!==j.completedBatches*r.qty||(j.remainingMs===0&&j.outputQty===0))fail();
     }
-    for(const id of ['furnace','craft_bench'])out.jobs[id]=normalJob(data.jobs[id],id,data.schema!==2);
+    if(Object.keys(data.jobs).sort().join()!==Object.keys(out.jobs).sort().join())fail();
+    for(const id of Object.keys(out.jobs))out.jobs[id]=normalJob(data.jobs[id],id,data.schema!==2);
     if(!int(out.magazines.rifle_ak74,0,30)||!int(out.magazines.rifle_m4,0,30))fail();
     if(data.feed!==null){
       const f=deep(data.feed);if(!f)fail();
@@ -449,28 +452,29 @@ const V09Craft = (() => {
   function validate(data){normalizeSave(data);return true;}
   function restore(data){
     if(data){const d=normalizeSave(data);jobs=deep(d.jobs);magazines=deep(d.magazines);pendingFeedCraft=d.feed?deep(d.feed):null;}
-    else{jobs={furnace:null,craft_bench:null};magazines={rifle_ak74:clamp(magazine,0,30),rifle_m4:0};if(pendingFeedCraft){const f={qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,remainingMs:clamp(Number.isFinite(pendingFeedCraft.remainingMs)?pendingFeedCraft.remainingMs:pendingFeedCraft.readyAt-AgricultureTime.now(),0,2500)};pendingFeedCraft=normalizeSave({jobs,magazines,feed:f}).feed;}}
-    syncFeed(pendingFeedCraft);feedCraftLoaded=0;burst=0;lastWeapon=null;benchPhase=0;selected={furnace:'iron',craft_bench:'ammo',feed_craft:'feed'};quantity={furnace:0,craft_bench:0,feed_craft:0};syncMagazine();updateAmmoHud();
+    else{jobs=emptyJobs();magazines={rifle_ak74:clamp(magazine,0,30),rifle_m4:0};if(pendingFeedCraft){const f={qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,remainingMs:clamp(Number.isFinite(pendingFeedCraft.remainingMs)?pendingFeedCraft.remainingMs:pendingFeedCraft.readyAt-AgricultureTime.now(),0,2500)};pendingFeedCraft=normalizeSave({jobs,magazines,feed:f}).feed;}}
+    syncFeed(pendingFeedCraft);feedCraftLoaded=0;burst=0;lastWeapon=null;benchPhase=0;selected=defaultSelection();quantity=byStation(()=>0);syncMagazine();updateAmmoHud();
   }
   function queueCapture(){return {version:1,queues:deep(queueExtra),ready:deep(readyExtra),refunds:deep(refundExtra),paused:deep(pauseExtra),pin:deep(pinnedRecipe),upgrades:{...craftUpgrades}};}
   function queueValidate(data){
     if(data==null)return true;
     const fail=()=>{throw new Error('Некорректная очередь производства');};
     if(!data||data.version!==1||!data.queues||!data.ready||!data.refunds||!data.paused)fail();
+    for(const field of ['queues','ready','refunds','paused'])if(Object.keys(data[field]).sort().join()!==[...STATIONS].sort().join())fail();
     for(const id of STATIONS){
       const list=data.queues[id];if(!Array.isArray(list)||list.length>30||typeof data.paused[id]!=='boolean')fail();
-      for(const j of list){const r=RECIPES[j?.recipe];if(!r||!validPaid(j)||r.station!==id||!Number.isInteger(j.batches)||j.batches<1||j.batches>MAX_BATCHES||j.totalMs!==r.ms*j.batches||j.remainingMs!==j.totalMs||j.completedBatches!==0||j.outputQty!==0||j.collectedQty!==0)fail();}
+      for(const j of list){const r=RECIPES[j?.recipe];if(!r||!validPaid(j)||r.station!==stationType(id)||!Number.isInteger(j.batches)||j.batches<1||j.batches>MAX_BATCHES||j.totalMs!==r.ms*j.batches||j.remainingMs!==j.totalMs||j.completedBatches!==0||j.outputQty!==0||j.collectedQty!==0)fail();}
       for(const field of ['ready','refunds']){const pool=data[field][id];if(!pool||typeof pool!=='object'||Array.isArray(pool)||Object.keys(pool).length>200)fail();for(const [t,n] of Object.entries(pool))if(!ITEM[t]||!Number.isSafeInteger(n)||n<1||n>100000000)fail();}
     }
     if(data.pin!==null&&(!data.pin||!RECIPES[data.pin.recipe]||!Number.isInteger(data.pin.batches)||data.pin.batches<1||data.pin.batches>MAX_BATCHES))fail();
     if(data.upgrades&&(['workshop','tools'].some(k=>typeof data.upgrades[k]!=='boolean')))fail();return true;
   }
   function queueRestore(data){
-    queueValidate(data);readySelected={furnace:null,craft_bench:null,feed_craft:null};readyOrder={furnace:[],craft_bench:[],feed_craft:[]};craftView=null;queueExtra={furnace:[],craft_bench:[],feed_craft:[]};readyExtra={furnace:{},craft_bench:{},feed_craft:{}};refundExtra={furnace:{},craft_bench:{},feed_craft:{}};pauseExtra={furnace:false,craft_bench:false,feed_craft:false};pinnedRecipe=null;craftUpgrades={workshop:false,tools:false};
+    queueValidate(data);readySelected=byStation(()=>null);readyOrder=byStation(()=>[]);craftView=null;queueExtra=byStation(()=>[]);readyExtra=byStation(()=>({}));refundExtra=byStation(()=>({}));pauseExtra=byStation(()=>false);pinnedRecipe=null;craftUpgrades={workshop:false,tools:false};
     if(data){queueExtra=deep(data.queues);readyExtra=deep(data.ready);refundExtra=deep(data.refunds);pauseExtra=deep(data.paused);pinnedRecipe=deep(data.pin);craftUpgrades={...craftUpgrades,...data.upgrades};}activeStation=null;
   }
-  function improve(key){
-    if(!['workshop','tools'].includes(key)||craftUpgrades[key]||!powered('craft_bench'))return false;
+  function improve(key,id='craft_bench'){
+    if(!['workshop','tools'].includes(key)||craftUpgrades[key]||!powered(id))return false;
     const unlock=key==='workshop'?'workshop_efficiency':'tools_upgrade';if(typeof V010Progression==='undefined'||!V010Progression.isUnlocked(unlock))return false;
     const input=key==='workshop'?{iron:30,copper:10,parts:10}:{iron:15,copper:5,parts:4};
     if(!commitIngredients(input,1)){message('Не хватает материалов для улучшения');return false;}
@@ -482,5 +486,3 @@ const V09Craft = (() => {
 
   return {visualState:id=>({working:active(id)&&powered(id),powered:powered(id),status:state(id),progress:getJob(id)?1-getJob(id).remainingMs/getJob(id).totalMs:0}),craftQueue,materialCount,capture,restore,validate,normalizeSave,open,start,collect,tick,startFeed,collectFeed,drawWorkshop,drawM4Held,recipes:RECIPES,weapons:GUNS,magazineTypes,weaponsForAmmo,acceptsMagazine,magazineCapacity,fixtures,gunStats,maximum};
 })();
-
-

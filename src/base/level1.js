@@ -6,9 +6,11 @@ window.BunkerState=(()=>{
   const oldSolids=solidObjects;
   solidObjects=function(which){const list=oldSolids(which);return which==='bunker'?list.filter(o=>!layout.agricultureId(o.id)).concat(layout.solids):list;};
   const oldObjects=interactionObjects;
-  interactionObjects=function(which=scene){const list=oldObjects(which);if(which!=='bunker')return list;return list.filter(o=>!layout.agricultureId(o.id)).concat(
+  interactionObjects=function(which=scene){const list=oldObjects(which);if(which!=='bunker')return list;return list.filter(o=>!layout.agricultureId(o.id)).map(o=>o.id==='exit'?{
+    ...o,...layout.stairs[0],id:o.id,kind:o.kind,r:undefined,pickBounds:layout.stairs[0]
+  }:o).concat(
     {...layout.core,name:I18n.t('bunker.core.name')},
-    {...layout.down,name:I18n.t('bunker.down.locked')}
+    {...layout.down,pickBounds:layout.stairs[1],name:I18n.t('bunker.down.locked')}
   );};
   const oldExecute=executeInteraction;
   executeInteraction=function(target){

@@ -45,6 +45,11 @@ function registerPowerDevice(id,room,watts,isActiveCallback=()=>true,label){
   return V09Power.devices[id]={id,room,watts,active:isActiveCallback,enabled:previous?previous.enabled:true,name:label||names[id]||id};
 }
 function devicePowered(id){return !!V09Power.devices[id]&&V09Power.allocation().served.has(id);}
+function registerEquipmentPowerDevice(instanceId,active){
+  const instance=GameEquipment.get(instanceId),def=GameEquipment.definition(instanceId);
+  if(!instance?.refs.device||!Number.isFinite(def.powerKW))throw Error('Equipment has no power adapter');
+  return registerPowerDevice(instance.refs.device,instance.transform.room,def.powerKW,active,def.name);
+}
 V09Power.powered=devicePowered;
 function v09PowerChanged(){V09Power.allocation();queueGameSave();v09RefreshPowerUI();}
 function togglePowerDevice(id){
@@ -305,5 +310,4 @@ function v09DrawSpotlights(){if(window.V015Base)return;
 }
 const v09PowerOldDrawSurface=drawSurface;
 drawSurface=function(){v09PowerOldDrawSurface();v09DrawSpotlights();};
-
 

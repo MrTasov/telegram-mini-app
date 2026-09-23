@@ -34,7 +34,7 @@ window.V0161Upgrade=(()=>{
     const header=text(body,'div','v161StationHero');I18n.assign(header,"innerHTML",'<img src="'+V011Art.sources.upgrade_station0161+'" alt="Станок усиления"><div><b>Усиление снаряжения</b><p>Оружие · экипировка · пулемёт · дрон</p><small id="v161UpgradePower"></small></div>');
     refs.power=el('v161UpgradePower');const area=text(body,'div','v161UpgradeWork');refs.cradle=text(area,'div','v161Cradle');refs.card=text(area,'div','v161UpgradeCard');
     refs.modules=text(body,'div','v161UpgradeModules');refs.materials=text(body,'div','v161UpgradeMaterials');
-    const actions=text(body,'div','v161UpgradeActions');refs.upgrade=v09Button('Усилить',()=>upgrade());refs.upgrade.id='v161UpgradeButton';refs.take=v09Button('Забрать предмет',take);refs.take.id='v161UpgradeTake';actions.append(refs.upgrade,refs.take);
+    const actions=text(body,'div','v161UpgradeActions');refs.upgrade=v09Button('Усилить',()=>GameEquipmentRuntime.request(station.id,'upgrade',{key:selectedModule}));refs.upgrade.id='v161UpgradeButton';refs.take=v09Button('Забрать предмет',()=>GameEquipmentRuntime.request(station.id,'take'));refs.take.id='v161UpgradeTake';actions.append(refs.upgrade,refs.take);
     text(body,'p','v161UpgradeHint','Удерживайте предмет и перенесите в ячейку станка или выберите его ниже. Материалы берутся из рюкзака и складов базы. Предмет останется на станке после закрытия окна.');
     refs.pick=text(body,'div','v161UpgradePick');refs.quick=text(body,'div','v161UpgradeQuick');refs.bag=text(body,'div','inventoryGrid');refs.bag.id='v161UpgradeBag';
   }
@@ -52,9 +52,9 @@ window.V0161Upgrade=(()=>{
     refs.modules.replaceChildren();if(isDrone(s))for(const [key,label]of Object.entries(labels)){const b=v09Button(label+' +'+robot.state.modules[key],()=>chooseModule(key),selectedModule===key?'selected':'');b.dataset.upgradeModule=key;refs.modules.append(b);}
     refs.materials.replaceChildren();if(s&&level(s)<maxLevel(s))for(const [t,n]of Object.entries(cost(s))){const have=inv.materialCount(t),row=text(refs.materials,'div','v161Material'+(have<n?' missing':''));row.dataset.upgradeMaterial=t;I18n.assign(row,"innerHTML",itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+have+' / '+n+'</small></span>');}
     I18n.assign(refs.upgrade,"textContent",!s?'Усилить':level(s)>=maxLevel(s)?'Максимум +'+maxLevel(s):'Усилить до +'+(level(s)+1));refs.upgrade.disabled=!s||!on||!near()||level(s)>=maxLevel(s);refs.take.disabled=!s||!near();
-    refs.pick.replaceChildren();for(const [key,item]of Object.entries(equipment))if(accepts(item)){const b=v09Button(ITEM[item.type].name+' · снять со снаряжения',()=>depositEquipment(key));b.disabled=!!s;refs.pick.append(b);}
-    refs.quick.replaceChildren();quickItems().forEach((item,i)=>{const cell=inv.cell('quick',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)deposit('quick',i);};refs.quick.append(cell);});
-    refs.bag.replaceChildren();for(let i=0;i<BAG_SLOTS;i++){const item=bag[i],cell=inv.cell('bag',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)deposit('bag',i);};if(item&&!accepts(item))cell.classList.add('v161Unavailable');refs.bag.append(cell);}
+    refs.pick.replaceChildren();for(const [key,item]of Object.entries(equipment))if(accepts(item)){const b=v09Button(ITEM[item.type].name+' · снять со снаряжения',()=>GameEquipmentRuntime.request(station.id,'depositEquipment',{key}));b.disabled=!!s;refs.pick.append(b);}
+    refs.quick.replaceChildren();quickItems().forEach((item,i)=>{const cell=inv.cell('quick',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)GameEquipmentRuntime.request(station.id,'deposit',{from:'quick',index:i});};refs.quick.append(cell);});
+    refs.bag.replaceChildren();for(let i=0;i<BAG_SLOTS;i++){const item=bag[i],cell=inv.cell('bag',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)GameEquipmentRuntime.request(station.id,'deposit',{from:'bag',index:i});};if(item&&!accepts(item))cell.classList.add('v161Unavailable');refs.bag.append(cell);}
     // Retain magazine installation and existing specialization without a second
     // cheap enhancement route. Components still consume the correct module.
     if(s&&V09Craft.weapons[s.type])window.V0162Magazines?.render(refs.pick,s,changed);
@@ -62,7 +62,9 @@ window.V0161Upgrade=(()=>{
   }
   function quickItems(){return V013Inventory.items;}
   function open(){if(!near()){message('Подойдите к станку усиления в углу мастерской');return false;}if(!overlay)build();openOverlay(overlay);refresh(true);return true;}
-  registerPowerDevice(station.id,'workshop',2,()=>!!slots[0]&&!!overlay?.classList.contains('open'),'Станок усиления');
+  // A loaded, enabled cradle is an energized world device, even with every
+  // client's panel closed. Opening an empty panel never requests power.
+  registerEquipmentPowerDevice(station.id,()=>!!slots[0]);
   let lastRefresh=0;const updateBefore=update;update=function(...args){const r=updateBefore(...args);if(overlay?.classList.contains('open')&&performance.now()-lastRefresh>=250){lastRefresh=performance.now();refresh();}return r;};
   const solids=solidObjects;solidObjects=function(which=scene){const a=solids(which);return which==='bunker'?[...a,{...station}]:a;};
   const objects=interactionObjects;interactionObjects=function(which=scene){const a=objects(which);return which==='bunker'?[...a,{...station}]:a;};
@@ -98,4 +100,3 @@ window.V0161Upgrade=(()=>{
   for(const [type,key]of Object.entries(icons))V092_ICONS[type]=V011Art.sources[key];
   renderBag();V0161UI.refreshQuick();
 })();
-

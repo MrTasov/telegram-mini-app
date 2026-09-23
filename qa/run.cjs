@@ -3,7 +3,9 @@ const root=path.resolve(__dirname,'..'),out=path.join(__dirname,'results');fs.mk
 const env={...process.env,LAST_BASE_TEST_LANGUAGE:process.env.LAST_BASE_TEST_LANGUAGE||'ru',LAST_BASE_ASSETS:root,LAST_BASE_BASELINE:path.join(__dirname,'stage0'),NODE_PATH:[process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,path.join(root,'node_modules'),process.env.NODE_PATH].filter(Boolean).join(path.delimiter)};
 const jobs=[
  ['build','tools/build.cjs',['--check']],
+ ['stage-b','qa/stage-b.cjs',[]],
  ['campaign','qa/campaign.cjs',[]],
+ ['stage-a-corrective','qa/stage-a-corrective.cjs',[]],
  ['verification','qa/verify.cjs',[]],
  ['regressions','qa/run-regressions.cjs',[path.join(root,'index.html'),path.join(out,'regression')]],
  ['interactions','qa/interactions.cjs',[path.join(root,'index.html'),path.join(out,'interactions.json')]],
@@ -59,9 +61,9 @@ async function run(index){
  const concurrency=Math.max(1,Math.min(3,Number(process.env.LAST_BASE_TEST_JOBS)||1));let next=0;
  await Promise.all(Array.from({length:concurrency},async()=>{while(next<jobs.length)await run(next++);}));
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
-const reports=[read('campaign.json'),read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
+const reports=[read('stage-a-corrective.json'),read('campaign.json'),read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
 reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'),read('player-visual-fix.json'),read('corrective-performance.json'),read('corrective-visuals.json'),read('polish.json'),read('polish-visuals.json'),read('audio-unlock.json'),read('hud-display.json'));
-reports.push(read('audio-pass.json'),read('bunker-level1.json'),read('bunker-floor-cache.json'),read('bunker-r2.json'));
-const summary={version:require('../package.json').version,stage:7,patch:"campaign-stage-a",stageAStarted:true,stageBStarted:false,level2Started:false,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.','All audio paths are included and decoded; subjective mix requires physical device listening.']};
+reports.push(read('audio-pass.json'),read('bunker-level1.json'),read('bunker-floor-cache.json'),read('bunker-r2.json'),read('stage-b.json'));
+const summary={version:require('../package.json').version,stage:7,patch:"stage-b",stageAStarted:true,stageAStatus:"conditional-manual-review-pending",stageBStarted:true,stageC1Started:false,level2Started:false,passed:runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,runs,limitations:['VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.','All audio paths are included and decoded; subjective mix requires physical device listening.']};
 fs.writeFileSync(path.join(out,'summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));if(!summary.passed)process.exitCode=1;
 })().catch(error=>{console.error(error);process.exitCode=1;});

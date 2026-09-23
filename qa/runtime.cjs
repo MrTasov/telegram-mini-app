@@ -84,7 +84,7 @@ function setup(file,initialStorage={},options={}){
    if(src&&/^https?:\/\//.test(src))continue; // Telegram SDK stays mocked, as in Stage 0.
    const scriptFile=src?path.resolve(path.dirname(file),src.split(/[?#]/)[0]):file;
    const code=src?fs.readFileSync(scriptFile,'utf8'):m[2];
-   vm.runInContext(code,context,{filename:scriptFile,timeout:20000});loadedScripts.push(scriptFile);
+   vm.runInContext(options.transformScript?options.transformScript(code,scriptFile):code,context,{filename:scriptFile,timeout:20000});loadedScripts.push(scriptFile);
  }
  // Legacy gameplay suites intentionally exercise their historical post-launch
  // setup. Menu-specific suites opt out and assert the real untouched boot state.

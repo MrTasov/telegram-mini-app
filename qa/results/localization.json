@@ -1,11 +1,11 @@
 {
-  "version": "0.31.0",
+  "version": "0.32.0",
   "reference": "0.24.1 fixed Stage 4",
   "languages": [
     "en",
     "ru"
   ],
-  "catalogKeys": 1670,
+  "catalogKeys": 1768,
   "uiCoverage": [
     "startup",
     "settings.PC",
@@ -74,7 +74,7 @@
     "craft.feed_craft",
     "recipe.feed"
   ],
-  "passed": 3630,
+  "passed": 3826,
   "failed": 0,
   "checks": [
     {
@@ -6770,6 +6770,398 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.en.core.sections",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.campaign",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.chapter.complete",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.chapter.progress",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.objectives.required",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.objectives.optional",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.objectives.optionalHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.objective.count",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.base.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.base.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.group.energy",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.group.workshop",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.group.support",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.group.defense",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.group.rooms",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.group.agriculture",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.generator.capacity",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.tank",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.tank.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.battery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.battery.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.battery.remaining",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.grid",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.grid.load",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.grid.demand",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.core.demand",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.working",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.off",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.circuitOff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.waitingPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.noPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.standby",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.powered",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.charging",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.discharging",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.reserve",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.outputReady",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.bench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.upgrade",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.upgrade.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.production.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.storage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.storage.value",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.storage.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.packed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.damaged",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.inBunker",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.onSurface",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.task.packed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.task.follow",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.task.return",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.task.docking",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.task.docked",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.task.disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.task.guard",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.drone.task.attack",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.dock",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.dock.occupied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.dock.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.perimeter.outer",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.perimeter.inner",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.perimeter.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.gates",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.gates.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.turrets",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.turrets.value",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.turrets.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.surfaceLights",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.devices.served",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.room.corridor",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.room.room6",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.room.room4",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.room.workshop",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.room.room5",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.room.reserve_l1",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.room.storage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.room.room7",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.light.on",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.light.off",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.door.auto",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.door.manual",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.door.broken",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.agriculture",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.core.agriculture.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.campaign.objective.wood",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.campaign.objective.wood.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.campaign.objective.iron",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.campaign.objective.iron.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.campaign.objective.battery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.campaign.objective.battery.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.campaign.objective.perimeter",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.campaign.objective.perimeter.description",
+      "status": "PASS"
+    },
+    {
       "id": "catalog.ru.legacy.6c127073fb4b",
       "status": "PASS"
     },
@@ -13447,6 +13839,398 @@
     },
     {
       "id": "catalog.ru.campaign.reason.paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.sections",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.campaign",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.chapter.complete",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.chapter.progress",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.objectives.required",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.objectives.optional",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.objectives.optionalHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.objective.count",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.base.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.base.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.group.energy",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.group.workshop",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.group.support",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.group.defense",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.group.rooms",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.group.agriculture",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.generator.capacity",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.tank",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.tank.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.battery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.battery.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.battery.remaining",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.grid",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.grid.load",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.grid.demand",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.core.demand",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.working",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.off",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.circuitOff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.waitingPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.noPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.standby",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.powered",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.charging",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.discharging",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.reserve",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.outputReady",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.bench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.upgrade",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.upgrade.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.production.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.storage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.storage.value",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.storage.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.packed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.damaged",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.inBunker",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.onSurface",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.task.packed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.task.follow",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.task.return",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.task.docking",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.task.docked",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.task.disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.task.guard",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.drone.task.attack",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.dock",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.dock.occupied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.dock.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.perimeter.outer",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.perimeter.inner",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.perimeter.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.gates",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.gates.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.turrets",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.turrets.value",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.turrets.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.surfaceLights",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.devices.served",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.room.corridor",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.room.room6",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.room.room4",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.room.workshop",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.room.room5",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.room.reserve_l1",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.room.storage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.room.room7",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.light.on",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.light.off",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.door.auto",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.door.manual",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.door.broken",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.agriculture",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.core.agriculture.detail",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.campaign.objective.wood",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.campaign.objective.wood.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.campaign.objective.iron",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.campaign.objective.iron.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.campaign.objective.battery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.campaign.objective.battery.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.campaign.objective.perimeter",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.campaign.objective.perimeter.description",
       "status": "PASS"
     },
     {

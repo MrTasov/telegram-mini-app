@@ -19,7 +19,7 @@ window.V014Robots=(()=>{
   const modes={follow:'Следовать',carry:'Следовать',defense:'Защита',attack:'Атака'};
   const DOCK={id:'robots014_dock',kind:'robots014_dock',name:'Станция дрона',...BunkerLayout.fixture('robots014_dock'),range:65,detectionRadius:52,watts:1,returnThreshold:15};
   const combat=Object.freeze({get ammoType(){return definition.combat.ammoType;},get capacity(){return definition.combat.capacity;},get damage(){return Math.round(definition.combat.damage*(1+state.modules.weapon*definition.combat.damagePerLevel));},get intervalMs(){return definition.combat.intervalMs;},get range(){return definition.combat.range;}});
-  function dockPosition(){return {x:DOCK.x+74,y:DOCK.y+45,scene:'bunker'};}
+  function dockPosition(){const p=GameEquipment.definition(DOCK.id).dock;return {...GameEquipment.point(DOCK.id,p.x,p.y),scene:GameEquipment.get(DOCK.id).transform.scene};}
   function defaults(){return {schema:1,id:INSTANCE_ID,name:'Спутник',...dockPosition(),battery:100,hp:100,ammo:30,packed:false,mode:'defense',combatMode:'defense',resumeTask:null,task:'docked',modules:{body:0,battery:0,cargo:0,weapon:0,engine:0},cargo:[],light:false,autoCollect:true,economy:true,guard:null,targetIndex:null,lowWarn:false,autoReturn:true};}
   const state=defaults();
   let targetId=null;
@@ -31,7 +31,7 @@ window.V014Robots=(()=>{
   const motion=V0141DroneMotion.create(state,definition.movement);
   // Station detection does not require drone power. The charging pad is flat;
   // only the raised control cabinet blocks movement and pathfinding.
-  const solids=solidObjects;solidObjects=function(which=scene){const a=solids(which);return which==='bunker'?[...a,{id:DOCK.id+'_body',x:DOCK.x+7,y:DOCK.y+7,w:26,h:DOCK.h-14}]:a;};
+  const solids=solidObjects;solidObjects=function(which=scene){const a=solids(which);return which==='bunker'?[...a,GameEquipment.fixture(DOCK.id+'_body')]:a;};
   const home={age:0,sample:0,still:0,stale:0,retries:0,pause:0,blocked:false,point:null,best:Infinity,level:null};
   let undocking=false;
   function resetReturn(){Object.assign(home,{age:0,sample:0,still:0,stale:0,retries:0,pause:0,blocked:false,point:null,best:Infinity,level:null});}
@@ -244,7 +244,7 @@ window.V014Robots=(()=>{
     shot=Math.max(0,shot);
     if(saveClock>=5){saveClock=0;queueGameSave();}if(uiClock>.25){uiClock=0;updateHUD();}
   }
-  registerPowerDevice('robot_drone_charge','room5',DOCK.watts,()=>atDock()&&state.battery<100,'Станция · дрон');
+  registerEquipmentPowerDevice(DOCK.id,()=>atDock()&&state.battery<100);
 
   function statusText(){return state.packed?'В рюкзаке':state.task==='docking'?'Стыковка':atDock()?(state.battery>=100?(state.hp<=0?'Требуется ремонт':'Заряжен · на станции'):stationInfo().charging?'Заряжается':'На станции · нет питания'):state.hp<=0?'Требуется ремонт':state.battery<=0?'Разряжен':({follow:'Сопровождает',attack:'Атакует',guard:'Охраняет точку',return:home.blocked?'Путь закрыт · ожидание':'Возвращается на станцию',disabled:'Остановлен'})[state.task]||'Ожидание';}
   function updateHUD(){window.V0141DroneUI?.refresh();window.V0151Station?.refresh();window.V0163Loot?.refresh();}

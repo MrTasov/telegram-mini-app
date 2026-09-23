@@ -79,7 +79,23 @@ window.GameCampaignDomain=(()=>{
       const ids=new Set();for(const r of s.receipts){if(!object(r)||!validActor(r.actorId)||typeof r.requestId!=='string'||!/^[a-zA-Z0-9:_-]{1,100}$/.test(r.requestId)||typeof r.signature!=='string'||r.signature.length>400||!s.transitions.some(t=>t.to===r.chapter&&t.actorId===r.actorId)||ids.has(r.actorId+'|'+r.requestId))fail();let sig;try{sig=JSON.parse(r.signature);}catch{fail();}if(!Array.isArray(sig)||sig.length!==4||sig[0]!=='ADVANCE_CHAPTER'||!s.completed.includes(sig[1])||!integer(sig[3]))fail();ids.add(r.actorId+'|'+r.requestId);}
       return true;
     }
-    return Object.freeze({fresh,refresh,view,execute,validate,capture:()=>copy(state),restore(s){validate(s);state=copy(s);},definitions});
+    function migrate(s,facts={}){
+      if(s?.contentRevision===definitions.revision){validate(s);return copy(s);}
+      if(s?.contentRevision!==1||definitions.revision!==2)throw Error('Unsupported campaign content');
+      // Validate against the original content before adding optional objectives.
+      // Completed chapters and command receipts are never replayed or revoked.
+      const previous=copy(definitions);previous.revision=1;
+      previous.chapters.forEach(c=>{c.objectives=c.objectives.filter(o=>!o.since);});
+      create(previous,ports).validate(s);
+      const next=copy(s);
+      for(const id of [...next.completed,next.activeChapter])for(const o of chapters.get(id).objectives){
+        if(next.objectives[o.id])continue;
+        const active=id===next.activeChapter&&o.requires.every(key=>next.objectives[key]?.done);
+        next.objectives[o.id]={active,done:false,baseline:o.semantics==='after'?(active?facts[o.condition.fact]||0:0):null};
+      }
+      next.contentRevision=definitions.revision;next.revision=Math.min(1000000000,next.revision+1);validate(next);return next;
+    }
+    return Object.freeze({fresh,refresh,view,execute,validate,migrate,capture:()=>copy(state),restore(s){validate(s);state=copy(s);},definitions});
   }
   return Object.freeze({create,validateDefinitions});
 })();

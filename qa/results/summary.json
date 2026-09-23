@@ -1,224 +1,236 @@
 {
-  "version": "0.31.0",
+  "version": "0.32.0",
   "stage": 7,
-  "patch": "campaign-stage-a",
+  "patch": "stage-b",
   "stageAStarted": true,
-  "stageBStarted": false,
+  "stageAStatus": "conditional-manual-review-pending",
+  "stageBStarted": true,
+  "stageC1Started": false,
   "level2Started": false,
   "passed": true,
-  "automatedAssertions": 11267,
+  "automatedAssertions": 11558,
   "historicalBaselineAssertions": 477,
   "ladderContractChanged": true,
   "runs": [
     {
       "id": "build",
       "exitCode": 0,
-      "elapsedMs": 186
+      "elapsedMs": 216
+    },
+    {
+      "id": "stage-b",
+      "exitCode": 0,
+      "elapsedMs": 8177
     },
     {
       "id": "campaign",
       "exitCode": 0,
-      "elapsedMs": 4343
+      "elapsedMs": 4146
+    },
+    {
+      "id": "stage-a-corrective",
+      "exitCode": 0,
+      "elapsedMs": 6554
     },
     {
       "id": "verification",
       "exitCode": 0,
-      "elapsedMs": 256
+      "elapsedMs": 305
     },
     {
       "id": "regressions",
       "exitCode": 0,
-      "elapsedMs": 19353
+      "elapsedMs": 21691
     },
     {
       "id": "interactions",
       "exitCode": 0,
-      "elapsedMs": 27603
+      "elapsedMs": 31835
     },
     {
       "id": "saves",
       "exitCode": 0,
-      "elapsedMs": 7223
+      "elapsedMs": 8384
     },
     {
       "id": "balance",
       "exitCode": 0,
-      "elapsedMs": 1385
+      "elapsedMs": 1579
     },
     {
       "id": "state-saves",
       "exitCode": 0,
-      "elapsedMs": 15219
+      "elapsedMs": 15862
     },
     {
       "id": "differential",
       "exitCode": 0,
-      "elapsedMs": 28339
+      "elapsedMs": 29245
     },
     {
       "id": "systems",
       "exitCode": 0,
-      "elapsedMs": 2695
+      "elapsedMs": 2918
     },
     {
       "id": "stage3-differential",
       "exitCode": 0,
-      "elapsedMs": 42561
+      "elapsedMs": 41596
     },
     {
       "id": "controls",
       "exitCode": 0,
-      "elapsedMs": 18480
+      "elapsedMs": 18765
     },
     {
       "id": "controls-differential",
       "exitCode": 0,
-      "elapsedMs": 42739
+      "elapsedMs": 43307
     },
     {
       "id": "assets",
       "exitCode": 0,
-      "elapsedMs": 5416
+      "elapsedMs": 5503
     },
     {
       "id": "asset-rendering",
       "exitCode": 0,
-      "elapsedMs": 2454
+      "elapsedMs": 2680
     },
     {
       "id": "stage4-differential",
       "exitCode": 0,
-      "elapsedMs": 42493
+      "elapsedMs": 43244
     },
     {
       "id": "map-workbar",
       "exitCode": 0,
-      "elapsedMs": 9363
+      "elapsedMs": 10665
     },
     {
       "id": "localization",
       "exitCode": 0,
-      "elapsedMs": 72508
+      "elapsedMs": 70167
     },
     {
       "id": "localization-rendering",
       "exitCode": 0,
-      "elapsedMs": 3794
+      "elapsedMs": 3793
     },
     {
       "id": "localization-controls",
       "exitCode": 0,
-      "elapsedMs": 56766
+      "elapsedMs": 54825
     },
     {
       "id": "main-menu",
       "exitCode": 0,
-      "elapsedMs": 123088
+      "elapsedMs": 122160
     },
     {
       "id": "menu-preferences",
       "exitCode": 0,
-      "elapsedMs": 16332
+      "elapsedMs": 15678
     },
     {
       "id": "world-events",
       "exitCode": 0,
-      "elapsedMs": 19266
+      "elapsedMs": 18383
     },
     {
       "id": "readiness",
       "exitCode": 0,
-      "elapsedMs": 16861
+      "elapsedMs": 17936
     },
     {
       "id": "corrective",
       "exitCode": 0,
-      "elapsedMs": 17718
+      "elapsedMs": 17270
     },
     {
       "id": "world-farm",
       "exitCode": 0,
-      "elapsedMs": 17715
+      "elapsedMs": 18763
     },
     {
       "id": "drone-return",
       "exitCode": 0,
-      "elapsedMs": 33289
+      "elapsedMs": 32696
     },
     {
       "id": "resource-access",
       "exitCode": 0,
-      "elapsedMs": 2894
+      "elapsedMs": 2821
     },
     {
       "id": "character-animation",
       "exitCode": 0,
-      "elapsedMs": 5746
+      "elapsedMs": 5998
     },
     {
       "id": "master-unarmed",
       "exitCode": 0,
-      "elapsedMs": 17583
+      "elapsedMs": 18819
     },
     {
       "id": "equipment-integration",
       "exitCode": 0,
-      "elapsedMs": 24512
+      "elapsedMs": 24469
     },
     {
       "id": "player-visual-fix",
       "exitCode": 0,
-      "elapsedMs": 1855
+      "elapsedMs": 1832
     },
     {
       "id": "corrective-performance",
       "exitCode": 0,
-      "elapsedMs": 5443
+      "elapsedMs": 5524
     },
     {
       "id": "corrective-visuals",
       "exitCode": 0,
-      "elapsedMs": 3164
+      "elapsedMs": 3015
     },
     {
       "id": "polish",
       "exitCode": 0,
-      "elapsedMs": 5605
+      "elapsedMs": 6086
     },
     {
       "id": "polish-visuals",
       "exitCode": 0,
-      "elapsedMs": 8285
+      "elapsedMs": 8774
     },
     {
       "id": "audio-unlock",
       "exitCode": 0,
-      "elapsedMs": 9081
+      "elapsedMs": 9651
     },
     {
       "id": "hud-display",
       "exitCode": 0,
-      "elapsedMs": 10218
+      "elapsedMs": 10754
     },
     {
       "id": "audio-pass",
       "exitCode": 0,
-      "elapsedMs": 6195
+      "elapsedMs": 6310
     },
     {
       "id": "bunker-level1",
       "exitCode": 0,
-      "elapsedMs": 7631
+      "elapsedMs": 8316
     },
     {
       "id": "bunker-floor-cache",
       "exitCode": 0,
-      "elapsedMs": 2707
+      "elapsedMs": 2981
     },
     {
       "id": "bunker-r2",
       "exitCode": 0,
-      "elapsedMs": 4156
+      "elapsedMs": 4612
     }
   ],
   "limitations": [

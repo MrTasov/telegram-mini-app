@@ -180,7 +180,7 @@ function getChestPositions(){
     {x:-102, y:bunker.farm.top+88},    // cow milk inventory — top-left corner
     {x:-72, y:bunker.farm.top+350},    // feed inventory — center
     {x:18,  y:bunker.farm.top+350}     // water inventory — center
-  ];
+  ].map((p,i)=>GameEquipment.center('chest'+i)||p);
 }
 
 // =====================================================
@@ -402,8 +402,7 @@ function updateLivestockAnimals(){
 }
 
 function feedCraftStationPos(){
-  const f=bunker.farm;
-  return {x:255,y:f.bottom-30};
+  return GameEquipment.center('feed_craft');
 }
 function nearFeedCraftStation(){
   if(scene!=="bunker") return false;
@@ -580,4 +579,3 @@ function openChestSettings(){
   openOverlay(settingsOverlay);
   settingsOverlay.style.zIndex="10050";
 }
-
