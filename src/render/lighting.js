@@ -37,10 +37,24 @@ window.V016Lighting=(()=>{
   function canvasOf(w,h){const v=typeof OffscreenCanvas==='function'?new OffscreenCanvas(w,h):document.createElement('canvas');v.width=w;v.height=h;return v;}
   function buffer(){const w=Math.max(1,Math.ceil(screenWidth)),h=Math.max(1,Math.ceil(screenHeight));if(!mask){mask=canvasOf(w,h);maskContext=mask.getContext('2d');}if(mask.width!==w)mask.width=w;if(mask.height!==h)mask.height=h;return maskContext;}
   function sprite(kind){
-    if(sprites.has(kind))return sprites.get(kind);const v=canvasOf(256,256),c=v.getContext('2d'),g=c.createRadialGradient(128,128,0,128,128,128);
-    const stops=kind==='flashlight'?[[0,'#ffffffff'],[.32,'#ffffffff'],[.74,'#fffffffc'],[.9,'#ffffffac'],[1,'#ffffff00']]:kind==='warm'?[[0,'#ffe7b544'],[.2,'#ffe7b525'],[.65,'#ffe7b510'],[1,'#ffe7b500']]:kind==='drone'?[[0,'#ffffffff'],[.28,'#fffffffc'],[.6,'#ffffffce'],[.84,'#ffffff52'],[1,'#ffffff00']]:kind==='flood'?[[0,'#ffffffff'],[.3,'#ffffffff'],[.6,'#ffffffdf'],[.84,'#ffffff70'],[1,'#ffffff00']]:[[0,'#fffffffc'],[.15,'#fffffff0'],[.45,'#ffffffad'],[.76,'#ffffff42'],[1,'#ffffff00']];
+    if(sprites.has(kind))return sprites.get(kind);const v=canvasOf(256,256),c=v.getContext('2d');
+    if(kind==='flashlight'){
+      // Bake the angular and radial falloff once. A single clipped blit then
+      // replaces sixteen full-radius blends per frame, with no extra buffer.
+      const pixels=c.createImageData(256,256),half=V091Light.halfAngle;
+      for(let y=0;y<256;y++)for(let x=0;x<256;x++){
+        const dx=x+.5-128,dy=y+.5-128,r=Math.hypot(dx,dy)/128,a=Math.abs(Math.atan2(dy,dx)),i=(y*256+x)*4;
+        const radial=r<=.77?1:r<=.92?1-(r-.77)/.15*(1-189/255):Math.max(0,(1-r)/.08)*(189/255);
+        const angular=a>=half?0:Math.cos(a/half*Math.PI/2)**2;
+        pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=255;pixels.data[i+3]=Math.round(255*.997*radial*angular);
+      }
+      c.putImageData(pixels,0,0);sprites.set(kind,v);return v;
+    }
+    const g=c.createRadialGradient(128,128,0,128,128,128);
+    const stops=kind==='warm'?[[0,'#ffe7b544'],[.2,'#ffe7b525'],[.65,'#ffe7b510'],[1,'#ffe7b500']]:kind==='drone'?[[0,'#ffffffff'],[.28,'#fffffffc'],[.6,'#ffffffce'],[.84,'#ffffff52'],[1,'#ffffff00']]:kind==='flood'?[[0,'#ffffffff'],[.3,'#ffffffff'],[.6,'#ffffffdf'],[.84,'#ffffff70'],[1,'#ffffff00']]:[[0,'#fffffffc'],[.15,'#fffffff0'],[.45,'#ffffffad'],[.76,'#ffffff42'],[1,'#ffffff00']];
     for(const [at,color]of stops)g.addColorStop(at,color);c.fillStyle=g;c.fillRect(0,0,256,256);sprites.set(kind,v);return v;
   }
+  function disc(c,kind,x,y,radius){const m=c.getTransform();c.save();c.setTransform(1,0,0,1,0,0);c.drawImage(sprite(kind),(x-radius)*m.a+m.e,(y-radius)*m.d+m.f,radius*2*m.a,radius*2*m.d);c.restore();}
   function nearSolids(x,y,range,which=scene){const g=geometryFor(which);let all=which==='surface'?[...g.walls,...g.objects]:[...g.objects,...V091Navigation.walls,...v09Doors.filter(d=>BunkerLayout.roomActive(d.room)).flatMap(v09DoorPanels)];
     return all.filter(o=>o.r!==undefined?Math.hypot(o.x-x,o.y-y)<range+o.r:o.x<x+range&&o.x+o.w>x-range&&o.y<y+range&&o.y+o.h>y-range);
   }
@@ -112,13 +126,34 @@ window.V016Lighting=(()=>{
   }
   function bunkerMask(c,served){c.fillStyle='rgba(2,5,12,.63)';const view=V010Camera.view();c.fillRect(camera.x,camera.y,view.w,view.h);for(const room of Object.keys(V09Power.rooms)){const r=bunker[room];if(!BunkerLayout.roomActive(room)||!r||!visibleOnScreen((r.left+r.right)/2,(r.top+r.bottom)/2,Math.hypot(r.right-r.left,r.bottom-r.top)/2))continue;c.clearRect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.drawImage(roomMask(room,r,served.has('light_'+room)),r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);}
     if(V09Craft.visualState('furnace').working){c.save();const r=bunker.workshop,p=BunkerLayout.point('workshop',49,708);c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();c.globalCompositeOperation='destination-out';c.globalAlpha=.9;c.drawImage(sprite('white'),p.x,p.y,340,340);c.restore();}}
+  function doorLeaks(served=supplied()){
+    if(scene!=='bunker')return [];const hall=served.has('light_corridor'),out=[];
+    for(const d of v09Doors){const open=window.V018Build?.isBroken(d.id)?1:d.open;if(!BunkerLayout.roomActive(d.room)||open<=.001)continue;const lit=served.has('light_'+d.room);if(lit===hall)continue;
+      const room=BunkerLayout.rooms[d.room],into=hall?1:-1,nx=d.horizontal?0:(room.side==='left'?-1:1)*into,ny=d.horizontal?into:0;
+      out.push({id:d.id,x:d.x+d.w/2,y:d.y+d.h/2,nx,ny,opening:(d.horizontal?d.w:d.h)*open,alpha:.28*smooth(open),room:hall?room:BunkerLayout.rooms.corridor});
+    }return out;
+  }
+  function portalLight(c,served){for(const p of doorLeaks(served)){
+    const r=p.room,half=p.opening/2,depth=155,spread=half+32,tx=-p.ny,ty=p.nx;c.save();c.beginPath();c.rect(r.left+9,r.top+9,r.right-r.left-18,r.bottom-r.top-18);c.clip();
+    c.beginPath();c.moveTo(p.x-tx*half,p.y-ty*half);c.lineTo(p.x+tx*half,p.y+ty*half);c.lineTo(p.x+p.nx*depth+tx*spread,p.y+p.ny*depth+ty*spread);c.lineTo(p.x+p.nx*depth-tx*spread,p.y+p.ny*depth-ty*spread);c.closePath();c.clip();
+    c.globalCompositeOperation='destination-out';c.globalAlpha=p.alpha;disc(c,'white',p.x,p.y,depth);c.restore();
+  }}
+  function localBounce(c,b){if(!b)return;c.save();c.globalCompositeOperation='destination-out';c.globalAlpha=.23*b.strength;c.beginPath();c.moveTo(b.x,b.y);for(const p of b.points)c.lineTo(p.x,p.y);c.closePath();c.clip();disc(c,'white',b.x,b.y,b.radius);c.restore();
+    // A shallow highlight on the struck face; it cannot illuminate behind it.
+    c.save();c.globalCompositeOperation='destination-out';c.globalAlpha=.58*b.strength;c.translate(b.contact.x,b.contact.y);c.rotate(Math.atan2(b.ny,b.nx));c.beginPath();c.ellipse(0,0,1.8,7+9*b.strength,0,0,TAU);c.fillStyle='#fff';c.fill();c.restore();
+  }
   function droneActive(){const s=window.V014Robots?.state;return !!(s&&s.scene===scene&&!s.packed&&s.task!=='docked'&&s.hp>0&&s.battery>0&&s.light&&!(s.economy&&s.battery<20));}
-  function flashlight(c,beam){if(!beam)return;c.save();c.globalCompositeOperation='destination-out';let previous=0;const half=(beam.points.length-1)/2;
-    for(let inset=0;inset<half;inset+=3){const desired=.997*Math.sin(Math.min(1,(inset+3)/half)*Math.PI/2)**2,strength=(desired-previous)/Math.max(.00001,1-previous);previous=desired;c.save();c.globalAlpha=strength;c.beginPath();c.moveTo(beam.ox,beam.oy);for(let i=inset;i<beam.points.length-inset;i++)c.lineTo(beam.points[i].x,beam.points[i].y);c.closePath();c.clip();c.drawImage(sprite('flashlight'),beam.ox-beam.range,beam.oy-beam.range,beam.range*2,beam.range*2);c.restore();}c.restore();}
+  function flashlight(c,beam){if(!beam)return;c.save();c.globalCompositeOperation='destination-out';
+    c.beginPath();c.moveTo(beam.ox,beam.oy);for(const p of beam.points)c.lineTo(p.x,p.y);c.closePath();c.clip();
+    const m=c.getTransform(),co=Math.cos(beam.angle),si=Math.sin(beam.angle),r=beam.range;
+    // Positive bitmap-local coordinates avoid native Canvas image culling
+    // before the world-to-mask transform, including all diagonal aim angles.
+    const scale=r/128;c.setTransform(m.a*co*scale,m.d*si*scale,-m.a*si*scale,m.d*co*scale,(beam.ox-r*co+r*si)*m.a+m.e,(beam.oy-r*si-r*co)*m.d+m.f);
+    c.drawImage(sprite('flashlight'),0,0);c.restore();}
   function illuminate(){
     const c=buffer(),zoom=V010Camera.zoom,view=V010Camera.view(),served=supplied();c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,mask.width,mask.height);c.setTransform(zoom,0,0,zoom,-camera.x*zoom,-camera.y*zoom);
-    if(scene==='bunker')bunkerMask(c,served);else{const dark=(1-daylight())*.64;c.fillStyle='rgba(6,15,31,'+dark+')';c.fillRect(camera.x,camera.y,view.w,view.h);if(dark>.001){c.save();c.globalCompositeOperation='destination-out';for(const s of fixtures())if(active(s,served)&&visibleOnScreen(s.x,s.y,s.range+20))paintFixture(c,s,s.kind==='flood'?'flood':'white');c.restore();}}
-    flashlight(c,V091Light.cone());if(droneActive()){const d=V014Robots.state,s={x:d.x,y:d.y,range:275,angle:0,kind:'drone'};c.save();c.globalCompositeOperation='destination-out';c.setTransform(1,0,0,1,0,0);c.drawImage(droneField(s),(s.x-s.range-camera.x)*zoom,(s.y-s.range-camera.y)*zoom,s.range*2*zoom,s.range*2*zoom);c.restore();}
+    if(scene==='bunker'){bunkerMask(c,served);portalLight(c,served);}else{const dark=(1-daylight())*.64;c.fillStyle='rgba(6,15,31,'+dark+')';c.fillRect(camera.x,camera.y,view.w,view.h);if(dark>.001){c.save();c.globalCompositeOperation='destination-out';for(const s of fixtures())if(active(s,served)&&visibleOnScreen(s.x,s.y,s.range+20))paintFixture(c,s,s.kind==='flood'?'flood':'white');c.restore();}}
+    const beam=V091Light.cone();flashlight(c,beam);localBounce(c,beam?.bounce);if(droneActive()){const d=V014Robots.state,s={x:d.x,y:d.y,range:275,angle:0,kind:'drone'};c.save();c.globalCompositeOperation='destination-out';c.setTransform(1,0,0,1,0,0);c.drawImage(droneField(s),(s.x-s.range-camera.x)*zoom,(s.y-s.range-camera.y)*zoom,s.range*2*zoom,s.range*2*zoom);c.restore();}
     c.setTransform(1,0,0,1,0,0);ctx.save();try{ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.drawImage(mask,camera.x,camera.y,view.w,view.h);}finally{ctx.restore();}
   }
   V091Light.illuminate=illuminate;
@@ -126,5 +161,5 @@ window.V016Lighting=(()=>{
   GameSave.extend('capture','render.lighting',function(oldCapture){const d=oldCapture();d.lighting016=capture();return d;});
   GameSave.extend('decode','render.lighting',function(oldDecode,raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);});
   GameSave.extend('restore','render.lighting',function(oldRestore,d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);});
-  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,droneActive,drawFixtures,illuminate,get day(){return WorldClock.day;},maskImage:()=>mask,droneMetrics:()=>({...droneMetrics}),cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:5,droneShapes:droneShape?1:0,droneLimit:1,droneBytes:droneLayer?droneLayer.width*droneLayer.height*4:0,width:mask?.width||0,height:mask?.height||0})};
+  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,doorLeaks,droneActive,drawFixtures,illuminate,get day(){return WorldClock.day;},maskImage:()=>mask,droneMetrics:()=>({...droneMetrics}),cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:5,droneShapes:droneShape?1:0,droneLimit:1,droneBytes:droneLayer?droneLayer.width*droneLayer.height*4:0,width:mask?.width||0,height:mask?.height||0})};
 })();

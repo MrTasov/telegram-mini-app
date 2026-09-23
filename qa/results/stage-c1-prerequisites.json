@@ -1,0 +1,220 @@
+{
+  "version": "0.32.2",
+  "baseline": "0.32.1",
+  "groups": [
+    {
+      "name": "stage-c1-light-modules",
+      "passed": 24,
+      "failed": 0
+    },
+    {
+      "name": "state-saves",
+      "passed": 58,
+      "failed": 0
+    },
+    {
+      "name": "saves",
+      "passed": 75,
+      "failed": 0
+    },
+    {
+      "name": "readiness",
+      "passed": 60,
+      "failed": 0
+    },
+    {
+      "name": "stage-ab-corrective",
+      "passed": 34,
+      "failed": 0
+    },
+    {
+      "name": "stage-ab-light-audio",
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "name": "stage-b",
+      "passed": 58,
+      "failed": 0
+    }
+  ],
+  "performance": {
+    "version": "0.32.2",
+    "baseline": "immutable accepted 0.32.1 A/B Corrective",
+    "environment": {
+      "node": "v24.19.0",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "mode": "Modeled DOM/WebAudio, native Canvas2D, DPR 1, zoom .65, 120 measured frames per scene/version; alternating AB/BA"
+    },
+    "rows": [
+      {
+        "viewport": "390x844",
+        "scene": "bunker_moving_lights",
+        "before": {
+          "samples": 120,
+          "p50Ms": 23.28734500000064,
+          "p95Ms": 30.100382000000536,
+          "meanMs": 23.895817608333267
+        },
+        "after": {
+          "samples": 120,
+          "p50Ms": 22.253418000000238,
+          "p95Ms": 28.360247000000527,
+          "meanMs": 22.88419242499997
+        },
+        "deltaMs": -1.0339270000004035,
+        "percent": -4.439866373776724
+      },
+      {
+        "viewport": "390x844",
+        "scene": "night_combined_lights",
+        "before": {
+          "samples": 120,
+          "p50Ms": 28.972202000000834,
+          "p95Ms": 35.15946199999962,
+          "meanMs": 29.832948099999808
+        },
+        "after": {
+          "samples": 120,
+          "p50Ms": 28.45201200000156,
+          "p95Ms": 38.951970000000074,
+          "meanMs": 29.450352350000124
+        },
+        "deltaMs": -0.5201899999992747,
+        "percent": -1.7954796808308138
+      },
+      {
+        "viewport": "390x844",
+        "scene": "bunker_door_spill",
+        "before": {
+          "samples": 120,
+          "p50Ms": 17.511884999999893,
+          "p95Ms": 22.360038000002532,
+          "meanMs": 18.077128258333264
+        },
+        "after": {
+          "samples": 120,
+          "p50Ms": 17.867111000003206,
+          "p95Ms": 22.289122000001953,
+          "meanMs": 18.498333166666818
+        },
+        "deltaMs": 0.35522600000331295,
+        "percent": 2.028485225909815
+      }
+    ],
+    "navigation": [
+      {
+        "version": "0.32.1",
+        "reachable": 80,
+        "samples": 80,
+        "p50Ms": 8.471261999999115,
+        "p95Ms": 69.10492800000065,
+        "meanMs": 14.048395450000134
+      },
+      {
+        "version": "0.32.2",
+        "reachable": 80,
+        "samples": 80,
+        "p50Ms": 7.561657999998715,
+        "p95Ms": 70.1532739999966,
+        "meanMs": 14.086550987499868
+      }
+    ],
+    "commands": [
+      {
+        "version": "0.32.1",
+        "samples": 400,
+        "p50Ms": 0.34271799999987707,
+        "p95Ms": 0.6259969999991881,
+        "meanMs": 0.401319072499964
+      },
+      {
+        "version": "0.32.2",
+        "samples": 400,
+        "p50Ms": 0.3351260000054026,
+        "p95Ms": 0.46695099999487866,
+        "meanMs": 0.3543731474998276
+      }
+    ],
+    "serialization": [
+      {
+        "version": "0.32.1",
+        "characters": 68791,
+        "utf8Bytes": 69019,
+        "samples": 100,
+        "p50Ms": 0.8008259999987786,
+        "p95Ms": 1.204914000001736,
+        "meanMs": 0.8670130199999403
+      },
+      {
+        "version": "0.32.2",
+        "characters": 68829,
+        "utf8Bytes": 69057,
+        "samples": 100,
+        "p50Ms": 0.8026889999964624,
+        "p95Ms": 1.2013389999992796,
+        "meanMs": 0.8721408999997948
+      }
+    ],
+    "heaps": [
+      {
+        "version": "0.32.1",
+        "snapshots": 100,
+        "transientHeapDeltaBytes": 33361520,
+        "postGcHeapDeltaBytes": -152920,
+        "gcAvailable": true
+      },
+      {
+        "version": "0.32.2",
+        "snapshots": 100,
+        "transientHeapDeltaBytes": 34870768,
+        "postGcHeapDeltaBytes": 46728,
+        "gcAvailable": true
+      }
+    ],
+    "campaignPoll": {
+      "closed": {
+        "samples": 400,
+        "p50Ms": 0.04802100000233622,
+        "p95Ms": 0.10408399999869289,
+        "meanMs": 0.05929940749983871
+      },
+      "open": {
+        "samples": 400,
+        "p50Ms": 0.8417570000019623,
+        "p95Ms": 1.20713799999794,
+        "meanMs": 0.9038255625001875
+      }
+    },
+    "droneMetrics": {
+      "updates": 360,
+      "candidateScans": 4,
+      "rayCasts": 0,
+      "lastX": 479.597275031619,
+      "lastY": 57.603992470665126
+    },
+    "lightingCache": {
+      "shadows": 0,
+      "shadowLimit": 28,
+      "rooms": 14,
+      "roomLimit": 18,
+      "sprites": 5,
+      "spriteLimit": 5,
+      "droneShapes": 1,
+      "droneLimit": 1,
+      "droneBytes": 262144,
+      "width": 390,
+      "height": 844
+    },
+    "errors": [],
+    "limitations": [
+      "CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.",
+      "Moving-light scenes include continuously changing drone positions and player aim; night scene runs all eight searchlights.",
+      "Command dispatch excludes OS/browser delivery. Navigation covers complete path queries.",
+      "Heap deltas include harness and serialization allocations, not a browser/device memory budget."
+    ],
+    "passed": true
+  },
+  "bundleSha256": "7dd7fded950c7a000a2f7e9099730b0d0ed2e4a1a4ea8be1c7a8c93a73cb936a",
+  "result": "PASS — automatic transition to C1 authorized"
+}

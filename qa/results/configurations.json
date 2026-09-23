@@ -1,5 +1,5 @@
 {
-  "version": "0.32.1",
+  "version": "0.33.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -48,9 +48,11 @@
       "hand": true
     },
     "flashlight": {
-      "name": "Фонарик",
+      "name": "Тактический фонарь",
       "icon": "🔦",
-      "hand": true
+      "hand": true,
+      "moduleSlot": "flashlight",
+      "description": "Модуль для головного снаряжения. Установите в слот фонаря; включение — кнопка 🔦 или F."
     },
     "wood": {
       "name": "Дерево",
@@ -259,7 +261,25 @@
       "name": "Тактический шлем",
       "icon": "🪖",
       "equip": "head",
-      "level": 1
+      "level": 1,
+      "moduleSlots": [
+        "flashlight"
+      ]
+    },
+    "head_mount": {
+      "name": "Крепление для фонаря",
+      "icon": "🔦",
+      "equip": "head",
+      "moduleSlots": [
+        "flashlight"
+      ],
+      "stats": {},
+      "upgrades": {
+        "maxLevel": 0,
+        "cost": {},
+        "rarePerLevel": 0
+      },
+      "description": "Лёгкое головное крепление со слотом фонаря. Не даёт брони или бонусов."
     },
     "advanced_parts": {
       "name": "Редкие компоненты",
@@ -511,6 +531,31 @@
       "output": "rifle_m4",
       "qty": 1,
       "ms": 60000
+    },
+    "flashlight": {
+      "station": "craft_bench",
+      "category": "Модули",
+      "name": "Тактический фонарь",
+      "input": {
+        "iron": 4,
+        "copper": 2,
+        "parts": 1
+      },
+      "output": "flashlight",
+      "qty": 1,
+      "ms": 12000
+    },
+    "head_mount": {
+      "station": "craft_bench",
+      "category": "Экипировка",
+      "name": "Крепление для фонаря",
+      "input": {
+        "iron": 2,
+        "parts": 1
+      },
+      "output": "head_mount",
+      "qty": 1,
+      "ms": 8000
     },
     "helmet1": {
       "station": "craft_bench",
@@ -1656,6 +1701,44 @@
         "hp": 35,
         "accuracy": 0.13
       }
+    ],
+    "head_mount": [
+      {
+        "level": 0,
+        "name": "Крепление для фонаря",
+        "variant": "balanced",
+        "specialization": "balanced"
+      },
+      {
+        "level": 0,
+        "name": "Крепление для фонаря",
+        "variant": "balanced",
+        "specialization": "balanced"
+      },
+      {
+        "level": 0,
+        "name": "Крепление для фонаря",
+        "variant": "balanced",
+        "specialization": "balanced"
+      },
+      {
+        "level": 0,
+        "name": "Крепление для фонаря",
+        "variant": "balanced",
+        "specialization": "balanced"
+      },
+      {
+        "level": 0,
+        "name": "Крепление для фонаря",
+        "variant": "balanced",
+        "specialization": "balanced"
+      },
+      {
+        "level": 0,
+        "name": "Крепление для фонаря",
+        "variant": "balanced",
+        "specialization": "balanced"
+      }
     ]
   },
   "upgradeCosts": {
@@ -2553,6 +2636,8 @@
       "bunker030",
       "campaign031",
       "equipment032",
+      "headModules033",
+      "recovery033",
       "identity027",
       "saveVersion"
     ],
@@ -2579,6 +2664,8 @@
       "bunker030": 1,
       "campaign031": 1,
       "equipment032": 1,
+      "headModules033": 1,
+      "recovery033": 1,
       "identity027": 1
     },
     "registeredModules": [
@@ -3184,6 +3271,7 @@
       "daylight",
       "fixtures",
       "active",
+      "doorLeaks",
       "droneActive",
       "drawFixtures",
       "illuminate",
@@ -3326,6 +3414,8 @@
       "isBroken",
       "closedDoors",
       "damage",
+      "applyRepair",
+      "applyUpgrade",
       "start",
       "stop",
       "repairStep",

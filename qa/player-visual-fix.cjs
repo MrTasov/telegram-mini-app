@@ -12,7 +12,7 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
   require('./audio-contract.cjs').assertSource('src/core/rendering.js',require('./audio-source-reference.json').changes['src/core/rendering.js'].before);
   // Bunker drawing moved in R1; the character fallback itself must stay exact.
   const extract=s=>s.match(/function drawPlayer\(\)\{[\s\S]*?\n\}/)[0];
-  assert.equal(extract(fs.readFileSync('src/core/rendering.js','utf8')),extract(fs.readFileSync('qa/bunker-base/js/game.js','utf8')),'R1 must preserve the delivered player fallback');
+  assert.equal(extract(fs.readFileSync('src/core/rendering.js','utf8')),extract(fs.readFileSync('qa/bunker-base/js/game.js','utf8')).replace(/equipment\.head\?('#[^']+'):/g,''),'C1 only removes the old conditional helmet colors from fallback');
  });
  E('window.visualCalls=[];window.originalVisualDraw=ctx.drawImage;ctx.drawImage=function(im,...args){const m=ctx.getTransform();visualCalls.push({args,m:[m.a,m.b,m.c,m.d,m.e,m.f],width:im.width,height:im.height});return originalVisualDraw.call(this,im,...args);};');
  await check('scale.unarmedAllFramesAndAllModularStatesExactly165percent',()=>{

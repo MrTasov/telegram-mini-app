@@ -1,41 +1,50 @@
-# LAST BASE 0.32.1 — Stage A/B Corrective
+# LAST BASE 0.33.0 — Stage C1
 
-Separate GitHub-ready patch based on delivered **0.32.0 Stage B**. Implements the
-user's manual-review corrections: compact Objectives HUD, Command Core, room
-swap, shared physical bodies, quieter audio and improved lighting. Awaiting
-repeat manual acceptance. Development stops here; C1 and later stages are closed.
+GitHub-ready source and built game based on the accepted **0.32.1 Stage A/B
+Corrective**. Includes local light through open doors, a brighter flashlight with
+pose-based origin and local contact/bounce, a craftable Tactical Flashlight head
+module, and the approved C1 recovery / power-bootstrap foundation.
 
-Deploy the extracted root `index.html`, `js/`, `styles/` and `assets/` together.
-The game is already built. Local server: `python -m http.server 8000`.
-Keep the same site origin to retain browser saves. SaveFormat migrates **7 → 8**,
-and the existing migration chain supports earlier saves. Older builds cannot read
-format 8. Exporting the old save before opening the new build allows rollback.
+Extract the ZIP root unchanged. Deploy `index.html`, `js/`, `styles/` and `assets/`
+together. Local preview: `python -m http.server 8000`. Keep the same site origin
+for browser saves; export an old save before switching builds if rollback matters.
 
-Level 1 R3 moves Workshop to the upper-left room and Kitchen to the lower-left.
-Semantic room/equipment identities, queue owners, storage, power and replay
-receipts remain intact. Saved player, drone, guard and map positions in the two
-rooms move once. The outer Level 1 shell, stairs and Core artwork stay in place.
+SaveFormat **8 → 9 → 10** preserves earlier migration steps and all five slots.
+Old worlds retain flashlight access through an installed module; a player without
+head equipment receives a statless mount. New games craft the module and a head
+mount or helmet at the existing workbench. Install/remove through the item/head
+card. Toggle with **F** or **🔦**. Helmet/module artwork is not drawn on the actor;
+existing sprites and animations are unchanged. There is no flashlight durability
+or separate battery.
 
-Stage A campaign and Stage B type → instance / transform contracts are preserved.
-Explicit actor/instance/request IDs and expected revisions remain authoritative;
-the UI owns no unlocks or inventories. Multiplayer readiness remains local
-authority preparation, without network transport. No Building/Placement, damaged
-start, Level 2 or final Chapter 1 is added. Eleven presentation-test objectives
-extend the existing two-chapter fixture; no new mandatory gate or reward.
+Normal New Game does **not** apply the damage preset. C1 provides an explicit,
+inactive bootstrap preview factory for recovery testing. No C2 Chapter 1,
+Building/Placement, Level 2, or Farm/Animals restart is included. The existing
+Level 1 R3 layout, permanent Command Core, eleven test objectives, Stage A campaign
+contracts and eighteen fixed Stage B instances remain intact.
 
-Development: `npm ci`, `npm run build`, `npm test`, `npm run test:corrective`,
-`npm run bench:corrective`. The last command compares the immutable delivered
-0.32.0 fixture, including its original audio. Native Canvas QA uses Node 20+
-and the locked `@napi-rs/canvas` dependency. Audio reproduction requires numpy:
-apply `tools/corrective-audio.py` after any original audio preparation.
+The existing world owners still hold HP, repair credit, inventories, jobs, fuel
+and battery state. Recovery and wearable actions use actor/instance/request IDs,
+expected revisions and bounded saved receipts. This is preparation for multiple
+players; network multiplayer is not implemented.
 
-See `STAGE_AB_CORRECTIVE_REPORT_RU.md`,
-`docs/STAGE_AB_CORRECTIVE_CONTRACT_RU.md` and
-`docs/COMMAND_CORE_UI_CONTRACT.md`. Earlier reports, source references and
-baseline fixtures are historical and remain included. Current validation is
-`qa/results/summary.json`; current performance is
-`qa/results/stage-ab-performance.json`.
+Development (Node 20+):
 
-QA uses modeled DOM/WebAudio and native Canvas2D. It does not certify native
-browser/Telegram layout, physical touch response or subjective audio quality.
-Those checks remain part of the user's repeat manual review.
+```sh
+npm ci
+npm run build
+npm test
+npm run test:c1
+npm run bench:c1
+npm run package:c1
+```
+
+`bench:c1` compares the immutable delivered 0.32.1 executable in matching warmed
+scenes, including moving lights and open doors. QA uses modeled DOM/WebAudio and
+native Canvas2D; it does not substitute for a browser, Telegram or phone review.
+
+Read `STAGE_C1_REPORT_RU.md` for results, migration details, manual checks and the
+explicit preview command. The approved Roadmap remains unchanged in `docs/`.
+Earlier reports and immutable QA fixtures are retained as history.
+
+**Development stops after C1. C2 has not started.**

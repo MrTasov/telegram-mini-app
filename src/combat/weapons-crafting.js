@@ -27,11 +27,14 @@ window.V010Combat=(() => {
   }
   const MODULES={magazine:{type:'magazine_module',label:'Магазин',unlock:null}};
   Object.assign(ITEM,{
-    helmet1:{name:'Тактический шлем',icon:'🪖',equip:'head',level:1},
+    helmet1:{name:'Тактический шлем',icon:'🪖',equip:'head',level:1,moduleSlots:['flashlight']},
+    head_mount:{name:'Крепление для фонаря',icon:'🔦',equip:'head',moduleSlots:['flashlight'],stats:{},upgrades:{maxLevel:0,cost:{},rarePerLevel:0},description:'Лёгкое головное крепление со слотом фонаря. Не даёт брони или бонусов.'},
     advanced_parts:{name:'Редкие компоненты',icon:'🔧'},
     magazine_module:{name:'Увеличенный магазин',icon:'▥'}
   });
   Object.assign(V09Craft.recipes,{
+    flashlight:{station:'craft_bench',category:'Модули',name:'Тактический фонарь',input:{iron:4,copper:2,parts:1},output:'flashlight',qty:1,ms:12000},
+    head_mount:{station:'craft_bench',category:'Экипировка',name:'Крепление для фонаря',input:{iron:2,parts:1},output:'head_mount',qty:1,ms:8000},
     helmet1:{station:'craft_bench',category:'Экипировка',name:'Тактический шлем',input:{iron:12,copper:4,parts:2},output:'helmet1',qty:1,ms:22000},
     magazine_module:{station:'craft_bench',category:'Модули',name:'Увеличенный магазин',input:{iron:6,copper:2,parts:1},output:'magazine_module',qty:1,ms:15000},
   });
@@ -51,11 +54,12 @@ window.V010Combat=(() => {
     return item;
   }
   function ensure(item){
-    if(item&&(GUNS[item.type]||ITEM[item.type]?.equip)&&!item.uid)item.uid='gear-'+nextUid++;
+    if(item&&(GUNS[item.type]||ITEM[item.type]?.equip||ITEM[item.type]?.moduleSlot)&&!item.uid)item.uid='gear-'+nextUid++;
+    if(item?.attachments?.flashlight)ensure(item.attachments.flashlight);
     return initializeFields(item);
   }
   function itemView(item){return item?initializeFields({...item,...(item.modules?{modules:{...item.modules}}:{})}):null;}
-  function allItems(){return [...(window.V0161Upgrade?.slots||[]).filter(Boolean),...(window.V013Inventory?.items||[]).filter(Boolean),...bag.filter(Boolean),...Object.values(equipment).filter(Boolean),...storageChests.flatMap(c=>c.items.filter(Boolean))];}
+  function allItems(){const roots=[...(window.V0161Upgrade?.slots||[]).filter(Boolean),...(window.V013Inventory?.items||[]).filter(Boolean),...bag.filter(Boolean),...Object.values(equipment).filter(Boolean),...storageChests.flatMap(c=>c.items.filter(Boolean))];return roots.flatMap(i=>[i,...Object.values(i.attachments||{})]);}
   function migrateItems(legacy){
     const seen=new Set();let largest=nextUid;
     for(const item of allItems()){
@@ -204,7 +208,7 @@ window.V010Combat=(() => {
     const note=document.createElement('p');note.className='v010UpgradeNote';I18n.assign(note,"textContent",'Без случайных провалов. Материалы берутся из рюкзака и складов базы. Улучшение HP не восстанавливает здоровье.');body.append(note);
   }
   function openWorkshop(){if(window.V0161Upgrade)return V0161Upgrade.open();if(!inWorkshop()){message('Улучшения доступны в мастерской');return false;}renderWorkshop();openOverlay(upgradeOverlay);return true;}
-  function validateItem(item){if(!item)return true;if(ITEM[item.type]?.turret&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==ITEM[item.type].drone?.instanceId||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,maxUpgradeLevel(item)))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.magazineType!==undefined&&(!GUNS[item.type]?.magazineTypes||(item.magazineType!==null&&!V09Craft.acceptsMagazine(item.type,item.magazineType))))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,gunSpec(item).mag)))return false;return true;}
+  function validateItem(item){if(!item)return true;if(item.attachments!==undefined&&window.GameHeadModules?.validateItem(item)!==true)return false;if(ITEM[item.type]?.turret&&window.V016Turret?.validItem(item)!==true)return false;if(ITEM[item.type]?.robot&&(item.qty!==1||item.robotId!==ITEM[item.type].drone?.instanceId||item.robotData!==undefined))return false;if(item.type==='fish'&&item.fishGrams!==undefined&&(!Number.isInteger(item.fishGrams)||item.fishGrams<item.qty||item.fishGrams>item.qty*2000))return false;const i=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;if(item.uid!==undefined&&(typeof item.uid!=='string'||item.uid.length>80))return false;if(item.level!==undefined&&!i(item.level,0,maxUpgradeLevel(item)))return false;if(item.variant!==undefined&&!['balanced','sturdy','light'].includes(item.variant))return false;if(item.specialization!==undefined&&!['balanced','speed','vitality'].includes(item.specialization))return false;if(item.modules!==undefined&&(!GUNS[item.type]||!item.modules||Array.isArray(item.modules)||Object.entries(item.modules).some(([k,v])=>!MODULES[k]||v!==true)))return false;if(item.magazineType!==undefined&&(!GUNS[item.type]?.magazineTypes||(item.magazineType!==null&&!V09Craft.acceptsMagazine(item.type,item.magazineType))))return false;if(item.rounds!==undefined&&(!GUNS[item.type]||!i(item.rounds,0,gunSpec(item).mag)))return false;return true;}
   function capture(){migrateItems(null);return {schema:1,nextUid};}
   function validate(d){if(!d||d.schema!==1||!Number.isInteger(d.nextUid)||d.nextUid<1||d.nextUid>100000000)throw Error('Некорректные данные экипировки');return true;}
   function restore(d){if(d){validate(d);nextUid=d.nextUid;}else nextUid=1;reloading=null;practice=false;lastUid=null;burst=0;const legacy=d?null:V09Craft.capture().magazines;migrateItems(legacy);refreshStats();syncAmmo();updateAmmoHud();}

@@ -30,7 +30,7 @@ window.V011UI=(()=>{
     }).join('')+'</div>';
   }
   function cardHTML(item){
-    const def=ITEM[item.type],gear=!!(def.equip&&def.equip!=='backpack'||V09Craft.weapons[item.type]);
+    const def=ITEM[item.type],gear=!!(def.equip&&def.equip!=='backpack'&&combat.maxUpgradeLevel(item)>0||V09Craft.weapons[item.type]);
     return '<div class="v011ItemHero"><div class="v011ItemArt">'+itemIconHTML(item.type)+'</div><div class="v011ItemInfo"><div class="v011ItemKicker">'+esc(def.equip?EQUIP_LABELS[def.equip]:def.hand?'Снаряжение':'Предмет')+'</div><b class="v011ItemName">'+esc(def.name)+'</b><div class="v011ItemMeta">'+(gear?'Улучшение <strong>+'+(item.level||0)+' / '+V010Combat.maxUpgradeLevel(item)+'</strong>':'Количество <strong>'+(item.qty||1)+'</strong>')+'</div><p class="v011ItemDescription">'+esc(def.description||purposes[item.type]||(def.equip==='backpack'?'Расширяет место для предметов и запасов.':'Материал для производства и развития базы.'))+'</p></div></div>'+statsHTML(item);
   }
   const locationItems=where=>inv.list(where);

@@ -50,7 +50,7 @@ for(const weapon of ['rifle_ak74','rifle_m4'])for(const capacity of [0,30,60])fo
 for(const count of [0,9,120,999])check('weapon.reserve.'+count,()=>{
  equip('rifle_ak74');E(`removeItem('ammo',bagCount('ammo'));addItem('ammo',${count});updateAmmoHud();`);assert.equal(node('hudReserve').textContent,String(count));
 });
-for(const lang of ['ru','en'])for(const [type,en,ru]of [['axe','Axe','Топор'],['pickaxe','Pickaxe','Кирка'],['hammer','Hammer','Молот'],['remote','Base remote','Пульт базы'],['flashlight','Flashlight','Фонарик'],['fishing_rod','Fishing rod','Удочка']])check(`tool.${lang}.${type}`,()=>{
+for(const lang of ['ru','en'])for(const [type,en,ru]of [['axe','Axe','Топор'],['pickaxe','Pickaxe','Кирка'],['hammer','Hammer','Молот'],['remote','Base remote','Пульт базы'],['flashlight','Tactical Flashlight','Тактический фонарь'],['fishing_rod','Fishing rod','Удочка']])check(`tool.${lang}.${type}`,()=>{
  E(`I18n.setLanguage('${lang}')`);equip(type);assert.equal(node('equippedItemName').textContent,lang==='ru'?ru:en);assert.equal(node('heldItemName').hidden,false);assert.equal(node('ammoHud').hidden,true);assert.equal(node('hudReserve').hidden,true);assert.equal(node('heldItemName').dataset.firearm,'false');
 });
 check('equipped.emptyHandsHidden',()=>{E('activeHandSlot=null;renderQuickSlots();updateAmmoHud();');assert.equal(E('heldItem()'),null);assert.equal(node('heldItemName').hidden,true);});

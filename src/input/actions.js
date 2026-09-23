@@ -18,6 +18,7 @@ window.GameActions=(()=>{
       case 'WORLD_TARGET':return point(data)&&!!window.V0105?.tapWorld(data.x,data.y);
       case 'INVENTORY':renderBag();openOverlay(el('inventoryOverlay'));return true;
       case 'MAP':window.V010Camera?.showMap();return true;
+      case 'FLASHLIGHT':return !!window.GameHeadModules?.request('toggle',{value:!flashlightOn}).ok;
       case 'SETTINGS':openOverlay(el('settingsOverlay'));return true;
       default:return GameSimulation.execute(command);
     }

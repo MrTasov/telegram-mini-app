@@ -214,7 +214,7 @@ const ITEM={
  fish:{name:'Свежая рыба',icon:'🐟',stackMax:20},
   rifle_ak74:{name:'АК-74',icon:'🔫',hand:true},
   axe:{name:'Топор',icon:'🪓',hand:true},
-  flashlight:{name:'Фонарик',icon:'🔦',hand:true},
+  flashlight:{name:'Тактический фонарь',icon:'🔦',hand:true,moduleSlot:'flashlight',description:'Модуль для головного снаряжения. Установите в слот фонаря; включение — кнопка 🔦 или F.'},
   wood:{name:"Дерево",icon:"🪵"},
   metal:{name:"Металл",icon:"🔩"},
   parts:{name:"Детали",icon:"⚙️"},
@@ -273,7 +273,7 @@ let bag=[
   {type:'grain',qty:100},
   {type:'rifle_ak74',qty:1},
   {type:'axe',qty:1},
-  {type:'flashlight',qty:1}
+  null // Former starter light slot stays empty; preserve other initial slot positions.
 ];
 let storageChests=[
   {name:"Топливо",icon:"⛽",items:[]},
@@ -306,9 +306,9 @@ const scavenges=[
 ];
 
 const HAND_TYPES=['rifle_ak74','axe','flashlight','fishing_rod','hammer'];
-let handSlots=['rifle_ak74','axe','flashlight',null,null];
+let handSlots=['rifle_ak74','axe',null,null,null];
 let activeHandSlot=0;
-let flashlightOn=true;
+let flashlightOn=false;
 let assigningHandType=null;
 let starterPending=[];
 const handSvg={
@@ -346,7 +346,7 @@ function selectHandSlot(index){
   if(!handSlots[index]){message('Назначьте предмет из рюкзака в этот слот');return;}
   const same=activeHandSlot===index;
   activeHandSlot=index;firing=false;
-  if(heldItem()==='flashlight')flashlightOn=same?!flashlightOn:true;
+  if(heldItem()==='flashlight'&&window.GameHeadModules?.available())GameHeadModules.request('toggle',{value:same?!flashlightOn:true});
   // Work is cancelled by movement, exhaustion, or loss of its tool.
   renderQuickSlots();updateAmmoHud();queueGameSave();
 }

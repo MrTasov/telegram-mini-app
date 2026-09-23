@@ -1,5 +1,5 @@
 {
-  "version": "0.32.1",
+  "version": "0.33.0",
   "passed": 1,
   "failed": 0,
   "scope": "Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.",
@@ -9,7 +9,9 @@
       "stackMax",
       "caliber",
       "drone",
-      "turret"
+      "turret",
+      "moduleSlot",
+      "moduleSlots"
     ],
     "weapons": [
       "category",
@@ -106,6 +108,7 @@
     ],
     "V0151Station": [],
     "V016Lighting": [
+      "doorLeaks",
       "droneMetrics"
     ],
     "V016Turret": [
@@ -133,7 +136,9 @@
     "V018Build": [
       "health",
       "definition",
-      "maxLevel"
+      "maxLevel",
+      "applyRepair",
+      "applyUpgrade"
     ]
   },
   "error": null,

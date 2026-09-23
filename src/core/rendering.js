@@ -363,8 +363,8 @@ function drawPlayer(){
   }else{
     ctx.beginPath();ctx.moveTo(3,-11);ctx.lineTo(11,-13-bob);ctx.moveTo(3,11);ctx.lineTo(11,13+bob);ctx.stroke();
   }
-  ctx.fillStyle=equipment.head?'#637258':'#cca784';ctx.beginPath();ctx.arc(1,0,8,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=equipment.head?'#414d3d':'#483c30';ctx.beginPath();ctx.arc(-1,0,7,Math.PI*.5,Math.PI*1.5);ctx.fill();
+  ctx.fillStyle='#cca784';ctx.beginPath();ctx.arc(1,0,8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#483c30';ctx.beginPath();ctx.arc(-1,0,7,Math.PI*.5,Math.PI*1.5);ctx.fill();
   ctx.restore();
   }
   if(canFire()&&rightAimActive){

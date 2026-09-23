@@ -113,8 +113,8 @@ window.GameInput=(()=>{
       if(!e.repeat){e.preventDefault();escape();}return;
     }
     if(editable(e.target)||editable(document.activeElement))return;
-    const key=e.code||({r:'KeyR',i:'KeyI',m:'KeyM',c:'KeyC'}[e.key?.toLowerCase()]||(/^[1-5]$/.test(e.key)?'Digit'+e.key:''));
-    const command={KeyR:'RELOAD',KeyI:'INVENTORY',KeyM:'MAP',KeyC:'SNEAK'}[key];
+    const key=e.code||({r:'KeyR',i:'KeyI',m:'KeyM',c:'KeyC',f:'KeyF'}[e.key?.toLowerCase()]||(/^[1-5]$/.test(e.key)?'Digit'+e.key:''));
+    const command={KeyR:'RELOAD',KeyI:'INVENTORY',KeyM:'MAP',KeyC:'SNEAK',KeyF:'FLASHLIGHT'}[key];
     const slot=/^Digit[1-5]$/.test(key)?Number(key.slice(-1))-1:null;
     if(!command&&slot===null)return;
     if(e.repeat){e.preventDefault();return;}

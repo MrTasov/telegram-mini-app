@@ -5,8 +5,11 @@ window.V015Base=(()=>{
     const levels=Object.freeze([0,10000,20000,40000,60000,100000]);
     const costs=Object.freeze({2:{concrete:20,iron:5},3:{concrete:40,iron:10},4:{concrete:60,iron:15},5:{concrete:100,iron:25}});
     const repair=Object.freeze({material:'concrete',hpPerUnit:1000,hpPerMs:1,maxTickMs:100});
-    const profile={levels,costs,repair,armor:0,resistances:{},stages:[0,.2,.5,.9]};
-    const types={wall:profile,gate:profile,automatic:profile,house:profile,bath:profile};
+    // Independent immutable definitions: changing a door rule can never change
+    // a wall. Released levels 1–5, costs and repair conversion remain exact.
+    const profile=(typeId,family)=>Object.freeze({typeId,family,recovery:'recoverable',levels:Object.freeze([...levels]),costs:Object.freeze(Object.fromEntries(Object.entries(costs).map(([k,v])=>[k,Object.freeze({...v})]))),repair:Object.freeze({...repair}),armor:0,resistances:Object.freeze({}),stages:Object.freeze([0,.2,.5,.9])});
+    // The registry remains extensible for definition-driven content/test ports.
+    const types={wall:profile('wall_section','wall'),gate:profile('perimeter_gate','door'),automatic:profile('bunker_sliding_door','door'),house:profile('house_door','door'),bath:profile('bathroom_door','door')};
     const definition=type=>types[type];
     function stage(o,type='wall'){const thresholds=definition(type).stages,p=o.hp/o.maxHp;for(let i=0;i<thresholds.length;i++)if(p<=thresholds[i])return thresholds.length-i;return 0;}
     function damage(o,amount,type='wall',damageType='physical'){

@@ -150,7 +150,7 @@ executeInteraction=function(target){
   GameMovement.openUI();
   if(target.kind==='v09room_switch')v09ToggleRoom(target.room);
   if(target.kind==='v09door'){
-    const door=v09Doors.find(d=>d.id===target.id);door.manual=true;door.away=0;message(devicePowered('door_'+door.room)?'Дверь открывается':'Дверь открыта вручную');queueGameSave();
+    GameRecovery.request(target.id,'manualOpen');
   }
   if(target.kind==='v09fuel'||target.kind==='v09generator')v09OpenGenerator(target.kind==='v09fuel');
   if(target.kind==='v09battery')message('Резервная батарея — подключим в следующем обновлении');

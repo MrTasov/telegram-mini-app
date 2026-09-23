@@ -20,7 +20,9 @@ GameSave.seal({
     "base.construction",
     "bunker.level1",
     "campaign.foundation",
-    "equipment.instances"
+    "equipment.instances",
+    "inventory.head-modules",
+    "base.recovery"
   ],
   "decode": [
     "save.slots",
@@ -44,7 +46,9 @@ GameSave.seal({
     "base.construction",
     "bunker.level1",
     "campaign.foundation",
-    "equipment.instances"
+    "equipment.instances",
+    "inventory.head-modules",
+    "base.recovery"
   ],
   "restore": [
     "save.slots",
@@ -69,7 +73,9 @@ GameSave.seal({
     "base.construction",
     "bunker.level1",
     "campaign.foundation",
-    "equipment.instances"
+    "equipment.instances",
+    "inventory.head-modules",
+    "base.recovery"
   ]
 });
 GameState.seal();

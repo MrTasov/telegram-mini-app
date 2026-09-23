@@ -109,7 +109,7 @@ const V010Energy=(()=>{
   };
   function openBattery(){
     const overlay=v09Overlay('v010BatteryOverlay','Энергоблок · резервная батарея'),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());
-    const row=document.createElement('div');row.className='v09DeviceRow';const text=document.createElement('div');I18n.assign(text,"innerHTML",'<strong>Резервное питание</strong><small data-power="battery-flow"></small>');row.appendChild(text);const button=v09Button('',()=>{battery.enabled=!battery.enabled;v09PowerChanged();},'v09DeviceToggle');button.dataset.power='battery-toggle';row.appendChild(button);body.appendChild(row);
+    const row=document.createElement('div');row.className='v09DeviceRow';const text=document.createElement('div');I18n.assign(text,"innerHTML",'<strong>Резервное питание</strong><small data-power="battery-flow"></small>');row.appendChild(text);const button=v09Button('',()=>GameRecovery.request('battery','battery',{value:!battery.enabled}),'v09DeviceToggle');button.dataset.power='battery-toggle';row.appendChild(button);body.appendChild(row);
     const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Ёмкость: 1,5 кВт·ч. Зарядка до 3 кВт от свободной мощности генератора, отдача до 6 кВт. Батарея поддерживает базу при остановке генератора и помогает при большой нагрузке. Выключатель энергоблока не отключает резерв.');body.appendChild(note);
     const remote=v09Button('Открыть пульт базы',v09OpenPowerRemote);body.appendChild(remote);v09RefreshPowerUI();openOverlay(overlay);
   }

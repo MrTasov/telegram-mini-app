@@ -8,7 +8,7 @@ const reset=()=>E("restoreGameProgress(GameSave.newGameData());GameFlow.resume()
 const core=()=>r.doc.getElementById('commandCoreOverlay');
 const overview=(group,id)=>J('GameBaseOverview.snapshot()').find(g=>g.id===group).rows.find(v=>v.id===id);
 function originalReset(){old.eval("restoreGameProgress(GameSave.newGameData());GameFlow.resume();menuOpen=false;playerDead=false;document.hidden=false;scene='bunker';player.x=1210;player.y=675;stopControls(true);");}
-function strip(d){d=require('./stage-ab-contract.cjs').previousLayout(d);delete d.equipment032;delete d.saveVersion;delete d.campaign031;delete d.gameVersion;return d;}
+function strip(d){d=require('./stage-c1-contract.cjs').project(d);d=require('./stage-ab-contract.cjs').previousLayout(d);delete d.equipment032;delete d.saveVersion;delete d.campaign031;delete d.gameVersion;return d;}
 for(const point of ['fresh','power','ore','completed'])check('migration.original_A.'+point,()=>{
  originalReset();if(point!=='fresh')old.eval('V09Power.running=true;GameCampaign.refresh(true)');
  if(['ore','completed'].includes(point))old.eval("V010.emit('mined',{type:'iron_ore',qty:1});V010Progression.record('produced',7,'iron');");

@@ -8,7 +8,8 @@ const load=r=>r.eval('Promise.all(Object.entries(AssetManifest.images).filter(([
 const snapshot=r=>require('./corrective-contract.cjs').snapshot(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,firing,scene})'));
 async function main(){
  const b=make('qa/pre-equipment/index.html'),r=make(),E=s=>r.eval(s),B=s=>b.eval(s);await load(r);await load(b);
- const raw=B('JSON.stringify(captureGameProgress())');
+ // Align the historical movement fixture's now-empty flashlight slot.
+ const fixture=JSON.parse(B('JSON.stringify(captureGameProgress())'));for(const list of [fixture.bag,fixture.quick013.items])for(let i=0;i<list.length;i++)if(list[i]?.type==='flashlight')list[i]=null;fixture.handSlots=fixture.handSlots.map(t=>t==='flashlight'?null:t);const raw=JSON.stringify(fixture);
  const init=`restoreGameProgress(decodeGameProgress(${JSON.stringify(raw)}));for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);V014Controls.stopRoute();stopControls(true);V010World.setSneaking(false);el('fade').classList.remove('show');scene='surface';player.wallLevel=false;player.x=800;player.y=850;player.walkAnimation=0;player.moving=false;player.running=false;player.aimX=1;player.aimY=0;menuOpen=false;playerDead=false;document.hidden=false;frameScale=1;zombies=[];V013City.setFloor(0);`;
  function pair(code){B(code);E(code);}function fresh(code=''){pair(init+code);E('ActorVisuals.pose(null)');}function same(){assert.deepEqual(snapshot(r),snapshot(b));}
  function step(ms=1000/60,code='updatePlayer();'){for(const q of [b,r]){q.advance(ms);q.eval(code);}}
@@ -30,9 +31,9 @@ async function main(){
   assert.deepEqual(frames.map(f=>f.gear.position),[[399.75,546.25],[396.875,545.75],[397.125,546],[397.375,546.75],[398.125,546.75],[398.5,546.25],[397.25,546.25],[396.625,546.5],[396.625,546.25],[397.5,546],[400.875,546],[402.875,546.25]]);
   for(const f of [mod.items.rifle_ak74.idle,...frames]){assert.equal(f.gear.angle,0);assert.equal(f.gear.scale,.60);assert.equal(f.cap,null);assert.ok(f.gear.front&&f.gear.rear);assert.deepEqual(f.gear.muzzle.map((v,i)=>v-f.gear.position[i]),[0,120]);}
  });
- await check('save.full029PayloadAndRoundtripPreserved',()=>{fresh();same();pair('restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())))');same();assert.equal(E('captureGameProgress().saveVersion'),8);});
+ await check('save.full029PayloadAndRoundtripPreserved',()=>{fresh();same();pair('restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())))');same();assert.equal(E('captureGameProgress().saveVersion'),E('SaveFormat.version'));});
  for(const mode of ['PC','MOBILE'])for(const item of Object.keys(mod.items))await check('movement.'+mode+'.'+item,()=>{
-  fresh(`GameInput.setMode('${mode}');addItem('${item}',1);V013Inventory.equip('${item}');moveX=1;moveY=0;movePower=1;`);const frames=new Set();
+  fresh(`GameInput.setMode('${mode}');addItem('${item}',1${item==='flashlight'?",{uid:'qa-movement-light'}":''});V013Inventory.equip('${item}');moveX=1;moveY=0;movePower=1;`);const frames=new Set();
   for(let i=0;i<78;i++){step();const p=plain(E(`ActorVisuals.pose('${item}')`));assert.equal(p.mode,'walk');frames.add(p.frame);E('drawPlayer()');if(i%13===0)same();}
   assert.equal(frames.size,12);assert.equal(E('player.radius'),10);
   pair('movePower=0');step();assert.equal(E(`ActorVisuals.pose('${item}').mode`),'idle');same();
@@ -110,7 +111,7 @@ async function main(){
  });
  for(const viewport of [{id:'pc',width:1280,height:800,maxTouchPoints:0},{id:'portrait',width:390,height:844,maxTouchPoints:5},{id:'landscape',width:844,height:390,maxTouchPoints:5}])await check('viewport.'+viewport.id+'.renderAndSavedStateUnchanged',async()=>{
   const q=make('index.html',viewport);await load(q);q.eval(init);for(const item of Object.keys(mod.items))for(const which of ['surface','bunker']){
-   q.eval(`scene='${which}';player.x=${which==='surface'?800:725};player.y=${which==='surface'?850:650};addItem('${item}',1);V013Inventory.equip('${item}');updateCamera();restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())));draw();`);const prev=snapshot(q);q.eval('draw()');assert.deepEqual(snapshot(q),prev);
+   q.eval(`scene='${which}';player.x=${which==='surface'?800:725};player.y=${which==='surface'?850:650};addItem('${item}',1${item==='flashlight'?",{uid:'qa-movement-light'}":''});V013Inventory.equip('${item}');updateCamera();restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())));draw();`);const prev=snapshot(q);q.eval('draw()');assert.deepEqual(snapshot(q),prev);
   }assert.deepEqual(q.errors,[]);
  });
  const bytes=mod.preload.reduce((sum,id)=>sum+catalog.images[id].size[0]*catalog.images[id].size[1]*4,0);

@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.32.1",
+  "version": "0.33.0",
   "private": true,
-  "description": "LAST BASE 0.32.1 — Stage A/B corrective: HUD, Core, room migration, physical bodies, audio and lighting.",
+  "description": "LAST BASE 0.33.0 \u2014 Stage C1 recovery and power bootstrap; local lighting and craftable head flashlight.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -24,7 +24,10 @@
     "bench:equipment": "node --expose-gc qa/stage-b-performance.cjs",
     "test:corrective": "node qa/stage-ab-corrective.cjs && node qa/stage-ab-light-audio.cjs",
     "bench:corrective": "node --expose-gc qa/stage-ab-performance.cjs",
-    "package:corrective": "node tools/package-stage-ab.cjs"
+    "package:corrective": "node tools/package-stage-ab.cjs",
+    "test:c1": "node qa/stage-c1-light-modules.cjs && node qa/stage-c1-recovery.cjs",
+    "bench:c1": "node --expose-gc qa/stage-c1-performance.cjs",
+    "package:c1": "node tools/package-stage-c1.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

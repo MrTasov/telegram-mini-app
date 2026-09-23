@@ -3,7 +3,8 @@
 const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 exports.assertSource=(file,expected)=>{
  const refs=require('./campaign-source-reference.json'),change=refs.changes[file];
- const current=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+ let current=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+ const c1=require('./stage-c1-source-reference.json').changes[file];if(c1){assert.equal(current,c1.after,file+' C1 output');current=c1.before;}
  const corrective=require('./stage-ab-source-reference.json').changes[file];
  if(corrective)assert.equal(current,corrective.after,file+' A/B corrective output');
  const actual=corrective?corrective.before:current;

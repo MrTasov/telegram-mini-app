@@ -1,0 +1,339 @@
+{
+  "version": "0.33.0",
+  "baseline": "immutable accepted 0.32.1 A/B Corrective",
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "mode": "Modeled DOM/WebAudio, native Canvas2D, DPR 1, zoom .65, 120 measured frames per scene/version; alternating AB/BA"
+  },
+  "rows": [
+    {
+      "viewport": "390x844",
+      "scene": "quiet_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 16.43366100000003,
+        "p95Ms": 22.951498000000356,
+        "meanMs": 17.304668033333336
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 16.395800999999665,
+        "p95Ms": 20.2916639999994,
+        "meanMs": 16.702988866666615
+      },
+      "deltaMs": -0.03786000000036438,
+      "percent": -0.23038080194281996
+    },
+    {
+      "viewport": "390x844",
+      "scene": "stress_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 30.48093400000107,
+        "p95Ms": 38.16473899999983,
+        "meanMs": 31.482731950000122
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 30.863039999996545,
+        "p95Ms": 36.76576099999875,
+        "meanMs": 31.12719714166659
+      },
+      "deltaMs": 0.3821059999954741,
+      "percent": 1.2535901950887052
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 120,
+        "p50Ms": 18.85667100000137,
+        "p95Ms": 22.862246000000596,
+        "meanMs": 19.376487258333206
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 18.363231999999698,
+        "p95Ms": 25.67299400000047,
+        "meanMs": 20.12695886666652
+      },
+      "deltaMs": -0.49343900000167196,
+      "percent": -2.6167874488643106
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 22.339412000001175,
+        "p95Ms": 28.021166000002268,
+        "meanMs": 23.053925708333676
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 24.499927999997453,
+        "p95Ms": 32.07783700000073,
+        "meanMs": 25.314112341667016
+      },
+      "deltaMs": 2.160515999996278,
+      "percent": 9.67131990759722
+    },
+    {
+      "viewport": "390x844",
+      "scene": "night_combined_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 27.156065999995917,
+        "p95Ms": 31.713167000001704,
+        "meanMs": 27.68987936666702
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 35.34716199999821,
+        "p95Ms": 41.48537099999521,
+        "meanMs": 36.224042008333285
+      },
+      "deltaMs": 8.19109600000229,
+      "percent": 30.163043498286978
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_door_spill",
+      "before": {
+        "samples": 120,
+        "p50Ms": 17.996608000001288,
+        "p95Ms": 20.967141999994055,
+        "meanMs": 18.278816408333476
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 17.43968500000483,
+        "p95Ms": 20.716441000004124,
+        "meanMs": 17.992866916666753
+      },
+      "deltaMs": -0.5569229999964591,
+      "percent": -3.0945998267919106
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "quiet_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 33.96394600000349,
+        "p95Ms": 38.505709999997634,
+        "meanMs": 34.358599049999675
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 33.83798899999965,
+        "p95Ms": 41.81153700000141,
+        "meanMs": 35.03905549166678
+      },
+      "deltaMs": -0.12595700000383658,
+      "percent": -0.3708550237473074
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "stress_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 52.895103000002564,
+        "p95Ms": 59.9695470000006,
+        "meanMs": 53.58129429166681
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 52.92384000000311,
+        "p95Ms": 60.381546000004164,
+        "meanMs": 53.72030941666574
+      },
+      "deltaMs": 0.028737000000546686,
+      "percent": 0.05432828063600681
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 120,
+        "p50Ms": 42.476683000000776,
+        "p95Ms": 47.18818699999247,
+        "meanMs": 42.96312171666747
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 43.28511300000537,
+        "p95Ms": 49.063676000005216,
+        "meanMs": 43.92631064999963
+      },
+      "deltaMs": 0.8084300000045914,
+      "percent": 1.9032324157810976
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 43.3103059999994,
+        "p95Ms": 48.48725099999865,
+        "meanMs": 44.13777115833388
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 44.92686500000127,
+        "p95Ms": 50.523824000003515,
+        "meanMs": 45.024396933333264
+      },
+      "deltaMs": 1.616559000001871,
+      "percent": 3.7325042219787052
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "night_combined_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 53.46136300000944,
+        "p95Ms": 63.01455100000021,
+        "meanMs": 54.47382883333339
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 61.94406599999638,
+        "p95Ms": 70.054913999993,
+        "meanMs": 63.08890763333245
+      },
+      "deltaMs": 8.482702999986941,
+      "percent": 15.86697855044481
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_door_spill",
+      "before": {
+        "samples": 120,
+        "p50Ms": 41.687781999993604,
+        "p95Ms": 47.604040999984136,
+        "meanMs": 42.2107571833328
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 42.16252899999381,
+        "p95Ms": 51.002840999979526,
+        "meanMs": 43.04512659166794
+      },
+      "deltaMs": 0.47474700000020675,
+      "percent": 1.1388156846537933
+    }
+  ],
+  "navigation": [
+    {
+      "version": "0.32.1",
+      "reachable": 80,
+      "samples": 80,
+      "p50Ms": 7.482585999998264,
+      "p95Ms": 68.80164200000581,
+      "meanMs": 13.786835399998017
+    },
+    {
+      "version": "0.33.0",
+      "reachable": 80,
+      "samples": 80,
+      "p50Ms": 7.749018999980763,
+      "p95Ms": 75.39918400000897,
+      "meanMs": 14.266148237498783
+    }
+  ],
+  "commands": [
+    {
+      "version": "0.32.1",
+      "samples": 400,
+      "p50Ms": 0.3516300000192132,
+      "p95Ms": 0.491716999997152,
+      "meanMs": 0.37069881999988863
+    },
+    {
+      "version": "0.33.0",
+      "samples": 400,
+      "p50Ms": 0.3722299999790266,
+      "p95Ms": 0.677151000010781,
+      "meanMs": 0.41845186499951526
+    }
+  ],
+  "serialization": [
+    {
+      "version": "0.32.1",
+      "characters": 68791,
+      "utf8Bytes": 69019,
+      "samples": 100,
+      "p50Ms": 0.8186510000086855,
+      "p95Ms": 1.210770000005141,
+      "meanMs": 0.865495870001032
+    },
+    {
+      "version": "0.33.0",
+      "characters": 68897,
+      "utf8Bytes": 69125,
+      "samples": 100,
+      "p50Ms": 0.9447170000057667,
+      "p95Ms": 1.7230080000008456,
+      "meanMs": 1.0266021899986664
+    }
+  ],
+  "heaps": [
+    {
+      "version": "0.32.1",
+      "snapshots": 100,
+      "transientHeapDeltaBytes": 33246560,
+      "postGcHeapDeltaBytes": -891632,
+      "gcAvailable": true
+    },
+    {
+      "version": "0.33.0",
+      "snapshots": 100,
+      "transientHeapDeltaBytes": 34812696,
+      "postGcHeapDeltaBytes": 53296,
+      "gcAvailable": true
+    }
+  ],
+  "campaignPoll": {
+    "closed": {
+      "samples": 400,
+      "p50Ms": 0.04787999999825843,
+      "p95Ms": 0.10954199999105185,
+      "meanMs": 0.058261447499899074
+    },
+    "open": {
+      "samples": 400,
+      "p50Ms": 0.9083530000061728,
+      "p95Ms": 1.4860280000139028,
+      "meanMs": 0.9867795175001811
+    }
+  },
+  "droneMetrics": {
+    "updates": 720,
+    "candidateScans": 8,
+    "rayCasts": 0,
+    "lastX": 479.597275031619,
+    "lastY": 57.603992470665126
+  },
+  "lightingCache": {
+    "shadows": 0,
+    "shadowLimit": 28,
+    "rooms": 16,
+    "roomLimit": 18,
+    "sprites": 5,
+    "spriteLimit": 5,
+    "droneShapes": 1,
+    "droneLimit": 1,
+    "droneBytes": 262144,
+    "width": 1280,
+    "height": 800
+  },
+  "errors": [],
+  "limitations": [
+    "CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.",
+    "Moving-light scenes include continuously changing drone positions and player aim; night scene runs all eight searchlights.",
+    "Command dispatch excludes OS/browser delivery. Navigation covers complete path queries.",
+    "Heap deltas include harness and serialization allocations, not a browser/device memory budget."
+  ],
+  "passed": true
+}

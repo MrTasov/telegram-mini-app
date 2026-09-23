@@ -188,6 +188,16 @@ window.ActorVisuals=(()=>{
     }
     return worldPoint(p,m,player.x,player.y,Math.atan2(player.aimY,player.aimX),recoil);
   }
+  // The light uses the same pose, scale and attachment transform as the prop.
+  // [270,405] is the lens centre in the existing 512px flashlight artwork.
+  function lightPoint(){
+    const item=heldItem(),p=pose(item),g=p?.record?.gear,aim=Math.atan2(player.aimY,player.aimX);
+    if(item==='flashlight'&&g){const dx=(270-g.grip[0])*g.scale*(g.flipX?-1:1)*(g.axisScale?.[0]||1),dy=(405-g.grip[1])*g.scale*(g.axisScale?.[1]||1),a=g.angle||0;
+      return worldPoint(p,[g.position[0]+dx*Math.cos(a)-dy*Math.sin(a),g.position[1]+dx*Math.sin(a)+dy*Math.cos(a)]);}
+    if(V09Craft.weapons[item])return muzzlePoint();
+    // The head module is intentionally not drawn; this is its forehead socket.
+    const forward=8*visualScale;return {x:player.x+Math.cos(aim)*forward,y:player.y+Math.sin(aim)*forward};
+  }
   // The existing visual locomotion phase owns both frames and sound contacts.
   // Never advance a separate timer or use the gameplay noise scheduler for audio.
   function updateAudio(){
@@ -277,5 +287,5 @@ window.ActorVisuals=(()=>{
   // Initial warmup is small; selecting an item warms only its shared carry/work
   // atlases. GameAssets owns every Image and settled promise, including errors.
   void GameAssets.load(cfg.unarmed.idle);
-  return Object.freeze({pose,framePose,renderPose,drawPlayer,drawSleep,muzzlePoint,bodyAngle,worldPoint,impactSample,updateAudio,weaponShot,tracerSegment,drawProjectiles,movementScale,beginRepair,finishRepair,cancelRepair,fishCaught,cancelFishing,fishingVisualPhase,drawFishingLine,config:cfg});
+  return Object.freeze({pose,framePose,renderPose,drawPlayer,drawSleep,muzzlePoint,lightPoint,bodyAngle,worldPoint,impactSample,updateAudio,weaponShot,tracerSegment,drawProjectiles,movementScale,beginRepair,finishRepair,cancelRepair,fishCaught,cancelFishing,fishingVisualPhase,drawFishingLine,config:cfg});
 })();

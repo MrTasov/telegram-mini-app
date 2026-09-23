@@ -47,20 +47,22 @@ window.V018Build=(()=>{
   }
   function closedDoors(){return doorRecords.filter(r=>r.scene==='surface'&&r.object.hp>0&&r.kind==='house'&&r.owner.doorProgress<.88).map(r=>r.object);}
   function stop(notice=''){if(notice==='Ремонт завершён')GameAudio.play('repair');window.ActorVisuals?.finishRepair(job,notice==='Ремонт завершён');job=null;hud.style.display='none';if(notice)message(notice);refresh();}
-  function start(value){
+  function start(value,actorId=GameActors.localId){
+    if(actorId!==GameActors.localId||!GameActors.get(actorId)||GameFlow.paused)return false;
     const r=record(value);if(!near(r)||!held())return false;
     if(r.object.hp>=r.object.maxHp){open(r.id);return false;}
     if(job?.id===r.id)return true;
     if(!r.object.hp&&occupied(r)){message('Освободите место для восстановления');return false;}
     if(credit<=0&&count(definition(r).repair.material)<1){message('Нужен бетон в рюкзаке · 2 камня → 1 бетон в печи');return false;}
     V014Controls.stopRoute();cancelNavigation();cancelChop();cancelSearch();V012Fishing.stop();firing=false;
-    job={id:r.id,x:player.x,y:player.y,scene,ms:0};
+    job={id:r.id,actorId,x:player.x,y:player.y,scene,ms:0};
     window.ActorVisuals?.beginRepair(job,r.object);
     if(el('v018Structure')?.classList.contains('open'))closeOverlay(el('v018Structure'));
     refresh();return true;
   }
   function repairStep(ms){
-    if(!job)return;const r=record(job.id);
+    if(!job||GameFlow.paused)return;const r=record(job.id);
+    if(job.actorId!==GameActors.localId||!GameActors.get(job.actorId)){stop();return;}
     if(!held()||!near(r)||scene!==job.scene||movePower>JOY_DEAD||navigation||Math.hypot(player.x-job.x,player.y-job.y)>.8){stop();return;}
     if(document.hidden)return;
     if(r.object.hp>=r.object.maxHp){stop('Ремонт завершён');return;}
@@ -73,7 +75,8 @@ window.V018Build=(()=>{
       if(o.hp>=o.maxHp){stop('Ремонт завершён');break;}
     }
   }
-  function upgrade(value){
+  function upgrade(value,actorId=GameActors.localId){
+    if(actorId!==GameActors.localId||!GameActors.get(actorId)||GameFlow.paused)return false;
     const r=record(value);if(!near(r)||!held())return false;const o=r.object;
     if(o.hp<o.maxHp){message('Сначала полностью отремонтируйте секцию');return false;}
     if(o.level>=maxLevel(r))return false;
@@ -84,14 +87,14 @@ window.V018Build=(()=>{
     }
     GameAudio.play('upgrade');o.level++;o.maxHp=definition(r).levels[o.level];o.hp=o.maxHp;changed(r,true);refresh(true);message(title(r)+' · уровень '+o.level);return true;
   }
-  const hud=document.createElement('div');hud.id='v018RepairHUD';const hudText=document.createElement('span'),hudStop=v09Button('Стоп',()=>stop());hud.append(hudText,hudStop);document.body.append(hud);
+  const hud=document.createElement('div');hud.id='v018RepairHUD';const hudText=document.createElement('span'),hudStop=v09Button('Стоп',()=>job&&GameRecovery.request(job.id,'stopRepair'));hud.append(hudText,hudStop);document.body.append(hud);
   function open(value){
     const r=record(value);if(!near(r)||!held())return false;selected=r.id;
     const overlay=v09Overlay('v018Structure',title(r)),body=overlay.querySelector('.v09Body');body.replaceChildren();
     const hero=document.createElement('div');hero.className='v018BuildHero';I18n.assign(hero,"innerHTML",itemIconHTML('hammer')+'<div><b id="v018Level"></b><span id="v018HP"></span></div>');body.append(hero);
     const meter=document.createElement('div');meter.className='v018BuildMeter';I18n.assign(meter,"innerHTML",'<i id="v018HPFill"></i>');body.append(meter);
     const costs=document.createElement('div');costs.className='v018BuildCosts';body.append(costs);
-    const button=v09Button('',()=>{const q=record(selected);if(!q)return;if(q.object.hp<q.object.maxHp)start(q.id);else upgrade(q.id);});button.id='v018BuildButton';body.append(button);
+    const button=v09Button('',()=>{const q=record(selected);if(!q)return;if(q.object.hp<q.object.maxHp)GameRecovery.request(q.id,'repair');else GameRecovery.request(q.id,'upgrade');});button.id='v018BuildButton';body.append(button);
     const note=document.createElement('p');note.className='v018BuildNote';body.append(note);
     refs={overlay,level:el('v018Level'),hp:el('v018HP'),fill:el('v018HPFill'),costs,button,note,signature:''};openOverlay(overlay);refresh(true);return true;
   }
@@ -109,7 +112,7 @@ window.V018Build=(()=>{
   }
   const interactions=interactionObjects;interactionObjects=function(which=scene){const out=interactions(which);if(!held()||(which==='surface'&&V013City.floor))return out;const available=[...structures.values()].filter(r=>r.scene===which);const ids=new Set(available.map(r=>r.id));return [...out.filter(o=>!ids.has(o.id)),...available.map(target)];};
   const hit=hitInteraction;hitInteraction=function(x,y){if(held()&&(scene!=='surface'||!V013City.floor)){const r=[...structures.values()].find(r=>r.scene===scene&&rectHit(x,y,7,r.object));if(r)return target(r);}return hit(x,y);};
-  const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind==='repair018'){const r=record(o.ref);if(!r)return;if(r.object.hp<r.object.maxHp)start(r.id);else open(r.id);return;}
+  const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind==='repair018'){const r=record(o.ref);if(!r)return;if(r.object.hp<r.object.maxHp)GameRecovery.request(r.id,'repair');else open(r.id);return;}
     if(o&&isBroken(o.id)&&!V015Base.byId.has(o.id)){message('Дверь разрушена · восстановите её молотом');return;}return execute(o,...args);};
   const approach=approachObject;approachObject=function(o,...args){if(o?.kind==='repair018'&&near(record(o.ref)))return executeInteraction(o);return approach(o,...args);};
   const action=updateAction;updateAction=function(...args){const out=action(...args);if(held()){const candidates=[...structures.values()].filter(near);candidates.sort((a,b)=>{const p=contactPoint(a.object,player.x,player.y),q=contactPoint(b.object,player.x,player.y);return Math.hypot(player.x-p.x,player.y-p.y)-Math.hypot(player.x-q.x,player.y-q.y);});if(candidates.length){const r=candidates[0];interactionTarget=currentActionObject=target(r);currentAction='repair018';I18n.assign(actionButton,"innerHTML",itemIconHTML('hammer'));actionButton.classList.add('available');actionButton.classList.remove('inactive');I18n.setAttr(actionButton,'aria-label',interactionTarget.name);}}return out;};
@@ -177,5 +180,5 @@ window.V018Build=(()=>{
     #v018RepairHUD button{pointer-events:auto;min-height:24px;min-width:35px;padding:3px 7px;font-size:10px;margin:0;width:auto}#actionButton .itemIcon{width:28px;height:28px}
   `);
   invalidateGeometry();renderQuickSlots();renderBag();
-  return{health,definition,maxLevel,LEVELS,COSTS,structures,stoneNodes,doorRecords,record,isBroken,closedDoors,damage,start,stop,repairStep,upgrade,open,near,occupied,consume,count,capture,restore,validate,drawHeld,drawStone,enemyDoorStep,refresh,get job(){return job;},get credit(){return credit;}};
+  return{health,definition,maxLevel,LEVELS,COSTS,structures,stoneNodes,doorRecords,record,isBroken,closedDoors,damage,applyRepair:start,applyUpgrade:upgrade,start:(value)=>window.GameRecovery?GameRecovery.request(typeof value==='string'?value:value?.id,'repair').ok:start(value),stop,repairStep,upgrade:(value)=>window.GameRecovery?GameRecovery.request(typeof value==='string'?value:value?.id,'upgrade').ok:upgrade(value),open,near,occupied,consume,count,capture,restore,validate,drawHeld,drawStone,enemyDoorStep,refresh,get job(){return job;},get credit(){return credit;}};
 })();

@@ -1,304 +1,263 @@
 {
-  "version": "0.32.1",
+  "version": "0.33.0",
   "stage": 7,
-  "patch": "stage-ab-corrective",
+  "patch": "stage-c1",
   "stageAStarted": true,
-  "stageAStatus": "corrected-repeat-manual-review-pending",
+  "stageAStatus": "accepted-in-general",
   "stageBStarted": true,
-  "stageBStatus": "corrected-repeat-manual-review-pending",
-  "stageC1Started": false,
+  "stageBStatus": "accepted-in-general",
+  "stageC1Started": true,
+  "stageC2Started": false,
   "level2Started": false,
   "passed": true,
-  "automatedAssertions": 11631,
+  "automatedAssertions": 11743,
   "historicalBaselineAssertions": 477,
   "ladderContractChanged": true,
-  "filtered": false,
+  "filtered": true,
   "runs": [
+    {
+      "id": "stage-c1-light-modules",
+      "exitCode": 0,
+      "elapsedMs": 6657
+    },
+    {
+      "id": "stage-c1-recovery",
+      "exitCode": 0,
+      "elapsedMs": 9439
+    },
     {
       "id": "build",
       "exitCode": 0,
-      "elapsedMs": 271
+      "elapsedMs": 254
     },
     {
       "id": "stage-ab-corrective",
       "exitCode": 0,
-      "elapsedMs": 7712
+      "elapsedMs": 6246
     },
     {
       "id": "stage-ab-light-audio",
       "exitCode": 0,
-      "elapsedMs": 4079
+      "elapsedMs": 3479
     },
     {
       "id": "stage-b",
       "exitCode": 0,
-      "elapsedMs": 8543
+      "elapsedMs": 7821
     },
     {
       "id": "campaign",
       "exitCode": 0,
-      "elapsedMs": 4535
+      "elapsedMs": 4128
     },
     {
       "id": "stage-a-corrective",
       "exitCode": 0,
-      "elapsedMs": 6049
+      "elapsedMs": 5863
     },
     {
       "id": "verification",
       "exitCode": 0,
-      "elapsedMs": 280
+      "elapsedMs": 290
     },
     {
       "id": "regressions",
       "exitCode": 0,
-      "elapsedMs": 20048
+      "elapsedMs": 18965
     },
     {
       "id": "interactions",
       "exitCode": 0,
-      "elapsedMs": 29596
+      "elapsedMs": 25060
     },
     {
       "id": "saves",
       "exitCode": 0,
-      "elapsedMs": 7461
+      "elapsedMs": 6742
     },
     {
       "id": "balance",
       "exitCode": 0,
-      "elapsedMs": 1460
+      "elapsedMs": 1533
     },
     {
       "id": "state-saves",
       "exitCode": 0,
-      "elapsedMs": 14612
+      "elapsedMs": 15097
     },
     {
       "id": "differential",
       "exitCode": 0,
-      "elapsedMs": 30237
+      "elapsedMs": 26678
     },
     {
       "id": "systems",
       "exitCode": 0,
-      "elapsedMs": 2927
+      "elapsedMs": 2848
     },
     {
       "id": "stage3-differential",
       "exitCode": 0,
-      "elapsedMs": 44653
+      "elapsedMs": 36945
     },
     {
       "id": "controls",
       "exitCode": 0,
-      "elapsedMs": 19585
+      "elapsedMs": 18842
     },
     {
       "id": "controls-differential",
       "exitCode": 0,
-      "elapsedMs": 42665
+      "elapsedMs": 39900
     },
     {
       "id": "assets",
       "exitCode": 0,
-      "elapsedMs": 5755
+      "elapsedMs": 5135
     },
     {
       "id": "asset-rendering",
       "exitCode": 0,
-      "elapsedMs": 2330
+      "elapsedMs": 2228
     },
     {
       "id": "stage4-differential",
       "exitCode": 0,
-      "elapsedMs": 42479
+      "elapsedMs": 41514
     },
     {
       "id": "map-workbar",
       "exitCode": 0,
-      "elapsedMs": 9700
+      "elapsedMs": 8638
     },
     {
       "id": "localization",
       "exitCode": 0,
-      "elapsedMs": 74558
+      "elapsedMs": 65176
     },
     {
       "id": "localization-rendering",
       "exitCode": 0,
-      "elapsedMs": 4001
+      "elapsedMs": 3751
     },
     {
       "id": "localization-controls",
       "exitCode": 0,
-      "elapsedMs": 59068
+      "elapsedMs": 52348
     },
     {
       "id": "main-menu",
       "exitCode": 0,
-      "elapsedMs": 129537
+      "elapsedMs": 114778
     },
     {
       "id": "menu-preferences",
       "exitCode": 0,
-      "elapsedMs": 16569
+      "elapsedMs": 16774
     },
     {
       "id": "world-events",
       "exitCode": 0,
-      "elapsedMs": 18282
+      "elapsedMs": 17365
     },
     {
       "id": "readiness",
       "exitCode": 0,
-      "elapsedMs": 18650
+      "elapsedMs": 16022
     },
     {
       "id": "corrective",
       "exitCode": 0,
-      "elapsedMs": 17736
+      "elapsedMs": 16281
     },
     {
       "id": "world-farm",
       "exitCode": 0,
-      "elapsedMs": 19328
+      "elapsedMs": 16595
     },
     {
       "id": "drone-return",
       "exitCode": 0,
-      "elapsedMs": 33708
+      "elapsedMs": 30090
     },
     {
       "id": "resource-access",
       "exitCode": 0,
-      "elapsedMs": 3382
+      "elapsedMs": 2511
     },
     {
       "id": "character-animation",
       "exitCode": 0,
-      "elapsedMs": 6555
+      "elapsedMs": 5277
     },
     {
       "id": "master-unarmed",
       "exitCode": 0,
-      "elapsedMs": 19581
+      "elapsedMs": 16940
     },
     {
       "id": "equipment-integration",
       "exitCode": 0,
-      "elapsedMs": 25985
+      "elapsedMs": 23333
     },
     {
       "id": "player-visual-fix",
       "exitCode": 0,
-      "elapsedMs": 2417
+      "elapsedMs": 1731
     },
     {
       "id": "corrective-performance",
       "exitCode": 0,
-      "elapsedMs": 5645
+      "elapsedMs": 5329
     },
     {
       "id": "corrective-visuals",
       "exitCode": 0,
-      "elapsedMs": 3244
+      "elapsedMs": 2970
     },
     {
       "id": "polish",
       "exitCode": 0,
-      "elapsedMs": 5484
+      "elapsedMs": 5228
     },
     {
       "id": "polish-visuals",
       "exitCode": 0,
-      "elapsedMs": 8605
+      "elapsedMs": 8035
     },
     {
       "id": "audio-unlock",
       "exitCode": 0,
-      "elapsedMs": 9781
+      "elapsedMs": 9035
     },
     {
       "id": "hud-display",
       "exitCode": 0,
-      "elapsedMs": 10277
+      "elapsedMs": 9777
     },
     {
       "id": "audio-pass",
       "exitCode": 0,
-      "elapsedMs": 6323
+      "elapsedMs": 5685
     },
     {
       "id": "bunker-level1",
       "exitCode": 0,
-      "elapsedMs": 8560
+      "elapsedMs": 7687
     },
     {
       "id": "bunker-floor-cache",
       "exitCode": 0,
-      "elapsedMs": 2849
+      "elapsedMs": 2615
     },
     {
       "id": "bunker-r2",
       "exitCode": 0,
-      "elapsedMs": 4562
+      "elapsedMs": 4279
     }
   ],
   "limitations": [
     "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
     "All audio paths are included and decoded; subjective mix requires physical device listening."
-  ],
-  "followup": {
-    "version": "0.32.1",
-    "reason": "Local drone-light raster optimization after complete regression run",
-    "postFullRunChangedRuntime": [
-      "src/render/lighting.js"
-    ],
-    "passed": true,
-    "runtimeSha256": "14cc0acb61a886aff3d3ff46d92b3cc622c0a7e210dbc7aba6da4f7207cf49a9",
-    "sourceSha256": "2d358edb20cb530ff7a7ba1e8a589eec3d8ad6dd6632a8879872f321f2ec6451",
-    "runs": [
-      {
-        "id": "build",
-        "exitCode": 0,
-        "elapsedMs": 271
-      },
-      {
-        "id": "stage-ab-light-audio",
-        "exitCode": 0,
-        "elapsedMs": 4079
-      },
-      {
-        "id": "stage-ab-corrective",
-        "exitCode": 0,
-        "elapsedMs": 7712
-      },
-      {
-        "id": "stage-b",
-        "exitCode": 0,
-        "elapsedMs": 8543
-      },
-      {
-        "id": "campaign",
-        "exitCode": 0,
-        "elapsedMs": 4535
-      },
-      {
-        "id": "bunker-floor-cache",
-        "exitCode": 0,
-        "elapsedMs": 2849
-      },
-      {
-        "id": "polish",
-        "exitCode": 0,
-        "elapsedMs": 5484
-      },
-      {
-        "id": "asset-rendering",
-        "exitCode": 0,
-        "elapsedMs": 2330
-      }
-    ]
-  }
+  ]
 }

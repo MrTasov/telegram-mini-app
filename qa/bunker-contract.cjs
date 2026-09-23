@@ -2,7 +2,7 @@
 // actor and exact farm preservation are asserted independently in bunker-level1.
 const copy=v=>JSON.parse(JSON.stringify(v));
 exports.project=value=>{
- const d=copy(value);if(!d||typeof d!=='object')return d;
+ const d=require('./stage-c1-contract.cjs').project(value);if(!d||typeof d!=='object')return d;
  delete d.equipment032;delete d.campaign031;if(d.v09?.power)delete d.v09.power.deviceEnabled.command_core_l1;delete d.bunker030;delete d.saveVersion;d.gameVersion='release-metadata';
  const doors=list=>list?.filter(o=>o.id!=='v09door_reserve_l1').sort((a,b)=>a.id.localeCompare(b.id));
  if(d.building018)d.building018.doors=doors(d.building018.doors);
@@ -27,5 +27,5 @@ exports.project=value=>{
  if(d.farm014)for(const bed of d.farm014.beds||[])for(const p of bed||[])delete p.elapsed;
  return d;
 };
-exports.legacyProjection=value=>{const d=copy(value);if(d.doors)d.doors.doors=d.doors.doors.filter(o=>o.id!=='v09door_reserve_l1').sort((a,b)=>a.id.localeCompare(b.id));if(d.drone?.scene==='bunker'){delete d.drone.x;delete d.drone.y;if(d.drone.guard?.scene==='bunker'){delete d.drone.guard.x;delete d.drone.guard.y;}}return d;};
+exports.legacyProjection=value=>{const d=require('./stage-c1-contract.cjs').project(value);if(d.doors)d.doors.doors=d.doors.doors.filter(o=>o.id!=='v09door_reserve_l1').sort((a,b)=>a.id.localeCompare(b.id));if(d.drone?.scene==='bunker'){delete d.drone.x;delete d.drone.y;if(d.drone.guard?.scene==='bunker'){delete d.drone.guard.x;delete d.drone.guard.y;}}return d;};
 exports.assertSource=(file,expected)=>{const fs=require('fs'),crypto=require('crypto'),assert=require('assert/strict'),ref=require('./bunker-source-reference.json'),change=ref.changes[file],actual=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');if(change){assert.equal(expected,change.before,file+' immutable Audio Pass input');require('./campaign-source-contract.cjs').assertSource(file,change.after);}else require('./campaign-source-contract.cjs').assertSource(file,expected);};

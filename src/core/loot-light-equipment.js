@@ -58,7 +58,7 @@ const V091Light = (()=>{
       o.x<ox+distanceLimit&&o.x+o.w>ox-distanceLimit&&o.y<oy+distanceLimit&&o.y+o.h>oy-distanceLimit);
   }
   function cast(ox,oy,angle,maxDistance=range,solids=obstacles(ox,oy,maxDistance)){
-    const dx=Math.cos(angle),dy=Math.sin(angle),pad=.35;let reach=maxDistance,hit=false;
+    const dx=Math.cos(angle),dy=Math.sin(angle),pad=.35;let reach=maxDistance,hit=false,body=null;
     for(const o of solids){
       let near,far;
       if(o.r!==undefined){
@@ -73,27 +73,39 @@ const V091Light = (()=>{
         else {const a=(top-oy)/dy,b=(bottom-oy)/dy;near=Math.max(near,Math.min(a,b));far=Math.min(far,Math.max(a,b));}
         if(far<Math.max(0,near))continue;near=Math.max(0,near);
       }
-      if(near<reach){reach=near;hit=true;}
+      if(near<reach){reach=near;hit=true;body=o;}
     }
     // Include only the front subpixel of a solid, never the space behind it.
     if(hit)reach=Math.min(maxDistance,reach+.25);
-    return {x:ox+dx*reach,y:oy+dy*reach,distance:reach,hit};
+    return {x:ox+dx*reach,y:oy+dy*reach,distance:reach,hit,body};
   }
   function cone(){
-    if(heldItem()!=='flashlight'||!flashlightOn||playerDead)return null;
+    if(!(window.GameHeadModules?GameHeadModules.available():heldItem()==='flashlight')||!flashlightOn||playerDead)return null;
     const angle=Math.atan2(player.aimY,player.aimX);
+    const anchor=window.ActorVisuals?.lightPoint()||{x:player.x+Math.cos(angle)*29,y:player.y+Math.sin(angle)*29};
     // Doors move independently of the navigation geometry revision.
-    const key=[scene,player.x,player.y,angle,geometryRevision,player.wallLevel||0,
+    const key=[scene,player.x,player.y,anchor.x,anchor.y,angle,geometryRevision,player.wallLevel||0,
       typeof V091Fortress!=='undefined'?V091Fortress.innerGateOpen:0,
-      gateOpen,...v09Doors.map(d=>d.open)].join('|');
+      gateOpen,...v09Doors.map(d=>d.open),window.V011Living?.bathDoor.open].join('|');
     if(key===lastKey&&cachedCone)return cachedCone;
-    const solids=obstacles(player.x,player.y,range+29);
-    const emitter=cast(player.x,player.y,angle,29,solids);
+    const length=Math.hypot(anchor.x-player.x,anchor.y-player.y),direction=Math.atan2(anchor.y-player.y,anchor.x-player.x),solids=obstacles(player.x,player.y,range+length);
+    const emitter=cast(player.x,player.y,direction,length,solids);
     const reach=Math.max(0,emitter.distance-(emitter.hit?2:0));
-    const ox=player.x+Math.cos(angle)*reach,oy=player.y+Math.sin(angle)*reach;
+    const ox=player.x+Math.cos(direction)*reach,oy=player.y+Math.sin(direction)*reach;
     const points=[];
     for(let i=0;i<=rayCount;i++)points.push(cast(ox,oy,angle-halfAngle+2*halfAngle*i/rayCount,range,solids));
-    lastKey=key;return cachedCone={ox,oy,angle,range,halfAngle,points};
+    const contact=points[rayCount/2];let bounce=null;
+    if(contact.hit){
+      const o=contact.body;let nx,ny;
+      if(o.r!==undefined){const n=Math.hypot(contact.x-o.x,contact.y-o.y)||1;nx=(contact.x-o.x)/n;ny=(contact.y-o.y)/n;}
+      else {const sides=[{d:Math.abs(contact.x-o.x),x:-1,y:0},{d:Math.abs(contact.x-o.x-o.w),x:1,y:0},{d:Math.abs(contact.y-o.y),x:0,y:-1},{d:Math.abs(contact.y-o.y-o.h),x:0,y:1}].sort((a,b)=>a.d-b.d);nx=sides[0].x;ny=sides[0].y;}
+      const strength=1-contact.distance/range,radius=28+28*strength,x=contact.x+nx*2,y=contact.y+ny*2,normal=Math.atan2(ny,nx),fan=[];
+      // One small front-facing fan, cached with the primary beam, never a GI pass.
+      const nearby=solids.filter(o=>o.r!==undefined?Math.hypot(o.x-x,o.y-y)<radius+o.r:o.x<x+radius&&o.x+o.w>x-radius&&o.y<y+radius&&o.y+o.h>y-radius);
+      for(let i=0;i<=12;i++)fan.push(cast(x,y,normal-Math.PI/2+Math.PI*i/12,radius,nearby));
+      bounce={x,y,radius,nx,ny,contact,strength,points:fan};
+    }
+    lastKey=key;return cachedCone={ox,oy,anchor,angle,range,halfAngle,points,bounce};
   }
   function buffer(){
     if(!mask){
@@ -244,5 +256,4 @@ v09Style(`
   @media(max-height:500px){.v091Paperdoll{height:175px}.equipSlot{min-height:55px}}
 `);
 window.V091Equipment={unequip:v091Unequip,render:renderEquipment};
-
 
