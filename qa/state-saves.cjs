@@ -24,7 +24,7 @@ check('owners.sessionIsSingleSourceOfTruth',()=>{
 });
 check('owners.noLateRegistration',()=>assert.throws(()=>E(`GameState.register('extra',{}, {source:'test'})`)));
 check('owners.sealedViews',()=>assert.equal(E('Object.isFrozen(GameState)&&Object.isFrozen(GameState.inventory)&&Object.isSealed(GameState.session)'),true));
-check('registry.historicalOrderIsExplicit',()=>assert.deepEqual(copy(E('GameSave.describe()')),Object.fromEntries(Object.entries(require('./save-adapters.json').order).map(([k,v])=>[k,[...v,'bunker.level1','campaign.foundation','equipment.instances','inventory.head-modules','base.recovery']]))));
+check('registry.historicalOrderIsExplicit',()=>assert.deepEqual(copy(E('GameSave.describe()')),Object.fromEntries(Object.entries(require('./save-adapters.json').order).map(([k,v])=>[k,[...v,'bunker.level1','campaign.foundation','equipment.instances','inventory.head-modules','base.recovery','campaign.chapter-one']]))));
 check('registry.singleSharedModuleRegistry',()=>assert.equal(E('V010.modules===GameSave.modules&&Object.isFrozen(V010.modules)'),true));
 check('registry.moduleRestoreOrder',()=>assert.deepEqual(copy(E('GameSave.moduleOrder')),['world','inventory','craft','combat','energy','progression','camera']));
 check('registry.rejectDuplicateOrLateHooks',()=>assert.throws(()=>E(`GameSave.extend('capture','save.slots',next=>next())`)));
@@ -115,7 +115,7 @@ check('slots.invalidImportDoesNotAllocateOrOverwrite',()=>{
 check('slots.newGameDoesNotClonePreviousProgress',()=>{
  const s=setup('index.html',{'survival_base_v09_active_slot':'1','survival_base_v09_slot_1':rawFixture('damaged_base_turret')});
  const old=s.storage.get('survival_base_v09_slot_1');assert.equal(s.eval('V09Saves.newGame()'),true);assert.equal(s.eval('v09ActiveSlot'),2);
- assert.equal(s.eval('V015Base.sections.every(s=>s.hp===s.maxHp&&s.level===1)'),true);assert.equal(s.eval('player.health'),100);assert.ok(s.storage.has('survival_base_v09_slot_1'));assert.equal(JSON.parse(old).gameVersion,'0.21.0');
+ assert.equal(s.eval('V015Base.sections.every(s=>s.level===1&&s.hp===(ChapterOnePreset.damage.find(d=>d.id===s.id)?.hp??s.maxHp))'),true);assert.equal(s.eval('GameCampaign.view().chapter'),'chapter_1');assert.equal(s.eval('player.health'),100);assert.ok(s.storage.has('survival_base_v09_slot_1'));assert.equal(JSON.parse(old).gameVersion,'0.21.0');
 });
 check('newGame.templateCannotBeReplacedAfterLoad',()=>assert.throws(()=>E('GameSave.seal(GameSave.describe())')));
 check('newGame.templateIsPrivateAndDetached',()=>{

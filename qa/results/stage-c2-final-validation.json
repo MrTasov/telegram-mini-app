@@ -1,0 +1,63 @@
+{
+  "version": "0.34.0",
+  "passed": true,
+  "method": "Complete 50-group run followed by focused reruns after fixes; final summary retains every group result.",
+  "fullCoverageGroups": 50,
+  "automatedAssertions": 11866,
+  "runtimeSha256": "9af2b1bef2ae287ce798d485b6ae3498f4ea862ec387e2e128398366455eba62",
+  "initialRuntimeSha256": "f76a6b45a9de852fe258803a5e250a92059f0a485e49a7dbf6f82789097a08d0",
+  "initialFullRun": "qa/results/stage-c2-initial-full-run.json",
+  "initialFailingGroups": [
+    "regressions",
+    "balance",
+    "map-workbar",
+    "localization-controls",
+    "world-farm",
+    "character-animation",
+    "equipment-integration",
+    "corrective-performance",
+    "polish"
+  ],
+  "finalSummary": "qa/results/summary.json",
+  "followupGroups": [
+    "stage-c2",
+    "stage-c2-prerequisites",
+    "stage-c1-recovery",
+    "build",
+    "verification",
+    "regressions",
+    "balance",
+    "state-saves",
+    "map-workbar",
+    "localization-controls",
+    "world-farm"
+  ],
+  "followupLog": "qa/results/stage-c2-followup-run.log",
+  "runtimeChangesAfterInitialFullRun": [
+    "Reject impossible/future night anchors when decoding a C2 save.",
+    "Update exported save filename from 0.33.1 to 0.34.0."
+  ],
+  "testContractChanges": "Old expectations updated for new physical tool UIDs, yield 15 at pickaxe Lv.0, shared impact phase, new save owner and damaged New Game. Historical fixtures remain byte-identical; C2 tests assert new behavior directly.",
+  "performance": {
+    "passed": true,
+    "comparison": "qa/results/stage-c2-performance.json",
+    "sceneViewportPairs": 12,
+    "framesPerPairPerVersion": 120,
+    "errors": 0,
+    "resumed": true,
+    "resumeNote": "The last scene and remaining metrics were measured after the host tool session ended. Completed rows were retained unchanged, runtime hash verified."
+  },
+  "preservation": {
+    "filesChecked": 300,
+    "allUnchanged": true,
+    "report": "qa/results/stage-c2-preservation.json"
+  },
+  "buildCheck": "Passed in final follow-up and required again by release packager.",
+  "stageDStarted": false,
+  "stageC2Status": "implemented; manual review pending",
+  "limitations": [
+    "VM with modeled DOM/WebAudio and native Canvas2D; actual browser/Telegram/phone layout, subjective sound and device performance require manual review.",
+    "Timing samples run on a shared CPU host; no FPS, touch-latency or zero-regression claim is made."
+  ],
+  "createdAt": "2026-09-23T19:59:46.562162+00:00"
+}

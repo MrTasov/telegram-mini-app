@@ -10,7 +10,7 @@ window.GameCampaign=(()=>{
     medicalStored:storageChests.slice(0,8).reduce((n,c)=>n+c.items.reduce((q,s)=>q+(s?.type==='meds'?s.qty:0),0),0),
     droneReady:!V014Robots.state.packed&&V014Robots.state.hp>0&&V014Robots.state.battery>=20,
     workshopLit:devicePowered('light_workshop'),
-    perimeterCondition:Math.min(1,...V015Base.sections.filter(s=>['outer','inner'].includes(s.group)).map(s=>s.hp/s.maxHp))};}
+    perimeterCondition:Math.min(1,...V015Base.sections.filter(s=>['outer','inner'].includes(s.group)).map(s=>s.hp/s.maxHp)),...window.GameChapterOne?.facts()};}
   function access(actor,targetId,requirePower=true){
     if(targetId!==core.id||!interactionObjects('bunker').some(o=>o.id===targetId&&o.kind==='command_core'))return {available:false,reason:'campaign.reason.target'};
     const p=actor?.entity;
@@ -21,9 +21,13 @@ window.GameCampaign=(()=>{
     return {available:true,reason:null};
   }
   const listeners=new Set();let lastFacts='',elapsed=0;
-  const domain=GameCampaignDomain.create(CampaignDefinitions,{facts,actor:id=>GameActors.get(id),permission:actor=>!!GameActors.get(actor.id),access,
-    changed(){queueGameSave();for(const fn of listeners)fn();},emit:event=>V010.emit('campaign',event)});
+  const ports={facts,actor:id=>GameActors.get(id),permission:actor=>!!GameActors.get(actor.id),access,
+    changed(){queueGameSave();for(const fn of listeners)fn();},emit:event=>V010.emit('campaign',event)};
+  const legacyDomain=GameCampaignDomain.create(CampaignDefinitions,ports),chapterOneDomain=GameCampaignDomain.create(ChapterOneDefinitions,ports);
+  let domain=legacyDomain;
+  const owner=s=>s?.contentRevision===ChapterOneDefinitions.revision?chapterOneDomain:legacyDomain;
   function refresh(force=false){
+    window.GameChapterOne?.observe();
     const f=facts(),signature=Object.values(f).join('|');
     if(force||signature!==lastFacts){lastFacts=signature;domain.refresh(f);for(const fn of listeners)fn();}
     return domain.view();
@@ -40,15 +44,15 @@ window.GameCampaign=(()=>{
   const oldUpdate=update;
   update=function(){oldUpdate();tick(16.667*frameScale);};
   function migrate(d){
-    if(!d.campaign031)d.campaign031=domain.fresh('legacy',{mined:d.v010?.modules?.progression?.counts?.mined||0});
+    if(!d.campaign031)d.campaign031=legacyDomain.fresh('legacy',{mined:d.v010?.modules?.progression?.counts?.mined||0});
     if(d.v09?.power?.deviceEnabled&&!Object.hasOwn(d.v09.power.deviceEnabled,powerId))d.v09.power.deviceEnabled[powerId]=true;
   }
   GameSave.extend('capture','campaign.foundation',function(capture){const d=capture();d.campaign031=domain.capture();return d;});
-  function contentMigration(d){if(d.campaign031?.contentRevision<CampaignDefinitions.revision)d.campaign031=domain.migrate(d.campaign031,{mined:d.v010?.modules?.progression?.counts?.mined||0,ironProduced:d.v010?.modules?.progression?.byResource?.produced?.iron||0,copperProduced:d.v010?.modules?.progression?.byResource?.produced?.copper||0});domain.validate(d.campaign031);return d;}
+  function contentMigration(d){if(d.campaign031?.contentRevision<CampaignDefinitions.revision)d.campaign031=legacyDomain.migrate(d.campaign031,{mined:d.v010?.modules?.progression?.counts?.mined||0,ironProduced:d.v010?.modules?.progression?.byResource?.produced?.iron||0,copperProduced:d.v010?.modules?.progression?.byResource?.produced?.copper||0});owner(d.campaign031).validate(d.campaign031);return d;}
   GameSave.extend('decode','campaign.foundation',function(decode,raw){return contentMigration(decode(raw));});
-  GameSave.extend('restore','campaign.foundation',function(restore,d){domain.validate(d.campaign031);const result=restore(d);domain.restore(d.campaign031);lastFacts='';elapsed=0;window.CommandCoreUI?.reset();return result;});
+  GameSave.extend('restore','campaign.foundation',function(restore,d){owner(d.campaign031).validate(d.campaign031);const result=restore(d);domain=owner(d.campaign031);domain.restore(d.campaign031);lastFacts='';elapsed=0;window.CommandCoreUI?.reset();return result;});
   GameState.register('campaign',{capture:()=>domain.capture(),get status(){return domain.view();}}, {source:'campaign/runtime.js',saved:['campaign031'],transient:['fact signature','UI listeners']});
-  return Object.freeze({definitions:CampaignDefinitions,capture:domain.capture,validate:domain.validate,view:domain.view,execute:command=>GameFlow.paused?{ok:false,reason:'campaign.reason.paused'}:domain.execute(command),refresh,tick,migrate,access,powerId,
+  return Object.freeze({get definitions(){return domain.definitions;},freshChapterOne:()=>chapterOneDomain.fresh(),capture:()=>domain.capture(),validate:s=>owner(s).validate(s),view:()=>domain.view(),execute:command=>GameFlow.paused?{ok:false,reason:'campaign.reason.paused'}:domain.execute(command),refresh,tick,migrate,access,powerId,
     facts,subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
     baseSummary(){const a=V09Power.allocation();return {running:V09Power.running&&V09Power.fuel>0,fuel:V09Power.fuel,battery:V010Energy.battery.charge,capacity:V010Energy.battery.capacity,load:a.load,supply:a.supply,corePowered:a.served.has(powerId),day:WorldClock.day};}});
 })();

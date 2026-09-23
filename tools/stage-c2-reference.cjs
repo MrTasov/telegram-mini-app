@@ -1,0 +1,5 @@
+// Explicit source chain to the accepted ZIP, without rewriting any old fixture.
+const fs=require('node:fs'),crypto=require('node:crypto'),path=require('node:path');const root=path.resolve(__dirname,'..');process.chdir(root);
+const base=require('../qa/stage-c2-base/release_manifest.json'),hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),changes={};
+for(const entry of base.files){if(!entry.file.startsWith('src/')&&!entry.file.startsWith('locales/')&&!['index.html','package.json'].includes(entry.file))continue;const after=fs.existsSync(entry.file)?hash(entry.file):null;if(after!==entry.sha256)changes[entry.file]={before:entry.sha256,after};}
+const report={baseline:'immutable delivered 0.33.0 Stage C1',baselineArchiveSha256:'cb223567033e911483be4f231fa2d9d64bdd59d4f25de5556df6970844c71d8e',baselineBundleSha256:hash('qa/stage-c2-base/js/game.js'),changes};fs.writeFileSync('qa/stage-c2-source-reference.json',JSON.stringify(report,null,2)+'\n');console.log(Object.keys(changes).length+' reviewed source changes');

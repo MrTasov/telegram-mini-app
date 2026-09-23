@@ -1,0 +1,284 @@
+{
+  "version": "0.34.0",
+  "stage": 7,
+  "patch": "stage-c2",
+  "stageAStarted": true,
+  "stageAStatus": "accepted-in-general",
+  "stageBStarted": true,
+  "stageBStatus": "accepted-in-general",
+  "stageC1Started": true,
+  "stageC1Status": "accepted-by-user",
+  "stageC2Started": true,
+  "stageDStarted": false,
+  "level2Started": false,
+  "passed": false,
+  "automatedAssertions": 11758,
+  "historicalBaselineAssertions": 477,
+  "ladderContractChanged": true,
+  "filtered": false,
+  "runs": [
+    {
+      "id": "stage-c2",
+      "exitCode": 0,
+      "elapsedMs": 18257
+    },
+    {
+      "id": "stage-c2-prerequisites",
+      "exitCode": 0,
+      "elapsedMs": 6882
+    },
+    {
+      "id": "stage-c1-light-modules",
+      "exitCode": 0,
+      "elapsedMs": 7037
+    },
+    {
+      "id": "stage-c1-recovery",
+      "exitCode": 0,
+      "elapsedMs": 9449
+    },
+    {
+      "id": "build",
+      "exitCode": 0,
+      "elapsedMs": 246
+    },
+    {
+      "id": "stage-ab-corrective",
+      "exitCode": 0,
+      "elapsedMs": 6962
+    },
+    {
+      "id": "stage-ab-light-audio",
+      "exitCode": 0,
+      "elapsedMs": 3948
+    },
+    {
+      "id": "stage-b",
+      "exitCode": 0,
+      "elapsedMs": 8907
+    },
+    {
+      "id": "campaign",
+      "exitCode": 0,
+      "elapsedMs": 5159
+    },
+    {
+      "id": "stage-a-corrective",
+      "exitCode": 0,
+      "elapsedMs": 6666
+    },
+    {
+      "id": "verification",
+      "exitCode": 0,
+      "elapsedMs": 288
+    },
+    {
+      "id": "regressions",
+      "exitCode": 1,
+      "elapsedMs": 19947,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/run-regressions.cjs /workspace/scratch/a6d22bff5614/stage_c2/index.html /workspace/scratch/a6d22bff5614/stage_c2/qa/results/regression\n"
+    },
+    {
+      "id": "interactions",
+      "exitCode": 0,
+      "elapsedMs": 33268
+    },
+    {
+      "id": "saves",
+      "exitCode": 0,
+      "elapsedMs": 9257
+    },
+    {
+      "id": "balance",
+      "exitCode": 1,
+      "elapsedMs": 1674,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/balance.cjs\n"
+    },
+    {
+      "id": "state-saves",
+      "exitCode": 0,
+      "elapsedMs": 17141
+    },
+    {
+      "id": "differential",
+      "exitCode": 0,
+      "elapsedMs": 30190
+    },
+    {
+      "id": "systems",
+      "exitCode": 0,
+      "elapsedMs": 2602
+    },
+    {
+      "id": "stage3-differential",
+      "exitCode": 0,
+      "elapsedMs": 43290
+    },
+    {
+      "id": "controls",
+      "exitCode": 0,
+      "elapsedMs": 18723
+    },
+    {
+      "id": "controls-differential",
+      "exitCode": 0,
+      "elapsedMs": 43012
+    },
+    {
+      "id": "assets",
+      "exitCode": 0,
+      "elapsedMs": 5179
+    },
+    {
+      "id": "asset-rendering",
+      "exitCode": 0,
+      "elapsedMs": 2343
+    },
+    {
+      "id": "stage4-differential",
+      "exitCode": 0,
+      "elapsedMs": 44713
+    },
+    {
+      "id": "map-workbar",
+      "exitCode": 1,
+      "elapsedMs": 9241,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/map-workbar.cjs\n"
+    },
+    {
+      "id": "localization",
+      "exitCode": 0,
+      "elapsedMs": 73557
+    },
+    {
+      "id": "localization-rendering",
+      "exitCode": 0,
+      "elapsedMs": 3941
+    },
+    {
+      "id": "localization-controls",
+      "exitCode": 1,
+      "elapsedMs": 56443,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/localization-controls.cjs\n"
+    },
+    {
+      "id": "main-menu",
+      "exitCode": 0,
+      "elapsedMs": 124044
+    },
+    {
+      "id": "menu-preferences",
+      "exitCode": 0,
+      "elapsedMs": 16268
+    },
+    {
+      "id": "world-events",
+      "exitCode": 0,
+      "elapsedMs": 18596
+    },
+    {
+      "id": "readiness",
+      "exitCode": 0,
+      "elapsedMs": 16515
+    },
+    {
+      "id": "corrective",
+      "exitCode": 0,
+      "elapsedMs": 17104
+    },
+    {
+      "id": "world-farm",
+      "exitCode": 1,
+      "elapsedMs": 20181,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/world-farm.cjs\n"
+    },
+    {
+      "id": "drone-return",
+      "exitCode": 0,
+      "elapsedMs": 33324
+    },
+    {
+      "id": "resource-access",
+      "exitCode": 0,
+      "elapsedMs": 3092
+    },
+    {
+      "id": "character-animation",
+      "exitCode": 1,
+      "elapsedMs": 6266,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/character-animation.cjs\n"
+    },
+    {
+      "id": "master-unarmed",
+      "exitCode": 0,
+      "elapsedMs": 19816
+    },
+    {
+      "id": "equipment-integration",
+      "exitCode": 1,
+      "elapsedMs": 24639,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/equipment-integration.cjs\n"
+    },
+    {
+      "id": "player-visual-fix",
+      "exitCode": 0,
+      "elapsedMs": 2142
+    },
+    {
+      "id": "corrective-performance",
+      "exitCode": 1,
+      "elapsedMs": 5238,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/corrective-performance.cjs\n"
+    },
+    {
+      "id": "corrective-visuals",
+      "exitCode": 0,
+      "elapsedMs": 2970
+    },
+    {
+      "id": "polish",
+      "exitCode": 1,
+      "elapsedMs": 5666,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_c2/qa/polish.cjs\n"
+    },
+    {
+      "id": "polish-visuals",
+      "exitCode": 0,
+      "elapsedMs": 7939
+    },
+    {
+      "id": "audio-unlock",
+      "exitCode": 0,
+      "elapsedMs": 9431
+    },
+    {
+      "id": "hud-display",
+      "exitCode": 0,
+      "elapsedMs": 10278
+    },
+    {
+      "id": "audio-pass",
+      "exitCode": 0,
+      "elapsedMs": 5977
+    },
+    {
+      "id": "bunker-level1",
+      "exitCode": 0,
+      "elapsedMs": 8458
+    },
+    {
+      "id": "bunker-floor-cache",
+      "exitCode": 0,
+      "elapsedMs": 2895
+    },
+    {
+      "id": "bunker-r2",
+      "exitCode": 0,
+      "elapsedMs": 4493
+    }
+  ],
+  "limitations": [
+    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "All audio paths are included and decoded; subjective mix requires physical device listening."
+  ]
+}

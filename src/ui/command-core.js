@@ -23,14 +23,18 @@ window.CommandCoreUI=(()=>{
   // Reserved routes describe the extension boundary, not visible placeholders.
   // Register a route only when its real owner and complete view are available.
   const routeOrder=['construction','base','chapters','research','blueprints','archive','map-signals'],routes=new Set(routeOrder);
-  const sections=new Map();let tab='base',remote=false,sequence=0,dirty=true,lastTracker='',lastLanguage='',selectedChapter=null;
-  function registerSection(id,title,mount,available=()=>true){
+  const sections=new Map();let tab='base',remote=false,sequence=0,dirty=true,lastTracker='',lastLanguage='';
+  let scope=null;
+  const location=()=>GameActors.local.scene==='bunker'&&(GameActors.local.entity.floor??1)===1?'bunker:1':null;
+  function syncLocation(){const next=location();if(scope!==next){reset();scope=next;}return next;}
+  function registerSection(id,title,mount,available=()=>true,validPage=()=>true){
     if(!routes.has(id)||sections.has(id)||typeof mount!=='function')throw Error('Invalid Core section');
     const scroll=node('section',null,'coreScroll');scroll.id='coreSection_'+id;scroll.hidden=true;scroll.setAttribute('role','tabpanel');scroll.setAttribute('aria-labelledby','coreTab_'+id);
-    const update=mount(scroll);if(typeof update!=='function')throw Error('Core section needs an update client');
+    let page=null;const route=Object.freeze({get page(){if(page!==null&&!validPage(page))page=null;return page;},setPage(value){if(value!==null&&(typeof value!=='string'||value.length>100||!validPage(value)))return false;page=value;return true;},reset(){page=null;}});
+    const update=mount(scroll,route);if(typeof update!=='function')throw Error('Core section needs an update client');
     const b=button(title,()=>select(id));b.id='coreTab_'+id;b.setAttribute('role','tab');b.setAttribute('aria-controls',scroll.id);
-    b.onkeydown=e=>{const ids=[...sections.keys()],i=ids.indexOf(id);let target;if(e.key==='ArrowRight')target=ids[(i+1)%ids.length];if(e.key==='ArrowLeft')target=ids[(i+ids.length-1)%ids.length];if(e.key==='Home')target=ids[0];if(e.key==='End')target=ids.at(-1);if(target){e.preventDefault();select(target);sections.get(target).b.focus();}};
-    sections.set(id,{title,b,scroll,update,available});for(const key of routeOrder)if(sections.has(key))tabs.append(sections.get(key).b);stage.append(scroll);return true;
+    b.onkeydown=e=>{const ids=[...sections.keys()].filter(key=>sections.get(key).available()),i=ids.indexOf(id);let target;if(e.key==='ArrowRight')target=ids[(i+1)%ids.length];if(e.key==='ArrowLeft')target=ids[(i+ids.length-1)%ids.length];if(e.key==='Home')target=ids[0];if(e.key==='End')target=ids.at(-1);if(target){e.preventDefault();select(target);sections.get(target).b.focus();}};
+    sections.set(id,{title,b,scroll,update,available,route});for(const key of routeOrder)if(sections.has(key))tabs.append(sections.get(key).b);stage.append(scroll);return true;
   }
   function select(id){if(!sections.has(id)||!sections.get(id).available())return false;tab=id;for(const [key,s]of sections){const active=key===tab;s.scroll.hidden=!active;s.b.classList.toggle('active',active);s.b.setAttribute('aria-selected',String(active));s.b.setAttribute('aria-pressed',String(active));s.b.tabIndex=active?0:-1;}dirty=true;render();return true;}
   function chapter(v=GameCampaign.view()){return GameCampaign.definitions.chapters.find(c=>c.id===v.chapter);}
@@ -42,12 +46,12 @@ window.CommandCoreUI=(()=>{
     }}
     previousObjectives=v.objectives;
     feedback.hidden=!visible||now>=feedbackUntil;tracker.classList.toggle('completed',!feedback.hidden);
-    put(trackerMark,feedback.hidden?'◎':'✓');put(trackerTitle,t('campaign.tracker.title'));put(trackerChevron,trackerExpanded?'⌃':'⌄');
+    put(trackerMark,feedback.hidden?'◎':'✓');put(trackerTitle,t(window.GameChapterOne?.active?'chapter1.tracker':'campaign.tracker.title'));put(trackerChevron,trackerExpanded?'⌃':'⌄');
     trackerPanel.hidden=!trackerExpanded;trackerToggle.setAttribute('aria-expanded',String(trackerExpanded));put(trackerOpen,t('campaign.tracker.open'));
     if(!visible||!trackerExpanded)return;
     const signature=[v.revision,JSON.stringify(GameCampaign.facts()),I18n.language].join('|');if(signature===lastTracker)return;lastTracker=signature;
     trackerItems.replaceChildren();const pending=c.objectives.filter(o=>v.objectives[o.id].active&&!v.objectives[o.id].done).sort((a,b)=>Number(b.required)-Number(a.required));
-    for(const o of pending){const row=node('div',null,'trackerObjective');row.append(node('span',o.title));const p=node('small');put(p,progress(o,v.objectives[o.id],GameCampaign.facts()));row.append(p);trackerItems.append(row);}
+    for(const o of pending){const row=node('div',null,'trackerObjective');row.append(node('span',o.title));const p=node('small');put(p,progress(o,v.objectives[o.id],GameCampaign.facts()));row.append(p);trackerItems.append(row);if(window.GameChapterOne?.active&&o===pending.find(x=>x.required))trackerItems.append(node('p',o.description,'trackerInstruction'));}
     if(!pending.length)trackerItems.append(node('p',v.ready?'campaign.tracker.ready':c.title));
   }
   function progress(o,s,f){
@@ -59,15 +63,16 @@ window.CommandCoreUI=(()=>{
     if(o.condition.fact==='perimeterCondition')return num(value*100)+'% / '+num(target*100)+'%';
     return t('core.objective.count',{value:num(Math.min(value,target)),target:num(target)});
   }
-  registerSection('chapters','campaign.tab.chapters',scroll=>{
+  registerSection('chapters','campaign.tab.chapters',(scroll,route)=>{
     let built='',cards=[],notice,heading,description,summary,advance,ready,completed,bar;const chapterButtons=new Map();
     const expanded=objectiveExpanded;
     return ({v,c,a,f})=>{
-      const key=c.id+'|'+I18n.language+'|'+viewEpoch;
+      c=GameCampaign.definitions.chapters.find(ch=>ch.id===route.page)||chapter(v);
+      const key=c.id+'|'+v.chapter+'|'+I18n.language+'|'+viewEpoch;
       if(key!==built){
         const top=scroll.scrollTop||0;built=key;scroll.replaceChildren();cards=[];
         chapterButtons.clear();const strip=node('nav',null,'coreChapterStrip');strip.setAttribute('aria-label',t('campaign.tab.chapters'));
-        GameCampaign.definitions.chapters.forEach((ch,i)=>{const b=button(null,()=>{selectedChapter=ch.id;scroll.scrollTop=0;render();},'coreChapterSelect');const label=node('small');put(label,t('core.chapter.number',{number:num(i+1)}));b.append(label,node('strong',ch.title));chapterButtons.set(ch.id,b);strip.append(b);});scroll.append(strip);
+        GameCampaign.definitions.chapters.forEach((ch,i)=>{if(ch.id==='base_restored'&&ch.id!==v.chapter)return;const b=button(null,()=>{route.setPage(ch.id);scroll.scrollTop=0;render();},'coreChapterSelect');const label=node('small');put(label,ch.id==='base_restored'?t('core.chapter.complete'):t('core.chapter.number',{number:num(i+1)}));b.append(label,node('strong',ch.title));chapterButtons.set(ch.id,b);strip.append(b);});scroll.append(strip);
         const hero=node('div',null,'coreChapterHero');hero.append(node('small','core.campaign','coreEyebrow'));
         heading=node('h3',c.title);description=node('p',c.description);summary=node('div',null,'coreChapterProgress');hero.append(heading,description,node('p',c.goal,'coreMainGoal'),summary);bar=node('div',null,'coreProgressFill');const track=node('div',null,'coreProgressTrack');track.append(bar);hero.append(track);scroll.append(hero);
         notice=node('p',null,'campaignNotice');scroll.append(notice);
@@ -102,7 +107,7 @@ window.CommandCoreUI=(()=>{
       ready.hidden=!v.ready||past;put(ready,t('campaign.ready'));advance.hidden=v.terminal||past;advance.disabled=remote||!a.available||!v.ready;advance.dataset.revision=v.revision;advance.dataset.chapter=v.chapter;
       completed.hidden=!v.completed.length;put(completed,t('campaign.completed',{count:num(v.completed.length)}));
     };
-  });
+  },()=>true,id=>{const v=GameCampaign.view();return id===v.chapter||v.completed.includes(id);});
   registerSection('base','campaign.tab.base',scroll=>{
     const cards=new Map();let locale='';
     return ()=>{
@@ -120,17 +125,18 @@ window.CommandCoreUI=(()=>{
     if(!overlay.classList.contains('open'))return;dirty=false;
     put(overlay.querySelector('.v09Title'),t('bunker.core.name'));panel.setAttribute('aria-label',t('bunker.core.name'));tabs.setAttribute('aria-label',t('core.sections'));
     for(const s of sections.values()){put(s.b,t(s.title));s.b.hidden=!s.available();}for(const {b,key}of legacyLinks)put(b,t(key));
-    const v=GameCampaign.view();if(selectedChapter!==v.chapter&&!v.completed.includes(selectedChapter))selectedChapter=v.chapter;
-    const context={v,c:GameCampaign.definitions.chapters.find(c=>c.id===selectedChapter)||chapter(v),a:status(),f:GameCampaign.facts()};
+    const v=GameCampaign.view();
+    if(!sections.get(tab)?.available()){const fallback=[...sections.keys()].find(id=>sections.get(id).available());if(fallback)select(fallback);}
+    const context={v,c:chapter(v),a:status(),f:GameCampaign.facts()};
     if(lastLanguage!==I18n.language){lastLanguage=I18n.language;for(const s of sections.values())s.update(context);}else sections.get(tab).update(context);
   }
-  function show(which='base',readOnly=false){
+  function show(which,readOnly=false){
     if(!GameState.session.ready||playerDead||window.MainMenu?.active)return false;
     if(!readOnly){const a=GameCampaign.access(GameActors.local,BunkerLayout.core.id,false);if(!a.available){message(t(a.reason));return false;}}
-    remote=readOnly;selectedChapter=GameCampaign.view().chapter;GameCampaign.refresh(true);GameMovement.openUI();openOverlay(overlay);select(sections.has(which)?which:'base');return true;
+    syncLocation();remote=readOnly;if(!remote)window.GameChapterOne?.visit(GameActors.localId,BunkerLayout.core.id);GameCampaign.refresh(true);GameMovement.openUI();openOverlay(overlay);select(sections.has(which)?which:sections.get(tab)?.available()?tab:'base');return true;
   }
-  function tick(){renderTracker();if(overlay.classList.contains('open'))render();}
-  function reset(){closeOverlay(overlay);remote=false;dirty=true;lastTracker='';trackerExpanded=false;selectedChapter=null;previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values())s.scroll.scrollTop=0;renderTracker();}
+  function tick(){syncLocation();renderTracker();if(overlay.classList.contains('open'))render();}
+  function reset(){closeOverlay(overlay);remote=false;dirty=true;lastTracker='';trackerExpanded=!!window.GameChapterOne?.active&&GameCampaign.view().chapter==='chapter_1';tab='base';previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values()){s.route.reset();s.scroll.scrollTop=0;}renderTracker();}
   GameCampaign.subscribe(()=>{dirty=true;renderTracker();});
   I18n.onChange(()=>{lastTracker='';dirty=true;V09Power.devices[GameCampaign.powerId].name=t('bunker.core.name');renderTracker();render();});
   v09Style(`
@@ -189,6 +195,7 @@ body #v010Trackers{overflow:visible;max-height:none;top:calc(var(--v011-game-top
 #campaignTracker .trackerChip b{flex:1;font-weight:500}#campaignTracker .trackerMark{font-size:16px;width:16px;color:#bdd5a5}
 #campaignTracker .trackerPanel{position:absolute;top:40px;left:0;width:224px;max-width:calc(100vw - 150px);height:192px;display:flex;flex-direction:column;box-sizing:border-box;padding:8px;border:1px solid #72866d66;border-radius:8px;background:#102127ee;box-shadow:0 6px 20px #0005}
 #campaignTracker .trackerItems{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+#campaignTracker .trackerInstruction{font-size:11px;line-height:1.5;color:#c1d1c8;margin:5px 2px 10px;overflow-wrap:anywhere}
 #campaignTracker .trackerObjective{display:flex;gap:8px;padding:7px 2px;border-bottom:1px solid #ffffff10;font-size:11px;line-height:1.3}#campaignTracker .trackerObjective span{flex:1}#campaignTracker .trackerObjective small{color:#afc49d;font-size:9px;max-width:65px;text-align:right;font-variant-numeric:tabular-nums}
 #campaignTracker .trackerOpen{height:32px;flex:0 0 32px;border:0;background:#ffffff08;color:#c9dabc;font:inherit;margin-top:5px;border-radius:5px}
 #campaignTracker .trackerFeedback{position:absolute;top:0;left:calc(100% + 7px);width:150px;min-height:34px;box-sizing:border-box;padding:6px 8px;border:1px solid #a7d58d88;border-radius:7px;background:#284636ed;font-size:11px;line-height:1.3;pointer-events:none;animation:objectiveConfirm .25s ease-out}
@@ -199,5 +206,5 @@ body.v0161Modal #campaignTracker,body:has(.overlay.open) #campaignTracker{displa
 @media(prefers-reduced-motion:reduce){#campaignTracker .trackerFeedback{animation:none}}
 @media(max-height:500px){#commandCoreOverlay .v09Panel{padding:10px}#commandCoreOverlay .v09Header{height:38px;flex-basis:38px}#commandCoreOverlay .campaignTabs{flex-basis:44px}#commandCoreOverlay .campaignLinks{flex-basis:40px}}
 `);
-  select('base');renderTracker();return Object.freeze({show,tick,reset,registerSection,refreshTracker:renderTracker});
+  select('base');renderTracker();return Object.freeze({show,tick,reset,syncLocation,registerSection,refreshTracker:renderTracker});
 })();

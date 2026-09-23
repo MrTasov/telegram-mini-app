@@ -9,10 +9,12 @@ window.V010Combat=(() => {
   // all released limits and costs remain the original Level 0..5 values.
   const upgradeRules={
     weapon:{maxLevel:5,cost:{iron:32,copper:16,parts:10},rarePerLevel:3,stats:{damagePerLevel:.05,sturdyDamage:.02,minSpread:.006}},
+    tool:{maxLevel:5,cost:{iron:25,copper:12,parts:8},rarePerLevel:2},
     equipment:{maxLevel:5,cost:{iron:25,copper:12,parts:8},rarePerLevel:2},
     drone:{maxLevel:5,cost:{iron:30,copper:18,parts:12},rarePerLevel:4},
     turret:{maxLevel:5,cost:{iron:50,copper:25,parts:15},rarePerLevel:5}
   };
+  for(const [type,yieldBase,yieldPerLevel,cycleMs]of [['axe',10,0,1800+GameplayBalance.resources.treeChopExtraMs],['pickaxe',15,5,1800]])Object.assign(ITEM[type],{upgrades:upgradeRules.tool,gathering:{yieldBase,yieldPerLevel,speedPerLevel:.1,cycleMs}});
   function upgradeProfile(item){const d=ITEM[item?.type];return GUNS[item?.type]?.upgrades||d?.turret?.upgrades||d?.drone?.upgrades||d?.upgrades||(GUNS[item?.type]?upgradeRules.weapon:upgradeRules.equipment);}
   const maxUpgradeLevel=item=>upgradeProfile(item).maxLevel;
   const equipmentStats={
@@ -45,7 +47,7 @@ window.V010Combat=(() => {
   const practiceTarget={id:'v010PracticeTarget',kind:'v010practice',name:'Тренировочная мишень',x:1110,y:734,w:20,h:32,range:95};
   function initializeFields(item){
     if(!item)return null;
-    if(GUNS[item.type]||ITEM[item.type]?.equip){
+    if(GUNS[item.type]||ITEM[item.type]?.equip||ITEM[item.type]?.gathering){
       if(!Number.isInteger(item.level))item.level=0;
       if(!item.variant)item.variant='balanced';
       if(!item.specialization)item.specialization='balanced';
@@ -54,7 +56,7 @@ window.V010Combat=(() => {
     return item;
   }
   function ensure(item){
-    if(item&&(GUNS[item.type]||ITEM[item.type]?.equip||ITEM[item.type]?.moduleSlot)&&!item.uid)item.uid='gear-'+nextUid++;
+    if(item&&(GUNS[item.type]||ITEM[item.type]?.equip||ITEM[item.type]?.moduleSlot||ITEM[item.type]?.gathering)&&!item.uid)item.uid='gear-'+nextUid++;
     if(item?.attachments?.flashlight)ensure(item.attachments.flashlight);
     return initializeFields(item);
   }
@@ -80,6 +82,7 @@ window.V010Combat=(() => {
     const level=clamp(Number(item.level)||0,0,maxUpgradeLevel(item));
     const stats={level,name:d.name,variant:item.variant||'balanced',specialization:item.specialization||'balanced'};
     if(GUNS[item.type])return {...stats,...gunSpec(item)};
+    if(d.gathering)return {...stats,gatheringYield:d.gathering.yieldBase+level*d.gathering.yieldPerLevel,gatheringSpeed:1+level*d.gathering.speedPerLevel};
     for(const [key,rule] of Object.entries(d.stats||equipmentStats[d.equip]||{}))stats[key]=gearStat(rule,item,d,level);
     if(d.equip==='backpack')stats.capacity=d.capacity;
     return stats;

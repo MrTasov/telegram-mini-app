@@ -1,32 +1,40 @@
-# LAST BASE 0.33.0 — Stage C1
+# LAST BASE 0.34.0 — Stage C2
 
-GitHub-ready source and built game based on the accepted **0.32.1 Stage A/B
-Corrective**. Includes local light through open doors, a brighter flashlight with
-pose-based origin and local contact/bounce, a craftable Tactical Flashlight head
-module, and the approved C1 recovery / power-bootstrap foundation.
+GitHub-ready sources and built game based on accepted **0.33.0 Stage C1**.
+Includes Axe/Pickaxe levels 0–5, Command Core session navigation and the first
+complete Chapter 1 recovery cycle, applied **only to New Game**.
 
 Extract the ZIP root unchanged. Deploy `index.html`, `js/`, `styles/` and `assets/`
 together. Local preview: `python -m http.server 8000`. Keep the same site origin
-for browser saves; export an old save before switching builds if rollback matters.
+for browser saves. Use New Game in a free slot to review Chapter 1; Continue keeps
+existing worlds, progression, queues and unlocks.
 
-SaveFormat **8 → 9 → 10** preserves earlier migration steps and all five slots.
-Old worlds retain flashlight access through an installed module; a player without
-head equipment receives a statless mount. New games craft the module and a head
-mount or helmet at the existing workbench. Install/remove through the item/head
-card. Toggle with **F** or **🔦**. Helmet/module artwork is not drawn on the actor;
-existing sprites and animations are unchanged. There is no flashlight durability
-or separate battery.
+Pickaxe yields 15/20/25/30/35/40 resources per successful hit at levels 0–5.
+Axe yields 10 at every level. Both tools gain 10% real gathering speed per level.
+Use the existing enhancement station. Physical tool levels/IDs and the strike
+phase are saved; animation impact, tool sound and resource gain share one phase.
 
-Normal New Game does **not** apply the damage preset. C1 provides an explicit,
-inactive bootstrap preview factory for recovery testing. No C2 Chapter 1,
-Building/Placement, Level 2, or Farm/Animals restart is included. The existing
-Level 1 R3 layout, permanent Command Core, eleven test objectives, Stage A campaign
-contracts and eighteen fixed Stage B instances remain intact.
+Command Core remembers its section, valid page and scrolling while the player
+stays on Bunker Level 1. Leaving Level 1 or loading a save resets the UI to Base.
+This state is not saved as gameplay progress. The frame retains fixed dimensions
+and position; content scrolls inside it.
 
-The existing world owners still hold HP, repair credit, inventories, jobs, fuel
-and battery state. Recovery and wearable actions use actor/instance/request IDs,
-expected revisions and bounded saved receipts. This is preparation for multiple
-players; network multiplayer is not implemented.
+Chapter 1 starts in a damaged, unpowered LAST BASE. The existing Storage crate
+contains guaranteed fuel and stone. Follow the objective tracker before the Core
+is powered: supplies → tank → generator → Core → concrete → critical repairs →
+survive a night → complete the chapter at Core. Early actions count. The initial
+balance and objective list are documented for manual review in the report.
+
+SaveFormat **10 → 11 → 12** retains every earlier migration and all five slots.
+Existing worlds keep the Stage A campaign content at revision 3. New C2 worlds
+use revision 4. Completed milestones, receipts and repairs are never replayed on
+load. The existing Tactical Flashlight equipment module and legacy flashlight
+migration remain intact. No sprite, animation atlas or audio asset was replaced.
+
+Level 1 layout R3, permanent Core, Stage A contracts and eighteen fixed Stage B
+instances remain intact. Recovery still uses existing HP, repair-credit, power,
+inventory and station owners. Actor/instance/request IDs, expected revisions and
+saved receipts remain in place; network multiplayer is not implemented.
 
 Development (Node 20+):
 
@@ -34,17 +42,19 @@ Development (Node 20+):
 npm ci
 npm run build
 npm test
-npm run test:c1
-npm run bench:c1
-npm run package:c1
+npm run test:c2
+npm run bench:c2
+npm run package:c2
 ```
 
-`bench:c1` compares the immutable delivered 0.32.1 executable in matching warmed
-scenes, including moving lights and open doors. QA uses modeled DOM/WebAudio and
-native Canvas2D; it does not substitute for a browser, Telegram or phone review.
+`bench:c2` compares the immutable accepted 0.33.0 executable in matching warmed
+scenes with alternating AB/BA passes. QA uses modeled DOM/WebAudio and native
+Canvas2D; it does not replace a browser, Telegram or phone review.
 
-Read `STAGE_C1_REPORT_RU.md` for results, migration details, manual checks and the
-explicit preview command. The approved Roadmap remains unchanged in `docs/`.
-Earlier reports and immutable QA fixtures are retained as history.
+See `STAGE_C2_REPORT_RU.md`, `docs/STAGE_C2_CONTRACT_RU.md` and
+`docs/COMMAND_CORE_UI_CONTRACT.md`. Earlier reports, the approved Master Roadmap
+and all historical fixtures are retained as history.
 
-**Development stops after C1. C2 has not started.**
+**Development stops after C2 for manual review. Stage D has not started.**
+Building/Placement, Level 2, new research/blueprint gates and later chapters are
+not implemented. Farm/Animals remain paused until a future Level 2.

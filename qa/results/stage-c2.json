@@ -1,0 +1,261 @@
+{
+  "version": "0.34.0",
+  "passed": 33,
+  "failed": 0,
+  "boundaries": [
+    {
+      "id": "arrival",
+      "chapter": "chapter_1",
+      "revision": 1
+    },
+    {
+      "id": "supplies",
+      "chapter": "chapter_1",
+      "revision": 2
+    },
+    {
+      "id": "tank",
+      "chapter": "chapter_1",
+      "revision": 3
+    },
+    {
+      "id": "power",
+      "chapter": "chapter_1",
+      "revision": 4
+    },
+    {
+      "id": "core",
+      "chapter": "chapter_1",
+      "revision": 5
+    },
+    {
+      "id": "materials",
+      "chapter": "chapter_1",
+      "revision": 6
+    },
+    {
+      "id": "repair:v091wall020_N_0",
+      "chapter": "chapter_1",
+      "revision": 6
+    },
+    {
+      "id": "repair:gate",
+      "chapter": "chapter_1",
+      "revision": 6
+    },
+    {
+      "id": "repair:v09door_storage",
+      "chapter": "chapter_1",
+      "revision": 7
+    },
+    {
+      "id": "sunset",
+      "chapter": "chapter_1",
+      "revision": 8
+    },
+    {
+      "id": "midnight",
+      "chapter": "chapter_1",
+      "revision": 8
+    },
+    {
+      "id": "dawn",
+      "chapter": "chapter_1",
+      "revision": 9
+    },
+    {
+      "id": "completed",
+      "chapter": "base_restored",
+      "revision": 10
+    },
+    {
+      "id": "repair:v091wall020_N_0",
+      "chapter": "chapter_1",
+      "revision": 4
+    },
+    {
+      "id": "repair:gate",
+      "chapter": "chapter_1",
+      "revision": 4
+    },
+    {
+      "id": "repair:v09door_storage",
+      "chapter": "chapter_1",
+      "revision": 4
+    },
+    {
+      "id": "early-production-repair",
+      "chapter": "chapter_1",
+      "revision": 4
+    },
+    {
+      "id": "full-output",
+      "chapter": "chapter_1",
+      "revision": 3
+    },
+    {
+      "id": "blackout-job",
+      "chapter": "chapter_1",
+      "revision": 4
+    },
+    {
+      "id": "second-night",
+      "chapter": "chapter_1",
+      "revision": 1
+    },
+    {
+      "id": "repair:v091wall020_N_0",
+      "chapter": "chapter_1",
+      "revision": 6
+    },
+    {
+      "id": "repair:gate",
+      "chapter": "chapter_1",
+      "revision": 6
+    },
+    {
+      "id": "repair:v09door_storage",
+      "chapter": "chapter_1",
+      "revision": 7
+    },
+    {
+      "id": "legacy-continue",
+      "chapter": "free_preparation",
+      "revision": 3
+    }
+  ],
+  "checks": [
+    {
+      "id": "baseline.accepted_C1_immutable",
+      "status": "PASS"
+    },
+    {
+      "id": "new_game.only_factory_applies_preset_and_content",
+      "status": "PASS"
+    },
+    {
+      "id": "new_empty_slot.real_menu_creation_no_overwrite",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.exit",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.tank",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.battery",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.command_core_l1",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.upgrade0161",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.robots014_dock",
+      "status": "PASS"
+    },
+    {
+      "id": "blackout.physical_route.chest0",
+      "status": "PASS"
+    },
+    {
+      "id": "chapter.full_path_save_every_boundary_no_extra_rewards",
+      "status": "PASS"
+    },
+    {
+      "id": "early_actions_before_core_latched_and_survive_load",
+      "status": "PASS"
+    },
+    {
+      "id": "core.remote_unpowered_foreign_actor_cannot_activate",
+      "status": "PASS"
+    },
+    {
+      "id": "no_space.no_loss_then_recover_storage_and_output",
+      "status": "PASS"
+    },
+    {
+      "id": "power_loss.pauses_queue_refuel_resumes_no_duplicate_inputs",
+      "status": "PASS"
+    },
+    {
+      "id": "night.no_wall_clock_pause_jump_or_death_credit",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.instructions_and_fixed_shell.ru",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.instructions_and_fixed_shell.en",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.missing",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.preset",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.mismatch",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.duplicate-repair",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.night-forged",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.night-future",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.night-before-sunset",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.unknown-field",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_atomic.unknown-seen",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy.developed_world_continue_pure_and_no_new_objectives",
+      "status": "PASS"
+    },
+    {
+      "id": "no_power.guaranteed_surface_fuel_and_route",
+      "status": "PASS"
+    },
+    {
+      "id": "scope.only_C2_18_instances_farm_pause_no_D",
+      "status": "PASS"
+    }
+  ]
+}

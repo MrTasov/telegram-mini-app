@@ -4,7 +4,7 @@ window.V0161Upgrade=(()=>{
   const inv=V010Inventory,combat=V010Combat,robot=V014Robots,copy=x=>JSON.parse(JSON.stringify(x));
   const labels=robot.definition.modules,isDrone=s=>!!ITEM[s?.type]?.drone,isTurret=s=>V016Turret.isType(s?.type),maxLevel=s=>combat.maxUpgradeLevel(s);
   let overlay=null,refs={},selectedModule='body',pulseUntil=0,lastSignature='';
-  const eligibleGear=s=>!!s&&(!!V09Craft.weapons[s.type]||['head','body','legs','feet'].includes(ITEM[s.type]?.equip));
+  const eligibleGear=s=>!!s&&(!!V09Craft.weapons[s.type]||!!ITEM[s.type]?.gathering||['head','body','legs','feet'].includes(ITEM[s.type]?.equip));
   const accepts=s=>!!s&&(eligibleGear(s)&&maxLevel(s)>0||isTurret(s)&&V016Turret.validItem(s)||isDrone(s)&&robot.ownsToken(s)&&robot.state.packed);
   function near(){return scene==='bunker'&&!playerDead&&canInteract(station,player.x,player.y);}
   function level(s=slots[0],key=selectedModule){return isDrone(s)?robot.state.modules[key]||0:isTurret(s)?s.turretData.level||0:s?.level||0;}
@@ -14,7 +14,7 @@ window.V0161Upgrade=(()=>{
   }
   const droneCost=key=>cost({type:robot.type},key);
   function changed(){lastSignature='';inv.render();queueGameSave();refresh(true);}
-  function deposit(from,index){if(!near()||slots[0])return false;const s=inv.list(from)?.[index];if(!accepts(s)){message('Выберите доступное оружие, экипировку или упакованный дрон');return false;}combat.cancelReload();const ok=inv.move(from,index,'upgrade',0);if(ok)changed();return ok;}
+  function deposit(from,index){if(!near()||slots[0])return false;const s=inv.list(from)?.[index];if(!accepts(s)){message('Выберите оружие, инструмент, экипировку или упакованный дрон');return false;}combat.cancelReload();const ok=inv.move(from,index,'upgrade',0);if(ok)changed();return ok;}
   function depositEquipment(key){const s=equipment[key];if(!near()||slots[0]||!accepts(s))return false;slots[0]=s;equipment[key]=null;combat.refreshStats();changed();return true;}
   function take(){if(!near()||!slots[0])return false;const moved=inv.transfer('upgrade',0,'bag');if(!moved)message('Освободите ячейку в рюкзаке');else changed();return !!moved;}
   function upgrade(s=slots[0],key=selectedModule){
@@ -31,7 +31,7 @@ window.V0161Upgrade=(()=>{
   function text(parent,tag,cls,value){const e=document.createElement(tag);e.className=cls;if(value!==undefined)I18n.assign(e,"textContent",value);parent.append(e);return e;}
   function build(){
     overlay=v09Overlay('v0161UpgradePanel','Станок усиления');const body=overlay.querySelector('.v09Body');body.replaceChildren();
-    const header=text(body,'div','v161StationHero');I18n.assign(header,"innerHTML",'<img src="'+V011Art.sources.upgrade_station0161+'" alt="Станок усиления"><div><b>Усиление снаряжения</b><p>Оружие · экипировка · пулемёт · дрон</p><small id="v161UpgradePower"></small></div>');
+    const header=text(body,'div','v161StationHero');I18n.assign(header,"innerHTML",'<img src="'+V011Art.sources.upgrade_station0161+'" alt="Станок усиления"><div><b>Усиление снаряжения</b><p>Оружие · инструменты · экипировка · пулемёт · дрон</p><small id="v161UpgradePower"></small></div>');
     refs.power=el('v161UpgradePower');const area=text(body,'div','v161UpgradeWork');refs.cradle=text(area,'div','v161Cradle');refs.card=text(area,'div','v161UpgradeCard');
     refs.modules=text(body,'div','v161UpgradeModules');refs.materials=text(body,'div','v161UpgradeMaterials');
     const actions=text(body,'div','v161UpgradeActions');refs.upgrade=v09Button('Усилить',()=>GameEquipmentRuntime.request(station.id,'upgrade',{key:selectedModule}));refs.upgrade.id='v161UpgradeButton';refs.take=v09Button('Забрать предмет',()=>GameEquipmentRuntime.request(station.id,'take'));refs.take.id='v161UpgradeTake';actions.append(refs.upgrade,refs.take);
@@ -58,7 +58,7 @@ window.V0161Upgrade=(()=>{
     // Retain magazine installation and existing specialization without a second
     // cheap enhancement route. Components still consume the correct module.
     if(s&&V09Craft.weapons[s.type])window.V0162Magazines?.render(refs.pick,s,changed);
-    else if(s&&eligibleGear(s))for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[s.type].equip==='feet'?[['speed','Скорость']]:[])]){const b=v09Button((s.specialization===key?'✓ ':'')+label,()=>{s.specialization=key;combat.refreshStats();changed();});b.disabled=false;refs.pick.append(b);}
+    else if(s&&eligibleGear(s)&&!ITEM[s.type]?.gathering)for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[s.type].equip==='feet'?[['speed','Скорость']]:[])]){const b=v09Button((s.specialization===key?'✓ ':'')+label,()=>{s.specialization=key;combat.refreshStats();changed();});b.disabled=false;refs.pick.append(b);}
   }
   function quickItems(){return V013Inventory.items;}
   function open(){if(!near()){message('Подойдите к станку усиления в углу мастерской');return false;}if(!overlay)build();openOverlay(overlay);refresh(true);return true;}

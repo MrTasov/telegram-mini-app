@@ -1,259 +1,271 @@
 {
-  "version": "0.33.0",
+  "version": "0.34.0",
   "stage": 7,
-  "patch": "stage-c1",
+  "patch": "stage-c2",
   "stageAStarted": true,
   "stageAStatus": "accepted-in-general",
   "stageBStarted": true,
   "stageBStatus": "accepted-in-general",
   "stageC1Started": true,
-  "stageC2Started": false,
+  "stageC1Status": "accepted-by-user",
+  "stageC2Started": true,
+  "stageDStarted": false,
   "level2Started": false,
   "passed": true,
-  "automatedAssertions": 11743,
+  "automatedAssertions": 11866,
   "historicalBaselineAssertions": 477,
   "ladderContractChanged": true,
   "filtered": true,
   "runs": [
     {
+      "id": "stage-c2",
+      "exitCode": 0,
+      "elapsedMs": 19994
+    },
+    {
+      "id": "stage-c2-prerequisites",
+      "exitCode": 0,
+      "elapsedMs": 6476
+    },
+    {
       "id": "stage-c1-light-modules",
       "exitCode": 0,
-      "elapsedMs": 6657
+      "elapsedMs": 7037
     },
     {
       "id": "stage-c1-recovery",
       "exitCode": 0,
-      "elapsedMs": 9439
+      "elapsedMs": 9441
     },
     {
       "id": "build",
       "exitCode": 0,
-      "elapsedMs": 254
+      "elapsedMs": 204
     },
     {
       "id": "stage-ab-corrective",
       "exitCode": 0,
-      "elapsedMs": 6246
+      "elapsedMs": 6962
     },
     {
       "id": "stage-ab-light-audio",
       "exitCode": 0,
-      "elapsedMs": 3479
+      "elapsedMs": 3948
     },
     {
       "id": "stage-b",
       "exitCode": 0,
-      "elapsedMs": 7821
+      "elapsedMs": 8907
     },
     {
       "id": "campaign",
       "exitCode": 0,
-      "elapsedMs": 4128
+      "elapsedMs": 5159
     },
     {
       "id": "stage-a-corrective",
       "exitCode": 0,
-      "elapsedMs": 5863
+      "elapsedMs": 6666
     },
     {
       "id": "verification",
       "exitCode": 0,
-      "elapsedMs": 290
+      "elapsedMs": 265
     },
     {
       "id": "regressions",
       "exitCode": 0,
-      "elapsedMs": 18965
+      "elapsedMs": 18851
     },
     {
       "id": "interactions",
       "exitCode": 0,
-      "elapsedMs": 25060
+      "elapsedMs": 25835
     },
     {
       "id": "saves",
       "exitCode": 0,
-      "elapsedMs": 6742
+      "elapsedMs": 7218
     },
     {
       "id": "balance",
       "exitCode": 0,
-      "elapsedMs": 1533
+      "elapsedMs": 1370
     },
     {
       "id": "state-saves",
       "exitCode": 0,
-      "elapsedMs": 15097
+      "elapsedMs": 14607
     },
     {
       "id": "differential",
       "exitCode": 0,
-      "elapsedMs": 26678
+      "elapsedMs": 27804
     },
     {
       "id": "systems",
       "exitCode": 0,
-      "elapsedMs": 2848
+      "elapsedMs": 2613
     },
     {
       "id": "stage3-differential",
       "exitCode": 0,
-      "elapsedMs": 36945
+      "elapsedMs": 40078
     },
     {
       "id": "controls",
       "exitCode": 0,
-      "elapsedMs": 18842
+      "elapsedMs": 17626
     },
     {
       "id": "controls-differential",
       "exitCode": 0,
-      "elapsedMs": 39900
+      "elapsedMs": 42002
     },
     {
       "id": "assets",
       "exitCode": 0,
-      "elapsedMs": 5135
+      "elapsedMs": 5060
     },
     {
       "id": "asset-rendering",
       "exitCode": 0,
-      "elapsedMs": 2228
+      "elapsedMs": 2498
     },
     {
       "id": "stage4-differential",
       "exitCode": 0,
-      "elapsedMs": 41514
+      "elapsedMs": 39987
     },
     {
       "id": "map-workbar",
       "exitCode": 0,
-      "elapsedMs": 8638
+      "elapsedMs": 9398
     },
     {
       "id": "localization",
       "exitCode": 0,
-      "elapsedMs": 65176
+      "elapsedMs": 65903
     },
     {
       "id": "localization-rendering",
       "exitCode": 0,
-      "elapsedMs": 3751
+      "elapsedMs": 3711
     },
     {
       "id": "localization-controls",
       "exitCode": 0,
-      "elapsedMs": 52348
+      "elapsedMs": 56798
     },
     {
       "id": "main-menu",
       "exitCode": 0,
-      "elapsedMs": 114778
+      "elapsedMs": 110993
     },
     {
       "id": "menu-preferences",
       "exitCode": 0,
-      "elapsedMs": 16774
+      "elapsedMs": 16762
     },
     {
       "id": "world-events",
       "exitCode": 0,
-      "elapsedMs": 17365
+      "elapsedMs": 17236
     },
     {
       "id": "readiness",
       "exitCode": 0,
-      "elapsedMs": 16022
+      "elapsedMs": 15439
     },
     {
       "id": "corrective",
       "exitCode": 0,
-      "elapsedMs": 16281
+      "elapsedMs": 16362
     },
     {
       "id": "world-farm",
       "exitCode": 0,
-      "elapsedMs": 16595
+      "elapsedMs": 20229
     },
     {
       "id": "drone-return",
       "exitCode": 0,
-      "elapsedMs": 30090
+      "elapsedMs": 29764
     },
     {
       "id": "resource-access",
       "exitCode": 0,
-      "elapsedMs": 2511
+      "elapsedMs": 2412
     },
     {
       "id": "character-animation",
       "exitCode": 0,
-      "elapsedMs": 5277
+      "elapsedMs": 5220
     },
     {
       "id": "master-unarmed",
       "exitCode": 0,
-      "elapsedMs": 16940
+      "elapsedMs": 17697
     },
     {
       "id": "equipment-integration",
       "exitCode": 0,
-      "elapsedMs": 23333
+      "elapsedMs": 24264
     },
     {
       "id": "player-visual-fix",
       "exitCode": 0,
-      "elapsedMs": 1731
+      "elapsedMs": 1717
     },
     {
       "id": "corrective-performance",
       "exitCode": 0,
-      "elapsedMs": 5329
+      "elapsedMs": 5468
     },
     {
       "id": "corrective-visuals",
       "exitCode": 0,
-      "elapsedMs": 2970
+      "elapsedMs": 3116
     },
     {
       "id": "polish",
       "exitCode": 0,
-      "elapsedMs": 5228
+      "elapsedMs": 7124
     },
     {
       "id": "polish-visuals",
       "exitCode": 0,
-      "elapsedMs": 8035
+      "elapsedMs": 7989
     },
     {
       "id": "audio-unlock",
       "exitCode": 0,
-      "elapsedMs": 9035
+      "elapsedMs": 8932
     },
     {
       "id": "hud-display",
       "exitCode": 0,
-      "elapsedMs": 9777
+      "elapsedMs": 9443
     },
     {
       "id": "audio-pass",
       "exitCode": 0,
-      "elapsedMs": 5685
+      "elapsedMs": 5658
     },
     {
       "id": "bunker-level1",
       "exitCode": 0,
-      "elapsedMs": 7687
+      "elapsedMs": 7654
     },
     {
       "id": "bunker-floor-cache",
       "exitCode": 0,
-      "elapsedMs": 2615
+      "elapsedMs": 2721
     },
     {
       "id": "bunker-r2",
       "exitCode": 0,
-      "elapsedMs": 4279
+      "elapsedMs": 4512
     }
   ],
   "limitations": [

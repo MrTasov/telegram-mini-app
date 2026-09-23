@@ -5,7 +5,9 @@ const catalog=require('../assets/manifest.json'),mod=catalog.actors.modular,chec
 async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack});}}
 const make=(file='index.html',options={})=>{const r=setup(file,{},options);runtimes.push(r);return r;};
 const load=r=>r.eval('Promise.all(Object.entries(AssetManifest.images).filter(([,d])=>!d.historical).map(([id])=>GameAssets.load(id)))');
-const snapshot=r=>require('./corrective-contract.cjs').snapshot(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,firing,scene})'));
+// The legacy allocator did not count tools; fixture-created/discarded axes now
+// consume IDs. Physical ID conservation is checked by stage-c2-prerequisites.
+const snapshot=r=>{const d=require('./corrective-contract.cjs').snapshot(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,firing,scene})'));delete d.save.v010.modules.combat.nextUid;return d;};
 async function main(){
  const b=make('qa/pre-equipment/index.html'),r=make(),E=s=>r.eval(s),B=s=>b.eval(s);await load(r);await load(b);
  // Align the historical movement fixture's now-empty flashlight slot.
@@ -45,8 +47,8 @@ async function main(){
   fresh();const action=mod.items[item].action;let elapsed=0;const seen=new Set();
   for(let i=0;i<12;i++){
    const t=elapsed+action.durations[i]/2;
-   if(item==='axe')E(`chopState={id:worldTrees[0].id,duration:${action.duration},startedAt:Date.now()-${t/catalog.actors.gathering.playbackRate}}`);
-   if(item==='pickaxe')E(`V09World.resumeMining({id:V09World.ores[0].id,elapsed:${t/catalog.actors.gathering.playbackRate},duration:${action.duration},at:Date.now()})`);
+   if(item==='axe')E(`chopState={id:worldTrees[0].id,duration:${action.duration},elapsed:${t}}`);
+   if(item==='pickaxe')E(`V09World.resumeMining({id:V09World.ores[0].id,elapsed:${t},duration:${action.duration},at:Date.now()})`);
    if(item==='hammer')E(`window.qaHammer=ActorVisuals.framePose('hammer','work',${i});qaHammer.localTime=${t};qaHammer.work={key:'qa',elapsed:${t},duration:${action.duration},material:'metal',target:{x:840,y:810,w:15,h:80}}`);
    const expr=item==='hammer'?'qaHammer':`ActorVisuals.pose('${item}')`,p=plain(E(expr));seen.add(p.frame);assert.equal(p.frame,i);
    const position=plain(E('({...player})'));E(`ActorVisuals.renderPose(${expr},player.x,player.y,Math.atan2(player.aimY,player.aimX))`);assert.deepEqual(plain(E('({...player})')),position);
@@ -61,9 +63,12 @@ async function main(){
   for(let i=0;i<139;i++){step(1000/60,'updateChop();');E('drawPlayer()');}
   assert.equal(E('qaTree.felled'),true);assert.equal(B("bagCount('wood')")-oldWood,15);assert.equal(E("bagCount('wood')")-newWood,10);
  });
- await check('work.realMiningYieldAndToolUpgradeRatePreserved',()=>{
+ await check('work.realMiningNewYieldExistingCycleAndPosition',()=>{
   fresh("addItem('pickaxe',1);V013Inventory.equip('pickaxe');window.qaOre=V09World.ores[0];player.x=qaOre.x+qaOre.r+20;player.y=qaOre.y;executeInteraction(interactionObjects('surface').find(o=>o.id===qaOre.id));");assert.ok(E('V09World.miningState()'));
-  for(let i=0;i<125;i++){step(1000/60,'V09World.tickMining();');E('drawPlayer()');if(i%10===0)same();}same();assert.ok(E('qaOre.remaining<qaOre.capacity'));
+  const before=E('qaOre.remaining'),resource=E('qaOre.type'),owned=E(`bagCount('${resource}')`),position=plain(E('({x:player.x,y:player.y})'));
+  assert.equal(E('V09World.miningState().duration'),B('V09World.miningState().duration'));
+  for(let i=0;i<125;i++){step(1000/60,'V09World.tickMining();');E('drawPlayer()');}
+  assert.equal(E(`bagCount('${resource}')`)-owned,15);assert.equal(before-E('qaOre.remaining'),15);assert.equal(B('qaOre.capacity-qaOre.remaining'),10);assert.deepEqual(plain(E('({x:player.x,y:player.y})')),position);
  });
  await check('work.realRepairHPAndConcreteConsumptionPreserved',()=>{
   fresh("addItem('hammer',1);addItem('concrete',5);V013Inventory.equip('hammer');window.qaWall=[...V018Build.structures.values()].find(r=>r.kind==='wall'&&!r.object.corner);qaWall.object.hp-=100;player.x=qaWall.object.x+qaWall.object.w/2;player.y=qaWall.object.y-25;V018Build.start(qaWall.id);");assert.ok(E('V018Build.job'));

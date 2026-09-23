@@ -100,7 +100,7 @@
     if(!o.remaining){message(`Месторождение восстанавливается: ${Math.ceil(o.regrowMs/60000)} мин.`);return;}
     if(heldItem()!=='pickaxe'||bagCount('pickaxe')<1){message('⛏ Выберите кирку в быстром слоте');return;}
     if(freeItemSpace(bag,o.type,BAG_SLOTS)<1){message('🎒 Освободите место для руды');return;}
-    cancelSearch();cancelChop();mining={id:o.id,elapsed:0,duration:1800,at:Date.now()};
+    cancelSearch();cancelChop();mining=GameGathering.start('pickaxe',o.id);if(!mining)return;
     const dx=o.x-player.x,dy=o.y-player.y,n=Math.hypot(dx,dy)||1;
     player.aimX=dx/n;player.aimY=dy/n;
   }
@@ -153,18 +153,16 @@
     if(!mining)return;
     const o=ores.find(v=>v.id===mining.id),target=interactionObjects('surface').find(v=>v.id===mining.id);
     if(scene!=='surface'||playerDead||movePower>JOY_DEAD||bagCount('pickaxe')<1||!o||!canInteract(target,player.x,player.y)){stopMining();return;}
-    const now=Date.now(),elapsed=Math.max(0,now-mining.at);mining.at=now;
-    mining.elapsed+=elapsed*(typeof V010World!=='undefined'?V010World.settings.miningRate:1)*(V09Craft.craftQueue.upgrades.tools?1.2:1);
-    // This loop is bounded by deposit capacity and backpack space, including offline catch-up.
-    while(mining&&mining.elapsed>=mining.duration){
-      mining.elapsed-=mining.duration;
-      const amount=Math.min(10,o.remaining,freeItemSpace(bag,o.type,BAG_SLOTS));
-      const received=amount-addItem(o.type,amount);o.remaining-=received;if(received>0)GameAudio.play(o.remaining?'pickup':'rockBreak',{x:o.x,y:o.y,scene:'surface'});
-      if(!o.remaining)o.regrowMs=600000;
-      if(received>0&&typeof V010!=='undefined')V010.emit('mined',{type:o.type,qty:received});
-      if(!received||!o.remaining||freeItemSpace(bag,o.type,BAG_SLOTS)<1){stopMining();message(!o.remaining?'Месторождение исчерпано · восстановление через 10 минут игры':'🎒 Рюкзак заполнен');}
+    if(!GameGathering.valid(mining,'pickaxe')){stopMining();return;}
+    GameGathering.advance(mining,'pickaxe',o,perHit=>{
+      const amount=Math.min(perHit,o.remaining,freeItemSpace(bag,o.type,BAG_SLOTS));
+      const received=amount-addItem(o.type,amount);o.remaining-=received;
+      if(!o.remaining){o.regrowMs=600000;GameAudio.play('rockBreak',{x:o.x,y:o.y,scene:'surface'});}
+      if(received>0)V010.emit('mined',{type:o.type,qty:received});
       if(!document.hidden)createNoise(o.x,o.y,230);queueGameSave();
-    }
+      if(!received||!o.remaining||freeItemSpace(bag,o.type,BAG_SLOTS)<1){stopMining();message(!o.remaining?'Месторождение исчерпано · восстановление через 10 минут игры':'🎒 Рюкзак заполнен');return false;}
+      return true;
+    });
     const bar=el('searchBarWrap');
     if(mining){bar.style.display=menuOpen?'none':'block';positionWorkProgress(bar,62);el('searchBarFill').style.width=(100*mining.elapsed/mining.duration)+'%';}
   }

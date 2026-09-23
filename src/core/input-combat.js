@@ -539,6 +539,7 @@ function damagePlayer(amount){
 function killPlayer(){
 
   playerDead = true;
+  window.GameChapterOne?.onDeath();
 
   movePower = 0;
   firing = false;
@@ -562,6 +563,7 @@ function respawn(){
 
   scene =
     "surface";
+  window.CommandCoreUI?.syncLocation();
 
   player.x =
     800;

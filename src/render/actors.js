@@ -28,11 +28,7 @@ window.ActorVisuals=(()=>{
   }
   function workState(item,now){
     if(playerDead||document.hidden)return null;
-    if(item==='axe'&&chopState&&scene==='surface')return {key:chopState,elapsed:Math.max(0,Date.now()-chopState.startedAt),duration:chopState.duration,material:'wood',target:worldTrees.find(t=>t.id===chopState.id)};
-    if(item==='pickaxe'&&scene==='surface'){
-      const m=window.V09World?.miningState();
-      if(m)return {key:m.id,elapsed:m.elapsed,duration:m.duration,material:'mineral',target:V09World.ores.find(o=>o.id===m.id)};
-    }
+    if(GameGathering.definition(item)&&scene==='surface')return GameGathering.visual(item);
     if(item==='hammer'){
       const job=window.V018Build?.job;
       if(job&&repairVisual?.job!==job)beginRepair(job,V018Build.record(job.id)?.object);
@@ -78,9 +74,9 @@ window.ActorVisuals=(()=>{
       if(window.V012Fishing?.state)return framePose(item,'wait',0);
     }
     const work=workState(item,now);
-    if(work){work.cycleMs=work.duration/(cfg.gathering.sounds[work.material]?cfg.gathering.playbackRate:1);
+    if(work){work.cycleMs??=work.duration/(cfg.gathering.sounds[work.material]?cfg.gathering.playbackRate:1);
       const elapsed=(work.elapsed%work.cycleMs+work.cycleMs)%work.cycleMs,local=elapsed/work.cycleMs*entry.action.duration;
-      return {...framePose(item,'work',timedFrame(entry.action,local)),work,localTime:local};}
+      return {...framePose(item,'work',timedFrame(entry.action,local+1e-7)),work,localTime:local};}
     return framePose(item,motion.moving?'walk':'idle',motion.moving?loop(motion.phase*mod.walkCount,mod.walkCount):0);
   }
   const bodyAngle=(p,aim)=>aim-Math.PI/2;
@@ -213,6 +209,7 @@ window.ActorVisuals=(()=>{
     stepPhase=motion.phase;
     const p=pose(heldItem()),work=p?.work,name=work&&(cfg.gathering.sounds[work.material]||(work.material==='metal'?'impactMetal':null));
     if(!name){stopAnimationSound('work');workSound=null;return;}
+    if(GameGathering.definition(p.item)){workSound=null;return;}
     const action=mod.items[p.item].action,hitPhase=action.durations.slice(0,action.impactFrame).reduce((s,n)=>s+n,0)/action.duration;
     const hit=Math.floor(work.elapsed/work.cycleMs-hitPhase);
     if(!workSound||workSound.key!==work.key||work.elapsed<workSound.elapsed){workSound={key:work.key,elapsed:work.elapsed,hit};return;}

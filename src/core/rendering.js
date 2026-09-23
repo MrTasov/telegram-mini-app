@@ -54,6 +54,7 @@ function transition(title,callback){
     function(){
 
       callback();
+      window.CommandCoreUI?.syncLocation();
 
       setTimeout(
         function(){

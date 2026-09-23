@@ -396,7 +396,7 @@ function useTree(tree){
   if(freeItemSpace(bag,'wood',BAG_SLOTS)<=0){message('🎒 Освободите место для древесины');return;}
   if(tree.felled){collectTreeWood(tree);return;}
   if(chopState)return;
-  chopState={id:tree.id,startedAt:Date.now(),duration:1800+GameplayBalance.resources.treeChopExtraMs};
+  chopState=GameGathering.start('axe',tree.id);if(!chopState)return;
   player.aimX=tree.x-player.x;player.aimY=tree.y-player.y;
   const n=Math.hypot(player.aimX,player.aimY)||1;player.aimX/=n;player.aimY/=n;
 }
@@ -412,9 +412,14 @@ function updateChop(){
   const target=interactionObjects('surface').find(o=>o.id===tree?.id);
   if(!tree||scene!=='surface'||playerDead||movePower>JOY_DEAD||bagCount('axe')<1||!canInteract(target,player.x,player.y)){cancelChop();return;}
   if(freeItemSpace(bag,'wood',BAG_SLOTS)<=0){cancelChop();message('Рюкзак заполнен');return;}
-  const p=clamp((Date.now()-chopState.startedAt)/chopState.duration,0,1);
-  const bar=el('searchBarWrap');bar.style.display=menuOpen?'none':'block';positionWorkProgress(bar,58);el('searchBarFill').style.width=(p*100)+'%';
-  if(p>=1){GameAudio.play('treeBreak',{x:tree.x,y:tree.y,scene:'surface'});tree.felled=true;tree.regrowMs=600000;invalidateGeometry();cancelChop();collectTreeWood(tree);}
+  if(!GameGathering.valid(chopState,'axe')){cancelChop();return;}
+  GameGathering.advance(chopState,'axe',tree,amount=>{
+    const qty=Math.min(amount,tree.wood,freeItemSpace(bag,'wood',BAG_SLOTS)),received=qty-addItem('wood',qty);tree.wood-=received;
+    if(received){V010.emit('gathered',{type:'wood',qty:received});createNoise(tree.x,tree.y,170);queueGameSave();}
+    if(!tree.wood){tree.felled=true;tree.regrowMs=600000;invalidateGeometry();GameAudio.play('treeBreak',{x:tree.x,y:tree.y,scene:'surface'});}
+    if(!received||!tree.wood||freeItemSpace(bag,'wood',BAG_SLOTS)<1){cancelChop();return false;}return true;
+  });
+  const bar=el('searchBarWrap');if(chopState){bar.style.display=menuOpen?'none':'block';positionWorkProgress(bar,58);el('searchBarFill').style.width=(chopState.elapsed/chopState.duration*100)+'%';}
 }
 
 

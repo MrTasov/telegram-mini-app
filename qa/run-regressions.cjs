@@ -29,6 +29,8 @@ for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs'])
  if(name==='target0191.cjs')code=code.replace('alphas.push(ctx.globalAlpha);','if(a.length===9)alphas.push(ctx.globalAlpha);');
  // UX patch intentionally replaces 16 ladders with 4. Frozen files stay intact.
  if(name==='perimeter020.cjs')code=code.replace('three spans and four ladders','three spans and one ladder').replace("stairs.filter(t=>t.side==='${side}').length===4","stairs.filter(t=>t.side==='${side}').length===1").replace('for(let i=0;i<16;i++)','for(let i=0;i<4;i++)').replace('ladder on destroyed section becomes unavailable','removed ladder remains absent on destroyed section').replace('!V020Walls.usable(V091Fortress.stairs[0])',"!V091Fortress.stairs.some(t=>t.id==='n_0')");
+ // Project only added level-zero tool metadata in the disposable oracle.
+ if(name==='perimeter020.cjs')code=code.replace("JSON.stringify(raw.bag)===JSON.stringify(legacy.bag)","JSON.stringify(require("+JSON.stringify(path.join(__dirname,'stage-c2-contract.cjs'))+").project({bag:raw.bag}).bag)===JSON.stringify(legacy.bag)");
  if(name==='perimeter020.cjs')code=code.replace("JSON.stringify(raw.robots014)===JSON.stringify(legacy.robots014)","JSON.stringify({...raw.robots014,x:0,y:0})===JSON.stringify({...legacy.robots014,x:0,y:0})");
  fs.writeFileSync(path.join(game,'qa',name),adaptAssetWaits(code));
 }

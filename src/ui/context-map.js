@@ -189,20 +189,15 @@ window.V0105=(()=>{
   }
 
   
-  GameSave.extend('capture','ui.context-map',function(oldCapture){V09World.tickMining();updateChop();const d=oldCapture();d.gathering={schema:1,chop:chopState?{...chopState}:null,mining:V09World.miningState(),hand:contextHand};return d;});
+  GameSave.extend('capture','ui.context-map',function(oldCapture){V09World.tickMining();updateChop();const d=oldCapture();d.gathering={schema:2,chop:chopState?{...chopState}:null,mining:V09World.miningState(),hand:contextHand};return d;});
   GameSave.extend('decode','ui.context-map',function(oldDecode,raw){
     const d=oldDecode(raw),g=d.gathering;
-    if(g!==undefined){
-      const time=t=>Number.isFinite(t)&&t>0&&t<=Date.now()+60000;
-      if(!g||g.schema!==1||(g.chop&&g.mining)||(g.hand!==null&&!['axe','pickaxe','fishing_rod','hammer',...guns].includes(g.hand)))throw Error('Некорректное сохранение добычи');
-      if(g.chop&&(!worldTrees.some(t=>t.id===g.chop.id)||![1800,1800+GameplayBalance.resources.treeChopExtraMs].includes(g.chop.duration)||!time(g.chop.startedAt)))throw Error('Некорректная рубка');
-      if(g.mining&&(!V09World.ores.some(o=>o.id===g.mining.id)||g.mining.duration!==1800||!time(g.mining.at)||!Number.isFinite(g.mining.elapsed)||g.mining.elapsed<0||g.mining.elapsed>=1800))throw Error('Некорректная добыча');
-    }
+    GameGathering.validate(g);
     return d;
   });
   GameSave.extend('restore','ui.context-map',function(oldRestore,d){
-    target=null;contextHand=null;cancelChop();oldRestore(d);
-    const g=d.gathering;if(g){contextHand=g.hand&&bagCount(g.hand)>0?g.hand:null;chopState=g.chop?{...g.chop}:null;V09World.resumeMining(g.mining);V09World.tickMining();updateChop();}
+    target=null;contextHand=null;cancelChop();GameGathering.reset();oldRestore(d);
+    const g=d.gathering;if(g){contextHand=g.hand&&bagCount(g.hand)>0?g.hand:null;chopState=g.chop?{...g.chop,at:Date.now()}:null;V09World.resumeMining(g.mining?{...g.mining,at:Date.now()}:null);V09World.tickMining();updateChop();}
     renderQuickSlots();updateAmmoHud();
   });
   const history=[

@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "private": true,
-  "description": "LAST BASE 0.33.0 \u2014 Stage C1 recovery and power bootstrap; local lighting and craftable head flashlight.",
+  "description": "LAST BASE 0.34.0 \u2014 Stage C2 Chapter 1, damaged New Game, tool upgrades and Command Core session navigation.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -27,7 +27,10 @@
     "package:corrective": "node tools/package-stage-ab.cjs",
     "test:c1": "node qa/stage-c1-light-modules.cjs && node qa/stage-c1-recovery.cjs",
     "bench:c1": "node --expose-gc qa/stage-c1-performance.cjs",
-    "package:c1": "node tools/package-stage-c1.cjs"
+    "package:c1": "node tools/package-stage-c1.cjs",
+    "test:c2": "node qa/stage-c2-prerequisites.cjs && node qa/stage-c2.cjs",
+    "bench:c2": "node --expose-gc qa/stage-c2-performance.cjs",
+    "package:c2": "node tools/package-stage-c2.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

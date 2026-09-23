@@ -1,5 +1,5 @@
 {
-  "version": "0.33.0",
+  "version": "0.34.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -45,7 +45,22 @@
     "axe": {
       "name": "Топор",
       "icon": "🪓",
-      "hand": true
+      "hand": true,
+      "upgrades": {
+        "maxLevel": 5,
+        "cost": {
+          "iron": 25,
+          "copper": 12,
+          "parts": 8
+        },
+        "rarePerLevel": 2
+      },
+      "gathering": {
+        "yieldBase": 10,
+        "yieldPerLevel": 0,
+        "speedPerLevel": 0.1,
+        "cycleMs": 2300
+      }
     },
     "flashlight": {
       "name": "Тактический фонарь",
@@ -234,7 +249,22 @@
     "pickaxe": {
       "name": "Кирка",
       "icon": "⛏️",
-      "hand": true
+      "hand": true,
+      "upgrades": {
+        "maxLevel": 5,
+        "cost": {
+          "iron": 25,
+          "copper": 12,
+          "parts": 8
+        },
+        "rarePerLevel": 2
+      },
+      "gathering": {
+        "yieldBase": 15,
+        "yieldPerLevel": 5,
+        "speedPerLevel": 0.1,
+        "cycleMs": 1800
+      }
     },
     "remote": {
       "name": "Пульт базы",
@@ -2638,6 +2668,7 @@
       "equipment032",
       "headModules033",
       "recovery033",
+      "chapter034",
       "identity027",
       "saveVersion"
     ],
@@ -2646,7 +2677,7 @@
       "v09": 1,
       "v091": 1,
       "v010": 1,
-      "gathering": 1,
+      "gathering": 2,
       "farmV011": 2,
       "farm014": 2,
       "world011": 2,
@@ -2666,6 +2697,7 @@
       "equipment032": 1,
       "headModules033": 1,
       "recovery033": 1,
+      "chapter034": 1,
       "identity027": 1
     },
     "registeredModules": [

@@ -1,11 +1,18 @@
-# Command Core presentation contract — 0.32.1
+# Command Core presentation contract — 0.34.0
 
 The Core shell owns only transient presentation state: selected section, scrolling,
 expanded objective descriptions and command request sequence. It is never a save,
 research, inventory, station or campaign authority.
 
-`CommandCoreUI.registerSection(id, titleKey, mount, available)` accepts a ready section. The
-mount receives its persistent scroll element and returns an update function.
+`CommandCoreUI.registerSection(id, titleKey, mount, available, validPage)` accepts a ready section. The
+mount receives its persistent scroll element plus a generic route object and returns an update function.
+`route.page` is revalidated on read; `route.setPage(id)` accepts only a valid page.
+The same contract applies to future registered sections. No per-tab resume switch
+is needed. Section, page, expansion and scrolling remain session-only. Closing
+and reopening inside Level 1 preserves them. Leaving Level 1 (surface or a future
+other floor), loading a save or creating a game resets all routes and selects Base.
+Scene transitions call `syncLocation()` immediately, with a polling safeguard.
+No UI route is serialized.
 Only complete sections are registered; there is no placeholder registration.
 The optional availability callback reads the corresponding domain owner; it
 does not grant access. Priority is `construction`, `base`, `chapters`, `research`,
@@ -46,3 +53,7 @@ world counter when activated. Previously completed chapters are not reopened;
 new optional records in those chapters remain inactive. Old transitions and
 receipts survive unchanged. Decode does not mutate the live world, grant rewards,
 advance a chapter, or consume supplies.
+
+C2 uses `GameCampaign.definitions` for the active world profile: old worlds retain
+revision 3 content; only New Game uses the Chapter 1 revision 4 route. The terminal
+recovery view is not presented as an empty Chapter 2.

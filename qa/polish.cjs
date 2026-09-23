@@ -48,24 +48,19 @@ async function main(){
  });
  check('assets.noDuplicateImages',()=>assert.equal(r.imageRequests.length,new Set(r.imageRequests).size));
  check('gameplay.definitionsAndMiningOwnersByteIdentical',()=>{const hashes=require('./pre-polish/source-hashes.json');for(const f of ['src/config/gameplay.js','src/crafting/manufacturing.js','src/world/resources.js','src/ui/context-map.js','src/save/legacy-progress.js','src/drones/companion.js'])require('./hud-contract.cjs').assertSource(f,hashes[f]);});
- for(const material of ['tree','stone','iron_ore','copper_ore','coal'])check('gathering.'+material+'.twoCyclesAndSynchronizedHits',()=>{
+ // C2 intentionally replaces the old two visual swings / timer payout with
+ // one shared stroke per real yield. Exercise the real owner and real audio.
+ for(const material of ['tree','stone','iron_ore','copper_ore','coal'])check('gathering.'+material+'.realCyclesSynchronizedHits',()=>{
   reset();const tree=material==='tree',item=tree?'axe':'pickaxe';
-  E(`window.testResource=${tree?'worldTrees[0]':`V09World.ores.find(o=>o.type==='${material}')`};window.testJob=interactionObjects().find(o=>o.id===testResource.id);player.x=testResource.x+testResource.r+25;player.y=testResource.y;executeInteraction(testJob);updateFootstepsAudio();audioEvents=[];`);
-  const duration=E(tree?'chopState.duration':'V09World.miningState().duration'),cycle=duration/2;
-  assert.equal(duration,tree?2300:1800);const frames=[];
-  // Observe the job through its existing timing owner up to just before completion.
-  for(let i=0;i<120;i++){
-   const elapsed=(i+.1)*duration/120;
-   if(tree)E(`chopState.startedAt=Date.now()-${elapsed}`);else E(`V09World.resumeMining({...V09World.miningState(),elapsed:${elapsed}})`);
-   E('updateFootstepsAudio()');frames.push(E(`ActorVisuals.pose('${item}').frame`));
-  }
-  assert.equal(new Set(frames.slice(0,60)).size,12);assert.deepEqual(frames.slice(0,60),frames.slice(60));
+  E(`window.testResource=${tree?'worldTrees[0]':`V09World.ores.find(o=>o.type==='${material}')`};${tree?'testResource.wood=20;testResource.felled=false;':''}window.testJob=interactionObjects().find(o=>o.id===testResource.id);player.x=testResource.x+testResource.r+25;player.y=testResource.y;executeInteraction(testJob);updateFootstepsAudio();audioEvents=[];`);
+  const duration=E(tree?'chopState.duration':'V09World.miningState().duration'),frames=[];assert.equal(duration,tree?2300:1800);let previous=0;
+  for(let i=0;i<240;i++){const elapsed=Math.ceil(i*duration/120);advance(elapsed-previous,tree?'updateChop();updateFootstepsAudio()':'V09World.tickMining();updateFootstepsAudio()');previous=elapsed;frames.push(E(`ActorVisuals.pose('${item}').frame`));}
+  assert.equal(new Set(frames.slice(0,120)).size,12);assert.equal(new Set(frames.slice(120)).size,12);
   const events=J('audioEvents');assert.equal(events.length,2);assert.ok(events.every(e=>e.name===(tree?'chopWood':'mineRock')&&e.pose===7));
-  assert.equal(E(tree?'chopState.duration':'V09World.miningState().duration'),duration);
-  assert.equal(E(`ActorVisuals.pose('${item}').work.cycleMs`),cycle);
+  assert.equal(E(`ActorVisuals.pose('${item}').work.cycleMs`),duration);
   const count=E('audioEvents.length');for(let i=0;i<20;i++)E('updateFootstepsAudio();drawPlayer()');assert.equal(E('audioEvents.length'),count);
  });
- check('gathering.realTreeYieldAndCompletionUnchanged',()=>{reset();E("window.testResource=worldTrees[0];window.testJob=interactionObjects().find(o=>o.id===testResource.id);player.x=testResource.x+testResource.r+25;player.y=testResource.y;window.woodBefore=bagCount('wood');executeInteraction(testJob);updateFootstepsAudio()");advance(2299,'updateChop();updateFootstepsAudio()');assert.equal(E('testResource.felled'),false);advance(1,'updateChop();updateFootstepsAudio()');assert.equal(E('testResource.felled'),true);assert.equal(E("bagCount('wood')-woodBefore"),10);});
+ check('gathering.realTreeYieldAtImpact',()=>{reset();E("window.testResource=worldTrees[0];window.testJob=interactionObjects().find(o=>o.id===testResource.id);player.x=testResource.x+testResource.r+25;player.y=testResource.y;window.woodBefore=bagCount('wood');executeInteraction(testJob);updateFootstepsAudio()");advance(Math.ceil(E("chopState.duration*GameGathering.phase('axe')"))-1,'updateChop();updateFootstepsAudio()');assert.equal(E('testResource.felled'),false);advance(1,'updateChop();updateFootstepsAudio()');assert.equal(E('testResource.felled'),true);assert.equal(E("bagCount('wood')-woodBefore"),10);});
  for(const direction of [1,-1])check('audio.stepsFollowForwardAndBackwardContactPhases.'+direction,()=>{
   reset();E(`player.moving=true;movePower=1;ActorVisuals.pose(null);`);
   const start=E('player.x');
