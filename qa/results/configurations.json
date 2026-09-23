@@ -1,5 +1,5 @@
 {
-  "version": "0.30.1",
+  "version": "0.31.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -2034,6 +2034,12 @@
         "room": "workshop",
         "watts": 2,
         "enabled": true
+      },
+      {
+        "id": "command_core_l1",
+        "room": "corridor",
+        "watts": 0.05,
+        "enabled": true
       }
     ],
     "battery": {
@@ -2545,6 +2551,7 @@
       "monsters017",
       "building018",
       "bunker030",
+      "campaign031",
       "identity027",
       "saveVersion"
     ],
@@ -2569,6 +2576,7 @@
       "monsters017": 2,
       "building018": 1,
       "bunker030": 1,
+      "campaign031": 1,
       "identity027": 1
     },
     "registeredModules": [
@@ -2787,6 +2795,7 @@
       "ACH",
       "ORDERS",
       "GOALS",
+      "count",
       "record",
       "discover",
       "isUnlocked",

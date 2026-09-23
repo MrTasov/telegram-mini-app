@@ -187,7 +187,7 @@ window.V010Progression=(()=>{
     return true;
   }
   function restore(d){validate(d);state=d?JSON.parse(JSON.stringify(d)):fresh();elapsed=0;dirty=true;seenLog.clear();evaluate(true);renderPin();}
-  const api={TECH,ACH,ORDERS,GOALS,record,discover,isUnlocked,unlock,claim,collectPending,startOrder,pin,show,log:appendLog,tick,capture,restore,validate,get state(){return capture();}};
+  const api={TECH,ACH,ORDERS,GOALS,count:metric=>state.counts[metric],record,discover,isUnlocked,unlock,claim,collectPending,startOrder,pin,show,log:appendLog,tick,capture,restore,validate,get state(){return capture();}};
   V010.on('combatkill',()=>record('kills',1));
   V010.on('mined',p=>{if(Number.isSafeInteger(p?.qty))record('mined',p.qty,p.type);});
   V010.on('harvested',p=>{if(Number.isSafeInteger(p?.qty))record('harvested',p.qty,p.type);});

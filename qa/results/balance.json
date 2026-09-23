@@ -1,5 +1,5 @@
 {
-  "version": "0.30.1",
+  "version": "0.31.0",
   "passed": 1,
   "failed": 0,
   "scope": "Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.",
@@ -50,7 +50,9 @@
     ],
     "V010World": [],
     "V010Energy": [],
-    "V010Progression": [],
+    "V010Progression": [
+      "count"
+    ],
     "V010Camera": [
       "resetTouch",
       "touchActive"

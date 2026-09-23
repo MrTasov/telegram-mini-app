@@ -14,7 +14,7 @@ window.BunkerState=(()=>{
   executeInteraction=function(target){
     if(target&&layout.agricultureId(target.id)&&scene==='bunker')return;
     if(target?.id===layout.core.id||target?.id===layout.down.id){
-      if(!menuOpen&&!playerDead&&scene==='bunker'&&canInteract(target,player.x,player.y))message(I18n.t(target.id===layout.core.id?'bunker.core.waiting':'bunker.down.locked'));
+      if(!menuOpen&&!playerDead&&scene==='bunker'&&canInteract(target,player.x,player.y)){if(target.id===layout.core.id)window.CommandCoreUI?.show();else message(I18n.t('bunker.down.locked'));}
       return;
     }
     return oldExecute(target);

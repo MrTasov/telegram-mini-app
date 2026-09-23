@@ -126,7 +126,7 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01]|28\.0|29\.0|30\.[01])))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01]|28\.0|29\.0|30\.[01]|31\.0)))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -144,6 +144,8 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   if(legacy){
     if(legacySchema===1)d.starterPending=d.starterPending.filter(type=>type!=='rifle_m4');
     d.v09=clone(v09NewGameTemplate.v09);
+    // Stage A adds its circuit after the historical partial template was captured.
+    window.GameCampaign?.migrate(d);
     d.v09.crafting.magazines.rifle_ak74=d.magazine;
     d.v09.crafting.magazines.rifle_m4=0;
     d.v09.crafting.feed=d.feedCraft?clone(d.feedCraft):null;
@@ -348,7 +350,7 @@ function v09DownloadSave(){
     const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;
     const filename=(GameState.session.name||v091DefaultName(GameState.session.activeSlot)).replace(/[^\p{L}\p{N}_-]+/gu,'-').slice(0,48)||'save';
-    a.download=`survival-base-0.29.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`survival-base-0.31.0-${filename}-${new Date().toISOString().slice(0,10)}.json`;
     document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
     message('💾 Файл сохранения подготовлен для скачивания.');
   }catch(error){message('Не удалось подготовить сохранение.');}

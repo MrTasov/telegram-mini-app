@@ -1,218 +1,224 @@
 {
-  "version": "0.30.1",
+  "version": "0.31.0",
   "stage": 7,
-  "patch": "bunker-level1-rework-r2",
-  "stageAStarted": false,
+  "patch": "campaign-stage-a",
+  "stageAStarted": true,
+  "stageBStarted": false,
   "level2Started": false,
   "passed": true,
-  "automatedAssertions": 11115,
+  "automatedAssertions": 11267,
   "historicalBaselineAssertions": 477,
   "ladderContractChanged": true,
   "runs": [
     {
       "id": "build",
       "exitCode": 0,
-      "elapsedMs": 205
+      "elapsedMs": 186
+    },
+    {
+      "id": "campaign",
+      "exitCode": 0,
+      "elapsedMs": 4343
     },
     {
       "id": "verification",
       "exitCode": 0,
-      "elapsedMs": 257
+      "elapsedMs": 256
     },
     {
       "id": "regressions",
       "exitCode": 0,
-      "elapsedMs": 19107
+      "elapsedMs": 19353
     },
     {
       "id": "interactions",
       "exitCode": 0,
-      "elapsedMs": 25886
+      "elapsedMs": 27603
     },
     {
       "id": "saves",
       "exitCode": 0,
-      "elapsedMs": 6729
+      "elapsedMs": 7223
     },
     {
       "id": "balance",
       "exitCode": 0,
-      "elapsedMs": 1517
+      "elapsedMs": 1385
     },
     {
       "id": "state-saves",
       "exitCode": 0,
-      "elapsedMs": 15049
+      "elapsedMs": 15219
     },
     {
       "id": "differential",
       "exitCode": 0,
-      "elapsedMs": 28926
+      "elapsedMs": 28339
     },
     {
       "id": "systems",
       "exitCode": 0,
-      "elapsedMs": 2629
+      "elapsedMs": 2695
     },
     {
       "id": "stage3-differential",
       "exitCode": 0,
-      "elapsedMs": 42760
+      "elapsedMs": 42561
     },
     {
       "id": "controls",
       "exitCode": 0,
-      "elapsedMs": 19053
+      "elapsedMs": 18480
     },
     {
       "id": "controls-differential",
       "exitCode": 0,
-      "elapsedMs": 40488
+      "elapsedMs": 42739
     },
     {
       "id": "assets",
       "exitCode": 0,
-      "elapsedMs": 5006
+      "elapsedMs": 5416
     },
     {
       "id": "asset-rendering",
       "exitCode": 0,
-      "elapsedMs": 2339
+      "elapsedMs": 2454
     },
     {
       "id": "stage4-differential",
       "exitCode": 0,
-      "elapsedMs": 40989
+      "elapsedMs": 42493
     },
     {
       "id": "map-workbar",
       "exitCode": 0,
-      "elapsedMs": 8874
+      "elapsedMs": 9363
     },
     {
       "id": "localization",
       "exitCode": 0,
-      "elapsedMs": 73659
+      "elapsedMs": 72508
     },
     {
       "id": "localization-rendering",
       "exitCode": 0,
-      "elapsedMs": 3566
+      "elapsedMs": 3794
     },
     {
       "id": "localization-controls",
       "exitCode": 0,
-      "elapsedMs": 50512
+      "elapsedMs": 56766
     },
     {
       "id": "main-menu",
       "exitCode": 0,
-      "elapsedMs": 123485
+      "elapsedMs": 123088
     },
     {
       "id": "menu-preferences",
       "exitCode": 0,
-      "elapsedMs": 15613
+      "elapsedMs": 16332
     },
     {
       "id": "world-events",
       "exitCode": 0,
-      "elapsedMs": 17019
+      "elapsedMs": 19266
     },
     {
       "id": "readiness",
       "exitCode": 0,
-      "elapsedMs": 15903
+      "elapsedMs": 16861
     },
     {
       "id": "corrective",
       "exitCode": 0,
-      "elapsedMs": 17192
+      "elapsedMs": 17718
     },
     {
       "id": "world-farm",
       "exitCode": 0,
-      "elapsedMs": 18004
+      "elapsedMs": 17715
     },
     {
       "id": "drone-return",
       "exitCode": 0,
-      "elapsedMs": 32541
+      "elapsedMs": 33289
     },
     {
       "id": "resource-access",
       "exitCode": 0,
-      "elapsedMs": 2661
+      "elapsedMs": 2894
     },
     {
       "id": "character-animation",
       "exitCode": 0,
-      "elapsedMs": 5847
+      "elapsedMs": 5746
     },
     {
       "id": "master-unarmed",
       "exitCode": 0,
-      "elapsedMs": 19180
+      "elapsedMs": 17583
     },
     {
       "id": "equipment-integration",
       "exitCode": 0,
-      "elapsedMs": 25336
+      "elapsedMs": 24512
     },
     {
       "id": "player-visual-fix",
       "exitCode": 0,
-      "elapsedMs": 2313
+      "elapsedMs": 1855
     },
     {
       "id": "corrective-performance",
       "exitCode": 0,
-      "elapsedMs": 5664
+      "elapsedMs": 5443
     },
     {
       "id": "corrective-visuals",
       "exitCode": 0,
-      "elapsedMs": 3064
+      "elapsedMs": 3164
     },
     {
       "id": "polish",
       "exitCode": 0,
-      "elapsedMs": 5928
+      "elapsedMs": 5605
     },
     {
       "id": "polish-visuals",
       "exitCode": 0,
-      "elapsedMs": 8260
+      "elapsedMs": 8285
     },
     {
       "id": "audio-unlock",
       "exitCode": 0,
-      "elapsedMs": 9142
+      "elapsedMs": 9081
     },
     {
       "id": "hud-display",
       "exitCode": 0,
-      "elapsedMs": 10182
+      "elapsedMs": 10218
     },
     {
       "id": "audio-pass",
       "exitCode": 0,
-      "elapsedMs": 6050
+      "elapsedMs": 6195
     },
     {
       "id": "bunker-level1",
       "exitCode": 0,
-      "elapsedMs": 7751
+      "elapsedMs": 7631
     },
     {
       "id": "bunker-floor-cache",
       "exitCode": 0,
-      "elapsedMs": 2677
+      "elapsedMs": 2707
     },
     {
       "id": "bunker-r2",
       "exitCode": 0,
-      "elapsedMs": 4339
+      "elapsedMs": 4156
     }
   ],
   "limitations": [

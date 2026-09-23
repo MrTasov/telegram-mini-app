@@ -1,17 +1,39 @@
-# LAST BASE 0.30.1 — Bunker Level 1 Rework R2
+# LAST BASE 0.31.0 — Stage A
 
-R2 revision on the delivered **LAST_BASE_0.30.0_Bunker_Level_1_Rework_R1.zip**. The complete built game, editable sources, local assets, licenses and regression suite are included. Read [Russian patch report](BUNKER_LEVEL1_REWORK_RU.md) and [setup instructions](README_RU.md).
+Complete built game on the manually accepted **0.30.1 Bunker Level 1 Rework R2**.
+Adds campaign/objective foundations and the minimal Command Core panel. R2 geometry,
+Core center (1210, 510), art and collision are unchanged.
 
-Level 1 has an 800 × 1500 central hall, seven surrounding rooms and a permanent physical Command Core at its center. The upper stairs lead to the surface; the lower stairs remain sealed. Existing power equipment, storage, production and the Drone Station retain their gameplay owners. Farm/cows/chickens are preserved with their entire simulation paused while Level 2 is unavailable.
+Deploy the extracted `index.html`, `js/`, `styles/` and `assets/` together, keeping
+relative paths. You may upload the entire project to the GitHub Pages branch root.
+No Node.js is needed to play. Keep the same origin and browser storage to retain
+existing slots. Saves migrate automatically to format **6**; older game versions
+cannot read format 6. Local server: `python -m http.server 8000`.
 
-Deploy `index.html`, `js/`, `styles/` and `assets/` together, preserving paths. No Node.js is required to play. Keep the same HTTP(S) origin and browser storage to retain local save slots. Save format **5** automatically migrates R1 and earlier saves, projects invalid actor positions onto safe Level 1 floor and preserves dormant agriculture. Audio starts after a real user gesture. Local server: `python -m http.server 8000`.
+Core has two tabs: Chapters and Base. Start the generator, mine new ore after that
+objective activates, return to the powered Core and explicitly confirm the
+transition. Moving existing ore does not count. No duplicate legacy rewards are
+granted. Core consumes **0.05 kW** through the existing power grid. The objective
+tracker stays readable without power. Research and achievements retain their
+existing owners, unlocks and UI.
 
-Development: Node.js 20+, `npm ci`, `npm run build`, `npm run check`, `npm test`. Optional test process concurrency: `LAST_BASE_TEST_JOBS=3 npm test`. Focused Level 1 checks: `npm run test:bunker`; visuals: `node qa/bunker-visuals.cjs`; paired performance: `node qa/bunker-performance.cjs`, separately from the suite.
+Stage B, Level 2, free placement, new research and damaged New Game are not started.
+Agriculture remains paused as in R2. Day X, equipment, inventories, production,
+drone and audio remain under their previous owners.
 
-Current aggregate: `qa/results/summary.json`. Current reports: `qa/results/bunker-level1.json`, `qa/results/drone-return.json`, `qa/results/bunker-visuals.json`, `qa/results/bunker-performance.json`. Historical fixtures/source baselines remain immutable. Old comparison tests explicitly account for the approved layout, format and agriculture pause; those behaviors are tested directly in the Level 1 and R2 integration suites.
+See [Russian report](STAGE_A_REPORT_RU.md), [setup](README_RU.md) and
+[domain contracts](docs/STAGE_A_CONTRACT_RU.md).
 
-All 58 audio clips remain local and unchanged. Attribution: `assets/audio/CREDITS.md`; preparation records: `tools/audio-sources.json`, `tools/audio-preparation.json`. Keep the chicken CC BY 3.0 and adapted cow CC BY-SA 3.0 attribution. The additional Core sprite and its generation prompt are documented in `docs/BUNKER_COMMAND_CORE_R2_ASSET.md`.
+Development: Node.js 20+, `npm ci`, `npm run build`, `npm run check`, `npm test`.
+Focused contracts: `npm run test:campaign`. Optional suite concurrency:
+`LAST_BASE_TEST_JOBS=3 npm test`. Paired CPU benchmark:
+`node --expose-gc qa/campaign-performance.cjs`, separately from other tests.
 
-`character-preview.html` remains the shared-renderer character preview; `dev.html` uses isolated development saves. Older reports describe their own historical patches. Native Canvas and modeled DOM/WebAudio tests do not replace physical phone/PC review. Stage A, Level 2 and the future Building/Placement System are not implemented in this release.
+Current gate: `qa/results/summary.json`; changes: `STAGE_A_CHANGESET.json`;
+file inventory: `release_manifest.json`. Historical baseline fixtures remain intact.
+Modeled DOM/WebAudio and native Canvas checks do not replace physical device review.
 
-R2 geometry: `docs/LAST_BASE_Bunker_L1_Layout_R2.json`. Object mapping: `docs/LAST_BASE_Bunker_L1_R1_to_R2_Object_Mapping.csv`. R1 migration tests: `node qa/bunker-r2.cjs`. Both stairs are 140 × 200 with a 40-unit gap. The Core center and collision footprint remain unchanged.
+All 58 audio files and existing artwork are included unchanged. Keep attribution
+in `assets/audio/CREDITS.md`. `dev.html` uses isolated development saves.
+
+Stop for manual acceptance after this release. Do not start Stage B automatically.

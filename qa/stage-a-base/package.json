@@ -1,0 +1,26 @@
+{
+  "name": "last-base",
+  "version": "0.30.1",
+  "private": true,
+  "description": "LAST BASE 0.30.1 — Bunker Level 1 Rework R2 on Full Audio Pass Recovery 1.",
+  "scripts": {
+    "build": "node tools/build.cjs",
+    "check": "node tools/build.cjs --check && node qa/verify.cjs",
+    "test": "node qa/run.cjs",
+    "bench": "node qa/performance.cjs",
+    "assets": "node tools/assets.cjs",
+    "locales": "node tools/locales.cjs",
+    "bench:stages": "node qa/compare-readiness-performance.cjs",
+    "bench:ux": "node qa/compare-corrective-performance.cjs",
+    "bench:world-farm": "node qa/compare-world-farm-performance.cjs",
+    "bench:audio": "node qa/audio-performance.cjs",
+    "test:audio": "node qa/audio-pass.cjs",
+    "test:bunker": "node qa/bunker-level1.cjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

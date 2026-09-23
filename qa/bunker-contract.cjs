@@ -3,7 +3,7 @@
 const copy=v=>JSON.parse(JSON.stringify(v));
 exports.project=value=>{
  const d=copy(value);if(!d||typeof d!=='object')return d;
- delete d.bunker030;delete d.saveVersion;d.gameVersion='release-metadata';
+ delete d.campaign031;if(d.v09?.power)delete d.v09.power.deviceEnabled.command_core_l1;delete d.bunker030;delete d.saveVersion;d.gameVersion='release-metadata';
  const doors=list=>list?.filter(o=>o.id!=='v09door_reserve_l1').sort((a,b)=>a.id.localeCompare(b.id));
  if(d.building018)d.building018.doors=doors(d.building018.doors);
  const power=d.v09?.power;if(power){delete power.roomEnabled.reserve_l1;delete power.deviceEnabled.light_reserve_l1;delete power.deviceEnabled.door_reserve_l1;power.doors=doors(power.doors);}
@@ -28,4 +28,4 @@ exports.project=value=>{
  return d;
 };
 exports.legacyProjection=value=>{const d=copy(value);if(d.doors)d.doors.doors=d.doors.doors.filter(o=>o.id!=='v09door_reserve_l1').sort((a,b)=>a.id.localeCompare(b.id));if(d.drone?.scene==='bunker'){delete d.drone.x;delete d.drone.y;if(d.drone.guard?.scene==='bunker'){delete d.drone.guard.x;delete d.drone.guard.y;}}return d;};
-exports.assertSource=(file,expected)=>{const fs=require('fs'),crypto=require('crypto'),assert=require('assert/strict'),ref=require('./bunker-source-reference.json'),change=ref.changes[file],actual=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');if(change){assert.equal(expected,change.before,file+' immutable Audio Pass input');assert.equal(actual,change.after,file+' reviewed Bunker R1 delta');}else assert.equal(actual,expected,file);};
+exports.assertSource=(file,expected)=>{const fs=require('fs'),crypto=require('crypto'),assert=require('assert/strict'),ref=require('./bunker-source-reference.json'),change=ref.changes[file],actual=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');if(change){assert.equal(expected,change.before,file+' immutable Audio Pass input');require('./campaign-source-contract.cjs').assertSource(file,change.after);}else require('./campaign-source-contract.cjs').assertSource(file,expected);};

@@ -36,7 +36,7 @@ async function main(){
   for(const [id,d]of Object.entries(catalog.images))if(id.startsWith('art/monster_')||id.startsWith('art/corpse_'))assert.deepEqual(d,prior.images[id]);
   for(const d of Object.values(catalog.actors.modular.items))assert.equal(d.walk.length,12);
  });
- await check('save.full029PayloadLoadsUnchanged',()=>{fresh();equalState();assert.equal(E('captureGameProgress().saveVersion'),5);});
+ await check('save.full029PayloadLoadsUnchanged',()=>{fresh();equalState();assert.equal(E('captureGameProgress().saveVersion'),6);});
  await check('save.roundtripAfterAnimationKeepsIdentityInventoryAndWorld',()=>{
   fresh('movePower=1;moveX=1;moveY=0;');for(let i=0;i<35;i++)step();
   pair('restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())))');equalState();
