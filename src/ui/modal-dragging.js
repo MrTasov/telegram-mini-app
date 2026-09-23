@@ -76,9 +76,9 @@ window.V0161UI=(()=>{
   const sneak=el('v010SneakButton');I18n.assign(sneak,'title','Тихий шаг · C');I18n.setAttr(sneak,'aria-label','Тихий шаг');
   I18n.assign(sneak,"innerHTML",'<svg viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="boot161" x2="0" y2="1"><stop stop-color="#dee4d6"/><stop offset="1" stop-color="#8ea699"/></linearGradient></defs><path d="M13 5h13l-1 15 8 6c3 2 4 5 2 7H8c-3-5-1-9 1-12l3-4Z" fill="url(#boot161)" stroke="#dce9df" stroke-width="1.1"/><path d="M10 28h24M15 12l8 1m-8 4 7 1m-7 4 9 1M9 34h24" fill="none" stroke="#425d54" stroke-width="2"/><path d="M3 17v5m34-7v6" stroke="#b8cbbd" stroke-width="1.5"/></svg>');
   v09Style(`
-    #v010Minimap{width:120px!important;height:120px!important;top:calc(var(--v011-game-top) + 100px)!important;transform:none!important;z-index:35!important}
-    @media(max-width:500px){#v010Minimap{width:106px!important;height:106px!important}}
-    @media(max-height:550px){#v010Minimap{width:98px!important;height:98px!important}}
+    #v010Minimap{width:90px!important;height:90px!important;top:calc(var(--v011-game-top) + 100px)!important;transform:none!important;z-index:35!important}
+    @media(max-width:500px){#v010Minimap{width:88px!important;height:88px!important}}
+    @media(max-height:550px){#v010Minimap{width:84px!important;height:84px!important}}
     body.v0161Modal :is(${controls.map(id=>'#'+id).join(',')}),body:has(.overlay.open) :is(${controls.map(id=>'#'+id).join(',')}){display:none!important;pointer-events:none!important}
     :is(#actionButton,#bagButton,#settingsButton,#v010SneakButton,#v010ReloadButton,#v091JumpInward,#v014DroneHUD,#v014RouteStop,#v010PracticeStop){opacity:.8!important;background-color:rgba(22,40,40,.2)!important;box-shadow:none!important}
     #v010SneakButton svg{fill:none;stroke:none;width:28px;height:28px}
@@ -117,4 +117,3 @@ window.V0161Migration=(()=>{
   GameSave.extend('decode','ui.modal-dragging',function(decode,raw){return decode(JSON.stringify(migrate(JSON.parse(raw))));});
   return{migrate,removed};
 })();
-

@@ -215,7 +215,7 @@ function v09Refuel(amount){
   // Do not consume a whole unit for a fractional gap at the top of the tank.
   const whole=Math.min(n,Math.floor(V09Power.capacity-V09Power.fuel));
   if(whole<=0){message('Бак почти полный');return;}
-  removeFromSlots(bag,'fuel',whole);V09Power.fuel+=whole;GameAudio.play('refuel');message('Заправлено: '+whole+' топлива');renderBag();v09PowerChanged();
+  removeFromSlots(bag,'fuel',whole);V09Power.fuel+=whole;GameAudio.play('refuel',{...GameEquipment.center('tank'),scene:'bunker',floor:1});message('Заправлено: '+whole+' топлива');renderBag();v09PowerChanged();
 }
 function v09OpenDevice(id){
   const d=V09Power.devices[id];if(!d)return;const overlay=v09Overlay('v09PowerDeviceOverlay',d.name),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());body.appendChild(renderDeviceSwitch(id));

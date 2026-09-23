@@ -5,7 +5,7 @@ Generated using the built-in image_gen tool on 2026-09-23. Style references: the
 - Current file: `assets/images/props/command_core_r2.png` (1421 × 1107 RGBA).
 - Manifest crop: x=38, y=115, w=1346, h=882.
 - Stable registry ID: `art/command_core`, alias `command_core`.
-- Draw uses the existing aspect-preserving V011Art fit and shared world footprint. World center remains (1210, 510); collision footprint remains 360 × 280.
+- Draw uses the existing aspect-preserving V011Art fit. World center remains (1210, 510). The original R2 collision was 360 × 280; in 0.32.1 `GameFootprints.body` matches the fitted opaque crop: 360 × 235.899 at (1030, 392.051). The separate drawn floor shadow is walkable and does not occlude light.
 - R1 file is retained only for historical comparison; the live manifest requests the R2 file once through GameAssets.
 - This is a physical static prop. It adds no campaign, research, power restoration or placement functionality.
 

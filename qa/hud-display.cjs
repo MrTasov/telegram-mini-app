@@ -8,7 +8,7 @@ const r=setup('index.html',{}, {language:'en'}),E=s=>r.eval(s),node=id=>r.doc.ge
 const initial=E('JSON.stringify(captureGameProgress())');
 function restore(){E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(initial)}));for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);document.hidden=false;playerDead=false;`);}
 function equip(type){E(`if(!bagCount('${type}'))addItem('${type}',1);V013Inventory.equip('${type}');updateAmmoHud();`);assert.equal(E('heldItem()'),type);}
-check('defaults.normalHUDOnDiagnosticsOff',()=>assert.deepEqual(copy(E('GameHUD.settings')),{minimap:true,dayTime:true,fps:false,frameTime:false,equippedItem:true}));
+check('defaults.normalHUDOnDiagnosticsOff',()=>assert.deepEqual(copy(E('GameHUD.settings')),{minimap:true,dayTime:true,fps:false,frameTime:false,equippedItem:true,objectives:true}));
 check('structure.onlyClockAndPerformanceInTopNoImagesInEquipped',()=>{
  assert.deepEqual(node('hud').children.map(n=>n.id),['v016WorldClock','hudPerformance']);
  assert.equal(node('ammoHud').parentNode,node('heldItemName'));assert.equal(node('locationName').parentNode,node('game'));
@@ -97,7 +97,7 @@ check('safeArea.telegramInsetsShareExistingEventOwner',()=>{
  app.safeAreaInset.bottom=21;for(const fn of events.safeAreaChanged)fn();assert.equal(style['--v011-safe-bottom'],'26px');assert.deepEqual(q.errors,[]);
 });
 check('layout.fixedColumnsTabularNumbersNoPanelsOrImages',()=>{
- const css=fs.readFileSync('styles/hud.css','utf8');assert.ok(css.includes('grid-template-columns:3.2em 3ch 5ch 2ch'));assert.ok(css.includes('grid-template-columns:minmax(0,1fr) 5ch 4ch'));assert.ok(css.includes('tabular-nums lining-nums'));assert.ok(css.includes('text-shadow:0 1px 2px #000,0 0 1px #000'));assert.ok(css.includes('background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none'));assert.ok(!/url\(/.test(css));assert.ok(css.includes('#hud [hidden]'));assert.ok(css.includes('var(--hud-safe-bottom)'));assert.ok(css.includes('orientation:landscape'));assert.ok(css.includes('pointer-events:none'));
+ const css=fs.readFileSync('styles/hud.css','utf8');assert.ok(css.includes('grid-template-columns:2.6em 3ch 5ch 2ch'));assert.ok(css.includes('grid-template-columns:minmax(0,1fr) 5ch 4ch'));assert.ok(css.includes('tabular-nums lining-nums'));assert.ok(css.includes('text-shadow:0 1px 2px #000,0 0 1px #000'));assert.ok(css.includes('background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none'));assert.ok(!/url\(/.test(css));assert.ok(css.includes('#hud [hidden]'));assert.ok(css.includes('var(--hud-safe-bottom)'));assert.ok(css.includes('orientation:landscape'));assert.ok(css.includes('pointer-events:none'));
 });
 check('layout.defaultPortraitJoystickAndVerticalClearanceContract',()=>{
  const css=fs.readFileSync('styles/hud.css','utf8');

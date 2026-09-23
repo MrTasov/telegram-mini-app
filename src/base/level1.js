@@ -1,15 +1,15 @@
-/* Bunker Level 1 R2: static world ownership, dormant agriculture and save migration.
+/* Bunker Level 1 R3: room swap, shared bodies and ordered save migration.
    The Core and sealed lower stair are not damageable/buildable records. */
 window.BunkerState=(()=>{
   const layout=BunkerLayout,copy=v=>JSON.parse(JSON.stringify(v));
   let dormantMarkers=[];
   const oldSolids=solidObjects;
-  solidObjects=function(which){const list=oldSolids(which);return which==='bunker'?list.filter(o=>!layout.agricultureId(o.id)).concat(layout.solids):list;};
+  solidObjects=function(which){const list=oldSolids(which);return which==='bunker'?list.filter(o=>!layout.agricultureId(o.id)).concat(layout.solids).map(o=>GameFootprints.body(o.id)||o):list;};
   const oldObjects=interactionObjects;
   interactionObjects=function(which=scene){const list=oldObjects(which);if(which!=='bunker')return list;return list.filter(o=>!layout.agricultureId(o.id)).map(o=>o.id==='exit'?{
     ...o,...layout.stairs[0],id:o.id,kind:o.kind,r:undefined,pickBounds:layout.stairs[0]
-  }:o).concat(
-    {...layout.core,name:I18n.t('bunker.core.name')},
+  }:GameEquipment.get(o.id)&&GameEquipment.get(o.id).typeId!=='drone_station'?{...o,...GameFootprints.body(o.id),pickBounds:o.pickBounds||o}:o).concat(
+    {...layout.core,...GameFootprints.body(layout.core.id),pickBounds:layout.core,name:I18n.t('bunker.core.name')},
     {...layout.down,pickBounds:layout.stairs[1],name:I18n.t('bunker.down.locked')}
   );};
   const oldExecute=executeInteraction;
@@ -34,12 +34,17 @@ window.BunkerState=(()=>{
     if(!p||p.scene!=='bunker'||!Number.isFinite(p.x)||!Number.isFinite(p.y))return;
     const oldStairs=[{x:980,y:-480,w:180,h:240},{x:1260,y:-480,w:180,h:240}];
     for(let i=0;i<oldStairs.length;i++){const s=oldStairs[i],n=layout.stairs[i];if(p.x>=s.x&&p.x<=s.x+s.w&&p.y>=s.y&&p.y<=s.y+s.h){p.x=n.x+(p.x-s.x)/s.w*n.w;p.y=n.y+(p.y-s.y)/s.h*n.h;return;}}
-    for(const r of layout.roomData){
+    for(const current of layout.roomData){
+      const r={...current,y:current.id==='workshop'?760:current.id==='room6'?-240:current.y};
       if(r.id==='corridor')continue;
       const dx=r.side==='left'?200:r.side==='right'?-200:0,left=r.x-dx;
       if(p.x>=left&&p.x<=left+r.w&&p.y>=r.y&&p.y<=r.y+r.h){p.x+=dx;return;}
     }
     if(p.x>=610&&p.x<=1810&&p.y>=-240&&p.y<=1260)p.x=layout.rooms.corridor.left+(p.x-610)*800/1200;
+  }
+  function moveR2(p){
+    if(!p||p.scene!=='bunker'||!Number.isFinite(p.x)||!Number.isFinite(p.y))return;
+    if(p.x>=290&&p.x<=810){if(p.y>=-240&&p.y<260)p.y+=1000;else if(p.y>=760&&p.y<=1260)p.y-=1000;}
   }
   function moveActorsAndMap(d,move){
     move(d.player);move(d.robots014);move(d.robots014?.guard);
@@ -52,8 +57,12 @@ window.BunkerState=(()=>{
     if(d.bunker030){
       if(d.bunker030.schema!==1)throw Error('Unsupported bunker schema');
       if(d.bunker030.layout===layout.revision)return; // no double translation
-      if(d.bunker030.layout!==1)throw Error('Unsupported bunker layout');
-      moveActorsAndMap(d,moveR1);d.bunker030.layout=layout.revision;return;
+      if(![1,2].includes(d.bunker030.layout))throw Error('Unsupported bunker layout');
+      if(d.bunker030.layout===1)moveActorsAndMap(d,moveR1);
+      // Validate old fixed equipment before translating; malformed imports
+      // must never be repaired into apparently valid instance records.
+      window.GameEquipmentRuntime?.migrateLayout(d);
+      moveActorsAndMap(d,moveR2);d.bunker030.layout=layout.revision;return;
     }
     const held=Number.isFinite(d.savedAt)?d.savedAt:Date.now();
     d.bunker030={schema:1,layout:layout.revision,agricultureAt:held,dormantMarkers:[]};
@@ -118,7 +127,7 @@ window.BunkerState=(()=>{
       if(!up){ctx.fillStyle='#293b3c';ctx.fillRect(x+9,bottom-41,w-18,30);ctx.strokeStyle='#b4a477';ctx.lineWidth=4;for(let n=0;n<5;n++){ctx.beginPath();ctx.moveTo(x+17+n*21,bottom-16);ctx.lineTo(x+32+n*21,bottom-38);ctx.stroke();}}
       ctx.fillStyle=up?'#cee5da':'#d8c69e';ctx.textAlign='center';ctx.font='12px Arial';ctx.fillText(I18n.t(up?'bunker.up.label':'bunker.down.label'),x+w/2,bottom+27,w+24);ctx.font='10px Arial';ctx.fillText(I18n.t(up?'bunker.up.destination':'bunker.down.locked'),x+w/2,bottom+46,w+24);
     }
-    const c=layout.core;V011Rooms.shadow(c.x+12,c.y+15,c.w-24,c.h-28,15,'corridor');
+    const c=layout.core,b=GameFootprints.body(c.id);V011Rooms.shadow(b.x,b.y,b.w,b.h,15,'corridor');
     if(!V011Art.draw('command_core',c.x,c.y,c.w,c.h)){
       ctx.fillStyle='#293f46';ctx.strokeStyle='#90aaa9';ctx.lineWidth=4;ctx.fillRect(c.x+12,c.y+14,c.w-24,c.h-28);ctx.strokeRect(c.x+12,c.y+14,c.w-24,c.h-28);
       ctx.fillStyle='#124b60';ctx.fillRect(c.x+46,c.y+45,c.w-92,c.h-90);ctx.strokeStyle='#61c2cd';ctx.lineWidth=1;for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(c.x+46+i*(c.w-92)/6,c.y+45);ctx.lineTo(c.x+46+i*(c.w-92)/6,c.y+c.h-45);ctx.stroke();}

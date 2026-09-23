@@ -1,8 +1,8 @@
 /* Presentation-only observer. It reads existing states at 10 Hz; no new RAF/timer. */
 window.GameAudioWorld=(()=>{
-  let next=0,lastPlace=null,lastPower=null,lastDrone=null,lastChicken=-Infinity;
+  let next=0,lastPlace=null,lastPower=null,lastDrone=null,lastChicken=-Infinity,lastDistant=-Infinity;
   const doors=new WeakMap();
-  function reset(){next=0;lastPlace=null;lastPower=null;lastDrone=null;lastChicken=-Infinity;}
+  function reset(){next=0;lastPlace=null;lastPower=null;lastDrone=null;lastChicken=-Infinity;lastDistant=-Infinity;}
   function door(object,opening,which='bunker',broken=false){
     if(broken){doors.delete(object);return;}
     const prev=doors.has(object)?doors.get(object):object.open>.5;doors.set(object,opening);
@@ -11,12 +11,13 @@ window.GameAudioWorld=(()=>{
   function tick(force=false){
     if(!GameAudio.sync())return;
     const now=performance.now();if(!force&&now<next)return;next=now+100;
-    if(window.MainMenu?.active){GameAudio.loop('ambience','menu');for(const key of ['rotor','generator','machine','water','shower'])GameAudio.loop(key,null);lastPlace='menu';return;}
+    if(window.MainMenu?.active){if(lastPlace!=='menu')GameAudio.play('menu');GameAudio.loop('ambience',null);for(const key of ['rotor','generator','machine','water','shower'])GameAudio.loop(key,null);lastPlace='menu';return;}
     if(playerDead){GameAudio.reset();return;}
-    const place=scene==='bunker'?'bunker':window.V013City?.floor?'interior':'surface';
-    const ambience=place==='bunker'||place==='interior'?'bunker':WorldEvents.isActive('day_x')?'dayX':WorldClock.minute>=360&&WorldClock.minute<1200?'day':'night';
+    const zone=GameAudio.listenerZone(),place=zone.scene+':'+zone.floor,underground=scene==='bunker',interior=scene==='surface'&&!!zone.floor,dayX=WorldEvents.isActive('day_x');
+    const ambience=underground&&dayX?'dayX':underground||interior?'bunker':dayX?'dayX':WorldClock.minute>=360&&WorldClock.minute<1200?null:'night';
     if(lastPlace!==null&&lastPlace!==place){GameAudio.reset();}lastPlace=place;
-    GameAudio.loop('ambience',ambience);
+    GameAudio.loop('ambience',ambience,underground&&dayX?{scene:'surface',floor:0,dayXLeak:true}:{});
+    if(underground&&dayX&&now-lastDistant>11000){const z=zombies.find(z=>z.alive&&z.type==='heavy'&&Math.hypot(z.x-800,z.y-650)<1500);if(z&&GameAudio.play('zombie',{x:z.x,y:z.y,scene:'surface',floor:0,dayXLeak:true,owner:z,rate:.76}))lastDistant=now;}
     const gen=BunkerLayout.fixture('generator'),shower=V011Living.shower;
     const power=!!(V09Power.running&&V09Power.fuel>0);
     if(lastPower!==null&&lastPower!==power)GameAudio.play(power?'powerStart':'powerStop',{x:gen.x+gen.w/2,y:gen.y+gen.h/2,scene:'bunker',radius:480});lastPower=power;

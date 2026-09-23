@@ -1,5 +1,5 @@
 {
-  "version": "0.32.0",
+  "version": "0.32.1",
   "passed": 1,
   "failed": 0,
   "scope": "Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.",
@@ -105,7 +105,9 @@
       "health"
     ],
     "V0151Station": [],
-    "V016Lighting": [],
+    "V016Lighting": [
+      "droneMetrics"
+    ],
     "V016Turret": [
       "type",
       "definition",

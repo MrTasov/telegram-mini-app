@@ -9,31 +9,46 @@ window.CommandCoreUI=(()=>{
   function button(key,fn,cls='menuButton'){const b=node('button',key,cls);b.type='button';b.onclick=fn;return b;}
   const tabs=node('div',null,'campaignTabs');tabs.setAttribute('role','tablist');
   const stage=node('div',null,'coreSections'),links=node('div',null,'campaignLinks');body.append(tabs,stage,links);
-  const tracker=button(null,()=>show('chapters',true));tracker.id='campaignTracker';el('v010Trackers').append(tracker);
-  const trackerTitle=node('b','campaign.tracker.title'),trackerText=node('span');tracker.append(trackerTitle,trackerText);
+  const tracker=node('section');tracker.id='campaignTracker';el('v010Trackers').append(tracker);
+  const trackerToggle=button(null,()=>{trackerExpanded=!trackerExpanded;renderTracker();},'trackerChip');trackerToggle.id='campaignTrackerToggle';
+  const trackerMark=node('span',null,'trackerMark'),trackerTitle=node('b','campaign.tracker.title'),trackerChevron=node('span');trackerToggle.append(trackerMark,trackerTitle,trackerChevron);
+  const trackerPanel=node('div',null,'trackerPanel');trackerPanel.id='campaignTrackerList';
+  const trackerItems=node('div',null,'trackerItems'),trackerOpen=button('campaign.tracker.open',()=>show('chapters',true),'trackerOpen');trackerPanel.append(trackerItems,trackerOpen);
+  const feedback=node('div',null,'trackerFeedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+  tracker.append(trackerToggle,trackerPanel,feedback);trackerToggle.setAttribute('aria-controls',trackerPanel.id);
+  let trackerExpanded=false,previousObjectives=null,feedbackUntil=0,viewEpoch=0;const celebrated=new Set(),objectiveExpanded=new Set();
   const legacyLinks=[['campaign.research','research'],['campaign.achievements','achievements']].map(([key,legacy])=>{
     const b=button(key,()=>{closeOverlay(overlay);V010Progression.show(legacy);});links.append(b);return {b,key};
   });
   // Reserved routes describe the extension boundary, not visible placeholders.
   // Register a route only when its real owner and complete view are available.
-  const routes=new Set(['chapters','base','research','blueprints','construction','archive','map-signals']);
-  const sections=new Map();let tab='chapters',remote=false,sequence=0,dirty=true,lastTracker='',lastLanguage='';
-  function registerSection(id,title,mount){
+  const routeOrder=['construction','base','chapters','research','blueprints','archive','map-signals'],routes=new Set(routeOrder);
+  const sections=new Map();let tab='base',remote=false,sequence=0,dirty=true,lastTracker='',lastLanguage='',selectedChapter=null;
+  function registerSection(id,title,mount,available=()=>true){
     if(!routes.has(id)||sections.has(id)||typeof mount!=='function')throw Error('Invalid Core section');
     const scroll=node('section',null,'coreScroll');scroll.id='coreSection_'+id;scroll.hidden=true;scroll.setAttribute('role','tabpanel');scroll.setAttribute('aria-labelledby','coreTab_'+id);
     const update=mount(scroll);if(typeof update!=='function')throw Error('Core section needs an update client');
     const b=button(title,()=>select(id));b.id='coreTab_'+id;b.setAttribute('role','tab');b.setAttribute('aria-controls',scroll.id);
     b.onkeydown=e=>{const ids=[...sections.keys()],i=ids.indexOf(id);let target;if(e.key==='ArrowRight')target=ids[(i+1)%ids.length];if(e.key==='ArrowLeft')target=ids[(i+ids.length-1)%ids.length];if(e.key==='Home')target=ids[0];if(e.key==='End')target=ids.at(-1);if(target){e.preventDefault();select(target);sections.get(target).b.focus();}};
-    sections.set(id,{title,b,scroll,update});tabs.append(b);stage.append(scroll);return true;
+    sections.set(id,{title,b,scroll,update,available});for(const key of routeOrder)if(sections.has(key))tabs.append(sections.get(key).b);stage.append(scroll);return true;
   }
-  function select(id){if(!sections.has(id))return false;tab=id;for(const [key,s]of sections){const active=key===tab;s.scroll.hidden=!active;s.b.classList.toggle('active',active);s.b.setAttribute('aria-selected',String(active));s.b.setAttribute('aria-pressed',String(active));s.b.tabIndex=active?0:-1;}dirty=true;render();return true;}
+  function select(id){if(!sections.has(id)||!sections.get(id).available())return false;tab=id;for(const [key,s]of sections){const active=key===tab;s.scroll.hidden=!active;s.b.classList.toggle('active',active);s.b.setAttribute('aria-selected',String(active));s.b.setAttribute('aria-pressed',String(active));s.b.tabIndex=active?0:-1;}dirty=true;render();return true;}
   function chapter(v=GameCampaign.view()){return GameCampaign.definitions.chapters.find(c=>c.id===v.chapter);}
   function status(){return GameCampaign.access(GameActors.local,BunkerLayout.core.id);}
   function renderTracker(){
-    const v=GameCampaign.view(),c=chapter(v),next=c.objectives.find(o=>o.required&&v.objectives[o.id].active&&!v.objectives[o.id].done);
-    const key=v.ready?'campaign.tracker.ready':next?next.title:c.title;
-    const signature=[key,I18n.language].join('|');if(signature===lastTracker)return;lastTracker=signature;
-    put(trackerTitle,t('campaign.tracker.title'));put(trackerText,t(key));tracker.setAttribute('aria-label',t('campaign.tracker.open'));
+    const v=GameCampaign.view(),c=chapter(v),visible=GameHUD.settings.objectives,now=performance.now();tracker.hidden=!visible;
+    if(previousObjectives&&!GameSave.restoring)for(const o of c.objectives){if(v.objectives[o.id].done&&!previousObjectives[o.id]?.done&&!celebrated.has(o.id)){
+      celebrated.add(o.id);if(visible){feedbackUntil=now+2300;put(feedback,'✓ '+t(o.title));}
+    }}
+    previousObjectives=v.objectives;
+    feedback.hidden=!visible||now>=feedbackUntil;tracker.classList.toggle('completed',!feedback.hidden);
+    put(trackerMark,feedback.hidden?'◎':'✓');put(trackerTitle,t('campaign.tracker.title'));put(trackerChevron,trackerExpanded?'⌃':'⌄');
+    trackerPanel.hidden=!trackerExpanded;trackerToggle.setAttribute('aria-expanded',String(trackerExpanded));put(trackerOpen,t('campaign.tracker.open'));
+    if(!visible||!trackerExpanded)return;
+    const signature=[v.revision,JSON.stringify(GameCampaign.facts()),I18n.language].join('|');if(signature===lastTracker)return;lastTracker=signature;
+    trackerItems.replaceChildren();const pending=c.objectives.filter(o=>v.objectives[o.id].active&&!v.objectives[o.id].done).sort((a,b)=>Number(b.required)-Number(a.required));
+    for(const o of pending){const row=node('div',null,'trackerObjective');row.append(node('span',o.title));const p=node('small');put(p,progress(o,v.objectives[o.id],GameCampaign.facts()));row.append(p);trackerItems.append(row);}
+    if(!pending.length)trackerItems.append(node('p',v.ready?'campaign.tracker.ready':c.title));
   }
   function progress(o,s,f){
     if(!s.active)return t('campaign.status.locked');
@@ -45,14 +60,16 @@ window.CommandCoreUI=(()=>{
     return t('core.objective.count',{value:num(Math.min(value,target)),target:num(target)});
   }
   registerSection('chapters','campaign.tab.chapters',scroll=>{
-    let built='',cards=[],notice,heading,description,summary,advance,ready,completed;
-    const expanded=new Set();
+    let built='',cards=[],notice,heading,description,summary,advance,ready,completed,bar;const chapterButtons=new Map();
+    const expanded=objectiveExpanded;
     return ({v,c,a,f})=>{
-      const key=c.id+'|'+I18n.language;
+      const key=c.id+'|'+I18n.language+'|'+viewEpoch;
       if(key!==built){
         const top=scroll.scrollTop||0;built=key;scroll.replaceChildren();cards=[];
+        chapterButtons.clear();const strip=node('nav',null,'coreChapterStrip');strip.setAttribute('aria-label',t('campaign.tab.chapters'));
+        GameCampaign.definitions.chapters.forEach((ch,i)=>{const b=button(null,()=>{selectedChapter=ch.id;scroll.scrollTop=0;render();},'coreChapterSelect');const label=node('small');put(label,t('core.chapter.number',{number:num(i+1)}));b.append(label,node('strong',ch.title));chapterButtons.set(ch.id,b);strip.append(b);});scroll.append(strip);
         const hero=node('div',null,'coreChapterHero');hero.append(node('small','core.campaign','coreEyebrow'));
-        heading=node('h3',c.title);description=node('p',c.description);summary=node('div',null,'coreChapterProgress');hero.append(heading,description,summary);scroll.append(hero);
+        heading=node('h3',c.title);description=node('p',c.description);summary=node('div',null,'coreChapterProgress');hero.append(heading,description,node('p',c.goal,'coreMainGoal'),summary);bar=node('div',null,'coreProgressFill');const track=node('div',null,'coreProgressTrack');track.append(bar);hero.append(track);scroll.append(hero);
         notice=node('p',null,'campaignNotice');scroll.append(notice);
         for(const required of [true,false]){
           const objectives=c.objectives.filter(o=>o.required===required);if(!objectives.length)continue;
@@ -77,11 +94,12 @@ window.CommandCoreUI=(()=>{
         });advance.id='campaignAdvance';scroll.append(advance);
         completed=node('p',null,'coreHint');scroll.append(completed);scroll.scrollTop=top;
       }
-      const req=c.objectives.filter(o=>o.required),done=req.filter(o=>v.objectives[o.id].done).length;
-      put(summary,v.terminal?t('core.chapter.complete'):t('core.chapter.progress',{done:num(done),total:num(req.length)}));
+      for(const [id,b]of chapterButtons){b.disabled=id!==v.chapter&&!v.completed.includes(id);b.classList.toggle('selected',id===c.id);b.setAttribute('aria-current',id===c.id?'page':'false');b.dataset.state=b.disabled?'locked':v.completed.includes(id)?'done':'current';}
+      const done=c.objectives.filter(o=>v.objectives[o.id]?.done).length,past=v.completed.includes(c.id);
+      put(summary,!c.objectives.length?t('core.chapter.complete'):t('core.chapter.progress',{done:num(done),total:num(c.objectives.length)}));bar.style.width=(c.objectives.length?done/c.objectives.length*100:100)+'%';
       const notes=[];if(remote)notes.push(t('campaign.remote'));if(!a.available)notes.push(t(a.reason));notice.hidden=!notes.length;put(notice,notes.join(' '));
       for(const {o,card,mark,state}of cards){const s=v.objectives[o.id];card.dataset.state=s.done?'done':s.active?'active':'locked';put(mark,s.done?'✓':s.active?'○':'–');put(state,progress(o,s,f));}
-      ready.hidden=!v.ready;put(ready,t('campaign.ready'));advance.hidden=v.terminal;advance.disabled=remote||!a.available||!v.ready;advance.dataset.revision=v.revision;advance.dataset.chapter=v.chapter;
+      ready.hidden=!v.ready||past;put(ready,t('campaign.ready'));advance.hidden=v.terminal||past;advance.disabled=remote||!a.available||!v.ready;advance.dataset.revision=v.revision;advance.dataset.chapter=v.chapter;
       completed.hidden=!v.completed.length;put(completed,t('campaign.completed',{count:num(v.completed.length)}));
     };
   });
@@ -101,22 +119,23 @@ window.CommandCoreUI=(()=>{
   function render(){
     if(!overlay.classList.contains('open'))return;dirty=false;
     put(overlay.querySelector('.v09Title'),t('bunker.core.name'));panel.setAttribute('aria-label',t('bunker.core.name'));tabs.setAttribute('aria-label',t('core.sections'));
-    for(const s of sections.values())put(s.b,t(s.title));for(const {b,key}of legacyLinks)put(b,t(key));
-    const v=GameCampaign.view(),context={v,c:chapter(v),a:status(),f:GameCampaign.facts()};
+    for(const s of sections.values()){put(s.b,t(s.title));s.b.hidden=!s.available();}for(const {b,key}of legacyLinks)put(b,t(key));
+    const v=GameCampaign.view();if(selectedChapter!==v.chapter&&!v.completed.includes(selectedChapter))selectedChapter=v.chapter;
+    const context={v,c:GameCampaign.definitions.chapters.find(c=>c.id===selectedChapter)||chapter(v),a:status(),f:GameCampaign.facts()};
     if(lastLanguage!==I18n.language){lastLanguage=I18n.language;for(const s of sections.values())s.update(context);}else sections.get(tab).update(context);
   }
-  function show(which='chapters',readOnly=false){
+  function show(which='base',readOnly=false){
     if(!GameState.session.ready||playerDead||window.MainMenu?.active)return false;
     if(!readOnly){const a=GameCampaign.access(GameActors.local,BunkerLayout.core.id,false);if(!a.available){message(t(a.reason));return false;}}
-    remote=readOnly;GameCampaign.refresh(true);GameMovement.openUI();openOverlay(overlay);select(sections.has(which)?which:'chapters');return true;
+    remote=readOnly;selectedChapter=GameCampaign.view().chapter;GameCampaign.refresh(true);GameMovement.openUI();openOverlay(overlay);select(sections.has(which)?which:'base');return true;
   }
   function tick(){renderTracker();if(overlay.classList.contains('open'))render();}
-  function reset(){closeOverlay(overlay);remote=false;dirty=true;lastTracker='';for(const s of sections.values())s.scroll.scrollTop=0;renderTracker();}
+  function reset(){closeOverlay(overlay);remote=false;dirty=true;lastTracker='';trackerExpanded=false;selectedChapter=null;previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values())s.scroll.scrollTop=0;renderTracker();}
   GameCampaign.subscribe(()=>{dirty=true;renderTracker();});
   I18n.onChange(()=>{lastTracker='';dirty=true;V09Power.devices[GameCampaign.powerId].name=t('bunker.core.name');renderTracker();render();});
   v09Style(`
-#commandCoreOverlay{position:fixed;inset:0;padding:0;overflow:hidden}
-#commandCoreOverlay .v09Panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;width:min(720px,calc(100vw - 24px));height:min(760px,calc(100vh - 24px));height:min(760px,calc(100dvh - 24px));max-height:none;min-height:0;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;text-align:left}
+#commandCoreOverlay{position:fixed;inset:0;padding:0;overflow:hidden;--core-top:max(28px,calc(var(--v011-game-top,10px) + 18px),calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 12px));--core-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+#commandCoreOverlay .v09Panel{position:absolute;left:50%;top:calc(var(--core-top) + (100dvh - var(--core-top) - var(--core-bottom) - min(760px,100dvh - var(--core-top) - var(--core-bottom)))/2);transform:translateX(-50%);margin:0;width:min(720px,calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)));height:min(760px,calc(100vh - var(--core-top) - var(--core-bottom)));height:min(760px,calc(100dvh - var(--core-top) - var(--core-bottom)));max-height:none;min-height:0;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;text-align:left;background:linear-gradient(145deg,#142b30,#101e26);border:1px solid #66827a66;border-radius:14px;box-shadow:0 20px 60px #0009}
 #commandCoreOverlay .v09Header{height:48px;flex:0 0 48px;box-sizing:border-box;padding:0 0 10px;margin:0}
 #commandCoreOverlay .v09Title{font-size:19px;line-height:1.2;margin:0}
 #commandCoreOverlay .v09Body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
@@ -138,11 +157,11 @@ window.CommandCoreUI=(()=>{
 #commandCoreOverlay .coreHint{font-size:11px;color:#9cb1ad;margin:5px 0 9px}
 #commandCoreOverlay .coreObjectiveList{display:flex;flex-direction:column;gap:5px}
 #commandCoreOverlay .campaignObjective{border:1px solid #3d5758;border-radius:8px;background:#192c30;overflow:hidden}
-#commandCoreOverlay .coreObjectiveToggle{display:flex;align-items:center;gap:10px;width:100%;min-height:54px;text-align:left;padding:9px 11px;background:none;border:0;color:#e4ece4;font:inherit;cursor:pointer}
+#commandCoreOverlay .coreObjectiveToggle{display:flex;align-items:center;gap:8px;width:100%;min-height:43px;text-align:left;padding:7px 10px;background:none;border:0;color:#e4ece4;font:inherit;cursor:pointer}
 #commandCoreOverlay .coreObjectiveToggle:focus-visible{outline:2px solid #c5dca5;outline-offset:-3px}
-#commandCoreOverlay .coreObjectiveText{flex:1;min-width:0}
-#commandCoreOverlay .coreObjectiveText strong{font-size:13px;line-height:1.3;display:block}
-#commandCoreOverlay .campaignStatus{font-size:11px;line-height:1.35;color:#9ab5ad;display:block;font-variant-numeric:tabular-nums;margin-top:3px}
+#commandCoreOverlay .coreObjectiveText{flex:1;min-width:0;display:flex;align-items:center;gap:8px}
+#commandCoreOverlay .coreObjectiveText strong{font-size:12px;line-height:1.3;display:block;flex:1}
+#commandCoreOverlay .campaignStatus{font-size:10px;line-height:1.3;color:#9ab5ad;display:block;font-variant-numeric:tabular-nums;text-align:right;max-width:90px}
 #commandCoreOverlay .coreObjectiveMark{width:18px;flex:0 0 18px;font-size:18px;color:#aec7b4}
 #commandCoreOverlay .campaignObjective[data-state="done"]{border-color:#557b63;background:#20352f}
 #commandCoreOverlay .campaignObjective[data-state="locked"]{background:#18272c;color:#9dadac}
@@ -157,10 +176,28 @@ window.CommandCoreUI=(()=>{
 #commandCoreOverlay .coreSystem h5{font-size:12px;font-weight:400;color:#acbfb9;margin:0 0 7px}
 #commandCoreOverlay .coreSystem strong{display:block;font-size:14px;line-height:1.4;color:#e1ecd7;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 #commandCoreOverlay .coreSystem p{font-size:11px;color:#9bb1ad;margin:6px 0 0}
-#campaignTracker{pointer-events:auto;color:#e4e9dc;text-align:left;padding:7px 10px;border:1px solid #64715c;border-radius:8px;background:rgba(14,25,30,.82);font-size:11px;min-height:44px;max-width:100%}
-#campaignTracker b,#campaignTracker span{display:block}#campaignTracker span{margin-top:3px;color:#c9d6b4}
+#commandCoreOverlay .coreChapterStrip{display:flex;gap:8px;margin:0 0 12px;overflow-x:auto;flex-wrap:nowrap}
+#commandCoreOverlay .coreChapterSelect{flex:1;min-width:120px;min-height:54px;padding:8px 10px;text-align:left;color:#b0c7bd;background:#192e33;border:1px solid #405c5b;border-radius:8px}
+#commandCoreOverlay .coreChapterSelect small{display:block;font-size:9px;letter-spacing:.08em;margin-bottom:5px}#commandCoreOverlay .coreChapterSelect strong{font-size:11px}
+#commandCoreOverlay .coreChapterSelect.selected{border-color:#a4bd94;background:#30493e;color:#edf0d9}#commandCoreOverlay .coreChapterSelect:disabled{opacity:.45}#commandCoreOverlay .coreChapterSelect[data-state="locked"] small:after{content:' · 🔒'}#commandCoreOverlay .coreChapterSelect[data-state="done"] small:after{content:' · ✓'}
+#commandCoreOverlay .coreChapterHero .coreMainGoal{color:#dbe6ce;margin-top:12px;font-size:12px;border-left:2px solid #a0b783;padding-left:10px}
+#commandCoreOverlay .coreProgressTrack{height:4px;background:#091a21;border-radius:2px;margin-top:8px;overflow:hidden}#commandCoreOverlay .coreProgressFill{height:100%;background:#a3bf88}
+body #v010Trackers{overflow:visible;max-height:none;top:calc(var(--v011-game-top,10px) + 108px)}
+#campaignTracker{position:relative;pointer-events:auto;color:#e4e9dc;text-align:left;height:34px;width:224px;max-width:calc(100vw - 150px);font-size:11px}
+#campaignTracker[hidden],#campaignTracker [hidden]{display:none!important}
+#campaignTracker .trackerChip{height:34px;width:100%;display:flex;align-items:center;gap:7px;padding:5px 9px;border:1px solid #82948055;border-radius:7px;background:#102127bb;color:#dbe6d2;text-align:left;font:inherit;touch-action:manipulation}
+#campaignTracker .trackerChip b{flex:1;font-weight:500}#campaignTracker .trackerMark{font-size:16px;width:16px;color:#bdd5a5}
+#campaignTracker .trackerPanel{position:absolute;top:40px;left:0;width:224px;max-width:calc(100vw - 150px);height:192px;display:flex;flex-direction:column;box-sizing:border-box;padding:8px;border:1px solid #72866d66;border-radius:8px;background:#102127ee;box-shadow:0 6px 20px #0005}
+#campaignTracker .trackerItems{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+#campaignTracker .trackerObjective{display:flex;gap:8px;padding:7px 2px;border-bottom:1px solid #ffffff10;font-size:11px;line-height:1.3}#campaignTracker .trackerObjective span{flex:1}#campaignTracker .trackerObjective small{color:#afc49d;font-size:9px;max-width:65px;text-align:right;font-variant-numeric:tabular-nums}
+#campaignTracker .trackerOpen{height:32px;flex:0 0 32px;border:0;background:#ffffff08;color:#c9dabc;font:inherit;margin-top:5px;border-radius:5px}
+#campaignTracker .trackerFeedback{position:absolute;top:0;left:calc(100% + 7px);width:150px;min-height:34px;box-sizing:border-box;padding:6px 8px;border:1px solid #a7d58d88;border-radius:7px;background:#284636ed;font-size:11px;line-height:1.3;pointer-events:none;animation:objectiveConfirm .25s ease-out}
+#campaignTracker.completed .trackerChip{border-color:#bddda8;background:#294934e8}@keyframes objectiveConfirm{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+body.v0161Modal #campaignTracker,body:has(.overlay.open) #campaignTracker{display:none!important}
 @media(max-width:480px){#commandCoreOverlay .v09Panel{padding:12px}#commandCoreOverlay .v09Title{font-size:17px}#commandCoreOverlay .campaignBaseGrid{grid-template-columns:1fr}#commandCoreOverlay .coreChapterHero{padding:12px}}
-@media(max-height:500px){#commandCoreOverlay .v09Panel{height:calc(100dvh - 16px);padding:10px}#commandCoreOverlay .v09Header{height:38px;flex-basis:38px}#commandCoreOverlay .campaignTabs{flex-basis:44px}#commandCoreOverlay .campaignLinks{flex-basis:40px}}
+@media(max-width:480px){#campaignTracker{width:150px}#campaignTracker .trackerPanel{width:205px;max-width:calc(100vw - 120px)}#campaignTracker .trackerFeedback{width:130px}#commandCoreOverlay .coreChapterHero{padding:11px}#commandCoreOverlay h3{font-size:19px}}
+@media(prefers-reduced-motion:reduce){#campaignTracker .trackerFeedback{animation:none}}
+@media(max-height:500px){#commandCoreOverlay .v09Panel{padding:10px}#commandCoreOverlay .v09Header{height:38px;flex-basis:38px}#commandCoreOverlay .campaignTabs{flex-basis:44px}#commandCoreOverlay .campaignLinks{flex-basis:40px}}
 `);
-  select('chapters');renderTracker();return Object.freeze({show,tick,reset,registerSection});
+  select('base');renderTracker();return Object.freeze({show,tick,reset,registerSection,refreshTracker:renderTracker});
 })();

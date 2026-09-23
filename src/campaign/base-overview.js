@@ -10,7 +10,7 @@ window.GameBaseOverview=(()=>{
     const deviceStatus=id=>{const d=V09Power.devices[id];return !d||!d.enabled?'off':!V09Power.roomEnabled[d.room]?'circuitOff':!a.served.has(id)?(a.supply>0?'waitingPower':'noPower'):d.active()?'working':'standby';};
     let g=group('energy');
     add(g,'generator',t('generator'),t(V09Power.running&&V09Power.fuel>0?'working':'off'),t('generator.capacity',{power:num(V09Power.supply,2)}));
-    add(g,'fuel',t('tank'),pct(V09Power.fuel,V09Power.capacity),t('tank.detail',{amount:num(V09Power.fuel,1),capacity:num(V09Power.capacity)}));
+    add(g,'fuel',t('tank'),t('tank.amount',{amount:num(V09Power.fuel,1)}),t('tank.detail',{amount:num(V09Power.fuel,1),capacity:num(V09Power.capacity)}));
     const flow=!battery.enabled?'off':a.batteryOutput>0?'discharging':a.chargeInput>0?'charging':battery.charge>0?'reserve':'empty';
     add(g,'battery',t('battery'),pct(battery.charge,battery.capacity)+' · '+t(flow),t('battery.detail',{charge:num(battery.charge,2),capacity:num(battery.capacity,2)})+(a.batteryOutput>0?' · '+t('battery.remaining',{minutes:num(Math.ceil(battery.charge/a.batteryOutput*60))}):''));
     add(g,'grid',t('grid'),t('grid.load',{load:num(a.load,2),supply:num(a.supply,2)}),t('grid.demand',{demand:num(a.demand,2),waiting:num(a.shed.length)}));

@@ -2,7 +2,7 @@
 window.GameHUD=(()=>{
   'use strict';
   const storageKey='last_base_display_v1';
-  const defaults=Object.freeze({minimap:true,dayTime:true,fps:false,frameTime:false,equippedItem:true});
+  const defaults=Object.freeze({minimap:true,dayTime:true,fps:false,frameTime:false,equippedItem:true,objectives:true});
   const settings={...defaults};
   try{const saved=JSON.parse(localStorage.getItem(storageKey));if(saved&&typeof saved==='object')for(const key of Object.keys(defaults))if(typeof saved[key]==='boolean')settings[key]=saved[key];}catch(_){}
   const top=el('hud'),clock=el('v016WorldClock'),perf=el('hudPerformance'),equipped=el('heldItemName'),mini=el('v010Minimap');
@@ -69,7 +69,7 @@ window.GameHUD=(()=>{
   function apply(){
     show(mini,settings.minimap);show(clock,settings.dayTime);show(perf,settings.fps||settings.frameTime);show(top,settings.dayTime||settings.fps||settings.frameTime);
     show(fpsLabel,settings.fps);show(fps,settings.fps);show(frameTime,settings.frameTime);show(unit,settings.frameTime);
-    perf.dataset.fps=String(settings.fps);refreshButtons();refreshClock();updateAmmoHud();
+    perf.dataset.fps=String(settings.fps);refreshButtons();refreshClock();updateAmmoHud();window.CommandCoreUI?.refreshTracker();
   }
   function set(key,value){
     if(!Object.hasOwn(defaults,key)||typeof value!=='boolean')return false;

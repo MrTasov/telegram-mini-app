@@ -1,14 +1,18 @@
-# Command Core presentation contract — 0.31.1
+# Command Core presentation contract — 0.32.1
 
 The Core shell owns only transient presentation state: selected section, scrolling,
 expanded objective descriptions and command request sequence. It is never a save,
 research, inventory, station or campaign authority.
 
-`CommandCoreUI.registerSection(id, titleKey, mount)` accepts a ready section. The
+`CommandCoreUI.registerSection(id, titleKey, mount, available)` accepts a ready section. The
 mount receives its persistent scroll element and returns an update function.
 Only complete sections are registered; there is no placeholder registration.
-Reserved routes are `chapters`, `base`, `research`, `blueprints`, `construction`,
-`archive`, `map-signals`. The shipped implementation registers only the first two.
+The optional availability callback reads the corresponding domain owner; it
+does not grant access. Priority is `construction`, `base`, `chapters`, `research`,
+`blueprints`, `archive`, `map-signals`. The shipped implementation registers only
+`base` and `chapters`, with Base selected initially. Future construction handles
+base buildables; item recipes remain with their existing stations. No placeholder
+categories, blueprint inventory or placement workflow is implemented.
 The existing Research and Achievements links open their established owner/UI.
 
 The shell has a viewport-sized, content-independent frame. Header, tabs and footer
@@ -30,8 +34,13 @@ The owner rechecks permissions, target, proximity, resource and power conditions
 A hidden or disabled button is never an authority or security gate. Summary rows
 in this patch are read-only.
 
-SaveFormat 6 remains unchanged. Campaign schema 1 now has contentRevision 2.
-Revision-1 saves are first validated against original objective definitions, then
+The frame is at most 720 × 760 CSS pixels, constrained by viewport and safe top /
+bottom insets. Header, tabs and footer keep fixed heights. Only content scrolls.
+The Objectives HUD defaults to a collapsed chip. Its independent device-level
+HUD preference hides all tracker UI, without suspending campaign progress.
+
+SaveFormat is 8 (room-swap migration); campaign schema 1 has contentRevision 3.
+Older content revisions are first validated against their objective definitions, then
 receive new optional objective records. New `after` objectives begin at the saved
 world counter when activated. Previously completed chapters are not reopened;
 new optional records in those chapters remain inactive. Old transitions and

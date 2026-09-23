@@ -169,8 +169,8 @@ function drawBunker(){
     ctx.fillText(I18n.text(label),(o.left+o.right)/2,o.top+34);
   }
 
-  // №2 — WORKSHOP (visual redesign; existing interaction preserved)
-  drawSideRoom(bunker.workshop,"left","","#343a3c");
+  // Workshop follows its semantic room after the Level 1 room swap.
+  drawSideRoom(bunker.workshop,"left",I18n.t('core.room.workshop'),"#343a3c");
 
   BunkerLayout.withArt('workshop',()=>V09Craft.drawWorkshop());
 

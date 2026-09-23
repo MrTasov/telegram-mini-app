@@ -3,7 +3,15 @@
 All game-ready WAVs are included. The game makes no requests to the source sites.
 Exact source archive URLs and SHA-256: `tools/audio-sources.json`.
 Per-clip provenance, cut points, format, loudness and hashes: `tools/audio-preparation.json`.
-Reproduction: `tools/build-audio.py` (offline FFmpeg, numpy, scipy).
+Original audio pass: `tools/build-audio.py` (offline FFmpeg, numpy, scipy).
+Apply `tools/corrective-audio.py` afterwards for the current 0.32.1 mix.
+
+In 0.32.1, `ui_click`, `ui_confirm`, `ui_error`, `loot_close`, `menu`, `pickup`,
+`machine`, `generator`, `rotor`, `bunker`, `water` and `liquid` are replaced with
+original offline sound designs prepared for LAST BASE. They use no sampled
+recordings. Current per-clip provenance, RMS, peak and SHA-256 are recorded in
+`tools/audio-corrective-preparation.json`; the older preparation list is historical
+for these twelve clips. Normal `day.wav` is removed. `day_x.wav` is unchanged.
 
 | Source | Creator / uploader | License | Used for |
 | --- | --- | --- | --- |

@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.32.0",
+  "version": "0.32.1",
   "private": true,
-  "description": "LAST BASE 0.32.0 — Stage B: fixed equipment instances, shared transforms and authority adapters.",
+  "description": "LAST BASE 0.32.1 — Stage A/B corrective: HUD, Core, room migration, physical bodies, audio and lighting.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -21,7 +21,10 @@
     "test:campaign:patch": "node qa/stage-a-corrective.cjs",
     "bench:campaign:patch": "node qa/stage-a-corrective-performance.cjs",
     "test:equipment": "node qa/stage-b.cjs",
-    "bench:equipment": "node --expose-gc qa/stage-b-performance.cjs"
+    "bench:equipment": "node --expose-gc qa/stage-b-performance.cjs",
+    "test:corrective": "node qa/stage-ab-corrective.cjs && node qa/stage-ab-light-audio.cjs",
+    "bench:corrective": "node --expose-gc qa/stage-ab-performance.cjs",
+    "package:corrective": "node tools/package-stage-ab.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

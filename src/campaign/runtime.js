@@ -1,11 +1,15 @@
 /* Existing owners remain authoritative. Core uses the existing power allocator;
    the campaign adds no second Research system and never gates old recipes. */
 window.GameCampaign=(()=>{
-  const core=BunkerLayout.core,powerId='command_core_l1';
+  const core={...BunkerLayout.core,...GameFootprints.body(BunkerLayout.core.id)},powerId='command_core_l1';
   registerPowerDevice(powerId,'corridor',.05,()=>true,I18n.t('bunker.core.name'));
   function facts(){return {generatorRunning:V09Power.running&&V09Power.fuel>0,corePowered:devicePowered(powerId),mined:V010Progression.count('mined'),
     woodStored:storageChests.slice(0,8).reduce((n,c)=>n+c.items.reduce((q,s)=>q+(s?.type==='wood'?s.qty:0),0),0),
     ironProduced:V010Progression.state.byResource.produced.iron||0,batteryCharge:V010Energy.battery.charge,
+    copperProduced:V010Progression.state.byResource.produced.copper||0,
+    medicalStored:storageChests.slice(0,8).reduce((n,c)=>n+c.items.reduce((q,s)=>q+(s?.type==='meds'?s.qty:0),0),0),
+    droneReady:!V014Robots.state.packed&&V014Robots.state.hp>0&&V014Robots.state.battery>=20,
+    workshopLit:devicePowered('light_workshop'),
     perimeterCondition:Math.min(1,...V015Base.sections.filter(s=>['outer','inner'].includes(s.group)).map(s=>s.hp/s.maxHp))};}
   function access(actor,targetId,requirePower=true){
     if(targetId!==core.id||!interactionObjects('bunker').some(o=>o.id===targetId&&o.kind==='command_core'))return {available:false,reason:'campaign.reason.target'};
@@ -40,7 +44,7 @@ window.GameCampaign=(()=>{
     if(d.v09?.power?.deviceEnabled&&!Object.hasOwn(d.v09.power.deviceEnabled,powerId))d.v09.power.deviceEnabled[powerId]=true;
   }
   GameSave.extend('capture','campaign.foundation',function(capture){const d=capture();d.campaign031=domain.capture();return d;});
-  function contentMigration(d){if(d.campaign031?.contentRevision===1)d.campaign031=domain.migrate(d.campaign031,{mined:d.v010?.modules?.progression?.counts?.mined||0,ironProduced:d.v010?.modules?.progression?.byResource?.produced?.iron||0});domain.validate(d.campaign031);return d;}
+  function contentMigration(d){if(d.campaign031?.contentRevision<CampaignDefinitions.revision)d.campaign031=domain.migrate(d.campaign031,{mined:d.v010?.modules?.progression?.counts?.mined||0,ironProduced:d.v010?.modules?.progression?.byResource?.produced?.iron||0,copperProduced:d.v010?.modules?.progression?.byResource?.produced?.copper||0});domain.validate(d.campaign031);return d;}
   GameSave.extend('decode','campaign.foundation',function(decode,raw){return contentMigration(decode(raw));});
   GameSave.extend('restore','campaign.foundation',function(restore,d){domain.validate(d.campaign031);const result=restore(d);domain.restore(d.campaign031);lastFacts='';elapsed=0;window.CommandCoreUI?.reset();return result;});
   GameState.register('campaign',{capture:()=>domain.capture(),get status(){return domain.view();}}, {source:'campaign/runtime.js',saved:['campaign031'],transient:['fact signature','UI listeners']});

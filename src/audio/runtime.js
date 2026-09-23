@@ -27,11 +27,12 @@ const GameAudio=window.GameAudio=(()=>{
   define('switch','switch',.22,'ui',100);define('refuel','liquid',.33,'world',200);define('plant','plant',.25,'world',180);
   define('fishCast','fishCast',.31,'world',250);define('fishCatch','fishCatch',.36,'world',250,3);
   define('chicken','chicken',.17,'animal',15000,1);define('cow','cow',.25,'animal',20000,1);define('slaughter','slaughter',.32,'animal',500,2);
-  define('uiClick','uiClick',.12,'ui',70);define('uiConfirm','uiConfirm',.18,'ui',140);define('uiError warning droneLow','uiError',.19,'ui',900,3);
+  define('uiClick','uiClick',.15,'ui',70);define('menu','menu',.15,'ui',180);define('uiConfirm','uiConfirm',.19,'ui',140);define('uiError warning droneLow','uiError',.17,'ui',900,3);
   define('droneCharge droneLand sleep wake','uiConfirm',.17,'world',500);
   define('droneHit','impactMetal',.32,'combat',220,3);define('droneDisabled','powerStop',.36,'world',600,4);
   define('powerStart','powerStart',.35,'world',300);define('powerStop','powerStop',.29,'world',300);
-  const loopDefs={menu:['menu',.065],day:['day',.085],night:['night',.10],bunker:['bunker',.075],dayX:['dayX',.12],rotor:['rotor',.17],generator:['generator',.16],machine:['machine',.13],water:['water',.10],shower:['water',.13]};
+  const loopDefs={night:['night',.10],bunker:['bunker',.065],dayX:['dayX',.12],rotor:['rotor',.10],generator:['generator',.11],machine:['machine',.09],water:['water',.085],shower:['water',.095]};
+  const transmissionCues=new Set(['dayX','zombie','zombieAggro','explosion','constructionHit','constructionBreak']);
   const now=()=>performance.now();
   function random(){randomState^=randomState<<13;randomState^=randomState>>>17;randomState^=randomState<<5;return (randomState>>>0)/4294967296;}
   function set(param,value,seconds=.04){if(!param)return;if(param.setTargetAtTime)param.setTargetAtTime(value,audioCtx.currentTime,seconds);else param.value=value;}
@@ -41,27 +42,42 @@ const GameAudio=window.GameAudio=(()=>{
     if(audioCtx.createDynamicsCompressor){compressor=audioCtx.createDynamicsCompressor();compressor.threshold.value=-12;compressor.knee.value=18;compressor.ratio.value=4;compressor.attack.value=.006;compressor.release.value=.18;bus.connect(compressor);compressor.connect(audioCtx.destination);}else bus.connect(audioCtx.destination);
     return bus;
   }
+  function listenerZone(){return {scene,floor:scene==='bunker'?1:window.V013City?.floor||0};}
+  function sourceZone(opts={}){
+    const local=listenerZone(),source=opts.scene||local.scene;
+    const floor=opts.floor??(typeof opts.level==='number'?opts.level:undefined)??(opts.scene?(source==='bunker'?1:0):local.floor);
+    return {scene:source,floor};
+  }
+  function sameZone(opts){const a=listenerZone(),b=sourceZone(opts);return a.scene===b.scene&&a.floor===b.floor;}
   function positional(opts={}){
-    if(opts.scene&&opts.scene!==scene)return 0;
-    if(opts.scene==='surface'&&opts.level===false&&window.V013City?.floor)return 0;
-    if(opts.level!==undefined&&!!opts.level!==!!player.wallLevel)return 0;
+    if(!sameZone(opts))return 0;
+    if(typeof opts.level==='boolean'&&opts.level!==!!player.wallLevel)return 0;
     if(!Number.isFinite(opts.x)||!Number.isFinite(opts.y))return 1;
     const n=1-Math.hypot(opts.x-player.x,opts.y-player.y)/(opts.radius||420);return n>0?n*n:0;
+  }
+  function spatial(name,opts={}){
+    if(sameZone(opts))return {gain:positional(opts),lowpass:0};
+    const listener=listenerZone(),source=sourceZone(opts);
+    if(!opts.dayXLeak||!transmissionCues.has(name)||!window.WorldEvents?.isActive('day_x')||source.scene!=='surface'||source.floor!==0||listener.scene!=='bunker')return {gain:0,lowpass:0};
+    // Sources outside are measured from the surface entrance, not coordinates
+    // in the unrelated underground map. Concrete removes highs and most gain.
+    const d=Number.isFinite(opts.x)&&Number.isFinite(opts.y)?Math.hypot(opts.x-800,opts.y-650):0;
+    return {gain:.065*Math.max(0,1-d/1800)**2/Math.max(1,Number(listener.floor)||1),lowpass:420};
   }
   function cleanup(v){
     if(v.done)return;v.done=true;voices.delete(v);tails.delete(v);
     if(v.channel&&loops.get(v.channel)===v)loops.delete(v.channel);
-    try{v.source.disconnect();v.gain.disconnect();}catch(_){}
+    try{v.source.disconnect();v.filter?.disconnect();v.gain.disconnect();}catch(_){}
   }
   function stop(v){if(!v||v.done)return;cleanup(v);try{v.source.stop(0);}catch(_){};}
   function ready(){return !document.hidden&&masterVolume>0&&audioCtx?.state==='running';}
-  function create(clip,volume,rate=1,loop=false){
+  function create(clip,volume,rate=1,loop=false,lowpass=0){
     const buffer=audioBuffers[clip];if(!ready()||!buffer)return null;
-    try{const source=audioCtx.createBufferSource(),gain=audioCtx.createGain();source.buffer=buffer;source.loop=loop;source.playbackRate.value=rate;gain.gain.value=volume;source.connect(gain);gain.connect(output());const v={source,gain,clip,done:false,started:now()};source.onended=()=>cleanup(v);source.start(0);return v;}catch(_){return null;}
+    try{const source=audioCtx.createBufferSource(),gain=audioCtx.createGain(),filter=lowpass&&audioCtx.createBiquadFilter?audioCtx.createBiquadFilter():null;source.buffer=buffer;source.loop=loop;source.playbackRate.value=rate;gain.gain.value=volume;if(filter){filter.type='lowpass';filter.frequency.value=lowpass;filter.Q.value=.5;source.connect(filter);filter.connect(gain);}else source.connect(gain);gain.connect(output());const v={source,gain,filter,lowpass,clip,done:false,started:now()};source.onended=()=>cleanup(v);source.start(0);return v;}catch(_){return null;}
   }
   function play(name,opts={}){
     const def=cues[name];if(!def||!ready())return false;
-    const distance=positional(opts);if(distance<.002)return false;
+    const space=spatial(name,opts),distance=space.gain;if(distance<.002)return false;
     const key=name+(opts.cooldownKey?':'+opts.cooldownKey:''),time=now();if(time<(cooldowns.get(key)||0)||name==='uiClick'&&time-lastFeedback<60)return false;
     const clips=def.clips.filter(c=>audioBuffers[c]);if(!clips.length)return false;
     const same=[...voices].filter(v=>v.family===def.family),cap=limits[def.family]||4;
@@ -70,22 +86,22 @@ const GameAudio=window.GameAudio=(()=>{
       if(!pool.length){stats.dropped++;return false;}stop(pool[0]);stats.stolen++;
     }
     let index=Math.floor(random()*clips.length);if(clips.length>1&&index===lastVariant.get(name))index=(index+1)%clips.length;
-    const v=create(clips[index],def.gain*(opts.volume??1)*distance,opts.rate??(name.startsWith('shot')||name==='gunshot'?1:.97+random()*.06));if(!v)return false;
-    Object.assign(v,{family:def.family,priority:def.priority,owner:opts.owner});voices.add(v);lastVariant.set(name,index);cooldowns.set(key,time+def.cooldown);stats.peakOneShots=Math.max(stats.peakOneShots,voices.size);lastFeedback=time;
+    const v=create(clips[index],def.gain*(opts.volume??1)*distance,opts.rate??(name.startsWith('shot')||name==='gunshot'?1:.97+random()*.06),false,space.lowpass);if(!v)return false;
+    Object.assign(v,{family:def.family,priority:def.priority,owner:opts.owner,name,opts:{...opts},zone:listenerZone()});voices.add(v);lastVariant.set(name,index);cooldowns.set(key,time+def.cooldown);stats.peakOneShots=Math.max(stats.peakOneShots,voices.size);lastFeedback=time;
     if(cooldowns.size>256)for(const [k,t]of cooldowns)if(t<=time)cooldowns.delete(k);
     return true;
   }
   function loop(channel,name,opts={}){
-    const def=loopDefs[name],volume=def?def[1]*(opts.volume??1)*positional(opts):0;
+    const def=loopDefs[name],space=spatial(name,opts),volume=def?def[1]*(opts.volume??1)*space.gain:0;
     let old=loops.get(channel);
-    if(!ready()||!def||volume<.002||!audioBuffers[def[0]]){if(old)stop(old);return false;}
-    if(old&&old.clip===def[0]){set(old.gain.gain,volume,.08);return true;}
+    if(!ready()||!def||volume<.0002||!audioBuffers[def[0]]){if(old)stop(old);return false;}
+    if(old&&old.clip===def[0]&&old.lowpass===space.lowpass){set(old.gain.gain,volume,.08);return true;}
     if(old){
       loops.delete(channel);
       if(tails.size<limits.tails&&old.gain.gain.linearRampToValueAtTime){tails.add(old);old.gain.gain.cancelScheduledValues?.(audioCtx.currentTime);old.gain.gain.setValueAtTime?.(old.gain.gain.value,audioCtx.currentTime);old.gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+.25);try{old.source.stop(audioCtx.currentTime+.26);}catch(_){stop(old);}}else stop(old);
     }
     if(loops.size>=limits.loops)return false;
-    const v=create(def[0],volume,1,true);if(!v)return false;v.channel=channel;loops.set(channel,v);stats.peakLoops=Math.max(stats.peakLoops,loops.size);return true;
+    const v=create(def[0],volume,1,true,space.lowpass);if(!v)return false;v.channel=channel;v.zone=listenerZone();loops.set(channel,v);stats.peakLoops=Math.max(stats.peakLoops,loops.size);return true;
   }
   function stopOwner(owner){for(const v of voices)if(v.owner===owner)stop(v);}
   function reset(){for(const v of [...voices,...loops.values(),...tails])stop(v);for(const key of animationVoices.keys())stopAnimationSound(key);cooldowns.clear();lastVariant.clear();reloads=new WeakMap();window.GameAudioWorld?.reset();}
@@ -99,7 +115,8 @@ const GameAudio=window.GameAudio=(()=>{
     if(!audioCtx)return false;
     if(bus)set(bus.gain,clamp(masterVolume,0,1),.02);
     if(document.hidden||masterVolume<=0||audioCtx&&audioCtx.state!=='running'){if(!muted){reset();muted=true;}return false;}
-    for(const v of voices)if(v.owner?.alive===false||v.family==='groan'&&v.owner&&positional({x:v.owner.x,y:v.owner.y,scene:'surface',radius:ZOMBIE_AUDIO_RADIUS,level:false})<.002)stop(v);
+    const here=listenerZone();for(const v of voices)if(v.owner?.alive===false||v.zone.scene!==here.scene||v.zone.floor!==here.floor||v.family==='groan'&&v.owner&&spatial(v.name,{...v.opts,x:v.owner.x,y:v.owner.y}).gain<.002)stop(v);
+    for(const v of loops.values())if(v.zone.scene!==here.scene||v.zone.floor!==here.floor)stop(v);
     muted=false;return true;
   }
   async function preload(){
@@ -112,7 +129,7 @@ const GameAudio=window.GameAudio=(()=>{
     }));})().finally(()=>{preloading=null;});return preloading;
   }
   function inspect(){return {...stats,oneShots:voices.size,loops:loops.size,tails:tails.size,animation:[...animationVoices.values()].filter(v=>v.source).length,buffers:Object.keys(audioBuffers).length,families:Object.fromEntries(['combat','enemy','groan','animal','world','ui'].map(k=>[k,[...voices].filter(v=>v.family===k).length])),loopKeys:[...loops.keys()],context:audioCtx?.state||'locked'};}
-  return {play,loop,reset,sync,preload,stopOwner,positional,output,random,limits,cues,inspect,reload};
+  return {play,loop,reset,sync,preload,stopOwner,positional,spatial,listenerZone,sourceZone,output,random,limits,cues,inspect,reload};
 })();
 function ensureAudioContext(){
   if(audioCtx)return audioCtx;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;

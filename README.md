@@ -1,29 +1,41 @@
-# LAST BASE 0.32.0 — Stage B
+# LAST BASE 0.32.1 — Stage A/B Corrective
 
-Separate GitHub-ready release based on **0.31.1 Stage A Corrective**. Stage A is
-conditionally accepted for development only; final manual review remains open.
-Review A Corrective and B together. **Stop after B: no C1, Building/Placement,
-damaged start or final Chapter 1.**
+Separate GitHub-ready patch based on delivered **0.32.0 Stage B**. Implements the
+user's manual-review corrections: compact Objectives HUD, Command Core, room
+swap, shared physical bodies, quieter audio and improved lighting. Awaiting
+repeat manual acceptance. Development stops here; C1 and later stages are closed.
 
 Deploy the extracted root `index.html`, `js/`, `styles/` and `assets/` together.
 The game is already built. Local server: `python -m http.server 8000`.
-Keep the same site origin to retain browser saves. Export a backup before testing.
-SaveFormat migrates **6 → 7**; older builds cannot read the new format.
+Keep the same site origin to retain browser saves. SaveFormat migrates **7 → 8**,
+and the existing migration chain supports earlier saves. Older builds cannot read
+format 8. Exporting the old save before opening the new build allows rollback.
 
-Equipment definitions, stable instances and transforms are separated. Existing
-positions and recipes are preserved. Job/container/power references retain their
-original owners. No duplicate inventories, production pools or devices.
-Two same-type furnaces exist only in an isolated QA world, not in the actual game.
+Level 1 R3 moves Workshop to the upper-left room and Kitchen to the lower-left.
+Semantic room/equipment identities, queue owners, storage, power and replay
+receipts remain intact. Saved player, drone, guard and map positions in the two
+rooms move once. The outer Level 1 shell, stairs and Core artwork stay in place.
 
-Equipment commands carry actor/instance/request IDs and expected revision;
-bounded replay receipts survive reload. This is local authority readiness, not
-networking. Unknown actors are rejected, never redirected to the local bag.
-A loaded enhancement cradle requests 2 kW independently of its UI.
+Stage A campaign and Stage B type → instance / transform contracts are preserved.
+Explicit actor/instance/request IDs and expected revisions remain authoritative;
+the UI owns no unlocks or inventories. Multiplayer readiness remains local
+authority preparation, without network transport. No Building/Placement, damaged
+start, Level 2 or final Chapter 1 is added. Eleven presentation-test objectives
+extend the existing two-chapter fixture; no new mandatory gate or reward.
 
-Level 1 R2, full stair hit area, fixed Command Core frame and 0.31.1 objectives
-remain intact. No new assets or later-stage content.
+Development: `npm ci`, `npm run build`, `npm test`, `npm run test:corrective`,
+`npm run bench:corrective`. The last command compares the immutable delivered
+0.32.0 fixture, including its original audio. Native Canvas QA uses Node 20+
+and the locked `@napi-rs/canvas` dependency. Audio reproduction requires numpy:
+apply `tools/corrective-audio.py` after any original audio preparation.
 
-Development: `npm run build`, `npm test`, `npm run test:equipment`,
-`npm run bench:equipment`. See `STAGE_B_REPORT_RU.md` and
-`docs/STAGE_B_EQUIPMENT_CONTRACT_RU.md`. Older Stage A reports are historical.
-QA uses modeled DOM/WebAudio and native Canvas2D, not a physical phone or browser.
+See `STAGE_AB_CORRECTIVE_REPORT_RU.md`,
+`docs/STAGE_AB_CORRECTIVE_CONTRACT_RU.md` and
+`docs/COMMAND_CORE_UI_CONTRACT.md`. Earlier reports, source references and
+baseline fixtures are historical and remain included. Current validation is
+`qa/results/summary.json`; current performance is
+`qa/results/stage-ab-performance.json`.
+
+QA uses modeled DOM/WebAudio and native Canvas2D. It does not certify native
+browser/Telegram layout, physical touch response or subjective audio quality.
+Those checks remain part of the user's repeat manual review.

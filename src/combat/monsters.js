@@ -95,7 +95,7 @@ window.V017Monsters=(()=>{
   function canHurt(z,range){return sameLevel()&&!playerDead&&!V091Fortress.isElevated()&&dist(z,player)<=range&&lineClear(z.x,z.y,player.x,player.y,0,'surface');}
   function armFuse(r,now,ms){r.fuse=now+ms;r.fuseAt=now;r.fuseDuration=ms;}
   function explode(z){
-    const r=prepare(z),boost=factor(),blast=stats(z,false).blast||specs.bloater.blast;if(r.exploded)return false;r.exploded=true;r.fuse=0;GameAudio.play('explosion',{x:z.x,y:z.y,scene:'surface',radius:700});
+    const r=prepare(z),boost=factor(),blast=stats(z,false).blast||specs.bloater.blast;if(r.exploded)return false;r.exploded=true;r.fuse=0;GameAudio.play('explosion',{x:z.x,y:z.y,scene:'surface',radius:700,dayXLeak:true});
     effects.push({x:z.x,y:z.y,at:performance.now(),seed:r.id,boost});if(effects.length>24)effects.shift();
     // A distant kill is harmless; a point-blank kill has the same contact blast.
     if(canHurt(z,blast.playerRange*boost)){

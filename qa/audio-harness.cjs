@@ -13,6 +13,7 @@ exports.boot=function(root=path.resolve(__dirname,'..'),options={}){
    resume(){meter.resumes++;if(!meter.gesture)return Promise.reject(Error('NotAllowedError'));this.state='running';this.listeners.statechange?.();return Promise.resolve();}
    async decodeAudioData(b){meter.decodes++;const d=new DataView(b);if(d.getUint32(0,false)!==0x52494646)throw Error('Not WAV');return {duration:(b.byteLength-44)/(d.getUint32(24,true)*2),sampleRate:d.getUint32(24,true),numberOfChannels:1,length:(b.byteLength-44)/2};}
    createGain(){meter.gains++;return {gain:param(),connect(){},disconnect(){}};}
+   createBiquadFilter(){return {type:'lowpass',frequency:param(),Q:param(),connect(){},disconnect(){}};}
    createDynamicsCompressor(){return {threshold:param(),knee:param(),ratio:param(),attack:param(),release:param(),connect(){},disconnect(){}};}
    createBufferSource(){meter.sources++;const ctx=this;return {buffer:null,loop:false,playbackRate:param(),connect(){},disconnect(){},start(){this.end=this.loop?Infinity:ctx.currentTime+this.buffer.duration/this.playbackRate.value;meter.active.add(this);meter.peak=Math.max(meter.peak,meter.active.size);meter.starts.push({at:ctx.currentTime,buffer:this.buffer,loop:this.loop,rate:this.playbackRate.value});},stop(at=0){if(at>ctx.currentTime){this.end=at;return;}meter.active.delete(this);this.onended?.();}};}
   };

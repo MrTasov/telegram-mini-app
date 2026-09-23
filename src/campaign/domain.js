@@ -81,11 +81,11 @@ window.GameCampaignDomain=(()=>{
     }
     function migrate(s,facts={}){
       if(s?.contentRevision===definitions.revision){validate(s);return copy(s);}
-      if(s?.contentRevision!==1||definitions.revision!==2)throw Error('Unsupported campaign content');
+      if(!Number.isInteger(s?.contentRevision)||s.contentRevision<1||s.contentRevision>=definitions.revision)throw Error('Unsupported campaign content');
       // Validate against the original content before adding optional objectives.
       // Completed chapters and command receipts are never replayed or revoked.
-      const previous=copy(definitions);previous.revision=1;
-      previous.chapters.forEach(c=>{c.objectives=c.objectives.filter(o=>!o.since);});
+      const previous=copy(definitions);previous.revision=s.contentRevision;
+      previous.chapters.forEach(c=>{c.objectives=c.objectives.filter(o=>(o.since||1)<=s.contentRevision);});
       create(previous,ports).validate(s);
       const next=copy(s);
       for(const id of [...next.completed,next.activeChapter])for(const o of chapters.get(id).objectives){
