@@ -16,7 +16,7 @@ check('save.noModuleBypass',()=>assert.ok(!/V010\.modules\.\w+\s*=/.test(body)))
 check('save.stage2AdapterAuditRetained',()=>{const audit=JSON.parse(fs.readFileSync(path.join(__dirname,'adapter-preservation.json')));assert.equal(audit.adapters.length,56);assert.ok(audit.adapters.every(v=>v.bodyPreserved));for(const v of Object.values(audit.baseBodies))assert.equal(v.old,v.new);});
 const baseline=fs.readFileSync(path.join(__dirname,'stage2/js/game.js'),'utf8');
 const registrations=source=>[...source.matchAll(/GameSave\.extend\('([^']+)','([^']+)'/g)].map(m=>[m[1],m[2]]);
-check('save.stage3SameAdapterOrder',()=>assert.deepEqual(registrations(body).filter(([,id])=>id!=='bunker.level1'&&id!=='campaign.foundation'&&id!=='equipment.instances'&&id!=='inventory.head-modules'&&id!=='base.recovery'&&id!=='campaign.chapter-one'&&id!=='equipment.placement'&&id!=='inventory.buildables'&&id!=='base.control'),registrations(baseline)));
+check('save.stage3SameAdapterOrder',()=>assert.deepEqual(registrations(body).filter(([,id])=>id!=='bunker.level1'&&id!=='campaign.foundation'&&id!=='equipment.instances'&&id!=='inventory.head-modules'&&id!=='base.recovery'&&id!=='campaign.chapter-one'&&id!=='equipment.placement'&&id!=='inventory.buildables'&&id!=='base.control'&&id!=='research.foundation'),registrations(baseline)));
 const oldMap=JSON.parse(fs.readFileSync(path.join(__dirname,'controls-base/js/game.js.map')));
 check('stage5.onlyDeclaredSourceChanges',()=>assert.deepEqual(acceptedMap.sources.filter((file,i)=>acceptedMap.sourcesContent[i]!==oldMap.sourcesContent[oldMap.sources.indexOf(file)]).sort(),expected.changedSources));
 check('bootstrap.last',()=>assert.equal(manifest.files.at(-1),'bootstrap.js'));

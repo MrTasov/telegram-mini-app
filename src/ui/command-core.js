@@ -17,7 +17,7 @@ window.CommandCoreUI=(()=>{
   const feedback=node('div',null,'trackerFeedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
   tracker.append(trackerToggle,trackerPanel,feedback);trackerToggle.setAttribute('aria-controls',trackerPanel.id);
   let trackerExpanded=false,previousObjectives=null,feedbackUntil=0,viewEpoch=0;const celebrated=new Set(),objectiveExpanded=new Set();
-  const legacyLinks=[['campaign.research','research'],['campaign.achievements','achievements']].map(([key,legacy])=>{
+  const legacyLinks=[['campaign.achievements','achievements']].map(([key,legacy])=>{
     const b=button(key,()=>{closeOverlay(overlay);V010Progression.show(legacy);});links.append(b);return {b,key};
   });
   // Reserved routes describe the extension boundary, not visible placeholders.

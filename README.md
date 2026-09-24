@@ -1,14 +1,37 @@
-# LAST BASE 0.35.3 — Stage D Corrective
+# LAST BASE 0.36.0 — Stage E: Research + Blueprints
 
-This release completes the 57-point corrective request on the unchanged delivered
-**0.35.2 Stage D Corrective** baseline. No later roadmap stage is started.
-See [STAGE_D_COMPLETE_REPORT_RU.md](STAGE_D_COMPLETE_REPORT_RU.md) for the current
-Russian report and [docs/STAGE_D_COMPLETE_CONTRACT_RU.md](docs/STAGE_D_COMPLETE_CONTRACT_RU.md)
-for the current contracts. Older stage reports are historical.
+Built on the accepted **0.35.3 Stage D Corrective** baseline. Research unlocks
+production rights over the existing Craft → Inventory → Placement workflow.
+See [STAGE_E_REPORT_RU.md](STAGE_E_REPORT_RU.md) and
+[docs/STAGE_E_RESEARCH_CONTRACT_RU.md](docs/STAGE_E_RESEARCH_CONTRACT_RU.md).
+Earlier reports describe historical releases. Stage F and Level 2 are not started.
 
 Serve `index.html`, `js/`, `styles/`, and `assets/` together, for example with
 `python -m http.server 8000`. Keep the same site origin to retain browser saves.
 Node 20+ and the declared dev dependency are only needed for rebuilding and QA.
+
+## Research and blueprints
+
+Approach the physical powered **Command Core → Research**. Obtain a one-time
+packet from **Obtain and submit data**, then submit it. Packets belong to the actor
+until submission and do not use backpack slots. Submitted Data, permanent
+Blueprints and technology rights belong to the base.
+
+Research consumes Data once. It grants no items, materials, equipment levels or
+placements. Manufacture the unlocked result through existing stations or Core
+Construction. Sources are finite and guaranteed; no exploration/world expansion
+is included. Confirm Chapter 1 at the Core to receive its research reward.
+
+| Research | Data | Blueprint / prerequisite | Existing production destination |
+| --- | ---: | --- | --- |
+| Station fabrication | 12 | Powered Core | Core Construction: extra Furnace / Weapon Workbench |
+| Precision weapons | 18 | Precision blueprint + fabrication or legacy precision TECH | Weapon Workbench: M4 |
+| Scout servicing | 15 | Scout service blueprint + installed Drone Station | Enhancement Cradle: existing body / battery / weapon upgrades |
+| Production efficiency | 15 | Fabrication capability | Existing paid workshop improvement (+20% production speed) |
+
+The three one-time sources provide 20 + 20 + 25 Data. All four projects cost 60.
+Basic Utility Workbench, Hammer, Pickaxe, Axe, repairs and power remain ungated.
+Four legacy TECH routes and their existing effects remain available.
 
 ## Building and moving equipment
 
@@ -74,7 +97,10 @@ required. The original ten stone are a guaranteed repair reserve. Further full
 repairs require gathering and concrete production. Survive the night and confirm
 completion at the physical Core.
 
-Save format **15** retains older worlds and campaign revisions 3/4/5. New games
+Save format **16** adds an independently validated Research owner. Migration from
+0.35.3 / format 15 preserves all existing owners and previously open production
+rights. It grants no Data, Blueprints or completed projects. Research UI clearly
+marks inherited rights; further prerequisites accept those rights. It also retains older worlds and campaign revisions 3/4/5. New games
 use revision 6. Old priority fields are retained only as compatibility data.
 Previously disabled room circuits migrate to individually disabled consumers.
 Old packed equipment fills available bag slots; import-only overflow remains
@@ -87,13 +113,15 @@ requires a free slot. No migration grants new resources or duplicates instances.
 npm install
 npm run build
 npm run check
-npm test
-npm run bench:d:complete
-npm run package:d:complete
+LAST_BASE_TEST_JOBS=1 npm test
+npm run bench:e
+node --expose-gc qa/stage-e-tail-performance.cjs
+node --expose-gc qa/stage-e-dense-performance.cjs
+npm run package:e
 ```
 
-`npm test` runs 55 groups. Performance comparisons run separately against frozen
-0.35.2 code, with the same assets/audio. Reports use modeled DOM/WebAudio and
+`npm test` runs 56 groups. Performance comparisons run separately against frozen
+0.35.3 code, with the same assets/audio. Reports use modeled DOM/WebAudio and
 native Canvas2D; they do not claim browser/WebView/phone FPS or physical touch
 acceptance. The release ZIP contains source, runtime, tests, fixtures, assets,
 reports, and a SHA-256 file manifest. Manual acceptance is pending.

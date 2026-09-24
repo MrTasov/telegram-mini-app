@@ -49,7 +49,7 @@ window.V010Progression=(()=>{
     if(!silent)report('Изучено: '+TECH[id].name+'. Чертёж доступен на станке.','research');
     if(window.V010)V010.emit('research',{id});return true;
   }
-  function isUnlocked(id){return state.unlocks.includes(id);}
+  function isUnlocked(id){return window.GameAvailability?GameAvailability.legacy(id):state.unlocks.includes(id);}
   function evaluate(silent=false){
     for(const [id,t] of Object.entries(TECH))if(t.paths.some(([k,n])=>state.counts[k]>=n))unlock(id,silent);
     for(const a of ACH)if(state.counts[a.metric]>=a.target&&!state.announced.includes(a.id)){
@@ -187,7 +187,7 @@ window.V010Progression=(()=>{
     return true;
   }
   function restore(d){validate(d);state=d?JSON.parse(JSON.stringify(d)):fresh();elapsed=0;dirty=true;seenLog.clear();evaluate(true);renderPin();}
-  const api={TECH,ACH,ORDERS,GOALS,count:metric=>state.counts[metric],record,discover,isUnlocked,unlock,claim,collectPending,startOrder,pin,show,log:appendLog,tick,capture,restore,validate,get state(){return capture();}};
+  const api={TECH,ACH,ORDERS,GOALS,count:metric=>state.counts[metric],record,discover,isUnlocked,isLegacyUnlocked:id=>state.unlocks.includes(id),unlock,claim,collectPending,startOrder,pin,show,log:appendLog,tick,capture,restore,validate,get state(){return capture();}};
   V010.on('combatkill',()=>record('kills',1));
   V010.on('mined',p=>{if(Number.isSafeInteger(p?.qty))record('mined',p.qty,p.type);});
   V010.on('harvested',p=>{if(Number.isSafeInteger(p?.qty))record('harvested',p.qty,p.type);});
@@ -195,4 +195,3 @@ window.V010Progression=(()=>{
   V010.on('discover',discover);V010.on('log',p=>appendLog(p,p?.kind||'base'));
   V010.register('progression',api);return api;
 })();
-

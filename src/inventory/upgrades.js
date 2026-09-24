@@ -21,6 +21,7 @@ window.V0161Upgrade=(()=>{
     if(!near()||!s||s!==slots[0]||!accepts(s)){message('Положите предмет на станок усиления');return false;}
     
     if(isDrone(s)&&!Object.hasOwn(labels,key))return false;
+    if(isDrone(s)&&window.GameAvailability&&!GameAvailability.droneModule(key).available){message(I18n.t(GameAvailability.droneModule(key).reason));return false;}
     if(level(s,key)>=maxLevel(s)){message('Максимальное усиление +'+maxLevel(s));return false;}
     if(!devicePowered(station.id)){message('Станку нужно питание · 2 кВт');return false;}
     const input=cost(s,key);if(!inv.consumeMaterials(input)){for(const b of overlay?.querySelectorAll('[data-upgrade-material]')||[])if(inv.materialCount(b.dataset.upgradeMaterial)<input[b.dataset.upgradeMaterial]){b.classList.remove('v013Missing');void b.offsetWidth;b.classList.add('v013Missing');}message('Не хватает материалов для усиления');return false;}
@@ -41,7 +42,7 @@ window.V0161Upgrade=(()=>{
   function chooseModule(key){if(!Object.hasOwn(labels,key))return false;selectedModule=key;lastSignature='';refresh(true);return true;}
   function refresh(force=false){
     if(!overlay||!overlay.classList.contains('open'))return;
-    const s=slots[0],on=devicePowered(station.id),signature=JSON.stringify([s,robot.state.modules,robot.state.hp,robot.state.battery,bag,quickItems(),equipment,selectedModule,on,near(),Object.entries(cost(s)).map(([t])=>inv.materialCount(t))]);
+    const s=slots[0],on=devicePowered(station.id),signature=JSON.stringify([s,robot.state.modules,robot.state.hp,robot.state.battery,bag,quickItems(),equipment,selectedModule,on,near(),window.GameResearch?.epoch,Object.entries(cost(s)).map(([t])=>inv.materialCount(t))]);
     if(!force&&lastSignature===signature)return;lastSignature=signature;
     I18n.assign(refs.power,"textContent",on?'Питание включено · 2 кВт':'Нет питания · требуется 2 кВт');refs.power.className=on?'powered':'missing';
     refs.cradle.replaceChildren();const cell=inv.cell('upgrade',0,s);cell.id='v161UpgradeSlot';I18n.setAttr(cell,'aria-label',s?ITEM[s.type].name:'Ячейка станка усиления');if(!s){const hint=document.createElement('span');I18n.assign(hint,"textContent",'＋');cell.append(hint);}refs.cradle.append(cell);
@@ -52,6 +53,7 @@ window.V0161Upgrade=(()=>{
     refs.modules.replaceChildren();if(isDrone(s))for(const [key,label]of Object.entries(labels)){const b=v09Button(label+' +'+robot.state.modules[key],()=>chooseModule(key),selectedModule===key?'selected':'');b.dataset.upgradeModule=key;refs.modules.append(b);}
     refs.materials.replaceChildren();if(s&&level(s)<maxLevel(s))for(const [t,n]of Object.entries(cost(s))){const have=inv.materialCount(t),row=text(refs.materials,'div','v161Material'+(have<n?' missing':''));row.dataset.upgradeMaterial=t;I18n.assign(row,"innerHTML",itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+have+' / '+n+'</small></span>');}
     I18n.assign(refs.upgrade,"textContent",!s?'Усилить':level(s)>=maxLevel(s)?'Максимум +'+maxLevel(s):'Усилить до +'+(level(s)+1));refs.upgrade.disabled=!s||!on||!near()||level(s)>=maxLevel(s);refs.take.disabled=!s||!near();
+    if(isDrone(s)&&window.GameAvailability&&!GameAvailability.droneModule(selectedModule).available){refs.upgrade.disabled=true;text(refs.card,'p','missing',I18n.t(GameAvailability.droneModule(selectedModule).reason));}
     refs.pick.replaceChildren();for(const [key,item]of Object.entries(equipment))if(accepts(item)){const b=v09Button(ITEM[item.type].name+' · снять со снаряжения',()=>GameEquipmentRuntime.request(station.id,'depositEquipment',{key}));b.disabled=!!s;refs.pick.append(b);}
     refs.quick.replaceChildren();quickItems().forEach((item,i)=>{const cell=inv.cell('quick',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)GameEquipmentRuntime.request(station.id,'deposit',{from:'quick',index:i});};refs.quick.append(cell);});
     refs.bag.replaceChildren();for(let i=0;i<BAG_SLOTS;i++){const item=bag[i],cell=inv.cell('bag',i,item);cell.onclick=e=>{e.stopPropagation();if(!inv.clickSuppressed()&&item)GameEquipmentRuntime.request(station.id,'deposit',{from:'bag',index:i});};if(item&&!accepts(item))cell.classList.add('v161Unavailable');refs.bag.append(cell);}

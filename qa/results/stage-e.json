@@ -1,0 +1,201 @@
+{
+  "version": "0.36.0",
+  "runtimeSha256": "7e147c04ddb67e03a4c62f7de554c1813987101a0ba59937132e2a51312b486a",
+  "passed": 40,
+  "failed": 0,
+  "boundaries": [
+    "fresh",
+    "held-packet",
+    "submitted-packet",
+    "full-bag-unlock",
+    "unlock-receipt",
+    "researched-buildable-carried",
+    "researched-buildable-used",
+    "researched-buildable-picked-up",
+    "researched-buildable-replaced",
+    "paid-drone-upgrade",
+    "migrated-0353-all-owners",
+    "legacy-new-research",
+    "legacy-tech-rights",
+    "UI-PC-ru",
+    "UI-PC-en",
+    "UI-MOBILE-ru",
+    "UI-MOBILE-en",
+    "UI-route-transient",
+    "chapter-tools-no-research",
+    "chapter-functional-repairs",
+    "chapter-finished-without-research",
+    "precision-blueprint-discovered",
+    "precision-unlocked",
+    "M4-paid-job",
+    "M4-equipped",
+    "source-station-carried",
+    "source-station-reinstalled"
+  ],
+  "checks": [
+    {
+      "id": "baseline.authoritative_0353_immutable",
+      "status": "PASS"
+    },
+    {
+      "id": "new_game.no_research_grants_and_revision6_retained",
+      "status": "PASS"
+    },
+    {
+      "id": "sources.held_actor_packet_then_submission_blueprint_once",
+      "status": "PASS"
+    },
+    {
+      "id": "sources.full_bag_never_loses_or_duplicates_progression",
+      "status": "PASS"
+    },
+    {
+      "id": "availability.data_blueprint_prerequisite_rejected_without_debit",
+      "status": "PASS"
+    },
+    {
+      "id": "unlock.not_free_item_and_duplicate_after_load",
+      "status": "PASS"
+    },
+    {
+      "id": "availability.locked_buildable_direct_command_and_recipe",
+      "status": "PASS"
+    },
+    {
+      "id": "research_full_building_cycle_no_new_craft_route",
+      "status": "PASS"
+    },
+    {
+      "id": "drone_existing_effects_gated_then_paid_upgrade_only",
+      "status": "PASS"
+    },
+    {
+      "id": "basic_chapter1_recipes_never_research_gated",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_distance",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_power",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_dead",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_paused",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_foreign",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_target",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_unknown",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_payload",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.pure_two_actors_shared_progress_personal_packet",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.stale_and_conflicting_request_no_double_spend",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.permission_and_power_rechecked_after_preview",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.AND_OR_and_no_unreachable_or_cyclic_content",
+      "status": "PASS"
+    },
+    {
+      "id": "save.validation_conservation_and_receipts_atomic",
+      "status": "PASS"
+    },
+    {
+      "id": "save.capture_is_pure_and_new_game_resets_only_research",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.0353_preserves_every_existing_owner_and_paid_jobs",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.entitlement_prerequisites_do_not_softlock_research",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_four_TECH_preserved_and_single_availability_policy",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.physical_core_localized_and_fixed_shell_PC_ru",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.physical_core_localized_and_fixed_shell_PC_en",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.physical_core_localized_and_fixed_shell_MOBILE_ru",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.physical_core_localized_and_fixed_shell_MOBILE_en",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.route_detail_restores_and_resets_on_departure_load",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.remote_and_tracker_never_expose_research_commands",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.idle_research_does_not_rebuild_graph_or_modify_progress",
+      "status": "PASS"
+    },
+    {
+      "id": "chapter1_real_new_game_then_blueprint_research_M4_craft_load",
+      "status": "PASS"
+    },
+    {
+      "id": "source.held_packet_survives_station_pack_and_resume",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.malformed_and_cyclic_payload_rejected_atomically",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.receipt_eviction_cannot_reclaim_data_after_load",
+      "status": "PASS"
+    },
+    {
+      "id": "save.corrupt_receipt_payload_result_and_revision_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.no_console_errors",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Modeled DOM and native Canvas2D; no native browser/Telegram/phone claim.",
+    "Full Chapter 1 uses real tool impact, crafting, repair and campaign commands; movement/time are controlled by the harness. Additional M4 materials are test supplies."
+  ]
+}

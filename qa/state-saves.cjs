@@ -24,7 +24,7 @@ check('owners.sessionIsSingleSourceOfTruth',()=>{
 });
 check('owners.noLateRegistration',()=>assert.throws(()=>E(`GameState.register('extra',{}, {source:'test'})`)));
 check('owners.sealedViews',()=>assert.equal(E('Object.isFrozen(GameState)&&Object.isFrozen(GameState.inventory)&&Object.isSealed(GameState.session)'),true));
-check('registry.historicalOrderIsExplicit',()=>assert.deepEqual(copy(E('GameSave.describe()')),Object.fromEntries(Object.entries(require('./save-adapters.json').order).map(([k,v])=>[k,[...v,'bunker.level1','campaign.foundation','equipment.instances','inventory.head-modules','base.recovery','campaign.chapter-one','equipment.placement','inventory.buildables','base.control']]))));
+check('registry.historicalOrderIsExplicit',()=>assert.deepEqual(copy(E('GameSave.describe()')),Object.fromEntries(Object.entries(require('./save-adapters.json').order).map(([k,v])=>[k,[...v,'bunker.level1','campaign.foundation','equipment.instances','inventory.head-modules','base.recovery','campaign.chapter-one','equipment.placement','inventory.buildables','base.control','research.foundation']]))));
 check('registry.singleSharedModuleRegistry',()=>assert.equal(E('V010.modules===GameSave.modules&&Object.isFrozen(V010.modules)'),true));
 check('registry.moduleRestoreOrder',()=>assert.deepEqual(copy(E('GameSave.moduleOrder')),['world','inventory','craft','combat','energy','progression','camera']));
 check('registry.rejectDuplicateOrLateHooks',()=>assert.throws(()=>E(`GameSave.extend('capture','save.slots',next=>next())`)));

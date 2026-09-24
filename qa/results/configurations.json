@@ -1,5 +1,5 @@
 {
-  "version": "0.35.3",
+  "version": "0.36.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -573,7 +573,22 @@
       },
       "output": "rifle_m4",
       "qty": 1,
-      "ms": 60000
+      "ms": 60000,
+      "availability": {
+        "any": [
+          {
+            "fact": "technology.precision_weapons",
+            "equals": true,
+            "reason": "research.error.prerequisite"
+          },
+          {
+            "fact": "legacy.precision_blueprint",
+            "equals": true,
+            "reason": "research.error.prerequisite"
+          }
+        ],
+        "reason": "research.error.precision"
+      }
     },
     "flashlight": {
       "station": "utility_workbench",
@@ -2741,6 +2756,7 @@
       "placement035",
       "carry0353",
       "control0353",
+      "research036",
       "identity027",
       "saveVersion"
     ],
@@ -2773,6 +2789,7 @@
       "placement035": 2,
       "carry0353": 1,
       "control0353": 1,
+      "research036": 1,
       "identity027": 1
     },
     "registeredModules": [
@@ -2991,6 +3008,7 @@
       "record",
       "discover",
       "isUnlocked",
+      "isLegacyUnlocked",
       "unlock",
       "claim",
       "collectPending",

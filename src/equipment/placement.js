@@ -65,6 +65,7 @@ window.GamePlacement=(()=>{
   function access(actor){return !actor.dead&&actor.scene==='bunker'&&(actor.entity.floor??1)===1;}
   function coreAccess(actor){return GameCampaign.access(actor,BunkerLayout.core.id,false).available;}
   function make(typeId,actorId){const rule=rules[typeId];if(!rule?.craftable)return fail('type');if(GameEquipment.ids.length>=48||GameEquipment.capture().filter(r=>r.typeId===typeId).length>=rule.limit)return fail('limitReached');
+    if(window.GameAvailability&&!GameAvailability.buildable(typeId).available)return fail('researchLocked');
     if(GameCarried.free()<0)return fail('inventoryFull');
     const record=GameEquipment.create(typeId,centered(typeId,'reserve_l1',1900,480),actorId,typeId==='storage_crate'?storageChests.length:undefined),next=GameEquipment.capture().concat(record);GameEquipment.validate(next);
     if(Object.entries(rule.cost).some(([t,n])=>V010Inventory.materialCount(t)<n))return fail('materials');

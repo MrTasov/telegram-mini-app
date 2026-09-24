@@ -18,6 +18,10 @@ configs.environmentAssumptions={equipment:'starter gear; balanced variant and sp
 
 const expected=JSON.parse(fs.readFileSync(path.join(__dirname,'stage0/audit/configurations.json'))),actual=JSON.parse(JSON.stringify(configs));
 const version=actual.version;actual.version=expected.version; // Release metadata and the explicitly versioned envelope are the only additions.
+// Stage E adds a capability gate, not a change to price/time/output or stats.
+assert.deepEqual(actual.recipes.rifle_m4.availability,JSON.parse(E('JSON.stringify(ResearchDefinitions.bindings.recipes.rifle_m4)')));
+delete actual.recipes.rifle_m4.availability;
+assert.equal(actual.save.schemas.research036,1);delete actual.save.schemas.research036;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='research036');
 assert.equal(actual.save.topKeys.filter(k=>k==='saveVersion').length,1);
 assert.equal(E('captureGameProgress().saveVersion'),E('SaveFormat.version'));
 actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='saveVersion'&&k!=='identity027'&&k!=='bunker030'&&k!=='campaign031'&&k!=='equipment032'&&k!=='headModules033'&&k!=='recovery033'&&k!=='chapter034'&&k!=='placement035'&&k!=='carry0353'&&k!=='control0353');

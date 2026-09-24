@@ -211,7 +211,7 @@ const V09Craft = (() => {
 
   function duration(ms){const sec=Math.ceil(ms/1000);return sec<60?`${sec} сек.`:sec<3600?`${Math.floor(sec/60)} мин. ${sec%60} сек.`:`${Math.floor(sec/3600)} ч. ${Math.floor(sec%3600/60)} мин.`;}
   let craftView=null;
-  function availableRecipe(r){return !r.unlock||typeof V010Progression==='undefined'||V010Progression.isUnlocked(r.unlock);}
+  function availableRecipe(r){return window.GameAvailability?GameAvailability.recipe(r).available:!r.unlock||typeof V010Progression==='undefined'||V010Progression.isUnlocked(r.unlock);}
   function refreshProgress(){
     if(!activeStation)return;const id=activeStation,j=getJob(id),r=j?RECIPES[j.recipe]:null;
     const status=el('v091CraftStatus'),bar=el('v091CraftBar'),made=el('v091CraftMade'),ready=el('v091CraftReady'),time=el('v091CraftTime'),button=el('v091CraftCollect');
@@ -253,7 +253,7 @@ const V09Craft = (() => {
     for(const [key,r] of recipes){
       const node=craftView.buttons.get(key),selectedHere=selected[id]===key;
       node.button.classList.toggle('selected',selectedHere);node.button.setAttribute('aria-pressed',String(selectedHere));
-      const detail=availableRecipe(r)?'×'+r.qty+' · '+duration(r.ms):'🔒 Нужен чертёж';
+      const detail=availableRecipe(r)?'×'+r.qty+' · '+duration(r.ms):'🔒 '+(window.GameAvailability?I18n.t(GameAvailability.recipe(r).reason):I18n.text('Нужен чертёж'));
       if(I18n.source(node.detail)!==detail)I18n.assign(node.detail,"textContent",detail);
     }
     scroll.replaceChildren();if(!craftView.output)actions.replaceChildren();craftView.detailRecipe=selected[id];

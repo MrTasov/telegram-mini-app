@@ -1,0 +1,41 @@
+// Stage E release gates and reproducible inventory over immutable 0.35.3.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),cp=require('node:child_process');
+const root=path.resolve(__dirname,'..'),out=path.resolve(process.argv[2]||path.join(root,'..','deliverables'));process.chdir(root);fs.mkdirSync(out,{recursive:true});
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),version=require('../package.json').version,runtimeSha256=sha(fs.readFileSync('js/game.js'));
+const summary=require('../qa/results/summary.json'),perf=require('../qa/results/stage-e-performance.json'),research=require('../qa/results/stage-e.json');
+if(version!=='0.36.0'||!summary.passed||summary.filtered||summary.patch!=='stage-e-research-blueprints'||summary.runs.length!==56||!summary.runtimeUnchanged||summary.runtimeSha256!==runtimeSha256||summary.runs.some(r=>r.exitCode!==0||r.runtimeSha256!==runtimeSha256))throw Error('Full current Stage E regression gate failed or stale');
+if(research.failed||research.passed<40||research.runtimeSha256!==runtimeSha256||research.boundaries.length<20)throw Error('Stage E full loop/save boundary gate failed or stale');
+if(perf.benchmarkVersion!==1||perf.audioBuffers?.length!==2||!perf.audioBuffers.every(n=>n===57)||!perf.passed||perf.version!==version||perf.runtimeSha256!==runtimeSha256||perf.rows.length!==12||perf.errors.length||perf.idlePlacementChecks!==0||perf.maxEquipment.length!==4||perf.maxEquipment.some(r=>r.instances!==42||r.placedLamps!==8||r.poweredLamps!==8))throw Error('Full current Stage E performance gate failed or stale');
+if(perf.severalEquipment?.length!==4||perf.controlUI?.length!==2||perf.corridorChecks?.samples!==60||perf.maxSerialization?.length!==2||perf.researchUI?.open?.idleRenders!==0||perf.researchUI?.closed?.idleRenders!==0||perf.researchCommands?.length!==6)throw Error('Incomplete extended performance coverage');
+if(!perf.movement?.passed||perf.movement.rows.length!==4||perf.movement.rows.some(r=>r.playerDistance<=10||r.droneDistance<=2||r.samples!==120))throw Error('Actual movement performance coverage missing');
+for(const [file,count]of [['stage-e-tail-performance',3],['stage-e-dense-performance',2]]){const r=require('../qa/results/'+file+'.json');if(!r.passed||r.runtimeSha256!==runtimeSha256||r.rows.length!==count||r.errors.length)throw Error('Missing current performance follow-up: '+file);}
+for(const name of ['stage-d-complete','stage-d-corrective','stage-d','stage-c2']){const r=require('../qa/results/'+name+'.json');if(r.failed||r.runtimeSha256&&r.runtimeSha256!==runtimeSha256)throw Error('Previous accepted contract failed: '+name);}
+cp.execFileSync(process.execPath,['tools/build.cjs','--check'],{stdio:'inherit'});
+const report='STAGE_E_REPORT_RU.md';if(!fs.existsSync(report)||/<!-- (?:FINAL_RESULTS|PERFORMANCE_ASSESSMENT) -->/.test(fs.readFileSync(report,'utf8')))throw Error('Unfinished report');
+const baseline=require('../qa/stage-e-base/release_manifest.json'),reference='LAST_BASE_0.35.3_Stage_D_Corrective_GitHub.zip',referenceSha256='f22cd4ffb69807b12929f9a368a0ff642e470e0c182b41d7538971cd7af88add';
+if(sha(fs.readFileSync('qa/stage-e-base/js/game.js'))!==baseline.runtimeSha256||baseline.version!=='0.35.3')throw Error('Invalid accepted baseline');
+for(const [kind,files]of Object.entries(require('../qa/stage-e-source-reference.json'))){if(!['changes','added'].includes(kind))continue;for(const [file,hashes]of Object.entries(files))if(sha(fs.readFileSync(file))!==hashes.after)throw Error('Stale source reference '+file);}
+const proof={version,runtimeSha256,passed:true,baseline:reference,baselineSha256:referenceSha256,regressionGroups:56,automatedAssertions:summary.automatedAssertions,researchCases:research.passed,researchSaveBoundaries:research.boundaries.length,allGroupsSameRuntime:true,performanceScenes:12,performanceFollowUps:['tail','dense'],maximumCurrentEquipment:42,registryCap:48,placedLamps:8,realBackpackSlots:true,pickupHoldMs:3000,sharedBaseControl:true,roomPriorityGameplay:false,sameInstancePackUp:true,saveVersion:16,researchSchema:1,completedResearchGrantsItems:false,researchProjects:4,blueprints:2,finiteSources:3,sourceDataTotal:65,researchCostTotal:60,chapterContentRevision:6,report,nextStageStarted:false,level2Implemented:false,manualAcceptance:'pending',limitations:perf.limitations};
+fs.writeFileSync('qa/results/stage-e-final-validation.json',JSON.stringify(proof,null,2)+'\n');
+function walk(dir=''){return fs.readdirSync(path.join(root,dir),{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name,'en')).flatMap(e=>{if(['node_modules','.git','.DS_Store','__pycache__'].includes(e.name))return [];const rel=path.posix.join(dir,e.name);if(e.isSymbolicLink())throw Error('Unexpected symlink '+rel);return e.isDirectory()?walk(rel):[rel];});}
+const before=new Map(baseline.files.map(f=>[f.file,f.sha256])),changes=[],added=[];
+for(const name of walk()){if(['release_manifest.json','STAGE_E_CHANGESET.json'].includes(name))continue;const hash=sha(fs.readFileSync(name));if(!before.has(name))added.push({file:name,sha256:hash});else if(hash!==before.get(name))changes.push({file:name,before:before.get(name),after:hash});}
+const removed=[...before.keys()].filter(f=>!fs.existsSync(f));if(removed.length)throw Error('Unexpected baseline removals: '+removed.join(','));
+fs.writeFileSync('STAGE_E_CHANGESET.json',JSON.stringify({version,baseline:'0.35.3 Stage D Corrective',changes,added,removed},null,2)+'\n');
+const files=walk().filter(f=>f!=='release_manifest.json').map(file=>{const b=fs.readFileSync(file);return {file,bytes:b.length,sha256:sha(b)};});
+const manifest={...baseline,version,patch:'stage-e-research-blueprints',reference,referenceSha256,builtAt:new Date().toISOString(),runtimeSha256,saveVersion:16,researchSchema:1,researchContentRevision:1,researchProjects:4,blueprints:2,finiteSources:3,sourceDataTotal:65,researchCostTotal:60,blueprintConsumption:false,researchCreatesEquipment:false,productionAvailability:'shared data-driven policy over accepted Craft/Inventory/Placement',legacyResearchMigration:'preserve existing production rights; no Data, Blueprints or completed research grants',manualAcceptance:'pending',nextStageStarted:false,stageFStarted:false,level2Implemented:false,automatedGatePassed:true,automatedAssertions:summary.automatedAssertions,regressionGroups:56,validationReport:'qa/results/stage-e-final-validation.json',performanceComparison:'qa/results/stage-e-performance.json',performanceFollowUps:['qa/results/stage-e-tail-performance.json','qa/results/stage-e-dense-performance.json'],report,files};
+fs.writeFileSync('release_manifest.json',JSON.stringify(manifest,null,2)+'\n');
+const zip=path.join(out,'LAST_BASE_0.36.0_Stage_E_GitHub.zip');if(fs.existsSync(zip))throw Error('Refusing to overwrite an existing release');
+cp.execFileSync('zip',['-q','-9',zip,'-@'],{cwd:root,input:walk().join('\n')+'\n',maxBuffer:1024*1024});cp.execFileSync('unzip',['-tq',zip],{maxBuffer:1024*1024});
+cp.execFileSync('python3',['-c',`import hashlib,json,pathlib,sys,zipfile
+root=pathlib.Path(sys.argv[2])
+with zipfile.ZipFile(sys.argv[1]) as z:
+ m=json.loads(z.read('release_manifest.json'));names=z.namelist()
+ assert len(names)==len(set(names))==len(m['files'])+1
+ assert set(names)=={f['file'] for f in m['files']}|{'release_manifest.json'}
+ for f in m['files']:
+  b=z.read(f['file']);assert len(b)==f['bytes'] and hashlib.sha256(b).hexdigest()==f['sha256'],f['file']
+  assert b==(root/f['file']).read_bytes(),f['file']
+ assert z.read('release_manifest.json')==(root/'release_manifest.json').read_bytes()
+`,zip,root],{maxBuffer:1024*1024});
+const result={zip,bytes:fs.statSync(zip).size,sha256:sha(fs.readFileSync(zip)),files:files.length+1,crcPassed:true,allManifestHashesPassed:true,sourceTreeEqualityPassed:true,runtimeSha256,baseline:reference,baselineSha256:referenceSha256,report:path.join(out,'LAST_BASE_0.36.0_Stage_E_Report_RU.md')};fs.copyFileSync(report,result.report);const proofPath=path.join(out,'LAST_BASE_0.36.0_Stage_E_Verification.json');fs.writeFileSync(proofPath,JSON.stringify({...proof,archive:result},null,2)+'\n');console.log(JSON.stringify({...result,verification:proofPath}));

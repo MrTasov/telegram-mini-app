@@ -1,0 +1,75 @@
+{
+  "version": "0.36.0",
+  "runtimeSha256": "7e147c04ddb67e03a4c62f7de554c1813987101a0ba59937132e2a51312b486a",
+  "baseline": "immutable delivered 0.35.3",
+  "purpose": "Recheck observed upper-tail variance without replacing the first full comparison",
+  "passes": 8,
+  "samplesPerVersionPerScene": 240,
+  "rows": [
+    {
+      "viewport": "390x844",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 240,
+        "p50Ms": 21.264484999999695,
+        "p95Ms": 33.92046699999992,
+        "meanMs": 23.780401025000046
+      },
+      "after": {
+        "samples": 240,
+        "p50Ms": 20.481259000000136,
+        "p95Ms": 29.776843999999983,
+        "meanMs": 21.902283449999988
+      },
+      "deltaMs": -0.7832259999995586,
+      "percent": -3.683258729282979
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 240,
+        "p50Ms": 45.104787999996915,
+        "p95Ms": 66.31132200000138,
+        "meanMs": 48.005332095833154
+      },
+      "after": {
+        "samples": 240,
+        "p50Ms": 46.08766900000046,
+        "p95Ms": 96.36916299999939,
+        "meanMs": 56.91938222499986
+      },
+      "deltaMs": 0.9828810000035446,
+      "percent": 2.1791056860828384
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_door_spill",
+      "before": {
+        "samples": 240,
+        "p50Ms": 44.30716899999243,
+        "p95Ms": 56.176292999996804,
+        "meanMs": 45.5309078208337
+      },
+      "after": {
+        "samples": 240,
+        "p50Ms": 45.107955999992555,
+        "p95Ms": 69.69029500000761,
+        "meanMs": 48.38584428749982
+      },
+      "deltaMs": 0.8007870000001276,
+      "percent": 1.8073531170548662
+    }
+  ],
+  "errors": [],
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "mode": "Modeled DOM/WebAudio, native Canvas2D, DPR1; warmed alternating AB/BA"
+  },
+  "limitations": [
+    "Shared-host CPU timing, not browser/phone FPS.",
+    "This targeted repeat is separate from the required twelve-scene full pass."
+  ],
+  "passed": true
+}

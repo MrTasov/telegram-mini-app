@@ -26,7 +26,8 @@ GameSave.seal({
     "campaign.chapter-one",
     "equipment.placement",
     "inventory.buildables",
-    "base.control"
+    "base.control",
+    "research.foundation"
   ],
   "decode": [
     "save.slots",
@@ -56,7 +57,8 @@ GameSave.seal({
     "campaign.chapter-one",
     "equipment.placement",
     "inventory.buildables",
-    "base.control"
+    "base.control",
+    "research.foundation"
   ],
   "restore": [
     "save.slots",
@@ -87,7 +89,8 @@ GameSave.seal({
     "campaign.chapter-one",
     "equipment.placement",
     "inventory.buildables",
-    "base.control"
+    "base.control",
+    "research.foundation"
   ]
 });
 GameState.seal();

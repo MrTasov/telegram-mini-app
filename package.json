@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.35.3",
+  "version": "0.36.0",
   "private": true,
-  "description": "LAST BASE 0.35.3 \u2014 Stage D Corrective: physical pickup, inventory instances, shared Base Control and Chapter 1 onboarding.",
+  "description": "LAST BASE 0.36.0 — Stage E: Research Data and Blueprints over accepted Stage D contracts.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -38,7 +38,10 @@
     "bench:d:corrective": "node --expose-gc qa/stage-d-complete-performance.cjs",
     "package:d:corrective": "node tools/package-stage-d-complete.cjs",
     "bench:d:complete": "node --expose-gc qa/stage-d-complete-performance.cjs",
-    "package:d:complete": "node tools/package-stage-d-complete.cjs"
+    "package:d:complete": "node tools/package-stage-d-complete.cjs",
+    "test:e": "node qa/stage-e.cjs",
+    "bench:e": "node --expose-gc qa/stage-e-performance.cjs",
+    "package:e": "node tools/package-stage-e.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

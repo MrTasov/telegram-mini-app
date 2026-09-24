@@ -2,7 +2,11 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const hash=()=>require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(__dirname,'../js/game.js'))).digest('hex'),runtimeSha256=hash();
 const root=path.resolve(__dirname,'..'),out=path.join(__dirname,'results');fs.mkdirSync(out,{recursive:true});
 const env={...process.env,LAST_BASE_TEST_LANGUAGE:process.env.LAST_BASE_TEST_LANGUAGE||'ru',LAST_BASE_ASSETS:root,LAST_BASE_BASELINE:path.join(__dirname,'stage0'),NODE_PATH:[process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,path.join(root,'node_modules'),process.env.NODE_PATH].filter(Boolean).join(path.delimiter)};
+// Persist actual completed child results so an interrupted host session does
+// not erase the provenance of the pass. The release still requires all groups.
+const checkpoint=path.join(out,'run-checkpoint.json');
 const jobs=[
+ ['stage-e','qa/stage-e.cjs',[]],
  ['stage-d-complete','qa/stage-d-complete.cjs',[]],
  ['stage-d-corrective','qa/stage-d-corrective.cjs',[]],
  ['stage-d','qa/stage-d.cjs',[]],
@@ -59,8 +63,13 @@ const jobs=[
  ['bunker-floor-cache','qa/bunker-floor-cache.cjs',[]],
  ['bunker-r2','qa/bunker-r2.cjs',[]]
 ],runs=[];
+// Retry only failed children of a completed full pass, on the very same
+// runtime. Successful actual exit results retain their original provenance.
+const retry=process.env.LAST_BASE_TEST_RETRY?JSON.parse(fs.readFileSync(checkpoint)):null;
+if(retry&&(!retry.complete||retry.filtered||!retry.runtimeUnchanged||retry.runtimeSha256!==runtimeSha256||retry.runs.length!==jobs.length||retry.runs.some((r,i)=>r.id!==jobs[i][0]||r.runtimeSha256!==runtimeSha256)))throw Error('Cannot retry an incomplete, filtered or different-runtime pass');
 async function run(index){
  const [id,file,args]=jobs[index];
+ if(retry&&retry.runs[index].exitCode===0){runs[index]=retry.runs[index];return;}
  if(process.env.LAST_BASE_TEST_FILTER&&!process.env.LAST_BASE_TEST_FILTER.split(',').includes(id)){const old=fs.existsSync(path.join(out,'summary.json'))?JSON.parse(fs.readFileSync(path.join(out,'summary.json'))):null;runs[index]=old?.runs?.find(r=>r.id===id)||{id,exitCode:1,error:'No previous result for skipped group'};return;}
  console.log('Running '+id+'…');const start=Date.now();
  // Explicitly close child stdin. Serial CI also has a synchronous path, so a
@@ -69,6 +78,7 @@ async function run(index){
  const r=process.env.LAST_BASE_TEST_JOBS==='1'?cp.spawnSync(process.execPath,[path.join(root,file),...args],options):await new Promise(resolve=>cp.execFile(process.execPath,[path.join(root,file),...args],options,(error,stdout,stderr)=>resolve({status:error?(typeof error.code==='number'?error.code:1):0,stdout,stderr,error})));
  fs.writeFileSync(path.join(out,id+'.log'),r.stdout+'\n'+r.stderr);if(r.stdout)console.log(r.stdout.trim());if(r.stderr)console.error(r.stderr.trim());
  runs[index]={id,runtimeSha256,exitCode:r.status,elapsedMs:Date.now()-start,error:r.error?.message};
+ fs.writeFileSync(checkpoint,JSON.stringify({runtimeSha256,version:require('../package.json').version,complete:false,runs:runs.filter(Boolean)},null,2)+'\n');
 }
 (async()=>{
  // Independent suites own separate report files. Default remains serial; CI
@@ -76,10 +86,12 @@ async function run(index){
  const concurrency=Math.max(1,Math.min(3,Number(process.env.LAST_BASE_TEST_JOBS)||1));let next=0;
  await Promise.all(Array.from({length:concurrency},async()=>{while(next<jobs.length)await run(next++);}));
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
-const reports=[read('stage-d-complete.json'),read('stage-d-corrective.json'),read('stage-d.json'),read('stage-d-repair.json'),read('stage-d-visuals.json'),read('stage-c2.json'),read('stage-c2-prerequisites.json'),read('stage-c1-light-modules.json'),read('stage-c1-recovery.json'),read('stage-a-corrective.json'),read('campaign.json'),read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
+const reports=[read('stage-e.json'),read('stage-d-complete.json'),read('stage-d-corrective.json'),read('stage-d.json'),read('stage-d-repair.json'),read('stage-d-visuals.json'),read('stage-c2.json'),read('stage-c2-prerequisites.json'),read('stage-c1-light-modules.json'),read('stage-c1-recovery.json'),read('stage-a-corrective.json'),read('campaign.json'),read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
 reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'),read('player-visual-fix.json'),read('corrective-performance.json'),read('corrective-visuals.json'),read('polish.json'),read('polish-visuals.json'),read('audio-unlock.json'),read('hud-display.json'));
 reports.push(read('audio-pass.json'),read('bunker-level1.json'),read('bunker-floor-cache.json'),read('bunker-r2.json'),read('stage-b.json'));
 reports.push(read('stage-ab-corrective.json'),read('stage-ab-light-audio.json'));
-const summary={runtimeSha256,runtimeUnchanged:runtimeSha256===hash(),version:require('../package.json').version,stage:7,patch:"stage-d-corrective-complete",stageAStarted:true,stageAStatus:"accepted-in-general",stageBStarted:true,stageBStatus:"accepted-in-general",stageC1Started:true,stageC1Status:"accepted-by-user",stageC2Started:true,stageDStarted:true,stageEStarted:false,level2Started:false,passed:runtimeSha256===hash()&&runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,filtered:!!process.env.LAST_BASE_TEST_FILTER,runs,limitations:['VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.','All audio paths are included and decoded; subjective mix requires physical device listening.']};
+const summary={runtimeSha256,runtimeUnchanged:runtimeSha256===hash(),version:require('../package.json').version,stage:7,patch:"stage-e-research-blueprints",stageAStarted:true,stageAStatus:"accepted-in-general",stageBStarted:true,stageBStatus:"accepted-in-general",stageC1Started:true,stageC1Status:"accepted-by-user",stageC2Started:true,stageDStarted:true,stageEStarted:true,stageFStarted:false,level2Started:false,passed:runtimeSha256===hash()&&runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,filtered:!!process.env.LAST_BASE_TEST_FILTER,runs,limitations:['VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.','All audio paths are included and decoded; subjective mix requires physical device listening.']};
+if(retry)summary.retriedGroups=retry.runs.filter(r=>r.exitCode!==0).map(r=>r.id);
 fs.writeFileSync(path.join(out,'summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));if(!summary.passed)process.exitCode=1;
+fs.writeFileSync(checkpoint,JSON.stringify({...summary,complete:true},null,2)+'\n');
 })().catch(error=>{console.error(error);process.exitCode=1;});

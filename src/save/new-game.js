@@ -23,6 +23,7 @@ window.GameNewGame=(()=>{
     const d=apply(ChapterOnePreset);
     d.storage[0].items=clone(ChapterOnePreset.supplies);
     d.campaign031=GameCampaign.freshChapterOne();d.chapter034=GameChapterOne.fresh(true);
+    d.research036=GameResearch.fresh('new');
     // Tools must come from the guaranteed manual workbench chain, including
     // physical quick slots and any deferred historical starter grants.
     const tools=new Set(['hammer','pickaxe','axe']);d.quick013.items=d.quick013.items.map(s=>s&&tools.has(s.type)?null:s);d.handSlots=d.handSlots.map(t=>tools.has(t)?null:t);if(!d.handSlots[d.activeHandSlot])d.activeHandSlot=null;
