@@ -1,202 +1,71 @@
 {
-  "version": "0.35.1",
-  "passed": 49,
+  "version": "0.35.2",
+  "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+  "passed": 16,
   "failed": 0,
   "checks": [
     {
-      "id": "fresh_base.archive_and_manifest_provenance",
+      "id": "baseline.delivered_0351_immutable",
       "status": "PASS"
     },
     {
-      "id": "default.identity_and_layout_unchanged",
+      "id": "defaults.identity_layout_and_farm_pause",
       "status": "PASS"
     },
     {
-      "id": "build.atomic_cost_and_second_instance_owners",
+      "id": "migration.delivered_dynamic_furnace_installed",
       "status": "PASS"
     },
     {
-      "id": "authority.no_mutation.materials",
+      "id": "migration.delivered_dynamic_furnace_packed",
       "status": "PASS"
     },
     {
-      "id": "authority.no_mutation.surface",
+      "id": "migration.delivered_dynamic_craft_bench_installed",
       "status": "PASS"
     },
     {
-      "id": "authority.no_mutation.floor2",
+      "id": "migration.delivered_dynamic_craft_bench_packed",
       "status": "PASS"
     },
     {
-      "id": "authority.no_mutation.distance",
+      "id": "migration.production_job",
       "status": "PASS"
     },
     {
-      "id": "authority.no_mutation.dead",
+      "id": "migration.production_queue",
       "status": "PASS"
     },
     {
-      "id": "authority.no_mutation.paused",
+      "id": "migration.production_output",
       "status": "PASS"
     },
     {
-      "id": "authority.foreign_actor_duplicate_stale_conflict_reload",
+      "id": "migration.production_refund",
       "status": "PASS"
     },
     {
-      "id": "authority.world_revision_rechecked_at_commit",
+      "id": "migration.historical_recipe_owner_hammer",
       "status": "PASS"
     },
     {
-      "id": "validation.wrong-scene",
+      "id": "migration.historical_recipe_owner_fishing_rod",
       "status": "PASS"
     },
     {
-      "id": "validation.future-room",
+      "id": "migration.historical_recipe_owner_flashlight",
       "status": "PASS"
     },
     {
-      "id": "validation.corridor",
+      "id": "migration.historical_recipe_owner_head_mount",
       "status": "PASS"
     },
     {
-      "id": "validation.wall",
+      "id": "scope.fixed_infrastructure_cannot_be_packed",
       "status": "PASS"
     },
     {
-      "id": "validation.rotation",
-      "status": "PASS"
-    },
-    {
-      "id": "validation.NaN",
-      "status": "PASS"
-    },
-    {
-      "id": "validation.door",
-      "status": "PASS"
-    },
-    {
-      "id": "validation.overlap_actors_drone_and_limit",
-      "status": "PASS"
-    },
-    {
-      "id": "pack.preserves_identity_state_no_collision_interactions_or_power",
-      "status": "PASS"
-    },
-    {
-      "id": "pack.busy_guard.active",
-      "status": "PASS"
-    },
-    {
-      "id": "pack.busy_guard.paused",
-      "status": "PASS"
-    },
-    {
-      "id": "pack.busy_guard.queued",
-      "status": "PASS"
-    },
-    {
-      "id": "pack.busy_guard.output",
-      "status": "PASS"
-    },
-    {
-      "id": "pack.busy_guard.refund",
-      "status": "PASS"
-    },
-    {
-      "id": "pack.authored_furnace_free_reinstall_and_protected_devices",
-      "status": "PASS"
-    },
-    {
-      "id": "production.two_queues_power_loss_output_refunds_save_load",
-      "status": "PASS"
-    },
-    {
-      "id": "navigation.player_and_drone_critical_routes_after_two_builds",
-      "status": "PASS"
-    },
-    {
-      "id": "save.old_C2_pure_migration_and_developed_world",
-      "status": "PASS"
-    },
-    {
-      "id": "save.JSON_key_order_is_not_gameplay_state",
-      "status": "PASS"
-    },
-    {
-      "id": "save.legacy_C2_JSON_key_order_migrates",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.missing-state",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.future-schema",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.protected-packed",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.unknown-presence",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.bad-position",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.missing-owner",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.mixed-type",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.packed-job",
-      "status": "PASS"
-    },
-    {
-      "id": "save.atomic_rejection.device-ref",
-      "status": "PASS"
-    },
-    {
-      "id": "save.new_game_after_dynamic_world_cleans_all_owners",
-      "status": "PASS"
-    },
-    {
-      "id": "UI.preview_explicit_confirm_session_layout.ru",
-      "status": "PASS"
-    },
-    {
-      "id": "UI.preview_explicit_confirm_session_layout.en",
-      "status": "PASS"
-    },
-    {
-      "id": "UI.touch_long_hold_cancel_and_no_world_movement",
-      "status": "PASS"
-    },
-    {
-      "id": "UI.preview_does_not_survive_close_load_or_section_change",
-      "status": "PASS"
-    },
-    {
-      "id": "rotation.all_quarter_turns_and_free_pack_reinstall",
-      "status": "PASS"
-    },
-    {
-      "id": "malformed_commands_do_not_mutate_world",
-      "status": "PASS"
-    },
-    {
-      "id": "UI.room_page_uses_generic_Core_route_reset",
-      "status": "PASS"
-    },
-    {
-      "id": "performance.no_idle_validation_or_preview_in_save",
+      "id": "runtime.clean",
       "status": "PASS"
     }
   ]

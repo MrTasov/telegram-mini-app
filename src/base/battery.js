@@ -20,8 +20,8 @@ const V010Energy=(()=>{
   }
   function allocation(dt=1/60){
     dt=Math.max(.001,Math.min(.1,Number(dt)||1/60));
-    const generator=V09Power.running&&V09Power.fuel>0?V09Power.supply:0;
-    const batterySupply=battery.enabled&&battery.charge>0?Math.min(battery.maxDischarge,battery.charge*3600/dt):0;
+    const generator=GameEquipment.present('generator')&&GameEquipment.present('tank')&&V09Power.running&&V09Power.fuel>0?V09Power.supply:0;
+    const batterySupply=GameEquipment.present('battery')&&battery.enabled&&battery.charge>0?Math.min(battery.maxDischarge,battery.charge*3600/dt):0;
     const supply=generator+batterySupply,served=new Set(),shed=[];
     let demand=0,load=0;
     const devices=Object.values(V09Power.devices).filter(d=>(!d.present||d.present())&&BunkerLayout.roomActive(d.room)).map((d,i)=>({d,i,active:!!d.active()}));
@@ -33,7 +33,7 @@ const V010Energy=(()=>{
       if(load+d.watts<=supply+.000001){load+=d.watts;served.add(d.id);}else shed.push(d.id);
     }
     const batteryOutput=Math.max(0,load-generator);
-    const chargeInput=battery.enabled&&generator>0&&batteryOutput<.000001?Math.min(battery.maxCharge,Math.max(0,generator-load),Math.max(0,battery.capacity-battery.charge)*3600/dt):0;
+    const chargeInput=GameEquipment.present('battery')&&battery.enabled&&generator>0&&batteryOutput<.000001?Math.min(battery.maxCharge,Math.max(0,generator-load),Math.max(0,battery.capacity-battery.charge)*3600/dt):0;
     V09Power.load=load;V09Power.demand=demand;
     return {served,load,demand,supply,generator,batterySupply,batteryOutput,chargeInput,shed};
   }
@@ -54,6 +54,7 @@ const V010Energy=(()=>{
   };
   v09DeviceStatus=function(d){
     if(d.present&&!d.present())return I18n.t('placement.packed');
+    if(GameEquipment.recipeStation(d.id)==='utility_workbench')return I18n.t('build.manual');
     if(!d.enabled)return 'Выключен';
     if(!V09Power.roomEnabled[d.room])return 'Комната обесточена';
     const a=allocation();

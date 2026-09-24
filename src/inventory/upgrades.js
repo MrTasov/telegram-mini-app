@@ -6,7 +6,7 @@ window.V0161Upgrade=(()=>{
   let overlay=null,refs={},selectedModule='body',pulseUntil=0,lastSignature='';
   const eligibleGear=s=>!!s&&(!!V09Craft.weapons[s.type]||!!ITEM[s.type]?.gathering||['head','body','legs','feet'].includes(ITEM[s.type]?.equip));
   const accepts=s=>!!s&&(eligibleGear(s)&&maxLevel(s)>0||isTurret(s)&&V016Turret.validItem(s)||isDrone(s)&&robot.ownsToken(s)&&robot.state.packed);
-  function near(){return scene==='bunker'&&!playerDead&&canInteract(station,player.x,player.y);}
+  function near(){return GameEquipment.present(station.id)&&scene==='bunker'&&!playerDead&&canInteract(station,player.x,player.y);}
   function level(s=slots[0],key=selectedModule){return isDrone(s)?robot.state.modules[key]||0:isTurret(s)?s.turretData.level||0:s?.level||0;}
   function cost(s=slots[0],key=selectedModule){
     if(!s)return {};const n=level(s,key)+1,rule=combat.upgradeProfile(s);
@@ -69,7 +69,7 @@ window.V0161Upgrade=(()=>{
   const solids=solidObjects;solidObjects=function(which=scene){const a=solids(which);return which==='bunker'?[...a,{...station}]:a;};
   const objects=interactionObjects;interactionObjects=function(which=scene){const a=objects(which);return which==='bunker'?[...a,{...station}]:a;};
   const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind===station.kind)return open();return execute(o,...args);};
-  const drawB=drawBunker;drawBunker=function(...a){const r=drawB(...a);ctx.save();V011Rooms.shadow(station.x,station.y,station.w,station.h,11,'workshop');V011Art.draw('upgrade_station0161',station.x,station.y,station.w,station.h);if(performance.now()<pulseUntil){const y=station.y+35+(performance.now()%850)/850*45;ctx.strokeStyle='#85e7caaa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(station.x+34,y);ctx.lineTo(station.x+108,y);ctx.stroke();}ctx.fillStyle='#bbd5c2';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text('УСИЛЕНИЕ'),station.x+station.w/2,station.y+station.h+14);ctx.restore();return r;};
+  const drawB=drawBunker;drawBunker=function(...a){const r=drawB(...a);window.GameMovable?.drawUpgrade(pulseUntil);return r;};
   GameSave.extend('capture','inventory.upgrades',function(cap){const d=cap();d.upgrade0161={schema:1,item:copy(slots[0])};return d;});
   function validate(d){const u=d.upgrade0161;if(u===undefined)return true;if(!u||u.schema!==1||!Object.hasOwn(u,'item'))throw Error('Некорректный станок усиления');const s=u.item;if(s===null)return true;
     if(!s||s.qty!==1||!ITEM[s.type]||!(eligibleGear(s)&&maxLevel(s)>0||isTurret(s)||isDrone(s))||combat.validateItem(s)===false)throw Error('Некорректный предмет на станке');

@@ -13,7 +13,7 @@ window.GameRecovery=(()=>{
     const r=V018Build.record(id);return r?{id:r.id,typeId:V018Build.definition(r).typeId,transform:{scene:r.scene,x:r.object.x,y:r.object.y,rotation:0},refs:{health:r.id}}:null;
   }
   function access(actor,target){
-    if(actor.dead)return false;
+    if(actor.dead||GameEquipment.get(target.id)&&!GameEquipment.present(target.id))return false;
     const id=target.id;
     if(['generator','battery'].includes(id)){
       // Preserve the existing remote controller and energy-room control panels.

@@ -44,7 +44,7 @@ window.V014Robots=(()=>{
   }
   function beginDocking(){state.task='docking';state.targetId=null;state.guard=null;primaryCommand();clearRoute();resetReturn();changed();}
   function detectDock(dt){
-    if(state.packed||state.scene!=='bunker')return;
+    if(!GameEquipment.present(DOCK.id)||state.packed||state.scene!=='bunker')return;
     const p=dockPosition(),d=distance(state.x,state.y,p.x,p.y);
     if(undocking){if(d>DOCK.detectionRadius+16)undocking=false;else if(state.battery>0&&state.hp>0)return;else undocking=false;}
     if(state.task==='docked'){
@@ -91,8 +91,8 @@ window.V014Robots=(()=>{
   function maxHp(modules=state.modules){return definition.body.hp+(modules?.body||0)*definition.body.hpPerLevel;}
   function armor(){return state.modules.body*definition.body.armorPerLevel;}
   function near(){return !state.packed&&state.scene===scene&&distance(player.x,player.y,state.x,state.y)<=130;}
-  function atDock(){const p=dockPosition('drone');return !state.packed&&state.scene==='bunker'&&distance(state.x,state.y,p.x,p.y)<12&&state.task==='docked';}
-  function stationNear(){return scene==='bunker'&&distance(player.x,player.y,DOCK.x+DOCK.w/2,DOCK.y+DOCK.h/2)<210;}
+  function atDock(){const p=dockPosition('drone');return GameEquipment.present(DOCK.id)&&!state.packed&&state.scene==='bunker'&&distance(state.x,state.y,p.x,p.y)<12&&state.task==='docked';}
+  function stationNear(){return GameEquipment.present(DOCK.id)&&scene==='bunker'&&distance(player.x,player.y,DOCK.x+DOCK.w/2,DOCK.y+DOCK.h/2)<210;}
   function clearRoute(){motion.reset();}
   function changed(){queueGameSave();updateHUD();}
   const combatEnabled=()=>state.mode==='defense'||state.mode==='attack';
@@ -142,7 +142,7 @@ window.V014Robots=(()=>{
     undocking=atDock()||state.task==='docking';resetReturn();state.task='follow';state.guard=null;state.targetId=null;primaryCommand();clearRoute();changed();return true;
   }
   function recall(){return follow();}
-  function returnToDock(){if(state.packed||state.hp<=0||state.battery<=0)return false;if(atDock()||state.task==='docking')return true;undocking=false;resetReturn();state.task='return';state.targetId=null;state.guard=null;primaryCommand();clearRoute();changed();return true;}
+  function returnToDock(){if(!GameEquipment.present(DOCK.id)||state.packed||state.hp<=0||state.battery<=0)return false;if(atDock()||state.task==='docking')return true;undocking=false;resetReturn();state.task='return';state.targetId=null;state.guard=null;primaryCommand();clearRoute();changed();return true;}
   function attack(z,quiet=false){
     const fail=text=>{if(!quiet)message(text);return false;};
     if(!combatEnabled())return fail('Включите боевой режим');
@@ -186,8 +186,8 @@ window.V014Robots=(()=>{
   }
   function moveTo(p,dt){const result=motion.move(p,dt);angle=motion.heading;return result;}
   function sceneTravel(p,dt){const result=motion.travel(p,dt);angle=motion.heading;return result;}
-  function doorNear(d){return !state.packed&&state.scene==='bunker'&&state.hp>0&&state.battery>0&&state.task!=='docked'&&distance(state.x,state.y,d.x+d.w/2,d.y+d.h/2)<105;}
-  function doorOccupies(d){return !state.packed&&state.scene==='bunker'&&rectHit(state.x,state.y,18,d);}
+  function doorNear(d){return GameEquipment.present(DOCK.id)&&!state.packed&&state.scene==='bunker'&&state.hp>0&&state.battery>0&&state.task!=='docked'&&distance(state.x,state.y,d.x+d.w/2,d.y+d.h/2)<105;}
+  function doorOccupies(d){return GameEquipment.present(DOCK.id)&&!state.packed&&state.scene==='bunker'&&rectHit(state.x,state.y,18,d);}
   function targetForDefense(){
     if(!combatEnabled()||state.scene!=='surface'||scene!=='surface'||V013City.floor)return null;
     const selected=window.V014Controls?.target?.()||V0105.target,anchor=state.task==='guard'&&state.guard?state.guard:player;
@@ -259,8 +259,9 @@ window.V014Robots=(()=>{
   const executeOld=executeInteraction;executeInteraction=function(o,...args){if(['robots014_dock','drone014'].includes(o?.kind)){if(!menuOpen&&!playerDead&&canInteract(o,player.x,player.y)){if(o.kind==='robots014_dock')openStation();else open();}return;}return executeOld(o,...args);};
   function disk(x,y,r,fill,stroke){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.3;ctx.stroke();}}
   function drawDock(){
-    if(scene!=='bunker')return;
-    const x=DOCK.x,y=DOCK.y,w=DOCK.w,h=DOCK.h,p=dockPosition(),charging=atDock()&&devicePowered('robot_drone_charge')&&state.battery<100;
+    if(scene!=='bunker'||!GameEquipment.present(DOCK.id))return;
+    GameEquipment.withArt(DOCK.id,()=>{
+    const f=BunkerLayout.authored(DOCK.id),x=f.x,y=f.y,w=f.w,h=f.h,p={x:x+74,y:y+45},charging=atDock()&&devicePowered('robot_drone_charge')&&state.battery<100;
     ctx.save();ctx.fillStyle='#071c202b';ctx.beginPath();ctx.roundRect(x+5,y+7,w,h,10);ctx.fill();
     const g=ctx.createLinearGradient(x,y,x,y+h);g.addColorStop(0,'#56716c');g.addColorStop(1,'#304b4b');ctx.fillStyle=g;ctx.strokeStyle='#82978b';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(x,y,w,h,8);ctx.fill();ctx.stroke();
     ctx.fillStyle='#1d3238';ctx.beginPath();ctx.roundRect(x+9,y+10,w-18,h-20,6);ctx.fill();
@@ -271,6 +272,7 @@ window.V014Robots=(()=>{
     for(let i=0;i<4;i++){ctx.fillStyle='#354a4a';ctx.fillRect(x+12,y+48+i*5,15,2);}
     const light=charging?.7+Math.sin(performance.now()/600)*.16:.3;ctx.globalAlpha=light;ctx.strokeStyle='#9adfc5';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,29,-Math.PI/2,-Math.PI/2+Math.PI*2*state.battery/100);ctx.stroke();ctx.globalAlpha=1;
     for(const a of [[x+4,y+4],[x+w-4,y+4],[x+4,y+h-4],[x+w-4,y+h-4]])disk(a[0],a[1],1.5,'#a8b8a8');ctx.restore();
+    });
   }
   function drawDrone(){
     if(state.packed||state.scene!==scene)return;const t=performance.now()/1000,pose=dronePose(),flying=pose.flying;

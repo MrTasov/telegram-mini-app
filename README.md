@@ -1,61 +1,80 @@
-# LAST BASE 0.35.1 — Stage D
+# LAST BASE 0.35.2 — Stage D Corrective
 
-Fresh implementation from the accepted **0.34.0 Stage C2** archive. The canceled
-Stage D worktree and release were not used. The original archive SHA-256 is
-`11a1742cf3887b29036f7a9d3168942bf86829db9c1fdee9c32bbb1a49cb2b60`.
+This release extends the delivered **0.35.1 Stage D**. Later roadmap stages are
+not started. The complete Russian change report is
+[STAGE_D_CORRECTIVE_REPORT_RU.md](STAGE_D_CORRECTIVE_REPORT_RU.md).
 
-Deploy `index.html`, `js/`, `styles/` and `assets/` together. Local preview:
-`python -m http.server 8000`. Keep the site origin unchanged to retain browser
-save slots. Node 20+ is needed only to rebuild and run QA.
+Serve `index.html`, `js/`, `styles/` and `assets/` together. For local preview:
+`python -m http.server 8000`. Keep the same site origin to retain browser saves.
+Node 20+ is required only for rebuilding and QA; the game has no npm runtime dependency.
 
-At the physical **Command Core → Construction**, choose a new or packed furnace
-or workbench. Select Workshop or Reserve Room, tap/drag the room plan, rotate,
-and press **Place**. Arrow keys/buttons adjust by one grid step; R rotates;
-Escape cancels the preview. Tapping or holding the plan never installs anything.
-The existing fixed Core frame and internal scrolling remain in use.
+## Construction and moving equipment
 
-| Equipment | Total limit, including packed | New installation cost |
+At the physical **Command Core → Construction**, select **Craft**. The new
+instance appears in the separate **Base Equipment** compartment of Inventory.
+Crafting does not install it or open a placement preview.
+
+Use **Inventory → Base Equipment → Place**. Choose a physical room, tap or drag
+the plan, rotate with R/the button, and explicitly confirm placement. Arrow
+keys/buttons adjust the position; Escape cancels. Place is free. Pack Up returns
+the same instance with its condition, level, modules and settings to Inventory.
+It does not refund materials or destroy equipment.
+
+| Craftable equipment | Total instance limit | Craft cost |
 | --- | ---: | --- |
-| Furnace | 2 | 20 iron, 6 parts, 8 concrete |
-| Workbench | 2 | 16 iron, 12 wood, 4 parts |
+| Utility Workbench | 4 | 6 wood + 4 iron |
+| Weapon Workbench | 4 | 12 wood + 16 iron + 4 parts |
+| Furnace | 4 | 20 iron + 6 parts + 8 concrete |
+| Storage | 16 | 6 wood + 2 iron |
+| Floor Lamp, from Utility Workbench | 8 | 2 iron + 1 copper + 1 part |
 
-Existing stations count toward these limits. Placement checks room bounds,
-physical bodies, doorway approaches, other stations' accessibility, actors and
-drone clearance. Commit rechecks the world revision, cost and geometry.
+Limits include authored and carried instances. Generators, fuel tanks, batteries,
+drone stations and the enhancement cradle also use the moving contract; their
+additional construction recipes are not exposed. Core, doors, stairs, bunker
+architecture and dormant farm fixtures remain fixed.
 
-**Pack Up** removes a station's art, collisions, interactions and Power demand.
-Its instance ID, transform, switches, priorities and production owner remain.
-Reinstalling the same instance is free. Finish production and collect output and
-refunded materials before packing. Preview/cancel never debit materials or
-change installed equipment. Core, stairs, energy equipment, storage, upgrade
-station and drone dock remain fixed.
+Active production, queues, output or refunds prevent packing. Empty storage and
+the enhancement cradle first; stop the generator before moving it or its tank,
+disable the battery, and pack the drone before moving its dock. Packed equipment
+has no world collision, interaction or power consumption.
 
-SaveFormat **12 → 13** adds installed/packed state and bounded command receipts.
-Old worlds keep their authored equipment and all historical migrations. Decoding
-validates incoming instance references before touching live state. New Game and
-slot switching remove extra stations from the outgoing world correctly.
+All seven Level 1 rooms accept valid equipment placement. Door approaches, front
+access, physical bodies and drone docking clearance remain protected. In
+**Core → Base**, room names can use RU/EN presets or up to 24 custom characters;
+names do not change technical room identities or placement permissions.
 
-Chapter 1, R3 Level 1 layout, Stage A/B/C1 contracts, Tactical Flashlight, tool
-levels 0–5 and lighting/audio/collision behavior are retained. Repair milestones
-are confirmed at the actual full-health repair and reconciled from world state;
-completed milestones survive later damage. Mandatory initial repairs cost 18
-concrete; all initial damage costs 32. The Objective identifies the required
-structures and explains mining extra stone and making more concrete when needed.
-Starter resources are unchanged.
+## New Game and compatibility
 
-Farm/Animals remain paused. No Research/Blueprint progression, Level 2 or next
-Roadmap stage is implemented. Commands remain actor/instance addressed with
-revision checks and saved receipts; network multiplayer itself is future work.
+New games start without a hammer, pickaxe or axe. The ordinary emergency storage
+contains **12 wood, 10 iron, 10 stone and 6 fuel**. A manual workbench and each of
+the three tools can be crafted without power. The tools cost 2 wood + 2 iron each.
+The minimum first-bench/tool budget is protected from unrelated crafting; extra
+materials remain freely spendable.
+
+Chapter 1 guides storage, crafting, placement, tools, fuel, generator, powered
+Core, concrete, five destroyed wall sections, survival through the night and
+confirmation at Core. Each critical wall counts after its first real repair
+restores its physical function. Full HP is optional and needs extra stone.
+
+Save format **14** migrates older formats through the existing chain. Existing
+campaigns keep their chapter content and milestones. Already paid legacy utility
+orders on a Weapon Workbench finish there with their original duration/cost.
+New orders use the correct station type. New equipment storage and room names
+are persistent; placement previews and Core navigation remain session UI state.
+
+## Development and checks
 
 ```sh
 npm ci
 npm run build
 npm test
-npm run bench:d
-npm run package:d
+npm run bench:d:corrective
 ```
 
-See `STAGE_D_REPORT_RU.md`, `docs/STAGE_D_CONTRACT.md` and `qa/results/` for the
-scope, checks, measurements and manual acceptance instructions. Automated UI
-checks use a modeled DOM, and rendering uses native Canvas2D; they do not replace
-browser/Telegram/phone review.
+`src/manifest.json` defines the deterministic build order. Generated `js/` files
+are included, so GitHub/static hosting does not require a build step.
+
+The release gate and reproducible archive are generated by
+`npm run package:d:corrective -- /absolute/output/directory` after QA and the
+report are complete. Native Canvas2D/DOM-model results are not physical phone or
+Telegram WebView measurements. Manual acceptance remains with the user.

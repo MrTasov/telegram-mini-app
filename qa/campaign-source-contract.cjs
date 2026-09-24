@@ -4,6 +4,7 @@ const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:a
 exports.assertSource=(file,expected)=>{
  const refs=require('./campaign-source-reference.json'),change=refs.changes[file];
  let current=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+ const correctiveD=require('./stage-d-corrective-source-reference.json').changes[file];if(correctiveD){assert.equal(current,correctiveD.after,file+' Stage D corrective output');current=correctiveD.before;}
  const stageD=require('./stage-d-source-reference.json').changes[file];if(stageD){assert.equal(current,stageD.after,file+' fresh Stage D output');current=stageD.before;}
  const c2=require('./stage-c2-source-reference.json').changes[file];if(c2){assert.equal(current,c2.after,file+' C2 output');current=c2.before;}
  const c1=require('./stage-c1-source-reference.json').changes[file];if(c1){assert.equal(current,c1.after,file+' C1 output');current=c1.before;}

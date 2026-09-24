@@ -540,7 +540,7 @@ function removeFromSlots(slots,type,qty){
   return qty-left;
 }
 function openStorage(index){
-  activeStorage=Number(index);
+  activeStorage=Number(index);window.GameChapterOne?.visitStorage(activeStorage);
   renderStorage();
   openOverlay(el("storageOverlay"));
 }

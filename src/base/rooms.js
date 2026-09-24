@@ -107,11 +107,11 @@ window.V011Rooms=(()=>{
     rect(armX+7,1126,11,18,metal,'#7e928e',2);for(let k=0;k<4;k++)line(armX+8,1130+k*3,armX+17,1130+k*3,'#304a4e',1);
     rect(armX+11,1142,3,8,'#c3cfbf',null,1);rect(armX+5,1101,15,3,b.working?'#71dbd5':'#345f67',null,1);
     if(b.working){ctx.globalAlpha=.35+.2*Math.sin(benchPhase*3);rect(armX+9,1150,7,2,'#a6eee8',null,1);ctx.globalAlpha=1;}
-    });}ctx.fillStyle='#d9e3d4';ctx.font='10px Arial';ctx.textAlign='center';for(const id of machines())GameEquipment.withArt(id,()=>{if(GameEquipment.recipeStation(id)==='furnace')ctx.fillText(I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ'),219,1008);else ctx.fillText(I18n.text('ЭЛЕКТРОСТАНОК'),287,1250);});ctx.restore();
+    });}ctx.fillStyle='#d9e3d4';ctx.font='10px Arial';ctx.textAlign='center';for(const id of machines())GameEquipment.withArt(id,()=>{if(GameEquipment.recipeStation(id)==='furnace')ctx.fillText(I18n.text('ПЛАВИЛЬНАЯ ПЕЧЬ'),219,1008);else ctx.fillText(I18n.text(GameEquipment.definition(id).name).toUpperCase(),287,1250);});ctx.restore();
   }
   function energy(){
-    ctx.save();const running=V09Power.running&&V09Power.fuel>0;GameEquipment.withArt('tank',()=>shadow(887,316,123,181,24,'room5'));GameEquipment.withArt('generator',()=>shadow(1052,315,130,195,23,'room5'));GameEquipment.withArt('battery',()=>shadow(1237,302,101,212,20,'room5'));
-    const pipe=(a,ax,ay,b,bx,by,color,width)=>{const p=BunkerLayout.artPoint(GameEquipment.point(a,ax,ay)),q=BunkerLayout.artPoint(GameEquipment.point(b,bx,by));line(p.x,p.y,q.x,q.y,color,width);};
+    ctx.save();const running=V09Power.running&&V09Power.fuel>0;for(const [id,height]of [['tank',24],['generator',23],['battery',20]])if(GameEquipment.present(id))equipmentShadow(id,height);
+    const pipe=(a,ax,ay,b,bx,by,color,width)=>{if(!GameEquipment.present(a)||!GameEquipment.present(b)||GameEquipment.get(a).transform.room!==GameEquipment.get(b).transform.room||distance(GameEquipment.center(a).x,GameEquipment.center(a).y,GameEquipment.center(b).x,GameEquipment.center(b).y)>320)return;const p=BunkerLayout.artPoint(GameEquipment.point(a,ax,ay)),q=BunkerLayout.artPoint(GameEquipment.point(b,bx,by));line(p.x,p.y,q.x,q.y,color,width);};
     pipe('tank',109,126,'generator',3,126,'#1a2e34',12);pipe('tank',109,124,'generator',3,124,'#81918a',6);pipe('generator',120,111,'battery',15,126,'#132c37',10);pipe('generator',120,110,'battery',15,125,'#618388',4);
     GameEquipment.withArt('tank',()=>{
     if(!art('tank',880,304,140,208)){const g=ctx.createLinearGradient(885,0,1010,0);g.addColorStop(0,'#56686b');g.addColorStop(.24,'#aab5a8');g.addColorStop(.7,'#617978');g.addColorStop(1,'#30494e');rect(889,316,120,182,g,'#9eafa1',18);for(const y of [342,473])rect(887,y,124,8,'#3a5355','#879b93',2);rect(933,307,32,17,'#354d52','#a0b1a4',3);}

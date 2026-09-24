@@ -86,7 +86,7 @@ function decodeGameProgressBase(raw){
   if(!d.equipment.backpack)fail();
   const capacity=ITEM[d.equipment.backpack.type].capacity;
   if(!slots(d.bag,capacity)||!integer(d.magazine,0,60))fail();
-  if(!Array.isArray(d.storage)||d.storage.length!==storageChests.length||
+  if(!Array.isArray(d.storage)||d.storage.length<14||d.storage.length>30||
     !d.storage.every(c=>c&&typeof c.name==="string"&&c.name.length<=64&&
       typeof c.icon==="string"&&c.icon.length<=64&&slots(c.items,60)))fail();
   if(!Array.isArray(d.farm)||d.farm.length!==5||!d.farm.every(st=>

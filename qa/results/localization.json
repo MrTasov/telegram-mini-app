@@ -1,11 +1,11 @@
 {
-  "version": "0.35.1",
+  "version": "0.35.2",
   "reference": "0.24.1 fixed Stage 4",
   "languages": [
     "en",
     "ru"
   ],
-  "catalogKeys": 1866,
+  "catalogKeys": 1964,
   "uiCoverage": [
     "startup",
     "settings.PC",
@@ -62,21 +62,17 @@
     "recipe.copper",
     "recipe.gunpowder",
     "craft.craft_bench",
-    "recipe.hammer",
-    "recipe.fishing_rod",
     "recipe.ammo",
     "recipe.ammo556",
     "recipe.rifle_ak74",
     "recipe.rifle_m4",
-    "recipe.flashlight",
-    "recipe.head_mount",
     "recipe.helmet1",
     "recipe.magazine_module",
     "recipe.hmg016",
     "craft.feed_craft",
     "recipe.feed"
   ],
-  "passed": 4025,
+  "passed": 4218,
   "failed": 0,
   "checks": [
     {
@@ -7556,6 +7552,398 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.en.build.craft",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.place",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.placeNamed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.pack",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.packed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.added",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.inventory",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.inventoryHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.carried",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.level",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.condition",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.limit",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.constructionHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.emergencyCore",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.installed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.placementHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.emptyContainer",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.stopGenerator",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.disableBattery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.packDrone",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.roomName",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.roomNames",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.roomPreset",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.customName",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.rename",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.renamed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.out_of_reach",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.world_paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room.workshop",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room.storage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room.power",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room.armory",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room.medical",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room.drone",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room.living",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.room.custom",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.utility_workbench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.storage_crate",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.fuel_tank",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.reserve_battery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.drone_station",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.enhancement_cradle",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.base_lamp",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.utility_workbench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.storage_crate",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.goal",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_storage.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_storage.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_storage.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_supplies.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_supplies.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_supplies.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_build.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_build.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_build.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_place.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_place.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_place.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_hammer.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_hammer.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_hammer.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_pickaxe.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_pickaxe.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_pickaxe.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_tank.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_tank.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_tank.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_power.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_power.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_power.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_core.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_core.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_core.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_materials.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_materials.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_materials.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_repairs.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_repairs.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_repairs.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_night.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_night.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_night.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_axe.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_axe.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_axe.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.corrective.7f1b1af5392e",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.corrective.b10b01e4440c",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.emergencyStorage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.bootstrapReserve",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.manual",
+      "status": "PASS"
+    },
+    {
       "id": "catalog.ru.legacy.6c127073fb4b",
       "status": "PASS"
     },
@@ -15020,6 +15408,398 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.ru.build.craft",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.place",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.placeNamed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.pack",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.packed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.added",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.inventory",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.inventoryHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.carried",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.level",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.condition",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.limit",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.constructionHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.emergencyCore",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.installed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.placementHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.emptyContainer",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.stopGenerator",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.disableBattery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.packDrone",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.roomName",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.roomNames",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.roomPreset",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.customName",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.rename",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.renamed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.out_of_reach",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.world_paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room.workshop",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room.storage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room.power",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room.armory",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room.medical",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room.drone",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room.living",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.room.custom",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.utility_workbench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.storage_crate",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.fuel_tank",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.reserve_battery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.drone_station",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.enhancement_cradle",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.base_lamp",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.utility_workbench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.storage_crate",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.goal",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_storage.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_storage.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_storage.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_supplies.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_supplies.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_supplies.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_build.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_build.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_build.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_place.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_place.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_place.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_hammer.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_hammer.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_hammer.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_pickaxe.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_pickaxe.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_pickaxe.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_tank.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_tank.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_tank.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_power.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_power.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_power.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_core.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_core.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_core.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_materials.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_materials.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_materials.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_repairs.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_repairs.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_repairs.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_night.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_night.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_night.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_axe.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_axe.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_axe.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.corrective.7f1b1af5392e",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.corrective.b10b01e4440c",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.emergencyStorage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.bootstrapReserve",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.manual",
+      "status": "PASS"
+    },
+    {
       "id": "ui.en.startup",
       "status": "PASS"
     },
@@ -15240,14 +16020,6 @@
       "status": "PASS"
     },
     {
-      "id": "ui.en.recipe.hammer",
-      "status": "PASS"
-    },
-    {
-      "id": "ui.en.recipe.fishing_rod",
-      "status": "PASS"
-    },
-    {
       "id": "ui.en.recipe.ammo",
       "status": "PASS"
     },
@@ -15261,14 +16033,6 @@
     },
     {
       "id": "ui.en.recipe.rifle_m4",
-      "status": "PASS"
-    },
-    {
-      "id": "ui.en.recipe.flashlight",
-      "status": "PASS"
-    },
-    {
-      "id": "ui.en.recipe.head_mount",
       "status": "PASS"
     },
     {
@@ -15533,6 +16297,10 @@
     },
     {
       "id": "ui.en.item.magazine_standard",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.base_lamp",
       "status": "PASS"
     },
     {

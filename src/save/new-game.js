@@ -23,8 +23,11 @@ window.GameNewGame=(()=>{
     const d=apply(ChapterOnePreset);
     d.storage[0].items=clone(ChapterOnePreset.supplies);
     d.campaign031=GameCampaign.freshChapterOne();d.chapter034=GameChapterOne.fresh(true);
-    // Preserve the existing starting weapon/axe/remote and statless backpack.
-    // C2 adds no flashlight entitlement, hidden recipe grants or extra instances.
+    // Tools must come from the guaranteed manual workbench chain, including
+    // physical quick slots and any deferred historical starter grants.
+    const tools=new Set(['hammer','pickaxe','axe']);d.quick013.items=d.quick013.items.map(s=>s&&tools.has(s.type)?null:s);d.handSlots=d.handSlots.map(t=>tools.has(t)?null:t);if(!d.handSlots[d.activeHandSlot])d.activeHandSlot=null;
+    d.starterPending=d.starterPending.filter(t=>!tools.has(t));
+    d.storage[0].name='Аварийный контейнер';d.storage[0].icon='📦';
     return d;
   }
   const previewBootstrap=()=>apply(CampaignBootstrap);

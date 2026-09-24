@@ -160,6 +160,7 @@ function drawBunker(){
   }
 
   function drawSideRoom(o,side,label,fill="#303638"){
+    const roomId=Object.keys(BunkerLayout.rooms).find(id=>bunker[id]===o);if(roomId&&window.GamePlacement)label=GamePlacement.roomName(roomId);
     ctx.fillStyle=fill;
     ctx.fillRect(o.left,o.top,o.right-o.left,o.bottom-o.top);
     V011Rooms.floor(Object.keys(bunker).find(k=>bunker[k]===o)||"storage",o);
@@ -178,7 +179,7 @@ function drawBunker(){
   // №3 — STORAGE: 8 independent functional chests, 4 on top wall + 4 on bottom wall
   drawSideRoom(bunker.storage,"right","СКЛАД","#303638");
 
-  V011Rooms.storage();
+  // Storage instances are drawn after every physical room floor.
 
   // №4–7 — equal-size empty rooms
   // №4 — MEDICAL ROOM
@@ -235,7 +236,7 @@ function drawBunker(){
   // №5 — POWER ROOM: FUEL -> GENERATOR -> BATTERY
   drawSideRoom(bunker.room5,"right","ЭНЕРГОБЛОК","#303739");
 
-  BunkerLayout.withArt('room5',()=>V011Rooms.energy());
+  // Movable power equipment is drawn after every room floor.
 
   // The room center and the corridor/door side intentionally remain empty.
   // №6 — KITCHEN / FOOD BLOCK
@@ -307,6 +308,7 @@ function drawBunker(){
 
   drawSideRoom(bunker.reserve_l1,'right','РЕЗЕРВНАЯ КОМНАТА','#394447');
   V09Craft.drawWorkshop();
+  window.GameMovable?.draw();
   for(const s of BunkerLayout.wallSegments)V011Rooms.wall(s.x1,s.y1,s.x2,s.y2);
   window.BunkerState?.draw();
 

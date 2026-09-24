@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.35.1",
+  "version": "0.35.2",
   "private": true,
-  "description": "LAST BASE 0.35.1 \u2014 Stage D rebuilt from clean 0.34.0: limited equipment placement and Pack Up.",
+  "description": "LAST BASE 0.35.2 — Stage D Corrective: carried buildables, free rooms and guaranteed Chapter 1 onboarding.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -33,7 +33,10 @@
     "package:c2": "node tools/package-stage-c2.cjs",
     "test:d": "node qa/stage-d.cjs && node qa/stage-d-repair.cjs && node qa/stage-d-visuals.cjs",
     "bench:d": "node --expose-gc qa/stage-d-performance.cjs",
-    "package:d": "node tools/package-stage-d.cjs"
+    "package:d": "node tools/package-stage-d.cjs",
+    "test:d:corrective": "node qa/stage-d-corrective.cjs && node qa/stage-d.cjs && node qa/stage-d-repair.cjs && node qa/stage-d-visuals.cjs",
+    "bench:d:corrective": "node --expose-gc qa/stage-d-corrective-performance.cjs",
+    "package:d:corrective": "node tools/package-stage-d-corrective.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

@@ -41,6 +41,13 @@ for(const id of ['iron','copper','concrete','ammo','ammo556'])actual.recipes[id]
 delete actual.save.schemas.livestock;
 for(const id of ['farmV011','farm014'])actual.save.schemas[id]=expected.save.schemas[id];
 for(const [id,removed]of Object.entries({V0141Farm:['stock','seedType','takeSeed'],V011Farm:['wetBetween']}))expected.exposedAPIs[id]=expected.exposedAPIs[id].filter(k=>!removed.includes(k));
+// Approved corrective recipe ownership/budget. Assert new values before
+// projecting only these declared changes back to the immutable Stage 0 audit.
+for(const id of ['hammer','pickaxe','axe']){assert.deepEqual(actual.recipes[id].input,{wood:2,iron:2});assert.equal(configs.recipes[id].station,'utility_workbench');assert.equal(configs.recipes[id].ms,3000);}
+for(const id of ['axe','pickaxe','remote','base_lamp'])delete actual.recipes[id];delete actual.items.base_lamp;
+for(const id of ['hammer','fishing_rod']){delete actual.recipes[id].manual;actual.recipes[id].station=expected.recipes[id].station;}
+actual.recipes.hammer.input=expected.recipes.hammer.input;actual.recipes.hammer.ms=expected.recipes.hammer.ms;
+for(const id of ['workshop','storage','room4','room5','room6','room7'])actual.power.rooms[id]=expected.power.rooms[id];
 let error=null;try{assert.deepEqual(actual,expected);}catch(e){error=e.message;}
 fs.writeFileSync(path.join(__dirname,'results/configurations.json'),JSON.stringify(configs,null,2)+'\n');
 const report={version,passed:error?0:1,failed:error?1:0,scope:'Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.',addedDefinitionFields:definitionFields,addedEnemyFields:['spawnOrder','behavior','healthColor','leap','blast'],addedAPIs,error,consoleErrors:r.errors};

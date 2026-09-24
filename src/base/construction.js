@@ -72,6 +72,7 @@ window.V018Build=(()=>{
     while(amount>0&&job){
       if(credit===0){if(!consume({[repair.material]:1})){stop('Бетон закончился · выполненный ремонт сохранён');break;}credit=repair.hpPerUnit;}
       const o=r.object,wasBroken=o.hp===0,n=health.restoreHP(o,Math.min(amount,credit));credit-=n;amount-=n;changed(r,wasBroken);
+      window.GameChapterOne?.confirmRepair(r.id);if(wasBroken)window.GameCampaign?.refresh(true);
       if(o.hp>=o.maxHp){window.GameChapterOne?.confirmRepair(r.id);window.GameCampaign?.refresh(true);stop('Ремонт завершён');break;}
     }
   }

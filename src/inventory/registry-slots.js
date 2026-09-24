@@ -54,7 +54,7 @@ window.V010Inventory=(()=>{
     const wanted=Math.max(0,Math.min(s.qty,Math.floor(amount??s.qty)));
     if(!wanted)return 0;
     const moved=wanted-insert(b,s.type==='fish'?V014Fish.portion(s,wanted):{...copy(s),qty:wanted},capacity(to));
-    if(moved){GameAudio.play('inventoryMove');if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)a[index]=null;notifyChange();}return moved;
+    if(moved){window.GameChapterOne?.transferStorage(from,to,s.type,moved);GameAudio.play('inventoryMove');if(s.type==='fish')V014Fish.remove(s,moved);s.qty-=moved;if(!s.qty)a[index]=null;notifyChange();}return moved;
   }
   function move(from,index,to,targetIndex,amount){
     from=address(from);to=address(to);
@@ -152,7 +152,8 @@ window.V010Inventory=(()=>{
   }
   function sources(){return [bag,...(scene==='bunker'?storageChests.map(c=>c.items):[])];}
   function materialCount(type){return sources().reduce((total,a)=>total+a.reduce((n,s)=>n+(s?.type===type?s.qty:0),0),0);}
-  function consumeMaterials(input,batches=1){
+  function consumeMaterials(input,batches=1,output){
+    if(window.GameChapterOne&&!GameChapterOne.spendAllowed(input,batches,output)){message(I18n.t("build.bootstrapReserve"));return false;}
     if(!Number.isInteger(batches)||batches<1||!Object.entries(input).every(([type,n])=>ITEM[type]&&Number.isFinite(n)&&n>=0&&Number.isInteger(n*batches)&&materialCount(type)>=n*batches))return false;
     const actual=sources(),draft=actual.map(copy);
     for(const [type,n] of Object.entries(input)){let left=n*batches;for(const a of draft)for(let i=0;i<a.length&&left;i++){const s=a[i];if(s?.type!==type)continue;const used=Math.min(left,s.qty);if(s.type==='fish')V014Fish.remove(s,used);left-=used;s.qty-=used;if(!s.qty)a[i]=null;}}

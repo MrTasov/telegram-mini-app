@@ -1,92 +1,55 @@
-/* Core client: a room plan is the placement preview. It never moves the actor,
-   consumes resources on pointer input, or serializes a ghost into gameplay. */
+/* Construction manufactures carried instances. Only Inventory -> Place opens
+   this client preview. The server-shaped command revalidates every commit. */
 window.GamePlacementUI=(()=>{
-  const t=(k,p)=>I18n.t('placement.'+k,p),clone=v=>JSON.parse(JSON.stringify(v));
-  const core=el('commandCoreOverlay');let sectionRoute=null,preview=null,room='reserve_l1',statusKey='hint',renderView=()=>{},renderMap=()=>{},lastSignature='',requestSequence=0;
-  const active=()=>core.classList.contains('open')&&!el('coreSection_construction')?.hidden;
-  function cancel(){preview=null;statusKey='hint';lastSignature='';if(active())renderView();}
-  function assess(){if(!preview)return;preview.result=GamePlacement.check(preview.selection,preview.transform);preview.revision=GamePlacement.revision;preview.geometry=geometryRevision;}
-  function choose(selection){
-    const r=GameEquipment.get(selection),typeId=r?.typeId||selection.replace(/^catalog:/,'');if(!GamePlacement.rules[typeId])return false;
-    if(r?.placement==='installed')return false;
-    const b=BunkerLayout.rooms[room];preview={selection,typeId,turn:0,transform:GamePlacement.centered(typeId,room,(b.left+b.right)/2,(b.top+b.bottom)/2)};assess();statusKey='preview';lastSignature='';renderView();return true;
-  }
-  function move(x,y){if(!preview)return;preview.transform=GamePlacement.centered(preview.typeId,room,x,y,preview.turn);assess();renderMap();renderView();}
-  function rotate(){if(!preview)return;const f=GamePlacement.footprint({typeId:preview.typeId,transform:preview.transform});preview.turn=(preview.turn+1)%4;move(f.x+f.w/2,f.y+f.h/2);}
-  function nudge(dx,dy){if(!preview)return;const f=GamePlacement.footprint({typeId:preview.typeId,transform:preview.transform});move(f.x+f.w/2+dx,f.y+f.h/2+dy);}
-  function commit(){
-    if(!preview)return false;
-    const p=preview,result=GamePlacement.execute({actorId:GameActors.localId,instanceId:p.selection,action:'place',payload:{transform:clone(p.transform),geometry:p.geometry},expectedRevision:p.revision,requestId:'placement-preview:'+p.revision+':'+(++requestSequence)});
-    if(result.ok){preview=null;statusKey='placed';lastSignature='';}else{statusKey=result.reason;preview.result=result;}
-    renderView();return result;
-  }
-  function pack(id){const result=GamePlacement.request(id,'pack');statusKey=result.ok?'packed':result.reason;lastSignature='';renderView();return result;}
-  function tick(){if(!active()){if(preview)cancel();return;}renderView();}
-  CommandCoreUI.registerSection('construction','placement.title',(scroll,route)=>{
-    sectionRoute=route;
-    const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
-    const button=(label,fn)=>{const b=node('button',label,'menuButton');b.type='button';b.onclick=fn;return b;};
-    const heading=node('h3'),hint=node('p',null,'coreHint'),catalog=node('div',null,'placementCatalog'),controls=node('div',null,'placementRooms');
-    const map=node('canvas',null,'placementPlan');map.id='placementPlan';map.width=520;map.height=500;map.tabIndex=0;map.setAttribute('role','application');
-    const note=node('p',null,'placementStatus');note.id='placementStatus';note.setAttribute('role','status');note.setAttribute('aria-live','polite');
-    const actions=node('div',null,'placementActions'),rotateButton=button('',rotate),confirm=button('',commit),cancelButton=button('',cancel);confirm.id='placementConfirm';rotateButton.id='placementRotate';cancelButton.id='placementCancel';actions.append(rotateButton,confirm,cancelButton);
-    const arrows=node('div',null,'placementNudge');for(const [label,dx,dy]of [['←',-10,0],['↑',0,-10],['↓',0,10],['→',10,0]]){const b=button(label,()=>nudge(dx,dy));b.dataset.nudge=label;arrows.append(b);}
-    scroll.append(heading,hint,catalog,controls,map,arrows,note,actions);
-    const roomButtons=GamePlacement.zones.map(id=>{const b=button('',()=>{route.setPage(id);room=id;if(preview)choose(preview.selection);lastSignature='';renderView();});controls.append(b);return {id,b};});
-    function costText(type){return Object.entries(GamePlacement.rules[type].cost).map(([id,n])=>I18n.text(ITEM[id].name)+' '+I18n.number(n)+' / '+I18n.number(V010Inventory.materialCount(id))).join(' · ');}
-    function paint(r,ghost=false){
-      const c=map.getContext('2d'),b=BunkerLayout.rooms[room],def=EquipmentInstances.definitions[r.typeId],key=({furnace:'furnace',craft_bench:'workbench',enhancement_cradle:'upgrade_station0161'})[r.typeId];
-      c.save();c.translate(r.transform.x-b.left,r.transform.y-b.top);c.rotate(r.transform.rotation);if(ghost)c.globalAlpha=.5;
-      const asset=key&&GameAssets.artId(key),meta=AssetManifest.images[asset],im=asset&&GameAssets.image(asset);
-      if(im&&GameAssets.ready(asset)){const crop=meta.crop||{x:0,y:0,w:meta.size[0],h:meta.size[1]},scale=Math.min(def.footprint.w/crop.w,def.footprint.h/crop.h);c.drawImage(im,crop.x,crop.y,crop.w,crop.h,(def.footprint.w-crop.w*scale)/2,(def.footprint.h-crop.h*scale)/2,crop.w*scale,crop.h*scale);}
-      else{c.fillStyle='#728d87';c.fillRect(0,0,def.footprint.w,def.footprint.h);}
-      c.restore();
-    }
-    renderMap=()=>{
-      if(!active())return;const c=map.getContext('2d'),b=BunkerLayout.rooms[room];c.clearRect(0,0,520,500);c.fillStyle='#172b32';c.fillRect(0,0,520,500);
-      c.strokeStyle='#2d454b';c.lineWidth=1;for(let n=20;n<520;n+=20){c.beginPath();c.moveTo(n,0);c.lineTo(n,500);c.stroke();}for(let n=20;n<500;n+=20){c.beginPath();c.moveTo(0,n);c.lineTo(520,n);c.stroke();}
-      const keep=GamePlacement.protectedArea(room);c.fillStyle='#c39a5730';c.fillRect(keep.x-b.left,keep.y-b.top,keep.w,keep.h);
-      c.strokeStyle='#799489';c.lineWidth=8;c.strokeRect(4,4,512,492);const door=BunkerLayout.door(room);c.fillStyle='#77b5a6';c.fillRect(door.x-b.left,door.y-b.top,door.w,door.h);
-      for(const r of GameEquipment.capture())if(r.transform.room===room&&r.placement==='installed')paint(r);
-      if(preview){const r={typeId:preview.typeId,transform:preview.transform},f=GamePlacement.footprint(r);paint(r,true);c.strokeStyle=preview.result?.ok?'#b9eb9d':'#f89c86';c.lineWidth=3;c.strokeRect(f.x-b.left,f.y-b.top,f.w,f.h);const p=EquipmentInstances.aabb(r.transform,{x:EquipmentInstances.definitions[r.typeId].footprint.w/2-5,y:EquipmentInstances.definitions[r.typeId].footprint.h-10,w:10,h:10});c.fillStyle=c.strokeStyle;c.fillRect(p.x-b.left,p.y-b.top,p.w,p.h);}
-    };
-    renderView=()=>{
-      if(!active())return;room=route.page||'reserve_l1';heading.textContent=t('heading');hint.textContent=t('hint');map.setAttribute('aria-label',t('mapHint'));for(const {id,b}of roomButtons){b.textContent=I18n.t('core.room.'+id);b.classList.toggle('active',room===id);b.setAttribute('aria-pressed',String(room===id));}
-      const signature=[I18n.language,GameEquipment.epoch,GamePlacement.revision,GameEquipment.productionIds.map(id=>Number(GamePlacement.blockedByWork(id))).join(),Object.keys(GamePlacement.rules).map(costText).join(),preview?.selection||''].join('|');
-      if(signature!==lastSignature){lastSignature=signature;catalog.replaceChildren();
-        for(const [type,rule]of Object.entries(GamePlacement.rules)){
-          const card=node('section',null,'placementType'),records=GameEquipment.capture().filter(r=>r.typeId===type);card.append(node('strong',I18n.text(EquipmentInstances.definitions[type].name)),node('small',t('limit',{count:records.length,limit:rule.limit})),node('p',costText(type),'coreHint'));
-          const build=button(t('build'),()=>choose('catalog:'+type));build.disabled=records.length>=rule.limit;build.dataset.buildType=type;card.append(build);
-          for(const [i,r]of records.entries()){
-            const line=node('div',null,'placementInstance');line.append(node('span',t(r.placement==='packed'?'packedLabel':'installedLabel',{number:i+1,room:I18n.t('core.room.'+r.transform.room)})));
-            const busy=GamePlacement.blockedByWork(r.id),b=button(t(r.placement==='packed'?'place':'pack'),()=>r.placement==='packed'?choose(r.id):pack(r.id));b.dataset.instance=r.id;b.disabled=busy;line.append(b);card.append(line);if(busy)card.append(node('small',t('busy'),'coreHint'));
-          }catalog.append(card);
-        }
-      }
-      rotateButton.textContent=t('rotate');confirm.textContent=t('confirm');cancelButton.textContent=t('cancel');rotateButton.disabled=cancelButton.disabled=!preview;for(const b of arrows.children){b.disabled=!preview;b.setAttribute('aria-label',t('nudge')+' '+b.dataset.nudge);}
-      const stale=preview&&(preview.revision!==GamePlacement.revision||preview.geometry!==geometryRevision),shortage=preview&&!GameEquipment.get(preview.selection)&&Object.entries(GamePlacement.rules[preview.typeId].cost).some(([id,n])=>V010Inventory.materialCount(id)<n);
-      const reason=!GamePlacement.access(GameActors.local)?'out_of_reach':stale?'world_changed':shortage?'materials':preview?(preview.result?.ok?'valid':preview.result?.reason||'bounds'):statusKey;
-      note.textContent=t(reason);note.dataset.valid=String(!!preview&&reason==='valid');confirm.disabled=!preview||reason!=='valid';renderMap();
-    };
-    let pointer=null;
-    const point=e=>{const b=map.getBoundingClientRect(),r=BunkerLayout.rooms[room];return {x:r.left+(e.clientX-b.left)*520/b.width,y:r.top+(e.clientY-b.top)*500/b.height};};
-    GameInput.registerSurface(map,{active,down(e){if(e.button>0||pointer!==null)return;pointer=e.pointerId;try{map.setPointerCapture?.(pointer);}catch(_){}const p=point(e);move(p.x,p.y);},move(e){if(pointer===e.pointerId){const p=point(e);move(p.x,p.y);}},up(e){if(pointer===e.pointerId){try{map.releasePointerCapture?.(pointer);}catch(_){}pointer=null;}},cancel(){pointer=null;},key(e){if(!preview)return false;if(e.key==='Escape'){cancel();return true;}if(e.repeat)return false;if(e.key.toLowerCase()==='r'){rotate();return true;}const delta={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]}[e.key];if(delta){nudge(...delta);return true;}return false;}});
-    return renderView;
-  },()=>true,id=>GamePlacement.zones.includes(id));
-  v09Style(`
-#commandCoreOverlay .placementCatalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
-#commandCoreOverlay .placementType{min-width:0;padding:11px;border:1px solid #49635c;border-radius:9px;background:#1a3033}
-#commandCoreOverlay .placementType>strong{display:block;font-size:13px}#commandCoreOverlay .placementType>small{font-size:10px;color:#b8c9b6}
-#commandCoreOverlay .placementType button{min-height:38px;margin:4px 0;padding:6px 9px;font-size:12px}
-#commandCoreOverlay .placementInstance{display:flex;align-items:center;gap:8px;font-size:11px;border-top:1px solid #ffffff12;margin-top:5px}#commandCoreOverlay .placementInstance span{flex:1;min-width:0;overflow-wrap:anywhere}
-#commandCoreOverlay .placementRooms,#commandCoreOverlay .placementActions,#commandCoreOverlay .placementNudge{display:flex;gap:8px;margin:7px 0}
-#commandCoreOverlay .placementRooms button,#commandCoreOverlay .placementActions button,#commandCoreOverlay .placementNudge button{flex:1;min-width:0;min-height:42px;margin:0;padding:7px;font-size:12px}
-#commandCoreOverlay .placementRooms .active{border-color:#b5d499;background:#375244}
-#commandCoreOverlay .placementPlan{display:block;width:min(100%,520px);height:auto;aspect-ratio:26/25;margin:10px auto;touch-action:none;border-radius:9px;outline-offset:3px}
-#commandCoreOverlay .placementStatus{font-size:12px;min-height:40px;color:#e0b29b;margin:8px 0}#commandCoreOverlay .placementStatus[data-valid="true"]{color:#b5db9c}
-#commandCoreOverlay .placementActions{position:sticky;bottom:-16px;background:#102127;padding:8px 0;margin-bottom:0;border-top:1px solid #4a655d}
-@media(max-width:380px){#commandCoreOverlay #coreTab_construction{font-size:11px;padding:6px 3px}}
-@media(max-width:480px){#commandCoreOverlay .placementCatalog{grid-template-columns:1fr}#commandCoreOverlay .placementActions{gap:5px}}
+ const t=(k,p)=>I18n.t('build.'+k,p),pt=(k,p)=>I18n.t('placement.'+k,p),copy=v=>JSON.parse(JSON.stringify(v));
+ const overlay=v09Overlay('equipmentPlacementOverlay',t('place')),panel=overlay.querySelector('.v09Panel'),body=overlay.querySelector('.v09Body');
+ let preview=null,room='reserve_l1',status='',sequence=0,epoch=-1,observedRevision=-1,observedGeometry=-1;const active=()=>overlay.classList.contains('open');
+ function node(tag,text,cls){const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;}
+ function button(label,fn){const b=node('button',label,'menuButton');b.type='button';b.onclick=fn;return b;}
+ function icon(type){const im=node('img',null,'buildIcon');im.src=AssetManifest.images['buildable/'+type].path;im.alt='';im.width=64;im.height=64;return im;}
+ function title(type){return I18n.t('build.type.'+type);}
+ const rooms=node('select',null,'placementRooms');rooms.id='placementRoom';for(const id of GamePlacement.zones){const o=node('option');o.value=id;rooms.append(o);}rooms.onchange=()=>{room=rooms.value;if(preview)choose(preview.selection);};
+ const map=node('canvas',null,'placementPlan');map.id='placementPlan';map.width=520;map.height=500;map.tabIndex=0;map.setAttribute('role','application');
+ const help=node('p',null,'coreHint'),note=node('p',null,'placementStatus');note.id='placementStatus';note.setAttribute('role','status');note.setAttribute('aria-live','polite');
+ const arrows=node('div',null,'placementNudge');for(const [label,dx,dy]of [['←',-4,0],['↑',0,-4],['↓',0,4],['→',4,0]])arrows.append(button(label,()=>nudge(dx,dy)));
+ const actions=node('div',null,'placementActions'),rotateButton=button('',rotate),confirm=button('',commit),cancelButton=button('',()=>{cancel();closeOverlay(overlay);});confirm.id='placementConfirm';rotateButton.id='placementRotate';cancelButton.id='placementCancel';actions.append(rotateButton,confirm,cancelButton);
+ body.append(rooms,help,map,arrows,note,actions);
+ function assess(){if(!preview)return;preview.result=GamePlacement.check(preview.selection,preview.transform);preview.revision=GamePlacement.revision;preview.geometry=geometryRevision;}
+ function choose(id){const r=GameEquipment.get(id);if(!r||r.placement!=='packed'||r.ownerId!==GameActors.localId)return false;const b=BunkerLayout.rooms[room];preview={selection:id,typeId:r.typeId,turn:0,transform:GamePlacement.centered(r.typeId,room,(b.left+b.right)/2,(b.top+b.bottom)/2)};assess();status='';render();return true;}
+ function show(id){CommandCoreUI.syncLocation();if(!GamePlacement.access(GameActors.local)){message(pt('room'));return false;}for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);GameMovement.openUI();openOverlay(overlay);return choose(id);}
+ function move(x,y){if(!preview)return;preview.transform=GamePlacement.centered(preview.typeId,room,x,y,preview.turn);assess();status='';render();}
+ function rotate(){if(!preview)return;const f=GamePlacement.footprint(preview);preview.turn=(preview.turn+1)%4;move(f.x+f.w/2,f.y+f.h/2);}
+ function nudge(dx,dy){if(!preview)return;const f=GamePlacement.footprint(preview);move(f.x+f.w/2+dx,f.y+f.h/2+dy);}
+ function commit(){if(!preview)return false;const p=preview,result=GamePlacement.execute({actorId:GameActors.localId,instanceId:p.selection,action:'place',payload:{transform:copy(p.transform),geometry:p.geometry},expectedRevision:p.revision,requestId:'placement-preview:'+p.revision+':'+(++sequence)});if(result.ok){message(pt('placed'));cancel();closeOverlay(overlay);}else{status=result.reason;assess();render();}return result;}
+ function cancel(){preview=null;status='';epoch=-1;}
+ function pack(id){const result=GamePlacement.request(id,'pack');message(result.ok?t('packed'):reason(result.reason));window.GameBuildableInventory?.render();return result;}
+ function reason(key){return ['emptyContainer','stopGenerator','disableBattery','packDrone','roomName','bootstrapReserve'].includes(key)?t(key):pt(key);}
+ function paint(r,ghost=false){const c=map.getContext('2d'),b=BunkerLayout.rooms[room],d=EquipmentInstances.definitions[r.typeId],key=GamePlacement.rules[r.typeId]?.art,asset=key&&GameAssets.artId(key),meta=AssetManifest.images[asset],im=asset&&GameAssets.image(asset);c.save();c.translate(r.transform.x-b.left,r.transform.y-b.top);c.rotate(r.transform.rotation);if(ghost)c.globalAlpha=.6;if(im&&GameAssets.ready(asset)){const crop=meta.crop||{x:0,y:0,w:meta.size[0],h:meta.size[1]},s=Math.min(d.footprint.w/crop.w,d.footprint.h/crop.h);c.drawImage(im,crop.x,crop.y,crop.w,crop.h,(d.footprint.w-crop.w*s)/2,(d.footprint.h-crop.h*s)/2,crop.w*s,crop.h*s);}else{c.fillStyle='#728d87';const f=GameFootprints.local(r);c.fillRect(f.x,f.y,f.w,f.h);}c.restore();}
+ function renderMap(){const c=map.getContext('2d'),b=BunkerLayout.rooms[room];c.clearRect(0,0,520,500);c.fillStyle='#152a30';c.fillRect(0,0,520,500);c.strokeStyle='#284147';c.lineWidth=1;for(let x=20;x<520;x+=20){c.beginPath();c.moveTo(x,0);c.lineTo(x,500);c.stroke();}for(let y=20;y<500;y+=20){c.beginPath();c.moveTo(0,y);c.lineTo(520,y);c.stroke();}const a=GamePlacement.protectedArea(room);c.fillStyle='#c39a5740';c.fillRect(a.x-b.left,a.y-b.top,a.w,a.h);c.strokeStyle='#799489';c.lineWidth=8;c.strokeRect(4,4,512,492);
+ for(const r of GameEquipment.capture())if(r.placement==='installed'&&r.transform.room===room)paint(r);
+ if(preview){paint(preview,true);const f=GamePlacement.footprint(preview),front=GameFootprints.front(preview);c.strokeStyle=preview.result?.ok?'#b9eb9d':'#f89c86';c.lineWidth=3;c.strokeRect(f.x-b.left,f.y-b.top,f.w,f.h);c.fillStyle=c.strokeStyle;c.beginPath();c.arc(front.x-b.left,front.y-b.top,7,0,Math.PI*2);c.fill();}}
+ function render(){if(!active())return;overlay.querySelector('.v09Title').textContent=preview?t('placeNamed',{name:title(preview.typeId)}):t('place');for(const o of rooms.children)o.textContent=GamePlacement.roomName(o.value);rooms.value=room;rooms.setAttribute('aria-label',t('room'));help.textContent=t('placementHint');map.setAttribute('aria-label',t('placementHint'));rotateButton.textContent=pt('rotate');confirm.textContent=pt('confirm');cancelButton.textContent=pt('cancel');const stale=preview&&(preview.revision!==GamePlacement.revision||preview.geometry!==geometryRevision),key=status||(!GamePlacement.access(GameActors.local)?'room':stale?'world_changed':preview?(preview.result?.ok?'valid':preview.result.reason):'hint');note.textContent=reason(key);note.dataset.valid=String(key==='valid');confirm.disabled=!preview||key!=='valid';rotateButton.disabled=!preview;for(const b of arrows.children)b.disabled=!preview;renderMap();}
+ function tick(){if(!active()){if(preview)cancel();return;}if(!GamePlacement.access(GameActors.local)){cancel();closeOverlay(overlay);return;}if(epoch!==GameEquipment.epoch||observedRevision!==GamePlacement.revision||observedGeometry!==geometryRevision){epoch=GameEquipment.epoch;observedRevision=GamePlacement.revision;observedGeometry=geometryRevision;render();}}
+ let pointer=null;const point=e=>{const a=map.getBoundingClientRect(),b=BunkerLayout.rooms[room];return{x:b.left+(e.clientX-a.left)*520/a.width,y:b.top+(e.clientY-a.top)*500/a.height};};
+ GameInput.registerSurface(map,{active,down(e){if(e.button>0||pointer!==null)return;pointer=e.pointerId;map.setPointerCapture?.(pointer);const p=point(e);move(p.x,p.y);},move(e){if(pointer===e.pointerId){const p=point(e);move(p.x,p.y);}},up(e){if(pointer===e.pointerId){map.releasePointerCapture?.(pointer);pointer=null;}},cancel(){pointer=null;},key(e){if(!preview)return false;if(e.key==='Escape'){cancel();closeOverlay(overlay);return true;}if(e.repeat)return false;if(e.key.toLowerCase()==='r'){rotate();return true;}const d={ArrowLeft:[-4,0],ArrowRight:[4,0],ArrowUp:[0,-4],ArrowDown:[0,4]}[e.key];if(d){nudge(...d);return true;}return false;}});
+ CommandCoreUI.registerSection('construction','placement.title',(scroll,route)=>{let sig='';const hint=node('p',null,'coreHint'),catalog=node('div',null,'buildCatalog'),stations=node('div',null,'buildInstalled');scroll.append(hint,catalog,stations);return()=>{
+   const signature=[I18n.language,GameEquipment.epoch,GamePlacement.revision,Object.values(ITEM).length,GameEquipment.capture().map(r=>GamePlacement.packReason(r)).join(),['wood','iron','parts','concrete'].map(k=>V010Inventory.materialCount(k)).join()].join('|');if(sig===signature)return;sig=signature;hint.textContent=t(devicePowered(GameCampaign.powerId)?'constructionHint':'emergencyCore');catalog.replaceChildren();stations.replaceChildren();
+   for(const [type,rule]of Object.entries(GamePlacement.rules)){if(!rule.craftable)continue;const card=node('section',null,'buildCard'),text=node('div',null,'buildCardBody');card.append(icon(type),text);text.append(node('strong',title(type)),node('p',t('description.'+type),'coreHint'));
+     const materials=node('div',null,'buildMaterials');for(const [key,count]of Object.entries(rule.cost)){const owned=V010Inventory.materialCount(key),line=node('div',I18n.text(ITEM[key].name)+' · '+I18n.number(owned)+' / '+I18n.number(count));line.classList.toggle('missing',owned<count);materials.append(line);}text.append(materials);
+     const reserved=!GameChapterOne.spendAllowed(rule.cost,1,type),count=GameEquipment.capture().filter(r=>r.typeId===type).length,craft=button(t('craft'),()=>{const result=GamePlacement.request(type,'craft');message(result.ok?t('added',{name:title(type)}):reason(result.reason));sig='';window.GameBuildableInventory?.render();CommandCoreUI.tick();});craft.dataset.buildType=type;craft.disabled=reserved||count>=rule.limit||Object.entries(rule.cost).some(([k,n])=>V010Inventory.materialCount(k)<n)||!GameCampaign.access(GameActors.local,BunkerLayout.core.id,false).available;text.append(craft,node('small',t('limit',{count,limit:rule.limit})));if(reserved)text.append(node('small',t('bootstrapReserve')));catalog.append(card);
+   }
+   stations.append(node('h4',t('installed')));for(const r of GameEquipment.capture().filter(r=>r.placement==='installed'&&GamePlacement.rules[r.typeId]&&BunkerLayout.roomActive(r.transform.room))){const line=node('div',null,'buildStationRow');line.append(icon(r.typeId),node('span',title(r.typeId)+' · '+GamePlacement.roomName(r.transform.room)));const why=GamePlacement.packReason(r),b=button(t('pack'),()=>{pack(r.id);sig='';CommandCoreUI.tick();});b.dataset.packInstance=r.id;line.append(b);if(why){b.disabled=true;line.append(node('small',reason(why)));}stations.append(line);}
+ };},()=>true,id=>Object.hasOwn(GamePlacement.rules,id));
+ // Equipment is a separate bounded compartment of the player's Inventory.
+ // Each row directly addresses the carried registry record, never a stack/token.
+ const inventory=node('section',null,'buildInventory');inventory.id='buildableInventory';el('inventoryGrid').after(inventory);let inventorySig='';
+ function renderInventory(){const records=GameEquipment.inventory(GameActors.localId),sig=GameEquipment.epoch+'|'+I18n.language+'|'+scene;if(sig===inventorySig)return;inventorySig=sig;inventory.replaceChildren();inventory.append(node('h3',t('inventory')),node('p',t('inventoryHint'),'coreHint'));if(!records.length)inventory.append(node('p',t('empty'),'coreHint'));for(const r of records){const card=node('div',null,'buildInventoryItem');card.dataset.instance=r.id;const info=node('div');info.append(node('strong',title(r.typeId)),node('small',t('carried')+(r.state.level?' · '+t('level',{level:r.state.level}):'')+(r.state.condition.hp<r.state.condition.maxHp?' · '+t('condition',{value:Math.round(r.state.condition.hp/r.state.condition.maxHp*100)}):'')));const b=button(t('place'),()=>show(r.id));b.disabled=!GamePlacement.access(GameActors.local);card.append(icon(r.typeId),info,b);inventory.append(card);}}
+ const renderBagOld=renderBag;renderBag=function(...a){const out=renderBagOld(...a);renderInventory();return out;};window.GameBuildableInventory=Object.freeze({render:renderInventory,get items(){return GameEquipment.inventory(GameActors.localId);}});
+ I18n.onChange(()=>{render();renderInventory();});
+ v09Style(`
+.buildIcon{width:64px;height:64px;object-fit:contain;flex:0 0 64px}.buildCatalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.buildCard{display:flex;align-items:flex-start;gap:8px;padding:12px;border:1px solid #49635c;border-radius:10px;background:#1a3033}.buildCardBody{min-width:0;flex:1}.buildCard strong{display:block;font-size:13px}.buildMaterials{font-size:12px;font-variant-numeric:tabular-nums;line-height:1.6}.buildCard small{display:block;color:#9bad9f;font-size:10px}.buildCard button{width:100%;min-height:40px}.buildStationRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid #526b6233;padding:7px 0}.buildStationRow .buildIcon{width:42px;height:42px;flex-basis:42px}.buildStationRow span{flex:1;min-width:120px;font-size:12px}.buildStationRow small{flex:0 0 100%;color:#d6b690;font-size:11px}.buildStationRow button{font-size:11px;min-height:36px}.buildInventory{border-top:1px solid #6d897b66;margin-top:14px;padding-top:8px}.buildInventory h3{font-size:14px}.buildInventory .coreHint{font-size:11px;color:#b2c6b7}.buildInventoryItem{display:flex;align-items:center;gap:8px;border:1px solid #486157;border-radius:8px;margin:6px 0;padding:7px}.buildInventoryItem>div{flex:1;min-width:0}.buildInventoryItem strong{font-size:12px;display:block}.buildInventoryItem small{display:block;font-size:10px;color:#b0c6b5;margin-top:4px}.buildInventoryItem button{font-size:12px;min-height:40px;padding:6px 10px}.buildInventoryItem .buildIcon{width:52px;height:52px;flex-basis:52px}
+#equipmentPlacementOverlay .v09Panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);box-sizing:border-box;width:min(600px,calc(100vw - 24px));height:min(760px,calc(100dvh - 36px));padding:14px;display:flex;flex-direction:column;overflow:hidden}#equipmentPlacementOverlay .v09Header{flex:0 0 40px;margin:0}#equipmentPlacementOverlay .v09Body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}#equipmentPlacementOverlay .placementRooms{width:100%;padding:9px;background:#173036;color:#dce9da;border:1px solid #56715f;border-radius:6px}#equipmentPlacementOverlay .placementPlan{display:block;width:100%;height:auto;aspect-ratio:26/25;touch-action:none;margin:8px 0}#equipmentPlacementOverlay .coreHint{font-size:11px;color:#b4c4b8}#equipmentPlacementOverlay .placementActions,#equipmentPlacementOverlay .placementNudge{display:flex;gap:7px}#equipmentPlacementOverlay .placementActions{position:sticky;bottom:0;background:#12292e;padding-top:6px}#equipmentPlacementOverlay button{min-height:40px;flex:1;font-size:12px;padding:6px}#equipmentPlacementOverlay .placementStatus{min-height:32px;font-size:12px;color:#e0b29b}#equipmentPlacementOverlay .placementStatus[data-valid="true"]{color:#b5db9c}
+@media(max-width:560px){.buildCatalog{grid-template-columns:1fr}.buildCard .buildIcon{width:76px;height:76px;flex-basis:76px}}
 `);
-  return Object.freeze({choose,pack,move,rotate,nudge,commit,cancel,tick,get preview(){return preview?clone(preview):null;},get room(){return sectionRoute?.page||'reserve_l1';}});
+ renderInventory();return Object.freeze({show,choose,pack,move,rotate,nudge,commit,cancel,tick,icon,title,reason,get preview(){return preview?copy(preview):null;},get room(){return room;}});
 })();

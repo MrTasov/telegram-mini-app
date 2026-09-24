@@ -49,7 +49,7 @@ function devicePowered(id){return !!V09Power.devices[id]&&V09Power.allocation().
 function registerEquipmentPowerDevice(instanceId,active){
   const instance=GameEquipment.get(instanceId),def=GameEquipment.definition(instanceId);
   if(!instance?.refs.device||!Number.isFinite(def.powerKW))throw Error('Equipment has no power adapter');
-  const device=registerPowerDevice(instance.refs.device,instance.transform.room,def.powerKW,active,def.name);device.present=()=>GameEquipment.present(instanceId);return device;
+  const device=registerPowerDevice(instance.refs.device,instance.transform.room,def.powerKW,active,def.name);Object.defineProperty(device,'room',{configurable:true,enumerable:true,get:()=>GameEquipment.get(instanceId)?.transform.room||instance.transform.room});device.present=()=>GameEquipment.present(instanceId);return device;
 }
 V09Power.powered=devicePowered;
 function v09PowerChanged(){V09Power.allocation();queueGameSave();v09RefreshPowerUI();}
@@ -69,6 +69,8 @@ function v09ToggleRoom(room){
   v09PowerChanged();
 }
 function v09DeviceStatus(d){
+  if(d.present&&!d.present())return I18n.t('placement.packed');
+  if(GameEquipment.recipeStation(d.id)==='utility_workbench')return I18n.t('build.manual');
   if(!d.enabled)return 'Выключен';
   if(!V09Power.roomEnabled[d.room])return 'Комната обесточена';
   if(!V09Power.running||V09Power.fuel<=0)return 'Нет питания';
@@ -191,9 +193,10 @@ function v09RenderCircuit(){
   const title=document.createElement('div');I18n.assign(title,"innerHTML",'<h3></h3><small></small>');I18n.assign(title.querySelector('h3'),"textContent",V09Power.rooms[room]);title.querySelector('small').dataset.roomPowerStatus=room;header.appendChild(title);
   const toggle=v09Button('',()=>v09ToggleRoom(room),'v09DeviceToggle');toggle.dataset.roomPowerToggle=room;header.appendChild(toggle);parent.appendChild(header);
   for(const d of Object.values(V09Power.devices).filter(d=>d.room===room))parent.appendChild(renderDeviceSwitch(d.id));
-  if(room==='room5'){const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Выключатель комнаты управляет её светом и дверью. Генератор запускается и останавливается отдельно.');parent.appendChild(note);}
+  if(GameEquipment.get('generator')?.transform.room===room){const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Выключатель комнаты управляет её светом и дверью. Генератор запускается и останавливается отдельно.');parent.appendChild(note);}
 }
 function v09ToggleGenerator(){
+  if(!GameEquipment.present('generator')||!GameEquipment.present('tank'))return false;
   if(V09Power.running)V09Power.running=false;
   else if(V09Power.fuel<=0){message('Сначала заправьте топливный бак в энергоблоке');return;}
   else V09Power.running=true;
@@ -208,9 +211,10 @@ function v09OpenGenerator(refuel=false){
   }
   const toggle=v09Button('',v09ToggleGenerator);toggle.dataset.power='generatorToggle';body.appendChild(toggle);
   const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Мощность: 10 кВт. 1 единица топлива ≈ 1 минута работы. При остановке генератора производство сохраняет прогресс. Резервная батарея будет подключена позже.');body.appendChild(note);
-  body.appendChild(renderDeviceSwitch('light_room5'));v09RefreshPowerUI();openOverlay(overlay);
+  body.appendChild(renderDeviceSwitch('light_'+GameEquipment.get(refuel?'tank':'generator').transform.room));v09RefreshPowerUI();openOverlay(overlay);
 }
 function v09Refuel(amount){
+  if(!GameEquipment.present('tank'))return false;
   const n=Math.min(amount,bagCount('fuel'),Math.ceil(V09Power.capacity-V09Power.fuel));
   if(n<=0){message(V09Power.fuel>=V09Power.capacity?'Бак уже заполнен':'В рюкзаке нет топлива');return;}
   // Do not consume a whole unit for a fractional gap at the top of the tank.

@@ -1,108 +1,101 @@
-/* Stage D authority. The registry owns presence/transform; manufacturing keeps
-   every job/output/refund. A client ghost never reserves space or spends items. */
+/* Shared placement authority: craft -> carried instance -> installed -> carried.
+   Inventory displays registry-owned instances; it never duplicates their state. */
 window.GamePlacement=(()=>{
-  const rules=EquipmentInstances.placement,copy=v=>JSON.parse(JSON.stringify(v));
-  const zones=Object.freeze(['workshop','reserve_l1']);let sequence=0,checks=0;
+  const rules=EquipmentInstances.placement,copy=v=>JSON.parse(JSON.stringify(v)),zones=EquipmentInstances.rooms;
+  const roomPresets=['workshop','storage','power','armory','medical','drone','living'];
+  let sequence=0,checks=0,roomNames={};
   const fail=reason=>({ok:false,reason});
   const overlap=(a,b,pad=0)=>a.x<b.x+b.w+pad&&a.x+a.w>b.x-pad&&a.y<b.y+b.h+pad&&a.y+a.h>b.y-pad;
-  const footprint=r=>EquipmentInstances.aabb(r.transform,{x:0,y:0,...EquipmentInstances.definitions[r.typeId].footprint});
-  function protectedArea(room){const r=BunkerLayout.rooms[room],d=BunkerLayout.door(room);return {x:d.x-108,y:d.y-24,w:d.w+216,h:d.h+48};}
-  function centered(typeId,room,x,y,turn=0){
-    const rotation=EquipmentInstances.turns[turn],b=EquipmentInstances.aabb({x:0,y:0,rotation},{x:0,y:0,...EquipmentInstances.definitions[typeId].footprint});
-    return {x:Math.round((x-b.w/2-b.x)/10)*10,y:Math.round((y-b.h/2-b.y)/10)*10,rotation,scene:'bunker',room};
-  }
+  const footprint=r=>GameFootprints.forRecord(r);
+  function protectedArea(room){const d=BunkerLayout.door(room);return d.horizontal?{x:d.x-24,y:d.y-62,w:d.w+48,h:d.h+124}:{x:d.x-62,y:d.y-24,w:d.w+124,h:d.h+48};}
+  function centered(typeId,room,x,y,turn=0){const rotation=EquipmentInstances.turns[turn],b=footprint({typeId,transform:{x:0,y:0,rotation,room}});return {x:Math.round((x-b.w/2-b.x)/2)*2,y:Math.round((y-b.h/2-b.y)/2)*2,rotation,scene:'bunker',room};}
   function blockedByWork(id,data){
+    if(!EquipmentInstances.definitions[(data?.equipment032.instances||GameEquipment.capture()).find(r=>r.id===id)?.typeId]?.recipeStation)return false;
     const q=data?.v010?.modules?.craft||V09Craft.craftQueue.capture(),job=data?data.v09.crafting.jobs[id]:V09Craft.craftQueue.getJob(id);
     return !!job||!!q.queues[id]?.length||Object.values(q.ready[id]||{}).some(n=>n>0)||Object.values(q.refunds[id]||{}).some(n=>n>0);
   }
-  function roomBodies(room,records){
-    const allIds=new Set(GameEquipment.ids.concat(records.map(r=>r.id))),bounds=BunkerLayout.rooms[room];
-    return solidObjects('bunker').filter(o=>!allIds.has(o.id)&&!o.id.startsWith('build:')&&!o.id.startsWith('v09door_')&&o.id!=='robots014_dock_body'&&overlap(o,{x:bounds.left,y:bounds.top,w:bounds.right-bounds.left,h:bounds.bottom-bounds.top}))
-      .concat(records.filter(r=>r.placement==='installed'&&r.transform.room===room).map(GameFootprints.forRecord));
-  }
-  // Bounded room grid (26 x 25); doors are tested as operable, including manual
-  // opening without Power. Both player and drone use 18-unit clearance here.
+  const guards={
+    production:(r,d)=>blockedByWork(r.id,d)?'busy':null,
+    container:(r,d)=>{const index=r.refs.container,items=index==='upgrade'?(d?[d.upgrade0161?.item]:V0161Upgrade.slots):(d?.storage||storageChests)[Number(index.slice(8))]?.items;return items?.some(Boolean)?'emptyContainer':null;},
+    generator:(r,d)=>(d?.v09.power||V09Power).running?'stopGenerator':null,
+    tank:(r,d)=>(d?.v09.power||V09Power).running?'stopGenerator':null,
+    battery:(r,d)=>(d?.v010.modules.energy.battery||V010Energy.battery).enabled?'disableBattery':null,
+    drone:(r,d)=>!(d?.robots014||V014Robots.state).packed?'packDrone':null,
+    empty:()=>null
+  };
+  function packReason(r,d){const rule=r&&rules[r.typeId];if(!rule||!BunkerLayout.roomActive(r.transform.room))return 'protected';return guards[rule.guard]?.(r,d)||null;}
+  function roomBodies(room,records){const ids=new Set([...GameEquipment.ids,...records.map(r=>r.id),'robots014_dock_body']),b=BunkerLayout.rooms[room];return solidObjects('bunker').filter(o=>!ids.has(o.id)&&!o.id.startsWith('build:')&&!o.id.startsWith('v09door_')&&overlap(o,{x:b.left,y:b.top,w:b.right-b.left,h:b.bottom-b.top})).concat(records.filter(r=>r.placement==='installed'&&r.transform.room===room).map(footprint));}
+  const authored=r=>{const s=EquipmentInstances.defaults.find(x=>x.id===r.id);return !!s&&['x','y','rotation','scene','room'].every(k=>s.transform[k]===r.transform[k]);};
   function reachable(room,records){
-    const r=BunkerLayout.rooms[room],bodies=roomBodies(room,records),step=20,radius=18;
-    const cols=Math.floor((r.right-r.left)/step),rows=Math.floor((r.bottom-r.top)/step),cells=new Uint8Array(cols*rows),seen=new Uint8Array(cols*rows);
+    const r=BunkerLayout.rooms[room],bodies=roomBodies(room,records),step=20,radius=18,cols=Math.floor((r.right-r.left)/step),rows=Math.floor((r.bottom-r.top)/step),cells=new Uint8Array(cols*rows),seen=new Uint8Array(cols*rows);
     const pos=i=>({x:r.left+(i%cols+.5)*step,y:r.top+(Math.floor(i/cols)+.5)*step});
     for(let i=0;i<cells.length;i++){const p=pos(i);cells[i]=p.x<r.left+radius+9||p.x>r.right-radius-9||p.y<r.top+radius+9||p.y>r.bottom-radius-9||bodies.some(b=>rectHit(p.x,p.y,radius,b))?1:0;}
-    const d=BunkerLayout.door(room),entry={x:r.side==='left'?r.right-40:r.left+40,y:d.y+d.h/2};let start=-1,best=Infinity;
+    const d=BunkerLayout.door(room),entry=d.horizontal?{x:d.x+d.w/2,y:r.top+40}:{x:r.side==='left'?r.right-40:r.left+40,y:d.y+d.h/2};let start=-1,best=Infinity;
     for(let i=0;i<cells.length;i++)if(!cells[i]){const p=pos(i),n=Math.hypot(p.x-entry.x,p.y-entry.y);if(n<best){best=n;start=i;}}
-    if(start<0||best>45)return false;
-    const queue=[start];seen[start]=1;
+    if(start<0||best>45)return false;const queue=[start];seen[start]=1;
     for(let k=0;k<queue.length;k++){const i=queue[k],x=i%cols,y=Math.floor(i/cols);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,n=ny*cols+nx;if(nx<0||nx>=cols||ny<0||ny>=rows||cells[n]||seen[n])continue;seen[n]=1;queue.push(n);}}
-    return records.filter(v=>v.placement==='installed'&&v.transform.room===room).every(v=>{
-      const b=GameFootprints.forRecord(v),range=EquipmentInstances.definitions[v.typeId].range-4;
-      return queue.some(i=>{const p=pos(i),q=contactPoint(b,p.x,p.y);return Math.hypot(p.x-q.x,p.y-q.y)<=range;});
-    });
+    const accessible=(v,strict)=>{const b=footprint(v),f=GameFootprints.front(v),range=EquipmentInstances.definitions[v.typeId].range-4;return queue.some(i=>{const p=pos(i),q=contactPoint(b,p.x,p.y);return Math.hypot(p.x-q.x,p.y-q.y)<=range&&(!strict||Math.hypot(p.x-f.x,p.y-f.y)<28);});};
+    if(!records.filter(v=>v.placement==='installed'&&v.transform.room===room).every(v=>{
+      if(!accessible(v,!authored(v)))return false;
+      const dock=EquipmentInstances.definitions[v.typeId].dock;if(!dock)return true;
+      const p=EquipmentInstances.aabb(v.transform,{...dock,w:0,h:0});
+      return p.x>r.left+24&&p.x<r.right-24&&p.y>r.top+24&&p.y<r.bottom-24&&!bodies.some(b=>rectHit(p.x,p.y,12,b))&&queue.some(i=>{const q=pos(i);return Math.hypot(p.x-q.x,p.y-q.y)<28;});
+    }))return false;
+    // Built-in medical/living fixtures remain reachable too; walls themselves
+    // are not interaction targets. Their authored fronts are intentionally free.
+    return interactionObjects('bunker').filter(o=>!GameEquipment.get(o.id)&&!records.some(v=>v.id===o.id)&&!o.id.startsWith('v09door_')&&!o.id.startsWith('switch_')&&!o.id.startsWith('lamp_')&&o.x>r.left+25&&o.x+(o.w||0)<r.right-25&&o.y>r.top+25&&o.y+(o.h||0)<r.bottom-25).every(o=>queue.some(i=>{const p=pos(i),q=contactPoint(o,p.x,p.y);return Math.hypot(p.x-q.x,p.y-q.y)<(o.range||50);}));
   }
   function checkRecord(record,records,occupants=true){
     checks++;const rule=Object.hasOwn(rules,record.typeId)?rules[record.typeId]:null,t=record.transform;
     if(!rule||!t||t.scene!=='bunker'||!rule.rooms.includes(t.room)||!EquipmentInstances.turns.includes(t.rotation)||![t.x,t.y].every(Number.isFinite))return fail('room');
-    const r=BunkerLayout.rooms[t.room],f=footprint(record),body=GameFootprints.forRecord(record);
-    if(f.x<r.left+18||f.y<r.top+18||f.x+f.w>r.right-18||f.y+f.h>r.bottom-18)return fail('bounds');
-    if(overlap(f,protectedArea(t.room)))return fail('door');
-    const others=records.filter(v=>v.id!==record.id),bodies=roomBodies(t.room,others);
-    if(bodies.some(b=>overlap(body,b,8)))return fail('overlap');
-    if(occupants&&BunkerLayout.occupants('bunker').some(a=>rectHit(a.x,a.y,(a.radius||14)+6,body)))return fail('occupied');
-    if(!reachable(t.room,others.concat(record)))return fail('passage');
-    return {ok:true,record:copy(record)};
+    const r=BunkerLayout.rooms[t.room],body=footprint(record);
+    if(body.x<r.left+10||body.y<r.top+10||body.x+body.w>r.right-10||body.y+body.h>r.bottom-10)return fail('bounds');
+    if(overlap(body,protectedArea(t.room)))return fail('door');
+    const others=records.filter(v=>v.id!==record.id);if(roomBodies(t.room,others).some(b=>overlap(body,b,1)))return fail('overlap');
+    if(occupants&&BunkerLayout.occupants('bunker').some(a=>rectHit(a.x,a.y,(a.radius||14)+2,body)))return fail('occupied');
+    if(!reachable(t.room,others.concat(record)))return fail('passage');return {ok:true,record:copy(record)};
   }
   function check(selection,transform,occupants=true){
     if(typeof selection!=='string'||!transform||Object.keys(transform).sort().join()!=='room,rotation,scene,x,y')return fail('invalid_command');
-    const existing=GameEquipment.get(selection),typeId=existing?.typeId||selection.replace(/^catalog:/,''),rule=Object.hasOwn(rules,typeId)?rules[typeId]:null;
-    if(!rule)return fail('type');
-    if(existing&&existing.placement!=='packed')return fail('installed');
-    if(!existing&&GameEquipment.capture().filter(r=>r.typeId===typeId).length>=rule.limit)return fail('limitReached');
-    const record=existing?{...copy(existing),placement:'installed',transform:copy(transform)}:GameEquipment.create(typeId,transform);
-    return checkRecord(record,GameEquipment.capture(),occupants);
+    const r=GameEquipment.get(selection);if(!r||!rules[r.typeId])return fail('type');if(r.placement!=='packed')return fail('installed');
+    return checkRecord({...copy(r),placement:'installed',ownerId:null,transform:copy(transform)},GameEquipment.capture(),occupants);
   }
-  function access(actor){return !actor.dead&&actor.scene==='bunker'&&(actor.entity.floor??1)===1&&GameCampaign.access(actor,BunkerLayout.core.id,false).available;}
-  function perform(c){
-    const p=c.payload||{};
-    if(p.geometry!==geometryRevision)return fail('world_changed');
-    if(c.action==='pack'){
-      const r=GameEquipment.get(c.instanceId);if(!r||!rules[r.typeId])return fail('protected');
-      if(r.placement!=='installed')return fail('packed');
-      if(blockedByWork(r.id))return fail('busy');
-      GameEquipment.change({...copy(r),placement:'packed'});V09Craft.syncInstances();invalidateGeometry();
-      return {ok:true,instanceId:r.id,placement:'packed'};
-    }
-    if(c.action!=='place')return fail('action');
-    const selection=c.instanceId;
-    const preview=check(selection,p.transform);if(!preview.ok)return preview;
-    const existing=GameEquipment.get(selection),cost=existing?{}:rules[selection.replace(/^catalog:/,'')].cost;
-    // Validate every field and owner link before the single atomic debit.
-    const next=GameEquipment.capture().filter(r=>r.id!==preview.record.id).concat(preview.record);GameEquipment.validate(next);
-    if(!V010Inventory.consumeMaterials(cost,1))return fail('materials');
-    GameEquipment.change(preview.record);V09Craft.syncInstances();invalidateGeometry();
-    return {ok:true,instanceId:preview.record.id,placement:'installed'};
+  function access(actor){return !actor.dead&&actor.scene==='bunker'&&(actor.entity.floor??1)===1;}
+  function coreAccess(actor){return GameCampaign.access(actor,BunkerLayout.core.id,false).available;}
+  function make(typeId,actorId){const rule=rules[typeId];if(!rule?.craftable)return fail('type');if(GameEquipment.ids.length>=48||GameEquipment.capture().filter(r=>r.typeId===typeId).length>=rule.limit)return fail('limitReached');
+    const record=GameEquipment.create(typeId,centered(typeId,'reserve_l1',1900,480),actorId,typeId==='storage_crate'?storageChests.length:undefined),next=GameEquipment.capture().concat(record);GameEquipment.validate(next);
+    if(Object.entries(rule.cost).some(([t,n])=>V010Inventory.materialCount(t)<n))return fail('materials');
+    if(window.GameChapterOne&&!GameChapterOne.spendAllowed(rule.cost,1,typeId))return fail('bootstrapReserve');
+    if(!V010Inventory.consumeMaterials(rule.cost,1,typeId))return fail('materials');
+    if(typeId==='storage_crate')storageChests.push({name:'',icon:'📦',items:[]});GameEquipment.change(record);V09Craft.syncInstances();window.GameMovable?.sync();window.GameChapterOne?.recordAction('crafted',record);return {ok:true,instanceId:record.id,placement:'packed'};
   }
-  const commands=EquipmentCommands.create({get:id=>id.startsWith('catalog:')&&Object.hasOwn(rules,id.slice(8))?{id}:GameEquipment.get(id)},
-    {actor:id=>GameActors.get(id),authorized:a=>a.id===GameActors.localId,access,perform,changed:()=>{queueGameSave();v09PowerChanged();}});
+  function perform(c,actor){const p=c.payload||{};if(p.geometry!==geometryRevision)return fail('world_changed');
+    if(c.action==='craft'){if(!coreAccess(actor))return fail('out_of_reach');return make(c.instanceId.slice(8),actor.id);}
+    if(c.action==='rename'){if(!coreAccess(actor))return fail('out_of_reach');const room=c.instanceId.slice(5),name=p.name;if(!validRoomName(name))return fail('roomName');roomNames[room]=copy(name);return {ok:true,room};}
+    const r=GameEquipment.get(c.instanceId);if(!r||!rules[r.typeId])return fail('protected');
+    if(c.action==='pack'){if(r.placement!=='installed')return fail('packed');if(!coreAccess(actor)&&!GameEquipmentRuntime.access(actor,r))return fail('out_of_reach');const reason=packReason(r);if(reason)return fail(reason);GameEquipment.change({...copy(r),placement:'packed',ownerId:actor.id});}
+    else if(c.action==='place'){if(r.ownerId!==actor.id)return fail('actor_denied');const result=check(c.instanceId,p.transform);if(!result.ok)return result;GameEquipment.change(result.record);window.GameChapterOne?.recordAction('placed',result.record);}
+    else return fail('action');
+    V09Craft.syncInstances();window.GameMovable?.sync();invalidateGeometry();return {ok:true,instanceId:r.id,placement:c.action==='pack'?'packed':'installed'};
+  }
+  const commands=EquipmentCommands.create({get:id=>id.startsWith('catalog:')&&Object.hasOwn(rules,id.slice(8))||id.startsWith('room:')&&zones.includes(id.slice(5))?{id}:GameEquipment.get(id)}, {actor:id=>GameActors.get(id),authorized:a=>a.id===GameActors.localId,access,perform,changed:()=>{queueGameSave();v09PowerChanged();window.GameBuildableInventory?.render();}});
   function execute(c){return GameFlow.paused?{ok:false,reason:'world_paused',revision:commands.revision}:commands.execute(c);}
-  function request(selection,action,transform){return execute({actorId:GameActors.localId,instanceId:selection.startsWith('catalog:')||GameEquipment.get(selection)?selection:'catalog:'+selection,action,payload:{geometry:geometryRevision,...(transform?{transform:copy(transform)}:{})},expectedRevision:commands.revision,requestId:'placement:'+commands.revision+':'+(++sequence)});}
-  function migrate(d){
-    const e=d.equipment032;if(!e||e.schema!==1)throw Error('Missing legacy equipment');
-    // Validate the accepted fixed layout independently of the current live world.
-    EquipmentInstances.createRegistry(EquipmentInstances.defaults).validate(e.instances,true);
-    e.schema=2;for(const r of e.instances)r.placement='installed';d.placement035={schema:1,commands:{revision:0,receipts:[]}};
-  }
+  function request(selection,action,transform){if(typeof selection!=='string')return fail('invalid_command');const instanceId=action==='craft'?(selection.startsWith('catalog:')?selection:'catalog:'+selection):selection;return execute({actorId:GameActors.localId,instanceId,action,payload:{geometry:geometryRevision,...(transform?{transform:copy(transform)}:{})},expectedRevision:commands.revision,requestId:'placement:'+commands.revision+':'+(++sequence)});}
+  function validRoomName(n){return !!n&&Object.keys(n).sort().join()==='custom,preset'&&(n.preset===null||roomPresets.includes(n.preset))&&typeof n.custom==='string'&&n.custom.length<=24&&!/[<>\u0000-\u001f\u007f]/.test(n.custom)&&(n.preset===null?!!n.custom.trim():n.custom==='');}
+  function roomName(id){const n=roomNames[id];return n?(n.preset?I18n.t('build.room.'+n.preset):n.custom):I18n.t('core.room.'+id);}
+  function rename(room,name){return execute({actorId:GameActors.localId,instanceId:'room:'+room,action:'rename',payload:{geometry:geometryRevision,name},expectedRevision:commands.revision,requestId:'room-name:'+commands.revision+':'+(++sequence)});}
+  // Historical 12 -> 13 remains intact; 13 -> 14 adds carried ownership/state.
+  function migrate(d){const e=d.equipment032;if(!e||e.schema!==1)throw Error('Missing legacy equipment');EquipmentInstances.createRegistry(EquipmentInstances.defaults).validate(e.instances,true);e.schema=2;for(const r of e.instances)r.placement='installed';d.placement035={schema:1,commands:{revision:0,receipts:[]}};}
+  function migrateCorrective(d){if(d.equipment032?.schema!==2||d.placement035?.schema!==1)throw Error('Missing Stage D state');d.equipment032.schema=3;for(const r of d.equipment032.instances){r.ownerId=r.placement==='packed'?(d.identity027?.playerId||'player:1'):null;r.state=EquipmentInstances.state();}d.placement035.schema=2;d.placement035.roomNames={};window.GameProductionSplit?.migrate(d);GameChapterOne.migrateCorrective(d);}
   function validate(d){
-    const s=d.placement035;if(!s||s.schema!==1||Object.keys(s).sort().join()!=='commands,schema')throw Error('Invalid placement state');commands.validate(s.commands);
-    const records=d.equipment032.instances;GameEquipment.validate(records);
-    for(const r of records){
-      if(r.placement==='packed'){if(blockedByWork(r.id,d))throw Error('Packed station owns unfinished work');continue;}
-      if(rules[r.typeId]){const seed=EquipmentInstances.defaults.find(v=>v.id===r.id);if(seed&&JSON.stringify(seed.transform)===JSON.stringify(r.transform))continue;
-        if(!checkRecord(r,records,false).ok)throw Error('Invalid saved placement');}
-    }
-    return true;
+    const s=d.placement035;if(!s||s.schema!==2||Object.keys(s).sort().join()!=='commands,roomNames,schema'||!s.roomNames||Array.isArray(s.roomNames)||Object.entries(s.roomNames).some(([id,n])=>!zones.includes(id)||!validRoomName(n)))throw Error('Invalid placement state');commands.validate(s.commands);const records=d.equipment032.instances;GameEquipment.validate(records);
+    for(const r of records){if(r.placement==='packed'){if(r.ownerId!==(d.identity027?.playerId||'player:1')||packReason(r,d))throw Error('Unsafe packed equipment');continue;}if(rules[r.typeId]&&!authored(r)&&!checkRecord(r,records,false).ok)throw Error('Invalid saved placement');}
+    const containers=records.filter(r=>r.refs.container?.startsWith('storage:')).map(r=>Number(r.refs.container.slice(8)));if(d.storage.length!==14+containers.filter(i=>i>=14).length||containers.some(i=>i>=d.storage.length))throw Error('Orphan storage container');return true;
   }
-  const capture=()=>({schema:1,commands:commands.capture()});
+  const capture=()=>({schema:2,commands:commands.capture(),roomNames:copy(roomNames)});
   GameSave.extend('capture','equipment.placement',function(previous){const d=previous();d.placement035=capture();return d;});
   GameSave.extend('decode','equipment.placement',function(previous,raw){const d=previous(raw);validate(d);return d;});
-  GameSave.extend('restore','equipment.placement',function(previous,d){validate(d);const result=previous(d);commands.restore(d.placement035.commands);window.GamePlacementUI?.cancel();invalidateGeometry();return result;});
+  GameSave.extend('restore','equipment.placement',function(previous,d){validate(d);const result=previous(d);commands.restore(d.placement035.commands);roomNames=copy(d.placement035.roomNames);window.GameMovable?.sync();window.GamePlacementUI?.cancel();invalidateGeometry();return result;});
   GameState.register('placement',{capture},{source:'equipment/placement.js',saved:['placement035'],transient:['client preview','request sequence','validation counters']});
-  return Object.freeze({rules,zones,footprint,protectedArea,centered,check,checkRecord,reachable,blockedByWork,access,execute,request,migrate,validate,capture,get revision(){return commands.revision;},metrics:()=>({checks})});
+  return Object.freeze({rules,zones,footprint,protectedArea,centered,check,checkRecord,reachable,blockedByWork,packReason,access,execute,request,migrate,migrateCorrective,validate,capture,roomName,roomPresets,rename,get revision(){return commands.revision;},metrics:()=>({checks})});
 })();

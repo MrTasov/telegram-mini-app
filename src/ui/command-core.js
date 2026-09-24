@@ -9,7 +9,7 @@ window.CommandCoreUI=(()=>{
   function button(key,fn,cls='menuButton'){const b=node('button',key,cls);b.type='button';b.onclick=fn;return b;}
   const tabs=node('div',null,'campaignTabs');tabs.setAttribute('role','tablist');
   const stage=node('div',null,'coreSections'),links=node('div',null,'campaignLinks');body.append(tabs,stage,links);
-  const tracker=node('section');tracker.id='campaignTracker';el('v010Trackers').append(tracker);
+  const tracker=node('section');tracker.id='campaignTracker';el('v010Trackers').prepend(tracker);
   const trackerToggle=button(null,()=>{trackerExpanded=!trackerExpanded;renderTracker();},'trackerChip');trackerToggle.id='campaignTrackerToggle';
   const trackerMark=node('span',null,'trackerMark'),trackerTitle=node('b','campaign.tracker.title'),trackerChevron=node('span');trackerToggle.append(trackerMark,trackerTitle,trackerChevron);
   const trackerPanel=node('div',null,'trackerPanel');trackerPanel.id='campaignTrackerList';
@@ -46,12 +46,13 @@ window.CommandCoreUI=(()=>{
     }}
     previousObjectives=v.objectives;
     feedback.hidden=!visible||now>=feedbackUntil;tracker.classList.toggle('completed',!feedback.hidden);
-    put(trackerMark,feedback.hidden?'◎':'✓');put(trackerTitle,t(window.GameChapterOne?.active?'chapter1.tracker':'campaign.tracker.title'));put(trackerChevron,trackerExpanded?'⌃':'⌄');
+    const primary=c.objectives.find(o=>o.required&&v.objectives[o.id].active&&!v.objectives[o.id].done);
+    put(trackerMark,feedback.hidden?'◎':'✓');put(trackerTitle,primary?t(primary.hud||primary.title):t(window.GameChapterOne?.active?'chapter1.tracker':'campaign.tracker.title'));put(trackerChevron,trackerExpanded?'⌃':'⌄');
     trackerPanel.hidden=!trackerExpanded;trackerToggle.setAttribute('aria-expanded',String(trackerExpanded));put(trackerOpen,t('campaign.tracker.open'));
     if(!visible||!trackerExpanded)return;
     const signature=[v.revision,JSON.stringify(GameCampaign.facts()),I18n.language].join('|');if(signature===lastTracker)return;lastTracker=signature;
     trackerItems.replaceChildren();const pending=c.objectives.filter(o=>v.objectives[o.id].active&&!v.objectives[o.id].done).sort((a,b)=>Number(b.required)-Number(a.required));
-    for(const o of pending){const row=node('div',null,'trackerObjective');row.append(node('span',o.title));const p=node('small');put(p,progress(o,v.objectives[o.id],GameCampaign.facts()));row.append(p);trackerItems.append(row);if(window.GameChapterOne?.active&&o===pending.find(x=>x.required))trackerItems.append(node('p',o.description,'trackerInstruction'));}
+    for(const o of pending){const row=node('div',null,'trackerObjective');row.append(node('span',o.hud||o.title));const p=node('small');put(p,progress(o,v.objectives[o.id],GameCampaign.facts()));row.append(p);trackerItems.append(row);if(window.GameChapterOne?.active&&o===pending.find(x=>x.required))trackerItems.append(node('p',o.description,'trackerInstruction'));}
     if(!pending.length)trackerItems.append(node('p',v.ready?'campaign.tracker.ready':c.title));
   }
   function progress(o,s,f){
@@ -114,6 +115,15 @@ window.CommandCoreUI=(()=>{
       const groups=GameBaseOverview.snapshot();
       const shape=I18n.language+'|'+GameEquipment.ids.join();if(locale!==shape){locale=shape;const top=scroll.scrollTop||0;scroll.replaceChildren();cards.clear();
         const intro=node('div',null,'coreBaseIntro');intro.append(node('h3','core.base.title'),node('p','core.base.description'));scroll.append(intro);
+        if(window.GamePlacement){
+          const editor=node('div',null,'coreRoomEditor'),room=node('select'),preset=node('select'),custom=node('input'),result=node('small');
+          room.setAttribute('aria-label',t('build.room'));preset.setAttribute('aria-label',t('build.roomPreset'));custom.setAttribute('aria-label',t('build.customName'));custom.maxLength=24;custom.placeholder=t('build.customName');
+          for(const id of GamePlacement.zones){const o=node('option');o.value=id;o.textContent=GamePlacement.roomName(id);room.append(o);}
+          for(const id of ['custom',...GamePlacement.roomPresets]){const o=node('option');o.value=id;o.textContent=t('build.room.'+id);preset.append(o);}
+          preset.onchange=()=>{custom.hidden=preset.value!=='custom';};
+          const save=button('build.rename',()=>{const r=GamePlacement.rename(room.value,{preset:preset.value==='custom'?null:preset.value,custom:preset.value==='custom'?custom.value.trim():''});result.textContent=t(r.ok?'build.renamed':'build.'+r.reason);if(r.ok)for(const o of room.children)o.textContent=GamePlacement.roomName(o.value);});
+          editor.append(node('h4','build.roomNames'),room,preset,custom,save,result);scroll.append(editor);
+        }
         for(const g of groups){const section=node('section',null,'coreBaseGroup');section.append(node('h4',null,'coreGroupTitle'));put(section.firstChild||section.children[0],g.title);const grid=node('div',null,'campaignBaseGrid');section.append(grid);scroll.append(section);
           for(const row of g.rows){const card=node('div',null,'coreSystem');card.dataset.system=row.id;const title=node('h5'),value=node('strong'),detail=node('p');card.append(title,value,detail);grid.append(card);cards.set(g.id+'/'+row.id,{title,value,detail});}
         }scroll.scrollTop=top;
@@ -188,15 +198,15 @@ window.CommandCoreUI=(()=>{
 #commandCoreOverlay .coreChapterSelect.selected{border-color:#a4bd94;background:#30493e;color:#edf0d9}#commandCoreOverlay .coreChapterSelect:disabled{opacity:.45}#commandCoreOverlay .coreChapterSelect[data-state="locked"] small:after{content:' · 🔒'}#commandCoreOverlay .coreChapterSelect[data-state="done"] small:after{content:' · ✓'}
 #commandCoreOverlay .coreChapterHero .coreMainGoal{color:#dbe6ce;margin-top:12px;font-size:12px;border-left:2px solid #a0b783;padding-left:10px}
 #commandCoreOverlay .coreProgressTrack{height:4px;background:#091a21;border-radius:2px;margin-top:8px;overflow:hidden}#commandCoreOverlay .coreProgressFill{height:100%;background:#a3bf88}
-body #v010Trackers{overflow:visible;max-height:none;top:calc(var(--v011-game-top,10px) + 108px)}
-#campaignTracker{position:relative;pointer-events:auto;color:#e4e9dc;text-align:left;height:34px;width:224px;max-width:calc(100vw - 150px);font-size:11px}
+body #v010Trackers{overflow:visible;max-height:none;top:calc(var(--v011-game-top,10px) + 24px)}
+#campaignTracker{position:relative;pointer-events:auto;color:#e4e9dc;text-align:left;height:27px;width:182px;max-width:calc(100vw - 150px);font-size:11px}
 #campaignTracker[hidden],#campaignTracker [hidden]{display:none!important}
-#campaignTracker .trackerChip{height:34px;width:100%;display:flex;align-items:center;gap:7px;padding:5px 9px;border:1px solid #82948055;border-radius:7px;background:#102127bb;color:#dbe6d2;text-align:left;font:inherit;touch-action:manipulation}
-#campaignTracker .trackerChip b{flex:1;font-weight:500}#campaignTracker .trackerMark{font-size:16px;width:16px;color:#bdd5a5}
-#campaignTracker .trackerPanel{position:absolute;top:40px;left:0;width:224px;max-width:calc(100vw - 150px);height:192px;display:flex;flex-direction:column;box-sizing:border-box;padding:8px;border:1px solid #72866d66;border-radius:8px;background:#102127ee;box-shadow:0 6px 20px #0005}
+#campaignTracker .trackerChip{height:27px;width:100%;display:flex;align-items:center;gap:5px;padding:3px 6px;border:1px solid #82948055;border-radius:7px;background:#10212780;color:#dbe6d2;text-align:left;font:inherit;touch-action:manipulation}
+#campaignTracker .trackerChip b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;font-size:10px;text-shadow:0 1px 2px #000}#campaignTracker .trackerMark{font-size:16px;width:16px;color:#bdd5a5}
+#campaignTracker .trackerPanel{position:absolute;top:31px;left:0;width:208px;max-width:calc(100vw - 150px);height:174px;display:flex;flex-direction:column;box-sizing:border-box;padding:6px;border:1px solid #72866d66;border-radius:8px;background:#10212780;box-shadow:0 6px 20px #0005}
 #campaignTracker .trackerItems{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
-#campaignTracker .trackerInstruction{font-size:11px;line-height:1.5;color:#c1d1c8;margin:5px 2px 10px;overflow-wrap:anywhere}
-#campaignTracker .trackerObjective{display:flex;gap:8px;padding:7px 2px;border-bottom:1px solid #ffffff10;font-size:11px;line-height:1.3}#campaignTracker .trackerObjective span{flex:1}#campaignTracker .trackerObjective small{color:#afc49d;font-size:9px;max-width:65px;text-align:right;font-variant-numeric:tabular-nums}
+#campaignTracker .trackerInstruction{font-size:10px;line-height:1.3;color:#f0f2df;margin:5px 2px 10px;overflow-wrap:anywhere}
+#campaignTracker .trackerObjective{display:flex;gap:6px;padding:4px 2px;border-bottom:1px solid #ffffff10;font-size:11px;line-height:1.3}#campaignTracker .trackerObjective span{flex:1}#campaignTracker .trackerObjective small{color:#afc49d;font-size:9px;max-width:65px;text-align:right;font-variant-numeric:tabular-nums}
 #campaignTracker .trackerOpen{height:32px;flex:0 0 32px;border:0;background:#ffffff08;color:#c9dabc;font:inherit;margin-top:5px;border-radius:5px}
 #campaignTracker .trackerFeedback{position:absolute;top:0;left:calc(100% + 7px);width:150px;min-height:34px;box-sizing:border-box;padding:6px 8px;border:1px solid #a7d58d88;border-radius:7px;background:#284636ed;font-size:11px;line-height:1.3;pointer-events:none;animation:objectiveConfirm .25s ease-out}
 #campaignTracker.completed .trackerChip{border-color:#bddda8;background:#294934e8}@keyframes objectiveConfirm{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
@@ -206,5 +216,6 @@ body.v0161Modal #campaignTracker,body:has(.overlay.open) #campaignTracker{displa
 @media(prefers-reduced-motion:reduce){#campaignTracker .trackerFeedback{animation:none}}
 @media(max-height:500px){#commandCoreOverlay .v09Panel{padding:10px}#commandCoreOverlay .v09Header{height:38px;flex-basis:38px}#commandCoreOverlay .campaignTabs{flex-basis:44px}#commandCoreOverlay .campaignLinks{flex-basis:40px}}
 `);
+  v09Style('.coreRoomEditor{display:grid;grid-template-columns:1fr 1fr;gap:8px;border:1px solid #486254;border-radius:9px;padding:10px;margin:10px 0}.coreRoomEditor h4,.coreRoomEditor small{grid-column:1/-1;margin:0;font-size:12px}.coreRoomEditor select,.coreRoomEditor input{min-width:0;background:#193036;color:#e3ebdd;border:1px solid #597268;border-radius:5px;padding:8px}.coreRoomEditor button{margin:0!important;min-height:36px}.trackerPanel{color:#f0f2e6;text-shadow:0 1px 2px #000}');
   select('base');renderTracker();return Object.freeze({show,tick,reset,syncLocation,registerSection,refreshTracker:renderTracker});
 })();

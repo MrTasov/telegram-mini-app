@@ -63,7 +63,7 @@ window.V016Lighting=(()=>{
     if(revision!==shadowRevision){shadowShapes.clear();shadowRevision=revision;droneKey='';}
     const key=dynamic?[revision,Math.round(s.x/2),Math.round(s.y/2),s.range].join(':'):s.id;
     if(dynamic&&key===droneKey)return droneShape;if(!dynamic&&shadowShapes.has(key))return shadowShapes.get(key);
-    const solids=nearSolids(s.x,s.y,s.range).filter(o=>!(scene==='surface'&&s.kind==='wall'&&(o.kind==='baseDecor015'||String(o.id).startsWith('v015prop_')||o.id==='well09'))),points=[],half=s.kind==='flood'?.85:Math.PI,n=s.kind==='flood'?40:64;
+    const solids=nearSolids(s.x,s.y,s.range).filter(o=>o.id!==s.instanceId&&!(scene==='surface'&&s.kind==='wall'&&(o.kind==='baseDecor015'||String(o.id).startsWith('v015prop_')||o.id==='well09'))),points=[],half=s.kind==='flood'?.85:Math.PI,n=s.kind==='flood'?40:64;
     for(let i=0;i<=n;i++){const angle=s.angle-half+2*half*i/n;points.push(V091Light.cast(s.x,s.y,angle,s.range,solids));}
     const result={x:s.x,y:s.y,points};if(dynamic){droneKey=key;droneShape=result;}else shadowShapes.set(key,result);return result;
   }
@@ -152,7 +152,7 @@ window.V016Lighting=(()=>{
     c.drawImage(sprite('flashlight'),0,0);c.restore();}
   function illuminate(){
     const c=buffer(),zoom=V010Camera.zoom,view=V010Camera.view(),served=supplied();c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,mask.width,mask.height);c.setTransform(zoom,0,0,zoom,-camera.x*zoom,-camera.y*zoom);
-    if(scene==='bunker'){bunkerMask(c,served);portalLight(c,served);}else{const dark=(1-daylight())*.64;c.fillStyle='rgba(6,15,31,'+dark+')';c.fillRect(camera.x,camera.y,view.w,view.h);if(dark>.001){c.save();c.globalCompositeOperation='destination-out';for(const s of fixtures())if(active(s,served)&&visibleOnScreen(s.x,s.y,s.range+20))paintFixture(c,s,s.kind==='flood'?'flood':'white');c.restore();}}
+    if(scene==='bunker'){bunkerMask(c,served);portalLight(c,served);c.save();c.globalCompositeOperation='destination-out';for(const r of GameEquipment.records)if(r.typeId==='base_lamp'&&r.placement==='installed'&&served.has(r.refs.device)){const p=GameEquipment.center(r.id);if(visibleOnScreen(p.x,p.y,190))paintFixture(c,{id:r.id,instanceId:r.id,...p,range:170,angle:0,kind:'radial'},'white');}c.restore();}else{const dark=(1-daylight())*.64;c.fillStyle='rgba(6,15,31,'+dark+')';c.fillRect(camera.x,camera.y,view.w,view.h);if(dark>.001){c.save();c.globalCompositeOperation='destination-out';for(const s of fixtures())if(active(s,served)&&visibleOnScreen(s.x,s.y,s.range+20))paintFixture(c,s,s.kind==='flood'?'flood':'white');c.restore();}}
     const beam=V091Light.cone();flashlight(c,beam);localBounce(c,beam?.bounce);if(droneActive()){const d=V014Robots.state,s={x:d.x,y:d.y,range:275,angle:0,kind:'drone'};c.save();c.globalCompositeOperation='destination-out';c.setTransform(1,0,0,1,0,0);c.drawImage(droneField(s),(s.x-s.range-camera.x)*zoom,(s.y-s.range-camera.y)*zoom,s.range*2*zoom,s.range*2*zoom);c.restore();}
     c.setTransform(1,0,0,1,0,0);ctx.save();try{ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.drawImage(mask,camera.x,camera.y,view.w,view.h);}finally{ctx.restore();}
   }

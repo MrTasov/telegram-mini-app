@@ -1,5 +1,5 @@
 {
-  "version": "0.35.1",
+  "version": "0.35.2",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -425,21 +425,27 @@
       "name": "Обычный магазин",
       "icon": "▥",
       "description": "Съёмный магазин АК / M4 · 30 патронов. В рюкзаке хранится пустым."
+    },
+    "base_lamp": {
+      "name": "Напольная лампа",
+      "icon": "💡",
+      "deployable": true,
+      "stackMax": 1
     }
   },
   "recipes": {
     "hammer": {
-      "station": "craft_bench",
+      "station": "utility_workbench",
       "category": "Инструменты",
       "name": "Молот",
       "input": {
-        "iron": 8,
-        "wood": 6,
-        "parts": 2
+        "wood": 2,
+        "iron": 2
       },
       "output": "hammer",
       "qty": 1,
-      "ms": 15000
+      "ms": 3000,
+      "manual": true
     },
     "concrete": {
       "station": "furnace",
@@ -453,7 +459,7 @@
       "ms": 2000
     },
     "fishing_rod": {
-      "station": "craft_bench",
+      "station": "utility_workbench",
       "category": "Инструменты",
       "name": "Удочка",
       "input": {
@@ -462,7 +468,8 @@
       },
       "output": "fishing_rod",
       "qty": 1,
-      "ms": 4000
+      "ms": 4000,
+      "manual": true
     },
     "feed": {
       "station": "feed_craft",
@@ -563,7 +570,7 @@
       "ms": 60000
     },
     "flashlight": {
-      "station": "craft_bench",
+      "station": "utility_workbench",
       "category": "Модули",
       "name": "Тактический фонарь",
       "input": {
@@ -573,10 +580,11 @@
       },
       "output": "flashlight",
       "qty": 1,
-      "ms": 12000
+      "ms": 12000,
+      "manual": true
     },
     "head_mount": {
-      "station": "craft_bench",
+      "station": "utility_workbench",
       "category": "Экипировка",
       "name": "Крепление для фонаря",
       "input": {
@@ -585,7 +593,8 @@
       },
       "output": "head_mount",
       "qty": 1,
-      "ms": 8000
+      "ms": 8000,
+      "manual": true
     },
     "helmet1": {
       "station": "craft_bench",
@@ -625,6 +634,60 @@
       "output": "hmg016",
       "qty": 1,
       "ms": 90000
+    },
+    "pickaxe": {
+      "station": "utility_workbench",
+      "category": "Инструменты",
+      "name": "Кирка",
+      "input": {
+        "wood": 2,
+        "iron": 2
+      },
+      "output": "pickaxe",
+      "qty": 1,
+      "ms": 3000,
+      "manual": true
+    },
+    "axe": {
+      "station": "utility_workbench",
+      "category": "Инструменты",
+      "name": "Топор",
+      "input": {
+        "wood": 2,
+        "iron": 2
+      },
+      "output": "axe",
+      "qty": 1,
+      "ms": 3000,
+      "manual": true
+    },
+    "remote": {
+      "station": "utility_workbench",
+      "category": "Инструменты",
+      "name": "Пульт базы",
+      "input": {
+        "iron": 2,
+        "copper": 1,
+        "parts": 1
+      },
+      "output": "remote",
+      "qty": 1,
+      "ms": 8000,
+      "manual": true
+    },
+    "base_lamp": {
+      "station": "utility_workbench",
+      "category": "Оборудование",
+      "name": "Напольная лампа",
+      "input": {
+        "iron": 2,
+        "copper": 1,
+        "parts": 1
+      },
+      "output": "base_lamp",
+      "qty": 1,
+      "ms": 6000,
+      "manual": true
     }
   },
   "weapons": {
@@ -1989,9 +2052,9 @@
       "workshop": "Мастерская",
       "storage": "Склад",
       "room4": "Медблок",
-      "room5": "Энергоблок",
+      "room5": "Энергосектор",
       "room6": "Кухня",
-      "room7": "Жилая комната",
+      "room7": "Жилая комната и санузел",
       "farm": "Ферма",
       "corridor": "Центральный зал",
       "reserve_l1": "Резервная комната",
@@ -2695,11 +2758,11 @@
       "building018": 1,
       "bunker030": 1,
       "campaign031": 1,
-      "equipment032": 2,
+      "equipment032": 3,
       "headModules033": 1,
       "recovery033": 1,
-      "chapter034": 1,
-      "placement035": 1,
+      "chapter034": 2,
+      "placement035": 2,
       "identity027": 1
     },
     "registeredModules": [

@@ -1,283 +1,352 @@
 {
-  "version": "0.35.1",
-  "patch": "stage-d-clean-restart",
-  "passed": true,
+  "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+  "runtimeUnchanged": true,
+  "version": "0.35.2",
+  "stage": 7,
+  "patch": "stage-d-corrective",
+  "stageAStarted": true,
+  "stageAStatus": "accepted-in-general",
+  "stageBStarted": true,
+  "stageBStatus": "accepted-in-general",
+  "stageC1Started": true,
+  "stageC1Status": "accepted-by-user",
+  "stageC2Started": true,
   "stageDStarted": true,
-  "nextStageStarted": false,
+  "stageEStarted": false,
   "level2Started": false,
-  "runtimeSha256": "7f47d8b939c1c0e522a984e6f8a88b217ab057a52e6e78d2c724349f04132a38",
-  "execution": "All 53 qa/run.cjs groups, split into three checkpointed independent partitions",
-  "filtered": false,
-  "automatedAssertions": 12008,
+  "passed": true,
+  "automatedAssertions": 12271,
   "historicalBaselineAssertions": 477,
+  "ladderContractChanged": true,
+  "filtered": false,
   "runs": [
     {
+      "id": "stage-d-corrective",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 49290
+    },
+    {
       "id": "stage-d",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 12566
-    },
-    {
-      "id": "stage-c2",
-      "exitCode": 0,
-      "elapsedMs": 21576
-    },
-    {
-      "id": "stage-c1-recovery",
-      "exitCode": 0,
-      "elapsedMs": 9357
-    },
-    {
-      "id": "stage-ab-light-audio",
-      "exitCode": 0,
-      "elapsedMs": 3161
-    },
-    {
-      "id": "stage-a-corrective",
-      "exitCode": 0,
-      "elapsedMs": 6093
-    },
-    {
-      "id": "interactions",
-      "exitCode": 0,
-      "elapsedMs": 27775
-    },
-    {
-      "id": "state-saves",
-      "exitCode": 0,
-      "elapsedMs": 15319
-    },
-    {
-      "id": "stage3-differential",
-      "exitCode": 0,
-      "elapsedMs": 41551
-    },
-    {
-      "id": "assets",
-      "exitCode": 0,
-      "elapsedMs": 5657
-    },
-    {
-      "id": "map-workbar",
-      "exitCode": 0,
-      "elapsedMs": 10941
-    },
-    {
-      "id": "localization-controls",
-      "exitCode": 0,
-      "elapsedMs": 57426
-    },
-    {
-      "id": "world-events",
-      "exitCode": 0,
-      "elapsedMs": 18432
-    },
-    {
-      "id": "world-farm",
-      "exitCode": 0,
-      "elapsedMs": 16956
-    },
-    {
-      "id": "character-animation",
-      "exitCode": 0,
-      "elapsedMs": 5781
-    },
-    {
-      "id": "player-visual-fix",
-      "exitCode": 0,
-      "elapsedMs": 1832
-    },
-    {
-      "id": "polish",
-      "exitCode": 0,
-      "elapsedMs": 7885
-    },
-    {
-      "id": "hud-display",
-      "exitCode": 0,
-      "elapsedMs": 10315
-    },
-    {
-      "id": "bunker-floor-cache",
-      "exitCode": 0,
-      "elapsedMs": 2672
+      "elapsedMs": 6933
     },
     {
       "id": "stage-d-repair",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 5159
-    },
-    {
-      "id": "stage-c2-prerequisites",
-      "exitCode": 0,
-      "elapsedMs": 6989
-    },
-    {
-      "id": "build",
-      "exitCode": 0,
-      "elapsedMs": 242
-    },
-    {
-      "id": "stage-b",
-      "exitCode": 0,
-      "elapsedMs": 8669
-    },
-    {
-      "id": "verification",
-      "exitCode": 0,
-      "elapsedMs": 254
-    },
-    {
-      "id": "saves",
-      "exitCode": 0,
-      "elapsedMs": 7706
-    },
-    {
-      "id": "differential",
-      "exitCode": 0,
-      "elapsedMs": 28479
-    },
-    {
-      "id": "controls",
-      "exitCode": 0,
-      "elapsedMs": 18974
-    },
-    {
-      "id": "asset-rendering",
-      "exitCode": 0,
-      "elapsedMs": 2543
-    },
-    {
-      "id": "localization",
-      "exitCode": 0,
-      "elapsedMs": 74630
-    },
-    {
-      "id": "main-menu",
-      "exitCode": 0,
-      "elapsedMs": 121461
-    },
-    {
-      "id": "readiness",
-      "exitCode": 0,
-      "elapsedMs": 17878
-    },
-    {
-      "id": "drone-return",
-      "exitCode": 0,
-      "elapsedMs": 30916
-    },
-    {
-      "id": "master-unarmed",
-      "exitCode": 0,
-      "elapsedMs": 16810
-    },
-    {
-      "id": "corrective-performance",
-      "exitCode": 0,
-      "elapsedMs": 5490
-    },
-    {
-      "id": "polish-visuals",
-      "exitCode": 0,
-      "elapsedMs": 7905
-    },
-    {
-      "id": "audio-pass",
-      "exitCode": 0,
-      "elapsedMs": 6526
-    },
-    {
-      "id": "bunker-r2",
-      "exitCode": 0,
-      "elapsedMs": 4454
+      "elapsedMs": 6674
     },
     {
       "id": "stage-d-visuals",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 2223
+      "elapsedMs": 1944
+    },
+    {
+      "id": "stage-c2",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 22408
+    },
+    {
+      "id": "stage-c2-prerequisites",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 6513
     },
     {
       "id": "stage-c1-light-modules",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 7098
+      "elapsedMs": 6579
+    },
+    {
+      "id": "stage-c1-recovery",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 8727
+    },
+    {
+      "id": "build",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 221
     },
     {
       "id": "stage-ab-corrective",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 6858
+      "elapsedMs": 6487
+    },
+    {
+      "id": "stage-ab-light-audio",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 3318
+    },
+    {
+      "id": "stage-b",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 7681
     },
     {
       "id": "campaign",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 4811
+      "elapsedMs": 4378
+    },
+    {
+      "id": "stage-a-corrective",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 5894
+    },
+    {
+      "id": "verification",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 281
     },
     {
       "id": "regressions",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 19338
+      "elapsedMs": 19850
+    },
+    {
+      "id": "interactions",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 29572
+    },
+    {
+      "id": "saves",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 7708
     },
     {
       "id": "balance",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 1489
+      "elapsedMs": 1456
+    },
+    {
+      "id": "state-saves",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 14790
+    },
+    {
+      "id": "differential",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 28717
     },
     {
       "id": "systems",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 2671
+      "elapsedMs": 2713
+    },
+    {
+      "id": "stage3-differential",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 44443
+    },
+    {
+      "id": "controls",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 18063
     },
     {
       "id": "controls-differential",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 43335
+      "elapsedMs": 47560
+    },
+    {
+      "id": "assets",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 5288
+    },
+    {
+      "id": "asset-rendering",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 2532
     },
     {
       "id": "stage4-differential",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 42699
+      "elapsedMs": 47239
+    },
+    {
+      "id": "map-workbar",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 10568
+    },
+    {
+      "id": "localization",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 77074
     },
     {
       "id": "localization-rendering",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 4043
+      "elapsedMs": 4637
+    },
+    {
+      "id": "localization-controls",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 58266
+    },
+    {
+      "id": "main-menu",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 128147
     },
     {
       "id": "menu-preferences",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 15776
+      "elapsedMs": 16883
+    },
+    {
+      "id": "world-events",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 21233
+    },
+    {
+      "id": "readiness",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 19051
     },
     {
       "id": "corrective",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 17287
+      "elapsedMs": 18912
+    },
+    {
+      "id": "world-farm",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 21784
+    },
+    {
+      "id": "drone-return",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 37776
     },
     {
       "id": "resource-access",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 2416
+      "elapsedMs": 2606
+    },
+    {
+      "id": "character-animation",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 5847
+    },
+    {
+      "id": "master-unarmed",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 19768
     },
     {
       "id": "equipment-integration",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 26004
+      "elapsedMs": 29197
+    },
+    {
+      "id": "player-visual-fix",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 2066
+    },
+    {
+      "id": "corrective-performance",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 6278
     },
     {
       "id": "corrective-visuals",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 3185
+      "elapsedMs": 3215
+    },
+    {
+      "id": "polish",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 8788
+    },
+    {
+      "id": "polish-visuals",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 9589
     },
     {
       "id": "audio-unlock",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 10252
+      "elapsedMs": 10475
+    },
+    {
+      "id": "hud-display",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 11679
+    },
+    {
+      "id": "audio-pass",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 7161
     },
     {
       "id": "bunker-level1",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
       "exitCode": 0,
-      "elapsedMs": 8438
+      "elapsedMs": 9051
+    },
+    {
+      "id": "bunker-floor-cache",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 3124
+    },
+    {
+      "id": "bunker-r2",
+      "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+      "exitCode": 0,
+      "elapsedMs": 5170
     }
   ],
   "limitations": [
-    "Modeled DOM/WebAudio and native Canvas2D; no physical browser/WebView/phone test implied."
+    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "All audio paths are included and decoded; subjective mix requires physical device listening."
   ]
 }

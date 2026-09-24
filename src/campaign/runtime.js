@@ -23,9 +23,9 @@ window.GameCampaign=(()=>{
   const listeners=new Set();let lastFacts='',elapsed=0;
   const ports={facts,actor:id=>GameActors.get(id),permission:actor=>!!GameActors.get(actor.id),access,
     changed(){queueGameSave();for(const fn of listeners)fn();},emit:event=>V010.emit('campaign',event)};
-  const legacyDomain=GameCampaignDomain.create(CampaignDefinitions,ports),chapterOneDomain=GameCampaignDomain.create(ChapterOneDefinitions,ports);
+  const legacyDomain=GameCampaignDomain.create(CampaignDefinitions,ports),chapterOneDomain=GameCampaignDomain.create(ChapterOneDefinitions,ports),previousChapterOneDomain=GameCampaignDomain.create(LegacyChapterOneDefinitions,ports);
   let domain=legacyDomain;
-  const owner=s=>s?.contentRevision===ChapterOneDefinitions.revision?chapterOneDomain:legacyDomain;
+  const owner=s=>s?.contentRevision===ChapterOneDefinitions.revision?chapterOneDomain:s?.contentRevision===LegacyChapterOneDefinitions.revision?previousChapterOneDomain:legacyDomain;
   function refresh(force=false){
     window.GameChapterOne?.observe();
     const f=facts(),signature=Object.values(f).join('|');
