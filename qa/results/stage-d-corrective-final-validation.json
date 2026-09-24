@@ -1,0 +1,26 @@
+{
+  "version": "0.35.2",
+  "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+  "passed": true,
+  "regressionGroups": 54,
+  "automatedAssertions": 12271,
+  "correctiveCases": 87,
+  "saveBoundaries": 55,
+  "allGroupsSameRuntime": true,
+  "performanceScenes": 12,
+  "maximumCurrentEquipment": 42,
+  "registryCap": 48,
+  "placedLamps": 8,
+  "inventoryInstances": true,
+  "sameInstancePackUp": true,
+  "saveVersion": 14,
+  "report": "STAGE_D_CORRECTIVE_REPORT_RU.md",
+  "nextStageStarted": false,
+  "manualAcceptance": "pending",
+  "limitations": [
+    "CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.",
+    "Moving-light scenes include continuously changing drone positions and player aim; night scene runs all eight searchlights.",
+    "Command dispatch excludes OS/browser delivery. Navigation covers complete path queries.",
+    "Heap deltas include harness and serialization allocations, not a browser/device memory budget."
+  ]
+}

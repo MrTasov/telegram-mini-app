@@ -1,0 +1,44 @@
+{
+  "name": "last-base",
+  "version": "0.35.1",
+  "private": true,
+  "description": "LAST BASE 0.35.1 \u2014 Stage D rebuilt from clean 0.34.0: limited equipment placement and Pack Up.",
+  "scripts": {
+    "build": "node tools/build.cjs",
+    "check": "node tools/build.cjs --check && node qa/verify.cjs",
+    "test": "node qa/run.cjs",
+    "bench": "node qa/performance.cjs",
+    "assets": "node tools/assets.cjs",
+    "locales": "node tools/locales.cjs",
+    "bench:stages": "node qa/compare-readiness-performance.cjs",
+    "bench:ux": "node qa/compare-corrective-performance.cjs",
+    "bench:world-farm": "node qa/compare-world-farm-performance.cjs",
+    "bench:audio": "node qa/audio-performance.cjs",
+    "test:audio": "node qa/audio-pass.cjs",
+    "test:bunker": "node qa/bunker-level1.cjs",
+    "test:campaign": "node qa/campaign.cjs",
+    "bench:campaign": "node qa/campaign-performance.cjs",
+    "test:campaign:patch": "node qa/stage-a-corrective.cjs",
+    "bench:campaign:patch": "node qa/stage-a-corrective-performance.cjs",
+    "test:equipment": "node qa/stage-b.cjs",
+    "bench:equipment": "node --expose-gc qa/stage-b-performance.cjs",
+    "test:corrective": "node qa/stage-ab-corrective.cjs && node qa/stage-ab-light-audio.cjs",
+    "bench:corrective": "node --expose-gc qa/stage-ab-performance.cjs",
+    "package:corrective": "node tools/package-stage-ab.cjs",
+    "test:c1": "node qa/stage-c1-light-modules.cjs && node qa/stage-c1-recovery.cjs",
+    "bench:c1": "node --expose-gc qa/stage-c1-performance.cjs",
+    "package:c1": "node tools/package-stage-c1.cjs",
+    "test:c2": "node qa/stage-c2-prerequisites.cjs && node qa/stage-c2.cjs",
+    "bench:c2": "node --expose-gc qa/stage-c2-performance.cjs",
+    "package:c2": "node tools/package-stage-c2.cjs",
+    "test:d": "node qa/stage-d.cjs && node qa/stage-d-repair.cjs && node qa/stage-d-visuals.cjs",
+    "bench:d": "node --expose-gc qa/stage-d-performance.cjs",
+    "package:d": "node tools/package-stage-d.cjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
