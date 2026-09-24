@@ -7,7 +7,7 @@ window.GameBaseOverview=(()=>{
     const a=V09Power.allocation(),battery=V010Energy.battery,robot=V014Robots.state;
     const rows=[],group=(id)=>{const g={id,title:t('group.'+id),rows:[]};rows.push(g);return g;};
     const add=(g,id,title,value,detail='')=>g.rows.push({id,title,value,detail});
-    const deviceStatus=id=>{if(V09Power.devices[id]?.present&&!V09Power.devices[id].present())return 'packed';if(GameEquipment.recipeStation(id)==='utility_workbench'&&GameEquipment.present(id))return V09Craft.visualState(id).working?'working':'standby';const d=V09Power.devices[id];return !d||!d.enabled?'off':!V09Power.roomEnabled[d.room]?'circuitOff':!a.served.has(id)?(a.supply>0?'waitingPower':'noPower'):d.active()?'working':'standby';};
+    const deviceStatus=id=>{if(V09Power.devices[id]?.present&&!V09Power.devices[id].present())return 'packed';if(GameEquipment.recipeStation(id)==='utility_workbench'&&GameEquipment.present(id))return V09Craft.visualState(id).working?'working':'standby';const d=V09Power.devices[id];return !d||!d.enabled?'off':!a.served.has(id)?(a.supply>0?'waitingPower':'noPower'):d.active()?'working':'standby';};
     let g=group('energy');
     add(g,'generator',t('generator'),GameEquipment.present('generator')?t(V09Power.running&&V09Power.fuel>0?'working':'off'):t('packed'),t('generator.capacity',{power:num(V09Power.supply,2)}));
     add(g,'fuel',t('tank'),GameEquipment.present('tank')?t('tank.amount',{amount:num(V09Power.fuel,1)}):t('packed'),t('tank.detail',{amount:num(V09Power.fuel,1),capacity:num(V09Power.capacity)}));
@@ -42,7 +42,7 @@ window.GameBaseOverview=(()=>{
     add(g,'surfaceLights',t('surfaceLights'),t('devices.served',{on:num(lights.filter(d=>a.served.has(d.id)).length),total:num(lights.length)}));
     g=group('rooms');
     for(const room of BunkerLayout.roomData){
-      const devices=Object.values(V09Power.devices).filter(d=>d.room===room.id),enabled=V09Power.roomEnabled[room.id],served=devices.filter(d=>a.served.has(d.id)).length;
+      const devices=Object.values(V09Power.devices).filter(d=>d.room===room.id&&(!d.present||d.present())),enabled=true,served=devices.filter(d=>a.served.has(d.id)).length;
       const door=v09Doors.find(d=>d.room===room.id),broken=door&&V018Build.isBroken(door.id);
       add(g,room.id,window.GamePlacement?GamePlacement.roomName(room.id):t('room.'+room.id),t(!enabled?'circuitOff':a.supply<=0?'noPower':devices.some(d=>d.enabled&&d.active()&&!a.served.has(d.id))?'waitingPower':'powered'),t(a.served.has('light_'+room.id)?'light.on':'light.off')+(door?' · '+t(broken?'door.broken':a.served.has('door_'+room.id)?'door.auto':'door.manual'):''));
     }

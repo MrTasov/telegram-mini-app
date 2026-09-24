@@ -13,7 +13,7 @@ window.GameInput=(()=>{
     return navigator.maxTouchPoints>0?'MOBILE':'PC';
   }
   let mode=preference==='AUTO'?detect():preference;
-  const active=()=>pcPress!==null||objectPointer!==null||leftPointerId!==null||rightPointerId!==null||!!window.V010Camera?.touchActive;
+  const active=()=>!!window.GamePickup?.active||pcPress!==null||objectPointer!==null||leftPointerId!==null||rightPointerId!==null||!!window.V010Camera?.touchActive;
   function release(){
     const press=pcPress;pcPress=null;
     if(press){try{canvas.releasePointerCapture?.(press.id);}catch(_){} }
@@ -88,7 +88,7 @@ window.GameInput=(()=>{
       }
       return;
     }
-    if(objectPointer||leftPointerId!==null||rightPointerId!==null)handleWorldPointerMove(e);
+    if(window.GamePickup?.active||objectPointer||leftPointerId!==null||rightPointerId!==null)handleWorldPointerMove(e);
   }
   function up(e){
     if(routeSurface('up',e))return;

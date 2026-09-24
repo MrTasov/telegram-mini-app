@@ -5,7 +5,7 @@ window.GameChapterOne=(()=>{
  const copy=v=>JSON.parse(JSON.stringify(v)),keys=['tools','fuel','tank','power','core','storage','supplies','workbenchCrafted','workbenchPlaced','hammer','pickaxe','axe'];
  function fresh(enabled=false){return {schema:2,recovered:{wood:0,iron:0,stone:0},preset:enabled?ChapterOnePreset.id:null,seen:Object.fromEntries(keys.map(k=>[k,false])),repaired:[],nightStartDay:null,nightSurvived:false};}
  let state=fresh(),previousTime=null;
- const active=()=>[ChapterOnePreset.id,LegacyChapterOnePreset.id].includes(state.preset);
+ const active=()=>[ChapterOnePreset.id,PreviousChapterOnePreset.id,LegacyChapterOnePreset.id].includes(state.preset);
  const preset=()=>state.preset===LegacyChapterOnePreset.id?LegacyChapterOnePreset:ChapterOnePreset;
  const time=()=>WorldClock.day*1440+WorldClock.minute;
  function mark(key){if(!active()||state.seen[key])return false;state.seen[key]=true;queueGameSave();return true;}
@@ -24,7 +24,7 @@ window.GameChapterOne=(()=>{
  // Keep only the minimum bootstrap budget available. Extra resources remain
  // freely spendable; paid jobs count, so batching/cancel/refund cannot bypass it.
  function spendAllowed(input,batches=1,output){
-   if(state.preset!==ChapterOnePreset.id)return true;
+   if(![ChapterOnePreset.id,PreviousChapterOnePreset.id].includes(state.preset))return true;
    const q=V09Craft.craftQueue.capture(),jobs=Object.values(V09Craft.capture().jobs).filter(Boolean).concat(Object.values(q.queues).flat());
    const has=type=>(V010Progression.state.byResource.produced[type]||0)>0||[...bag,...V013Inventory.items,...storageChests.flatMap(c=>c.items)].some(s=>s?.type===type)||jobs.some(j=>V09Craft.recipes[j.recipe]?.output===type);
    const missing=['hammer','pickaxe','axe'].filter(type=>!has(type)&&type!==output).length;
@@ -60,9 +60,9 @@ window.GameChapterOne=(()=>{
  function facts(){reconcileRepairs();return {c1Storage:state.seen.storage,c1Supplies:state.seen.supplies,c1WorkbenchCrafted:state.seen.workbenchCrafted,c1WorkbenchPlaced:state.seen.workbenchPlaced,c1Hammer:state.seen.hammer,c1Pickaxe:state.seen.pickaxe,c1Axe:state.seen.axe,c1Tools:state.seen.tools,c1Fuel:state.seen.fuel,c1Tank:state.seen.tank,c1Power:state.seen.power,c1Core:state.seen.core,c1Concrete:V010Progression.state.byResource.produced.concrete||0,c1Repairs:state.repaired.length,c1Night:state.nightSurvived};}
  function validate(d){
    const s=d.chapter034,fail=()=>{throw Error('Invalid Chapter 1 state');};
-   if(!s||Object.keys(s).sort().join()!=='nightStartDay,nightSurvived,preset,recovered,repaired,schema,seen'||s.schema!==2||![null,ChapterOnePreset.id,LegacyChapterOnePreset.id].includes(s.preset)||!s.seen||Object.keys(s.seen).sort().join()!==keys.slice().sort().join()||keys.some(k=>typeof s.seen[k]!=='boolean')||!Array.isArray(s.repaired)||new Set(s.repaired).size!==s.repaired.length||s.repaired.some(id=>!(s.preset===LegacyChapterOnePreset.id?LegacyChapterOnePreset:ChapterOnePreset).criticalRepairs.includes(id))||typeof s.nightSurvived!=='boolean'||s.nightStartDay!==null&&(!Number.isSafeInteger(s.nightStartDay)||s.nightStartDay<1||s.nightStartDay>d.lighting016.day))fail();
+   if(!s||Object.keys(s).sort().join()!=='nightStartDay,nightSurvived,preset,recovered,repaired,schema,seen'||s.schema!==2||![null,ChapterOnePreset.id,PreviousChapterOnePreset.id,LegacyChapterOnePreset.id].includes(s.preset)||!s.seen||Object.keys(s.seen).sort().join()!==keys.slice().sort().join()||keys.some(k=>typeof s.seen[k]!=='boolean')||!Array.isArray(s.repaired)||new Set(s.repaired).size!==s.repaired.length||s.repaired.some(id=>!(s.preset===LegacyChapterOnePreset.id?LegacyChapterOnePreset:ChapterOnePreset).criticalRepairs.includes(id))||typeof s.nightSurvived!=='boolean'||s.nightStartDay!==null&&(!Number.isSafeInteger(s.nightStartDay)||s.nightStartDay<1||s.nightStartDay>d.lighting016.day))fail();
    if(!s.recovered||Object.keys(s.recovered).sort().join()!=='iron,stone,wood'||Object.values(s.recovered).some(n=>!Number.isInteger(n)||n<0||n>1000))fail();
-   if(s.preset===ChapterOnePreset.id?d.campaign031?.contentRevision!==5:s.preset===LegacyChapterOnePreset.id?d.campaign031?.contentRevision!==4:[4,5].includes(d.campaign031?.contentRevision))fail();
+   if(s.preset===ChapterOnePreset.id?d.campaign031?.contentRevision!==6:s.preset===PreviousChapterOnePreset.id?d.campaign031?.contentRevision!==5:s.preset===LegacyChapterOnePreset.id?d.campaign031?.contentRevision!==4:[4,5,6].includes(d.campaign031?.contentRevision))fail();
    if(s.preset===null&&(keys.some(k=>s.seen[k])||s.repaired.length||s.nightStartDay!==null||s.nightSurvived))fail();
    if(s.nightStartDay!==null&&d.lighting016.day*1440+d.lighting016.minute<s.nightStartDay*1440+ChapterOnePreset.nightStart)fail();
    if(s.nightSurvived&&(s.nightStartDay===null||d.lighting016.day*1440+d.lighting016.minute<(s.nightStartDay+1)*1440+ChapterOnePreset.nightEnd))fail();return true;

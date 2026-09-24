@@ -3,7 +3,7 @@ window.GameFlow=(()=>{
   const reasons=new Set();
   return Object.freeze({
     get paused(){return reasons.size>0||!GameState.session.ready||!!window.MainMenu?.active||playerDead||document.hidden;},
-    pause(reason='explicit'){reasons.add(reason);window.GameGathering?.resetTiming();stopControls(true);},
+    pause(reason='explicit'){window.GamePickup?.cancel();reasons.add(reason);window.GameGathering?.resetTiming();stopControls(true);},
     resume(reason='explicit'){reasons.delete(reason);window.GameGathering?.resetTiming();},
     get reasons(){return [...reasons];}
   });

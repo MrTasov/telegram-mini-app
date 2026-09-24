@@ -3,11 +3,12 @@
 window.GamePlacement=(()=>{
   const rules=EquipmentInstances.placement,copy=v=>JSON.parse(JSON.stringify(v)),zones=EquipmentInstances.rooms;
   const roomPresets=['workshop','storage','power','armory','medical','drone','living'];
-  let sequence=0,checks=0,roomNames={};
+  let sequence=0,checks=0,roomNames={};const pickups=new Map();let pickupSequence=0;
   const fail=reason=>({ok:false,reason});
   const overlap=(a,b,pad=0)=>a.x<b.x+b.w+pad&&a.x+a.w>b.x-pad&&a.y<b.y+b.h+pad&&a.y+a.h>b.y-pad;
   const footprint=r=>GameFootprints.forRecord(r);
-  function protectedArea(room){const d=BunkerLayout.door(room);return d.horizontal?{x:d.x-24,y:d.y-62,w:d.w+48,h:d.h+124}:{x:d.x-62,y:d.y-24,w:d.w+124,h:d.h+48};}
+  function protectedArea(room){if(room==='corridor'){const r=BunkerLayout.rooms.corridor;return {x:(r.left+r.right)/2-56,y:r.top,w:112,h:r.bottom-r.top};}const d=BunkerLayout.door(room);return d.horizontal?{x:d.x-24,y:d.y-62,w:d.w+48,h:d.h+124}:{x:d.x-62,y:d.y-24,w:d.w+124,h:d.h+48};}
+  function protectedAreas(room){if(room!=='corridor')return [protectedArea(room)];return [protectedArea(room),...zones.map(protectedArea),...[BunkerLayout.core,BunkerLayout.up,BunkerLayout.down,...BunkerLayout.stairs].map(b=>({x:b.x-45,y:b.y-45,w:b.w+90,h:b.h+90}))];}
   function centered(typeId,room,x,y,turn=0){const rotation=EquipmentInstances.turns[turn],b=footprint({typeId,transform:{x:0,y:0,rotation,room}});return {x:Math.round((x-b.w/2-b.x)/2)*2,y:Math.round((y-b.h/2-b.y)/2)*2,rotation,scene:'bunker',room};}
   function blockedByWork(id,data){
     if(!EquipmentInstances.definitions[(data?.equipment032.instances||GameEquipment.capture()).find(r=>r.id===id)?.typeId]?.recipeStation)return false;
@@ -30,10 +31,11 @@ window.GamePlacement=(()=>{
     const r=BunkerLayout.rooms[room],bodies=roomBodies(room,records),step=20,radius=18,cols=Math.floor((r.right-r.left)/step),rows=Math.floor((r.bottom-r.top)/step),cells=new Uint8Array(cols*rows),seen=new Uint8Array(cols*rows);
     const pos=i=>({x:r.left+(i%cols+.5)*step,y:r.top+(Math.floor(i/cols)+.5)*step});
     for(let i=0;i<cells.length;i++){const p=pos(i);cells[i]=p.x<r.left+radius+9||p.x>r.right-radius-9||p.y<r.top+radius+9||p.y>r.bottom-radius-9||bodies.some(b=>rectHit(p.x,p.y,radius,b))?1:0;}
-    const d=BunkerLayout.door(room),entry=d.horizontal?{x:d.x+d.w/2,y:r.top+40}:{x:r.side==='left'?r.right-40:r.left+40,y:d.y+d.h/2};let start=-1,best=Infinity;
+    const d=BunkerLayout.door(room),entry=room==='corridor'?{x:(r.left+r.right)/2,y:r.top+40}:d.horizontal?{x:d.x+d.w/2,y:r.top+40}:{x:r.side==='left'?r.right-40:r.left+40,y:d.y+d.h/2};let start=-1,best=Infinity;
     for(let i=0;i<cells.length;i++)if(!cells[i]){const p=pos(i),n=Math.hypot(p.x-entry.x,p.y-entry.y);if(n<best){best=n;start=i;}}
     if(start<0||best>45)return false;const queue=[start];seen[start]=1;
     for(let k=0;k<queue.length;k++){const i=queue[k],x=i%cols,y=Math.floor(i/cols);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,n=ny*cols+nx;if(nx<0||nx>=cols||ny<0||ny>=rows||cells[n]||seen[n])continue;seen[n]=1;queue.push(n);}}
+    if(room==='corridor'&&!zones.every(id=>{const door=BunkerLayout.door(id),side=BunkerLayout.rooms[id].side,p=door.horizontal?{x:door.x+door.w/2,y:door.y-35}:{x:door.x+(side==='left'?50:-35),y:door.y+door.h/2};return queue.some(i=>{const q=pos(i);return Math.hypot(q.x-p.x,q.y-p.y)<32;});}))return false;
     const accessible=(v,strict)=>{const b=footprint(v),f=GameFootprints.front(v),range=EquipmentInstances.definitions[v.typeId].range-4;return queue.some(i=>{const p=pos(i),q=contactPoint(b,p.x,p.y);return Math.hypot(p.x-q.x,p.y-q.y)<=range&&(!strict||Math.hypot(p.x-f.x,p.y-f.y)<28);});};
     if(!records.filter(v=>v.placement==='installed'&&v.transform.room===room).every(v=>{
       if(!accessible(v,!authored(v)))return false;
@@ -50,7 +52,7 @@ window.GamePlacement=(()=>{
     if(!rule||!t||t.scene!=='bunker'||!rule.rooms.includes(t.room)||!EquipmentInstances.turns.includes(t.rotation)||![t.x,t.y].every(Number.isFinite))return fail('room');
     const r=BunkerLayout.rooms[t.room],body=footprint(record);
     if(body.x<r.left+10||body.y<r.top+10||body.x+body.w>r.right-10||body.y+body.h>r.bottom-10)return fail('bounds');
-    if(overlap(body,protectedArea(t.room)))return fail('door');
+    if(protectedAreas(t.room).some(area=>overlap(body,area)))return fail('door');
     const others=records.filter(v=>v.id!==record.id);if(roomBodies(t.room,others).some(b=>overlap(body,b,1)))return fail('overlap');
     if(occupants&&BunkerLayout.occupants('bunker').some(a=>rectHit(a.x,a.y,(a.radius||14)+2,body)))return fail('occupied');
     if(!reachable(t.room,others.concat(record)))return fail('passage');return {ok:true,record:copy(record)};
@@ -63,24 +65,30 @@ window.GamePlacement=(()=>{
   function access(actor){return !actor.dead&&actor.scene==='bunker'&&(actor.entity.floor??1)===1;}
   function coreAccess(actor){return GameCampaign.access(actor,BunkerLayout.core.id,false).available;}
   function make(typeId,actorId){const rule=rules[typeId];if(!rule?.craftable)return fail('type');if(GameEquipment.ids.length>=48||GameEquipment.capture().filter(r=>r.typeId===typeId).length>=rule.limit)return fail('limitReached');
+    if(GameCarried.free()<0)return fail('inventoryFull');
     const record=GameEquipment.create(typeId,centered(typeId,'reserve_l1',1900,480),actorId,typeId==='storage_crate'?storageChests.length:undefined),next=GameEquipment.capture().concat(record);GameEquipment.validate(next);
     if(Object.entries(rule.cost).some(([t,n])=>V010Inventory.materialCount(t)<n))return fail('materials');
     if(window.GameChapterOne&&!GameChapterOne.spendAllowed(rule.cost,1,typeId))return fail('bootstrapReserve');
     if(!V010Inventory.consumeMaterials(rule.cost,1,typeId))return fail('materials');
-    if(typeId==='storage_crate')storageChests.push({name:'',icon:'📦',items:[]});GameEquipment.change(record);V09Craft.syncInstances();window.GameMovable?.sync();window.GameChapterOne?.recordAction('crafted',record);return {ok:true,instanceId:record.id,placement:'packed'};
+    if(typeId==='storage_crate')storageChests.push({name:'',icon:'📦',items:[]});GameEquipment.change(record);if(!GameCarried.add(record.id))throw Error('Carried slot changed during synchronous craft');V09Craft.syncInstances();window.GameMovable?.sync();window.GameChapterOne?.recordAction('crafted',record);return {ok:true,instanceId:record.id,placement:'packed'};
   }
   function perform(c,actor){const p=c.payload||{};if(p.geometry!==geometryRevision)return fail('world_changed');
     if(c.action==='craft'){if(!coreAccess(actor))return fail('out_of_reach');return make(c.instanceId.slice(8),actor.id);}
     if(c.action==='rename'){if(!coreAccess(actor))return fail('out_of_reach');const room=c.instanceId.slice(5),name=p.name;if(!validRoomName(name))return fail('roomName');roomNames[room]=copy(name);return {ok:true,room};}
     const r=GameEquipment.get(c.instanceId);if(!r||!rules[r.typeId])return fail('protected');
-    if(c.action==='pack'){if(r.placement!=='installed')return fail('packed');if(!coreAccess(actor)&&!GameEquipmentRuntime.access(actor,r))return fail('out_of_reach');const reason=packReason(r);if(reason)return fail(reason);GameEquipment.change({...copy(r),placement:'packed',ownerId:actor.id});}
-    else if(c.action==='place'){if(r.ownerId!==actor.id)return fail('actor_denied');const result=check(c.instanceId,p.transform);if(!result.ok)return result;GameEquipment.change(result.record);window.GameChapterOne?.recordAction('placed',result.record);}
+    if(c.action==='pack'){if(r.placement!=='installed')return fail('packed');if(!GameEquipmentRuntime.access(actor,r))return fail('out_of_reach');const reason=packReason(r);if(reason)return fail(reason);if(GameCarried.free()<0)return fail('inventoryFull');const hold=pickups.get(actor.id);if(!hold||hold.id!==r.id||hold.token!==p.pickupToken||performance.now()-hold.startedAt<3000)return fail('holdRequired');if(!pickupValid(actor,hold))return fail('pickupChanged');GameEquipment.change({...copy(r),placement:'packed',ownerId:actor.id});if(!GameCarried.add(r.id))throw Error('Carried slot changed during synchronous pickup');pickups.delete(actor.id);}
+    else if(c.action==='place'){if(r.ownerId!==actor.id||!GameCarried.owns(r.id))return fail('actor_denied');const result=check(c.instanceId,p.transform);if(!result.ok)return result;GameEquipment.change(result.record);GameCarried.remove(r.id);window.GameChapterOne?.recordAction('placed',result.record);}
     else return fail('action');
     V09Craft.syncInstances();window.GameMovable?.sync();invalidateGeometry();return {ok:true,instanceId:r.id,placement:c.action==='pack'?'packed':'installed'};
   }
   const commands=EquipmentCommands.create({get:id=>id.startsWith('catalog:')&&Object.hasOwn(rules,id.slice(8))||id.startsWith('room:')&&zones.includes(id.slice(5))?{id}:GameEquipment.get(id)}, {actor:id=>GameActors.get(id),authorized:a=>a.id===GameActors.localId,access,perform,changed:()=>{queueGameSave();v09PowerChanged();window.GameBuildableInventory?.render();}});
   function execute(c){return GameFlow.paused?{ok:false,reason:'world_paused',revision:commands.revision}:commands.execute(c);}
-  function request(selection,action,transform){if(typeof selection!=='string')return fail('invalid_command');const instanceId=action==='craft'?(selection.startsWith('catalog:')?selection:'catalog:'+selection):selection;return execute({actorId:GameActors.localId,instanceId,action,payload:{geometry:geometryRevision,...(transform?{transform:copy(transform)}:{})},expectedRevision:commands.revision,requestId:'placement:'+commands.revision+':'+(++sequence)});}
+  function request(selection,action,transform,pickupToken){if(typeof selection!=='string')return fail('invalid_command');const instanceId=action==='craft'?(selection.startsWith('catalog:')?selection:'catalog:'+selection):selection;return execute({actorId:GameActors.localId,instanceId,action,payload:{geometry:geometryRevision,...(pickupToken?{pickupToken}:{}),...(transform?{transform:copy(transform)}:{})},expectedRevision:commands.revision,requestId:'placement:'+commands.revision+':'+(++sequence)});}
+  function pickupFingerprint(r){return JSON.stringify([r,r.refs.device?V09Power.devices[r.refs.device]?.enabled:null,r.refs.job?V09Craft.craftQueue.paused[r.id]:null,packReason(r)]);}
+  function pickupValid(actor,h){const r=GameEquipment.get(h.id);return !!r&&r.placement==='installed'&&access(actor)&&!GameFlow.paused&&!menuOpen&&GameEquipmentRuntime.access(actor,r)&&Math.hypot(actor.entity.x-h.x,actor.entity.y-h.y)<=3&&h.fingerprint===pickupFingerprint(r)&&!packReason(r);}
+  function beginPickup(id,actorId=GameActors.localId){const actor=GameActors.get(actorId),r=GameEquipment.get(id);if(!actor||actor.id!==GameActors.localId)return fail('actor_denied');if(!r||!rules[r.typeId])return fail('protected');if(GameFlow.paused||menuOpen)return fail('world_paused');if(r.placement!=='installed')return fail('packed');if(!access(actor)||!GameEquipmentRuntime.access(actor,r))return fail('out_of_reach');const reason=packReason(r);if(reason)return fail(reason);if(GameCarried.free()<0)return fail('inventoryFull');const h={id,token:'pickup:'+actor.id+':'+(++pickupSequence),startedAt:performance.now(),fingerprint:pickupFingerprint(r),x:actor.entity.x,y:actor.entity.y,revision:commands.revision,geometry:geometryRevision};pickups.set(actor.id,h);return {ok:true,...h};}
+  function cancelPickup(actorId=GameActors.localId){pickups.delete(actorId);}
+  function pollPickup(token,actorId=GameActors.localId){const h=pickups.get(actorId),a=GameActors.get(actorId);return !!h&&h.token===token&&!!a&&pickupValid(a,h);}
   function validRoomName(n){return !!n&&Object.keys(n).sort().join()==='custom,preset'&&(n.preset===null||roomPresets.includes(n.preset))&&typeof n.custom==='string'&&n.custom.length<=24&&!/[<>\u0000-\u001f\u007f]/.test(n.custom)&&(n.preset===null?!!n.custom.trim():n.custom==='');}
   function roomName(id){const n=roomNames[id];return n?(n.preset?I18n.t('build.room.'+n.preset):n.custom):I18n.t('core.room.'+id);}
   function rename(room,name){return execute({actorId:GameActors.localId,instanceId:'room:'+room,action:'rename',payload:{geometry:geometryRevision,name},expectedRevision:commands.revision,requestId:'room-name:'+commands.revision+':'+(++sequence)});}
@@ -95,7 +103,7 @@ window.GamePlacement=(()=>{
   const capture=()=>({schema:2,commands:commands.capture(),roomNames:copy(roomNames)});
   GameSave.extend('capture','equipment.placement',function(previous){const d=previous();d.placement035=capture();return d;});
   GameSave.extend('decode','equipment.placement',function(previous,raw){const d=previous(raw);validate(d);return d;});
-  GameSave.extend('restore','equipment.placement',function(previous,d){validate(d);const result=previous(d);commands.restore(d.placement035.commands);roomNames=copy(d.placement035.roomNames);window.GameMovable?.sync();window.GamePlacementUI?.cancel();invalidateGeometry();return result;});
+  GameSave.extend('restore','equipment.placement',function(previous,d){validate(d);const result=previous(d);commands.restore(d.placement035.commands);pickups.clear();window.GamePickup?.cancel();roomNames=copy(d.placement035.roomNames);window.GameMovable?.sync();window.GamePlacementUI?.cancel();invalidateGeometry();return result;});
   GameState.register('placement',{capture},{source:'equipment/placement.js',saved:['placement035'],transient:['client preview','request sequence','validation counters']});
-  return Object.freeze({rules,zones,footprint,protectedArea,centered,check,checkRecord,reachable,blockedByWork,packReason,access,execute,request,migrate,migrateCorrective,validate,capture,roomName,roomPresets,rename,get revision(){return commands.revision;},metrics:()=>({checks})});
+  return Object.freeze({rules,zones,footprint,protectedArea,protectedAreas,centered,check,checkRecord,reachable,blockedByWork,packReason,access,execute,request,migrate,migrateCorrective,validate,capture,roomName,roomPresets,rename,beginPickup,cancelPickup,pollPickup,get revision(){return commands.revision;},metrics:()=>({checks})});
 })();

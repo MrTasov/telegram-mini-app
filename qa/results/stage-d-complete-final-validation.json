@@ -1,0 +1,32 @@
+{
+  "version": "0.35.3",
+  "runtimeSha256": "ab1eb8124249f52ae9c8c8e2f30e2bacde7bfe68af99234c8d1e9486eac37505",
+  "passed": true,
+  "regressionGroups": 55,
+  "automatedAssertions": 12485,
+  "correctiveCases": 87,
+  "completeCorrectiveCases": 51,
+  "saveBoundaries": 78,
+  "allGroupsSameRuntime": true,
+  "performanceScenes": 12,
+  "maximumCurrentEquipment": 42,
+  "registryCap": 48,
+  "placedLamps": 8,
+  "inventoryInstances": true,
+  "realBackpackSlots": true,
+  "pickupHoldMs": 3000,
+  "sharedBaseControl": true,
+  "roomPriorityGameplay": false,
+  "sameInstancePackUp": true,
+  "saveVersion": 15,
+  "report": "STAGE_D_COMPLETE_REPORT_RU.md",
+  "nextStageStarted": false,
+  "manualAcceptance": "pending",
+  "limitations": [
+    "CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.",
+    "Moving-light scenes include continuously changing drone positions and player aim; night scene runs all eight searchlights.",
+    "Command dispatch excludes OS/browser delivery. Navigation covers complete path queries.",
+    "Heap deltas include harness and serialization allocations, not a browser/device memory budget.",
+    "Maximum-equipment comparison enables the same eight lamps in both versions; production is queued but deliberately disabled so power allocation policy does not confound render cost."
+  ]
+}

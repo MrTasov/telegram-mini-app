@@ -1,5 +1,5 @@
 {
-  "version": "0.35.2",
+  "version": "0.35.3",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -429,6 +429,12 @@
     "base_lamp": {
       "name": "Напольная лампа",
       "icon": "💡",
+      "deployable": true,
+      "stackMax": 1
+    },
+    "equipment_case": {
+      "name": "Оборудование базы",
+      "icon": "📦",
       "deployable": true,
       "stackMax": 1
     }
@@ -2733,6 +2739,8 @@
       "recovery033",
       "chapter034",
       "placement035",
+      "carry0353",
+      "control0353",
       "identity027",
       "saveVersion"
     ],
@@ -2763,6 +2771,8 @@
       "recovery033": 1,
       "chapter034": 2,
       "placement035": 2,
+      "carry0353": 1,
+      "control0353": 1,
       "identity027": 1
     },
     "registeredModules": [
@@ -2968,10 +2978,6 @@
       "snapshot",
       "restore",
       "validate",
-      "setRoomPriority",
-      "setDevicePriority",
-      "roomPriority",
-      "devicePriority",
       "open",
       "remainingTime",
       "flow"
@@ -3400,6 +3406,7 @@
       "reload",
       "unload",
       "setEnabled",
+      "applyEnabled",
       "reachable",
       "clear",
       "support",

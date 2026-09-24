@@ -44,7 +44,7 @@ window.V0141DroneUI=(()=>{
   function refreshGrid(side){const grid=grids[side],a=slots(side),count=size(side);
     while(grid.children.length>count)grid.lastChild.remove();
     while(grid.children.length<count){const i=grid.children.length,b=v09Button('',()=>{if(performance.now()<suppressUntil||window.V010Inventory?.clickSuppressed())return;selected={side,i};refresh();});b.dataset.v010Container=side==='bag'?'bag':'drone';b.dataset.v010Index=String(i);b.dataset.droneSide=side;b.dataset.droneIndex=String(i);b.className='menuButton droneItemCell';grid.append(b);}
-    for(let i=0;i<count;i++){const b=grid.children[i],s=a[i],sig=s?JSON.stringify(s):'';if(b.dataset.signature!==sig){b.dataset.signature=sig;I18n.assign(b,"innerHTML",s?itemIconHTML(s.type)+'<small>'+s.qty+'</small>':'');I18n.setAttr(b,'aria-label',s?ITEM[s.type]?.name+' × '+s.qty:'Пустая ячейка');}b.classList.toggle('selected',selected?.side===side&&selected.i===i);}
+    for(let i=0;i<count;i++){const b=grid.children[i],s=a[i],sig=s?JSON.stringify(s):'';if(b.dataset.signature!==sig){b.dataset.signature=sig;I18n.assign(b,"innerHTML",s?(window.GameCarried?.is(s)?GameCarried.html(s):itemIconHTML(s.type)+'<small>'+s.qty+'</small>'):'');I18n.setAttr(b,'aria-label',s?ITEM[s.type]?.name+' × '+s.qty:'Пустая ячейка');}b.classList.toggle('selected',selected?.side===side&&selected.i===i);}
   }
   function moveCell(from,i,to,j){
     const source=slots(from),dest=slots(to),s=source[i];if(!s||ITEM[s.type]?.robot||!robot.near()||i===j&&source===dest)return false;

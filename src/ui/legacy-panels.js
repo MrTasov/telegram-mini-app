@@ -3,6 +3,7 @@
 ===================================================== */
 
 function stopControls(preserveGather=false){
+  window.GamePickup?.cancel();
   window.GameInput?.release();
   navigation=null;objectPointer=null;if(!preserveGather)cancelChop();cancelSearch();
   moveX=0; moveY=0; movePower=0;

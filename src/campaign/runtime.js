@@ -3,7 +3,7 @@
 window.GameCampaign=(()=>{
   const core={...BunkerLayout.core,...GameFootprints.body(BunkerLayout.core.id)},powerId='command_core_l1';
   registerPowerDevice(powerId,'corridor',.05,()=>true,I18n.t('bunker.core.name'));
-  function facts(){return {generatorRunning:V09Power.running&&V09Power.fuel>0,corePowered:devicePowered(powerId),mined:V010Progression.count('mined'),
+  function facts(){return {generatorRunning:V09Power.running&&V09Power.fuel>0,corePowered:devicePowered(powerId),mined:V010Progression.count('mined'),stoneMined:V010Progression.state.byResource.mined.stone||0,
     woodStored:storageChests.slice(0,8).reduce((n,c)=>n+c.items.reduce((q,s)=>q+(s?.type==='wood'?s.qty:0),0),0),
     ironProduced:V010Progression.state.byResource.produced.iron||0,batteryCharge:V010Energy.battery.charge,
     copperProduced:V010Progression.state.byResource.produced.copper||0,
@@ -24,8 +24,9 @@ window.GameCampaign=(()=>{
   const ports={facts,actor:id=>GameActors.get(id),permission:actor=>!!GameActors.get(actor.id),access,
     changed(){queueGameSave();for(const fn of listeners)fn();},emit:event=>V010.emit('campaign',event)};
   const legacyDomain=GameCampaignDomain.create(CampaignDefinitions,ports),chapterOneDomain=GameCampaignDomain.create(ChapterOneDefinitions,ports),previousChapterOneDomain=GameCampaignDomain.create(LegacyChapterOneDefinitions,ports);
+  const previousCorrectiveDomain=GameCampaignDomain.create(PreviousChapterOneDefinitions,ports);
   let domain=legacyDomain;
-  const owner=s=>s?.contentRevision===ChapterOneDefinitions.revision?chapterOneDomain:s?.contentRevision===LegacyChapterOneDefinitions.revision?previousChapterOneDomain:legacyDomain;
+  const owner=s=>s?.contentRevision===ChapterOneDefinitions.revision?chapterOneDomain:s?.contentRevision===PreviousChapterOneDefinitions.revision?previousCorrectiveDomain:s?.contentRevision===LegacyChapterOneDefinitions.revision?previousChapterOneDomain:legacyDomain;
   function refresh(force=false){
     window.GameChapterOne?.observe();
     const f=facts(),signature=Object.values(f).join('|');

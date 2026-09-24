@@ -114,7 +114,7 @@ window.V014Robots=(()=>{
   function portion(s,n){return s.type==='fish'&&window.V014Fish?V014Fish.portion(s,n):{...copy(s),qty:n};}
   function removePart(s,n){if(s.type==='fish'&&window.V014Fish)V014Fish.remove(s,n);s.qty-=n;}
   function transfer(source,i,destination,max,amount){
-    const s=source?.[i];if(!s||source===destination||ITEM[s.type]?.robot)return 0;
+    const s=source?.[i];if(!s||source===destination||ITEM[s.type]?.robot||window.GameCarried?.is(s))return 0;
     const n=Math.min(s.qty,Math.max(0,Math.floor(amount??s.qty)));if(!n)return 0;
     const part=portion(s,n),left=addToSlots(destination,s.type,n,max,part),moved=n-left;
     if(moved){GameAudio.play('pickup');removePart(s,moved);if(!s.qty)source[i]=null;changed();renderBag();}return moved;

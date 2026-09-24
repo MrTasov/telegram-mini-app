@@ -31,6 +31,6 @@ window.GameMovable=(()=>{
     V011Rooms.energy();
   }
   function drawUpgrade(pulseUntil){const r=GameEquipment.get('upgrade0161');if(!active(r))return;const f=EquipmentInstances.definitions[r.typeId],b=GameFootprints.forRecord(r);V011Rooms.shadow(b.x,b.y,b.w,b.h,11,b.room);ctx.save();ctx.translate(r.transform.x,r.transform.y);ctx.rotate(r.transform.rotation);V011Art.draw('upgrade_station0161',0,0,f.footprint.w,f.footprint.h);if(performance.now()<pulseUntil){ctx.strokeStyle='#85e7caaa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(34,35+(performance.now()%850)/850*45);ctx.lineTo(108,35+(performance.now()%850)/850*45);ctx.stroke();}ctx.restore();}
-  function receive(type,qty){if(type!=='base_lamp')return qty;let left=qty;while(left>0&&GameEquipment.capture().filter(r=>r.typeId===type).length<EquipmentInstances.placement[type].limit&&GameEquipment.ids.length<48){GameEquipment.change(GameEquipment.create(type,GamePlacement.centered(type,'reserve_l1',1870,510),GameActors.localId));left--;}sync();return left;}
+  function receive(type,qty){if(type!=='base_lamp')return qty;let left=qty;while(left>0&&GameCarried.free()>=0&&GameEquipment.capture().filter(r=>r.typeId===type).length<EquipmentInstances.placement[type].limit&&GameEquipment.ids.length<48){const r=GameEquipment.create(type,GamePlacement.centered(type,'reserve_l1',1870,510),GameActors.localId);GameEquipment.change(r);GameCarried.add(r.id);left--;}sync();return left;}
   sync();return Object.freeze({sync,draw,drawUpgrade,receive});
 })();

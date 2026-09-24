@@ -31,14 +31,14 @@ window.LegacyChapterOnePreset=(()=>{
 })();
 
 /* Corrective content is opt-in through the New Game factory only. */
-window.ChapterOneDefinitions=(()=>{
+window.PreviousChapterOneDefinitions=(()=>{
  const steps=[['c1_storage','c1Storage',true],['c1_supplies','c1Supplies',true],['c1_build','c1WorkbenchCrafted',true],['c1_place','c1WorkbenchPlaced',true],['c1_hammer','c1Hammer',true],['c1_pickaxe','c1Pickaxe',true],['c1_tank','c1Tank',true],['c1_power','c1Power',true],['c1_core','c1Core',true],['c1_materials','c1Concrete',5],['c1_repairs','c1Repairs',5],['c1_night','c1Night',true]];
  const objectives=steps.map(([id,fact,target],i)=>({id,title:'onboarding.'+id+'.title',hud:'onboarding.'+id+'.hud',description:'onboarding.'+id+'.description',required:true,semantics:'once',requires:i?[steps[i-1][0]]:[],condition:{fact,...(target===true?{equals:true}:{atLeast:target})}}));
  objectives.push({id:'c1_axe',title:'onboarding.c1_axe.title',hud:'onboarding.c1_axe.hud',description:'onboarding.c1_axe.description',required:false,semantics:'once',requires:['c1_pickaxe'],condition:{fact:'c1Axe',equals:true}}, {id:'c1_mine',title:'chapter1.c1_mine.title',description:'chapter1.c1_mine.description',required:false,semantics:'once',requires:['c1_pickaxe'],condition:{fact:'mined',atLeast:15}});
  const d={revision:5,first:'chapter_1',facts:[...steps.map(s=>s[1]),'c1Axe','mined'],chapters:[{id:'chapter_1',title:'chapter1.title',description:'onboarding.description',goal:'onboarding.goal',requires:[],next:'base_restored',objectives},{...LegacyChapterOneDefinitions.chapters[1]}]};
  const freeze=o=>{Object.values(o).forEach(v=>{if(v&&typeof v==='object')freeze(v);});return Object.freeze(o);};return freeze(d);
 })();
-window.ChapterOnePreset=(()=>{
+window.PreviousChapterOnePreset=(()=>{
  const criticalRepairs=['v091wall020_N_0','v091wall020_N_1','v091wall020_N_2','v091wall020_E_1','v091wall020_E_2'];
  const p={id:'last-base-chapter1-v2',damage:criticalRepairs.map(id=>({id,hp:0})),criticalRepairs,
  starterKit:[{type:'ammo',qty:60},{type:'meds',qty:3}],
@@ -46,3 +46,8 @@ window.ChapterOnePreset=(()=>{
  enabledDevices:LegacyChapterOnePreset.enabledDevices,concreteRequired:5,nightStart:1200,nightEnd:360};
  const freeze=o=>{Object.values(o).forEach(v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v))freeze(v);});return Object.freeze(o);};return freeze(p);
 })();
+
+/* Revision 6 adds one real stone-gathering step only for future New Games.
+   Revision 5 remains a complete immutable route for existing 0.35.2 worlds. */
+window.ChapterOneDefinitions=(()=>{const d=JSON.parse(JSON.stringify(PreviousChapterOneDefinitions));d.revision=6;d.facts.push('stoneMined');const objectives=d.chapters[0].objectives,at=objectives.findIndex(o=>o.id==='c1_pickaxe')+1;const mine=objectives.splice(objectives.findIndex(o=>o.id==='c1_mine'),1)[0];Object.assign(mine,{required:true,title:'onboarding.c1_mine.title',hud:'onboarding.c1_mine.hud',description:'onboarding.c1_mine.description',requires:['c1_pickaxe'],condition:{fact:'stoneMined',atLeast:15}});objectives.splice(at,0,mine);objectives.find(o=>o.id==='c1_tank').requires=['c1_mine'];const freeze=o=>{Object.values(o).forEach(v=>{if(v&&typeof v==='object')freeze(v);});return Object.freeze(o);};return freeze(d);})();
+window.ChapterOnePreset=Object.freeze({...PreviousChapterOnePreset,id:'last-base-chapter1-v3'});

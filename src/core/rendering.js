@@ -126,6 +126,7 @@ function leaveBunker(){
 actionButton.addEventListener('pointerdown',function(e){
   e.preventDefault();e.stopPropagation();
   if(!GameInput.isMobile)return;
+  if(window.GamePickup?.begin(interactionTarget?.id,{pointerId:e.pointerId,clientX:e.clientX,clientY:e.clientY,source:'action'}))return;
   GameActions.dispatch('INTERACT',{nearest:true});
 });
 

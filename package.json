@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.35.2",
+  "version": "0.35.3",
   "private": true,
-  "description": "LAST BASE 0.35.2 — Stage D Corrective: carried buildables, free rooms and guaranteed Chapter 1 onboarding.",
+  "description": "LAST BASE 0.35.3 \u2014 Stage D Corrective: physical pickup, inventory instances, shared Base Control and Chapter 1 onboarding.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -34,9 +34,11 @@
     "test:d": "node qa/stage-d.cjs && node qa/stage-d-repair.cjs && node qa/stage-d-visuals.cjs",
     "bench:d": "node --expose-gc qa/stage-d-performance.cjs",
     "package:d": "node tools/package-stage-d.cjs",
-    "test:d:corrective": "node qa/stage-d-corrective.cjs && node qa/stage-d.cjs && node qa/stage-d-repair.cjs && node qa/stage-d-visuals.cjs",
-    "bench:d:corrective": "node --expose-gc qa/stage-d-corrective-performance.cjs",
-    "package:d:corrective": "node tools/package-stage-d-corrective.cjs"
+    "test:d:corrective": "node qa/stage-d-complete.cjs && node qa/stage-d-corrective.cjs && node qa/stage-d.cjs && node qa/stage-d-repair.cjs && node qa/stage-d-visuals.cjs",
+    "bench:d:corrective": "node --expose-gc qa/stage-d-complete-performance.cjs",
+    "package:d:corrective": "node tools/package-stage-d-complete.cjs",
+    "bench:d:complete": "node --expose-gc qa/stage-d-complete-performance.cjs",
+    "package:d:complete": "node tools/package-stage-d-complete.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

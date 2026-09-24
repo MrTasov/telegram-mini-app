@@ -17,7 +17,7 @@ window.GameRecovery=(()=>{
     const id=target.id;
     if(['generator','battery'].includes(id)){
       // Preserve the existing remote controller and energy-room control panels.
-      if(heldItem()==='remote'&&bagCount('remote')>0)return true;
+      if(bagCount('remote')>0||window.GameCampaign?.access(actor,BunkerLayout.core.id,false).available)return true;
       return ['tank','generator','battery'].some(key=>GameEquipmentRuntime.access(actor,GameEquipment.get(key)));
     }
     if(id==='tank')return GameEquipmentRuntime.access(actor,target);
@@ -36,7 +36,7 @@ window.GameRecovery=(()=>{
     }
     if(c.action==='manualOpen'){
       if(record?.kind!=='automatic'||!BunkerLayout.roomActive(record.object.room))return {ok:false,reason:'invalid_door'};
-      record.object.manual=true;record.object.away=0;message(devicePowered('door_'+record.object.room)?'Дверь открывается':'Дверь открыта вручную');return {ok:true};
+      if(window.GameBaseControl){const result=GameBaseControl.request(id,'door',{value:true,manual:true});if(result.ok)message(devicePowered('door_'+record.object.room)?'Дверь открывается':'Дверь открыта вручную');return result;}record.object.manual=true;record.object.away=0;message(devicePowered('door_'+record.object.room)?'Дверь открывается':'Дверь открыта вручную');return {ok:true};
     }
     if(c.action==='generator'&&id==='generator'){
       if(typeof p.value!=='boolean'||p.value&&V09Power.fuel<=0)return {ok:false,reason:'no_fuel'};

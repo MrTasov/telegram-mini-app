@@ -1,12 +1,7 @@
-/* 0.10 — reserve battery, automatic priority allocation and quiet base alerts. */
+/* 0.10 — reserve battery, independent consumers and quiet base alerts. */
 const V010Energy=(()=>{
   const battery={charge:0,capacity:1.5,enabled:true,maxCharge:3,maxDischarge:6};
   let roomPriority={},devicePriority={},warnings={},harvestSeen={},clock=0,lastFlow={charge:0,discharge:0};
-  const defaultRoom=id=>['corridor','room4'].includes(id)?3:2;
-  const defaultDevice=id=>id.startsWith('light_')||id.startsWith('door_')?3:GameEquipment.recipeStation(id)==='furnace'?1:2;
-  const priorityName=n=>['','Низкий','Обычный','Высокий'][n];
-  const roomRank=id=>roomPriority[id]??defaultRoom(id);
-  const deviceRank=id=>devicePriority[id]??defaultDevice(id);
   const log=text=>{if(typeof V010!=='undefined'&&typeof V010.log==='function')V010.log(text);};
   function edge(key,value,text){if(value&&!warnings[key]){log(text);GameAudio.play('warning');}warnings[key]=!!value;}
   const fmt=n=>I18n.numeric(n,{maximumFractionDigits:2,useGrouping:false});
@@ -24,13 +19,14 @@ const V010Energy=(()=>{
     const batterySupply=GameEquipment.present('battery')&&battery.enabled&&battery.charge>0?Math.min(battery.maxDischarge,battery.charge*3600/dt):0;
     const supply=generator+batterySupply,served=new Set(),shed=[];
     let demand=0,load=0;
-    const devices=Object.values(V09Power.devices).filter(d=>(!d.present||d.present())&&BunkerLayout.roomActive(d.room)).map((d,i)=>({d,i,active:!!d.active()}));
-    devices.sort((a,b)=>roomRank(b.d.room)-roomRank(a.d.room)||deviceRank(b.d.id)-deviceRank(a.d.id)||a.i-b.i);
+    const devices=Object.values(V09Power.devices).filter(d=>(!d.present||d.present())&&BunkerLayout.roomActive(d.room)&&d.enabled).map(d=>({d,active:!!d.active()}));
+    demand=devices.reduce((n,{d,active})=>n+(active?d.watts:0),0);
+    // A single overloaded bus pauses its electrical loads. No room/device
+    // rank silently chooses winners; enabled settings stay under player control.
+    const overloaded=demand>supply+.000001;
     for(const {d,active} of devices){
-      if(!d.enabled||!V09Power.roomEnabled[d.room])continue;
-      if(active)demand+=d.watts;
-      if(!active){if(supply>0)served.add(d.id);continue;}
-      if(load+d.watts<=supply+.000001){load+=d.watts;served.add(d.id);}else shed.push(d.id);
+      if(d.watts===0||supply>0&&!overloaded){served.add(d.id);if(active)load+=d.watts;}
+      else if(active&&d.watts>0)shed.push(d.id);
     }
     const batteryOutput=Math.max(0,load-generator);
     const chargeInput=GameEquipment.present('battery')&&battery.enabled&&generator>0&&batteryOutput<.000001?Math.min(battery.maxCharge,Math.max(0,generator-load),Math.max(0,battery.capacity-battery.charge)*3600/dt):0;
@@ -38,27 +34,14 @@ const V010Energy=(()=>{
     return {served,load,demand,supply,generator,batterySupply,batteryOutput,chargeInput,shed};
   }
   V09Power.allocation=allocation;
-  function setRoomPriority(id,value){
-    if(!Object.hasOwn(V09Power.rooms,id)||![1,2,3].includes(+value))return false;
-    roomPriority[id]=+value;v09PowerChanged();return true;
-  }
-  function setDevicePriority(id,value){
-    if(!V09Power.devices[id]||![1,2,3].includes(+value))return false;
-    devicePriority[id]=+value;v09PowerChanged();return true;
-  }
-  togglePowerDevice=function(id){const d=V09Power.devices[id];if(!d)return false;d.enabled=!d.enabled;v09PowerChanged();return d.enabled;};
-  v09ToggleRoom=function(id){
-    if(!Object.hasOwn(V09Power.roomEnabled,id))return;
-    V09Power.roomEnabled[id]=!V09Power.roomEnabled[id];
-    message(V09Power.rooms[id]+(V09Power.roomEnabled[id]?' — питание включено':' — питание отключено'));v09PowerChanged();
-  };
+  togglePowerDevice=id=>window.GameBaseControl?.toggleDevice(id)||false;
+  v09ToggleRoom=id=>window.GameBaseControl?.toggleDevice('light_'+id)||false;
   v09DeviceStatus=function(d){
     if(d.present&&!d.present())return I18n.t('placement.packed');
     if(GameEquipment.recipeStation(d.id)==='utility_workbench')return I18n.t('build.manual');
     if(!d.enabled)return 'Выключен';
-    if(!V09Power.roomEnabled[d.room])return 'Комната обесточена';
     const a=allocation();
-    if(!a.served.has(d.id))return a.supply>0?'Ожидает мощности · приоритет '+priorityName(deviceRank(d.id)).toLowerCase():'Нет питания';
+    if(!a.served.has(d.id))return a.supply>0?I18n.t('control.overloaded'):'Нет питания';
     return d.active()?'Работает':'Готов к работе';
   };
   function switchState(b,on,label){
@@ -68,17 +51,6 @@ const V010Energy=(()=>{
     const d=V09Power.devices[row.dataset.powerDevice];if(!d)return;
     const small=row.querySelector('small');if(small)I18n.assign(small,"textContent",v09DeviceStatus(d)+' · '+fmt(d.watts)+' кВт');
     switchState(row.querySelector('button'),d.enabled,'Питание: '+d.name);
-  };
-  function prioritySelect(value,label,callback){
-    const select=document.createElement('select');select.className='v010Priority';I18n.setAttr(select,'aria-label',label);I18n.assign(select,'title',label);
-    for(const n of [3,2,1]){const opt=document.createElement('option');opt.value=String(n);I18n.assign(opt,"textContent",priorityName(n));select.appendChild(opt);}select.value=String(value);select.onchange=()=>callback(+select.value);return select;
-  }
-  const originalCircuit=v09RenderCircuit;
-  v09RenderCircuit=function(){
-    originalCircuit();const parent=el('v09PowerCircuit');if(!parent)return;const room=V09Power.selectedRoom;
-    const header=parent.querySelector('.v09CircuitHeader');if(header){const wrap=document.createElement('label');wrap.className='v010PriorityLabel';I18n.assign(wrap,"textContent",'Приоритет комнаты');wrap.appendChild(prioritySelect(roomRank(room),'Приоритет: '+V09Power.rooms[room],n=>setRoomPriority(room,n)));header.appendChild(wrap);}
-    for(const row of parent.querySelectorAll('[data-power-device]')){const d=V09Power.devices[row.dataset.powerDevice];if(d)row.appendChild(prioritySelect(deviceRank(d.id),'Приоритет: '+d.name,n=>setDevicePriority(d.id,n)));}
-    const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Сначала питаются комнаты с высоким приоритетом, затем приборы внутри них. Если энергии не хватает, остальные ждут и возобновляют работу автоматически.');parent.appendChild(note);
   };
   v09PowerStats=function(){return '<div class="v09PowerStats"><div class="v09PowerStat"><small>Генератор</small><b data-power="running"></b></div><div class="v09PowerStat"><small>Топливо</small><b data-power="fuel"></b><div class="v09PowerMeter"><i data-power="fuelbar"></i></div></div><div class="v09PowerStat"><small>Нагрузка / доступно</small><b data-power="load"></b></div><div class="v09PowerStat"><small>Батарея</small><b data-power="battery"></b><small data-power="reserve"></small><div class="v09PowerMeter"><i data-power="batterybar"></i></div></div></div><div class="v09PowerWarning" data-power="warning"></div>';};
   v09RefreshPowerUI=function(){
@@ -97,7 +69,7 @@ const V010Energy=(()=>{
       if(key==='reserve')I18n.assign(node,"textContent",remainingTime(a));
       if(key==='battery-flow')I18n.assign(node,"textContent",a.chargeInput>0?'Зарядка: '+fmt(a.chargeInput)+' кВт':a.batteryOutput>0?'Питание базы: '+fmt(a.batteryOutput)+' кВт':remainingTime(a));
       if(key==='battery-toggle')switchState(node,battery.enabled,'Резервная батарея');
-      if(key==='warning')I18n.assign(node,"textContent",a.shed.length?'Приборов ожидают мощности: '+a.shed.length+'. Высокие приоритеты получают питание первыми.':a.supply<=0?'Нет энергии. Запустите генератор или подключите заряженную батарею.':a.batteryOutput>0?'Батарея питает базу · '+remainingTime(a):a.chargeInput>0?'Свободная мощность заряжает батарею: '+fmt(a.chargeInput)+' кВт':'Свободно '+fmt(a.supply-a.load)+' кВт');
+      if(key==='warning')I18n.assign(node,"textContent",a.shed.length?I18n.t('control.shortage',{count:a.shed.length}):a.supply<=0?'Нет энергии. Запустите генератор или подключите заряженную батарею.':a.batteryOutput>0?'Батарея питает базу · '+remainingTime(a):a.chargeInput>0?'Свободная мощность заряжает батарею: '+fmt(a.chargeInput)+' кВт':'Свободно '+fmt(a.supply-a.load)+' кВт');
     });
     document.querySelectorAll('[data-power-device]').forEach(v09UpdateDeviceRow);
     document.querySelectorAll('[data-room-power-toggle]').forEach(node=>switchState(node,V09Power.roomEnabled[node.dataset.roomPowerToggle],'Питание: '+V09Power.rooms[node.dataset.roomPowerToggle]));
@@ -126,7 +98,7 @@ const V010Energy=(()=>{
   function monitor(a){
     edge('fuelLow',V09Power.running&&V09Power.fuel>0&&V09Power.fuel<=2,'Топливо заканчивается: заправьте генератор.');
     edge('batteryLow',a.batteryOutput>0&&battery.charge/battery.capacity<=.1,'Низкий заряд резервной батареи.');
-    edge('shed',a.shed.length>0&&a.supply>0,'Не хватает мощности: часть приборов ожидает питания по приоритету.');
+    edge('shed',a.shed.length>0&&a.supply>0,I18n.t('control.overloaded'));
     if(AgricultureTime.available&&typeof livestockAlive!=='undefined'&&livestockAlive){
       const count=(i,type)=>(storageChests[i]?.items||[]).reduce((n,s)=>n+(s?.type===type?s.qty:0),0);
       edge('feed',count(12,'animal_feed')===0,'Ферма: у животных закончился корм.');
@@ -152,7 +124,8 @@ const V010Energy=(()=>{
       const powered=a.served.has('door_'+d.room);
       if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
       if(d.away>=4)d.manual=false;
-      const shouldOpen=occupied||(near&&powered)||d.manual||(d.open>0&&d.away<4);
+      const mode=window.GameBaseControl?.doorMode(d.id)||'auto';
+      const shouldOpen=occupied||mode==='open'&&powered||mode==='auto'&&((near&&powered)||d.manual||(d.open>0&&d.away<4));
       window.GameAudioWorld?.door(d,shouldOpen,'bunker',!!window.V018Build?.isBroken(d.id));d.open=clamp(d.open+(shouldOpen?1:-1)*dt*2.2,0,1);
     }
     clock+=dt;if(clock>=2){clock=0;monitor(a);}
@@ -160,7 +133,7 @@ const V010Energy=(()=>{
   };
   V09Power.tick=powerTick;
   v09DrawRoomSwitch=function(room){
-    const s=v09RoomSwitches.find(v=>v.room===room);if(!s)return;const enabled=V09Power.roomEnabled[room],powered=devicePowered('light_'+room);
+    const s=v09RoomSwitches.find(v=>v.room===room);if(!s)return;const enabled=V09Power.devices['light_'+room]?.enabled,powered=devicePowered('light_'+room);
     ctx.save();ctx.fillStyle='#223238';ctx.strokeStyle='#738984';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(s.x-7,s.y-11,14,22,2);ctx.fill();ctx.stroke();ctx.fillStyle=enabled?'#87a699':'#56656a';ctx.fillRect(s.x-4,s.y+(enabled?-6:0),8,7);ctx.fillStyle=enabled&&powered?'#b1e0b5':enabled?'#d3ac63':'#65746f';ctx.fillRect(s.x-2,s.y-9,4,2);ctx.restore();
   };
   const originalReadouts=v09DrawEnergyReadouts;
@@ -168,7 +141,7 @@ const V010Energy=(()=>{
     originalReadouts();const a=allocation();ctx.save();ctx.textAlign='center';ctx.fillStyle='#46504b';ctx.fillRect(1050,431,154,48);ctx.fillStyle='#d8ecd4';ctx.font='12px Arial';ctx.fillText(I18n.text(fmt(a.load)+' / '+fmt(a.supply)+' кВт'),1127,450);ctx.font='8px Arial';ctx.fillText(I18n.text(a.batteryOutput>0?'СЕТЬ + РЕЗЕРВ':a.chargeInput>0?'СЕТЬ · ЗАРЯДКА':'ПИТАНИЕ БАЗЫ'),1127,468);ctx.fillStyle='#263a3c';ctx.fillRect(1253,340,69,105);ctx.strokeStyle='#8eada8';ctx.lineWidth=2;ctx.strokeRect(1264,361,47,61);ctx.fillStyle=battery.enabled?'#75b99b':'#667775';const fill=clamp(battery.charge/battery.capacity,0,1);ctx.fillRect(1268,418-53*fill,39,53*fill);ctx.fillStyle='#e1f0e8';ctx.font='12px Arial';ctx.fillText(I18n.text(Math.round(fill*100)+'%'),1287,351);ctx.fillStyle='#24383c';ctx.fillRect(1239,479,97,27);ctx.fillStyle='#b5d4c8';ctx.font='9px Arial';ctx.fillText(I18n.text(!battery.enabled?'ОТКЛЮЧЕНА':a.batteryOutput>0?'ПИТАЕТ БАЗУ':a.chargeInput>0?'ЗАРЯЖАЕТСЯ':fill>0?'РЕЗЕРВ':'РАЗРЯЖЕНА'),1287,493);ctx.restore();
   };
   v09Style(`
-.v09DeviceRow{padding:5px 0;gap:8px;min-height:35px}.v09DeviceRow>div:first-child{flex:1;min-width:0}.v09DeviceRow strong{font-size:11px}.v09DeviceRow small{font-size:10px;margin-top:2px;line-height:1.3}.v09DeviceToggle{position:relative;box-sizing:border-box;flex:0 0 42px;width:42px!important;min-width:42px!important;max-width:42px!important;height:25px!important;min-height:25px!important;padding:0!important;border-radius:15px!important;border:1px solid #586b70!important;background:#2b3b42!important;box-shadow:none!important;font-size:0!important;overflow:visible!important}.v09DeviceToggle:before{content:'';position:absolute;inset:-9px -1px}.v09DeviceToggle:after{content:'';position:absolute;width:17px;height:17px;left:3px;top:3px;border-radius:50%;background:#a6b3b7;transition:transform .12s,background .12s}.v09DeviceToggle.on{background:#315f50!important;border-color:#8abda1!important}.v09DeviceToggle.on:after{transform:translateX(17px);background:#d8f1df}.v09DeviceToggle:focus-visible{outline:2px solid #e4d5a2;outline-offset:3px}.v09PowerStats{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.v09PowerStat{padding:8px 6px}.v09PowerStat b{font-size:12px}.v09PowerStat small{font-size:9px}.v09PowerStat [data-power="reserve"]{margin-top:5px;letter-spacing:0;text-transform:none}.v010Priority{font:10px Arial;color:#d6e6df;background:#21373d;border:1px solid #476066;border-radius:5px;min-height:28px;max-width:100px;padding:3px}.v010PriorityLabel{font-size:9px;color:#9db8b8;display:flex;flex-direction:column;gap:3px;align-items:flex-start}.v09CircuitHeader{flex-wrap:wrap}.v09CircuitHeader>div:first-child{flex:1}.v09CircuitHeader .v010PriorityLabel{margin-left:2px}.v09PowerWarning{line-height:1.4}.v09PowerActions button{min-height:34px;font-size:11px;padding:6px 10px}@media(max-width:480px){.v09PowerStats{grid-template-columns:repeat(2,minmax(0,1fr))}.v09DeviceRow{gap:6px}.v010Priority{max-width:85px;font-size:9px}}`);
+.v09DeviceRow{padding:5px 0;gap:8px;min-height:35px}.v09DeviceRow>div:first-child{flex:1;min-width:0}.v09DeviceRow strong{font-size:11px}.v09DeviceRow small{font-size:10px;margin-top:2px;line-height:1.3}.v09DeviceToggle{position:relative;box-sizing:border-box;flex:0 0 42px;width:42px!important;min-width:42px!important;max-width:42px!important;height:25px!important;min-height:25px!important;padding:0!important;border-radius:15px!important;border:1px solid #586b70!important;background:#2b3b42!important;box-shadow:none!important;font-size:0!important;overflow:visible!important}.v09DeviceToggle:before{content:'';position:absolute;inset:-9px -1px}.v09DeviceToggle:after{content:'';position:absolute;width:17px;height:17px;left:3px;top:3px;border-radius:50%;background:#a6b3b7;transition:transform .12s,background .12s}.v09DeviceToggle.on{background:#315f50!important;border-color:#8abda1!important}.v09DeviceToggle.on:after{transform:translateX(17px);background:#d8f1df}.v09DeviceToggle:focus-visible{outline:2px solid #e4d5a2;outline-offset:3px}.v09PowerStats{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.v09PowerStat{padding:8px 6px}.v09PowerStat b{font-size:12px}.v09PowerStat small{font-size:9px}.v09PowerStat [data-power="reserve"]{margin-top:5px;letter-spacing:0;text-transform:none}.v09CircuitHeader{flex-wrap:wrap}.v09CircuitHeader>div:first-child{flex:1}.v09CircuitHeader .v09PowerWarning{line-height:1.4}.v09PowerActions button{min-height:34px;font-size:11px;padding:6px 10px}@media(max-width:480px){.v09PowerStats{grid-template-columns:repeat(2,minmax(0,1fr))}.v09DeviceRow{gap:6px}}`);
   function capture(){return {schema:1,battery:{charge:battery.charge,enabled:battery.enabled},roomPriority:{...roomPriority},devicePriority:{...devicePriority},warnings:{...warnings},harvestSeen:{...harvestSeen}};}
   function validate(s){
     if(!s||s.schema!==1||!s.battery||!Number.isFinite(s.battery.charge)||s.battery.charge<0||s.battery.charge>battery.capacity||typeof s.battery.enabled!=='boolean')throw Error('Неверное сохранение резервной батареи');
@@ -179,7 +152,7 @@ const V010Energy=(()=>{
   function restore(s){
     if(s)validate(s);battery.charge=s?.battery.charge??0;battery.enabled=s?.battery.enabled??true;roomPriority={...(s?.roomPriority||{})};devicePriority={...(s?.devicePriority||{})};warnings={...(s?.warnings||{})};harvestSeen={...(s?.harvestSeen||{})};clock=0;lastFlow={charge:0,discharge:0};allocation();v09RefreshPowerUI();
   }
-  const api={battery,allocation,capture,snapshot:capture,restore,validate,setRoomPriority,setDevicePriority,roomPriority:roomRank,devicePriority:deviceRank,open:openBattery,remainingTime,get flow(){return {...lastFlow};}};
+  const api={battery,allocation,capture,snapshot:capture,restore,validate,open:openBattery,remainingTime,get flow(){return {...lastFlow};}};
   window.V010Energy=api;
   if(typeof V010!=='undefined'&&V010.modules)V010.register('energy',api);
   return api;

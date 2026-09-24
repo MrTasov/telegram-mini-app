@@ -36,13 +36,13 @@ const EquipmentInstances=(()=>{
     furnace:{limit:4,cost:{iron:20,parts:6,concrete:8},rooms,craftable:true,guard:'production',art:'furnace'},
     utility_workbench:{limit:4,cost:{iron:4,wood:6},rooms,craftable:true,guard:'production',art:'utility_workbench'},
     craft_bench:{limit:4,cost:{iron:16,wood:12,parts:4},rooms,craftable:true,guard:'production',art:'workbench'},
-    storage_crate:{limit:16,cost:{wood:6,iron:2},rooms,craftable:true,guard:'container',art:'chest'},
+    storage_crate:{limit:16,cost:{wood:6,iron:2},rooms:[...rooms,'corridor'],craftable:true,guard:'container',art:'chest'},
     generator:{limit:1,rooms,guard:'generator',art:'generator'},
     fuel_tank:{limit:1,rooms,guard:'tank',art:'tank'},
     reserve_battery:{limit:1,rooms,guard:'battery',art:'battery0352'},
     drone_station:{limit:1,rooms,guard:'drone',art:'drone_station0352'},
     enhancement_cradle:{limit:1,rooms,guard:'container',art:'upgrade_station0161'},
-    base_lamp:{limit:8,cost:{iron:2,copper:1,parts:1},rooms,craftable:false,guard:'empty',art:'base_lamp'}
+    base_lamp:{limit:8,cost:{iron:2,copper:1,parts:1},rooms:[...rooms,'corridor'],craftable:false,guard:'empty',art:'base_lamp'}
   });
   const state=()=>({level:0,condition:{hp:100,maxHp:100},modules:[],settings:{}});
   const turns=Object.freeze([0,Math.PI/2,Math.PI,Math.PI*1.5]);

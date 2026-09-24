@@ -51,6 +51,7 @@ window.V010Inventory=(()=>{
     from=address(from);to=address(to);
     const a=list(from),b=list(to),s=a?.[index];if(!s||!b||a===b)return 0;
     if(window.V0161UI&&!V0161UI.allowMove(from,index,to))return 0;
+    if(window.GameCarried?.is(s)&&(from!=='bag'||to!=='bag'))return 0;
     const wanted=Math.max(0,Math.min(s.qty,Math.floor(amount??s.qty)));
     if(!wanted)return 0;
     const moved=wanted-insert(b,s.type==='fish'?V014Fish.portion(s,wanted):{...copy(s),qty:wanted},capacity(to));
@@ -63,6 +64,7 @@ window.V010Inventory=(()=>{
     if(a===b&&index===targetIndex)return true;
     if(window.V0161UI&&!V0161UI.allowMove(from,index,to,targetIndex))return false;
     const target=b[targetIndex];
+    if((window.GameCarried?.is(s)||window.GameCarried?.is(target))&&(from!=='bag'||to!=='bag'))return false;
     const wanted=Math.max(0,Math.min(s.qty,Math.floor(amount??s.qty)));if(!wanted)return false;
     if(target&&!matches(s,target)){if(amount!==undefined||!window.V0161UI?.allowMove(to,targetIndex,from,index))return false;a[index]=target;b[targetIndex]=s;GameAudio.play('inventoryMove');notifyChange();return true;}
     const n=Math.min(wanted,stackMax(s.type)-(target?.qty||0));if(n<=0)return false;
@@ -110,6 +112,7 @@ window.V010Inventory=(()=>{
   };
   function slotContent(s){
     if(!s)return '';
+    if(window.GameCarried?.is(s))return GameCarried.html(s);
     const quick=handSlots.indexOf(s.type);
     return `<div class="ico">${itemIconHTML(s.type)}</div><span class="qty">${s.qty}</span>${quick>=0?'<span class="v010QuickMark">'+(quick+1)+'</span>':''}${s.level?'<span class="v010Level">+'+Number(s.level)+'</span>':''}`;
   }
@@ -117,7 +120,7 @@ window.V010Inventory=(()=>{
   function cell(where,i,s){
     const d=document.createElement('button');d.type='button';d.className='invSlot v010Slot'+(s?' hasItem':'')+(s&&handSlots.includes(s.type)?' quickAssigned':'');
     d.dataset.v010Container=where;d.dataset.v010Index=i;
-    I18n.assign(d,"innerHTML",slotContent(s));I18n.assign(d,'title',s?ITEM[s.type].name+' · '+s.qty:'Пустая ячейка');I18n.setAttr(d,'aria-label',I18n.source(d,'title'));
+    I18n.assign(d,"innerHTML",slotContent(s));I18n.assign(d,'title',s?(window.GameCarried?.is(s)?GameCarried.title(s):ITEM[s.type].name+' · '+s.qty):'Пустая ячейка');I18n.setAttr(d,'aria-label',I18n.source(d,'title'));
     d.onclick=e=>{e.stopPropagation();if(performance.now()<suppressClick)return;tap(where,i);};
     d.oncontextmenu=e=>{e.preventDefault();details(where,i);};
     d.addEventListener('pointerdown',e=>startPointer(e,where,i,d));return d;
@@ -181,6 +184,7 @@ window.V010Inventory=(()=>{
     body.append(v09Button('Сохранить комплект',()=>{preset={};for(const [type,input] of Object.entries(inputs))preset[type]=Math.max(0,Math.min(500,Math.floor(Number(input.value)||0)));queueGameSave();closeOverlay(o);}));openOverlay(o);
   }
   function details(where,index){
+    const carried=list(where)?.[index];if(window.GameCarried?.is(carried))return window.GameBuildableInventory?.details(carried.instanceId);
     if(window.V011UI)return V011UI.details(where,index);
     const s=where==='equipment'?equipment[index]:list(where)?.[index];if(!s)return;
     const def=ITEM[s.type],o=v09Overlay('v010ItemDetails',def.name),body=o.querySelector('.v09Body');body.replaceChildren();

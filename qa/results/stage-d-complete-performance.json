@@ -1,0 +1,579 @@
+{
+  "benchmarkVersion": 3,
+  "audioBuffers": [
+    57,
+    57
+  ],
+  "resumed": false,
+  "version": "0.35.3",
+  "runtimeSha256": "ab1eb8124249f52ae9c8c8e2f30e2bacde7bfe68af99234c8d1e9486eac37505",
+  "baseline": "immutable delivered 0.35.2 Stage D",
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "mode": "Modeled DOM/WebAudio, native Canvas2D, DPR 1, zoom .65, 120 measured frames per scene/version; alternating AB/BA"
+  },
+  "rows": [
+    {
+      "viewport": "390x844",
+      "scene": "quiet_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 27.135685999999623,
+        "p95Ms": 199.04563599999983,
+        "meanMs": 49.96731424166673
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 21.70160400000168,
+        "p95Ms": 70.07776300000114,
+        "meanMs": 28.17145072500004
+      },
+      "deltaMs": -5.434081999997943,
+      "percent": -20.025592866891294
+    },
+    {
+      "viewport": "390x844",
+      "scene": "stress_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 37.33455799999865,
+        "p95Ms": 69.44918099999995,
+        "meanMs": 44.824694408333166
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 34.56900900000255,
+        "p95Ms": 54.40375299999869,
+        "meanMs": 36.60195865833324
+      },
+      "deltaMs": -2.765548999996099,
+      "percent": -7.407477543985386
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 120,
+        "p50Ms": 26.36877700000332,
+        "p95Ms": 103.85779300000286,
+        "meanMs": 34.87081305833332
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 26.247197000004235,
+        "p95Ms": 57.32743099999789,
+        "meanMs": 30.142435258333233
+      },
+      "deltaMs": -0.12157999999908498,
+      "percent": -0.4610756122632065
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 26.121972000000824,
+        "p95Ms": 74.3442240000004,
+        "meanMs": 43.993663533333226
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 30.512919000000693,
+        "p95Ms": 58.273910000003525,
+        "meanMs": 33.82946660000004
+      },
+      "deltaMs": 4.390946999999869,
+      "percent": 16.809400913528783
+    },
+    {
+      "viewport": "390x844",
+      "scene": "night_combined_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 33.31551900001068,
+        "p95Ms": 93.97539800000959,
+        "meanMs": 44.91104475000005
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 30.819865999990725,
+        "p95Ms": 50.26621599998907,
+        "meanMs": 32.78415495000009
+      },
+      "deltaMs": -2.4956530000199564,
+      "percent": -7.490962395090273
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_door_spill",
+      "before": {
+        "samples": 120,
+        "p50Ms": 22.13377099999343,
+        "p95Ms": 30.836937000000034,
+        "meanMs": 23.166039883333116
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 20.722718999997596,
+        "p95Ms": 30.839017000005697,
+        "meanMs": 22.289221166667023
+      },
+      "deltaMs": -1.4110519999958342,
+      "percent": -6.3751088777246885
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "quiet_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 40.41982799999823,
+        "p95Ms": 65.77947599999607,
+        "meanMs": 43.7794588916667
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 39.546008999997866,
+        "p95Ms": 69.16797999999835,
+        "meanMs": 49.06434331666666
+      },
+      "deltaMs": -0.8738190000003669,
+      "percent": -2.161857294396219
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "stress_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 61.10329600000114,
+        "p95Ms": 88.50563800000236,
+        "meanMs": 65.76781229166772
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 61.91261200000008,
+        "p95Ms": 160.6904510000022,
+        "meanMs": 72.6934116916668
+      },
+      "deltaMs": 0.8093159999989439,
+      "percent": 1.3245046551972006
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 120,
+        "p50Ms": 56.485745000012685,
+        "p95Ms": 164.54561799997464,
+        "meanMs": 65.74433184166676
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 51.5114149999863,
+        "p95Ms": 129.37492400000338,
+        "meanMs": 62.63928295000029
+      },
+      "deltaMs": -4.974330000026384,
+      "percent": -8.806345742674138
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 71.91342600001371,
+        "p95Ms": 192.4409840000153,
+        "meanMs": 89.9148197000007
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 71.38181699998677,
+        "p95Ms": 170.66600200001267,
+        "meanMs": 90.19892988333304
+      },
+      "deltaMs": -0.5316090000269469,
+      "percent": -0.7392347014962719
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "night_combined_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 68.01296699998784,
+        "p95Ms": 158.09327099999064,
+        "meanMs": 78.53115635000043
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 68.34916999997222,
+        "p95Ms": 106.83680700001423,
+        "meanMs": 71.93553666666776
+      },
+      "deltaMs": 0.33620299998437986,
+      "percent": 0.49432191362044353
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_door_spill",
+      "before": {
+        "samples": 120,
+        "p50Ms": 50.371993999986444,
+        "p95Ms": 95.06392499999492,
+        "meanMs": 55.487518466666124
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 47.87648899998749,
+        "p95Ms": 67.99917500000447,
+        "meanMs": 50.245319066667676
+      },
+      "deltaMs": -2.495504999998957,
+      "percent": -4.9541517058062645
+    }
+  ],
+  "navigation": [
+    {
+      "version": "0.35.2",
+      "reachable": 80,
+      "samples": 80,
+      "p50Ms": 11.283656999992672,
+      "p95Ms": 105.60852000000887,
+      "meanMs": 19.53759637499934
+    },
+    {
+      "version": "0.35.3",
+      "reachable": 80,
+      "samples": 80,
+      "p50Ms": 10.077866000006907,
+      "p95Ms": 102.40912900000694,
+      "meanMs": 18.311172062498734
+    }
+  ],
+  "commands": [
+    {
+      "version": "0.35.2",
+      "samples": 400,
+      "p50Ms": 0.4725230000040028,
+      "p95Ms": 1.0126530000125058,
+      "meanMs": 0.5561248724999314
+    },
+    {
+      "version": "0.35.3",
+      "samples": 400,
+      "p50Ms": 0.46915599997737445,
+      "p95Ms": 1.1209930000186432,
+      "meanMs": 0.5783433299996977
+    }
+  ],
+  "serialization": [
+    {
+      "version": "0.35.2",
+      "characters": 71645,
+      "utf8Bytes": 71873,
+      "samples": 100,
+      "p50Ms": 1.2569199999852572,
+      "p95Ms": 3.2449679999845102,
+      "meanMs": 1.5091108699978213
+    },
+    {
+      "version": "0.35.3",
+      "characters": 71772,
+      "utf8Bytes": 72000,
+      "samples": 100,
+      "p50Ms": 1.342514999996638,
+      "p95Ms": 3.7966209999867715,
+      "meanMs": 1.6885949299993808
+    }
+  ],
+  "heaps": [
+    {
+      "version": "0.35.2",
+      "snapshots": 100,
+      "transientHeapDeltaBytes": 36278352,
+      "postGcHeapDeltaBytes": -1102200,
+      "gcAvailable": true
+    },
+    {
+      "version": "0.35.3",
+      "snapshots": 100,
+      "transientHeapDeltaBytes": 36408352,
+      "postGcHeapDeltaBytes": 69288,
+      "gcAvailable": true
+    }
+  ],
+  "placementCheck": {
+    "samples": 120,
+    "p50Ms": 7.755414000013843,
+    "p95Ms": 15.019148999999743,
+    "meanMs": 8.735591650001394
+  },
+  "placementPreview": {
+    "samples": 120,
+    "p50Ms": 0.008987999986857176,
+    "p95Ms": 0.01293000002624467,
+    "meanMs": 0.01066895000015696
+  },
+  "baselinePlacementCheck": {
+    "samples": 120,
+    "p50Ms": 9.425921999994898,
+    "p95Ms": 30.229602000006707,
+    "meanMs": 15.268406483333576
+  },
+  "baselinePlacementPreview": {
+    "samples": 120,
+    "p50Ms": 0.009033000009367242,
+    "p95Ms": 0.016483999992487952,
+    "meanMs": 0.026331166666932405
+  },
+  "dragPreview": {
+    "samples": 80,
+    "p50Ms": 12.197557000006782,
+    "p95Ms": 24.396951000002446,
+    "meanMs": 13.760975349999352
+  },
+  "baselineDragPreview": {
+    "samples": 80,
+    "p50Ms": 11.436499000003096,
+    "p95Ms": 25.27097800001502,
+    "meanMs": 14.01391079999994
+  },
+  "idlePlacementChecks": 0,
+  "maxEquipment": [
+    {
+      "version": "0.35.2",
+      "viewport": "390x844",
+      "instances": 42,
+      "activeInstances": 42,
+      "placedLamps": 8,
+      "poweredLamps": 8,
+      "denseRoom": {
+        "room": "workshop",
+        "count": 9
+      },
+      "samples": 120,
+      "p50Ms": 38.94700699998066,
+      "p95Ms": 68.40100299997721,
+      "meanMs": 46.737292983336374
+    },
+    {
+      "version": "0.35.2",
+      "viewport": "1280x800",
+      "instances": 42,
+      "activeInstances": 42,
+      "placedLamps": 8,
+      "poweredLamps": 8,
+      "denseRoom": {
+        "room": "workshop",
+        "count": 9
+      },
+      "samples": 120,
+      "p50Ms": 54.43215700000292,
+      "p95Ms": 319.74977499997476,
+      "meanMs": 94.37484084166402
+    },
+    {
+      "version": "0.35.3",
+      "viewport": "390x844",
+      "instances": 42,
+      "activeInstances": 42,
+      "placedLamps": 8,
+      "poweredLamps": 8,
+      "denseRoom": {
+        "room": "workshop",
+        "count": 9
+      },
+      "samples": 120,
+      "p50Ms": 29.895775999990292,
+      "p95Ms": 56.03793200000655,
+      "meanMs": 32.46622604166575
+    },
+    {
+      "version": "0.35.3",
+      "viewport": "1280x800",
+      "instances": 42,
+      "activeInstances": 42,
+      "placedLamps": 8,
+      "poweredLamps": 8,
+      "denseRoom": {
+        "room": "workshop",
+        "count": 9
+      },
+      "samples": 120,
+      "p50Ms": 39.50390799995512,
+      "p95Ms": 74.49363199999789,
+      "meanMs": 43.02226331666655
+    }
+  ],
+  "severalEquipment": [
+    {
+      "version": "0.35.2",
+      "viewport": "390x844",
+      "newInstances": 3,
+      "samples": 120,
+      "p50Ms": 25.765168999991147,
+      "p95Ms": 43.10011400000076,
+      "meanMs": 28.138340208334316
+    },
+    {
+      "version": "0.35.2",
+      "viewport": "1280x800",
+      "newInstances": 3,
+      "samples": 120,
+      "p50Ms": 56.8267980000237,
+      "p95Ms": 78.55607699998654,
+      "meanMs": 59.619915475000745
+    },
+    {
+      "version": "0.35.3",
+      "viewport": "390x844",
+      "newInstances": 3,
+      "samples": 120,
+      "p50Ms": 29.305538999964483,
+      "p95Ms": 129.56935900001554,
+      "meanMs": 40.136053191668665
+    },
+    {
+      "version": "0.35.3",
+      "viewport": "1280x800",
+      "newInstances": 3,
+      "samples": 120,
+      "p50Ms": 69.3847689999966,
+      "p95Ms": 164.85224999999627,
+      "meanMs": 91.0412883833366
+    }
+  ],
+  "maxSerialization": [
+    {
+      "version": "0.35.2",
+      "instances": 42,
+      "utf8Bytes": 93879,
+      "samples": 100,
+      "p50Ms": 1.7807119999779388,
+      "p95Ms": 4.256673999945633,
+      "meanMs": 2.1566697299986846
+    },
+    {
+      "version": "0.35.3",
+      "instances": 42,
+      "utf8Bytes": 94038,
+      "samples": 100,
+      "p50Ms": 1.5920289999921806,
+      "p95Ms": 3.713257999974303,
+      "meanMs": 1.8196447199996328
+    }
+  ],
+  "controlUI": [
+    {
+      "version": "0.35.2",
+      "scope": "operational Remote refresh",
+      "samples": 120,
+      "p50Ms": 7.3226509999949485,
+      "p95Ms": 12.168070999992779,
+      "meanMs": 8.04876139166663
+    },
+    {
+      "version": "0.35.3",
+      "scope": "operational Remote refresh",
+      "samples": 120,
+      "p50Ms": 4.792671999981394,
+      "p95Ms": 9.41751299999305,
+      "meanMs": 5.2634800416655105
+    }
+  ],
+  "corridorChecks": {
+    "samples": 60,
+    "p50Ms": 109.9235800000024,
+    "p95Ms": 232.64436299999943,
+    "meanMs": 127.74631123333529
+  },
+  "campaignPoll": {
+    "closed": {
+      "samples": 400,
+      "p50Ms": 0.17085900000529364,
+      "p95Ms": 0.6214429999818094,
+      "meanMs": 0.2836166799991042
+    },
+    "open": {
+      "samples": 400,
+      "p50Ms": 1.7894059999962337,
+      "p95Ms": 4.243736999982502,
+      "meanMs": 2.1610711525001536
+    }
+  },
+  "droneMetrics": {
+    "updates": 732,
+    "candidateScans": 9,
+    "rayCasts": 0,
+    "lastX": 1162.53,
+    "lastY": 710
+  },
+  "lightingCache": {
+    "shadows": 0,
+    "shadowLimit": 28,
+    "rooms": 16,
+    "roomLimit": 18,
+    "sprites": 5,
+    "spriteLimit": 5,
+    "droneShapes": 1,
+    "droneLimit": 1,
+    "droneBytes": 409600,
+    "width": 1280,
+    "height": 800
+  },
+  "errors": [],
+  "limitations": [
+    "CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.",
+    "Moving-light scenes include continuously changing drone positions and player aim; night scene runs all eight searchlights.",
+    "Command dispatch excludes OS/browser delivery. Navigation covers complete path queries.",
+    "Heap deltas include harness and serialization allocations, not a browser/device memory budget.",
+    "Maximum-equipment comparison enables the same eight lamps in both versions; production is queued but deliberately disabled so power allocation policy does not confound render cost."
+  ],
+  "passed": true,
+  "movement": {
+    "passed": true,
+    "rows": [
+      {
+        "version": "0.35.2",
+        "viewport": "390x844",
+        "playerDistance": 254.93023255814023,
+        "droneDistance": 291.3717227623564,
+        "samples": 120,
+        "p50Ms": 28.329478999999992,
+        "p95Ms": 41.34882999999991,
+        "meanMs": 30.28352795000006
+      },
+      {
+        "version": "0.35.3",
+        "viewport": "390x844",
+        "playerDistance": 254.93023255814023,
+        "droneDistance": 291.3717227623564,
+        "samples": 120,
+        "p50Ms": 27.14128299999902,
+        "p95Ms": 40.94300099999964,
+        "meanMs": 28.62782143333333
+      },
+      {
+        "version": "0.35.2",
+        "viewport": "1280x800",
+        "playerDistance": 254.93023255814023,
+        "droneDistance": 291.3717227623564,
+        "samples": 120,
+        "p50Ms": 50.216802999999345,
+        "p95Ms": 80.14763500000117,
+        "meanMs": 53.89468864999999
+      },
+      {
+        "version": "0.35.3",
+        "viewport": "1280x800",
+        "playerDistance": 254.93023255814023,
+        "droneDistance": 291.3717227623564,
+        "samples": 120,
+        "p50Ms": 50.48370099999738,
+        "p95Ms": 101.88177799999903,
+        "meanMs": 54.95367771666655
+      }
+    ],
+    "errors": [],
+    "scope": "Actual MOVE, update, following Drone, flashlight and Drone light, audio, native Canvas2D; 120 measured frames per version/viewport, alternating AB/BA. Distances cover measured frames only; no OS/browser input delivery."
+  }
+}

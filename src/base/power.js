@@ -7,7 +7,7 @@ const V09Power = {
   allocation(){
     let demand=0,load=0;const served=new Set();
     for(const d of Object.values(this.devices)){
-      const wanted=(!d.present||d.present())&&BunkerLayout.roomActive(d.room)&&d.enabled&&this.roomEnabled[d.room];
+      const wanted=(!d.present||d.present())&&BunkerLayout.roomActive(d.room)&&d.enabled;
       const active=wanted&&!!d.active();
       if(active)demand+=d.watts;
       if(!wanted||!this.running||this.fuel<=0)continue;
@@ -72,7 +72,6 @@ function v09DeviceStatus(d){
   if(d.present&&!d.present())return I18n.t('placement.packed');
   if(GameEquipment.recipeStation(d.id)==='utility_workbench')return I18n.t('build.manual');
   if(!d.enabled)return 'Выключен';
-  if(!V09Power.roomEnabled[d.room])return 'Комната обесточена';
   if(!V09Power.running||V09Power.fuel<=0)return 'Нет питания';
   if(!devicePowered(d.id))return 'Не хватает мощности';
   return d.active()?'Работает':'Готов к работе';
@@ -138,7 +137,7 @@ const v09PowerOldInteractions=interactionObjects;
 interactionObjects=function(which=scene){
   const base=v09PowerOldInteractions(which);
   if(which==='surface')return [...base,...v09Spotlights.map(s=>({id:s.id,kind:'v09power_device',device:s.id,name:'Прожектор',x:s.x,y:s.y,r:19,range:58}))];
-  return [...v09RoomSwitches.map(s=>({id:'switch_'+s.room,kind:'v09room_switch',room:s.room,name:'Питание: '+V09Power.rooms[s.room],x:s.x,y:s.y,r:10,range:48})),...base,
+  return [...v09RoomSwitches.map(s=>({id:'switch_'+s.room,kind:'v09room_switch',room:s.room,name:I18n.t('control.roomLights',{room:V09Power.rooms[s.room]}),x:s.x,y:s.y,r:10,range:48})),...base,
     ...v09Doors.filter(d=>BunkerLayout.roomActive(d.room)).map(d=>({...d,kind:'v09door',name:devicePowered('door_'+d.room)?'Раздвижная дверь':'Открыть дверь вручную',range:68})),
     {id:'tank',kind:'v09fuel',name:'Топливный бак',...BunkerLayout.fixture('tank'),range:50},
     {id:'generator',kind:'v09generator',name:'Генератор',...BunkerLayout.fixture('generator'),range:50},
@@ -224,7 +223,7 @@ function v09Refuel(amount){
 }
 function v09OpenDevice(id){
   const d=V09Power.devices[id];if(!d)return;const overlay=v09Overlay('v09PowerDeviceOverlay',d.name),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());body.appendChild(renderDeviceSwitch(id));
-  const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Контур: '+V09Power.rooms[d.room]+'. Общий выключатель комнаты имеет приоритет над настройкой прибора.');body.appendChild(note);v09RefreshPowerUI();openOverlay(overlay);
+  const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",I18n.t('control.deviceNote',{room:V09Power.rooms[d.room]}));body.appendChild(note);v09RefreshPowerUI();openOverlay(overlay);
 }
 function v09RefreshPowerUI(){
   const a=V09Power.allocation();

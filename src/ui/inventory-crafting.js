@@ -36,6 +36,7 @@ window.V011UI=(()=>{
   const locationItems=where=>inv.list(where);
   function details(where,index){
     const item=where==='equipment'?equipment[index]:locationItems(where)?.[index];if(!item)return;
+    if(window.GameCarried?.is(item))return window.GameBuildableInventory?.details(item.instanceId);
     const def=ITEM[item.type],overlay=v09Overlay('v010ItemDetails',def.name),body=overlay.querySelector('.v09Body');
     I18n.assign(body,"innerHTML",cardHTML(item));
     const actions=document.createElement('div');actions.className='v011ItemActions';

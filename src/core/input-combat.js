@@ -206,6 +206,7 @@ function handleWorldPointerDown(e){
   if(!GameActions.playable()||uiTouch(e.target)||e.button>0)return;
   if(joystickAt(e.clientX,e.clientY)){beginJoystick(e);return;}
   const {x,y}=screenToWorld(e.clientX,e.clientY);
+  const pickupTarget=hitInteraction(x,y);if(window.GamePickup?.begin(pickupTarget?.id,e)){e.preventDefault();return;}
   if(GameActions.dispatch('WORLD_TARGET',{x,y})){e.preventDefault();return;}
   if(objectPointer||leftPointerId!==null||rightPointerId!==null){
     const target=GameMovement.parallelTarget(x,y);
@@ -217,6 +218,7 @@ function handleWorldPointerDown(e){
   e.preventDefault();
 }
 function handleWorldPointerMove(e){
+  if(window.GamePickup?.move(e)){e.preventDefault();return;}
   if(objectPointer&&objectPointer.id===e.pointerId){
     objectPointer.screenX=e.clientX;objectPointer.screenY=e.clientY;
     if(distance(e.clientX,e.clientY,objectPointer.x,objectPointer.y)>10){
@@ -236,6 +238,7 @@ function handleWorldPointerMove(e){
   }
 }
 function handleWorldPointerUp(e){
+  if(window.GamePickup?.up(e)){e.preventDefault();return;}
   if(objectPointer&&objectPointer.id===e.pointerId){
     const tap=objectPointer;objectPointer=null;
     if(!GameActions.playable()||tap.scene!==scene||tap.cancelled)return;
@@ -249,6 +252,7 @@ function handleWorldPointerUp(e){
   }
 }
 function cancelWorldPointer(e){
+  if(window.GamePickup?.up(e,true))return;
   if(objectPointer?.id===e.pointerId){if(objectPointer.following)cancelNavigation();objectPointer=null;}
 }
 function startPointerFollow(){

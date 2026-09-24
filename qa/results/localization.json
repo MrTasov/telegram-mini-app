@@ -1,11 +1,11 @@
 {
-  "version": "0.35.2",
+  "version": "0.35.3",
   "reference": "0.24.1 fixed Stage 4",
   "languages": [
     "en",
     "ru"
   ],
-  "catalogKeys": 1964,
+  "catalogKeys": 2043,
   "uiCoverage": [
     "startup",
     "settings.PC",
@@ -72,7 +72,7 @@
     "craft.feed_craft",
     "recipe.feed"
   ],
-  "passed": 4218,
+  "passed": 4377,
   "failed": 0,
   "checks": [
     {
@@ -7944,6 +7944,322 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.en.build.pickUp",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.pickUpNamed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.pickedUp",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.pickupHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.inventoryFull",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.holdRequired",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.pickupChanged",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.legacyOverflow",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.overview",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.remote",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.surface",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.level1",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.yard",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.map",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.supply",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.fuel",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.kw",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.ammo",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.shortage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.overloaded",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.independent",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.roomLights",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.door",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.deviceNote",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.on",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.off",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.open",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.close",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.automatic",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.auto",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.damaged",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.noPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.start",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.stop",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.turnOn",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.turnOff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.activate",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.deactivate",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.combatOn",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.combatOff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.droneLightOn",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.droneLightOff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.droneTask.follow",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.droneTask.guard",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.droneTask.return",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.dronePanel",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.drone",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.remoteRequired",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.gate.south",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.gate.north",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.gate.commandN",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.gate.commandS",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.out_of_reach",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.actor_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.invalid_command",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.unknown_action",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.missing_instance",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.stale_revision",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.world_changed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.world_paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.noPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.damaged",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.occupied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.operation_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.no_fuel",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.request_conflict",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.error.revision_limit",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.fuel_tank",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.reserve_battery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.drone_station",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.enhancement_cradle",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.base_lamp",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_mine.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_mine.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.onboarding.c1_mine.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.control.opened",
+      "status": "PASS"
+    },
+    {
       "id": "catalog.ru.legacy.6c127073fb4b",
       "status": "PASS"
     },
@@ -15800,6 +16116,322 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.ru.build.pickUp",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.pickUpNamed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.pickedUp",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.pickupHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.inventoryFull",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.holdRequired",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.pickupChanged",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.legacyOverflow",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.overview",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.remote",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.surface",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.level1",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.yard",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.map",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.supply",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.fuel",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.kw",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.ammo",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.shortage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.overloaded",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.independent",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.roomLights",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.door",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.deviceNote",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.on",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.off",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.open",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.close",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.automatic",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.auto",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.damaged",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.noPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.start",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.stop",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.turnOn",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.turnOff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.activate",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.deactivate",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.combatOn",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.combatOff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.droneLightOn",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.droneLightOff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.droneTask.follow",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.droneTask.guard",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.droneTask.return",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.dronePanel",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.drone",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.remoteRequired",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.gate.south",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.gate.north",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.gate.commandN",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.gate.commandS",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.out_of_reach",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.actor_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.invalid_command",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.unknown_action",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.missing_instance",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.stale_revision",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.world_changed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.world_paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.noPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.damaged",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.occupied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.operation_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.no_fuel",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.request_conflict",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.error.revision_limit",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.fuel_tank",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.reserve_battery",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.drone_station",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.enhancement_cradle",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.base_lamp",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_mine.title",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_mine.hud",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.onboarding.c1_mine.description",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.control.opened",
+      "status": "PASS"
+    },
+    {
       "id": "ui.en.startup",
       "status": "PASS"
     },
@@ -16301,6 +16933,10 @@
     },
     {
       "id": "ui.en.item.base_lamp",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.equipment_case",
       "status": "PASS"
     },
     {
