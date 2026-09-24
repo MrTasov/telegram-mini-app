@@ -1,9 +1,0 @@
-{
-  "name": "last-base-stage0-baseline",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Stage 0 characterization only. Runtime game remains 0.20.0.",
-  "scripts": {"audit":"node tools/inventory.cjs","test":"node tools/behavior.cjs && node tools/regressions.cjs","bench":"node tools/performance.cjs","verify":"node tools/verify.cjs"},
-  "devDependencies": {"@napi-rs/canvas":"0.1.100"},
-  "engines": {"node": ">=20"}
-}

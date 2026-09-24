@@ -1,8 +1,0 @@
-// Run the original three test suites in disposable copies, not in the frozen release.
-const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),{spawnSync}=require('node:child_process');
-const root=path.resolve(__dirname,'..'),base=path.join(root,'baseline_0.20.0'),work=fs.mkdtempSync(path.join(os.tmpdir(),'last-base-stage0-'));
-fs.cpSync(base,work,{recursive:true});const suites=[['perimeter020.cjs','perimeter_0.20.0.json'],['wall_behaviors020.cjs','wall_behaviors_0.20.0.json'],['target0191.cjs','target_regression_0.20.0.json']],results=[];
-for(const [script,report]of suites){const out=spawnSync(process.execPath,[path.join(work,'qa',script)],{encoding:'utf8',env:{...process.env,NODE_PATH:[path.join(root,'node_modules'),process.env.NODE_PATH].filter(Boolean).join(path.delimiter)},timeout:180000,maxBuffer:8e6});fs.writeFileSync(path.join(root,'reports',script+'.log'),out.stdout+'\n'+out.stderr);const data=out.status===0?JSON.parse(fs.readFileSync(path.join(work,'qa',report))):null;if(data)fs.copyFileSync(path.join(work,'qa',report),path.join(root,'reports',report));results.push({suite:script,exitCode:out.status,passed:data?.passed||0,consoleErrors:data?.consoleErrors||[],error:out.error?.message});console.log(JSON.stringify(results.at(-1)));}
-const result={environment:'Original suites, isolated VM/Canvas2D; modeled DOM.',results,totalPassed:results.reduce((n,r)=>n+r.passed,0)};fs.writeFileSync(path.join(root,'reports/regressions.json'),JSON.stringify(result,null,2)+'\n');
-// The exact temporary copy is retained for failed-test inspection; the baseline is untouched.
-if(results.some(r=>r.exitCode!==0))process.exitCode=1;
