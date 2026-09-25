@@ -1,0 +1,108 @@
+{
+  "version": "0.38.0",
+  "passed": 24,
+  "failed": 1,
+  "checks": [
+    {
+      "id": "gather.axe.level0.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.axe.level1.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.axe.level2.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.axe.level3.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.axe.level4.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.axe.level5.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.pickaxe.level0.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.pickaxe.level1.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.pickaxe.level2.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.pickaxe.level3.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.pickaxe.level4.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.pickaxe.level5.impact_yield_speed",
+      "status": "PASS"
+    },
+    {
+      "id": "save.no_duplicate_impact.-1",
+      "status": "PASS"
+    },
+    {
+      "id": "save.no_duplicate_impact.1",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.full_bag_no_resource_loss_and_partial_capacity",
+      "status": "PASS"
+    },
+    {
+      "id": "gather.ui_parallel_pause_and_actor_guard",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrade.axe.station_cost_level5_and_reload",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrade.pickaxe.station_cost_level5_and_reload",
+      "status": "PASS"
+    },
+    {
+      "id": "tool_card.ru",
+      "status": "PASS"
+    },
+    {
+      "id": "tool_card.en",
+      "status": "PASS"
+    },
+    {
+      "id": "core.remembers_tabs_and_scroll_until_level_exit",
+      "status": "PASS"
+    },
+    {
+      "id": "core.future_sections_generic_page_validation_and_floor_scope",
+      "status": "FAIL",
+      "error": "/workspace/scratch/a6d22bff5614/stage_g_0380/js/game.js:14912\n    if(!routes.has(id)||sections.has(id)||typeof mount!=='function')throw Error('Invalid Core section');\n                                                                    ^\n\nError: Invalid Core section\n    at Object.registerSection (/workspace/scratch/a6d22bff5614/stage_g_0380/js/game.js:14912:75)\n    at evalmachine.<anonymous>:1:58\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at Object.eval (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/runtime.cjs:105:692)\n    at E (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-c2-prerequisites.cjs:2:69)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-c2-prerequisites.cjs:18:81\n    at test (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-c2-prerequisites.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-c2-prerequisites.cjs:18:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)"
+    },
+    {
+      "id": "core.no_saved_UI_state_restore_resets",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_gather_migration_pure_and_progress",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.clean",
+      "status": "PASS"
+    }
+  ]
+}

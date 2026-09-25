@@ -52,8 +52,8 @@ window.V0151Station=(()=>{
       label:I18n.verbatim(s.name)+(other?(s.scene==='bunker'?' · в бункере ↓':' · на поверхности ↑'):(s.battery<=0?' · разряжен':s.hp<=0?' · повреждён':' · '+Math.round(s.battery)+'%')),
       arrow:other?(s.scene==='bunker'?'↓':'↑'):''};
   }
-  function drawMap(c,scale,mini){
-    const m=mapMarker();if(!m||!(scale>0))return;
+  function drawMap(c,scale,mini,level=scene){
+    const m=mapMarker(level);if(!m||!(scale>0))return;
     c.save();c.translate(m.x,m.y);c.scale(1/scale,1/scale);
     const r=mini?4:5,col=m.off?'#ecc583':'#7ae0d6';
     c.lineWidth=4;c.strokeStyle='#102124';c.beginPath();c.moveTo(-r,-r);c.lineTo(r,r);c.moveTo(r,-r);c.lineTo(-r,r);c.stroke();

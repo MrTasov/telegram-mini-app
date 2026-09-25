@@ -4,7 +4,7 @@
 const ResearchDefinitions=(()=>{
   const yes=(fact,reason='research.error.prerequisite')=>({fact,equals:true,reason});
   const data={revision:1,categories:['production','weapons','drones'],
-    facts:['base.core_powered','base.drone_station','campaign.chapter_one_complete','campaign.legacy_world','legacy.precision_blueprint','legacy.elite_weapon','legacy.workshop_efficiency','legacy.tools_upgrade'],
+    facts:['base.core_powered','base.drone_station','campaign.chapter_one_complete','campaign.legacy_world','legacy.precision_blueprint','legacy.elite_weapon','legacy.workshop_efficiency','legacy.tools_upgrade',...ExplorationDefinitions.sites.map(s=>'world.'+s.id)],
     blueprints:[
       {id:'blueprint.precision_weapons',title:'research.blueprint.precision'},
       {id:'blueprint.scout_service',title:'research.blueprint.scout'}
@@ -27,7 +27,7 @@ const ResearchDefinitions=(()=>{
       {id:'source.core_diagnostics',kind:'base_diagnostics',title:'research.source.core',description:'research.source.coreDescription',data:20,blueprints:[],requires:yes('base.core_powered')},
       {id:'source.scout_service',kind:'equipment_documentation',title:'research.source.scout',description:'research.source.scoutDescription',data:20,blueprints:['blueprint.scout_service'],requires:yes('base.drone_station','research.error.drone_station')},
       {id:'source.recovery_report',kind:'chapter_reward',title:'research.source.recovery',description:'research.source.recoveryDescription',data:25,blueprints:['blueprint.precision_weapons'],requires:{any:[yes('campaign.chapter_one_complete'),yes('campaign.legacy_world')],reason:'research.error.chapter_one'}}
-    ],
+    ].concat(ExplorationDefinitions.researchSources),
     legacyEntitlements:['technology.station_fabrication','technology.precision_weapons','technology.scout_service'],
     legacyBindings:{precision_blueprint:'technology.precision_weapons',workshop_efficiency:'technology.workshop_efficiency'},
     bindings:{

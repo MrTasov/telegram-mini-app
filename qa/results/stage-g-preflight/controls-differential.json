@@ -1,0 +1,3997 @@
+{
+  "reference": "0.23.0 manually accepted",
+  "candidate": "0.38.0",
+  "ignoredFields": [
+    "gameVersion (release metadata)",
+    "Approved patch contracts: world-farm-contract.cjs and bunker-contract.cjs; current R1 migration tested separately"
+  ],
+  "passed": 995,
+  "failed": 1,
+  "checks": [
+    {
+      "id": "freshGame.fullPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.craft_in_progress.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.craft_in_progress.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.craft_in_progress.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_0.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_0.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_0.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_2.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_2.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_2.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_3.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_3.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_3.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_4.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_4.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_4.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_5.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_5.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_5.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_6.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_6.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_6.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_7.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_7.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_7.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_8.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_8.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_8.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_9.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_9.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.crop_9.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.damaged_base_turret.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.damaged_base_turret.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.damaged_base_turret.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.day_x.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.day_x.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.day_x.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_charging.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_charging.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_charging.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_empty_far.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_empty_far.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_empty_far.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_packed.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_packed.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.drone_packed.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.equipment_storage.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.equipment_storage.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.equipment_storage.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fish_instances.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fish_instances.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fish_instances.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fresh_game.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fresh_game.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.fresh_game.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.full_backpack.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.full_backpack.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.full_backpack.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.legacy_0.19.1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.legacy_0.19.1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.legacy_0.19.1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_ak74_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage0.rifle_m4_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.craft_in_progress.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.craft_in_progress.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.craft_in_progress.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_0.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_0.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_0.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_2.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_2.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_2.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_3.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_3.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_3.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_4.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_4.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_4.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_5.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_5.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_5.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_6.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_6.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_6.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_7.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_7.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_7.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_8.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_8.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_8.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_9.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_9.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.crop_9.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.damaged_base_turret.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.damaged_base_turret.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.damaged_base_turret.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.day_x.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.day_x.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.day_x.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_charging.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_charging.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_charging.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_empty_far.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_empty_far.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_empty_far.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_packed.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_packed.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.drone_packed.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.equipment_storage.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.equipment_storage.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.equipment_storage.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fish_instances.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fish_instances.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fish_instances.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fresh_game.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fresh_game.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.fresh_game.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.full_backpack.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.full_backpack.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.full_backpack.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.legacy_0.19.1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.legacy_0.19.1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.legacy_0.19.1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_ak74_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage1.rifle_m4_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.craft_in_progress.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.craft_in_progress.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.craft_in_progress.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_0.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_0.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_0.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_2.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_2.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_2.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_3.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_3.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_3.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_4.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_4.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_4.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_5.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_5.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_5.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_6.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_6.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_6.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_7.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_7.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_7.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_8.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_8.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_8.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_9.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_9.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.crop_9.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.damaged_base_turret.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.damaged_base_turret.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.damaged_base_turret.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.day_x.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.day_x.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.day_x.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_charging.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_charging.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_charging.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_empty_far.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_empty_far.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_empty_far.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_packed.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_packed.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.drone_packed.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.equipment_storage.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.equipment_storage.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.equipment_storage.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.fish_instances.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.fish_instances.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.fish_instances.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.fresh_game.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.fresh_game.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.fresh_game.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.full_backpack.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.full_backpack.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.full_backpack.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.legacy_0.19.1.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.legacy_0.19.1.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.legacy_0.19.1.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_ak74_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_ak74_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_ak74_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_ak74_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_ak74_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_ak74_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_m4_37_60.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_m4_37_60.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_m4_37_60.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_m4_no_magazine.json.decodedPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_m4_no_magazine.json.restoredPayload",
+      "status": "PASS"
+    },
+    {
+      "id": "stage2.rifle_m4_no_magazine.json.newRoundtrip",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.surfaceMovement",
+      "status": "FAIL",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n            '13,6',\n+           '9,7',\n+           '10,8',\n+           '11,8',\n+           '12,8',\n+           '13,7'\n          ],\n          goal: null,\n          known: [],\n          markers: [],\n          opacity: 0,\n"
+    },
+    {
+      "id": "simulation.craftingProgress",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.droneCharging",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.emptyDrone",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.droneFollowing",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.dayX",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.growingCrop",
+      "status": "PASS"
+    },
+    {
+      "id": "transactions.inventoryTransferAndQuickSlots",
+      "status": "PASS"
+    },
+    {
+      "id": "transactions.magazineRemovalAndReload",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_ak74.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack1.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack2.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack3.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.backpack4.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest1.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest2.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest3.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest4.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.vest5.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.pants1.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.boots1.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.rifle_m4.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.0.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.1.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.2.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.3.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.4.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.balanced.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.balanced.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.balanced.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.sturdy.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.sturdy.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.sturdy.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.light.balanced",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.light.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "stats.helmet1.5.light.speed",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.allEnemyBehaviors.day1",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.allEnemyBehaviors.day10",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.allEnemyBehaviors.day11",
+      "status": "PASS"
+    },
+    {
+      "id": "dayX.transitionsPreserveHealthRatios",
+      "status": "PASS"
+    },
+    {
+      "id": "console.noErrors",
+      "status": "PASS"
+    }
+  ]
+}

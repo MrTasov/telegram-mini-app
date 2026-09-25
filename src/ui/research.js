@@ -28,10 +28,12 @@ window.GameResearchUI=(()=>{
     function renderSources(state,facts,access){
       content.append(node('h3',t('research.sources')),node('p',t('research.packetHint'),'coreHint'));
       for(const source of d.sources){
+        if(source.kind==='exploration'&&!GameExploration.siteHint(source.siteId)&&!state.packets.some(p=>p.sourceId===source.id))continue;
         const status=GameResearch.sourceAvailability(source.id,GameActors.localId,facts),row=node('section',null,'researchSource');row.dataset.researchSource=source.id;
         row.append(node('h4',t(source.title)),node('p',t(source.description),'coreHint'),node('strong','+ '+t('research.data',{count:number(source.data)}),'researchReward'));
         for(const id of source.blueprints)row.append(node('small',t(d.blueprints.find(b=>b.id===id).title)));
         const submitted=status.packet?.status==='submitted',held=status.packet?.status==='held'&&status.packet.actorId===GameActors.localId;
+        if(source.kind==='exploration'&&!status.packet){const locate=button(t('exploration.show'),()=>GameExplorationUI.showSite(source.siteId));row.append(locate,node('small',t('exploration.collect.on_site'),'researchReason'));content.append(row);continue;}
         const b=button(t(submitted?'research.submitted':held?'research.submit':'research.obtain'),()=>run(held?'submit':'obtain',{sourceId:source.id},state.commands.revision));b.dataset.researchAction=held?'submit':'obtain';b.disabled=!access.available||submitted||!status.available;row.append(b);
         if(!status.available&&!submitted)row.append(node('small',t(status.reason),'researchReason'));content.append(row);
       }

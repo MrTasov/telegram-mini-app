@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.37.1",
+  "version": "0.38.0",
   "private": true,
-  "description": "LAST BASE 0.37.1 — Stage F Final: official Intro video and repeatable Archive reading.",
+  "description": "LAST BASE 0.38.0 \u2014 Stage G: World Map, Sectors and Exploration",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -50,7 +50,10 @@
     "bench:f": "node --expose-gc qa/stage-f-performance.cjs",
     "package:f": "node tools/package-stage-f.cjs",
     "test:f:final": "node qa/stage-f-final-checks.cjs",
-    "package:f:final": "node tools/package-stage-f-final.cjs"
+    "package:f:final": "node tools/package-stage-f-final.cjs",
+    "test:g": "node qa/stage-g.cjs && node qa/stage-g-routes.cjs",
+    "bench:g": "node --expose-gc qa/stage-g-performance.cjs",
+    "package:g": "node tools/package-stage-g.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

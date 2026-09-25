@@ -1,0 +1,294 @@
+{
+  "version": "0.38.0",
+  "runtimeSha256": "8a11f64155170b3fe887bbd69285641491bff9ae334db044ab46765efeaac3c1",
+  "baselineRuntimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+  "baseline": "0.37.1 accepted Stage F Final",
+  "benchmarkVersion": 1,
+  "complete": true,
+  "platform": {
+    "node": "v24.19.0",
+    "os": "linux",
+    "arch": "x64",
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
+  },
+  "scope": "Serial interleaved native Canvas2D with preloaded original assets; modeled DOM/WebAudio. Not native browser layout, device FPS, physical audio or Telegram performance.",
+  "perCaseTimeoutMs": 120000,
+  "rows": [
+    {
+      "id": "quiet_surface_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "quiet_surface",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 37.61099599999943,
+        "p95Ms": 43.2571450000014,
+        "meanMs": 37.713140700000004
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 36.935042000000976,
+        "p95Ms": 41.390910000000076,
+        "meanMs": 37.39134097777775
+      },
+      "deltaMs": -0.6759539999984554,
+      "percent": -1.797224407453779
+    },
+    {
+      "id": "stress_surface_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "stress_surface",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 52.70422299999882,
+        "p95Ms": 61.48942800000077,
+        "meanMs": 53.90404274444443
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 52.9853779999994,
+        "p95Ms": 57.117247000000134,
+        "meanMs": 53.406656555555564
+      },
+      "deltaMs": 0.2811550000005809,
+      "percent": 0.5334582012537892
+    },
+    {
+      "id": "bunker_hall_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "bunker_hall",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 39.29758799999945,
+        "p95Ms": 44.744350999999824,
+        "meanMs": 40.011025977777976
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 39.6204459999999,
+        "p95Ms": 44.7768930000002,
+        "meanMs": 40.37775853333323
+      },
+      "deltaMs": 0.3228580000004513,
+      "percent": 0.8215720517006142
+    },
+    {
+      "id": "night_lights_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "night_lights",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 28.969178000001193,
+        "p95Ms": 35.13171700000021,
+        "meanMs": 29.6170637444444
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 29.33266100000037,
+        "p95Ms": 37.238485999999284,
+        "meanMs": 30.667512655555583
+      },
+      "deltaMs": 0.363482999999178,
+      "percent": 1.2547232096097538
+    },
+    {
+      "id": "quiet_surface_390",
+      "w": 390,
+      "h": 844,
+      "scene": "quiet_surface",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 18.194191000000046,
+        "p95Ms": 23.845526000000064,
+        "meanMs": 18.914973788888823
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 17.493649000000005,
+        "p95Ms": 23.807817000000796,
+        "meanMs": 18.270000488888893
+      },
+      "deltaMs": -0.7005420000000413,
+      "percent": -3.8503608102170572
+    },
+    {
+      "id": "stress_surface_390",
+      "w": 390,
+      "h": 844,
+      "scene": "stress_surface",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 30.796622000000752,
+        "p95Ms": 36.427661000001535,
+        "meanMs": 31.497056511111193
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 30.66842799999995,
+        "p95Ms": 34.48214000000007,
+        "meanMs": 31.062535255555606
+      },
+      "deltaMs": -0.1281940000008035,
+      "percent": -0.4162599391608568
+    },
+    {
+      "id": "bunker_hall_390",
+      "w": 390,
+      "h": 844,
+      "scene": "bunker_hall",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 18.48901400000068,
+        "p95Ms": 22.519921000000068,
+        "meanMs": 18.937709099999964
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 18.319405000000188,
+        "p95Ms": 23.131333999999697,
+        "meanMs": 18.987848311111033
+      },
+      "deltaMs": -0.1696090000004915,
+      "percent": -0.9173501626451586
+    },
+    {
+      "id": "night_lights_390",
+      "w": 390,
+      "h": 844,
+      "scene": "night_lights",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 16.610233000000335,
+        "p95Ms": 20.950767999999698,
+        "meanMs": 16.897681899999988
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 16.13306999999986,
+        "p95Ms": 22.218856999999844,
+        "meanMs": 16.637422966666715
+      },
+      "deltaMs": -0.4771630000004734,
+      "percent": -2.8727050367111873
+    },
+    {
+      "id": "world_map_1280",
+      "w": 1280,
+      "h": 800,
+      "mw": 1120,
+      "mh": 510,
+      "scene": "world_map",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 191.82498200000555,
+        "p95Ms": 204.00736599999982,
+        "meanMs": 193.07254674444445
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 199.43030499999804,
+        "p95Ms": 213.75691400000142,
+        "meanMs": 199.5802894444445
+      },
+      "deltaMs": 7.605322999992495,
+      "percent": 3.96471977773587
+    },
+    {
+      "id": "world_map_390",
+      "w": 390,
+      "h": 844,
+      "mw": 350,
+      "mh": 470,
+      "scene": "world_map",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 194.13757700000133,
+        "p95Ms": 208.85458700000163,
+        "meanMs": 195.08326424444442
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 195.41358899999977,
+        "p95Ms": 217.20218699999896,
+        "meanMs": 198.16547163333357
+      },
+      "deltaMs": 1.2760119999984454,
+      "percent": 0.6572720334293791
+    },
+    {
+      "id": "world_map_844",
+      "w": 844,
+      "h": 390,
+      "mw": 804,
+      "mh": 220,
+      "scene": "world_map",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 203.82038699999976,
+        "p95Ms": 222.02923700000065,
+        "meanMs": 205.9906866999998
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 203.19151300000158,
+        "p95Ms": 214.1254259999987,
+        "meanMs": 204.35550016666664
+      },
+      "deltaMs": -0.6288739999981772,
+      "percent": -0.30854322732601913
+    },
+    {
+      "id": "world_map_320",
+      "w": 320,
+      "h": 568,
+      "mw": 280,
+      "mh": 320,
+      "scene": "world_map",
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 196.8656489999994,
+        "p95Ms": 214.8406759999998,
+        "meanMs": 199.7224096666667
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 200.9660240000012,
+        "p95Ms": 211.33994499999972,
+        "meanMs": 201.73255223333342
+      },
+      "deltaMs": 4.100375000001804,
+      "percent": 2.082829087161775
+    },
+    {
+      "id": "foundation",
+      "status": "LIMITATION",
+      "reason": "Error: Повтор или потеря переносного дрона\n    at tokenCheck (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:11960:118)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:11964:371\n    at chains.<computed> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:186:30)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:12312:70\n    at chains.<computed> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:186:30)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:12585:163\n    at chains.<computed> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:186:30)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:13032:133\n    at chains.<computed> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:186:30)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:13260:75\n",
+      "exitCode": 1
+    }
+  ],
+  "completedAt": "2026-09-25T10:43:28.759Z",
+  "runtimeUnchanged": true,
+  "limitations": [
+    {
+      "id": "foundation",
+      "status": "LIMITATION",
+      "reason": "Error: Повтор или потеря переносного дрона\n    at tokenCheck (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:11960:118)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:11964:371\n    at chains.<computed> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:186:30)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:12312:70\n    at chains.<computed> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:186:30)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:12585:163\n    at chains.<computed> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:186:30)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:13032:133\n    at chains.<computed> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:186:30)\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-g-base/js/game.js:13260:75\n",
+      "exitCode": 1
+    }
+  ]
+}

@@ -70,7 +70,7 @@ const ResearchDomain=(()=>{
       }
       return {ok:false,reason:'research.error.command'};
     }
-    const commands=EquipmentCommands.create({get:id=>id===ports.coreId?{id}:null},{actor:ports.actor,authorized:ports.authorized,access:()=>true,perform(c,actor,instance){const access=ports.access(actor,instance.id);if(!access.available)return {ok:false,reason:access.reason};return perform(c,actor);},changed(){epoch++;ports.changed?.();for(const fn of listeners)fn();}});
+    const commands=EquipmentCommands.create({get:id=>id===ports.coreId||bySource.get(id)?.kind==='exploration'?{id}:null},{actor:ports.actor,authorized:ports.authorized,access:()=>true,perform(c,actor,instance){const source=bySource.get(c.payload?.sourceId),field=c.action==='obtain'&&source?.kind==='exploration';if(instance.id!==(field?source.id:ports.coreId))return {ok:false,reason:'research.error.command'};const access=field?(ports.sourceAccess?.(actor,source)||{available:false,reason:'research.error.prerequisite'}):ports.access(actor,instance.id);if(!access.available)return {ok:false,reason:access.reason};return perform(c,actor);},changed(){epoch++;ports.changed?.();for(const fn of listeners)fn();}});
     state=fresh(ports.initialProfile||'new');
     function validate(s,savedFacts=ports.facts()){
       const fail=()=>{throw Error('Invalid research save');},keys=['schema','contentRevision','profile','data','completed','blueprints','technologies','legacyEntitlements','packets','unlocks','commands'];
@@ -89,7 +89,7 @@ const ResearchDomain=(()=>{
       const operations=s.completed.length+s.packets.reduce((n,p)=>n+(p.status==='submitted'?2:1),0);
       if(s.commands.revision!==operations||s.commands.receipts.length!==Math.min(128,operations)||operations&&s.commands.receipts.at(-1).revision!==operations)fail();
       // Receipt results cannot claim an unlock/packet absent from the owner.
-      for(const [index,receipt]of s.commands.receipts.entries()){let sig;try{sig=JSON.parse(receipt.signature);}catch{fail();}if(receipt.revision!==operations-s.commands.receipts.length+index+1||!Array.isArray(sig)||sig.length!==4||sig[0]!==ports.coreId||sig[3]!==receipt.revision-1||!['obtain','submit','research'].includes(sig[1]))fail();const p=sig[2],r=receipt.result;
+      for(const [index,receipt]of s.commands.receipts.entries()){let sig;try{sig=JSON.parse(receipt.signature);}catch{fail();}if(receipt.revision!==operations-s.commands.receipts.length+index+1||!Array.isArray(sig)||sig.length!==4||sig[0]!==((sig[1]==='obtain'&&bySource.get(sig[2]?.sourceId)?.kind==='exploration')?sig[2].sourceId:ports.coreId)||sig[3]!==receipt.revision-1||!['obtain','submit','research'].includes(sig[1]))fail();const p=sig[2],r=receipt.result;
         if(!p||typeof p!=='object'||Array.isArray(p)||Object.keys(p).join()!==(sig[1]==='research'?'researchId':'sourceId'))fail();
         if(sig[1]==='research'){if(!p||r.researchId!==p.researchId||!s.completed.includes(r.researchId)||!same(r.technologies||[],byResearch.get(r.researchId).technologies))fail();}
         else if(!p||r.sourceId!==p.sourceId||!s.packets.some(v=>v.sourceId===r.sourceId&&v.actorId===receipt.actorId&&(sig[1]!=='submit'||v.status==='submitted')))fail();
@@ -99,7 +99,7 @@ const ResearchDomain=(()=>{
     }
     function capture(){return {...copy(state),commands:commands.capture()};}
     return Object.freeze({definitions:d,fresh,validate,capture,facts,availability,sourceAvailability,
-      execute(c){const p=c?.payload,key=c?.action==='research'?'researchId':'sourceId';if(!c||!['obtain','submit','research'].includes(c.action)||!p||typeof p!=='object'||Array.isArray(p)||Object.keys(p).join()!==key||typeof p[key]!=='string'||p[key].length>100)return {ok:false,reason:'research.error.command',revision:commands.revision};return commands.execute(c);},restore(s){validate(s);state=copy(s);commands.restore(s.commands);epoch++;},
+      execute(c){const p=c?.payload,key=c?.action==='research'?'researchId':'sourceId';if(!c||!['obtain','submit','research'].includes(c.action)||!p||typeof p!=='object'||Array.isArray(p)||Object.keys(p).join()!==key||typeof p[key]!=='string'||p[key].length>100)return {ok:false,reason:'research.error.command',revision:commands.revision};return commands.execute(c);},restore(s,savedFacts){validate(s,savedFacts);state=copy(s);commands.restore(s.commands);epoch++;},
       hasTechnology:id=>state.technologies.includes(id)||state.legacyEntitlements.includes(id),get revision(){return commands.revision;},get epoch(){return epoch;},subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);}});
   }
   return Object.freeze({create,validateDefinitions});

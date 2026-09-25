@@ -20,7 +20,7 @@ for(const [name,width,height,mode]of [['desktop',1280,800,'PC'],['portrait',390,
  reset();E(`I18n.setLanguage('${lang}');GameInput.setMode('${mode}');innerWidth=${width};innerHeight=${height};CommandCoreUI.tick()`);
  assert.equal(section().querySelectorAll('[data-research-id]').length,4);assert.equal(section().querySelectorAll('[data-research-page]').length,3);languageCheck(lang);
  const before=snapshot(),panel=r.doc.getElementById('commandCoreOverlay').querySelector('.v09Panel'),tabs=r.doc.getElementById('coreTab_research');
- page('sources');assert.equal(section().querySelectorAll('[data-research-source]').length,3);assert.equal(r.doc.getElementById('coreBack').disabled,false);languageCheck(lang);
+ page('sources');assert.equal(section().querySelectorAll('[data-research-source]').length,4);assert.equal(r.doc.getElementById('coreBack').disabled,false);languageCheck(lang);
  source('obtain');assert.equal(E('GameResearch.capture().data'),0);source('submit');assert.equal(E('GameResearch.capture().data'),20);
  page('projects');category('production');assert.equal(section().querySelectorAll('[data-research-id]').length,2);detail('research.workshop_efficiency');assert.equal(section().querySelectorAll('[data-research-id]').length,1);assert.ok(section().querySelector('details'));languageCheck(lang);
  const action=section().querySelector('[data-research-action="research"]');assert.equal(action.disabled,false);action.click();assert.equal(E('GameResearch.capture().data'),5);assert.equal(E('GameResearch.hasTechnology("technology.workshop_efficiency")'),true);assert.equal(E('V09Craft.craftQueue.upgrades.workshop'),false);

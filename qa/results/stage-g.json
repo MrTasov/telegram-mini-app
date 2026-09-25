@@ -1,0 +1,191 @@
+{
+  "version": "0.38.0",
+  "runtimeSha256": "8a11f64155170b3fe887bbd69285641491bff9ae334db044ab46765efeaac3c1",
+  "passed": 45,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "baseline_exact_0371",
+      "status": "PASS"
+    },
+    {
+      "id": "only_existing_world_and_original_assets",
+      "status": "PASS"
+    },
+    {
+      "id": "new_game_preserves_C1_and_separates_unknown_from_access",
+      "status": "PASS"
+    },
+    {
+      "id": "opening_or_drawing_map_never_discovers_or_grants_access",
+      "status": "PASS"
+    },
+    {
+      "id": "survey_uses_simulation_actor_and_existing_fog",
+      "status": "PASS"
+    },
+    {
+      "id": "survey_does_not_duplicate_discoveries_or_receipts",
+      "status": "PASS"
+    },
+    {
+      "id": "survey_paused_hidden",
+      "status": "PASS"
+    },
+    {
+      "id": "survey_paused_dead",
+      "status": "PASS"
+    },
+    {
+      "id": "survey_paused_explicit",
+      "status": "PASS"
+    },
+    {
+      "id": "known_gate_does_not_bypass_physical_gate",
+      "status": "PASS"
+    },
+    {
+      "id": "field_collection_rejected_from_core_and_through_wall",
+      "status": "PASS"
+    },
+    {
+      "id": "collect_is_available_without_base_power_or_inventory_space",
+      "status": "PASS"
+    },
+    {
+      "id": "field_notes_unlock_only_code_and_small_archive_entry",
+      "status": "PASS"
+    },
+    {
+      "id": "new_field_archive_remains_reopenable_after_read_and_save_load",
+      "status": "PASS"
+    },
+    {
+      "id": "partial_exploration_save_load_continues_and_gate_stays_open",
+      "status": "PASS"
+    },
+    {
+      "id": "real_interaction_dispatch_collects_document_once",
+      "status": "PASS"
+    },
+    {
+      "id": "field_research_duplicate_request_and_conflict_survive_save",
+      "status": "PASS"
+    },
+    {
+      "id": "field_command_wrong_target_distance_actor_and_stale_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "explore_submit_research_craft_inventory_place_save_load",
+      "status": "PASS"
+    },
+    {
+      "id": "migration_0371_preserves_every_old_save_owner",
+      "status": "PASS"
+    },
+    {
+      "id": "migration_idempotent_and_no_intro_replay",
+      "status": "PASS"
+    },
+    {
+      "id": "save_atomic_reject_missing",
+      "status": "PASS"
+    },
+    {
+      "id": "save_atomic_reject_unknown_sector",
+      "status": "PASS"
+    },
+    {
+      "id": "save_atomic_reject_duplicate",
+      "status": "PASS"
+    },
+    {
+      "id": "save_atomic_reject_gate_without_code",
+      "status": "PASS"
+    },
+    {
+      "id": "save_atomic_reject_unknown_site",
+      "status": "PASS"
+    },
+    {
+      "id": "save_atomic_reject_bad_receipt",
+      "status": "PASS"
+    },
+    {
+      "id": "save_atomic_reject_future_schema",
+      "status": "PASS"
+    },
+    {
+      "id": "save_atomic_reject_future_format",
+      "status": "PASS"
+    },
+    {
+      "id": "research_packet_requires_persisted_site_evidence",
+      "status": "PASS"
+    },
+    {
+      "id": "shared_core_and_map_navigation_ru_1280x800",
+      "status": "PASS"
+    },
+    {
+      "id": "shared_core_and_map_navigation_en_1280x800",
+      "status": "PASS"
+    },
+    {
+      "id": "shared_core_and_map_navigation_ru_390x844",
+      "status": "PASS"
+    },
+    {
+      "id": "shared_core_and_map_navigation_en_390x844",
+      "status": "PASS"
+    },
+    {
+      "id": "shared_core_and_map_navigation_ru_844x390",
+      "status": "PASS"
+    },
+    {
+      "id": "shared_core_and_map_navigation_en_844x390",
+      "status": "PASS"
+    },
+    {
+      "id": "shared_core_and_map_navigation_ru_320x568",
+      "status": "PASS"
+    },
+    {
+      "id": "shared_core_and_map_navigation_en_320x568",
+      "status": "PASS"
+    },
+    {
+      "id": "home_goal_uses_surface_coordinates_without_changing_scene",
+      "status": "PASS"
+    },
+    {
+      "id": "surface_map_click_cannot_move_bunker_player",
+      "status": "PASS"
+    },
+    {
+      "id": "map_pins_and_camera_remain_outside_team_sector_owner",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation_budget_and_idle_map_do_not_rebuild",
+      "status": "PASS"
+    },
+    {
+      "id": "two_actor_domain_shared_access_and_duplicate_guards",
+      "status": "PASS"
+    },
+    {
+      "id": "two_actors_cannot_claim_same_research_source",
+      "status": "PASS"
+    },
+    {
+      "id": "no_console_errors",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Modeled DOM/WebAudio/HTMLVideoElement; physical PC/mobile/Telegram rendering and audio remain manual."
+  ]
+}

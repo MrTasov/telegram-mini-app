@@ -1,0 +1,217 @@
+{
+  "version": "0.38.0",
+  "passed": 45,
+  "failed": 6,
+  "checks": [
+    {
+      "id": "conditions.AND_OR_and_explanations",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject.unknownFact",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject.unknownObjective",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject.objectiveCycle",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject.chapterCycle",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject.unknownChapter",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject.duplicateObjective",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject.unreachable",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject.transientDependency",
+      "status": "PASS"
+    },
+    {
+      "id": "semantics.current_reverts_once_stays_after_ignores_history",
+      "status": "PASS"
+    },
+    {
+      "id": "ready_is_not_transition_and_snapshots_are_pure",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.closed_UI_two_actors_duplicate_and_stale",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reject.foreign",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reject.dead",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reject.permissions",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reject.stale",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reject.wrongChapter",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reject.wrongTarget",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reject.badRequest",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reject.wrongType",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.revalidate.power",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.revalidate.distance",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.revalidate.target",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.reused_id_different_payload_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "restore_never_emits_or_grants_and_duplicate_survives",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject.futureSchema",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject.futureContent",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject.unknownActive",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject.unknownObjective",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject.missingObjective",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject.forgedCompletion",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject.negativeBaseline",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject.invalidBoolean",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.R2_decode_is_additive_and_pure",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    schema: 2,\n+   sectors038: {\n+     access: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river',\n+       'sector.north',\n+       'sector.west',\n+       'sector.east',\n+       'sector.southwest',\n+       'sector.southeast',\n+       'sector.station',\n+       'sector.annex'\n+     ],\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     known: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river'\n+     ],\n+     profile: 'legacy',\n+     schema: 1,\n+     sites: [],\n+     visited: []\n+   },\n    starterPending: [],\n    storage: [\n      {\n        icon: '⛽',\n        items: [],\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:25:296\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:25:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "migration.old_R2_restore_preserves_equipment_progress_and_geometry",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    schema: 2,\n+   sectors038: {\n+     access: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river',\n+       'sector.north',\n+       'sector.west',\n+       'sector.east',\n+       'sector.southwest',\n+       'sector.southeast',\n+       'sector.station',\n+       'sector.annex'\n+     ],\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     known: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river'\n+     ],\n+     profile: 'legacy',\n+     schema: 1,\n+     sites: [],\n+     visited: []\n+   },\n    starterPending: [],\n    storage: [\n      {\n        icon: '⛽',\n        items: [],\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:26:424\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:26:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "migration.no_starter_rewards_or_backdated_actions",
+      "status": "PASS"
+    },
+    {
+      "id": "save.current_missing_owner_rejected_before_live_or_slot_changes",
+      "status": "PASS"
+    },
+    {
+      "id": "new_game_has_separate_profile_no_damage_and_no_old_completion",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.offline_journal_and_physical_Core_display_goals",
+      "status": "PASS"
+    },
+    {
+      "id": "events_and_polling_update_closed_UI_without_item_transfer_credit",
+      "status": "PASS"
+    },
+    {
+      "id": "Core.consumer_uses_existing_network_independent_of_UI",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.full_inventory_has_no_partial_expense_and_no_new_reward",
+      "status": "PASS"
+    },
+    {
+      "id": "save_transition_roundtrip_and_duplicate_restores_once",
+      "status": "PASS"
+    },
+    {
+      "id": "power_off_and_distance_rechecked_on_commit",
+      "status": "PASS"
+    },
+    {
+      "id": "pause_hidden_resume_does_not_advance_campaign",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.localized_tabs_and_legacy_access.ru.PC",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 5\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:37:401\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:37:69)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "UI.localized_tabs_and_legacy_access.ru.MOBILE",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 5\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:37:401\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:37:69)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "UI.localized_tabs_and_legacy_access.en.PC",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 5\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:37:401\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:37:69)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "UI.localized_tabs_and_legacy_access.en.MOBILE",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 5\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:37:401\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/campaign.cjs:37:69)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "snapshots_do_not_mutate_campaign_or_random_sequence",
+      "status": "PASS"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ]
+}

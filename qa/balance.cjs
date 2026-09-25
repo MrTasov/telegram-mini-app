@@ -21,6 +21,7 @@ const version=actual.version;actual.version=expected.version; // Release metadat
 // Stage E adds a capability gate, not a change to price/time/output or stats.
 assert.deepEqual(actual.recipes.rifle_m4.availability,JSON.parse(E('JSON.stringify(ResearchDefinitions.bindings.recipes.rifle_m4)')));
 delete actual.recipes.rifle_m4.availability;
+assert.equal(actual.save.schemas.sectors038,1);delete actual.save.schemas.sectors038;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='sectors038');
 assert.equal(actual.save.schemas.story037,1);delete actual.save.schemas.story037;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='story037');
 assert.equal(actual.save.schemas.research036,1);delete actual.save.schemas.research036;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='research036');
 assert.equal(actual.save.topKeys.filter(k=>k==='saveVersion').length,1);

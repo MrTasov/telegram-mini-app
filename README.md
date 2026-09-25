@@ -1,12 +1,15 @@
-# LAST BASE 0.37.1 — Stage F Final
+# LAST BASE 0.38.0 — Stage G
 
-Based on accepted **0.37.0 Stage F**. This focused update connects the supplied
-**official Intro video** and makes every unlocked Archive card reopenable,
-including after reading and Save/Load.
-See [final Russian report](STAGE_F_FINAL_REPORT_RU.md),
-[contracts](docs/STAGE_F_CONTRACT_RU.md), and [Russian README](README_RU.md).
-Earlier reports and performance results describe their named historical builds.
-**Stage G and Level 2 are not started.**
+Based on accepted **0.37.1 Stage F Final**. Existing world map + 12 sectors,
+progressive discovery and 3 physical document sources, using the existing
+Research and Archive contracts. No second crafting system or free equipment.
+See [Russian report](STAGE_G_REPORT_RU.md), [contracts](docs/STAGE_G_CONTRACT_RU.md)
+and [Russian README](README_RU.md). Previous reports describe their named builds.
+**Stage H and Level 2 are not started.**
+
+Save Format **18**, migration **17→18**. Existing saves retain all former route
+access and every old save owner. New Game's optional service-centre route opens
+with the field journal. Map access and discovery are separate.
 
 Serve `index.html`, `js/`, `styles/`, and `assets/` together, e.g.
 `python -m http.server 8000`. Use HTTP rather than `file://` for media fetching.
@@ -29,13 +32,11 @@ Reading costs nothing and grants no items or production rights.
 
 **Research/Blueprint → production unlock → Craft → Inventory → Place/use.**
 
-Save Format **17** and migration **16→17** are unchanged. Saves from 0.37.0
-load without a new migration. All existing gameplay owners are retained.
+Save Format **18** adds the sector owner through migration **17→18**. All
+prior migrations and gameplay owners are retained; Continue does not replay Intro.
 
-`npm run build`, `npm run test:f:final`, `npm run package:f:final`.
-The final targeted pass covers build/source verification, Stage F, official
-video lifecycle/Archive rereading, saves, menu, Core navigation and Audio.
-`npm test` remains the full regression command; that full pass and performance
-benchmarks were not repeated for this two-change update.
-The automated environment uses modeled DOM/HTMLVideoElement/WebAudio and native
-Canvas2D. Native playback, mobile/Telegram layout and listening require manual QA.
+`npm run build`, `npm test`, `npm run test:g`, `npm run bench:g`,
+`npm run package:g`. Release results are recorded in the Russian report and
+`qa/results/summary.json`; historical reports are not current pass evidence.
+QA uses modeled DOM/HTMLVideoElement/WebAudio and native Canvas2D.
+Native playback, mobile/Telegram layout and listening require manual QA.

@@ -1,0 +1,241 @@
+{
+  "version": "0.38.0",
+  "passed": 56,
+  "failed": 2,
+  "checks": [
+    {
+      "id": "baseline.sha256",
+      "status": "PASS"
+    },
+    {
+      "id": "default_world.has_only_existing_instances",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.0311.additive_pure_repeatable",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    schema: 2,\n+   sectors038: {\n+     access: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river',\n+       'sector.north',\n+       'sector.west',\n+       'sector.east',\n+       'sector.southwest',\n+       'sector.southeast',\n+       'sector.station',\n+       'sector.annex'\n+     ],\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     known: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river'\n+     ],\n+     profile: 'legacy',\n+     schema: 1,\n+     sites: [],\n+     visited: []\n+   },\n    starterPending: [],\n    storage: [\n      {\n        icon: '⛽',\n        items: [],\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-b.cjs:15:283\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-b.cjs:6:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-b.cjs:15:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "migration.0311.active_paused_queue_output_refund_feed_and_item",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 90,\n...\n    schema: 2,\n+   sectors038: {\n+     access: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river',\n+       'sector.north',\n+       'sector.west',\n+       'sector.east',\n+       'sector.southwest',\n+       'sector.southeast',\n+       'sector.station',\n+       'sector.annex'\n+     ],\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     known: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river'\n+     ],\n+     profile: 'legacy',\n+     schema: 1,\n+     sites: [],\n+     visited: []\n+   },\n    starterPending: [],\n    storage: [\n      {\n        icon: '⛽',\n        items: [],\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-b.cjs:18:105\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-b.cjs:6:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-b.cjs:16:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "transform.old_coordinates.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.feed_craft",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.upgrade0161",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.tank",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.battery",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.robots014_dock",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest0",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest1",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest2",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest3",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest4",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest5",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest6",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest7",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest8",
+      "status": "PASS"
+    },
+    {
+      "id": "transform.old_coordinates.chest9",
+      "status": "PASS"
+    },
+    {
+      "id": "geometry.preserved_shell_and_shared_new_physical_bodies",
+      "status": "PASS"
+    },
+    {
+      "id": "geometry.collision_grid_and_routes",
+      "status": "PASS"
+    },
+    {
+      "id": "container.live_refs_survive_restore",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.explicit_actor_instance_repeat_and_reload",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.denied_no_expense.foreign_actor",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.denied_no_expense.missing_instance",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.denied_no_expense.distance",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.denied_no_expense.dead",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.denied_no_expense.surface",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.denied_no_expense.inactive_feed",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.denied_no_expense.pause",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.atomic_materials_and_full_inventory_output",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.cancel_refund_is_conserved_once",
+      "status": "PASS"
+    },
+    {
+      "id": "power_off.roundtrip_and_no_free_progress",
+      "status": "PASS"
+    },
+    {
+      "id": "upgrade.power_depends_on_shared_item_not_open_window",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.missing",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.schema",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.duplicate_id",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.unknown_type",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.protected_moved",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.rotation",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.room",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.job_ref",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.device_ref",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.container_ref",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.extra_instance",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.negative_revision",
+      "status": "PASS"
+    },
+    {
+      "id": "save.reject_without_world_or_slot_mutation.future",
+      "status": "PASS"
+    },
+    {
+      "id": "two_instances.same_production_code_isolated_jobs_output_pause_power",
+      "status": "PASS"
+    },
+    {
+      "id": "two_instances.renderer_collision_interaction_share_transform",
+      "status": "PASS"
+    },
+    {
+      "id": "pure_authority.two_actor_conflict_and_permission",
+      "status": "PASS"
+    },
+    {
+      "id": "two_instances.actual_renderer_and_audio_observer_anchors",
+      "status": "PASS"
+    },
+    {
+      "id": "receipts.bounded_and_evicted_request_stays_stale",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.production_uses_instance_command_and_remains_localized",
+      "status": "PASS"
+    },
+    {
+      "id": "stage_A_and_content_files_unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ]
+}

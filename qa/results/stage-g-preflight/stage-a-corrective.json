@@ -1,0 +1,147 @@
+{
+  "version": "0.38.0",
+  "passed": 28,
+  "failed": 5,
+  "checks": [
+    {
+      "id": "migration.original_A.fresh",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    schema: 2,\n+   sectors038: {\n+     access: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river',\n+       'sector.north',\n+       'sector.west',\n+       'sector.east',\n+       'sector.southwest',\n+       'sector.southeast',\n+       'sector.station',\n+       'sector.annex'\n+     ],\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     known: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river'\n+     ],\n+     profile: 'legacy',\n+     schema: 1,\n+     sites: [],\n+     visited: []\n+   },\n    starterPending: [],\n    storage: [\n      {\n        icon: '⛽',\n        items: [],\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:17:121\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:12:56)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "migration.original_A.power",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    schema: 2,\n+   sectors038: {\n+     access: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river',\n+       'sector.north',\n+       'sector.west',\n+       'sector.east',\n+       'sector.southwest',\n+       'sector.southeast',\n+       'sector.station',\n+       'sector.annex'\n+     ],\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     known: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river'\n+     ],\n+     profile: 'legacy',\n+     schema: 1,\n+     sites: [],\n+     visited: []\n+   },\n    starterPending: [],\n    storage: [\n      {\n        icon: '⛽',\n        items: [],\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:17:121\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:12:56)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "migration.original_A.ore",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    schema: 2,\n+   sectors038: {\n+     access: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river',\n+       'sector.north',\n+       'sector.west',\n+       'sector.east',\n+       'sector.southwest',\n+       'sector.southeast',\n+       'sector.station',\n+       'sector.annex'\n+     ],\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     known: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river'\n+     ],\n+     profile: 'legacy',\n+     schema: 1,\n+     sites: [],\n+     visited: []\n+   },\n    starterPending: [],\n    storage: [\n      {\n        icon: '⛽',\n        items: [],\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:17:121\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:12:56)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "migration.original_A.completed",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    schema: 2,\n+   sectors038: {\n+     access: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river',\n+       'sector.north',\n+       'sector.west',\n+       'sector.east',\n+       'sector.southwest',\n+       'sector.southeast',\n+       'sector.station',\n+       'sector.annex'\n+     ],\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     known: [\n+       'sector.home',\n+       'sector.woodland',\n+       'sector.industry',\n+       'sector.south',\n+       'sector.river'\n+     ],\n+     profile: 'legacy',\n+     schema: 1,\n+     sites: [],\n+     visited: []\n+   },\n    starterPending: [],\n    storage: [\n      {\n        icon: '⛽',\n        items: [],\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:17:121\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:12:56)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "migration.reject_corrupt_original_before_mutation",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.current_missing_optional_is_invalid",
+      "status": "PASS"
+    },
+    {
+      "id": "content.seven_objectives_and_optional_compatibility",
+      "status": "PASS"
+    },
+    {
+      "id": "content.shared_wood_not_backpack_and_reverts_on_consumption",
+      "status": "PASS"
+    },
+    {
+      "id": "content.iron_activation_baseline_ignores_old_production_and_transfers",
+      "status": "PASS"
+    },
+    {
+      "id": "content.actual_furnace_output_completes_once_without_collection",
+      "status": "PASS"
+    },
+    {
+      "id": "content.battery_once_survives_discharge_and_load",
+      "status": "PASS"
+    },
+    {
+      "id": "content.perimeter_current_reverts_and_repairs",
+      "status": "PASS"
+    },
+    {
+      "id": "stairs.whole_visual_area.exit",
+      "status": "PASS"
+    },
+    {
+      "id": "stairs.whole_visual_area.stairs_down_locked",
+      "status": "PASS"
+    },
+    {
+      "id": "stairs.gap_is_not_a_target",
+      "status": "PASS"
+    },
+    {
+      "id": "stairs.up_action_from_foot_and_top_without_tiny_circle",
+      "status": "PASS"
+    },
+    {
+      "id": "stairs.locked_routes_to_seal_without_entering_level2",
+      "status": "PASS"
+    },
+    {
+      "id": "geometry_and_assets_unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "base.all_existing_systems_and_read_only",
+      "status": "PASS"
+    },
+    {
+      "id": "base.battery.empty",
+      "status": "PASS"
+    },
+    {
+      "id": "base.battery.charging",
+      "status": "PASS"
+    },
+    {
+      "id": "base.battery.discharging",
+      "status": "PASS"
+    },
+    {
+      "id": "base.battery.off",
+      "status": "PASS"
+    },
+    {
+      "id": "base.fuel_units_and_retired_room_switch_ignored",
+      "status": "PASS"
+    },
+    {
+      "id": "base.production_power_pause_and_ready",
+      "status": "PASS"
+    },
+    {
+      "id": "base.drone_location_and_fallen_defense",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.localized_compact_and_stable_nodes.ru.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.localized_compact_and_stable_nodes.ru.MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.localized_compact_and_stable_nodes.en.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.localized_compact_and_stable_nodes.en.MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.optional_progress_updates_without_revision_change",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.only_implemented_routes_and_legacy_screens",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 5\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:54:113\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-a-corrective.cjs:54:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "DOM persistence checked in a model; pixel layout requires the optional browser gate and physical device review."
+  ]
+}

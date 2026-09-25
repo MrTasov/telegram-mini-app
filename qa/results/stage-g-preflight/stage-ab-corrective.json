@@ -1,0 +1,145 @@
+{
+  "version": "0.38.0",
+  "passed": 32,
+  "failed": 2,
+  "checks": [
+    {
+      "id": "baseline.immutable",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.all_owners.workshop",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.all_owners.kitchen",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.all_owners.hall",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.all_owners.energy",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.reject_forged_old_transform",
+      "status": "PASS"
+    },
+    {
+      "id": "geometry.shell_stairs_core_art_unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.command_core_l1",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.tank",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.battery",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.upgrade0161",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.chest0",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.robots014_dock_body",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.medical_table",
+      "status": "PASS"
+    },
+    {
+      "id": "body.shared_collision_and_light.bed",
+      "status": "PASS"
+    },
+    {
+      "id": "body.transparent_sprite_margin_is_walkable.command_core_l1",
+      "status": "PASS"
+    },
+    {
+      "id": "body.transparent_sprite_margin_is_walkable.craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "body.transparent_sprite_margin_is_walkable.furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "body.transparent_sprite_margin_is_walkable.generator",
+      "status": "PASS"
+    },
+    {
+      "id": "body.transparent_sprite_margin_is_walkable.upgrade0161",
+      "status": "PASS"
+    },
+    {
+      "id": "navigation.player_and_drone_both_swapped_rooms",
+      "status": "PASS"
+    },
+    {
+      "id": "commands.moved_station_explicit_actor_once_and_after_load",
+      "status": "PASS"
+    },
+    {
+      "id": "tracker.collapsed_toggle_hide_and_independent_progress",
+      "status": "PASS"
+    },
+    {
+      "id": "tracker.confirmation_expires_without_objective_rollback",
+      "status": "PASS"
+    },
+    {
+      "id": "campaign.optional_extension_no_new_gate_or_reward",
+      "status": "PASS"
+    },
+    {
+      "id": "core.fixed_nodes_compact_objectives_chapter_selection.ru",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 5\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-ab-corrective.cjs:36:519\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-ab-corrective.cjs:6:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-ab-corrective.cjs:35:31)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "core.fixed_nodes_compact_objectives_chapter_selection.en",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 5\n\n    at /workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-ab-corrective.cjs:36:519\n    at check (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-ab-corrective.cjs:6:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_g_0380/qa/stage-ab-corrective.cjs:35:31)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "core.stable_viewport_constraints_and_hud_css",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.scene_floor_and_elevation_isolation",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.day_removed_dayX_untouched_and_replacements_real",
+      "status": "PASS"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ]
+}

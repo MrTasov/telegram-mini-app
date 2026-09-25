@@ -28,6 +28,7 @@ GameSave.seal({
     "inventory.buildables",
     "base.control",
     "research.foundation",
+    "world.exploration",
     "story.archive"
   ],
   "decode": [
@@ -60,6 +61,7 @@ GameSave.seal({
     "inventory.buildables",
     "base.control",
     "research.foundation",
+    "world.exploration",
     "story.archive"
   ],
   "restore": [
@@ -93,6 +95,7 @@ GameSave.seal({
     "inventory.buildables",
     "base.control",
     "research.foundation",
+    "world.exploration",
     "story.archive"
   ]
 });
