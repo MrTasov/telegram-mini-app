@@ -14,7 +14,7 @@ const V09Craft = (() => {
     rifle_m4: {station:'craft_bench',category:'Оружие',name:'M4',input:{iron:18,copper:12,parts:4,wood:4},output:'rifle_m4',qty:1,ms:60000}
   };
   const GUNS = {
-    rifle_ak74:{name:'АК-74',ammo:'ammo',caliber:'5,45 × 39',damage:35,delay:155,spread:.045,recoil:.019,range:660,mag:30,category:'assault',reloadMs:2000,noise:550,heldStyle:'ak',visualRecoil:-2.4,recoilLabel:'выше',magazineTypes:['magazine_standard','magazine_module'],defaultMagazine:'magazine_standard',extendedMagazine:'magazine_module'},
+    rifle_ak74:{name:'АК-74',ammo:'ammo',caliber:'5,45 × 39',damage:35,delay:155/1.3,spread:.045,recoil:.019,range:660,mag:30,category:'assault',reloadMs:2000,noise:550,heldStyle:'ak',visualRecoil:-2.4,recoilLabel:'выше',magazineTypes:['magazine_standard','magazine_module'],defaultMagazine:'magazine_standard',extendedMagazine:'magazine_module'},
     rifle_m4:{name:'M4',ammo:'ammo556',caliber:'5.56 × 45',damage:28,delay:115,spread:.021,recoil:.011,range:720,mag:30,category:'assault',reloadMs:1800,noise:550,heldStyle:'m4',visualRecoil:-1.3,recoilLabel:'ниже',magazineTypes:['magazine_standard','magazine_module'],defaultMagazine:'magazine_standard',extendedMagazine:'magazine_module'}
   };
   // Physical empty components, shared by combat, validation and the picker.

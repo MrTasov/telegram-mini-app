@@ -76,18 +76,18 @@ async function main(){
   reset();E(`addItem('${item}',1);V013Inventory.equip('${item}');V010Combat.currentWeapon().rounds=30;`);assert.equal(E('heldItem()'),item);
   for(let i=0;i<8;i++){
    advance(450,`lastShot=-10000;player.aimX=Math.cos(${i}*Math.PI/4);player.aimY=Math.sin(${i}*Math.PI/4);player.moving=${moving};player.walkAnimation+=.21;player.x+=${moving?2:0};bullets.length=0;shoot();`);
-   assert.equal(E('bullets.length'),1);const tip=J('ActorVisuals.muzzlePoint()'),seg=J('ActorVisuals.tracerSegment(bullets[0])');assert.deepEqual(seg.from,tip);assert.deepEqual(seg.to,tip);
-   E('bullets[0].x+=bullets[0].dx;bullets[0].y+=bullets[0].dy');assert.deepEqual(J('ActorVisuals.tracerSegment(bullets[0]).from'),tip);
-   assert.ok(E('(()=>{const s=ActorVisuals.tracerSegment(bullets[0]),b=bullets[0];return (s.to.x-s.from.x)*b.dx+(s.to.y-s.from.y)*b.dy>0})()'),'a tracer must always move away from the muzzle');
-   E('bullets[0].x+=bullets[0].dx*7;bullets[0].y+=bullets[0].dy*7');const after=J('ActorVisuals.tracerSegment(bullets[0])'),real=J('({x:bullets[0].x,y:bullets[0].y})');assert.ok(Math.hypot(after.to.x-real.x,after.to.y-real.y)<1e-9);assert.ok(Math.hypot(after.to.x-after.from.x,after.to.y-after.from.y)<11);
+   assert.equal(E('bullets.length'),1);assert.equal(E('ActorVisuals.tracerSegment'),undefined);
+   const first=J('({x:bullets[0].x,y:bullets[0].y,dx:bullets[0].dx,dy:bullets[0].dy})');
+   E('bullets[0].x+=bullets[0].dx;bullets[0].y+=bullets[0].dy');const next=J('({x:bullets[0].x,y:bullets[0].y})');assert.ok((next.x-first.x)*first.dx+(next.y-first.y)*first.dy>0);assert.ok(Number.isFinite(J('ActorVisuals.muzzlePoint()').x));
+
   }
  });
  check('weapon.AKSpriteMuzzleAndWorldAnchorMatchAllWalkFrames',()=>{
-  reset();E("window.muzzleMatrix=null;window.realMuzzleDraw=ctx.drawImage;ctx.drawImage=function(im,...a){if(im===GameAssets.image('actor/v4/items'))muzzleMatrix=ctx.getTransform();return realMuzzleDraw.call(this,im,...a);}");
+  reset();E("window.muzzleMatrix=null;window.muzzleRaster=false;window.realMuzzleDraw=ctx.drawImage;ctx.drawImage=function(im,...a){if(im===GameAssets.image('actor/v4/items')){muzzleMatrix=ctx.getTransform();muzzleRaster=false;}else if(a.length===4&&a[2]===1024&&a[3]===1024){muzzleMatrix=ctx.getTransform();muzzleRaster=true;}return realMuzzleDraw.call(this,im,...a);}");
   try{for(let i=0;i<12;i++)for(let a=0;a<8;a++){
    E(`window.p=ActorVisuals.framePose('rifle_ak74','walk',${i});ctx.setTransform(1,0,0,1,0,0);ActorVisuals.renderPose(p,150,150,${a}*Math.PI/4);`);
    const point=J(`ActorVisuals.worldPoint(p,p.record.gear.muzzle,150,150,${a}*Math.PI/4)`),matrix=J('({a:muzzleMatrix.a,b:muzzleMatrix.b,c:muzzleMatrix.c,d:muzzleMatrix.d,e:muzzleMatrix.e,f:muzzleMatrix.f})');
-   assert.ok(Math.hypot(point.x-(matrix.a*273+matrix.c*500+matrix.e),point.y-(matrix.b*273+matrix.d*500+matrix.f))<.0001);
+   const anchor=E('muzzleRaster')?J('p.record.gear.muzzle'):[273,500];assert.ok(Math.hypot(point.x-(matrix.a*anchor[0]+matrix.c*anchor[1]+matrix.e),point.y-(matrix.b*anchor[0]+matrix.d*anchor[1]+matrix.f))<.0001);
   }}finally{E('ctx.drawImage=realMuzzleDraw');}
  });
  check('scale.idleUnchangedMovementOnlySharedLayerTransform',()=>{assert.equal(cfg.visualScale,1.65);assert.equal(cfg.unarmed.walkScale,.94);assert.deepEqual(cfg.modular.walkScale,{firearm:.91,tool:.91,handheld:.9});reset();for(const item of Object.keys(cfg.modular.items)){assert.equal(E(`ActorVisuals.movementScale(ActorVisuals.framePose('${item}','idle'))`),1);for(let i=0;i<12;i++)assert.equal(E(`ActorVisuals.movementScale(ActorVisuals.framePose('${item}','walk',${i}))`),cfg.modular.walkScale[cfg.modular.items[item].body]);}});
@@ -104,7 +104,7 @@ async function main(){
  check('combat.seededShotsIdenticalDamageAmmoSpreadAndProjectileStates',()=>{
   // Restart both PRNGs from the same state. VFX must not consume gameplay RNG.
   for(const q of [r,before])q.eval("window.seed=781;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};bullets.length=0;");
-  for(let i=0;i<35;i++){r.advance(170);before.advance(170);for(const q of [r,before])q.eval('shoot();updateBullets()');assert.deepEqual(J('bullets'),plain(B('bullets')));assert.equal(E('V010Combat.currentWeapon().rounds'),B('V010Combat.currentWeapon().rounds'));assert.deepEqual(J("V010Combat.gunSpec(V010Combat.currentWeapon())"),plain(B("V010Combat.gunSpec(V010Combat.currentWeapon())")));}
+  for(let i=0;i<35;i++){r.advance(170);before.advance(170);for(const q of [r,before])q.eval('shoot();updateBullets()');assert.deepEqual(J('bullets'),plain(B('bullets')));assert.equal(E('V010Combat.currentWeapon().rounds'),B('V010Combat.currentWeapon().rounds'));const actual=J("V010Combat.gunSpec(V010Combat.currentWeapon())"),expected=plain(B("V010Combat.gunSpec(V010Combat.currentWeapon())"));assert.equal(actual.delay,expected.delay/1.3);actual.delay=expected.delay;assert.deepEqual(actual,expected);}
  });
  const result={patch:'visual-audio-polish-1',passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status==='FAIL').length,audio:{requests:meter.requests.length,maxActiveSources:meter.maxActive,reusedGainNodes:meter.gains,htmlAudioInstances:meter.htmlAudio},checks};
  fs.writeFileSync('qa/results/polish.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));if(result.failed)process.exitCode=1;

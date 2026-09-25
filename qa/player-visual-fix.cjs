@@ -21,7 +21,7 @@ async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catc
    const expr=item?`ActorVisuals.framePose('${item}','${mode}',${i})`:`{kind:'unarmed',id:'${mode==='idle'?cfg.unarmed.idle:cfg.body.unarmed}',frame:${i}}`;
    E(`visualCalls=[];ctx.setTransform(1,0,0,1,0,0);ActorVisuals.renderPose(${expr},200,200,.73);`);
    const calls=plain(E('visualCalls')),body=item?mod.items[item][mode==='work'?'action':mode]?.frames?.[i]?.body|| (mode==='walk'?mod.items[item].walk[i].body:mod.items[item].idle.body):{id:mode==='idle'?cfg.unarmed.idle:cfg.body.unarmed};
-   const size=manifest.images[body.id].size,call=calls.find(c=>c.width===size[0]&&c.height===size[1]);assert.ok(call,item+' '+mode);
+   const size=manifest.images[body.id].size,call=calls.find(c=>(c.width===size[0]&&c.height===size[1])||(c.args.length===4&&c.args[2]===1024&&c.args[3]===1024));assert.ok(call,item+' '+mode);
    const correction=mode==='walk'?(item?mod.walkScale[mod.items[item].body]:cfg.unarmed.walkScale):1;
    assert.ok(Math.abs(Math.hypot(call.m[0],call.m[1])-.125*1.65*correction)<1e-6,item+' '+mode+' scale');
   }

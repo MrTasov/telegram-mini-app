@@ -48,6 +48,7 @@ const meta=['category','heldStyle','visualRecoil','recoilLabel','magazineTypes',
 const gear=a.eval("Object.keys(ITEM).filter(t=>ITEM[t].equip||V09Craft.weapons[t])");
 for(const type of gear)for(let level=0;level<=5;level++)for(const variant of ['balanced','sturdy','light'])for(const specialization of ['balanced','vitality','speed'])check(`stats.${type}.${level}.${variant}.${specialization}`,()=>{
  const code=`V010Combat.getItemStats(${JSON.stringify({type,level,variant,specialization,modules:{},magazineType:'magazine_standard',rounds:0})})`,expected=json(a.eval(code)),actual=json(b.eval(code));
+ if(type==='rifle_ak74'){assert.equal(actual.delay,expected.delay/1.3);actual.delay=expected.delay;} // approved fire-rate correction, other fields remain exact
  assert.deepEqual(actual,expected);
 });
 for(const day of [1,10,11])check('simulation.allEnemyBehaviors.day'+day,()=>{

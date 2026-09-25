@@ -19,10 +19,18 @@ window.GameSurfacePlacement=(()=>{
  function checkRecord(record,records,occupants=true){
   const fail=reason=>({ok:false,reason}),t=record.transform,d=DefenseDefinitions.types[record.typeId];
   if(!d||t.scene!=='surface'||t.room!=='yard'||!EquipmentInstances.turns.includes(t.rotation)||![t.x,t.y].every(Number.isFinite))return fail('room');
-  // Imported wall mounts retain their exact ID/position. New placements use
-  // the ground plan; losing a support disables the mount until packed again.
-  if(record.state.settings.mountWall){const wall=V015Base.byId.get(record.state.settings.mountWall),p=GameEquipmentPoint(record);return /^hmg016_/.test(record.id)&&wall&&!wall.gate&&Math.hypot(p.x-clamp(p.x,wall.x,wall.x+wall.w),p.y-clamp(p.y,wall.y,wall.y+wall.h))<17.99?{ok:true,record:JSON.parse(JSON.stringify(record))}:fail('bounds');}
-  if(record.state.settings.fallen&&/^hmg016_/.test(record.id))return {ok:true,record:JSON.parse(JSON.stringify(record))};
+  // Wall mounting and ground placement use the same real instance / transform.
+  if(record.state.settings.mountWall){
+   const wall=V015Base.byId.get(record.state.settings.mountWall),p=GameEquipmentPoint(record),legacy=/^hmg016_/.test(record.id);
+   if(!d.ammoType||!wall||wall.gate||(!legacy&&wall.group!=='outer')||Math.hypot(p.x-clamp(p.x,wall.x,wall.x+wall.w),p.y-clamp(p.y,wall.y,wall.y+wall.h))>=17.99)return fail('bounds');
+   if(!legacy){const b=GameFootprints.forRecord(record);
+    if(protectedAreas().some(a=>overlap(b,a)))return fail('door');
+    if(records.some(r=>r.id!==record.id&&r.placement==='installed'&&r.transform.scene==='surface'&&overlap(b,GameFootprints.forRecord(r),8)))return fail('overlap');
+    if(occupants&&BunkerLayout.occupants('surface').some(a=>a.wallLevel&&rectHit(a.x,a.y,(a.radius||16)+2,b)))return fail('occupied');
+   }
+   return {ok:true,record:JSON.parse(JSON.stringify(record))};
+  }
+  if(record.state.settings.fallen)return {ok:true,record:JSON.parse(JSON.stringify(record))};
   const b=GameFootprints.forRecord(record);if(b.x<box.left||b.y<box.top||b.x+b.w>box.right||b.y+b.h>box.bottom)return fail('bounds');
   if(protectedAreas().some(p=>overlap(b,p)))return fail('door');
   if(fixed().map(body).some(p=>overlap(b,p,1))||records.some(r=>r.id!==record.id&&r.placement==='installed'&&r.transform.scene==='surface'&&!r.state.settings.mountWall&&r.state.condition.hp>0&&overlap(b,GameFootprints.forRecord(r),1)))return fail('overlap');
@@ -30,5 +38,8 @@ window.GameSurfacePlacement=(()=>{
   if(!routes(records.filter(r=>r.id!==record.id).concat(record)))return fail('passage');return {ok:true,record:JSON.parse(JSON.stringify(record))};
  }
  function GameEquipmentPoint(r){const p=DefenseDefinitions.types[r.typeId].pivot;return EquipmentInstances.aabb(r.transform,{...p,w:0,h:0});}
- return Object.freeze({box,protectedAreas,checkRecord,routes});
+ function mountFor(record){if(!DefenseDefinitions.types[record.typeId]?.ammoType)return '';
+  const p=GameEquipmentPoint(record);let wall=null,best=17.99;for(const w of V015Base.sections){if(w.group!=='outer'||w.gate||w.hp<=0)continue;const d=Math.hypot(p.x-clamp(p.x,w.x,w.x+w.w),p.y-clamp(p.y,w.y,w.y+w.h));if(d<best){best=d;wall=w;}}return wall?.id||'';
+ }
+ return Object.freeze({box,protectedAreas,checkRecord,routes,mountFor});
 })();

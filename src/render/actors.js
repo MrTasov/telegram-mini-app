@@ -9,7 +9,7 @@ window.ActorVisuals=(()=>{
   // stairs without writing player state or starting a second movement clock.
   const walk={stamp:null,x:0,y:0,scene:null,phase:0,moving:false};
   let stepPhase=null,workSound=null;
-  const shotVisuals=new WeakMap();let flashVisual=null;
+  let flashVisual=null;
   const vfxDefaults=cfg.weaponVfx.defaults;
   const weaponVfx=Object.fromEntries(Object.entries(cfg.weaponVfx.weapons).map(([id,v])=>[id,{...vfxDefaults,...v}]));
   const loop=(value,count)=>((Math.floor(value)%count)+count)%count;
@@ -34,7 +34,7 @@ window.ActorVisuals=(()=>{
       if(job&&repairVisual?.job!==job)beginRepair(job,V018Build.record(job.id)?.object);
       const r=repairVisual;
       if(r&&heldItem()==='hammer'&&scene===r.scene&&movePower<=JOY_DEAD&&!navigation&&Math.hypot(player.x-r.x,player.y-r.y)<=.8&&(job===r.job||r.until&&now<r.until)){
-        return {key:r.job,elapsed:now-r.at,duration:mod.items.hammer.action.duration,material:'metal',target:r.target};
+        return {key:r.job,elapsed:job===r.job?job.elapsed:now-r.at,cycleMs:mod.items.hammer.action.duration,duration:mod.items.hammer.action.duration,material:'metal',target:r.target};
       }
       repairVisual=null;
     }
@@ -82,20 +82,20 @@ window.ActorVisuals=(()=>{
   const bodyAngle=(p,aim)=>aim-Math.PI/2;
   function movementScale(p){return p.modular?(p.mode==='walk'?mod.walkScale[p.kind]||1:1):(p.id===cfg.body.unarmed?cfg.unarmed.walkScale:1);}
   function layersReady(rec){return [rec.body,rec.equipment,rec.cap,rec.gear?.rear,rec.gear?.front].filter(Boolean).map(l=>GameAssets.ready(l.id)).every(Boolean);}
-  function drawLayer(layer){
+  function drawLayer(layer,c=ctx){
     if(!layer)return;const b=GameAssets.frame(layer.id,layer.key);if(!b)return;
-    ctx.drawImage(GameAssets.image(layer.id),b.x,b.y,b.w,b.h,...layer.offset,...layer.size);
+    c.drawImage(GameAssets.image(layer.id),b.x,b.y,b.w,b.h,...layer.offset,...layer.size);
   }
-  function drawGear(gear,part){
+  function drawGear(gear,part,c=ctx){
     if(!gear?.[part])return;
-    ctx.save();ctx.translate(...gear.position);ctx.rotate(gear.angle);
-    ctx.scale((gear.flipX?-1:1)*gear.scale*(gear.axisScale?.[0]||1),gear.scale*(gear.axisScale?.[1]||1));ctx.translate(-gear.grip[0],-gear.grip[1]);
-    if(gear.splitY!==undefined){ctx.beginPath();ctx.rect(0,part==='rear'?0:gear.splitY,512,part==='rear'?gear.splitY:512-gear.splitY);ctx.clip();}
-    drawLayer(gear[part]);ctx.restore();
+    c.save();c.translate(...gear.position);c.rotate(gear.angle);
+    c.scale((gear.flipX?-1:1)*gear.scale*(gear.axisScale?.[0]||1),gear.scale*(gear.axisScale?.[1]||1));c.translate(-gear.grip[0],-gear.grip[1]);
+    if(gear.splitY!==undefined){c.beginPath();c.rect(0,part==='rear'?0:gear.splitY,512,part==='rear'?gear.splitY:512-gear.splitY);c.clip();}
+    drawLayer(gear[part],c);c.restore();
   }
-  function drawWorkPalms(record){
+  function drawWorkPalms(record,c=ctx){
     if(!record.hands)return;
-    ctx.save();ctx.beginPath();for(const [x,y]of record.hands){ctx.moveTo(x+16,y);ctx.arc(x,y,16,0,TAU);}ctx.clip();drawLayer(record.body);ctx.restore();
+    c.save();c.beginPath();for(const [x,y]of record.hands){c.moveTo(x+16,y);c.arc(x,y,16,0,TAU);}c.clip();drawLayer(record.body,c);c.restore();
   }
   function workOffset(p,aim){
     const zero={x:0,y:0},now=performance.now(),place=typeof scene==='undefined'?null:scene;
@@ -131,9 +131,10 @@ window.ActorVisuals=(()=>{
     const factor=movementScale(p);
     ctx.rotate(bodyAngle(p,aim));if(V09Craft.weapons[p.item])ctx.translate(0,recoil*visualScale*factor);
     ctx.scale(actorScale*factor,actorScale*factor);ctx.translate(-mod.pivot[0],-mod.pivot[1]);
-    drawGear(r.gear,'rear');if(!r.equipmentInFront)drawLayer(r.equipment);
-    drawLayer(r.body);if(r.equipmentInFront)drawLayer(r.equipment);
-    drawGear(r.gear,'front');drawLayer(r.cap);drawWorkPalms(r);
+    const paint=c=>{drawGear(r.gear,'rear',c);if(!r.equipmentInFront)drawLayer(r.equipment,c);drawLayer(r.body,c);if(r.equipmentInFront)drawLayer(r.equipment,c);drawGear(r.gear,'front',c);drawLayer(r.cap,c);drawWorkPalms(r,c);};
+    const extent=1024,density=GameSpriteRaster.density()*actorScale*factor;
+    const raster=GameSpriteRaster.get(r,extent*density,extent*density,(c,w,h)=>{c.scale(w/extent,h/extent);paint(c);});
+    if(raster)ctx.drawImage(raster,0,0,extent,extent);else paint(ctx);
     // The AK body includes both underhand palms. There is deliberately no
     // foreground hand cap: rear weapon -> body/palms -> front weapon.
     if(p.mode==='idle'||p.mode==='walk')drawProtection(256,256);
@@ -209,7 +210,7 @@ window.ActorVisuals=(()=>{
     stepPhase=motion.phase;
     const p=pose(heldItem()),work=p?.work,name=work&&(cfg.gathering.sounds[work.material]||(work.material==='metal'?'impactMetal':null));
     if(!name){stopAnimationSound('work');workSound=null;return;}
-    if(GameGathering.definition(p.item)){workSound=null;return;}
+    if(GameGathering.definition(p.item)||p.item==='hammer'){workSound=null;return;}
     const action=mod.items[p.item].action,hitPhase=action.durations.slice(0,action.impactFrame).reduce((s,n)=>s+n,0)/action.duration;
     const hit=Math.floor(work.elapsed/work.cycleMs-hitPhase);
     if(!workSound||workSound.key!==work.key||work.elapsed<workSound.elapsed){workSound={key:work.key,elapsed:work.elapsed,hit};return;}
@@ -219,27 +220,9 @@ window.ActorVisuals=(()=>{
   function weaponShot(bullet,angle,now,item){
     const origin=muzzlePoint(),vfx=weaponVfx[item];if(!origin||!vfx)return;
     flashVisual={origin,angle,at:now,item,vfx,scene};
-    // Keep combat coordinates, collision and ballistic velocity untouched. Only
-    // the short initial rendered segment joins the muzzle to that exact path.
-    if(bullet)shotVisuals.set(bullet,{origin,x:bullet.x,y:bullet.y,vfx});
   }
-  function tracerSegment(bullet){
-    const shot=shotVisuals.get(bullet),v=shot?.vfx||weaponVfx[bullet.weapon]||vfxDefaults;
-    const speed=Math.hypot(bullet.dx,bullet.dy)||1,ux=bullet.dx/speed,uy=bullet.dy/speed;
-    if(!shot)return {from:{x:bullet.x-ux*v.tracerLength,y:bullet.y-uy*v.tracerLength},to:{x:bullet.x,y:bullet.y},vfx:v};
-    const travelled=Math.max(0,(bullet.x-shot.x)*ux+(bullet.y-shot.y)*uy);
-    const point=d=>{const blend=1-clamp(d/v.joinDistance,0,1);return {x:shot.x+ux*d+(shot.origin.x-shot.x)*blend,y:shot.y+uy*d+(shot.origin.y-shot.y)*blend};};
-    return {from:point(travelled<=speed+1e-6?0:Math.max(0,travelled-v.tracerLength)),to:point(travelled),vfx:v};
-  }
-  function drawProjectiles(projectiles){
-    ctx.save();ctx.lineCap='round';
-    for(const bullet of projectiles){
-      if(!visibleOnScreen(bullet.x,bullet.y,35))continue;
-      const s=tracerSegment(bullet);ctx.strokeStyle='rgba(255,224,153,.78)';ctx.lineWidth=s.vfx.tracerWidth;
-      ctx.beginPath();ctx.moveTo(s.from.x,s.from.y);ctx.lineTo(s.to.x,s.to.y);ctx.stroke();
-      ctx.strokeStyle='rgba(255,249,219,.95)';ctx.lineWidth=s.vfx.tracerWidth*.65;
-      ctx.beginPath();ctx.moveTo(s.to.x+(s.from.x-s.to.x)*.23,s.to.y+(s.from.y-s.to.y)*.23);ctx.lineTo(s.to.x,s.to.y);ctx.stroke();
-    }
+  function drawMuzzle(){
+    ctx.save();
     const f=flashVisual,age=f?performance.now()-f.at:Infinity;
     if(f&&f.scene===scene&&age>=0&&age<f.vfx.flashMs){
       const point=heldItem()===f.item?muzzlePoint()||f.origin:f.origin,fade=1-age/f.vfx.flashMs;
@@ -284,5 +267,5 @@ window.ActorVisuals=(()=>{
   // Initial warmup is small; selecting an item warms only its shared carry/work
   // atlases. GameAssets owns every Image and settled promise, including errors.
   void GameAssets.load(cfg.unarmed.idle);
-  return Object.freeze({pose,framePose,renderPose,drawPlayer,drawSleep,muzzlePoint,lightPoint,bodyAngle,worldPoint,impactSample,updateAudio,weaponShot,tracerSegment,drawProjectiles,movementScale,beginRepair,finishRepair,cancelRepair,fishCaught,cancelFishing,fishingVisualPhase,drawFishingLine,config:cfg});
+  return Object.freeze({pose,framePose,renderPose,drawPlayer,drawSleep,muzzlePoint,lightPoint,bodyAngle,worldPoint,impactSample,updateAudio,weaponShot,drawMuzzle,movementScale,beginRepair,finishRepair,cancelRepair,fishCaught,cancelFishing,fishingVisualPhase,drawFishingLine,config:cfg});
 })();

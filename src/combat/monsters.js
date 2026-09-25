@@ -18,7 +18,7 @@ window.V017Monsters=(()=>{
     const s=specs[typeof z==='string'?z:z.type]||specs.normal;
     return WorldEvents.enemyStats(s,raid===undefined?WorldEvents.snapshot().modifiers:raid?WorldEvents.xModifiers:WorldEvents.none);
   }
-  let runtime=new WeakMap(),serial=0,lastPopulation=0,effects=[],neighbors=new Map(),lastRaid=null;
+  let runtime=new WeakMap(),serial=0,lastPopulation=0,effects=[],neighbors=new Map(),lastRaid=null;const neighborPool=[],emptyNeighbors=[];
   const night=()=>V016Lighting.daylight()<.28;
   const isDayX=(day,minute=WorldClock.minute)=>day===undefined?WorldEvents.isActive('day_x'):WorldEvents.matches('day_x',day,minute);
   const factor=()=>WorldEvents.value('enemy.mechanics');
@@ -64,10 +64,12 @@ window.V017Monsters=(()=>{
     }
     r.target=best;r.retarget=now+6500+hash(r.id)*5500;return best;
   }
+  let gapRevision=-1,gapCandidates=[];
   function passage(z,wall){
+    if(gapRevision!==geometryRevision){gapRevision=geometryRevision;gapCandidates=V015Base.sections.filter(o=>o.hp<=0||V015Base.isOpen(o));}
     const r=prepare(z),inner=insideOuter(z);if(insideInner(z))return null;
     let best=null,cost=Infinity;
-    for(const o of V015Base.sections){
+    for(const o of gapCandidates){
       if(!(o.sides?o.sides.includes(r.side):o.side===r.side)||(inner?o.group!=='inner':!['outer','gate'].includes(o.group)||o.id==='v091innerGate')||o.hp>0&&!V015Base.isOpen(o))continue;
             if(o.corner){
         const nx=o.corner.includes('W')?-1:1,ny=o.corner.includes('N')?-1:1,cx=o.x+o.w/2,cy=o.y+o.h/2,offset=o.w/2+z.radius+12;
@@ -155,7 +157,7 @@ window.V017Monsters=(()=>{
     syncEvent();const raid=isDayX();
     if(GameFlow.paused)return;
     const now=GameActivity.now(),boost=factor();GameActivity.begin(Math.min(2,Math.max(0,frameScale))*16.667);population(now);
-    neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,[]);neighbors.get(key).push(z);}
+    for(const list of neighbors.values()){list.length=0;neighborPool.push(list);}neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,neighborPool.pop()||[]);neighbors.get(key).push(z);}
     for(const z of zombies){
       const r=prepare(z);if(!z.alive)continue;if(!sameLevel())r.sees=false;const dt=GameActivity.step(z,r);if(!dt)continue;const s=stats(z),d=dist(z,player);
       if(sameLevel()&&d<ZOMBIE_AUDIO_RADIUS&&visibleOnScreen(z.x,z.y,60)&&performance.now()>(z.lastGrowl||0)){playZombieBuffer(z);z.lastGrowl=performance.now()+3500+hash(r.id+Math.floor(now/1000))*4500;}
@@ -167,7 +169,7 @@ window.V017Monsters=(()=>{
         continue;
       }
       if(r.fuse){if(now>=r.fuse)detonate(z);continue;}
-      if(r.sees){r.sawPlayerAt=now;r.lastSeen={x:player.x,y:player.y};}
+      if(r.sees){r.sawPlayerAt=now;if(!r.lastSeen)r.lastSeen={x:player.x,y:player.y};else {r.lastSeen.x=player.x;r.lastSeen.y=player.y;}}
       if(raid&&window.V018Build?.enemyDoorStep(z,s,r,now,dt,false))continue;
       let target=null,wall=null;
       // Until its own front is breached a raider keeps that front, even when
@@ -200,13 +202,13 @@ window.V017Monsters=(()=>{
       else {if(now>z.nextWanderChange){const h=hash(r.id+Math.floor(now/1000));z.wanderAngle=h*Math.PI*2;z.nextWanderChange=now+4000+h*3000;r.pauseUntil=now+600+hash(r.id*11+Math.floor(now/1000))*1600;}if(now<r.pauseUntil)continue;angle=z.wanderAngle;}
       // Local separation softens crowds without a global all-pairs scan.
       let sx=0,sy=0;const gx=Math.floor(z.x/80),gy=Math.floor(z.y/80);
-      for(let ox=-1;ox<=1;ox++)for(let oy=-1;oy<=1;oy++)for(const other of neighbors.get((gx+ox)+','+(gy+oy))||[]){if(other===z)continue;const dx=z.x-other.x,dy=z.y-other.y,d2=dx*dx+dy*dy,min=z.radius+other.radius;if(d2>1&&d2<min*min){const d=Math.sqrt(d2);sx+=dx/d*(1-d/min);sy+=dy/d*(1-d/min);}}
+      for(let ox=-1;ox<=1;ox++)for(let oy=-1;oy<=1;oy++)for(const other of neighbors.get((gx+ox)+','+(gy+oy))||emptyNeighbors){if(other===z)continue;const dx=z.x-other.x,dy=z.y-other.y,d2=dx*dx+dy*dy,min=z.radius+other.radius;if(d2>1&&d2<min*min){const d=Math.sqrt(d2);sx+=dx/d*(1-d/min);sy+=dy/d*(1-d/min);}}
       angle=Math.atan2(Math.sin(angle)+sy*.6,Math.cos(angle)+sx*.6);
       const moved=move(z,angle,(target?s.chaseSpeed:s.speed)*.5*dt);
       r.stuck=moved?0:r.stuck+dt*16.667;
       if(r.stuck>1800){r.retarget=0;r.target=null;z.nextWanderChange=0;r.stuck=0;}
     }
-    effects=effects.filter(e=>performance.now()-e.at<700);
+    for(let i=effects.length-1;i>=0;i--)if(performance.now()-effects[i].at>=700)effects.splice(i,1);
   }
   const worldUpdate=()=>GameActivity.ground(updateMonsters);updateZombies=worldUpdate;
   function healthBar(z){
@@ -267,7 +269,7 @@ window.V017Monsters=(()=>{
     const im=V011Art.image(key),jump=r.jump?Math.sin(clamp((now-r.jump.start-(r.jump.windup??255))/(r.jump.duration-(r.jump.windup??255)),0,1)*Math.PI)*24:0;
     ctx.save();ctx.translate(z.x,z.y);
     ctx.save();ctx.translate(3,7);shadow(s.radius*2.65,s.radius*1.75,1);ctx.restore();ctx.translate(0,-jump);ctx.rotate(r.angle-Math.PI/2);
-    if(V011Art.ready(key)){const b=V011Art.frame(key,frame);ctx.drawImage(im,b.x,b.y,b.w,b.h,-size*.375,-size*.5,size*.75,size);}
+    if(V011Art.ready(key)){const b=V011Art.frame(key,frame);const density=GameSpriteRaster.density(),raster=GameSpriteRaster.get(key+':'+frame,size*.75*density,size*density,(c,w,h)=>c.drawImage(im,b.x,b.y,b.w,b.h,0,0,w,h));if(raster)ctx.drawImage(raster,-size*.375,-size*.5,size*.75,size);else ctx.drawImage(im,b.x,b.y,b.w,b.h,-size*.375,-size*.5,size*.75,size);}
     else {ctx.fillStyle=s.color;ctx.beginPath();ctx.ellipse(0,0,s.radius,s.radius*1.2,0,0,Math.PI*2);ctx.fill();}
     ctx.restore();
     if(r.fuse&&z.alive){ctx.save();ctx.strokeStyle='#e9b57b';ctx.globalAlpha=.3+.4*Math.sin(now/70)**2;ctx.lineWidth=2;ctx.beginPath();ctx.arc(z.x,z.y,z.radius+7,0,Math.PI*2);ctx.stroke();ctx.restore();}

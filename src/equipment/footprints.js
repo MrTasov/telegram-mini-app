@@ -9,7 +9,11 @@ window.GameFootprints=(()=>{
     storage_crate:{x:-6,y:-3,w:80,h:56},enhancement_cradle:{x:4,y:12,w:131,h:87}
   });
   const local=r=>bodies[r.typeId]||EquipmentInstances.definitions[r.typeId].body||{x:0,y:0,...EquipmentInstances.definitions[r.typeId].footprint};
-  function forRecord(r){return {id:r.id,room:r.transform.room,...EquipmentInstances.aabb(r.transform,local(r))};}
+  const shapes=new Map();
+  function forRecord(r){const t=r.transform,key=[r.typeId,t.x,t.y,t.rotation,t.room].join('|'),old=shapes.get(r.id);
+    if(old?.key===key)return old.body;const body=Object.freeze({id:r.id,room:t.room,...EquipmentInstances.aabb(t,local(r))});
+    if(shapes.size>256)shapes.clear();shapes.set(r.id,{key,body});return body;
+  }
   function front(r){const b=local(r),p=EquipmentInstances.aabb(r.transform,{x:b.x+b.w/2,y:b.y+b.h+24,w:0,h:0});return{x:p.x,y:p.y};}
   function body(id){
     if(epoch!==GameEquipment.epoch){cache.clear();epoch=GameEquipment.epoch;}

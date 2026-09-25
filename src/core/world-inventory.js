@@ -206,7 +206,7 @@ function toggleGate(){
 
 const V092_ICONS=GameAssets.iconSources();
 const ITEM={
- hammer:{name:'Молот',icon:'🔨',hand:true,description:'Ремонт стен и дверей бетоном: 1000 HP/сек. Целые секции можно улучшить до уровня 5.'},
+ hammer:{name:'Молот',icon:'🔨',hand:true,description:'Ремонт стен и дверей: 5–15% максимальной прочности за удар, в зависимости от уровня молота. 1 бетон восстанавливает 1000 HP. Целые секции можно улучшить до уровня 5.'},
  stone:{name:'Камень',icon:'🪨',description:'Добывается киркой. В печи: 2 камня → 1 бетон.'},
  concrete:{name:'Бетон',icon:'▰',description:'Строительный блок. Ремонт: 1 бетон → 1000 HP. Нужен для улучшения стен и дверей.'},
  fishing_rod:{name:'Удочка',icon:'🎣',hand:true},

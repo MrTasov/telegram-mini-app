@@ -11,3 +11,5 @@ window.GameDefenseArt=(()=>{
  const prior=drawPlayer;drawPlayer=function(...args){draw();return prior(...args);};
  return Object.freeze({paint,draw});
 })();
+
+(()=>{const previous=draw;draw=function(...args){const allocation=V09Power.allocation,snapshot=allocation();V09Power.allocation=dt=>dt===undefined?snapshot:allocation(dt);try{return previous(...args);}finally{V09Power.allocation=allocation;}};})();

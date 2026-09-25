@@ -10,12 +10,13 @@ window.V011UI=(()=>{
     rifle_ak74:'АК-74 · использует патроны 5,45.',rifle_m4:'M4 · использует патроны 5,56.',axe:'Инструмент для заготовки древесины.',pickaxe:'Инструмент для добычи железной и медной руды.',flashlight:'Освещает путь и ближайшие объекты.',remote:'Управление оборудованием и электричеством базы.',
     iron_ore:'Переплавляется в железные слитки.',copper_ore:'Переплавляется в медные слитки.',iron:'Для оружия, патронов, оборудования и улучшений.',copper:'Для электрического оборудования и модулей.',ammo:'Для АК-74 · калибр 5,45.',ammo556:'Для M4 · калибр 5,56.',fuel:'Запас топлива для генератора.',meds:'Медицинские припасы для восстановления здоровья.',water:'Для питья и хозяйства базы.',animal_feed:'Корм для животных.',wood:'Строительный материал и сырьё для производства.'
   };
-  const names={hp:'Здоровье',armor:'Защита',speed:'Скорость',accuracy:'Точность',damage:'Урон',mag:'Магазин',reloadMs:'Перезарядка',spread:'Разброс',recoil:'Отдача',capacity:'Вместимость',gatheringYield:'Добыча за удар',gatheringSpeed:'Скорость добычи'};
+  const names={repairPercent:'Ремонт за удар',hp:'Здоровье',armor:'Защита',speed:'Скорость',accuracy:'Точность',damage:'Урон',mag:'Магазин',reloadMs:'Перезарядка',spread:'Разброс',recoil:'Отдача',capacity:'Вместимость',gatheringYield:'Добыча за удар',gatheringSpeed:'Скорость добычи'};
   const number=n=>I18n.numeric(n,{maximumFractionDigits:2,useGrouping:false});
   function format(key,n,bonus=false){
     const sign=n>0&&(bonus||['hp','speed','accuracy'].includes(key))?'+':'';
     if(['speed','accuracy','gatheringSpeed'].includes(key))return sign+number(Math.round(n*100))+'%';
     if(key==='hp')return sign+String(Math.round(n));
+    if(key==='repairPercent')return sign+number(n)+'%';
     if(key==='armor')return sign+number(n)+'%';
     if(key==='reloadMs')return sign+number(n/1000)+' с';
     if(['spread','recoil'].includes(key))return sign+number(n*180/Math.PI)+'°';
@@ -30,7 +31,7 @@ window.V011UI=(()=>{
     }).join('')+'</div>';
   }
   function cardHTML(item){
-    const def=ITEM[item.type],gear=!!(def.equip&&def.equip!=='backpack'&&combat.maxUpgradeLevel(item)>0||V09Craft.weapons[item.type]||def.gathering);
+    const def=ITEM[item.type],gear=!!(def.equip&&def.equip!=='backpack'&&combat.maxUpgradeLevel(item)>0||V09Craft.weapons[item.type]||def.gathering||def.repairTool);
     return '<div class="v011ItemHero"><div class="v011ItemArt">'+itemIconHTML(item.type)+'</div><div class="v011ItemInfo"><div class="v011ItemKicker">'+esc(def.equip?EQUIP_LABELS[def.equip]:def.hand?'Снаряжение':'Предмет')+'</div><b class="v011ItemName">'+esc(def.name)+'</b><div class="v011ItemMeta">'+(gear?'Улучшение <strong>+'+(item.level||0)+' / '+V010Combat.maxUpgradeLevel(item)+'</strong>':'Количество <strong>'+(item.qty||1)+'</strong>')+'</div><p class="v011ItemDescription">'+esc(def.description||purposes[item.type]||(def.equip==='backpack'?'Расширяет место для предметов и запасов.':'Материал для производства и развития базы.'))+'</p></div></div>'+statsHTML(item);
   }
   const locationItems=where=>inv.list(where);

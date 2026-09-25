@@ -276,10 +276,13 @@
   };
 
   // Floor slabs must not intercept a muzzle or light already on their upper side.
+  let upperRevision=-1,upperCache=null,upperRailCache=null;
   function upperObstacles(rails=false){
+    if(upperRevision!==geometryRevision){upperRevision=geometryRevision;upperCache=upperRailCache=null;}
+    const cached=rails?upperRailCache:upperCache;if(cached)return cached;
     const obstacles=[...surfaceWalls().filter(o=>o.group!=='outer'&&o.id!=='gate'&&o.id!=='v015northGate'),...solidObjects('surface').filter(o=>!o.id?.startsWith('v091tower'))];
     if(rails&&!window.V015Base)obstacles.push({x:170,y:130,w:1260,h:6},{x:170,y:130,w:6,h:940},{x:1424,y:130,w:6,h:940},{x:170,y:1064,w:1260,h:6});
-    return obstacles;
+    if(rails)upperRailCache=obstacles;else upperCache=obstacles;return obstacles;
   }
   function upperObstacleCollision(x,y,r=1,which=scene,rails=false){
     if(which!=='surface')return worldCollision(x,y,r,which);
@@ -302,14 +305,14 @@
     try{oldShoot();for(let i=first;i<bullets.length;i++)bullets[i].wallLevel=true;}finally{lineClear=previousLine;}
   };
   updateBullets=function(){
-    if(firing)shoot();
+    if(firing)shoot();if(scene==='surface'&&bullets.length)GameEnemyIndex.refresh();
     for(let i=bullets.length-1;i>=0;i--){
       const b=bullets[i],vx=b.dx*frameScale,vy=b.dy*frameScale,steps=Math.max(1,Math.ceil(Math.hypot(vx,vy)/3));let removed=false;
       for(let n=0;n<steps;n++){
         const x=b.x+vx/steps,y=b.y+vy/steps;
         if((b.wallLevel?upperObstacleCollision:worldCollision)(x,y,b.radius,scene)){removed=true;break;}
         b.x=x;b.y=y;
-        if(scene==='surface'){const hit=zombies.find(z=>z.alive&&distance(x,y,z.x,z.y)<z.radius+b.radius);if(hit){hitZombie(hit,b.damage??25);removed=true;break;}}
+        if(scene==='surface'){const hit=GameEnemyIndex.hit(x,y,b.radius);if(hit){hitZombie(hit,b.damage??25);removed=true;break;}}
       }
       b.life-=frameScale;if(removed||b.life<=0)bullets.splice(i,1);
     }

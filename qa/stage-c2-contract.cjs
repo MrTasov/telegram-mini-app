@@ -6,7 +6,7 @@ exports.project=value=>{
  const d=require('./stage-d-contract.cjs').project(value),tools=[];
  if(d.chapter034?.preset===null)delete d.chapter034;
  const walk=(v,fn)=>{if(!v||typeof v!=='object')return;fn(v);for(const x of Object.values(v))walk(x,fn);};
- walk(d,v=>{if(['axe','pickaxe'].includes(v.type)&&(!v.level||v.level===0)){
+ walk(d,v=>{if(['axe','pickaxe','hammer'].includes(v.type)&&(!v.level||v.level===0)){
    const n=/^gear-(\d+)$/.exec(v.uid||'');if(n)tools.push(Number(n[1]));
    delete v.uid;delete v.level;delete v.variant;delete v.specialization;
  }});

@@ -654,5 +654,5 @@ function drawZombie(zombie){
 ===================================================== */
 
 function drawBullets(){
-  window.ActorVisuals?.drawProjectiles(bullets);
+  window.ActorVisuals?.drawMuzzle();
 }

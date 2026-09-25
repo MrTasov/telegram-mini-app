@@ -1,0 +1,480 @@
+{
+  "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+  "runtimeUnchanged": false,
+  "version": "0.40.2",
+  "stage": 9,
+  "patch": "dev-qa",
+  "stageAStarted": true,
+  "stageAStatus": "accepted-in-general",
+  "stageBStarted": true,
+  "stageBStatus": "accepted-in-general",
+  "stageC1Started": true,
+  "stageC1Status": "accepted-by-user",
+  "stageC2Started": true,
+  "stageDStarted": true,
+  "stageEStarted": true,
+  "stageFStarted": true,
+  "stageGStarted": true,
+  "stageHStarted": true,
+  "stageI1Started": true,
+  "stageI2Started": false,
+  "level2Started": false,
+  "passed": false,
+  "automatedAssertions": 13079,
+  "historicalBaselineAssertions": 477,
+  "ladderContractChanged": true,
+  "filtered": false,
+  "runs": [
+    {
+      "id": "dev-qa",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 47075,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/dev-qa.cjs\n"
+    },
+    {
+      "id": "stage-h-corrective",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 6382
+    },
+    {
+      "id": "stage-i1",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 12149,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage-i1.cjs\n"
+    },
+    {
+      "id": "stage-h",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 12621,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage-h.cjs\n"
+    },
+    {
+      "id": "stage-h-visuals",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 2295
+    },
+    {
+      "id": "stage-h-prerequisites",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 1679
+    },
+    {
+      "id": "stage-g",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 12475
+    },
+    {
+      "id": "stage-g-routes",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 3131
+    },
+    {
+      "id": "stage-f",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 17319
+    },
+    {
+      "id": "stage-f-final",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 35942
+    },
+    {
+      "id": "stage-e-corrective",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 9493
+    },
+    {
+      "id": "stage-e-audio-corrective",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 13424
+    },
+    {
+      "id": "stage-e",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 11656,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage-e.cjs\n"
+    },
+    {
+      "id": "stage-d-complete",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 16100
+    },
+    {
+      "id": "stage-d-corrective",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 23433,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage-d-corrective.cjs\n"
+    },
+    {
+      "id": "stage-d",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 6800
+    },
+    {
+      "id": "stage-d-repair",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 4823,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage-d-repair.cjs\n"
+    },
+    {
+      "id": "stage-d-visuals",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 1729
+    },
+    {
+      "id": "stage-c2",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 19537,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage-c2.cjs\n"
+    },
+    {
+      "id": "stage-c2-prerequisites",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 6886
+    },
+    {
+      "id": "stage-c1-light-modules",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 7878
+    },
+    {
+      "id": "stage-c1-recovery",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 10721,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage-c1-recovery.cjs\n"
+    },
+    {
+      "id": "build",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 245
+    },
+    {
+      "id": "stage-ab-corrective",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 7421
+    },
+    {
+      "id": "stage-ab-light-audio",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 3478
+    },
+    {
+      "id": "stage-b",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 8268
+    },
+    {
+      "id": "campaign",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 4620
+    },
+    {
+      "id": "stage-a-corrective",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 6746
+    },
+    {
+      "id": "verification",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 276,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/verify.cjs\n"
+    },
+    {
+      "id": "regressions",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 19159,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/run-regressions.cjs /workspace/scratch/a6d22bff5614/perf_corrective_0402/index.html /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/results/regression\n"
+    },
+    {
+      "id": "interactions",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 30611
+    },
+    {
+      "id": "saves",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 8179
+    },
+    {
+      "id": "balance",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1392,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/balance.cjs\n"
+    },
+    {
+      "id": "state-saves",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 14902
+    },
+    {
+      "id": "differential",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 29775
+    },
+    {
+      "id": "systems",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 2511
+    },
+    {
+      "id": "stage3-differential",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 43578,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage3-differential.cjs\n"
+    },
+    {
+      "id": "controls",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 18641
+    },
+    {
+      "id": "controls-differential",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 45288,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/controls-differential.cjs\n"
+    },
+    {
+      "id": "assets",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 5441
+    },
+    {
+      "id": "asset-rendering",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 2065
+    },
+    {
+      "id": "stage4-differential",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 45038,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/stage4-differential.cjs\n"
+    },
+    {
+      "id": "map-workbar",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 11803
+    },
+    {
+      "id": "localization",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 30540,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/localization.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/localization.cjs:72:58)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "localization-rendering",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 0,
+      "elapsedMs": 3774
+    },
+    {
+      "id": "localization-controls",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 10280,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/localization-controls.cjs\n"
+    },
+    {
+      "id": "main-menu",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 89650,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/main-menu.cjs\n"
+    },
+    {
+      "id": "menu-preferences",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 12153,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/menu-preferences.cjs\n"
+    },
+    {
+      "id": "world-events",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1107,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/world-events.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/world-events.cjs:4:47)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "readiness",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1051,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/readiness.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/readiness.cjs:4:52)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "corrective",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1058,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/corrective.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/corrective.cjs:4:42)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "world-farm",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1197,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/world-farm.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/world-farm.cjs:3:42)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "drone-return",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1185,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/drone-return.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/drone-return.cjs:2:42)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "resource-access",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1236,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/resource-access.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/resource-access.cjs:4:42)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "character-animation",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 2126,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/character-animation.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at main (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/character-animation.cjs:8:54)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/character-animation.cjs:65:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n"
+    },
+    {
+      "id": "master-unarmed",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 2179,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/master-unarmed.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at make (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/master-unarmed.cjs:9:53)\n    at main (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/master-unarmed.cjs:15:50)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/master-unarmed.cjs:155:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n"
+    },
+    {
+      "id": "equipment-integration",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 2191,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/equipment-integration.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at make (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/equipment-integration.cjs:6:53)\n    at main (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/equipment-integration.cjs:12:48)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/equipment-integration.cjs:128:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n"
+    },
+    {
+      "id": "player-visual-fix",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1196,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/player-visual-fix.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/player-visual-fix.cjs:7:10\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/player-visual-fix.cjs:81:3)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n"
+    },
+    {
+      "id": "corrective-performance",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1217,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/corrective-performance.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/corrective-performance.cjs:4:42)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "corrective-visuals",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 2269,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/corrective-visuals.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at Object.setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at main (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/corrective-visuals.cjs:8:87)\n"
+    },
+    {
+      "id": "polish",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1230,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/polish.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at main (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/polish.cjs:20:10)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/polish.cjs:112:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n"
+    },
+    {
+      "id": "polish-visuals",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 2165,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/polish-visuals.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at main (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/polish-visuals.cjs:7:55)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/polish-visuals.cjs:53:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n"
+    },
+    {
+      "id": "audio-unlock",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 7503,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/audio-unlock.cjs . qa/results/audio-unlock.json\n"
+    },
+    {
+      "id": "hud-display",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1220,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/hud-display.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/hud-display.cjs:7:9)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "audio-pass",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1080,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/audio-pass.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at exports.boot (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/audio-harness.cjs:5:10)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/audio-pass.cjs:7:10\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/audio-pass.cjs:53:3)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n"
+    },
+    {
+      "id": "bunker-level1",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1073,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/bunker-level1.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/bunker-level1.cjs:3:42)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "bunker-floor-cache",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 2118,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/bunker-floor-cache.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/bunker-floor-cache.cjs:3:87)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    },
+    {
+      "id": "bunker-r2",
+      "runtimeSha256": "34f59f3ed9e4d4ad829bcdf5c130ef1647302670c93cfa77c076bbb5c162c5d0",
+      "exitCode": 1,
+      "elapsedMs": 1190,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/bunker-r2.cjs\n/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227\n    if(!Object.keys(phases).every(phase=>roots[phase]&&JSON.stringify(describe()[phase])===JSON.stringify(expected[phase])))throw Error('Save adapter order changed');\n                                                                                                                            ^\n\nError: Save adapter order changed\n    at Object.seal (/workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:227:131)\n    at /workspace/scratch/a6d22bff5614/perf_corrective_0402/js/game.js:17084:10\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at setup (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs:87:7)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/bunker-r2.cjs:4:42)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n"
+    }
+  ],
+  "limitations": [
+    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "All audio paths are included and decoded; subjective mix requires physical device listening."
+  ],
+  "complete": true
+}

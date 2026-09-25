@@ -55,7 +55,7 @@ window.V018Build=(()=>{
     if(!r.object.hp&&occupied(r)){message('Освободите место для восстановления');return false;}
     if(credit<=0&&count(definition(r).repair.material)<1){message('Нужен бетон в рюкзаке · 2 камня → 1 бетон в печи');return false;}
     V014Controls.stopRoute();cancelNavigation();cancelChop();cancelSearch();V012Fishing.stop();firing=false;
-    job={id:r.id,actorId,x:player.x,y:player.y,scene,ms:0};
+    job={id:r.id,actorId,x:player.x,y:player.y,scene,ms:0,elapsed:0,hits:0};
     window.ActorVisuals?.beginRepair(job,r.object);
     if(el('v018Structure')?.classList.contains('open'))closeOverlay(el('v018Structure'));
     refresh();return true;
@@ -68,7 +68,13 @@ window.V018Build=(()=>{
     if(r.object.hp>=r.object.maxHp){window.GameChapterOne?.confirmRepair(r.id);stop('Ремонт завершён');return;}
     if(!r.object.hp&&occupied(r)){stop('Проход занят · ремонт остановлен');return;}
     const p=contactPoint(r.object,player.x,player.y),dx=p.x-player.x,dy=p.y-player.y,n=Math.hypot(dx,dy)||1;player.aimX=dx/n;player.aimY=dy/n;
-    const repair=definition(r).repair;job.ms+=Math.max(0,Math.min(repair.maxTickMs,Number(ms)||0))*repair.hpPerMs;let amount=Math.floor(job.ms);job.ms-=amount;
+    const repair=definition(r).repair,action=AssetManifest.actors.modular.items.hammer.action;
+    const impact=action.durations.slice(0,action.impactFrame).reduce((n,v)=>n+v,0);
+    job.elapsed+=Math.max(0,Math.min(repair.maxTickMs,Number(ms)||0));
+    const hits=Math.floor((job.elapsed-impact)/action.duration)+1-job.hits;if(hits<=0)return;job.hits+=hits;
+    const tool=V010Inventory.selectedItem('hammer'),level=clamp(Number(tool?.level)||0,0,5);
+    let amount=Math.min(r.object.maxHp-r.object.hp,r.object.maxHp/100*Math.round(ITEM.hammer.repairTool.fractions[level]*100)*hits);
+    playAnimationSound('impactMetal','work',.52,1);
     while(amount>0&&job){
       if(credit===0){if(!consume({[repair.material]:1})){stop('Бетон закончился · выполненный ремонт сохранён');break;}credit=repair.hpPerUnit;}
       const o=r.object,wasBroken=o.hp===0,n=health.restoreHP(o,Math.min(amount,credit));credit-=n;amount-=n;changed(r,wasBroken);
@@ -109,7 +115,7 @@ window.V018Build=(()=>{
     const inputs=!full?{[definition(r).repair.material]:Math.ceil(Math.max(0,o.maxHp-o.hp-credit)/definition(r).repair.hpPerUnit)}:definition(r).costs[o.level+1]||{};
     for(const [t,n] of Object.entries(inputs)){const cell=document.createElement('div');cell.className='v018BuildMaterial'+(count(t)<n?' missing':'');cell.dataset.buildMaterial=t;I18n.assign(cell,"innerHTML",itemIconHTML(t)+'<span>'+ITEM[t].name+'<small>'+count(t)+' / '+n+'</small></span>');refs.costs.append(cell);}
     I18n.assign(refs.button,"textContent",!full?'Ремонтировать':o.level>=maxLevel(r)?'Максимальный уровень':'Улучшить до '+(o.level+1)+' · '+definition(r).levels[o.level+1].toLocaleString(I18n.locale)+' HP');refs.button.disabled=!near(r)||!held()||(full&&o.level>=maxLevel(r));
-    I18n.assign(refs.note,"textContent",!full?'1000 HP/сек. · 1 бетон = 1000 HP. Остаток смеси сохраняется.':o.level>=maxLevel(r)?'Укрепление полностью улучшено.':'Материалы из рюкзака. После улучшения прочность будет полной.');
+    I18n.assign(refs.note,"textContent",!full?'5–15% максимальной прочности за удар · 1 бетон = 1000 HP. Остаток смеси сохраняется.':o.level>=maxLevel(r)?'Укрепление полностью улучшено.':'Материалы из рюкзака. После улучшения прочность будет полной.');
   }
   const interactions=interactionObjects;interactionObjects=function(which=scene){const out=interactions(which);if(!held()||(which==='surface'&&V013City.floor))return out;const available=[...structures.values()].filter(r=>r.scene===which);const ids=new Set(available.map(r=>r.id));return [...out.filter(o=>!ids.has(o.id)),...available.map(target)];};
   const hit=hitInteraction;hitInteraction=function(x,y){if(held()&&(scene!=='surface'||!V013City.floor)){const r=[...structures.values()].find(r=>r.scene===scene&&rectHit(x,y,7,r.object));if(r)return target(r);}return hit(x,y);};

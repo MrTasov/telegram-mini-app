@@ -7,7 +7,7 @@ const make=(file='index.html',options={})=>{const r=setup(file,{},options);runti
 const load=r=>r.eval('Promise.all(Object.entries(AssetManifest.images).filter(([,d])=>!d.historical).map(([id])=>GameAssets.load(id)))');
 // The legacy allocator did not count tools; fixture-created/discarded axes now
 // consume IDs. Physical ID conservation is checked by stage-c2-prerequisites.
-const snapshot=r=>{const d=require('./corrective-contract.cjs').snapshot(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,firing,scene})'));delete d.save.v010.modules.combat.nextUid;return d;};
+const snapshot=r=>{r.eval('V010Combat.capture()');const d=require('./corrective-contract.cjs').snapshot(r.eval('({save:captureGameProgress(),player:{...player},moveX,moveY,movePower,firing,scene})'));delete d.save.v010.modules.combat.nextUid;return d;};
 async function main(){
  const b=make('qa/pre-equipment/index.html'),r=make(),E=s=>r.eval(s),B=s=>b.eval(s);await load(r);await load(b);
  // Align the historical movement fixture's now-empty flashlight slot.
@@ -72,12 +72,12 @@ async function main(){
  });
  await check('work.realRepairHPAndConcreteConsumptionPreserved',()=>{
   fresh("addItem('hammer',1);addItem('concrete',5);V013Inventory.equip('hammer');window.qaWall=[...V018Build.structures.values()].find(r=>r.kind==='wall'&&!r.object.corner);qaWall.object.hp-=100;player.x=qaWall.object.x+qaWall.object.w/2;player.y=qaWall.object.y-25;V018Build.start(qaWall.id);");assert.ok(E('V018Build.job'));
-  for(let i=0;i<100;i++){step(1000/60,'V018Build.repairStep(1000/60);');E('drawPlayer()');if(i%10===0)same();}same();
+  for(let i=0;i<100;i++){step(1000/60,'V018Build.repairStep(1000/60);');E('drawPlayer()');}assert.equal(E('qaWall.object.hp'),E('qaWall.object.maxHp'));assert.equal(E("bagCount('concrete')"),4);assert.equal(E('V018Build.credit'),900);
  });
- await check('work.oneTickRepairFinishesAllTwelveVisualFramesWithoutDelayingHP',()=>{
+ await check('work.repairHPWaitsForImpactThenCompletesVisibleStroke',()=>{
   fresh("addItem('hammer',1);addItem('concrete',5);V013Inventory.equip('hammer');window.qaWall=[...V018Build.structures.values()].find(r=>r.kind==='wall'&&!r.object.corner);qaWall.object.hp-=1;player.x=qaWall.object.x+qaWall.object.w/2;player.y=qaWall.object.y-25;V018Build.start(qaWall.id);");
-  step(1,'V018Build.repairStep(1)');same();assert.equal(E('V018Build.job'),null);assert.equal(E('qaWall.object.hp'),E('qaWall.object.maxHp'));
-  const frames=new Set();for(let i=0;i<69;i++){const p=plain(E("ActorVisuals.pose('hammer')"));if(p.working)frames.add(p.frame);E('drawPlayer()');step(1000/60,'');}assert.equal(frames.size,12);assert.equal(E("ActorVisuals.pose('hammer').mode"),'idle');same();
+  step(1,'V018Build.repairStep(1)');assert.ok(E('V018Build.job'));assert.equal(E('qaWall.object.hp'),E('qaWall.object.maxHp')-1);
+  const frames=new Set();for(let i=0;i<69;i++){const p=plain(E("ActorVisuals.pose('hammer')"));if(p.working)frames.add(p.frame);E('drawPlayer()');step(1000/60,'V018Build.repairStep(1000/60)');}assert.equal(frames.size,12);step(100,'V018Build.repairStep(100)');assert.equal(E("ActorVisuals.pose('hammer').mode"),'idle');assert.equal(E('qaWall.object.hp'),E('qaWall.object.maxHp'));assert.equal(E('V018Build.credit'),999);
  });
  await check('work.repairVisualClearsOnCancelMovementAndSaveRestore',()=>{
   for(const cancel of ["V018Build.stop()","movePower=1","restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())))"]){

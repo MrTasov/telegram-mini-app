@@ -95,7 +95,11 @@ const EquipmentInstances=(()=>{
     function center(id){const def=definitions[index.get(id)?.typeId];return def?point(id,def.footprint.w/2,def.footprint.h/2):null;}
     function withArt(id,fn){const r=index.get(id),authored=BunkerLayout.authored(id)||BunkerLayout.authored(definitions[r?.typeId]?.recipeStation);if(!r||!authored)throw Error('Unknown equipment art');if(r.placement==='packed')return;const p=BunkerLayout.artPoint(r.transform);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(r.transform.rotation);ctx.translate(-authored.x,-authored.y);try{return fn();}finally{ctx.restore();}}
     const capture=()=>copy([...index.values()]);
-    function change(record){const next=capture(),i=next.findIndex(r=>r.id===record.id);if(i<0)next.push(record);else next[i]=record;restore(next);}
+    function change(record){
+      const next=[...index.values()],i=next.findIndex(r=>r.id===record.id);if(i<0)next.push(record);else next[i]=record;
+      // Full domain validation remains atomic, but only the changed immutable record is cloned.
+      validate(next);index.set(record.id,freeze(copy(record)));epoch++;
+    }
     function withValidation(list,fn){validate(list);const was=validation;validation=new Map(list.map(r=>[r.id,r]));try{return fn();}finally{validation=was;}}
     return Object.freeze({get:id=>index.get(id),definition:id=>definitions[index.get(id)?.typeId],recipeStation:id=>definitions[index.get(id)?.typeId]?.recipeStation,
       get ids(){return ids();},get records(){return [...index.values()];},get productionIds(){return productionIds();},get epoch(){return epoch;},

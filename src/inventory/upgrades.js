@@ -4,7 +4,7 @@ window.V0161Upgrade=(()=>{
   const inv=V010Inventory,combat=V010Combat,robot=V014Robots,copy=x=>JSON.parse(JSON.stringify(x));
   const labels=robot.definition.modules,isDrone=s=>!!ITEM[s?.type]?.drone,isTurret=s=>V016Turret.isType(s?.type),maxLevel=s=>combat.maxUpgradeLevel(s);
   let overlay=null,refs={},selectedModule='body',pulseUntil=0,lastSignature='';
-  const eligibleGear=s=>!!s&&(!!V09Craft.weapons[s.type]||!!ITEM[s.type]?.gathering||['head','body','legs','feet'].includes(ITEM[s.type]?.equip));
+  const eligibleGear=s=>!!s&&(!!V09Craft.weapons[s.type]||!!(ITEM[s.type]?.gathering||ITEM[s.type]?.repairTool)||['head','body','legs','feet'].includes(ITEM[s.type]?.equip));
   const accepts=s=>!!s&&(eligibleGear(s)&&maxLevel(s)>0||isTurret(s)&&V016Turret.validItem(s)||isDrone(s)&&robot.ownsToken(s)&&robot.state.packed);
   function near(){return GameEquipment.present(station.id)&&scene==='bunker'&&!playerDead&&canInteract(station,player.x,player.y);}
   function level(s=slots[0],key=selectedModule){return isDrone(s)?robot.state.modules[key]||0:isTurret(s)?s.turretData.level||0:s?.level||0;}
@@ -60,7 +60,7 @@ window.V0161Upgrade=(()=>{
     // Retain magazine installation and existing specialization without a second
     // cheap enhancement route. Components still consume the correct module.
     if(s&&V09Craft.weapons[s.type])window.V0162Magazines?.render(refs.pick,s,changed);
-    else if(s&&eligibleGear(s)&&!ITEM[s.type]?.gathering)for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[s.type].equip==='feet'?[['speed','Скорость']]:[])]){const b=v09Button((s.specialization===key?'✓ ':'')+label,()=>{s.specialization=key;combat.refreshStats();changed();});b.disabled=false;refs.pick.append(b);}
+    else if(s&&eligibleGear(s)&&!ITEM[s.type]?.gathering&&!ITEM[s.type]?.repairTool)for(const [key,label]of [['balanced','Баланс'],['vitality','Живучесть'],...(ITEM[s.type].equip==='feet'?[['speed','Скорость']]:[])]){const b=v09Button((s.specialization===key?'✓ ':'')+label,()=>{s.specialization=key;combat.refreshStats();changed();});b.disabled=false;refs.pick.append(b);}
   }
   function quickItems(){return V013Inventory.items;}
   function open(){if(!near()){message('Подойдите к станку усиления в углу мастерской');return false;}if(!overlay)build();openOverlay(overlay);refresh(true);return true;}

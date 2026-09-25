@@ -2,7 +2,7 @@ const fs=require('node:fs'),path=require('node:path');
 const {setup}=require('./runtime.cjs');
 exports.boot=function(root=path.resolve(__dirname,'..'),options={}){
  const meter={contexts:0,resumes:0,requests:[],decodes:0,sources:0,gains:0,active:new Set(),peak:0,starts:[],gesture:true};let box;
- const r=setup(path.join(root,'index.html'),options.storage||{}, {width:390,height:844,maxTouchPoints:5,mainMenu:options.mainMenu??false,beforeScripts:s=>{
+ const r=setup(path.join(root,'index.html'),options.storage||{}, {width:390,height:844,maxTouchPoints:5,transformScript:options.transformScript,mainMenu:options.mainMenu??false,beforeScripts:s=>{
   box=s;
   s.fetch=async url=>{meter.requests.push(url);const b=fs.readFileSync(path.join(root,url));return {ok:true,arrayBuffer:async()=>b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength)};};
   function param(value=1){return {value,setTargetAtTime(v){this.value=v;},setValueAtTime(v){this.value=v;},linearRampToValueAtTime(v){this.value=v;},cancelScheduledValues(){}};}

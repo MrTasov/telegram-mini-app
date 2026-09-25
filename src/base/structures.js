@@ -89,8 +89,19 @@ window.V015Base=(()=>{
   }
   // Bound the new AI to nearby surface walls. The existing distant-world AI,
   // enemy movement speeds, damage and attack cooldowns are retained.
-  function rayEntry(a,b,o,pad=0){let lo=0,hi=1;for(const [axis,size] of [['x','w'],['y','h']]){const d=b[axis]-a[axis],low=o[axis]-pad,high=o[axis]+o[size]+pad;if(Math.abs(d)<1e-8){if(a[axis]<low||a[axis]>high)return null;}else{let t=(low-a[axis])/d,u=(high-a[axis])/d;if(t>u)[t,u]=[u,t];lo=Math.max(lo,t);hi=Math.min(hi,u);if(lo>hi)return null;}}return lo;}
-  function blocker(a,b,pad=0){let best=null,t=Infinity;for(const o of walls()){const n=rayEntry(a,b,o,pad);if(n!==null&&n<t){t=n;best=o;}}return best?{wall:best,t}:null;}
+  function rayEntry(a,b,o,pad=0){
+    let lo=0,hi=1,d=b.x-a.x,low=o.x-pad,high=o.x+o.w+pad;
+    if(Math.abs(d)<1e-8){if(a.x<low||a.x>high)return null;}else{let t=(low-a.x)/d,u=(high-a.x)/d;if(t>u){const n=t;t=u;u=n;}lo=Math.max(lo,t);hi=Math.min(hi,u);if(lo>hi)return null;}
+    d=b.y-a.y;low=o.y-pad;high=o.y+o.h+pad;
+    if(Math.abs(d)<1e-8){if(a.y<low||a.y>high)return null;}else{let t=(low-a.y)/d,u=(high-a.y)/d;if(t>u){const n=t;t=u;u=n;}lo=Math.max(lo,t);hi=Math.min(hi,u);if(lo>hi)return null;}return lo;
+  }
+  let blockerRevision=-1,blockerWalls=[];const blockerCache=new WeakMap();
+  function blocker(a,b,pad=0){
+    if(blockerRevision!==geometryRevision){blockerRevision=geometryRevision;blockerWalls=walls();}
+    const cached=blockerCache.get(a);if(cached&&cached.rev===geometryRevision&&cached.ax===a.x&&cached.ay===a.y&&cached.bx===b.x&&cached.by===b.y&&cached.pad===pad)return cached.value;
+    let best=null,t=Infinity;const left=Math.min(a.x,b.x)-pad,right=Math.max(a.x,b.x)+pad,top=Math.min(a.y,b.y)-pad,bottom=Math.max(a.y,b.y)+pad;
+    for(const o of blockerWalls){if(o.x>right||o.x+o.w<left||o.y>bottom||o.y+o.h<top)continue;const n=rayEntry(a,b,o,pad);if(n!==null&&n<t){t=n;best=o;}}const value=best?{wall:best,t}:null;blockerCache.set(a,{rev:geometryRevision,ax:a.x,ay:a.y,bx:b.x,by:b.y,pad,value});return value;
+  }
   function contactDistance(a,o){return Math.hypot(a.x-clamp(a.x,o.x,o.x+o.w),a.y-clamp(a.y,o.y,o.y+o.h));}
   function moveZombie(z,p,step){
     const d=distance(z.x,z.y,p.x,p.y);if(d<1)return true;const angle=Math.atan2(p.y-z.y,p.x-z.x),sign=z.turnSign||1;

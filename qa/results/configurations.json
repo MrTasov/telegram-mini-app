@@ -1,11 +1,30 @@
 {
-  "version": "0.40.0",
+  "version": "0.40.2",
   "items": {
     "hammer": {
       "name": "Молот",
       "icon": "🔨",
       "hand": true,
-      "description": "Ремонт стен и дверей бетоном: 1000 HP/сек. Целые секции можно улучшить до уровня 5."
+      "description": "Ремонт стен и дверей: 5–15% максимальной прочности за удар, в зависимости от уровня молота. 1 бетон восстанавливает 1000 HP. Целые секции можно улучшить до уровня 5.",
+      "upgrades": {
+        "maxLevel": 5,
+        "cost": {
+          "iron": 25,
+          "copper": 12,
+          "parts": 8
+        },
+        "rarePerLevel": 2
+      },
+      "repairTool": {
+        "fractions": [
+          0.05,
+          0.07,
+          0.1,
+          0.12,
+          0.13,
+          0.15
+        ]
+      }
     },
     "stone": {
       "name": "Камень",
@@ -718,7 +737,7 @@
       "ammo": "ammo",
       "caliber": "5,45 × 39",
       "damage": 35,
-      "delay": 155,
+      "delay": 119.23076923076923,
       "spread": 0.045,
       "recoil": 0.019,
       "range": 660,
@@ -767,7 +786,7 @@
         "ammo": "ammo",
         "caliber": "5,45 × 39",
         "damage": 35,
-        "delay": 155,
+        "delay": 119.23076923076923,
         "spread": 0.045,
         "recoil": 0.019,
         "range": 660,
@@ -791,7 +810,7 @@
         "ammo": "ammo",
         "caliber": "5,45 × 39",
         "damage": 37,
-        "delay": 155,
+        "delay": 119.23076923076923,
         "spread": 0.045,
         "recoil": 0.019,
         "range": 660,
@@ -815,7 +834,7 @@
         "ammo": "ammo",
         "caliber": "5,45 × 39",
         "damage": 39,
-        "delay": 155,
+        "delay": 119.23076923076923,
         "spread": 0.045,
         "recoil": 0.019,
         "range": 660,
@@ -839,7 +858,7 @@
         "ammo": "ammo",
         "caliber": "5,45 × 39",
         "damage": 40,
-        "delay": 155,
+        "delay": 119.23076923076923,
         "spread": 0.045,
         "recoil": 0.019,
         "range": 660,
@@ -863,7 +882,7 @@
         "ammo": "ammo",
         "caliber": "5,45 × 39",
         "damage": 42,
-        "delay": 155,
+        "delay": 119.23076923076923,
         "spread": 0.045,
         "recoil": 0.019,
         "range": 660,
@@ -887,7 +906,7 @@
         "ammo": "ammo",
         "caliber": "5,45 × 39",
         "damage": 44,
-        "delay": 155,
+        "delay": 119.23076923076923,
         "spread": 0.045,
         "recoil": 0.019,
         "range": 660,

@@ -1,0 +1,56 @@
+/* A single presentation surface. Local pause is an explicit client adapter,
+   never an archive-domain mutation or a future multiplayer world-pause request. */
+window.StoryPlayer=(()=>{
+  const overlay=v09Overlay('storyOverlay',I18n.t('story.player.title')),body=overlay.querySelector('.v09Body'),heading=overlay.querySelector('.v09Title');
+  const mediaHost=document.createElement('div'),subtitle=document.createElement('p'),notice=document.createElement('p'),controls=document.createElement('div');
+  mediaHost.className='storyMedia';subtitle.className='storySubtitle';subtitle.setAttribute('aria-live','polite');notice.className='storyMediaNotice';notice.setAttribute('role','status');controls.className='storyControls';
+  const toggle=document.createElement('button'),leave=document.createElement('button');toggle.type=leave.type='button';toggle.className=leave.className='menuButton';toggle.id='storyPlayPause';leave.id='storySkip';controls.append(toggle,leave);body.append(mediaHost,subtitle,notice,controls);
+  let current=null,generation=0,media=null,previousFocus=null;const adapters=new Map();
+  const t=key=>I18n.t(key),entry=id=>StoryDefinitions.entries.find(e=>e.id===id);
+  function releaseMedia(){const old=media;media=null;if(old)try{old.dispose?.();}catch(_){}mediaHost.replaceChildren();}
+  function fallback(token){if(!current||generation!==token)return;releaseMedia();current.fallback=true;current.blocked=false;current.playing=true;current.elapsed=0;current.last=null;render();}
+  function mountMedia(e,token){
+    if(!e.media)return;
+    if(e.media.kind==='image'){
+      const def=AssetManifest.images[e.media.assetId];if(!def){fallback(token);return;}
+      GameAssets.load(e.media.assetId).then(image=>{if(!current||token!==generation)return;if(!image||!GameAssets.ready(e.media.assetId)){fallback(token);return;}const node=document.createElement('img');node.src=def.path;node.alt=t(e.media.alt);mediaHost.replaceChildren(node);}).catch(()=>fallback(token));return;
+    }
+    const create=adapters.get(e.media.kind);if(!create){fallback(token);return;}
+    // Media owns its playback clock; story completion follows its ended event.
+    // Failed loads keep the text fallback and Skip usable.
+    try{const handle=create({definition:e.media,host:mediaHost,volume:masterVolume,onError:()=>fallback(token),onEnded:()=>{if(current&&generation===token)finish('completed');},onBlocked:()=>{if(current&&generation===token){current.playing=false;current.blocked=true;render();}}});if(!handle||typeof handle.dispose!=='function')throw Error('Invalid story media adapter');if(!current||generation!==token||current.fallback){handle.dispose();return;}media=handle;media.setPaused?.(!current.playing||document.hidden);media.setVolume?.(masterVolume);}catch(_){fallback(token);}
+  }
+  function render(){if(!current)return;const e=entry(current.id);heading.textContent=t(e.title);const cue=e.subtitles.find(c=>current.elapsed>=c.startMs&&current.elapsed<c.endMs)||e.subtitles.at(-1);subtitle.textContent=t(cue?.text||e.body[0]);toggle.textContent=t(current.playing?'story.pause':'story.play');toggle.setAttribute('aria-pressed',String(!current.playing));leave.textContent=t(current.intro?'story.skipCompact':'story.close');notice.hidden=!current.fallback&&!current.blocked;notice.textContent=current.blocked?t('story.video.blocked'):current.fallback?t('story.fallback'):'';overlay.classList.toggle('storyIntro',!!current.intro);document.body.classList.toggle('storyIntroActive',!!current.intro);overlay.classList.toggle('storyBlocked',!!current.blocked);overlay.classList.toggle('storyFallback',!!current.fallback);overlay.classList.toggle('storyHasVideo',!!media&&e.media?.kind==='video');overlay.querySelector('.v09Panel').setAttribute('aria-label',t(e.title));overlay.querySelector('.v09Close').setAttribute('aria-label',t(current.intro?'story.skip':'story.close'));const image=mediaHost.querySelector('img');if(image&&e.media)image.alt=t(e.media.alt);}
+  const originalClose=closeOverlay;
+  function cleanup(){generation++;releaseMedia();current=null;document.body.classList.remove('storyIntroActive');overlay.classList.remove('storyHasVideo','storyIntro','storyBlocked','storyFallback');originalClose(overlay);GameFlow.resume('story:local');stopControls(true);const focus=previousFocus;previousFocus=null;focus?.focus?.();}
+  function finish(outcome='skipped'){
+    if(!current)return false;const active=current;
+    if(active.intro){const r=GameStory.request('finish_intro',{outcome});if(!r.ok&&r.reason!=='story.error.handled')return false;}
+    else if(outcome==='completed'&&!GameStory.view().watched.includes(active.id))GameStory.request('watch',{entryId:active.id});
+    cleanup();queueGameSave();flushGameSave();return true;
+  }
+  function open(id,intro=false){
+    const e=entry(id),view=GameStory.view();if(!e||!view.unlocked.includes(id)||!e.durationMs&&!e.media)return false;
+    if(intro?view.intro!=='pending':GameFlow.paused||!GameCampaign.access(GameActors.local,BunkerLayout.core.id,true).available)return false;
+    if(current)cleanup();previousFocus=document.activeElement;current={id,intro,elapsed:0,last:null,playing:true,fallback:false,blocked:false};
+    GameFlow.pause('story:local');GameAudio.reset();openOverlay(overlay);const token=++generation;mountMedia(e,token);render();leave.focus();return true;
+  }
+  function tick(now=performance.now()){
+    if(!current)return;
+    if(document.hidden){current.last=null;return;}
+    const elapsed=current.last===null?0:Math.max(0,Math.min(250,now-current.last));current.last=now;
+    if(current.playing){const before=current.elapsed;current.elapsed=media?.timeMs?media.timeMs():current.elapsed+elapsed;if(Math.floor(before/100)!==Math.floor(current.elapsed/100))render();if(!media?.timeMs&&current.elapsed>=entry(current.id).durationMs&&entry(current.id).durationMs>0){finish('completed');return;}}
+    try{media?.setVolume?.(masterVolume);}catch(_){fallback(generation);}
+  }
+  function pause(){if(!current)return;current.playing=!current.playing;current.blocked=false;current.last=null;try{media?.setPaused?.(!current.playing||document.hidden);}catch(_){fallback(generation);}render();}
+  mediaHost.onclick=()=>{if(current?.blocked){pause();}};toggle.onclick=pause;leave.onclick=()=>finish('skipped');
+  closeOverlay=function(node,...args){if(node===overlay&&current){finish('skipped');return;}return originalClose(node,...args);};
+  document.addEventListener('visibilitychange',()=>{if(!current)return;current.last=null;try{media?.setPaused?.(document.hidden||!current.playing);}catch(_){fallback(generation);}});
+  I18n.onChange(render);
+  v09Style(`body.storyIntroActive>*:not(#storyOverlay){visibility:hidden!important}#storyOverlay.storyIntro{padding:0;background:#000}#storyOverlay.storyIntro .v09Panel{width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;background:#000}#storyOverlay.storyIntro .v09Header{display:none}#storyOverlay.storyIntro .v09Body{position:relative;display:block;width:100%;height:100%}#storyOverlay.storyIntro .storyMedia{position:absolute;inset:0;display:flex;max-height:none}#storyOverlay.storyIntro .storyMedia video{width:100%;height:100%;object-fit:contain}#storyOverlay.storyIntro .storySubtitle{position:absolute;left:7%;right:7%;bottom:max(74px,calc(env(safe-area-inset-bottom,0px) + 60px));max-height:25%;color:#fff;text-shadow:0 1px 4px #000;background:transparent;padding:6px;pointer-events:none;font-size:clamp(13px,2.6vw,19px)}#storyOverlay.storyIntro .storyControls{position:absolute;right:max(12px,env(safe-area-inset-right,0px),var(--tg-content-safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px),var(--tg-content-safe-area-inset-bottom,0px));display:block;min-height:0}#storyOverlay.storyIntro #storyPlayPause{display:none}#storyOverlay.storyIntro #storySkip{width:auto;min-height:44px;padding:8px 14px;background:#13231b77;border:1px solid #e6edda66;border-radius:7px;font-size:12px;color:#fff;opacity:.8}#storyOverlay.storyIntro .storyMediaNotice{display:none}#storyOverlay.storyIntro.storyBlocked .storyMediaNotice,#storyOverlay.storyIntro.storyFallback .storyMediaNotice{display:block;position:absolute;top:35%;left:12%;right:12%;text-align:center;font-size:14px;color:#eee}#storyOverlay.storyIntro.storyFallback .storySubtitle{top:15%;bottom:20%;max-height:none}
+#storyOverlay{z-index:12500;position:fixed;inset:0;padding:max(12px,var(--v011-game-top,12px)) max(12px,var(--v011-safe-right,0px)) max(12px,var(--v011-safe-bottom,0px)) max(12px,var(--v011-safe-left,0px));box-sizing:border-box;background:#071015f5}#storyOverlay .v09Panel{width:min(760px,100%);height:min(540px,100%);max-height:100%;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden}#storyOverlay .v09Header{flex:0 0 46px;min-height:46px;margin:0;padding:0 0 8px}#storyOverlay .v09Title{font-size:19px;margin:0}#storyOverlay .v09Body{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}#storyOverlay .storyMedia:empty{display:none}#storyOverlay .storyMedia{flex:0 1 40%;min-height:0;text-align:center;overflow:hidden}#storyOverlay .storyMedia img,#storyOverlay .storyMedia video{height:100%;max-width:100%;object-fit:contain}#storyOverlay .storySubtitle{flex:1;min-height:0;overflow:auto;display:grid;align-content:center;text-align:center;font-size:clamp(17px,3.8vw,26px);line-height:1.5;padding:12px;margin:0;color:#e8e8d7;white-space:pre-line;overflow-wrap:anywhere}#storyOverlay .storyControls{display:flex;gap:10px;flex:0 0 48px;min-height:48px}#storyOverlay .storyControls button{flex:1;margin:0;min-height:44px;touch-action:manipulation}#storyOverlay .storyMediaNotice{font-size:11px;margin:4px;color:#b2c3bd}#storyOverlay.storyHasVideo .storyMedia{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#000}#storyOverlay.storyHasVideo .storyMedia video{width:100%;height:100%;object-fit:contain}#storyOverlay.storyHasVideo .storySubtitle{flex:0 0 auto;min-height:0;max-height:28%;font-size:clamp(13px,2.6vw,17px);padding:8px;display:block}#storyOverlay [hidden]{display:none!important}@media(max-height:500px){#storyOverlay .storySubtitle{font-size:17px;padding:8px}#storyOverlay .v09Header{flex-basis:36px;min-height:36px}#storyOverlay .storyMedia{flex-basis:20%}#storyOverlay.storyHasVideo .storySubtitle{max-height:24%;font-size:12px;padding:4px}}`);
+  return Object.freeze({startIntro:()=>open(StoryDefinitions.introId,true),open:id=>open(id,false),skip:()=>finish('skipped'),pause,tick,cancel(){if(current)cleanup();},
+    settleContinue(){if(GameStory.view().intro==='pending')GameStory.request('finish_intro',{outcome:'interrupted'});},
+    registerMediaAdapter(kind,create){if(!['audio','video'].includes(kind)||adapters.has(kind)||typeof create!=='function')throw Error('Invalid story media adapter');adapters.set(kind,create);},
+    inspect:()=>({active:!!current,entryId:current?.id||null,intro:!!current?.intro,playing:!!current?.playing,elapsedMs:current?.elapsed||0,media:!!media,adapters:adapters.size}),get active(){return !!current;}});
+})();

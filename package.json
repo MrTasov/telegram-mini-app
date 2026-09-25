@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.40.1",
+  "version": "0.40.2",
   "private": true,
-  "description": "LAST BASE 0.40.1 — hidden Developer / QA Mode over unchanged I1",
+  "description": "LAST BASE 0.40.2 \u2014 Performance & Gameplay Corrective",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -62,7 +62,9 @@
     "package:i1": "node tools/package-stage-i1.cjs",
     "test:qa": "node qa/dev-targeted.cjs",
     "bench:qa": "node qa/dev-performance.cjs",
-    "package:qa": "node tools/package-dev.cjs"
+    "package:qa": "node tools/package-dev.cjs",
+    "test:perf-corrective": "node qa/perf-corrective-tests.cjs",
+    "bench:perf-corrective": "node qa/perf-corrective.cjs after"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

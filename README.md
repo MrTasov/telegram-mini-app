@@ -1,3 +1,9 @@
+# LAST BASE 0.40.2 — Performance & Gameplay Corrective
+
+Текущий отчёт: [PERFORMANCE_GAMEPLAY_REPORT_RU.md](PERFORMANCE_GAMEPLAY_REPORT_RU.md). Открывайте `index.html` через HTTP(S); готовый runtime уже собран. Новые проверки: `npm run test:perf-corrective`; сравнение производительности: `npm run bench:perf-corrective`. Save Format 20, Stage I2 не начат.
+
+---
+
 # LAST BASE 0.40.1 — Developer / QA
 
 In gameplay: Settings → tap the version six times → Create test copy. A free save slot is required; the original is preserved. [Russian QA report](DEV_QA_REPORT_RU.md). I1 is preserved; I2 is not started.

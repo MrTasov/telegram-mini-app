@@ -26,7 +26,7 @@ async function main(){
  const corpses=createCanvas(1000,640),zctx=corpses.getContext('2d');zctx.fillStyle='#46513f';zctx.fillRect(0,0,1000,640);
  const sizes=[];
  for(const [side,r]of [before,after].entries()){
-  r.eval("scene='surface';camera.x=600;camera.y=650;window.drawMeasures=[];window.measureDraw=ctx.drawImage;ctx.drawImage=function(im,...a){if(a.length===8)drawMeasures.push(a);return measureDraw.call(this,im,...a);}");
+  r.eval("scene='surface';camera.x=600;camera.y=650;window.drawMeasures=[];window.measureDraw=ctx.drawImage;ctx.drawImage=function(im,...a){if(a.length===8)drawMeasures.push(a);else if(a.length===4&&a[0]<0&&a[1]<0)drawMeasures.push([0,0,im.width,im.height,...a]);return measureDraw.call(this,im,...a);}");
   const row=[];
   for(const [i,type]of ['normal','heavy','fast','leaper','bloater'].entries())for(const dead of [false,true]){
    const im=await capture(r,`window.visualZombie=makeZombie(800,850);visualZombie.type='${type}';window.visualPose=V017Monsters.prepare(visualZombie);visualPose.variant=0;visualPose.angle=Math.PI;visualPose.deathAngle=.4;visualZombie.alive=${!dead};visualZombie.health=${dead?0:100};drawMeasures=[];ctx.save();ctx.translate(100-800,120-850);ctx.scale(1,1);drawZombie(visualZombie);ctx.restore();`);

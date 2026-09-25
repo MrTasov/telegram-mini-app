@@ -38,6 +38,8 @@ for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs'])
   code=code.replaceAll('V016Turret.guns[0].ammo===137','GameDefense.guns()[0].ammo===137').replaceAll('V016Turret.guns[0].level===4','GameDefense.guns()[0].level===4').replaceAll("V016Turret.guns[0].wallId===","GameDefense.guns()[0].wallId===").replaceAll('V016Turret.guns[1].','GameDefense.guns()[1].');
  }
  if(name==='wall_behaviors020.cjs'){
+  // Approved percent-per-impact repair: wait ten real Lv.0 impacts, same 5000 HP / 5 concrete.
+  code=code.replaceAll('i<50;i++','i<114;i++').replace('in five seconds','in ten animation impacts');
   const a=code.indexOf(' // Real inventory -> seam mount'),b=code.indexOf(' // Elevated movement',a);
   code=code.slice(0,a)+` // Stage H shared placement and same-instance hold pickup.
  fresh();E("scene='bunker';player.x=1210;player.y=680;bag=[];for(const c of storageChests)c.items=[];for(const type of ['iron','copper','parts'])addItem(type,200);window.crafted=GamePlacement.request('heavy_turret','craft');window.gunId=crafted.instanceId;");

@@ -7,7 +7,7 @@ async function main(){
  for(const dir of [beforeRoot,root]){
   process.env.LAST_BASE_ASSETS=root;const r=require(path.join(root,'qa/runtime.cjs')).setup(path.join(dir,'index.html')),E=s=>r.eval(s);runtimes.push(r);
   await E('Promise.all(Object.entries(AssetManifest.images).filter(([,d])=>!d.historical).map(([id])=>GameAssets.load(id)))');
-  E(`scene='surface';camera.x=600;camera.y=650;window.artCalls=[];window.realDraw=ctx.drawImage;ctx.drawImage=function(im,...a){if(a.length===8)artCalls.push(a);return realDraw.call(this,im,...a);};`);
+  E(`scene='surface';camera.x=600;camera.y=650;window.artCalls=[];window.realDraw=ctx.drawImage;ctx.drawImage=function(im,...a){if(a.length===8)artCalls.push(a);else if(a.length===4&&a[0]<0&&a[1]<0)artCalls.push([0,0,im.width,im.height,...a]);return realDraw.call(this,im,...a);};`);
   const measurements=[];
   for(let i=0;i<5;i++)for(let dead=0;dead<2;dead++){
    E(`ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,1280,800);ctx.save();ctx.translate(-650,-700);window.z=makeZombie(800,850);z.type='${kinds[i]}';window.pose=V017Monsters.prepare(z);pose.angle=Math.PI;pose.deathAngle=.35;pose.variant=0;z.alive=${!dead};z.health=${dead?0:120};artCalls.length=0;drawZombie(z);ctx.restore();`);

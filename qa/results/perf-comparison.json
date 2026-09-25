@@ -1,0 +1,1470 @@
+{
+  "baselineRuntimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+  "runtimeSha256": "64bcfe6bd3fca2579352083a49a086d189207bc7b0ba85702c0d60f719379692",
+  "scope": "390x844 native Canvas2D original assets, modeled DOM/WebAudio; NOT mobile/browser FPS",
+  "method": "Final isolated sequential before and after. Initial profiled baseline and first after series (overlapping targeted QA rechecks) retained. Lower ms is better. No phone/browser FPS inference.",
+  "rows": [
+    {
+      "id": "idle",
+      "label": "0 Zombies, покой",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 17.36310000000003,
+          "p95": 21.581922999999733,
+          "mean": 17.55143327500003
+        },
+        "update": {
+          "n": 120,
+          "p50": 3.7796320000002197,
+          "p95": 7.7958410000001095,
+          "mean": 4.135465383333299
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 13.386661000000458,
+          "p95": 15.032208999999966,
+          "mean": 13.41596789166673
+        },
+        "heap": {
+          "start": 22085440,
+          "beforeGC": 33116808,
+          "afterGC": 25712568,
+          "retained": 3627128,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 0,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 6,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 16.8811740000001,
+          "p95": 21.02175699999998,
+          "mean": 17.37328983333333
+        },
+        "update": {
+          "n": 120,
+          "p50": 3.8085940000000846,
+          "p95": 7.568232999999964,
+          "mean": 4.1325369500000155
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 12.837696999999935,
+          "p95": 16.130933999999797,
+          "mean": 13.240752883333316
+        },
+        "heap": {
+          "start": 22127928,
+          "beforeGC": 39490144,
+          "afterGC": 25721496,
+          "retained": 3593568,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 0,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 6,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -2.775575790037088,
+      "updateMedianChangePercent": 0.7662650755381195
+    },
+    {
+      "id": "ak_empty",
+      "label": "0 + AK непрерывно",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 17.149427999999716,
+          "p95": 21.127779999999802,
+          "mean": 17.47864602499999
+        },
+        "update": {
+          "n": 120,
+          "p50": 3.823667999999998,
+          "p95": 7.35389000000032,
+          "mean": 4.236741058333337
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 12.955472999999984,
+          "p95": 15.696098999999776,
+          "mean": 13.241904966666652
+        },
+        "heap": {
+          "start": 22092176,
+          "beforeGC": 28131248,
+          "afterGC": 26385392,
+          "retained": 4293216,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 12,
+          "initialAmmo": 30,
+          "living": 0,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 6,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 17.50342499999988,
+          "p95": 21.509687000000213,
+          "mean": 17.851619625000083
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.262668000000303,
+          "p95": 7.868476999999984,
+          "mean": 4.615037691666706
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 12.988944000000629,
+          "p95": 15.839899999999943,
+          "mean": 13.236581933333378
+        },
+        "heap": {
+          "start": 22129400,
+          "beforeGC": 38425176,
+          "afterGC": 26424136,
+          "retained": 4294736,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 7,
+          "initialAmmo": 30,
+          "living": 0,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 6,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": 2.0641912954774355,
+      "updateMedianChangePercent": 11.481122315020698
+    },
+    {
+      "id": "m4_empty",
+      "label": "0 + M4 непрерывно",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 17.585913999999775,
+          "p95": 23.601744000000053,
+          "mean": 17.985424016666684
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.014566000000741,
+          "p95": 8.177997000000232,
+          "mean": 4.431217350000001
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 13.4106069999998,
+          "p95": 15.74494199999981,
+          "mean": 13.554206666666683
+        },
+        "heap": {
+          "start": 22125456,
+          "beforeGC": 30601296,
+          "afterGC": 26351928,
+          "retained": 4226472,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_m4",
+          "remaining": 4,
+          "initialAmmo": 30,
+          "living": 0,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 6,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 17.19016799999963,
+          "p95": 21.85950700000012,
+          "mean": 17.564480733333326
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.057507999999871,
+          "p95": 7.85238100000015,
+          "mean": 4.506909433333317
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 12.979367999999795,
+          "p95": 14.475840999999946,
+          "mean": 13.05757130000001
+        },
+        "heap": {
+          "start": 22167392,
+          "beforeGC": 35208768,
+          "afterGC": 26351600,
+          "retained": 4184208,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_m4",
+          "remaining": 4,
+          "initialAmmo": 30,
+          "living": 0,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 6,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -2.250357871647446,
+      "updateMedianChangePercent": 1.069654851835078
+    },
+    {
+      "id": "z10",
+      "label": "10 Zombies",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 18.82022500000039,
+          "p95": 22.826196999999866,
+          "mean": 19.310052524999985
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.207194000000072,
+          "p95": 7.930880000000343,
+          "mean": 4.582689024999987
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 14.348532999999406,
+          "p95": 17.172629000000143,
+          "mean": 14.727363499999997
+        },
+        "heap": {
+          "start": 22108072,
+          "beforeGC": 31257128,
+          "afterGC": 26546376,
+          "retained": 4438304,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 10,
+          "hp": 76,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 1806,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 18.11522500000001,
+          "p95": 22.046694000000116,
+          "mean": 18.54449658333333
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.0520309999992605,
+          "p95": 7.953074999999899,
+          "mean": 4.44068693333334
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 13.948962999999821,
+          "p95": 15.462070999999924,
+          "mean": 14.10380964999999
+        },
+        "heap": {
+          "start": 22152840,
+          "beforeGC": 44740992,
+          "afterGC": 26580728,
+          "retained": 4427888,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 10,
+          "hp": 76,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 1806,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -3.745970093345685,
+      "updateMedianChangePercent": -3.6880400571214222
+    },
+    {
+      "id": "z25",
+      "label": "25 Zombies",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 21.521069000000352,
+          "p95": 26.972057999999834,
+          "mean": 22.067948841666652
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.672867000000224,
+          "p95": 9.102347000000009,
+          "mean": 5.307385900000019
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 16.397664000000077,
+          "p95": 20.314617999999882,
+          "mean": 16.760562941666635
+        },
+        "heap": {
+          "start": 19601600,
+          "beforeGC": 39754328,
+          "afterGC": 23636480,
+          "retained": 4034880,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 25,
+          "hp": 64,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 4506,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 19.769376000000193,
+          "p95": 26.28066900000067,
+          "mean": 20.5268637916667
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.402068000000327,
+          "p95": 8.794702000000143,
+          "mean": 5.014789958333324
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 14.984432000000197,
+          "p95": 18.59790200000043,
+          "mean": 15.512073833333375
+        },
+        "heap": {
+          "start": 22182264,
+          "beforeGC": 37825848,
+          "afterGC": 26627600,
+          "retained": 4445336,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 25,
+          "hp": 64,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 4506,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -8.139433036528676,
+      "updateMedianChangePercent": -5.79513604816666
+    },
+    {
+      "id": "z50",
+      "label": "50 Zombies",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 23.977548000000752,
+          "p95": 30.54593900000009,
+          "mean": 24.58609378333334
+        },
+        "update": {
+          "n": 120,
+          "p50": 5.37505499999952,
+          "p95": 8.906162000000222,
+          "mean": 5.870269099999965
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 18.19614199999978,
+          "p95": 22.57873100000006,
+          "mean": 18.715824683333373
+        },
+        "heap": {
+          "start": 22201416,
+          "beforeGC": 49819632,
+          "afterGC": 26681608,
+          "retained": 4480192,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 50,
+          "hp": 64,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 9006,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 21.968621999999414,
+          "p95": 28.546360000000277,
+          "mean": 22.632182733333277
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.911975999999868,
+          "p95": 9.79656100000011,
+          "mean": 5.367940291666616
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 16.934276999999838,
+          "p95": 20.870192999999745,
+          "mean": 17.264242441666664
+        },
+        "heap": {
+          "start": 22238456,
+          "beforeGC": 52573512,
+          "afterGC": 26728048,
+          "retained": 4489592,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 50,
+          "hp": 64,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 9006,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -8.378362958553042,
+      "updateMedianChangePercent": -8.615335098890963
+    },
+    {
+      "id": "z100",
+      "label": "100 Zombies (stress)",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 24.238601000000017,
+          "p95": 28.79856800000016,
+          "mean": 24.416965508333288
+        },
+        "update": {
+          "n": 120,
+          "p50": 5.438200000000052,
+          "p95": 9.804363999999623,
+          "mean": 5.847292366666666
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 18.268370999999206,
+          "p95": 21.504503999999997,
+          "mean": 18.56967314166662
+        },
+        "heap": {
+          "start": 22311208,
+          "beforeGC": 36458904,
+          "afterGC": 26835864,
+          "retained": 4524656,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 100,
+          "hp": 64,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 18006,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 23.91945399999986,
+          "p95": 32.1801260000002,
+          "mean": 24.878989908333356
+        },
+        "update": {
+          "n": 120,
+          "p50": 5.556587000000036,
+          "p95": 10.134458999999879,
+          "mean": 5.9484266833333175
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 18.097507999999834,
+          "p95": 23.675256000000445,
+          "mean": 18.930563225000036
+        },
+        "heap": {
+          "start": 22352504,
+          "beforeGC": 51291480,
+          "afterGC": 26899464,
+          "retained": 4546960,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 100,
+          "hp": 64,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 18006,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -1.316689028381457,
+      "updateMedianChangePercent": 2.17695193262446
+    },
+    {
+      "id": "z25_ak",
+      "label": "25 + AK",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 20.57830899999999,
+          "p95": 25.93842599999971,
+          "mean": 21.17604534166668
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.614628999999695,
+          "p95": 8.627390999999989,
+          "mean": 5.110788333333354
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 15.817840000000615,
+          "p95": 18.55958899999996,
+          "mean": 16.065257008333326
+        },
+        "heap": {
+          "start": 22132576,
+          "beforeGC": 43771704,
+          "afterGC": 27210528,
+          "retained": 5077952,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 12,
+          "initialAmmo": 30,
+          "living": 25,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 4323,
+            "coarse": 7,
+            "skipped": 110
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 19.488059999999678,
+          "p95": 23.61362199999985,
+          "mean": 19.75986689999998
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.424311000000216,
+          "p95": 8.383703000000423,
+          "mean": 4.85980574166662
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 14.79454399999986,
+          "p95": 16.537708999999268,
+          "mean": 14.900061158333362
+        },
+        "heap": {
+          "start": 22187592,
+          "beforeGC": 32175952,
+          "afterGC": 27291776,
+          "retained": 5104184,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 7,
+          "initialAmmo": 30,
+          "living": 25,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 4304,
+            "coarse": 7,
+            "skipped": 110
+          }
+        }
+      },
+      "frameMedianChangePercent": -5.298049514176862,
+      "updateMedianChangePercent": -4.124231872150319
+    },
+    {
+      "id": "z50_ak",
+      "label": "50 + AK",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 21.775300999999672,
+          "p95": 26.20751399999972,
+          "mean": 22.256449733333326
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.834547999999813,
+          "p95": 8.733698000000004,
+          "mean": 5.321473349999986
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 16.76952399999982,
+          "p95": 19.135572999999567,
+          "mean": 16.93497638333334
+        },
+        "heap": {
+          "start": 22193800,
+          "beforeGC": 50719216,
+          "afterGC": 27320304,
+          "retained": 5126504,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 12,
+          "initialAmmo": 30,
+          "living": 49,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 8809,
+            "coarse": 7,
+            "skipped": 110
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 21.61543299999994,
+          "p95": 28.471153999999842,
+          "mean": 22.247388700000027
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.8821899999998095,
+          "p95": 8.768540999999459,
+          "mean": 5.309312508333331
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 16.53686800000014,
+          "p95": 20.286117000000104,
+          "mean": 16.938076191666696
+        },
+        "heap": {
+          "start": 22247472,
+          "beforeGC": 64860912,
+          "afterGC": 27417352,
+          "retained": 5169880,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 7,
+          "initialAmmo": 30,
+          "living": 48,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 8742,
+            "coarse": 7,
+            "skipped": 110
+          }
+        }
+      },
+      "frameMedianChangePercent": -0.7341712520976706,
+      "updateMedianChangePercent": 0.9854488982216747
+    },
+    {
+      "id": "z50_turrets",
+      "label": "50 + Automatic/Heavy",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 22.464749000000666,
+          "p95": 26.818806000000222,
+          "mean": 22.823010566666685
+        },
+        "update": {
+          "n": 120,
+          "p50": 5.979304000000411,
+          "p95": 9.908732000000327,
+          "mean": 6.30724599166667
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 16.380306999999448,
+          "p95": 18.30322299999989,
+          "mean": 16.515764575000013
+        },
+        "heap": {
+          "start": 22323816,
+          "beforeGC": 49127792,
+          "afterGC": 27126912,
+          "retained": 4803096,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 41,
+          "hp": 64,
+          "shots": 33,
+          "ammo": [
+            585,
+            391,
+            591
+          ],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 7989,
+            "coarse": 12,
+            "skipped": 178
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 22.47376600000007,
+          "p95": 26.922049999999672,
+          "mean": 22.798603066666608
+        },
+        "update": {
+          "n": 120,
+          "p50": 5.832730999999512,
+          "p95": 9.804761999999755,
+          "mean": 6.239299208333322
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 16.349615999999514,
+          "p95": 19.18638700000065,
+          "mean": 16.559303858333287
+        },
+        "heap": {
+          "start": 22375960,
+          "beforeGC": 40521424,
+          "afterGC": 27149696,
+          "retained": 4773736,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 41,
+          "hp": 64,
+          "shots": 33,
+          "ammo": [
+            585,
+            391,
+            591
+          ],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 7989,
+            "coarse": 12,
+            "skipped": 178
+          }
+        }
+      },
+      "frameMedianChangePercent": 0.04013844089423291,
+      "updateMedianChangePercent": -2.451338818044524
+    },
+    {
+      "id": "z50_lights",
+      "label": "50 + Turrets + 2 Searchlights",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 26.073383000000376,
+          "p95": 30.976546000000326,
+          "mean": 26.48064993333335
+        },
+        "update": {
+          "n": 120,
+          "p50": 6.944297000000006,
+          "p95": 11.214758000000074,
+          "mean": 7.364409716666683
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 18.898839000000407,
+          "p95": 21.737333000000035,
+          "mean": 19.116240216666668
+        },
+        "heap": {
+          "start": 22433296,
+          "beforeGC": 64605008,
+          "afterGC": 27989064,
+          "retained": 5555768,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 37,
+          "hp": 64,
+          "shots": 39,
+          "ammo": [
+            585,
+            390,
+            586,
+            0,
+            0
+          ],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 7785,
+            "coarse": 12,
+            "skipped": 178
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 25.879869999999755,
+          "p95": 29.806789999999637,
+          "mean": 26.104719716666715
+        },
+        "update": {
+          "n": 120,
+          "p50": 6.72792599999957,
+          "p95": 10.944271999999728,
+          "mean": 7.111089158333334
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 18.77391500000067,
+          "p95": 21.513597999999547,
+          "mean": 18.993630558333383
+        },
+        "heap": {
+          "start": 22475488,
+          "beforeGC": 35484232,
+          "afterGC": 27992272,
+          "retained": 5516784,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 37,
+          "hp": 64,
+          "shots": 39,
+          "ammo": [
+            585,
+            390,
+            586,
+            0,
+            0
+          ],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 7785,
+            "coarse": 12,
+            "skipped": 178
+          }
+        }
+      },
+      "frameMedianChangePercent": -0.7421860063215324,
+      "updateMedianChangePercent": -3.1158085548535053
+    },
+    {
+      "id": "offzone",
+      "label": "50 снаружи, Player в Bunker",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 17.636545999999726,
+          "p95": 22.437242999999853,
+          "mean": 18.07289997500002
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.339603999999781,
+          "p95": 8.315110000000004,
+          "mean": 4.713216141666692
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 13.165533000000323,
+          "p95": 15.818217000000004,
+          "mean": 13.359683833333326
+        },
+        "heap": {
+          "start": 22394752,
+          "beforeGC": 31313160,
+          "afterGC": 26674872,
+          "retained": 4280120,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 50,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [
+            600,
+            400,
+            600
+          ],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 9006,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 17.105707000000166,
+          "p95": 21.372099000000162,
+          "mean": 17.544317724999985
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.1298759999999675,
+          "p95": 7.555061999999907,
+          "mean": 4.464709175000019
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 12.880949000000328,
+          "p95": 15.953607999999804,
+          "mean": 13.079608549999966
+        },
+        "heap": {
+          "start": 22418664,
+          "beforeGC": 30537632,
+          "afterGC": 26681696,
+          "retained": 4263032,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 50,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [
+            600,
+            400,
+            600
+          ],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 9006,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -3.009880732880277,
+      "updateMedianChangePercent": -4.832883369077557
+    },
+    {
+      "id": "return",
+      "label": "Возврат на Surface",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 20.267996999999923,
+          "p95": 26.386470000000372,
+          "mean": 21.04477101666663
+        },
+        "update": {
+          "n": 120,
+          "p50": 5.692861999999877,
+          "p95": 10.251695999999356,
+          "mean": 6.153122133333295
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 14.600233000000117,
+          "p95": 18.00512400000025,
+          "mean": 14.891648883333335
+        },
+        "heap": {
+          "start": 22359368,
+          "beforeGC": 44714672,
+          "afterGC": 27824024,
+          "retained": 5464656,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 50,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [
+            600,
+            400,
+            600
+          ],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 9006,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 18.58082800000011,
+          "p95": 23.905853000000207,
+          "mean": 19.195893475000005
+        },
+        "update": {
+          "n": 120,
+          "p50": 4.582186999999976,
+          "p95": 8.388856999999916,
+          "mean": 4.9644490083333155
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 13.982025999999678,
+          "p95": 17.45377099999996,
+          "mean": 14.23144446666669
+        },
+        "heap": {
+          "start": 22415144,
+          "beforeGC": 36028336,
+          "afterGC": 27849512,
+          "retained": 5434368,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 50,
+          "hp": 100,
+          "shots": 0,
+          "ammo": [
+            600,
+            400,
+            600
+          ],
+          "wallHP": null,
+          "wallInitialHP": null,
+          "activity": {
+            "frames": 181,
+            "full": 9006,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -8.324300620331737,
+      "updateMedianChangePercent": -19.509958260009196
+    },
+    {
+      "id": "offzone_combat",
+      "label": "I1: контактный бой у стены + турели",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 20.538313000000016,
+          "p95": 24.488424000000123,
+          "mean": 20.755597808333334
+        },
+        "update": {
+          "n": 120,
+          "p50": 6.907861000000594,
+          "p95": 10.90030200000001,
+          "mean": 7.277933808333353
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 13.354556999999659,
+          "p95": 14.639573000000382,
+          "mean": 13.477663999999981
+        },
+        "heap": {
+          "start": 19824392,
+          "beforeGC": 31459872,
+          "afterGC": 23878560,
+          "retained": 4054168,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 46,
+          "hp": 100,
+          "shots": 27,
+          "ammo": [
+            599,
+            389,
+            585
+          ],
+          "wallHP": 5500,
+          "wallInitialHP": 10000,
+          "activity": {
+            "frames": 181,
+            "full": 8718,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 18.869101000000228,
+          "p95": 23.35697600000003,
+          "mean": 19.407905258333358
+        },
+        "update": {
+          "n": 120,
+          "p50": 6.215785999999753,
+          "p95": 10.35826999999972,
+          "mean": 6.527648700000031
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 12.687536999999793,
+          "p95": 14.66753800000015,
+          "mean": 12.880256558333326
+        },
+        "heap": {
+          "start": 22423376,
+          "beforeGC": 36643824,
+          "afterGC": 26889848,
+          "retained": 4466472,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 46,
+          "hp": 100,
+          "shots": 27,
+          "ammo": [
+            599,
+            389,
+            585
+          ],
+          "wallHP": 5500,
+          "wallInitialHP": 10000,
+          "activity": {
+            "frames": 181,
+            "full": 8718,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -8.127308216598838,
+      "updateMedianChangePercent": -10.018658453040407
+    },
+    {
+      "id": "return_combat",
+      "label": "I1: возврат после контактного боя",
+      "before": {
+        "frame": {
+          "n": 120,
+          "p50": 22.275439000000006,
+          "p95": 26.523625000000266,
+          "mean": 22.801515874999996
+        },
+        "update": {
+          "n": 120,
+          "p50": 7.618821000000025,
+          "p95": 12.148380999999972,
+          "mean": 7.915483141666645
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 14.729055999999673,
+          "p95": 16.76289900000029,
+          "mean": 14.88603273333335
+        },
+        "heap": {
+          "start": 22366792,
+          "beforeGC": 64455016,
+          "afterGC": 28057672,
+          "retained": 5690880,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 46,
+          "hp": 100,
+          "shots": 27,
+          "ammo": [
+            599,
+            389,
+            585
+          ],
+          "wallHP": 5500,
+          "wallInitialHP": 10000,
+          "activity": {
+            "frames": 181,
+            "full": 8718,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "after": {
+        "frame": {
+          "n": 120,
+          "p50": 21.770853999999417,
+          "p95": 27.054110000000037,
+          "mean": 22.56202379166665
+        },
+        "update": {
+          "n": 120,
+          "p50": 7.025832999999693,
+          "p95": 11.41707200000019,
+          "mean": 7.510300150000031
+        },
+        "renderAudio": {
+          "n": 120,
+          "p50": 14.753713000000062,
+          "p95": 17.25482800000009,
+          "mean": 15.05172364166662
+        },
+        "heap": {
+          "start": 22419848,
+          "beforeGC": 44215864,
+          "afterGC": 28115040,
+          "retained": 5695192,
+          "note": "process-level diagnostic, not device RAM"
+        },
+        "end": {
+          "weapon": "rifle_ak74",
+          "remaining": 30,
+          "initialAmmo": 30,
+          "living": 46,
+          "hp": 100,
+          "shots": 27,
+          "ammo": [
+            599,
+            389,
+            585
+          ],
+          "wallHP": 5500,
+          "wallInitialHP": 10000,
+          "activity": {
+            "frames": 181,
+            "full": 8718,
+            "coarse": 2,
+            "skipped": 42
+          }
+        }
+      },
+      "frameMedianChangePercent": -2.2652078821009503,
+      "updateMedianChangePercent": -7.783199001529639
+    }
+  ]
+}

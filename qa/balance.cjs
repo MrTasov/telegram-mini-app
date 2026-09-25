@@ -60,6 +60,8 @@ for(const id of ['axe','pickaxe','remote','base_lamp'])delete actual.recipes[id]
 for(const id of ['hammer','fishing_rod']){delete actual.recipes[id].manual;actual.recipes[id].station=expected.recipes[id].station;}
 actual.recipes.hammer.input=expected.recipes.hammer.input;actual.recipes.hammer.ms=expected.recipes.hammer.ms;
 for(const id of ['workshop','storage','room4','room5','room6','room7'])actual.power.rooms[id]=expected.power.rooms[id];
+// 0.40.2 explicitly requested Hammer percent/levels and AK +30% rate.
+assert.equal(actual.weapons.rifle_ak74.delay,155/1.3);actual.weapons.rifle_ak74.delay=expected.weapons.rifle_ak74.delay;for(let i=0;i<6;i++){assert.equal(actual.effectiveWeapons.rifle_ak74[i].delay,155/1.3);actual.effectiveWeapons.rifle_ak74[i].delay=expected.effectiveWeapons.rifle_ak74[i].delay;}assert.deepEqual(actual.items.hammer.repairTool.fractions,[.05,.07,.10,.12,.13,.15]);delete actual.items.hammer.repairTool;delete actual.items.hammer.upgrades;actual.items.hammer.description=expected.items.hammer.description;
 let error=null;try{assert.deepEqual(actual,expected);}catch(e){error=e.message;}
 fs.writeFileSync(path.join(__dirname,'results/configurations.json'),JSON.stringify(configs,null,2)+'\n');
 const report={version,passed:error?0:1,failed:error?1:0,scope:'Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.',addedDefinitionFields:definitionFields,addedEnemyFields:['spawnOrder','behavior','healthColor','leap','blast'],addedAPIs,error,consoleErrors:r.errors};

@@ -60,7 +60,7 @@ window.GamePlacement=(()=>{
   function check(selection,transform,occupants=true){
     if(typeof selection!=='string'||!transform||Object.keys(transform).sort().join()!=='room,rotation,scene,x,y')return fail('invalid_command');
     const r=GameEquipment.get(selection);if(!r||!rules[r.typeId])return fail('type');if(r.placement!=='packed')return fail('installed');
-    const record={...copy(r),placement:'installed',ownerId:null,transform:copy(transform)};if(DefenseDefinitions.types[r.typeId]){record.state.settings.mountWall='';record.state.settings.fallen=false;}return checkRecord(record,GameEquipment.capture(),occupants);
+    const record={...copy(r),placement:'installed',ownerId:null,transform:copy(transform)};if(DefenseDefinitions.types[r.typeId]){record.state.settings.mountWall=GameSurfacePlacement.mountFor(record);record.state.settings.fallen=false;}return checkRecord(record,GameEquipment.capture(),occupants);
   }
   function access(actor){return !actor.dead&&(actor.scene==='surface'&&!V013City.floor||actor.scene==='bunker'&&(actor.entity.floor??1)===1);}
   function coreAccess(actor){return GameCampaign.access(actor,BunkerLayout.core.id,false).available;}
@@ -78,7 +78,7 @@ window.GamePlacement=(()=>{
     if(c.action==='rename'){if(!coreAccess(actor))return fail('out_of_reach');const room=c.instanceId.slice(5),name=p.name;if(!validRoomName(name))return fail('roomName');roomNames[room]=copy(name);return {ok:true,room};}
     const r=GameEquipment.get(c.instanceId);if(!r||!rules[r.typeId])return fail('protected');
     if(c.action==='pack'){if(r.placement!=='installed')return fail('packed');if(!GameEquipmentRuntime.access(actor,r))return fail('out_of_reach');const reason=packReason(r);if(reason)return fail(reason);if(GameCarried.free()<0)return fail('inventoryFull');const hold=pickups.get(actor.id);if(!hold||hold.id!==r.id||hold.token!==p.pickupToken||performance.now()-hold.startedAt<3000)return fail('holdRequired');if(!pickupValid(actor,hold))return fail('pickupChanged');GameEquipment.change({...copy(r),placement:'packed',ownerId:actor.id});if(!GameCarried.add(r.id))throw Error('Carried slot changed during synchronous pickup');pickups.delete(actor.id);}
-    else if(c.action==='place'){if(r.ownerId!==actor.id||!GameCarried.owns(r.id))return fail('actor_denied');if(p.transform?.scene!==actor.scene)return fail('room');const result=check(c.instanceId,p.transform);if(!result.ok)return result;if(DefenseDefinitions.types[r.typeId]){result.record.state.settings.mountWall='';result.record.state.settings.fallen=false;}GameEquipment.change(result.record);GameCarried.remove(r.id);window.GameChapterOne?.recordAction('placed',result.record);}
+    else if(c.action==='place'){if(r.ownerId!==actor.id||!GameCarried.owns(r.id))return fail('actor_denied');if(p.transform?.scene!==actor.scene)return fail('room');const result=check(c.instanceId,p.transform);if(!result.ok)return result;if(DefenseDefinitions.types[r.typeId]){result.record.state.settings.fallen=false;}GameEquipment.change(result.record);GameCarried.remove(r.id);window.GameChapterOne?.recordAction('placed',result.record);}
     else return fail('action');
     V09Craft.syncInstances();window.GameMovable?.sync();invalidateGeometry();return {ok:true,instanceId:r.id,placement:c.action==='pack'?'packed':'installed'};
   }

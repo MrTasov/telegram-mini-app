@@ -155,9 +155,9 @@ window.V0105=(()=>{
   const oldTree=useTree;useTree=function(t){if(!equip('axe'))return;V09World.stopMining();return oldTree(t);};
   const oldPoint=approachPoint;approachPoint=function(...args){cancelChop();return oldPoint(...args);};
 
-  function markers(includeInteractive=true,which=scene){
+  function markers(includeInteractive=true,which=scene,bounds=null){
     const out=[],ids=new Set();
-    const add=m=>{if(!Number.isFinite(m.x)||!Number.isFinite(m.y)||ids.has(m.id))return;ids.add(m.id);out.push(m);};
+    const add=m=>{if(!Number.isFinite(m.x)||!Number.isFinite(m.y)||ids.has(m.id)||bounds&&(m.x<bounds.x-80||m.y<bounds.y-80||m.x>bounds.x+bounds.w+80||m.y>bounds.y+bounds.h+80))return;ids.add(m.id);out.push(m);};
     if(which==='surface'){
       for(const t of worldTrees)if(t.wood>0)add({id:t.id,x:t.x,y:t.y,kind:t.felled?'wood':'tree'});
       for(const o of V09World.ores)if(o.remaining>0)add({id:o.id,x:o.x,y:o.y,kind:o.type==='coal'?'coal':o.type==='stone'?'stone':o.type==='copper_ore'?'copper':'iron'});
@@ -172,7 +172,7 @@ window.V0105=(()=>{
     return out;
   }
   function drawMapMarkers(c,scale,mini,bounds,which=scene){
-    for(const m of markers(!window.V011World||V011World.filters.interactives,which)){if(which!==scene&&!['building','car'].includes(m.kind))continue;if(which==='surface'&&['building','car'].includes(m.kind)&&!V010Camera.seen(m.x,m.y))continue;if(which===scene&&window.V0141Map&&!V0141Map.visible(m,mini))continue;
+    for(const m of markers(!window.V011World||V011World.filters.interactives,which,bounds)){if(which!==scene&&!['building','car'].includes(m.kind))continue;if(which==='surface'&&['building','car'].includes(m.kind)&&!V010Camera.seen(m.x,m.y))continue;if(which===scene&&window.V0141Map&&!V0141Map.visible(m,mini))continue;
       if(window.V011World&&!V011World.mapEnabled(m))continue;
       if(m.x<bounds.x-80||m.y<bounds.y-80||m.x>bounds.x+bounds.w+80||m.y>bounds.y+bounds.h+80)continue;
       const r=(m.kind==='zombie'?Math.max(2.3,Math.min(6,(m.radius||16)/7)):mini?2.3:2.8)/scale;
