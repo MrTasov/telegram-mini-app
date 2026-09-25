@@ -1,0 +1,416 @@
+{
+  "version": "0.40.0",
+  "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+  "passed": 85,
+  "failed": 2,
+  "boundaries": [
+    "new-game",
+    "crafted-carried",
+    "catalog-furnace",
+    "catalog-craft_bench",
+    "catalog-utility_workbench",
+    "catalog-storage_crate",
+    "two-carried",
+    "packed-persistent",
+    "relocated-persistent",
+    "active",
+    "queue",
+    "output",
+    "refund",
+    "storage-distinct",
+    "empty-storage-packed",
+    "storage-relocated",
+    "pack-generator",
+    "move-generator",
+    "pack-tank",
+    "move-tank",
+    "pack-battery",
+    "move-battery",
+    "pack-upgrade0161",
+    "move-upgrade0161",
+    "dock-packed",
+    "dock-relocated",
+    "room-workshop",
+    "room-room4",
+    "room-room5",
+    "room-room6",
+    "room-room7",
+    "room-storage",
+    "room-reserve_l1",
+    "renamed-room",
+    "duplicate",
+    "all-tools-no-power",
+    "protected-budget-paid-queue",
+    "protected-budget-finished",
+    "lamp-inventory",
+    "legacy-paid-production",
+    "legacy-chapter",
+    "two-manual-jobs",
+    "onboarding-supplies",
+    "onboarding-craft",
+    "onboarding-place",
+    "onboarding-hammer",
+    "onboarding-pickaxe",
+    "onboarding-first-stone-impact",
+    "onboarding-power-core",
+    "onboarding-concrete",
+    "onboarding-partial-repairs",
+    "onboarding-repair-complete",
+    "onboarding-night-start",
+    "onboarding-night-end",
+    "onboarding-confirmed",
+    "early-repair-rebroken"
+  ],
+  "checks": [
+    {
+      "id": "baseline.0351_byte_identity",
+      "status": "PASS"
+    },
+    {
+      "id": "new_game.no_free_tools_no_deferred_grants",
+      "status": "PASS"
+    },
+    {
+      "id": "craft.atomic_debit_inventory_only_no_placement",
+      "status": "PASS"
+    },
+    {
+      "id": "craft.each_real_catalog_type_furnace",
+      "status": "PASS"
+    },
+    {
+      "id": "craft.each_real_catalog_type_craft_bench",
+      "status": "PASS"
+    },
+    {
+      "id": "craft.each_real_catalog_type_utility_workbench",
+      "status": "PASS"
+    },
+    {
+      "id": "craft.each_real_catalog_type_storage_crate",
+      "status": "PASS"
+    },
+    {
+      "id": "craft.individual_instances_no_stack",
+      "status": "PASS"
+    },
+    {
+      "id": "place.pack.same_identity_state_free_no_refund",
+      "status": "PASS"
+    },
+    {
+      "id": "pack.guard_active",
+      "status": "PASS"
+    },
+    {
+      "id": "pack.guard_queue",
+      "status": "PASS"
+    },
+    {
+      "id": "pack.guard_output",
+      "status": "PASS"
+    },
+    {
+      "id": "pack.guard_refund",
+      "status": "PASS"
+    },
+    {
+      "id": "storage.multi_instance_isolated_empty_guard",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.safety_generator",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.safety_tank",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.safety_battery",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.safety_robots014_dock",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.authored_generator",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.authored_tank",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.authored_battery",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.authored_upgrade0161",
+      "status": "PASS"
+    },
+    {
+      "id": "movable.drone_station_packed_drone_reinstall",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_utility_workbench_0",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_utility_workbench_1",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_utility_workbench_2",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_utility_workbench_3",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_furnace_0",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_furnace_1",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_furnace_2",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_furnace_3",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_craft_bench_0",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_craft_bench_1",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_craft_bench_2",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_craft_bench_3",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_storage_crate_0",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_storage_crate_1",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_storage_crate_2",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_storage_crate_3",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_generator_0",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_generator_1",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_generator_2",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_generator_3",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_fuel_tank_0",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_fuel_tank_1",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_fuel_tank_2",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_fuel_tank_3",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_reserve_battery_0",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_reserve_battery_1",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_reserve_battery_2",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_reserve_battery_3",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_drone_station_0",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_drone_station_1",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_drone_station_2",
+      "status": "PASS"
+    },
+    {
+      "id": "footprint.rotation_wall_drone_station_3",
+      "status": "PASS"
+    },
+    {
+      "id": "rooms.universal_workshop",
+      "status": "PASS"
+    },
+    {
+      "id": "rooms.universal_room4",
+      "status": "PASS"
+    },
+    {
+      "id": "rooms.universal_room5",
+      "status": "PASS"
+    },
+    {
+      "id": "rooms.universal_room6",
+      "status": "PASS"
+    },
+    {
+      "id": "rooms.universal_room7",
+      "status": "PASS"
+    },
+    {
+      "id": "rooms.universal_storage",
+      "status": "PASS"
+    },
+    {
+      "id": "rooms.universal_reserve_l1",
+      "status": "PASS"
+    },
+    {
+      "id": "validation.doors_core_walls_front_overlap_actor",
+      "status": "PASS"
+    },
+    {
+      "id": "rename.persist_semantic_ID_escape_and_localization",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.duplicate_stale_foreign_actor_and_materials",
+      "status": "PASS"
+    },
+    {
+      "id": "production.manual_tools_real_cycles_and_split",
+      "status": "PASS"
+    },
+    {
+      "id": "bootstrap.no_spending_first_tools_budget",
+      "status": "PASS"
+    },
+    {
+      "id": "production.lamp_output_is_carried_instance",
+      "status": "PASS"
+    },
+    {
+      "id": "save.0351_jobs_queues_outputs_packed_identity_pure_migration",
+      "status": "PASS"
+    },
+    {
+      "id": "save.0351_active_chapter_retained",
+      "status": "PASS"
+    },
+    {
+      "id": "save.atomic_reject_owner",
+      "status": "PASS"
+    },
+    {
+      "id": "save.atomic_reject_duplicate",
+      "status": "PASS"
+    },
+    {
+      "id": "save.atomic_reject_state",
+      "status": "PASS"
+    },
+    {
+      "id": "save.atomic_reject_job",
+      "status": "PASS"
+    },
+    {
+      "id": "save.atomic_reject_roomname",
+      "status": "PASS"
+    },
+    {
+      "id": "save.atomic_reject_container",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.construction_crafts_does_not_open_preview_inventory_place",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.touch_hold_release_cancel_do_not_install",
+      "status": "FAIL",
+      "error": "TypeError: Cannot set properties of null (setting 'getBoundingClientRect')\n    at /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-corrective.cjs:44:190\n    at test (/workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-corrective.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-corrective.cjs:44:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "UI.localization_no_internal_ID_ru",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.localization_no_internal_ID_en",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.preview_stale_geometry_disables_without_rechecking",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-corrective.cjs:46:328\n    at test (/workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-corrective.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-corrective.cjs:46:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "production.multiple_manual_instances_independent",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.packed_power_and_manual_status_readable",
+      "status": "PASS"
+    },
+    {
+      "id": "performance.no_idle_validation_and_bounded_instances",
+      "status": "PASS"
+    },
+    {
+      "id": "chapter.real_menu_to_crafted_tools_functional_repairs_and_confirmation",
+      "status": "PASS"
+    },
+    {
+      "id": "repair.before_activation_partial_reload_rebroken_no_repeat",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.errors",
+      "status": "PASS"
+    }
+  ]
+}

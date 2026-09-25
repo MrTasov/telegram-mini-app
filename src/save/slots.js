@@ -126,7 +126,7 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01]|28\.0|29\.0|30\.[01]|31\.[01]|32\.[012]|33\.[01]|34\.0|35\.[123]|36\.[01]|37\.[01]|38\.0|39\.0)))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01]|28\.0|29\.0|30\.[01]|31\.[01]|32\.[012]|33\.[01]|34\.0|35\.[123]|36\.[01]|37\.[01]|38\.0|39\.0|40\.[01])))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -395,7 +395,7 @@ function v09RenderSaveSlots(){
       I18n.assign(name,"textContent",entry&&!entry.invalid?I18n.verbatim(entry.data.saveName):`Слот ${id}`);label.append(name);
       const meta=document.createElement('div');meta.className='subtitle';meta.style.margin='4px 0 0';
       I18n.assign(meta,"textContent",!entry?'Свободен':entry.invalid?'Не удалось прочитать. Данные сохранены.':
-        `Слот ${id}${id===GameState.session.activeSlot?' · текущий':''} · ${I18n.dateText(entry.data.savedAt,{dateStyle:'short',timeStyle:'medium'})} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}`);
+        `Слот ${id}${id===GameState.session.activeSlot?' · текущий':''} · ${I18n.dateText(entry.data.savedAt,{dateStyle:'short',timeStyle:'medium'})} · ${entry.data.player.scene==='bunker'?'Бункер':'Поверхность'}${entry.recovered?' · резервная копия':''}${entry.data.devQA0401?' · DEV/TEST':''}`);
       label.append(meta);row.append(label);
       if(entry&&!entry.invalid){
         const actions=document.createElement('div');actions.className='v091SaveActions';

@@ -1,0 +1,435 @@
+{
+  "version": "0.40.0",
+  "passed": 105,
+  "failed": 1,
+  "checks": [
+    {
+      "id": "boot.menuVisible.noSave.noLoop.noAutoSave",
+      "status": "PASS"
+    },
+    {
+      "id": "boot.timeAndInputCannotActivateSimulation",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    activity040: {\n      actors: [\n        {\n          angle: 2.5514422606228324,\n+         attackAgo: 15000,\n-         attackAgo: 10000,\n          fuse: null,\n          id: 'enemy:4',\n          jump: null,\n          lastSeen: null,\n          pause: 0,\n...\n          wall: null,\n+         wander: 0,\n-         wander: 2278.3668502233922,\n          wanderAngle: 2.5514422606228324\n        },\n        {\n          angle: 4.022620643919097,\n+         attackAgo: 15000,\n-         attackAgo: 10000,\n          fuse: null,\n          id: 'enemy:5',\n          jump: null,\n          lastSeen: null,\n          pause: 0,\n...\n          wall: null,\n+         wander: 0,\n-         wander: 1728.8528122007847,\n          wanderAngle: 4.022620643919097\n        },\n        {\n          angle: 5.009627335315259,\n+         attackAgo: 15000,\n-         attackAgo: 10000,\n          fuse: null,\n          id: 'enemy:6',\n          jump: null,\n          lastSeen: null,\n          pause: 0,\n...\n          wall: null,\n+         wander: 0,\n-         wander: 2185.5642874725163,\n          wanderAngle: 5.009627335315259\n        },\n        {\n          angle: 0.8995548032797134,\n+         attackAgo: 15000,\n-         attackAgo: 10000,\n          fuse: null,\n          id: 'enemy:7',\n          jump: null,\n          lastSeen: null,\n          pause: 0,\n...\n          wall: null,\n+         wander: 0,\n-         wander: 2878.4070974215865,\n          wanderAngle: 0.8995548032797134\n        },\n        {\n          angle: 4.302623309119721,\n+         attackAgo: 15000,\n-         attackAgo: 10000,\n          fuse: null,\n          id: 'enemy:8',\n          jump: null,\n          lastSeen: null,\n          pause: 0,\n...\n          wall: null,\n+         wander: 0,\n-         wander: 2874.6927748434246,\n          wanderAngle: 4.302623309119721\n        },\n        {\n          angle: 5.713043240394008,\n+         attackAgo: 15000,\n-         attackAgo: 10000,\n          fuse: null,\n          id: 'enemy:9',\n          jump: null,\n          lastSeen: null,\n          pause: 0,\n...\n          wall: null,\n+         wander: 0,\n-         wander: 2385.133193805814,\n          wanderAngle: 5.713043240394008\n        },\n        {\n          angle: 0.7972498918123656,\n+         attackAgo: 15000,\n-         attackAgo: 10000,\n          fuse: null,\n          id: 'enemy:10',\n          jump: null,\n          lastSeen: null"
+    },
+    {
+      "id": "settings.closeAndEscapeKeepMenuPaused",
+      "status": "PASS"
+    },
+    {
+      "id": "localization.liveMenuAndSettings",
+      "status": "PASS"
+    },
+    {
+      "id": "new.fiveEmptySlotsNoWriteUntilSelection",
+      "status": "PASS"
+    },
+    {
+      "id": "new.touchSelectedSlot.launchExactlyOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "new.saveLoadAfterLaunch",
+      "status": "PASS"
+    },
+    {
+      "id": "continue.noImplicitNewSaveWhenLegacyDisappears",
+      "status": "PASS"
+    },
+    {
+      "id": "continue.oneSave.noMutationAtBoot",
+      "status": "PASS"
+    },
+    {
+      "id": "continue.latestTimestampOverActivePointer",
+      "status": "PASS"
+    },
+    {
+      "id": "continue.backupFallbackAndInvalidSlot",
+      "status": "PASS"
+    },
+    {
+      "id": "continue.allInvalidDisabledNoOverwrite",
+      "status": "PASS"
+    },
+    {
+      "id": "load.fiveSlotsMetadataAndLiteralSaveName",
+      "status": "PASS"
+    },
+    {
+      "id": "new.fullSlotsNeedsExplicitConfirmation.cancelSafe",
+      "status": "PASS"
+    },
+    {
+      "id": "new.confirmReplacesOnlyChosenSlot",
+      "status": "PASS"
+    },
+    {
+      "id": "new.changedSlotCannotBeOverwrittenByStaleConfirmation",
+      "status": "PASS"
+    },
+    {
+      "id": "new.quotaFailurePreservesOccupiedSave",
+      "status": "PASS"
+    },
+    {
+      "id": "new.activePointerFailureRollsBackReplacement",
+      "status": "PASS"
+    },
+    {
+      "id": "storage.failureIsDisplayedAndNoSimulation",
+      "status": "PASS"
+    },
+    {
+      "id": "exit.browserDoesNotCallForbiddenWindowClose",
+      "status": "PASS"
+    },
+    {
+      "id": "exit.telegramCloseAndFailureFallback",
+      "status": "PASS"
+    },
+    {
+      "id": "exit.telegramPlatformAndBrowserSDK",
+      "status": "PASS"
+    },
+    {
+      "id": "loop.settingsAndLanguageRepeatedNoNewListeners",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy.continueMigratesExistingDataOnlyAfterSelection",
+      "status": "PASS"
+    },
+    {
+      "id": "input.en.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "input.en.MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "input.ru.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "input.ru.MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.craft_in_progress.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_0.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_1.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_2.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_3.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_4.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_5.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_6.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_7.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_8.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.crop_9.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.damaged_base_turret.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.day_x.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.drone_charging.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.drone_empty_far.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.drone_packed.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.equipment_storage.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.fish_instances.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.fresh_game.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.full_backpack.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.legacy_0.19.1.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.rifle_ak74_37_60.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.rifle_ak74_no_magazine.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.rifle_m4_37_60.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage0.rifle_m4_no_magazine.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.craft_in_progress.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_0.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_1.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_2.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_3.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_4.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_5.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_6.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_7.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_8.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.crop_9.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.damaged_base_turret.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.day_x.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.drone_charging.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.drone_empty_far.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.drone_packed.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.equipment_storage.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.fish_instances.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.fresh_game.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.full_backpack.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.legacy_0.19.1.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.rifle_ak74_37_60.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.rifle_ak74_no_magazine.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.rifle_m4_37_60.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage1.rifle_m4_no_magazine.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.craft_in_progress.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_0.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_1.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_2.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_3.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_4.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_5.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_6.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_7.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_8.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.crop_9.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.damaged_base_turret.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.day_x.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.drone_charging.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.drone_empty_far.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.drone_packed.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.equipment_storage.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.fish_instances.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.fresh_game.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.full_backpack.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.legacy_0.19.1.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.rifle_ak74_37_60.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.rifle_ak74_no_magazine.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.rifle_m4_37_60.json",
+      "status": "PASS"
+    },
+    {
+      "id": "oldSave.menuLoad.stage2.rifle_m4_no_magazine.json",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.pictureBothPathsExternalAndValid",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.unchangedOriginal.portrait",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.unchangedOriginal.landscape",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Modeled DOM plus native Canvas. Physical PC/phone visual acceptance is required."
+  ]
+}

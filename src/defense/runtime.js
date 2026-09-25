@@ -38,22 +38,29 @@ window.GameDefense=(()=>{
  function request(id,action,p={}){const r=GameEquipment.get(id);return execute({actorId:GameActors.localId,instanceId:id,action,payload:{...p,state:JSON.stringify(r?.state)},expectedRevision:commands.revision,requestId:'defense:'+commands.revision+':'+(++sequence)});}
  // Simulation damage port; no player-facing arbitrary damage command.
  function damage(id,amount){const r=GameEquipment.get(id);if(!is(r)||r.placement!=='installed'||r.state.condition.hp<=0||!Number.isFinite(amount)||amount<=0||GameFlow.paused)return false;const n=copy(r);n.state.condition.hp=Math.max(0,n.state.condition.hp-amount);change(n,{geometry:n.state.condition.hp===0});const p=pivot(r);GameAudio.play(n.state.condition.hp?'constructionHit':'constructionBreak',{...p,scene:r.transform.scene});return true;}
- function clear(r,z){const p=pivot(r),wallId=r.state.settings.mountWall;if(wallId)return V016Turret.clear({...p,wallId},z);return lineClear(p.x,p.y,z.x,z.y,0,'surface',r.id);}
- function shoot(r,z){const d=defs[r.typeId],p=pivot(r);if(!d.ammoType||!operational(r)||scene!==r.transform.scene||GameFlow.paused||!devicePowered(r.refs.device)||r.state.settings.ammo<=0||!z?.alive||z.health<=0||Math.hypot(z.x-p.x,z.y-p.y)>d.range||!clear(r,z))return false;
+ function clear(r,z){const p=pivot(r),mount=r.state.settings.mountWall,wall=mount&&V015Base.byId.get(mount);
+  for(const o of GameActivity.obstacles(p.x,p.y,z.x,z.y)){if(o.id===r.id)continue;
+   // Only the supporting slab is below a wall-mounted muzzle; remote walls still occlude.
+   if(wall&&(o.id===wall.id||o.group==='outer'&&V015Base.rayEntry(p,p,o,1)!==null))continue;
+   let hit;if(o.r!==undefined){const dx=z.x-p.x,dy=z.y-p.y,l=dx*dx+dy*dy,u=l?clamp(((o.x-p.x)*dx+(o.y-p.y)*dy)/l,0,1):0;hit=Math.hypot(p.x+dx*u-o.x,p.y+dy*u-o.y)<=o.r+1?u:null;}else hit=V015Base.rayEntry(p,z,o,1);
+   if(hit!==null&&hit<.99999)return false;
+  }return true;
+ }
+ function shoot(r,z){const d=defs[r.typeId],p=pivot(r);if(!d.ammoType||!operational(r)||r.transform.scene!=='surface'||GameFlow.paused||!devicePowered(r.refs.device)||r.state.settings.ammo<=0||!z?.alive||z.health<=0||Math.hypot(z.x-p.x,z.y-p.y)>d.range||!clear(r,z))return false;
   let first=z,at=1;const dx=z.x-p.x,dy=z.y-p.y,len=dx*dx+dy*dy;for(const q of zombies)if(q.alive&&q.health>0&&len){const u=clamp(((q.x-p.x)*dx+(q.y-p.y)*dy)/len,0,1);if(u<at&&Math.hypot(p.x+u*dx-q.x,p.y+u*dy-q.y)<(q.radius||16)){at=u;first=q;}}
   const n=copy(r);n.state.settings.ammo--;const v=transient(r.id);n.state.settings.angle=v.angle??r.state.settings.angle;change(n);v.shot=d.intervalMs/1000;v.flash=.07;v.tracer={x:first.x,y:first.y};hitZombie(first,Math.round(d.damage*(1+DefenseDefinitions.damagePerLevel*r.state.level)),{fixedDamage:true});GameAudio.play('turretFire',{...p,scene:'surface',radius:660});createNoise(p.x,p.y,600);metrics.shots++;return true;
  }
  function acquire(r,v){const p=pivot(r),d=defs[r.typeId];if(v.target?.alive&&v.target.health>0&&Math.hypot(v.target.x-p.x,v.target.y-p.y)<=d.range&&clear(r,v.target))return v.target;const a=zombies.filter(z=>z.alive&&z.health>0&&(z.x-p.x)**2+(z.y-p.y)**2<=d.range*d.range).sort((a,b)=>(a.x-p.x)**2+(a.y-p.y)**2-(b.x-p.x)**2-(b.y-p.y)**2);for(let i=0;i<Math.min(8,a.length);i++){const z=a[v.cursor++%a.length];metrics.scans++;if(clear(r,z))return z;}return null;}
  function settle(){for(const r of records())if(r.placement==='installed'&&r.state.settings.mountWall&&V015Base.byId.get(r.state.settings.mountWall)?.hp<=0){const n=copy(r),p=pivot(r),a=Math.atan2(600-p.y,800-p.x),q=V015Base.freePoint(p.x+Math.cos(a)*72,p.y+Math.sin(a)*72,10);if(q){n.transform.x+=q.x-p.x;n.transform.y+=q.y-p.y;}n.state.settings.mountWall='';n.state.settings.fallen=true;change(n,{geometry:true});}}
- function tick(ms){if(GameFlow.paused)return;const dt=clamp(Number(ms)||0,0,100)/1000;tickClock+=dt;if(tickClock>=.25){tickClock=0;settle();}if(scene!=='surface'||V013City.floor)return;
+ function tick(ms){if(GameFlow.paused)return;const dt=clamp(Number(ms)||0,0,100)/1000;tickClock+=dt;if(tickClock>=.25){tickClock=0;settle();}
   const served=V09Power.allocation().served;for(const r of records()){const d=defs[r.typeId];if(!d.ammoType)continue;const v=transient(r.id);v.flash=Math.max(0,v.flash-dt);v.shot=Math.max(0,v.shot-dt);v.scan-=dt;if(!operational(r)||!served.has(r.refs.device)||!r.state.settings.ammo){v.target=null;continue;}if(v.scan<=0){v.scan=.2;v.target=acquire(r,v);}const z=v.target;if(!z?.alive)continue;const p=pivot(r),a=Math.atan2(z.y-p.y,z.x-p.x);v.angle=wrap((v.angle??r.state.settings.angle)+clamp(wrap(a-(v.angle??r.state.settings.angle)),-d.turnRate*dt,d.turnRate*dt));if(Math.abs(wrap(a-v.angle))<.055&&v.shot<=0)shoot(r,z);}
  }
  // Existing monster simulation calls this port only after reaching the yard.
- function breachTarget(z,now,stats){if(scene!=='surface'||V013City.floor||z.x<254||z.x>1346||z.y<214||z.y>986)return null;let best=null,bestDistance=260;
-  for(const r of records()){if(!operational(r)||r.transform.scene!=='surface'||r.state.settings.mountWall)continue;const b=GameFootprints.forRecord(r),q=contactPoint(b,z.x,z.y),dist=Math.hypot(q.x-z.x,q.y-z.y);if(dist<bestDistance&&lineClear(z.x,z.y,q.x,q.y,0,'surface',r.id)){best={r,q,dist};bestDistance=dist;}}
+ function breachTarget(z,now,stats){if(z.x<254||z.x>1346||z.y<214||z.y>986)return null;let best=null,bestDistance=260;
+  for(const r of records()){if(!operational(r)||r.transform.scene!=='surface'||r.state.settings.mountWall)continue;const b=GameFootprints.forRecord(r),q=contactPoint(b,z.x,z.y),dist=Math.hypot(q.x-z.x,q.y-z.y);if(dist<bestDistance&&GameActivity.clear(z.x,z.y,q.x,q.y,0,r.id)){best={r,q,dist};bestDistance=dist;}}
   if(!best)return null;if(best.dist<(z.radius||16)+16&&now-z.lastAttack>stats.cooldown){z.lastAttack=now;damage(best.r.id,stats.damage*2*V010World.settings.enemyStrength);metrics.attacks++;GameAudio.play('zombieAttack',{x:z.x,y:z.y,scene:'surface',owner:z});}return best.q;
  }
- function blast(z,range,amount){if(scene!=='surface')return;for(const r of records()){if(!operational(r)||r.transform.scene!=='surface')continue;const p=pivot(r);if(Math.hypot(p.x-z.x,p.y-z.y)<=range&&lineClear(z.x,z.y,p.x,p.y,0,'surface',r.id))damage(r.id,amount);}}
+ function blast(z,range,amount){for(const r of records()){if(!operational(r)||r.transform.scene!=='surface')continue;const p=pivot(r);if(Math.hypot(p.x-z.x,p.y-z.y)<=range&&GameActivity.clear(z.x,z.y,p.x,p.y,0,r.id))damage(r.id,amount);}}
  function receiveLegacy(qty){let left=qty;while(left>0&&GameCarried.free()>=0&&GameEquipment.ids.length<192){const r=legacyRecord(V016Turret.newData(),GameActors.localId,true);GameEquipment.change(r);GameCarried.add(r.id);left--;}GameMovable.sync();return left;}
  function guns(){return records().filter(r=>defs[r.typeId].ammoType&&r.placement==='installed').map(r=>({id:r.id,type:r.typeId,...pivot(r),ammo:r.state.settings.ammo,angle:r.state.settings.angle,level:r.state.level,enabled:operational(r)&&devicePowered(r.refs.device),fallen:r.state.settings.fallen||r.state.condition.hp===0,wallId:r.state.settings.mountWall||null}));}
  function fresh(){return {schema:1,commands:{revision:0,receipts:[]}};}
@@ -83,6 +90,6 @@ window.GameDefense=(()=>{
  // Adopt the authored gun once before the New Game template is sealed.
  for(const gun of V016Turret.guns){const r=legacyRecord(gun,GameActors.localId);GameEquipment.change(r);}V016Turret.guns.splice(0);GameMovable.sync();
  V09Craft.recipes.hmg016.retiredBuildable='heavy_turret';ITEM.hmg016.name='Тяжёлая турель';
- GameState.register('defense',{capture},{source:'defense/runtime.js',saved:['defense039'],transient:['target acquisition','cooldowns','render aim','metrics']});
- return Object.freeze({is,records,pivot,operational,reachable,guns,receiveLegacy,repairCost,damage,shoot,tick,settle,breachTarget,blast,request,execute,capture,migrate,validate,fresh,transient,get revision(){return commands.revision;},metrics:()=>({...metrics})});
+ GameState.register('defense',{capture},{source:'defense/runtime.js',saved:['defense039'],transient:['target acquisition','flash and tracer','metrics']});
+ return Object.freeze({is,records,pivot,operational,reachable,clear,guns,receiveLegacy,repairCost,damage,shoot,tick,settle,breachTarget,blast,request,execute,capture,migrate,validate,fresh,transient,get revision(){return commands.revision;},metrics:()=>({...metrics})});
 })();

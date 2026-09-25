@@ -35,7 +35,7 @@ window.V017Monsters=(()=>{
     else if(changed||z.maxHealth!==s.hp){const previous=z.maxHealth||stats(z,z.raid019===true).hp;z.health=z.alive?clamp(z.health/previous,0,1)*s.hp:0;}
     z.raid019=raid;
     z.maxHealth=s.hp;z.radius=s.radius;z.speed=s.speed;z.chaseSpeed=s.chaseSpeed;
-    if(!runtime.has(z)){const id=++serial;runtime.set(z,{id,angle:z.wanderAngle||0,walk:0,nextSense:0,sees:false,target:null,retarget:0,attack:0,jump:null,fuse:0,exploded:false,deadAt:z.alive?0:performance.now(),stuck:0,side:nearestSide(z),variant:Math.floor(hash(id*23)*3),deathAngle:angleOf(z.wanderAngle||0),retired:false,pauseUntil:0});}
+    if(!runtime.has(z)){const shift=GameActivity.now()-performance.now();z.nextWanderChange+=shift;z.lastAttack+=shift;const id=++serial;runtime.set(z,{id,angle:z.wanderAngle||0,walk:0,nextSense:0,sees:false,target:null,retarget:0,attack:0,jump:null,fuse:0,exploded:false,deadAt:z.alive?0:performance.now(),stuck:0,side:nearestSide(z),variant:Math.floor(hash(id*23)*3),deathAngle:angleOf(z.wanderAngle||0),retired:false,pauseUntil:0});}
     const r=runtime.get(z);
     if(changed){r.side=nearestSide(z);r.target=null;r.retarget=0;r.nextSense=0;r.fuse=0;r.jump=null;r.sees=false;}
     return r;
@@ -134,11 +134,11 @@ window.V017Monsters=(()=>{
     // out of sight, without fake kills, rewards, blood or death explosions.
     for(let i=zombies.length-1;i>=0&&living>count&&removed<4;i--){
       const z=zombies[i],r=prepare(z),drone=window.V014Robots?.state;
-      if(!z.alive||r.sees||window.V0105?.target===z||drone?.task==='attack'&&drone.targetId===z.instanceId||sameLevel()&&(dist(z,player)<700||visibleOnScreen(z.x,z.y,130)))continue;
-      z.alive=false;z.health=0;z.state='wander';z.corpseAt011=Date.now()-CORPSE_MS;r.retired=true;r.deadAt=now-CORPSE_MS;r.target=null;r.fuse=0;r.jump=null;stopZombieAudio(z);living--;removed++;
+      if(!z.alive||GameActivity.engaged(z,r)&&isDayX()||r.sees||r.fuse||r.jump||window.V0105?.target===z||drone?.task==='attack'&&drone.targetId===z.instanceId||sameLevel()&&(dist(z,player)<700||visibleOnScreen(z.x,z.y,130)))continue;
+      z.alive=false;z.health=0;z.state='wander';z.corpseAt011=Date.now()-CORPSE_MS;r.retired=true;r.deadAt=performance.now()-CORPSE_MS;r.target=null;r.fuse=0;r.jump=null;stopZombieAudio(z);living--;removed++;
     }
     for(let i=0;i<zombies.length&&living<count&&added<4;i++){
-      const z=zombies[i],r=prepare(z);if(z.alive||!r.retired&&now-r.deadAt<CORPSE_MS)continue;
+      const z=zombies[i],r=prepare(z);if(z.alive||!r.retired&&performance.now()-r.deadAt<CORPSE_MS)continue;
       const next=spawn(i);if(next){zombies[i]=next;living++;added++;}
     }
     while(living<count&&zombies.length<144&&added<4){const z=spawn(zombies.length);if(!z)break;zombies.push(z);living++;added++;}
@@ -154,11 +154,11 @@ window.V017Monsters=(()=>{
   function updateMonsters(){
     syncEvent();const raid=isDayX();
     if(GameFlow.paused)return;
-    const now=performance.now(),boost=factor(),dt=Math.min(2,Math.max(0,frameScale));population(now);
+    const now=GameActivity.now(),boost=factor();GameActivity.begin(Math.min(2,Math.max(0,frameScale))*16.667);population(now);
     neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,[]);neighbors.get(key).push(z);}
     for(const z of zombies){
-      const r=prepare(z);if(!z.alive)continue;const s=stats(z),d=dist(z,player);
-      if(sameLevel()&&d<ZOMBIE_AUDIO_RADIUS&&visibleOnScreen(z.x,z.y,60)&&now>(z.lastGrowl||0)){playZombieBuffer(z);z.lastGrowl=now+3500+hash(r.id+Math.floor(now/1000))*4500;}
+      const r=prepare(z);if(!z.alive)continue;if(!sameLevel())r.sees=false;const dt=GameActivity.step(z,r);if(!dt)continue;const s=stats(z),d=dist(z,player);
+      if(sameLevel()&&d<ZOMBIE_AUDIO_RADIUS&&visibleOnScreen(z.x,z.y,60)&&performance.now()>(z.lastGrowl||0)){playZombieBuffer(z);z.lastGrowl=performance.now()+3500+hash(r.id+Math.floor(now/1000))*4500;}
       if(now>=r.nextSense){r.nextSense=now+190+hash(r.id)*100;r.sees=sameLevel()&&!V091Fortress.isElevated()&&d<(V010World.sneaking?130:240)*boost&&lineClear(z.x,z.y,player.x,player.y,0,'surface');}
       if(r.jump){
         const j=r.jump,t=(now-j.start)/j.duration;
@@ -206,9 +206,9 @@ window.V017Monsters=(()=>{
       r.stuck=moved?0:r.stuck+dt*16.667;
       if(r.stuck>1800){r.retarget=0;r.target=null;z.nextWanderChange=0;r.stuck=0;}
     }
-    effects=effects.filter(e=>now-e.at<700);
+    effects=effects.filter(e=>performance.now()-e.at<700);
   }
-  updateZombies=updateMonsters;
+  const worldUpdate=()=>GameActivity.ground(updateMonsters);updateZombies=worldUpdate;
   function healthBar(z){
     if(!z.alive||!visibleOnScreen(z.x,z.y,100))return;
     const s=specs[z.type]||specs.normal,w=s.radius*1.5+10,y=z.y-s.size*.5-5;
@@ -260,7 +260,7 @@ window.V017Monsters=(()=>{
     ctx.save();ctx.translate(z.x,z.y);ctx.rotate(r.deathAngle);ctx.globalAlpha*=corpseOpacity(z);ctx.save();ctx.translate(1,2);shadow(w*1.12,h*.8,.8);ctx.restore();ctx.drawImage(raster,0,0,raster.width,raster.height,-w/2,-h/2,w,h);ctx.restore();
   }
   drawZombie=function(z){
-    if(!visibleOnScreen(z.x,z.y,120))return;if(!z.alive){drawCorpse(z);return;}const r=prepare(z),s=specs[z.type],now=performance.now();
+    if(!visibleOnScreen(z.x,z.y,120))return;if(!z.alive){drawCorpse(z);return;}const r=prepare(z),s=specs[z.type],now=GameActivity.now();
     const key='monster_'+s.art+'017',visual=AssetManifest.images[GameAssets.artId(key)],anim=visual.animation,size=s.size*(visual.visualScale||1);
     const attack=r.attack>now||r.jump||r.fuse,progress=r.jump?(now-r.jump.start)/r.jump.duration:r.fuse?(now-(r.fuseAt??now))/(r.fuseDuration||850):1-(r.attack-now)/400;
     const frame=attack?anim.attack.start+Math.min(anim.attack.count-1,Math.max(0,Math.floor(progress*anim.attack.count))):anim.walk.start+Math.floor(r.walk/(anim.walk.distance/anim.walk.count))%anim.walk.count;
@@ -287,7 +287,7 @@ window.V017Monsters=(()=>{
   }
   GameSave.extend('decode','combat.monsters',function(decode,raw){validate(JSON.parse(raw));return decode(raw);});
   GameSave.extend('restore','combat.monsters',function(restore,d){
-    validate(d);restore(d);runtime=new WeakMap();effects=[];lastPopulation=performance.now();lastRaid=isDayX();
+    validate(d);restore(d);runtime=new WeakMap();effects=[];lastPopulation=GameActivity.now();lastRaid=isDayX();
     zombies.forEach((z,i)=>{
       const saved=d.monsters017?.schema===2?d.monsters017.actors[i]:null;
       if(d.monsters017){z.type=d.monsters017.types[i];z.monster017=true;z.raid019=saved?.raid??false;z.health=d.zombies[i].health;z.maxHealth=stats(z,z.raid019).hp;}
@@ -300,5 +300,5 @@ window.V017Monsters=(()=>{
   });
   const reset=resetZombies;resetZombies=function(){reset();runtime=new WeakMap();effects=[];zombies.forEach((z,i)=>{z.type=typeAt(i);z.monster017=false;z.health=100;z.maxHealth=100;prepare(z);});};
   zombies.forEach((z,i)=>{z.type=typeAt(i);prepare(z);});
-  return{specs,stats,dayX,typeAt,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:updateMonsters,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,visualCacheStats,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
+  return{specs,stats,dayX,typeAt,prepare,night,isDayX,factor,targetCount,spawn,population,sideCounts,move,chooseWall,passage,canHurt,explode,armFuse,update:worldUpdate,healthBar,drawCorpse,selectionRadius,drawTarget,corpseOpacity,visualCacheStats,validate,corpseMs:CORPSE_MS,get effects(){return effects;},state:z=>prepare(z)};
 })();

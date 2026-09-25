@@ -51,7 +51,7 @@ window.V013City=(()=>{
  function stairs(){if(!canInteract(stair,player.x,player.y)||menuOpen)return;cancelNavigation();cancelChop();cancelSearch();V012Fishing.stop();setFloor(floor?0:1);player.x=stair.x-35;player.y=stair.y+32;queueGameSave();message((floor+1)+' этаж');}
  const interactions=interactionObjects;interactionObjects=function(which=scene){const out=interactions(which);if(which==='surface'&&V011World.inside(mall,player.x,player.y,0))out.push(stair);return floor&&which==='surface'?out.filter(o=>o.id.startsWith('mall013')):out;};
  const execute=executeInteraction;executeInteraction=function(o,...args){if(o?.kind==='stairs013')return stairs();return execute(o,...args);};
- const solids=solidObjects;solidObjects=function(which){const out=solids(which);if(which==='surface')out.push(...partitions(),...(floor?[{...V011World.doorRect(mall),id:'mall013_upwall'}]:[]));return out;};
+ const solids=solidObjects;solidObjects=function(which){const out=solids(which);if(which==='surface')out.push(...partitions(),...(floor&&!window.GameActivity?.groundQuery?[{...V011World.doorRect(mall),id:'mall013_upwall'}]:[]));return out;};
  const oldZombies=updateZombies;updateZombies=function(...args){if(!floor)return oldZombies(...args);};
  const oldOpen=openLoot;openLoot=function(o){
   const f=V011World.containers.find(f=>f.ref===o);if(!o.searched&&f&&['fuel','clothes','electronics'].includes(f.lootKind)){

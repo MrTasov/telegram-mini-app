@@ -151,16 +151,17 @@ let geometryRevision=0;
 let geometryCache={};
 function invalidateGeometry(){geometryRevision++;geometryCache={};}
 function geometryFor(which){
-  if(!geometryCache[which]){
+  const cacheKey=which+(which==='surface'&&window.GameActivity?.groundQuery?':ground':'');
+  if(!geometryCache[cacheKey]){
     const walls=which==='surface'?surfaceWalls():[],objects=solidObjects(which),grid=Object.create(null),cell=96;
     for(const o of [...walls,...objects]){
       const x=o.r!==undefined?o.x-o.r:o.x,y=o.r!==undefined?o.y-o.r:o.y;
       const w=o.r!==undefined?o.r*2:o.w,h=o.r!==undefined?o.r*2:o.h;
       for(let cy=Math.floor(y/cell);cy<=Math.floor((y+h)/cell);cy++)for(let cx=Math.floor(x/cell);cx<=Math.floor((x+w)/cell);cx++)(grid[cx+','+cy]??=[]).push(o);
     }
-    geometryCache[which]={walls,objects,grid,cell};
+    geometryCache[cacheKey]={walls,objects,grid,cell};
   }
-  return geometryCache[which];
+  return geometryCache[cacheKey];
 }
 function worldCollision(x,y,r=15,which=scene,ignoreId=null){
   if(window.GamePassages?.clearanceBlocked(x,y,r,which))return true;

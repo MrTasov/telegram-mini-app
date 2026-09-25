@@ -156,7 +156,7 @@ window.V018Build=(()=>{
   }
   function enemyDoorStep(z,s,r,now,dt,dark){
     if(!window.V017Monsters?.isDayX())return false;
-    if(r.sees||!r.lastSeen||now-(r.sawPlayerAt||0)>5500||scene!=='surface'||V013City.floor||V091Fortress.isElevated())return false;
+    if(r.sees||!r.lastSeen||now-(r.sawPlayerAt||0)>5500)return false;
     let target=null,best=Infinity;
     for(const o of closedDoors()){const t=V015Base.rayEntry(z,r.lastSeen,o);if(t!==null&&t<best&&lineClear(z.x,z.y,r.lastSeen.x,r.lastSeen.y,0,'surface',o.id)){target=o;best=t;}}
     if(!target)return false;

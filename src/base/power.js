@@ -114,9 +114,10 @@ function powerTick(dt){
     const near=occupants.some(a=>distance(a.x,a.y,d.x+d.w/2,d.y+d.h/2)<116.25);
     const occupied=d.open>.2&&occupants.some(a=>rectHit(a.x,a.y,(a.radius||10)+8,d));
     const powered=devicePowered('door_'+d.room);
-    if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
+    const auto=window.GameBaseControl?.autoOpen(d.id)!==false;
+      if(occupied||near&&(auto||d.manual))d.away=0;else d.away=Math.min(4,d.away+dt);
     if(d.away>=4)d.manual=false;
-    const shouldOpen=occupied||(near&&powered)||d.manual||(d.open>0&&d.away<4);
+    const shouldOpen=occupied||auto&&near&&powered||d.manual||auto&&d.open>0&&d.away<4;
     window.GameAudioWorld?.door(d,shouldOpen,'bunker',!!window.V018Build?.isBroken(d.id));d.open=clamp(d.open+(shouldOpen?1:-1)*dt*2.2,0,1);
   }
   V09Power.uiClock+=dt;

@@ -85,7 +85,7 @@ window.V011World=(()=>{
   for(const [id,[x,y,w,h]]of Object.entries(placements))registerBuilding(scavenges.find(o=>o.id===id),{x,y,w,h,title:id==='garage10'?'Районная мастерская':id==='house1'?'Дом у дороги':id==='house09_4'?'Дом с кладовой':scavenges.find(o=>o.id===id)?.name||'Жилой дом'});
   function obsoleteFence(o){return o.id?.startsWith('fence09_')&&buildings.some(b=>o.x<b.x+b.w&&o.x+o.w>b.x&&o.y<b.y+b.h&&o.y+o.h>b.y);}
   const oldSolids=solidObjects;
-  solidObjects=function(which){const out=oldSolids(which);return which==='surface'?[...out.filter(o=>!byId.has(o.id)&&!obsoleteFence(o)),...buildings.flatMap(b=>[...walls(b),...b.furniture.map(f=>({id:f.id,x:f.x,y:f.y,w:f.w,h:f.h}))])]:out;};
+  solidObjects=function(which){const out=oldSolids(which);return which==='surface'?[...out.filter(o=>!byId.has(o.id)&&!obsoleteFence(o)),...buildings.flatMap(b=>[...walls(b),...(window.GameActivity?.groundQuery&&window.V013City?.mall===b?V013City.floors[0]:b.furniture).map(f=>({id:f.id,x:f.x,y:f.y,w:f.w,h:f.h}))])]:out;};
   invalidateGeometry();
   // A larger room replaces its former garden fence. Nearby resource identities
   // and remaining quantities stay intact while their nodes move beside the room.

@@ -1,40 +1,49 @@
-# LAST BASE 0.39.0 — Stage H
+# LAST BASE 0.40.1 — Developer / QA
 
-Based on accepted **0.38.0 Stage G**. Surface Defense uses the existing
-**Craft → Inventory → Place → Hold Pick Up → Inventory** workflow.
-Automatic Turret, Heavy Turret and Searchlight share equipment identity,
-placement, damage/repair, power and Base Control. No Research gate is added.
-See [Russian release report](STAGE_H_REPORT_RU.md),
-[contracts](docs/STAGE_H_CONTRACT_RU.md) and [Russian README](README_RU.md).
-Previous reports describe their named builds, not the current test gate.
+In gameplay: Settings → tap the version six times → Create test copy. A free save slot is required; the original is preserved. [Russian QA report](DEV_QA_REPORT_RU.md). I1 is preserved; I2 is not started.
 
-Objectives are narrower and more transparent; collapse is a session preference
-that survives zone changes. Sector graphics are hidden on the normal map;
-exploration, POIs, discovery and saved sectors remain intact.
+## Accepted 0.40.0 baseline
 
-Save Format **19**, migration **18→19** and every earlier migration retained.
-Legacy HMGs become Heavy Turret equipment instances without losing IDs, ammo,
-level, ON/OFF or installed position. Paid legacy production output remains
-collectable. Stored legacy turret tokens move to the existing recovery inventory
-if necessary; no duplicate physical item is created.
+# LAST BASE 0.40.0 — H Corrective + Stage I1
+
+Based on accepted **0.39.0 Stage H**. See the [Russian report](STAGE_I1_REPORT_RU.md),
+[contracts](docs/STAGE_I1_CONTRACT_RU.md) and [Russian README](README_RU.md).
+Earlier reports describe their named releases, not the current gate.
+
+Inventory → Place now opens a ghost on the actual gameplay floor. Drag with
+mouse/touch, rotate with the button or R, confirm with the button or Enter.
+Escape cancels without losing the item. The existing placement authority still
+checks the physical footprint, collision, rotation, door clearance and critical
+routes. Hold Pick Up remains 3 seconds and preserves the same instance/state.
+
+Ground turrets use physical line of sight through open gates and broken walls.
+Wall-mounted Heavy Turrets can fire outward from their supporting slab.
+Core/Remote share compact independent switches. Electrical doors expose
+**Auto-open**, separate from power and from local manual operation.
+New Game Intro fits the viewport without stretching, hides the HUD and native
+video controls, and keeps a safe-area Skip button. The official MP4 is unchanged.
+
+Stage I1 extends the existing monster/defense update: combat near the base,
+actors, drones and defense remains active independently of the viewed scene.
+Distant idle/travelling actors use a bounded 250 ms cadence, including raid
+actors still on their way to the active base area. No second enemy loop,
+network transport, offline catch-up or new Threat multipliers are introduced.
+Power, battery/fuel and production retain their existing single owners.
+
+Save Format **20** adds **19→20**, preserving earlier migrations. Pending enemy
+attacks, leap/fuse timing and turret cooldowns are saved by stable instance ID;
+HP, ammo, power and inventory stay in their existing owners. Continue never
+replays Intro. Chapter 1 revision 6, Research, Archive and exploration remain.
 
 Serve `index.html`, `js/`, `styles/`, and `assets/` together, e.g.
 `python -m http.server 8000`. Use HTTP rather than `file://` for media fetching.
 Keep the same site origin to retain browser saves; update the whole release.
 Node 20+ and `npm install` are needed only for rebuilding and QA.
 
-The supplied official Intro MP4 is unchanged. New Game → Intro/Skip → existing
-Chapter 1 revision 6; Continue does not replay Intro. Archive entries remain
-readable after their NEW badge disappears and after Save/Load.
-Research unlocks production rights; it never creates free equipment.
+`npm run build`, `npm test`, `npm run test:i1`, `npm run bench:i1`,
+`npm run package:i1`. Results: `qa/results/summary.json` and
+`qa/results/stage-i1-performance.json`. QA uses modeled DOM, HTMLVideoElement,
+WebAudio and native Canvas2D. Browser/Telegram layout, touch usability and
+physical audio still require manual acceptance; Canvas timings are not FPS.
 
-`npm run build`, `npm test`, `npm run test:h`, `npm run bench:h`,
-`npm run package:h`. Full results and measured comparison with 0.38.0 are in
-`qa/results/summary.json` and `qa/results/stage-h-performance.json`.
-QA uses modeled DOM/HTMLVideoElement/WebAudio and native Canvas2D.
-Mobile/Telegram browser layout, touch usability, native media playback and
-physical audio require manual acceptance. Native Canvas timings are not FPS.
-
-Stage I, Level 2, Farm/Animals, Signal/Threat and later stages are not started.
-Stage H retains the existing scene-bound combat simulation; off-screen combat
-is explicitly a future Stage I1 task.
+Stop after I1. I2 / Signal / Threat, Level 2 and Farm/Animals are not started.

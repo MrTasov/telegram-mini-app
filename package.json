@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.39.0",
+  "version": "0.40.1",
   "private": true,
-  "description": "LAST BASE 0.39.0 — Stage H: Surface Defense",
+  "description": "LAST BASE 0.40.1 — hidden Developer / QA Mode over unchanged I1",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -56,7 +56,13 @@
     "package:g": "node tools/package-stage-g.cjs",
     "test:h": "node qa/stage-h-prerequisites.cjs && node qa/stage-h.cjs && node qa/stage-h-visuals.cjs",
     "bench:h": "node --expose-gc qa/stage-h-performance.cjs",
-    "package:h": "node tools/package-stage-h.cjs"
+    "package:h": "node tools/package-stage-h.cjs",
+    "test:i1": "node qa/stage-h-corrective.cjs && node qa/stage-i1.cjs",
+    "bench:i1": "node --expose-gc qa/stage-i1-performance.cjs",
+    "package:i1": "node tools/package-stage-i1.cjs",
+    "test:qa": "node qa/dev-targeted.cjs",
+    "bench:qa": "node qa/dev-performance.cjs",
+    "package:qa": "node tools/package-dev.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

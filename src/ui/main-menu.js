@@ -75,7 +75,7 @@ window.MainMenu=(()=>{
       const title=document.createElement('strong');put(title,'slot',{slot:id});button.append(title);
       const name=document.createElement('span');
       if(!entry)put(name,'empty');else if(entry.invalid)put(name,'invalid');else I18n.assign(name,'textContent',I18n.verbatim(entry.data.saveName));button.append(name);
-      if(entry&&!entry.invalid){const meta=document.createElement('small');I18n.assign(meta,'textContent',I18n.dateText(entry.data.savedAt,{dateStyle:'short',timeStyle:'short'})+' · '+I18n.message('menu.'+(entry.data.player.scene==='bunker'?'bunker':'surface'))+(entry.recovered?' · '+I18n.message('menu.backup'):''));button.append(meta);}
+      if(entry&&!entry.invalid){const meta=document.createElement('small');I18n.assign(meta,'textContent',I18n.dateText(entry.data.savedAt,{dateStyle:'short',timeStyle:'short'})+' · '+I18n.message('menu.'+(entry.data.player.scene==='bunker'?'bunker':'surface'))+(entry.recovered?' · '+I18n.message('menu.backup'):'')+(entry.data.devQA0401?' · DEV/TEST':''));button.append(meta);}
       button.disabled=screen==='load'&&(!entry||entry.invalid);button.addEventListener('click',()=>screen==='new'?chooseNew(id):run(()=>V09Saves.load(id)));list.append(button);
     }
     if(screen==='load'&&data.legacy){const b=document.createElement('button');b.type='button';put(b,'legacy');b.onclick=continueGame;list.append(b);}

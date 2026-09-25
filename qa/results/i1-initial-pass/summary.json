@@ -1,0 +1,441 @@
+{
+  "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+  "runtimeUnchanged": true,
+  "version": "0.40.0",
+  "stage": 9,
+  "patch": "stage-i1",
+  "stageAStarted": true,
+  "stageAStatus": "accepted-in-general",
+  "stageBStarted": true,
+  "stageBStatus": "accepted-in-general",
+  "stageC1Started": true,
+  "stageC1Status": "accepted-by-user",
+  "stageC2Started": true,
+  "stageDStarted": true,
+  "stageEStarted": true,
+  "stageFStarted": true,
+  "stageGStarted": true,
+  "stageHStarted": true,
+  "stageI1Started": true,
+  "stageI2Started": false,
+  "level2Started": false,
+  "passed": false,
+  "automatedAssertions": 13346,
+  "historicalBaselineAssertions": 477,
+  "ladderContractChanged": true,
+  "filtered": false,
+  "runs": [
+    {
+      "id": "stage-h-corrective",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 7543
+    },
+    {
+      "id": "stage-i1",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 12394
+    },
+    {
+      "id": "stage-h",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 13820
+    },
+    {
+      "id": "stage-h-visuals",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 2623
+    },
+    {
+      "id": "stage-h-prerequisites",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 1929
+    },
+    {
+      "id": "stage-g",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 14029
+    },
+    {
+      "id": "stage-g-routes",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 3328
+    },
+    {
+      "id": "stage-f",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 19164
+    },
+    {
+      "id": "stage-f-final",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 43115
+    },
+    {
+      "id": "stage-e-corrective",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 12046
+    },
+    {
+      "id": "stage-e-audio-corrective",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 16320
+    },
+    {
+      "id": "stage-e",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 50877
+    },
+    {
+      "id": "stage-d-complete",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 1,
+      "elapsedMs": 17311,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-complete.cjs\n"
+    },
+    {
+      "id": "stage-d-corrective",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 1,
+      "elapsedMs": 59907,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-corrective.cjs\n"
+    },
+    {
+      "id": "stage-d",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 7825
+    },
+    {
+      "id": "stage-d-repair",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 7365
+    },
+    {
+      "id": "stage-d-visuals",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 2088
+    },
+    {
+      "id": "stage-c2",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 26505
+    },
+    {
+      "id": "stage-c2-prerequisites",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 7289
+    },
+    {
+      "id": "stage-c1-light-modules",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 8521
+    },
+    {
+      "id": "stage-c1-recovery",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 12403
+    },
+    {
+      "id": "build",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 270
+    },
+    {
+      "id": "stage-ab-corrective",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 8568
+    },
+    {
+      "id": "stage-ab-light-audio",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 4188
+    },
+    {
+      "id": "stage-b",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 9772
+    },
+    {
+      "id": "campaign",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 5923
+    },
+    {
+      "id": "stage-a-corrective",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 7631
+    },
+    {
+      "id": "verification",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 1,
+      "elapsedMs": 331,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/verify.cjs\n"
+    },
+    {
+      "id": "regressions",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 22448
+    },
+    {
+      "id": "interactions",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 33051
+    },
+    {
+      "id": "saves",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 8521
+    },
+    {
+      "id": "balance",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 1,
+      "elapsedMs": 1616,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/balance.cjs\n"
+    },
+    {
+      "id": "state-saves",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 16168
+    },
+    {
+      "id": "differential",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 31947
+    },
+    {
+      "id": "systems",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 2659
+    },
+    {
+      "id": "stage3-differential",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 45174
+    },
+    {
+      "id": "controls",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 19100
+    },
+    {
+      "id": "controls-differential",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 47452
+    },
+    {
+      "id": "assets",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 5649
+    },
+    {
+      "id": "asset-rendering",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 2426
+    },
+    {
+      "id": "stage4-differential",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 48146
+    },
+    {
+      "id": "map-workbar",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 13118
+    },
+    {
+      "id": "localization",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 84673
+    },
+    {
+      "id": "localization-rendering",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 4188
+    },
+    {
+      "id": "localization-controls",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 65220
+    },
+    {
+      "id": "main-menu",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 1,
+      "elapsedMs": 136889,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/main-menu.cjs\n"
+    },
+    {
+      "id": "menu-preferences",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 18888
+    },
+    {
+      "id": "world-events",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 24685
+    },
+    {
+      "id": "readiness",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 21894
+    },
+    {
+      "id": "corrective",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 20790
+    },
+    {
+      "id": "world-farm",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 20542
+    },
+    {
+      "id": "drone-return",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 37407
+    },
+    {
+      "id": "resource-access",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 2978
+    },
+    {
+      "id": "character-animation",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 1,
+      "elapsedMs": 4487,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/character-animation.cjs\n"
+    },
+    {
+      "id": "master-unarmed",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 18979
+    },
+    {
+      "id": "equipment-integration",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 26350
+    },
+    {
+      "id": "player-visual-fix",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 1869
+    },
+    {
+      "id": "corrective-performance",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 5890
+    },
+    {
+      "id": "corrective-visuals",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 2845
+    },
+    {
+      "id": "polish",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 8788
+    },
+    {
+      "id": "polish-visuals",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 8134
+    },
+    {
+      "id": "audio-unlock",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 9194
+    },
+    {
+      "id": "hud-display",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 9960
+    },
+    {
+      "id": "audio-pass",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 6500
+    },
+    {
+      "id": "bunker-level1",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 8775
+    },
+    {
+      "id": "bunker-floor-cache",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 2510
+    },
+    {
+      "id": "bunker-r2",
+      "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+      "exitCode": 0,
+      "elapsedMs": 4857
+    }
+  ],
+  "limitations": [
+    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "All audio paths are included and decoded; subjective mix requires physical device listening."
+  ]
+}

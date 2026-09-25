@@ -61,7 +61,7 @@ check('debug.realIsolatedStorageStartStopBoundaryAndSaves',()=>{
  }
  D("WorldEvents.debugOverride('day_x',null);V016Lighting.restore({schema:1,day:9,minute:1439});V016Lighting.tick(834)");assert.equal(D("WorldEvents.isActive('day_x')"),true);
  D('saveGameProgress();queueGameSave()');d.flushTimers(100);assert.deepEqual(Object.fromEntries(d.storage),before);
- D(fs.readFileSync('dev/panel.js','utf8'));assert.ok(d.doc.getElementById('worldEventDebug'));assert.equal(d.errors.length,0);
+ D(fs.readFileSync('dev/panel.js','utf8'));assert.ok(d.doc.getElementById('qaOverlay'));assert.equal(d.errors.length,0);
 });
 check('events.extensibleChannelsAndNoAtmosphereInstalled',()=>{
  const c={window:{}};c.window=c;vm.createContext(c);for(const f of ['clock','events'])vm.runInContext(fs.readFileSync('src/world/'+f+'.js','utf8'),c);

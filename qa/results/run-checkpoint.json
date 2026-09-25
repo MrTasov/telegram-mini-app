@@ -1,423 +1,124 @@
 {
-  "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-  "runtimeUnchanged": true,
-  "version": "0.39.0",
-  "stage": 8,
-  "patch": "stage-h",
-  "stageAStarted": true,
-  "stageAStatus": "accepted-in-general",
-  "stageBStarted": true,
-  "stageBStatus": "accepted-in-general",
-  "stageC1Started": true,
-  "stageC1Status": "accepted-by-user",
-  "stageC2Started": true,
-  "stageDStarted": true,
-  "stageEStarted": true,
-  "stageFStarted": true,
-  "stageGStarted": true,
-  "stageHStarted": true,
-  "stageIStarted": false,
-  "level2Started": false,
-  "passed": true,
-  "automatedAssertions": 13297,
-  "historicalBaselineAssertions": 477,
-  "ladderContractChanged": true,
-  "filtered": false,
+  "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
   "runs": [
     {
-      "id": "stage-h",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 12707
-    },
-    {
-      "id": "stage-h-visuals",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 2619
-    },
-    {
-      "id": "stage-h-prerequisites",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 1760
-    },
-    {
-      "id": "stage-g",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 12134
-    },
-    {
-      "id": "stage-g-routes",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 3040
-    },
-    {
-      "id": "stage-f",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 17536
-    },
-    {
-      "id": "stage-f-final",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 37178
-    },
-    {
-      "id": "stage-e-corrective",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 9152
-    },
-    {
-      "id": "stage-e-audio-corrective",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 13780
-    },
-    {
-      "id": "stage-e",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 48857
-    },
-    {
-      "id": "stage-d-complete",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 17130
-    },
-    {
-      "id": "stage-d-corrective",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 55872
-    },
-    {
-      "id": "stage-d",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 7086
-    },
-    {
-      "id": "stage-d-repair",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 6935
-    },
-    {
-      "id": "stage-d-visuals",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 1804
-    },
-    {
-      "id": "stage-c2",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 26649
-    },
-    {
-      "id": "stage-c2-prerequisites",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 7771
-    },
-    {
-      "id": "stage-c1-light-modules",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 8194
-    },
-    {
-      "id": "stage-c1-recovery",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 10465
-    },
-    {
       "id": "build",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
       "exitCode": 0,
-      "elapsedMs": 276
-    },
-    {
-      "id": "stage-ab-corrective",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 7058
-    },
-    {
-      "id": "stage-ab-light-audio",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 3722
-    },
-    {
-      "id": "stage-b",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 8457
-    },
-    {
-      "id": "campaign",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 4781
-    },
-    {
-      "id": "stage-a-corrective",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 6865
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 238,
+      "passed": 0,
+      "failed": 0
     },
     {
       "id": "verification",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
       "exitCode": 0,
-      "elapsedMs": 316
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 303,
+      "passed": 462,
+      "failed": 0
     },
     {
-      "id": "regressions",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
+      "id": "dev-qa",
       "exitCode": 0,
-      "elapsedMs": 21860
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 45570,
+      "passed": 72,
+      "failed": 0
     },
     {
-      "id": "interactions",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
+      "id": "stage-h-corrective",
       "exitCode": 0,
-      "elapsedMs": 31308
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 6652,
+      "passed": 22,
+      "failed": 0
+    },
+    {
+      "id": "stage-i1",
+      "exitCode": 0,
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 13562,
+      "passed": 28,
+      "failed": 0
     },
     {
       "id": "saves",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
       "exitCode": 0,
-      "elapsedMs": 8080
-    },
-    {
-      "id": "balance",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 1426
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 9034,
+      "passed": 75,
+      "failed": 0
     },
     {
       "id": "state-saves",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
       "exitCode": 0,
-      "elapsedMs": 15386
-    },
-    {
-      "id": "differential",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 31141
-    },
-    {
-      "id": "systems",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 2635
-    },
-    {
-      "id": "stage3-differential",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 46345
-    },
-    {
-      "id": "controls",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 19684
-    },
-    {
-      "id": "controls-differential",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 46535
-    },
-    {
-      "id": "assets",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 5637
-    },
-    {
-      "id": "asset-rendering",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 2478
-    },
-    {
-      "id": "stage4-differential",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 46430
-    },
-    {
-      "id": "map-workbar",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 12179
-    },
-    {
-      "id": "localization",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 83759
-    },
-    {
-      "id": "localization-rendering",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 3864
-    },
-    {
-      "id": "localization-controls",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 65517
-    },
-    {
-      "id": "main-menu",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 124721
-    },
-    {
-      "id": "menu-preferences",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 14989
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 17020,
+      "passed": 58,
+      "failed": 0
     },
     {
       "id": "world-events",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
       "exitCode": 0,
-      "elapsedMs": 20881
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 20313,
+      "passed": 118,
+      "failed": 0
     },
     {
-      "id": "readiness",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
+      "id": "campaign",
       "exitCode": 0,
-      "elapsedMs": 18674
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 4693,
+      "passed": 51,
+      "failed": 0
     },
     {
-      "id": "corrective",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
+      "id": "stage-e",
       "exitCode": 0,
-      "elapsedMs": 19576
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 49167,
+      "passed": 40,
+      "failed": 0
     },
     {
-      "id": "world-farm",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
+      "id": "stage-d-complete",
       "exitCode": 0,
-      "elapsedMs": 20293
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 18150,
+      "passed": 51,
+      "failed": 0
     },
     {
-      "id": "drone-return",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
+      "id": "main-menu",
       "exitCode": 0,
-      "elapsedMs": 36909
-    },
-    {
-      "id": "resource-access",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 2497
-    },
-    {
-      "id": "character-animation",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 5582
-    },
-    {
-      "id": "master-unarmed",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 19042
-    },
-    {
-      "id": "equipment-integration",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 26307
-    },
-    {
-      "id": "player-visual-fix",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 1926
-    },
-    {
-      "id": "corrective-performance",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 6049
-    },
-    {
-      "id": "corrective-visuals",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 2897
-    },
-    {
-      "id": "polish",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 8122
-    },
-    {
-      "id": "polish-visuals",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 8078
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 120710,
+      "passed": 106,
+      "failed": 0
     },
     {
       "id": "audio-unlock",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
       "exitCode": 0,
-      "elapsedMs": 8890
-    },
-    {
-      "id": "hud-display",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 10052
-    },
-    {
-      "id": "audio-pass",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 6342
-    },
-    {
-      "id": "bunker-level1",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 8747
-    },
-    {
-      "id": "bunker-floor-cache",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 2605
-    },
-    {
-      "id": "bunker-r2",
-      "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
-      "exitCode": 0,
-      "elapsedMs": 4927
+      "error": null,
+      "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+      "elapsedMs": 8740,
+      "passed": 10,
+      "failed": 0
     }
   ],
-  "limitations": [
-    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
-    "All audio paths are included and decoded; subjective mix requires physical device listening."
-  ],
-  "complete": true
+  "complete": true,
+  "scope": "targeted DEV/save/I1 regression; not a new full A–I1 pass"
 }

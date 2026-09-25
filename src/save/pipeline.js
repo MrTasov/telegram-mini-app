@@ -26,7 +26,7 @@ const GameSave=(()=>{
     const data=GameEquipment.withValidation(incoming.instances,()=>SaveFormat.stamp(chains.decode(prepared)));
     // Identity migration follows historical owner migrations, which can expand
     // the enemy array. Validation is still complete before touching live state.
-    SaveFormat.complete(data,migration.sourceVersion);GameIdentity.validate(data);
+    SaveFormat.complete(data,migration.sourceVersion);GameIdentity.validate(data);window.GameActivitySave?.validate(data);
     validated.set(data,JSON.stringify(data));return data;
   }
   function registerModule(id,system){

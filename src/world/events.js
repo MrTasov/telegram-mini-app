@@ -34,6 +34,7 @@ window.WorldEvents=(()=>{
   WorldClock.onChange(refresh);
   const api={dayX,none,xModifiers,register,matches,enemyStats,
     isActive:id=>current.ids.includes(id),value:(key,fallback=1)=>current.modifiers[key]??fallback,
+    setQAEvent(id,value){if(!window.GameDevQA?.authorized()||!definitions.has(id)||![null,true,false].includes(value))return false;if(value===null)overrides.delete(id);else overrides.set(id,value);refresh();return true;},
     snapshot:()=>current,definitions:()=>[...definitions.values()].map(d=>({id:d.id,modifiers:d.modifiers})),
     onChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}};
   // Absent from the production API. The separate developer entry installs an

@@ -173,7 +173,8 @@ function gameLoop(timestamp=performance.now()){
 
   try{
 
-    if(!GameFlow.paused)update();
+    if(!GameFlow.paused){if(window.GameDevQA?.enabled)GameDevQA.runFrame(update);else update();}
+    window.GameDevUI?.sample(timestamp);
     updateFootstepsAudio();
     window.GameAudioWorld?.tick();
     draw();

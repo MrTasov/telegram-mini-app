@@ -1,0 +1,73 @@
+{
+  "version": "0.40.1",
+  "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+  "baseline": "LAST_BASE_0.40.0_Stage_I1_GitHub.zip",
+  "baselineSha256": "ebe1ef9a022ee25b84e06dff866b77507e957eebe4648c1be944016ac12eba1e",
+  "baselineRuntimeSha256": "b150bfea1b1b5a6dfc9f394eb248380692a7b88d22fe687de60cfe599bb6ccf7",
+  "passed": true,
+  "scope": "targeted DEV/save/I1 regression; not a new full A–I1 pass",
+  "regressionGroups": 13,
+  "automatedAssertions": 1093,
+  "failed": 0,
+  "allGroupsSameRuntime": true,
+  "fullRegressionRepeated": false,
+  "saveFormat": 20,
+  "I1CoreUnchanged": true,
+  "acceptedAssetsUnchanged": true,
+  "realBrowserVisualQA": false,
+  "stageI2Started": false,
+  "manualAcceptancePending": true,
+  "performanceReport": "qa/results/dev-performance.json",
+  "performance": {
+    "version": "0.40.1",
+    "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+    "scope": "Native runtime update timing; modeled DOM, not browser FPS or phone performance",
+    "before": {
+      "samples": 240,
+      "p50Ms": 2.9564659999996366,
+      "p95Ms": 6.648161999999957
+    },
+    "after": {
+      "samples": 240,
+      "p50Ms": 3.016797000000224,
+      "p95Ms": 6.912600000000111
+    },
+    "deltaPercent": 2.0406458251370108,
+    "accelerated": [
+      {
+        "speed": 10,
+        "wall": {
+          "samples": 20,
+          "p50Ms": 14.144234999999753,
+          "p95Ms": 23.875836000000163
+        },
+        "stepsMin": 1,
+        "stepsMax": 3,
+        "note": "Budget checked between existing update calls; cannot preempt a slow individual update."
+      },
+      {
+        "speed": 50,
+        "wall": {
+          "samples": 20,
+          "p50Ms": 14.587153000000399,
+          "p95Ms": 18.181141000000025
+        },
+        "stepsMin": 2,
+        "stepsMax": 3,
+        "note": "Budget checked between existing update calls; cannot preempt a slow individual update."
+      },
+      {
+        "speed": "MAX",
+        "wall": {
+          "samples": 20,
+          "p50Ms": 13.930982000000768,
+          "p95Ms": 17.933766000000105
+        },
+        "stepsMin": 2,
+        "stepsMax": 3,
+        "note": "Budget checked between existing update calls; cannot preempt a slow individual update."
+      }
+    ],
+    "errors": []
+  }
+}

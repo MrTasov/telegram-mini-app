@@ -1,0 +1,236 @@
+{
+  "version": "0.40.0",
+  "runtimeSha256": "509aa0054f464fdd94a0e1123634db6dc9471eada1ee7c41b03707281ebff4d2",
+  "passed": 50,
+  "failed": 1,
+  "boundaries": [
+    "new-game",
+    "carried",
+    "installed",
+    "pickup",
+    "replaced",
+    "hold-cancelled-load",
+    "pickup-receipt",
+    "ui-pickup",
+    "independent-switches",
+    "battery-new-zone",
+    "independent-consumers",
+    "room-name",
+    "control-receipt",
+    "door-auto-off",
+    "yard-controls",
+    "corridor-storage",
+    "legacy-overflow",
+    "legacy-content5",
+    "long-control-receipt",
+    "partial-lamp-claim",
+    "all-lamps-claimed"
+  ],
+  "checks": [
+    {
+      "id": "baseline.0352.immutable",
+      "status": "PASS"
+    },
+    {
+      "id": "save.new_game.current_format.content6",
+      "status": "PASS"
+    },
+    {
+      "id": "inventory.real_slot_reference_no_duplicate_state",
+      "status": "PASS"
+    },
+    {
+      "id": "inventory.full_craft_atomic",
+      "status": "PASS"
+    },
+    {
+      "id": "inventory.no_transfer_destroy_or_quickslots_for_buildables",
+      "status": "PASS"
+    },
+    {
+      "id": "inventory.tokens_corrupt_duplicate_missing_reject_pure",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.hold_required_physical_distance",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.three_seconds_authority_and_same_state",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.full_inventory_keeps_world_intact",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.cancel_move",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.cancel_state",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.cancel_job",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.cancel_save-load",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.capacity_rechecked_after_hold",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.receipt_replay_survives_load",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.actor_validation",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.ui_short_tap_regular_action",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.ui_early_release_cancels",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.ui_confirmation_cancel_and_confirm",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.mobile_action_press_release_and_hold",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.tracker_journal_no_core_or_operational_routes",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.remote_requires_item_and_has_no_progression_routes",
+      "status": "PASS"
+    },
+    {
+      "id": "control.only_real_installed_controllable_objects",
+      "status": "PASS"
+    },
+    {
+      "id": "control.physical_core_can_control_every_remote_device",
+      "status": "PASS"
+    },
+    {
+      "id": "power.light_independent_from_production_and_door",
+      "status": "PASS"
+    },
+    {
+      "id": "power.no_priority_or_room_auto_selection",
+      "status": "PASS"
+    },
+    {
+      "id": "control.moved_instance_new_room_same_identity",
+      "status": "PASS"
+    },
+    {
+      "id": "control.multiple_production_instances_independent",
+      "status": "PASS"
+    },
+    {
+      "id": "control.rename_does_not_rewire",
+      "status": "PASS"
+    },
+    {
+      "id": "control.revision_idempotency_and_save",
+      "status": "PASS"
+    },
+    {
+      "id": "control.door_auto_preference_manual_occupied",
+      "status": "PASS"
+    },
+    {
+      "id": "control.turret_and_gate_real_domain",
+      "status": "PASS"
+    },
+    {
+      "id": "placement.small_corridor_only_critical_paths_protected",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.localization_core_remote_journal_ru",
+      "status": "PASS"
+    },
+    {
+      "id": "UI.localization_core_remote_journal_en",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.0352.packed_full_bag_escrow_no_losses",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.0352.chapter5_keeps_route",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.actual_world_pointer_PC",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.actual_world_pointer_MOBILE",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.gesture_cancel_pointercancel",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.gesture_cancel_blur",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.gesture_cancel_joystick",
+      "status": "PASS"
+    },
+    {
+      "id": "pickup.gesture_cancel_multitouch",
+      "status": "PASS"
+    },
+    {
+      "id": "control.UI_buttons_use_authority_and_core_route_memory",
+      "status": "PASS"
+    },
+    {
+      "id": "control.long_request_receipt_and_world_state_change",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.power_uses_imported_transform_not_live_registry",
+      "status": "PASS"
+    },
+    {
+      "id": "placement.pointer_burst_coalesced_authority_rechecks_commit",
+      "status": "FAIL",
+      "error": "TypeError: Cannot set properties of null (setting 'getBoundingClientRect')\n    at /workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-complete.cjs:55:206\n    at test (/workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_i1_0400/qa/stage-d-complete.cjs:55:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "inventory.lamp_output_partial_capacity_no_duplicate_instances",
+      "status": "PASS"
+    },
+    {
+      "id": "control.save_invalid_mode_atomic",
+      "status": "PASS"
+    },
+    {
+      "id": "control.save_invalid_receipt_atomic",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.errors",
+      "status": "PASS"
+    }
+  ]
+}

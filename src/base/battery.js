@@ -122,10 +122,11 @@ const V010Energy=(()=>{
       const near=occupants.some(a=>distance(a.x,a.y,d.x+d.w/2,d.y+d.h/2)<116.25);
       const occupied=d.open>.2&&occupants.some(a=>rectHit(a.x,a.y,(a.radius||10)+8,d));
       const powered=a.served.has('door_'+d.room);
-      if(near||occupied)d.away=0;else d.away=Math.min(4,d.away+dt);
+      const auto=window.GameBaseControl?.autoOpen(d.id)!==false;
+      if(occupied||near&&(auto||d.manual))d.away=0;else d.away=Math.min(4,d.away+dt);
       if(d.away>=4)d.manual=false;
-      const mode=window.GameBaseControl?.doorMode(d.id)||'auto';
-      const shouldOpen=occupied||mode==='open'&&powered||mode==='auto'&&((near&&powered)||d.manual||(d.open>0&&d.away<4));
+      const broken=!!window.V018Build?.isBroken(d.id);
+      const shouldOpen=broken||occupied||auto&&near&&powered||d.manual||auto&&d.open>0&&d.away<4;
       window.GameAudioWorld?.door(d,shouldOpen,'bunker',!!window.V018Build?.isBroken(d.id));d.open=clamp(d.open+(shouldOpen?1:-1)*dt*2.2,0,1);
     }
     clock+=dt;if(clock>=2){clock=0;monitor(a);}

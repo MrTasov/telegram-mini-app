@@ -13,7 +13,7 @@ window.GameGathering=(()=>{
     if(!GameSave.restoring&&!GameFlow.paused)playAnimationSound(type==='axe'?'chopWood':'mineRock','work',.52,1);
   }
   function advance(job,type,target,commit){
-    const now=Date.now(),delta=Math.max(0,now-job.at);job.at=now;
+    const now=Date.now(),delta=window.GameDevQA?.stepMs||Math.max(0,now-job.at);job.at=now;
     if(GameFlow.paused||GameSave.restoring)return;
     const rate=type==='pickaxe'?(V010World.settings.miningRate*(V09Craft.craftQueue.upgrades.tools?1.2:1)):1;
     let remaining=delta*rate,steps=0;

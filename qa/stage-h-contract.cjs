@@ -1,7 +1,7 @@
 /* Historical save comparison only. Reverse the explicit H equipment migration
    for legacy HMG IDs. Native defense/craft/damage uses unprojected Stage H tests. */
 exports.project=value=>{
- const d=JSON.parse(JSON.stringify(value));if(!d?.defense039)return d;
+ const d=JSON.parse(JSON.stringify(value));delete d.activity040;if(d.control0353?.schema===2)d.control0353={schema:1,commands:d.control0353.commands,doorModes:Object.fromEntries(Object.entries(d.control0353.autoOpen).map(([id,v])=>[id,v?'auto':'closed']))};if(!d?.defense039)return d;
  const records=d.equipment032.instances.filter(r=>['automatic_turret','heavy_turret','searchlight'].includes(r.typeId));
  const oldGun=r=>({id:r.id,ammo:r.state.settings.ammo,angle:r.state.settings.angle,enabled:d.v09.power.deviceEnabled[r.id],level:r.state.level});
  for(const r of records){

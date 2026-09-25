@@ -30,7 +30,9 @@ GameSave.seal({
     "research.foundation",
     "world.exploration",
     "story.archive",
-    "defense.foundation"
+    "defense.foundation",
+    "simulation.activity",
+    "dev.qa"
   ],
   "decode": [
     "save.slots",
@@ -64,7 +66,8 @@ GameSave.seal({
     "research.foundation",
     "world.exploration",
     "story.archive",
-    "defense.foundation"
+    "defense.foundation",
+    "dev.qa"
   ],
   "restore": [
     "save.slots",
@@ -99,7 +102,9 @@ GameSave.seal({
     "research.foundation",
     "world.exploration",
     "story.archive",
-    "defense.foundation"
+    "defense.foundation",
+    "simulation.activity",
+    "dev.qa"
   ]
 });
 GameState.seal();

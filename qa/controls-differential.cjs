@@ -56,7 +56,7 @@ for(const day of [1,10,11])check('simulation.allEnemyBehaviors.day'+day,()=>{
  // Both real runtimes receive identical entropy; all enemy outcomes still compare.
  for(const runtime of [a,b])runtime.eval('window.oracleRandom=Math.random;Math.random=()=>.5;');
  try{
- both(`scene='surface';player.x=800;player.y=850;player.health=player.maxHealth;menuOpen=false;stopControls(true);V016Lighting.restore({schema:1,day:${day},minute:180});zombies=['normal','heavy','fast','leaper','bloater'].map((type,i)=>{const z=makeZombie(760+i*30,800);z.type=type;V017Monsters.prepare(z);return z;});`);
+ both(`scene='surface';player.x=800;player.y=850;player.health=player.maxHealth;menuOpen=false;stopControls(true);V016Lighting.restore({schema:1,day:${day},minute:180});zombies=['normal','heavy','fast','leaper','bloater'].map((type,i)=>{const z=makeZombie(760+i*30,800);z.type=type;V017Monsters.prepare(z);return z;});void 0;`); // Outcomes below remain compared; transient timestamps use a pause-aware clock in I1.
  for(let i=0;i<180;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
  compare();
  }finally{for(const runtime of [a,b])runtime.eval('Math.random=oracleRandom;');}

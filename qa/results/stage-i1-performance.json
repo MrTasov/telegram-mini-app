@@ -1,0 +1,519 @@
+{
+  "version": "0.40.0",
+  "runtimeSha256": "b150bfea1b1b5a6dfc9f394eb248380692a7b88d22fe687de60cfe599bb6ccf7",
+  "baselineRuntimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
+  "baseline": "0.39.0 accepted Stage H",
+  "benchmarkVersion": 1,
+  "complete": true,
+  "platform": {
+    "node": "v24.19.0",
+    "os": "linux",
+    "arch": "x64",
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
+  },
+  "scope": "Serial interleaved native Canvas2D with preloaded original assets; modeled DOM/WebAudio. Not native browser layout, device FPS, physical audio or Telegram performance.",
+  "perCaseTimeoutMs": 90000,
+  "rows": [
+    {
+      "id": "quiet_surface_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "quiet_surface",
+      "activityMetrics": {
+        "frames": 121,
+        "full": 51,
+        "coarse": 3,
+        "skipped": 56
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 40.88289799999984,
+        "p95Ms": 51.145596000000296,
+        "meanMs": 41.90202345555555
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 39.197307000000364,
+        "p95Ms": 46.4357629999995,
+        "meanMs": 39.64181607777782
+      },
+      "deltaMs": -1.6855909999994765,
+      "percent": -4.122973376299022
+    },
+    {
+      "id": "bunker_hall_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "bunker_hall",
+      "activityMetrics": {
+        "frames": 121,
+        "full": 51,
+        "coarse": 3,
+        "skipped": 56
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 41.953427000000374,
+        "p95Ms": 47.070918999999776,
+        "meanMs": 42.515579422222224
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 41.395817000000534,
+        "p95Ms": 46.769813999999315,
+        "meanMs": 42.084264511111115
+      },
+      "deltaMs": -0.5576099999998405,
+      "percent": -1.3291166893227513
+    },
+    {
+      "id": "night_lights_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "night_lights",
+      "activityMetrics": {
+        "frames": 121,
+        "full": 51,
+        "coarse": 3,
+        "skipped": 56
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 31.88671899999963,
+        "p95Ms": 38.002026000000114,
+        "meanMs": 32.53004872222217
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 31.741079999999783,
+        "p95Ms": 38.23812799999996,
+        "meanMs": 32.398952388888866
+      },
+      "deltaMs": -0.14563899999984642,
+      "percent": -0.456738744427887
+    },
+    {
+      "id": "quiet_surface_390",
+      "w": 390,
+      "h": 844,
+      "scene": "quiet_surface",
+      "activityMetrics": {
+        "frames": 121,
+        "full": 51,
+        "coarse": 3,
+        "skipped": 56
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 18.123829999999543,
+        "p95Ms": 23.137592999999924,
+        "meanMs": 18.81735961111113
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 18.162869000000683,
+        "p95Ms": 22.732183999999506,
+        "meanMs": 18.551100100000024
+      },
+      "deltaMs": 0.03903900000113936,
+      "percent": 0.2154014907507884
+    },
+    {
+      "id": "bunker_hall_390",
+      "w": 390,
+      "h": 844,
+      "scene": "bunker_hall",
+      "activityMetrics": {
+        "frames": 121,
+        "full": 51,
+        "coarse": 3,
+        "skipped": 56
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 19.585888999999952,
+        "p95Ms": 24.65613600000006,
+        "meanMs": 20.4575556
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 18.443191999999726,
+        "p95Ms": 22.660099000000628,
+        "meanMs": 19.017451944444414
+      },
+      "deltaMs": -1.1426970000002257,
+      "percent": -5.834287123756432
+    },
+    {
+      "id": "night_lights_390",
+      "w": 390,
+      "h": 844,
+      "scene": "night_lights",
+      "activityMetrics": {
+        "frames": 121,
+        "full": 51,
+        "coarse": 3,
+        "skipped": 56
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 17.302598999999645,
+        "p95Ms": 21.558712999999898,
+        "meanMs": 17.87713551111112
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 16.953233000000182,
+        "p95Ms": 21.466307000000597,
+        "meanMs": 17.535209511111194
+      },
+      "deltaMs": -0.3493659999994634,
+      "percent": -2.0191533075433976
+    },
+    {
+      "id": "defense_23_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "defense_23",
+      "comparison": "Identical 23 installed defense objects and 80 enemies; 0.39.0 suspends off-zone turret combat, 0.40.0 runs it",
+      "installedDefense": 23,
+      "lightingCache": {
+        "shadows": 8,
+        "shadowLimit": 96,
+        "rooms": 0,
+        "roomLimit": 18,
+        "sprites": 1,
+        "spriteLimit": 6,
+        "droneShapes": 0,
+        "droneLimit": 1,
+        "droneBytes": 0,
+        "width": 1280,
+        "height": 800
+      },
+      "defenseMetrics": {
+        "scans": 148,
+        "shots": 84,
+        "attacks": 44
+      },
+      "activityMetrics": {
+        "frames": 121,
+        "full": 7952,
+        "coarse": 2,
+        "skipped": 42
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 81.78195899999992,
+        "p95Ms": 91.67901500000153,
+        "meanMs": 81.9510483444443
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 80.98191399999996,
+        "p95Ms": 88.25697800000125,
+        "meanMs": 81.30252142222227
+      },
+      "deltaMs": -0.8000449999999546,
+      "percent": -0.9782658789085241
+    },
+    {
+      "id": "offzone_defense_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "offzone_defense",
+      "comparison": "Identical 23 installed defense objects and 80 enemies; 0.39.0 suspends off-zone turret combat, 0.40.0 runs it",
+      "installedDefense": 23,
+      "lightingCache": {
+        "shadows": 0,
+        "shadowLimit": 96,
+        "rooms": 8,
+        "roomLimit": 18,
+        "sprites": 0,
+        "spriteLimit": 6,
+        "droneShapes": 0,
+        "droneLimit": 1,
+        "droneBytes": 0,
+        "width": 1280,
+        "height": 800
+      },
+      "defenseMetrics": {
+        "scans": 148,
+        "shots": 84,
+        "attacks": 44
+      },
+      "activityMetrics": {
+        "frames": 121,
+        "full": 7892,
+        "coarse": 2,
+        "skipped": 42
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 41.28476199999932,
+        "p95Ms": 48.848634000001766,
+        "meanMs": 41.719751022222326
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 60.82051800000045,
+        "p95Ms": 72.51255899999887,
+        "meanMs": 61.24961090000003
+      },
+      "deltaMs": 19.53575600000113,
+      "percent": 47.31953159861126
+    },
+    {
+      "id": "far_idle_120_1280",
+      "w": 1280,
+      "h": 800,
+      "scene": "far_idle_120",
+      "activityMetrics": {
+        "frames": 121,
+        "full": 6,
+        "coarse": 958,
+        "skipped": 13426
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 46.194469000000026,
+        "p95Ms": 52.40837199999987,
+        "meanMs": 46.957769222222204
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 43.55307600000015,
+        "p95Ms": 48.23494400000072,
+        "meanMs": 43.75355201111099
+      },
+      "deltaMs": -2.64139299999988,
+      "percent": -5.717985415093474
+    },
+    {
+      "id": "defense_23_390",
+      "w": 390,
+      "h": 844,
+      "scene": "defense_23",
+      "comparison": "Identical 23 installed defense objects and 80 enemies; 0.39.0 suspends off-zone turret combat, 0.40.0 runs it",
+      "installedDefense": 23,
+      "lightingCache": {
+        "shadows": 8,
+        "shadowLimit": 96,
+        "rooms": 0,
+        "roomLimit": 18,
+        "sprites": 1,
+        "spriteLimit": 6,
+        "droneShapes": 0,
+        "droneLimit": 1,
+        "droneBytes": 0,
+        "width": 390,
+        "height": 844
+      },
+      "defenseMetrics": {
+        "scans": 147,
+        "shots": 84,
+        "attacks": 44
+      },
+      "activityMetrics": {
+        "frames": 121,
+        "full": 7937,
+        "coarse": 2,
+        "skipped": 42
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 52.0221730000012,
+        "p95Ms": 59.52735600000051,
+        "meanMs": 52.200951722222314
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 52.34021500000017,
+        "p95Ms": 59.21251299999858,
+        "meanMs": 52.44909647777788
+      },
+      "deltaMs": 0.3180419999989681,
+      "percent": 0.6113585451322123
+    },
+    {
+      "id": "offzone_defense_390",
+      "w": 390,
+      "h": 844,
+      "scene": "offzone_defense",
+      "comparison": "Identical 23 installed defense objects and 80 enemies; 0.39.0 suspends off-zone turret combat, 0.40.0 runs it",
+      "installedDefense": 23,
+      "lightingCache": {
+        "shadows": 0,
+        "shadowLimit": 96,
+        "rooms": 8,
+        "roomLimit": 18,
+        "sprites": 0,
+        "spriteLimit": 6,
+        "droneShapes": 0,
+        "droneLimit": 1,
+        "droneBytes": 0,
+        "width": 390,
+        "height": 844
+      },
+      "defenseMetrics": {
+        "scans": 148,
+        "shots": 84,
+        "attacks": 44
+      },
+      "activityMetrics": {
+        "frames": 121,
+        "full": 7892,
+        "coarse": 2,
+        "skipped": 42
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 19.251502999999502,
+        "p95Ms": 23.331389000002673,
+        "meanMs": 19.7011778111112
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 37.609983000000284,
+        "p95Ms": 46.89458199999899,
+        "meanMs": 37.88102241111133
+      },
+      "deltaMs": 18.35848000000078,
+      "percent": 95.36128166201495
+    },
+    {
+      "id": "far_idle_120_390",
+      "w": 390,
+      "h": 844,
+      "scene": "far_idle_120",
+      "activityMetrics": {
+        "frames": 121,
+        "full": 6,
+        "coarse": 958,
+        "skipped": 13426
+      },
+      "status": "PASS",
+      "before": {
+        "samples": 90,
+        "p50Ms": 20.67620799999986,
+        "p95Ms": 24.23402199999964,
+        "meanMs": 21.119050200000007
+      },
+      "after": {
+        "samples": 90,
+        "p50Ms": 19.346804000000702,
+        "p95Ms": 22.46375799999987,
+        "meanMs": 19.685137722222287
+      },
+      "deltaMs": -1.3294039999991583,
+      "percent": -6.429631584278739
+    },
+    {
+      "id": "foundation",
+      "status": "PASS",
+      "serialization": [
+        {
+          "version": "0.39.0",
+          "bytes": 70480,
+          "samples": 80,
+          "p50Ms": 0.8796009999996386,
+          "p95Ms": 1.2678940000000694,
+          "meanMs": 0.9403726374999849
+        },
+        {
+          "version": "0.40.0",
+          "bytes": 83702,
+          "samples": 80,
+          "p50Ms": 1.1366979999993418,
+          "p95Ms": 1.5314619999999195,
+          "meanMs": 1.1734286125000382
+        }
+      ],
+      "loading": [
+        {
+          "version": "0.39.0",
+          "decode": {
+            "samples": 25,
+            "p50Ms": 15.078551000000061,
+            "p95Ms": 17.706713000000036,
+            "meanMs": 15.308054680000005
+          },
+          "decodeAndRestore": {
+            "samples": 8,
+            "p50Ms": 99.48928999999953,
+            "p95Ms": 110.4599189999999,
+            "meanMs": 98.48847424999985
+          }
+        },
+        {
+          "version": "0.40.0",
+          "decode": {
+            "samples": 25,
+            "p50Ms": 16.212015000000065,
+            "p95Ms": 18.421783999999207,
+            "meanMs": 16.73741488000007
+          },
+          "decodeAndRestore": {
+            "samples": 8,
+            "p50Ms": 95.07283199999983,
+            "p95Ms": 101.29336300000068,
+            "meanMs": 96.59823987499999
+          }
+        }
+      ],
+      "input": [
+        {
+          "version": "0.39.0",
+          "samples": 400,
+          "p50Ms": 0.41834800000015093,
+          "p95Ms": 0.6211869999997361,
+          "meanMs": 0.44705517999999983
+        },
+        {
+          "version": "0.40.0",
+          "samples": 400,
+          "p50Ms": 0.39767699999993056,
+          "p95Ms": 0.5927150000006804,
+          "meanMs": 0.4276991425000051
+        }
+      ],
+      "heap": [
+        {
+          "version": "0.39.0",
+          "snapshots": 100,
+          "retainedHeapDeltaBytes": 289096,
+          "gcAvailable": true
+        },
+        {
+          "version": "0.40.0",
+          "snapshots": 100,
+          "retainedHeapDeltaBytes": 333168,
+          "gcAvailable": true
+        }
+      ],
+      "explorationPoll": {
+        "samples": 400,
+        "p50Ms": 1.1743849999993472,
+        "p95Ms": 1.922230000000127,
+        "meanMs": 1.2727200125000286,
+        "idleDOMRebuilds": 0
+      },
+      "notes": [
+        "Heap is process-level diagnostic with both runtimes loaded, not isolated device RAM."
+      ]
+    }
+  ],
+  "completedAt": "2026-09-25T15:34:43.786Z",
+  "runtimeUnchanged": true,
+  "limitations": []
+}
