@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.36.0",
+  "version": "0.36.1",
   "private": true,
-  "description": "LAST BASE 0.36.0 — Stage E: Research Data and Blueprints over accepted Stage D contracts.",
+  "description": "LAST BASE 0.36.1 \u2014 Stage E Corrective: shared Research UI, Core navigation and audio recovery.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -41,7 +41,11 @@
     "package:d:complete": "node tools/package-stage-d-complete.cjs",
     "test:e": "node qa/stage-e.cjs",
     "bench:e": "node --expose-gc qa/stage-e-performance.cjs",
-    "package:e": "node tools/package-stage-e.cjs"
+    "package:e": "node tools/package-stage-e.cjs",
+    "test:e:corrective": "node qa/stage-e-corrective.cjs && node qa/stage-e-audio-corrective.cjs",
+    "bench:e:corrective": "node --expose-gc qa/stage-e-corrective-performance.cjs && node --expose-gc qa/stage-e-corrective-ui-performance.cjs",
+    "package:e:corrective": "node tools/package-stage-e-corrective.cjs",
+    "bench:e:corrective:tail": "node --expose-gc qa/stage-e-corrective-tail-performance.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

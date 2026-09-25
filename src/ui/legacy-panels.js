@@ -199,7 +199,7 @@ try{
       "base_sound"
     );
 
-  if(savedSound !== null){
+  if(savedSound !== null && savedSound.trim() !== '' && Number.isFinite(Number(savedSound)) && Number(savedSound)>=0 && Number(savedSound)<=100){
 
     soundSlider.value =
       savedSound;

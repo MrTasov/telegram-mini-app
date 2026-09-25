@@ -8,7 +8,7 @@ window.GameBaseControlUI=(()=>{
     const root=node('section','baseControl'),stats=node('div','baseControlStats'),warning=node('p','baseControlWarning'),levels=node('div','baseControlLevels'),map=node('div','baseControlMap'),heading=node('h4'),rows=node('div','baseControlObjects'),drone=node('button','menuButton');
     root.append(stats,warning,levels,map,heading,rows,drone);host.append(root);drone.type='button';drone.onclick=()=>V014Robots.openStation();
     let built='',area='bunker:1',zone='workshop',cards=new Map();
-    const set=(level,room)=>{area=level;zone=room;route?.setPage('control|'+area+'|'+zone);built='';refresh();};
+    const set=(level,room)=>{area=level;zone=room;route?.setPage('control|'+area+'|'+zone,{replace:true});built='';refresh();};
     function refresh(){
       if(!active())return;
       const saved=route?.page?.split('|');if(saved?.[0]==='control'&&GameBaseControl.levels.some(l=>l.id===saved[1]&&l.zones.includes(saved[2]))){area=saved[1];zone=saved[2];}

@@ -1,0 +1,75 @@
+{
+  "version": "0.36.1",
+  "runtimeSha256": "016d446011c4dfe3b6939fde050e2d1b27dc0614dea6316b8dff250edb86f3f4",
+  "baseline": "immutable delivered 0.36.0",
+  "purpose": "Recheck observed upper-tail variance without replacing the first full comparison",
+  "passes": 8,
+  "samplesPerVersionPerScene": 240,
+  "rows": [
+    {
+      "viewport": "390x844",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 240,
+        "p50Ms": 40.036072999999305,
+        "p95Ms": 64.95565699999861,
+        "meanMs": 44.362054979166565
+      },
+      "after": {
+        "samples": 240,
+        "p50Ms": 38.88854699999865,
+        "p95Ms": 81.24691900000107,
+        "meanMs": 44.872749920833236
+      },
+      "deltaMs": -1.1475260000006529,
+      "percent": -2.86623016198585
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 240,
+        "p50Ms": 69.6828749999986,
+        "p95Ms": 142.37028800000553,
+        "meanMs": 73.71204557916647
+      },
+      "after": {
+        "samples": 240,
+        "p50Ms": 63.917256000000634,
+        "p95Ms": 135.96228800000245,
+        "meanMs": 69.06080933750015
+      },
+      "deltaMs": -5.765618999997969,
+      "percent": -8.274083123002729
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_door_spill",
+      "before": {
+        "samples": 240,
+        "p50Ms": 45.44569100000081,
+        "p95Ms": 86.61189299999387,
+        "meanMs": 51.743071350000235
+      },
+      "after": {
+        "samples": 240,
+        "p50Ms": 45.63651100000425,
+        "p95Ms": 65.23450400000729,
+        "meanMs": 48.862305854166756
+      },
+      "deltaMs": 0.19082000000344124,
+      "percent": 0.4198857929202493
+    }
+  ],
+  "errors": [],
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "mode": "Modeled DOM/WebAudio, native Canvas2D, DPR1; warmed alternating AB/BA"
+  },
+  "limitations": [
+    "Shared-host CPU timing, not browser/phone FPS.",
+    "This targeted repeat is separate from the required twelve-scene full pass."
+  ],
+  "passed": true
+}

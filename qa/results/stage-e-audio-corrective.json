@@ -1,0 +1,80 @@
+{
+  "version": "0.36.1",
+  "runtimeSha256": "016d446011c4dfe3b6939fde050e2d1b27dc0614dea6316b8dff250edb86f3f4",
+  "passed": 17,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "first_gesture_PC_mouse",
+      "status": "PASS"
+    },
+    {
+      "id": "first_gesture_PC_keyboard",
+      "status": "PASS"
+    },
+    {
+      "id": "first_gesture_mobile_release",
+      "status": "PASS"
+    },
+    {
+      "id": "synthetic_input_cannot_mark_activation",
+      "status": "PASS"
+    },
+    {
+      "id": "focus_before_first_gesture_never_creates_audio",
+      "status": "PASS"
+    },
+    {
+      "id": "closed_context_recreated_and_graph_rebound_without_redecode",
+      "status": "PASS"
+    },
+    {
+      "id": "visibility_return_recovers_previously_allowed_context",
+      "status": "PASS"
+    },
+    {
+      "id": "resume_denial_on_focus_waits_for_real_gesture",
+      "status": "PASS"
+    },
+    {
+      "id": "decode_failure_reported_and_recovers",
+      "status": "PASS"
+    },
+    {
+      "id": "saved_volume_mute",
+      "status": "PASS"
+    },
+    {
+      "id": "saved_volume_quiet",
+      "status": "PASS"
+    },
+    {
+      "id": "saved_volume_invalid",
+      "status": "PASS"
+    },
+    {
+      "id": "saved_volume_empty",
+      "status": "PASS"
+    },
+    {
+      "id": "saved_volume_out_of_range",
+      "status": "PASS"
+    },
+    {
+      "id": "new_continue_load_preserve_device_audio_preferences",
+      "status": "PASS"
+    },
+    {
+      "id": "all_existing_cues_and_channels_retain_gains",
+      "status": "PASS"
+    },
+    {
+      "id": "baseline_0360_closed_and_focus_failure_reproduced",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Strict modeled WebAudio, no physical speaker output or browser autoplay-policy certification.",
+    "The cause of the reported PC silence is not identifiable without browser diagnostics from that affected environment."
+  ]
+}

@@ -68,7 +68,7 @@ window.V011UI=(()=>{
   }
   const person=el('bagButton');I18n.assign(person,"innerHTML",'<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="14" r="8"/><path d="M10 42v-8c0-8 6-12 14-12s14 4 14 12v8M18 25v12m12-12v12"/></svg>');I18n.assign(person,'title','Персонаж и инвентарь');I18n.setAttr(person,'aria-label','Персонаж и инвентарь');
   function safeArea(){
-    const app=window.Telegram?.WebApp;
+    const candidate=window.Telegram?.WebApp,app=candidate&&(candidate.initData||candidate.platform&&candidate.platform!=='unknown')?candidate:null;
     const top=app?Math.max(56,Number(app.safeAreaInset?.top||0)+Number(app.contentSafeAreaInset?.top||0))+10:10;
     document.documentElement.style.setProperty('--v011-hud-top',top+'px');
     document.documentElement.style.setProperty('--v011-tg-extra',app?'56px':'0px');

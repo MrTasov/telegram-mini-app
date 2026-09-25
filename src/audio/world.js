@@ -70,3 +70,17 @@ window.GameAudioWorld=(()=>{
   const volume=el('soundVolume');volume?.addEventListener('input',()=>GameAudio.sync());
   return {tick,reset,door};
 })();
+
+/* Device-only feedback. No gameplay save owner and no parallel audio mixer. */
+window.GameAudioSettings=(()=>{
+  const volume=el('soundVolume'),box=volume?.closest('.settingBox');if(!box)return Object.freeze({refresh(){}});
+  const test=document.createElement('button'),status=document.createElement('p');test.id='audioTest';test.type='button';test.className='menuButton';status.id='audioStatus';status.setAttribute('role','status');status.setAttribute('aria-live','polite');test.setAttribute('aria-describedby','audioStatus');box.append(test,status);
+  function refresh(){
+    const a=GameAudio.inspect();let key=masterVolume<=0?'muted':document.hidden?'hidden':!(window.AudioContext||window.webkitAudioContext)?'unsupported':a.failed.length?location.protocol==='file:'?'file':'error':a.activeLoads?'loading':a.context==='running'?'ready':'locked';
+    test.textContent=I18n.t('audio.test');status.textContent=I18n.t('audio.status.'+key);
+  }
+  test.addEventListener('click',event=>{void unlockGameAudio(event).then(()=>{GameAudio.play('uiConfirm');refresh();});});
+  volume.addEventListener('input',refresh);I18n.onChange(refresh);refresh();
+  v09Style('#audioTest{min-height:44px;width:100%;margin-top:8px}#audioStatus{font-size:12px;line-height:1.4;color:#bed1c5;margin:7px 0 0}');
+  return Object.freeze({refresh});
+})();

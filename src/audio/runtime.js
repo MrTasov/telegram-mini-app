@@ -1,6 +1,8 @@
 /* Full Audio Pass: one owner, bounded voices, no gameplay RNG or independent clock. */
 let audioCtx=null;
 const audioBuffers={},audioLoads=new Map(),audioRetryAt=new Map(),animationVoices=new Map();
+const audioFailures=new Map();
+let audioGestureSeen=false,audioResumeError=null,audioContextError=null;
 const AUDIO_FILES=GameAssets.audioSources();
 const sounds=Object.fromEntries(['gunshot','zombie','hit','playerHit','footsteps','chicken','cow'].map(name=>[name,{name}]));
 const ZOMBIE_AUDIO_RADIUS=285;
@@ -119,30 +121,66 @@ const GameAudio=window.GameAudio=(()=>{
     for(const v of loops.values())if(v.zone.scene!==here.scene||v.zone.floor!==here.floor)stop(v);
     muted=false;return true;
   }
+  function releaseGraph(){
+    reset();for(const v of animationVoices.values())try{v.gain?.disconnect();}catch(_){}animationVoices.clear();
+    try{bus?.disconnect();compressor?.disconnect();}catch(_){}bus=null;compressor=null;muted=false;
+  }
   async function preload(){
     const ctx=ensureAudioContext();if(!ctx)return;if(preloading)return preloading;
-    const tasks=Object.entries(AUDIO_FILES).filter(([key])=>!audioBuffers[key]&&now()>=(audioRetryAt.get(key)||0));let cursor=0;
+    const tasks=Object.entries(AUDIO_FILES).sort(([a],[b])=>Number(['uiClick','uiConfirm','menu'].includes(b))-Number(['uiClick','uiConfirm','menu'].includes(a))).filter(([key])=>!audioBuffers[key]&&now()>=(audioRetryAt.get(key)||0));let cursor=0;
     preloading=(async()=>{await Promise.all(Array.from({length:Math.min(2,tasks.length)},async()=>{
       while(cursor<tasks.length){const [name,url]=tasks[cursor++];if(audioBuffers[name])continue;if(audioLoads.has(name)){await audioLoads.get(name);continue;}
-        const p=(async()=>{stats.activeLoads++;stats.peakLoads=Math.max(stats.peakLoads,stats.activeLoads);try{stats.requests++;const response=await fetch(url,{cache:'no-cache'});if(!response.ok)throw Error('Audio request failed');const data=await response.arrayBuffer();audioBuffers[name]=await ctx.decodeAudioData(data);stats.decodes++;audioRetryAt.delete(name);}catch(_){audioRetryAt.set(name,now()+1000);}finally{stats.activeLoads--;}})();audioLoads.set(name,p);await p;audioLoads.delete(name);
+        const p=(async()=>{
+          stats.activeLoads++;stats.peakLoads=Math.max(stats.peakLoads,stats.activeLoads);
+          const controller=typeof AbortController==='function'?new AbortController():null;
+          const timeout=controller?setTimeout(()=>controller.abort(),12000):null;
+          let stage='fetch';
+          try{
+            stats.requests++;const response=await fetch(url,{cache:'no-cache',...(controller?{signal:controller.signal}:{})});
+            if(!response.ok)throw Error('HTTP '+response.status);const data=await response.arrayBuffer();stage='decode';
+            audioBuffers[name]=await ctx.decodeAudioData(data);stats.decodes++;audioRetryAt.delete(name);audioFailures.delete(name);
+          }catch(error){audioRetryAt.set(name,now()+1000);audioFailures.set(name,{stage,message:String(error?.message||error).slice(0,160)});}
+          finally{if(timeout!==null)clearTimeout(timeout);stats.activeLoads--;window.GameAudioSettings?.refresh();}
+        })();audioLoads.set(name,p);await p;audioLoads.delete(name);
       }
     }));})().finally(()=>{preloading=null;});return preloading;
   }
-  function inspect(){return {...stats,oneShots:voices.size,loops:loops.size,tails:tails.size,animation:[...animationVoices.values()].filter(v=>v.source).length,buffers:Object.keys(audioBuffers).length,families:Object.fromEntries(['combat','enemy','groan','animal','world','ui'].map(k=>[k,[...voices].filter(v=>v.family===k).length])),loopKeys:[...loops.keys()],context:audioCtx?.state||'locked'};}
-  return {play,loop,reset,sync,preload,stopOwner,positional,spatial,listenerZone,sourceZone,output,random,limits,cues,inspect,reload};
+  function inspect(){return {...stats,oneShots:voices.size,loops:loops.size,tails:tails.size,animation:[...animationVoices.values()].filter(v=>v.source).length,buffers:Object.keys(audioBuffers).length,families:Object.fromEntries(['combat','enemy','groan','animal','world','ui'].map(k=>[k,[...voices].filter(v=>v.family===k).length])),loopKeys:[...loops.keys()],context:audioCtx?.state||'locked',master:masterVolume,outputGain:bus?.gain.value??null,gestureSeen:audioGestureSeen,resumeError:audioResumeError,contextError:audioContextError,failed:[...audioFailures].map(([clip,error])=>({clip,...error})),missing:Object.keys(AUDIO_FILES).filter(k=>!audioBuffers[k])};}
+  return {play,loop,reset,sync,preload,stopOwner,positional,spatial,listenerZone,sourceZone,output,random,limits,cues,inspect,reload,releaseGraph};
 })();
 function ensureAudioContext(){
+  if(audioCtx?.state==='closed'){GameAudio.releaseGraph();audioCtx=null;}
   if(audioCtx)return audioCtx;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
-  try{audioCtx=new AC();audioCtx.addEventListener?.('statechange',()=>{GameAudio.sync();});}catch(_){audioCtx=null;}return audioCtx;
+  try{
+    audioCtx=new AC();audioContextError=null;
+    const current=audioCtx;current.addEventListener?.('statechange',()=>{
+      if(current!==audioCtx)return;GameAudio.sync();
+      if(current.state==='running'){audioResumeError=null;window.GameAudioWorld?.tick(true);}
+      window.GameAudioSettings?.refresh();
+    });
+  }catch(error){audioContextError=String(error?.message||error).slice(0,160);audioCtx=null;}return audioCtx;
 }
 function preloadGameAudio(){return GameAudio.preload();}
+function recoverGameAudio(){
+  if(document.hidden||!audioGestureSeen)return Promise.resolve(false);
+  const ctx=ensureAudioContext();if(!ctx){window.GameAudioSettings?.refresh();return Promise.resolve(false);}
+  // Called synchronously inside trusted input, before any fetch/decode await.
+  // Focus/visibility recovery only follows a previous gesture; a browser denial
+  // is retained and the next real gesture retries. Never fake user activation.
+  let resume=Promise.resolve();
+  if(ctx.state==='suspended'||ctx.state==='interrupted')try{resume=Promise.resolve(ctx.resume());}catch(error){resume=Promise.reject(error);}
+  resume.then(()=>{if(ctx===audioCtx&&ctx.state==='running'){audioResumeError=null;GameAudio.sync();window.GameAudioWorld?.tick(true);}window.GameAudioSettings?.refresh();}).catch(error=>{audioResumeError=String(error?.name||error?.message||error).slice(0,160);window.GameAudioSettings?.refresh();});
+  return preloadGameAudio().then(()=>{GameAudio.sync();window.GameAudioWorld?.tick(true);window.GameAudioSettings?.refresh();return ctx.state==='running';}).catch(()=>false);
+}
 function unlockGameAudio(event){
-  if(document.hidden||event?.isTrusted===false)return;const ctx=ensureAudioContext();
-  if(ctx&&(ctx.state==='suspended'||ctx.state==='interrupted'))try{Promise.resolve(ctx.resume()).then(()=>{GameAudio.sync();window.GameAudioWorld?.tick(true);}).catch(()=>{});}catch(_){}
-  preloadGameAudio().then(()=>{GameAudio.sync();window.GameAudioWorld?.tick(true);}).catch(()=>{});
+  if(document.hidden||event?.isTrusted===false)return Promise.resolve(false);
+  audioGestureSeen=true;return recoverGameAudio();
 }
 for(const type of ['pointerdown','pointerup','touchend','click','keydown'])window.addEventListener(type,unlockGameAudio,{capture:true,passive:true});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)GameAudio.reset();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)GameAudio.reset();else void recoverGameAudio();window.GameAudioSettings?.refresh();});
+window.addEventListener('focus',()=>{void recoverGameAudio();});
+window.addEventListener('pageshow',()=>{void recoverGameAudio();});
+window.addEventListener('blur',()=>{GameAudio.reset();});
 function playBuffer(name,volume=1){return GameAudio.play(name,{volume});}
 function playSound(sound,volume=1,options={}){return GameAudio.play(sound?.name,{...options,volume});}
 function playGunshot(){return GameAudio.play(heldItem()==='rifle_m4'?'shotM4':'shotAK');}

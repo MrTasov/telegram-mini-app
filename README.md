@@ -1,19 +1,24 @@
-# LAST BASE 0.36.0 — Stage E: Research + Blueprints
+# LAST BASE 0.36.1 — Stage E Corrective
 
-Built on the accepted **0.35.3 Stage D Corrective** baseline. Research unlocks
-production rights over the existing Craft → Inventory → Placement workflow.
-See [STAGE_E_REPORT_RU.md](STAGE_E_REPORT_RU.md) and
-[docs/STAGE_E_RESEARCH_CONTRACT_RU.md](docs/STAGE_E_RESEARCH_CONTRACT_RU.md).
-Earlier reports describe historical releases. Stage F and Level 2 are not started.
+Based on the delivered **0.36.0 Stage E**, retaining accepted 0.35.3 contracts.
+This corrective updates the shared Research presentation, Core back navigation,
+RU localization and audio recovery. Save Format 16 remains unchanged.
+See [STAGE_E_CORRECTIVE_REPORT_RU.md](STAGE_E_CORRECTIVE_REPORT_RU.md) and
+[corrective contracts](docs/STAGE_E_CORRECTIVE_CONTRACT_RU.md).
+Earlier reports are historical. **Stage F and Level 2 are not started.**
 
 Serve `index.html`, `js/`, `styles/`, and `assets/` together, for example with
-`python -m http.server 8000`. Keep the same site origin to retain browser saves.
+`python -m http.server 8000`. Opening `index.html` through `file://` can block audio
+fetches. Keep the same site origin to retain browser saves. Update the complete
+release, including the versioned JS and CSS, rather than mixing old files.
 Node 20+ and the declared dev dependency are only needed for rebuilding and QA.
 
 ## Research and blueprints
 
-Approach the physical powered **Command Core → Research**. Obtain a one-time
-packet from **Obtain and submit data**, then submit it. Packets belong to the actor
+Approach the physical powered **Command Core → Research**.
+The same Research / Data / Blueprints navigation is used on PC and mobile.
+Use the fixed Back button (or Escape on PC) to return from nested pages. Obtain a one-time
+packet from **Data**, then submit it. Packets belong to the actor
 until submission and do not use backpack slots. Submitted Data, permanent
 Blueprints and technology rights belong to the base.
 
@@ -25,9 +30,9 @@ is included. Confirm Chapter 1 at the Core to receive its research reward.
 | Research | Data | Blueprint / prerequisite | Existing production destination |
 | --- | ---: | --- | --- |
 | Station fabrication | 12 | Powered Core | Core Construction: extra Furnace / Weapon Workbench |
-| Precision weapons | 18 | Precision blueprint + fabrication or legacy precision TECH | Weapon Workbench: M4 |
+| Precision weapons | 18 | Precision blueprint | Weapon Workbench: M4 |
 | Scout servicing | 15 | Scout service blueprint + installed Drone Station | Enhancement Cradle: existing body / battery / weapon upgrades |
-| Production efficiency | 15 | Fabrication capability | Existing paid workshop improvement (+20% production speed) |
+| Production efficiency | 15 | Research Data (no prior research) | Existing paid workshop improvement (+20% production speed) |
 
 The three one-time sources provide 20 + 20 + 25 Data. All four projects cost 60.
 Basic Utility Workbench, Hammer, Pickaxe, Axe, repairs and power remain ungated.

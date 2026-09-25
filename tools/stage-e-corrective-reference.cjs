@@ -1,0 +1,6 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+process.chdir(path.resolve(__dirname,'..'));const baseline=path.resolve(process.argv[2]||'../stage_e_0360'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+if(hash(fs.readFileSync(path.join(baseline,'js/game.js')))!=='7e147c04ddb67e03a4c62f7de554c1813987101a0ba59937132e2a51312b486a')throw Error('Wrong 0.36.0 reference');
+const changes={},added={};function visit(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,e.name);if(e.isDirectory())visit(file);else{const after=hash(fs.readFileSync(file)),old=path.join(baseline,file);if(!fs.existsSync(old))added[file]={after};else{const before=hash(fs.readFileSync(old));if(before!==after)changes[file]={before,after};}}}}
+for(const dir of ['src','styles','locales'])visit(dir);for(const file of ['index.html','dev.html','package.json']){const before=hash(fs.readFileSync(path.join(baseline,file))),after=hash(fs.readFileSync(file));if(before!==after)changes[file]={before,after};}
+fs.writeFileSync('qa/stage-e-corrective-source-reference.json',JSON.stringify({baseline:'0.36.0 Stage E',changes,added},null,2)+'\n');console.log('Reviewed delta files: '+Object.keys(changes).length);

@@ -20,7 +20,7 @@ const SaveFormat=(()=>{
     function unpin(value){if(!value||typeof value!=='object')return;if(typeof value.type==='string')delete value.locked;for(const v of Object.values(value))if(v&&typeof v==='object')unpin(v);}
     unpin(data);return JSON.stringify(data);
   }
-  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.36.0';return data;}
+  function stamp(data){data.saveVersion=VERSION;data.gameVersion='0.36.1';return data;}
   return Object.freeze({version:VERSION,prepare,stamp,
     complete(data,sourceVersion){for(const m of migrations)if(m.from>=sourceVersion)m.complete?.(data);},
     migrations:()=>migrations.map(({from,to,id})=>({from,to,id}))});

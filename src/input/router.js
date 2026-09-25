@@ -114,6 +114,7 @@ window.GameInput=(()=>{
     const top=topOverlay();
     if(top){
       if(top.id==='deathOverlay')return;
+      if(top.id==='commandCoreOverlay'&&window.CommandCoreUI?.back())return;
       if(top.id==='v010MapOverlay'&&!el('v011MapFilterOptions')?.hidden){V012Map.setOptions(false);el('v011MapFilters').focus();return;}
       closeOverlay(top);return;
     }

@@ -8,7 +8,7 @@ window.CommandCoreUI=(()=>{
   function put(n,value){if(n.textContent!==value)n.textContent=value;}
   function button(key,fn,cls='menuButton'){const b=node('button',key,cls);b.type='button';b.onclick=fn;return b;}
   const tabs=node('div',null,'campaignTabs');tabs.setAttribute('role','tablist');
-  const stage=node('div',null,'coreSections'),links=node('div',null,'campaignLinks');body.append(tabs,stage,links);
+  const stage=node('div',null,'coreSections'),links=node('div',null,'campaignLinks');const navigation=node('nav',null,'coreNavigation'),backButton=button('core.back',()=>back(),'coreBack'),pathLabel=node('span');navigation.setAttribute('aria-label',t('core.navigation'));backButton.id='coreBack';navigation.append(backButton,pathLabel);body.append(tabs,navigation,stage,links);
   const tracker=node('section');tracker.id='campaignTracker';el('v010Trackers').prepend(tracker);
   const trackerToggle=button(null,()=>{trackerExpanded=!trackerExpanded;renderTracker();},'trackerChip');trackerToggle.id='campaignTrackerToggle';
   const trackerMark=node('span',null,'trackerMark'),trackerTitle=node('b','campaign.tracker.title'),trackerChevron=node('span');trackerToggle.append(trackerMark,trackerTitle,trackerChevron);
@@ -24,19 +24,29 @@ window.CommandCoreUI=(()=>{
   // Register a route only when its real owner and complete view are available.
   const routeOrder=['construction','base','chapters','research','blueprints','archive','map-signals'],routes=new Set(routeOrder);
   const sections=new Map();let tab='base',sequence=0,dirty=true,lastTracker='',lastLanguage='';
-  let scope=null;
+  let scope=null;const sectionHistory=[];
   const location=()=>GameActors.local.scene==='bunker'&&(GameActors.local.entity.floor??1)===1?'bunker:1':null;
   function syncLocation(){const next=location();if(scope!==next){reset();scope=next;}return next;}
   function registerSection(id,title,mount,available=()=>true,validPage=()=>true){
     if(!routes.has(id)||sections.has(id)||typeof mount!=='function')throw Error('Invalid Core section');
     const scroll=node('section',null,'coreScroll');scroll.id='coreSection_'+id;scroll.hidden=true;scroll.setAttribute('role','tabpanel');scroll.setAttribute('aria-labelledby','coreTab_'+id);
-    let page=null;const route=Object.freeze({get page(){if(page!==null&&!validPage(page))page=null;return page;},setPage(value){if(value!==null&&(typeof value!=='string'||value.length>100||!validPage(value)))return false;page=value;return true;},reset(){page=null;}});
+    let page=null;const history=[];
+    const legal=value=>value===null||typeof value==='string'&&value.length<=100&&validPage(value);
+    const route=Object.freeze({
+      get page(){if(!legal(page)){page=null;history.length=0;}return page;},
+      setPage(value,options={}){if(!legal(value))return false;if(value!==page){if(!options.replace){history.push({page,top:scroll.scrollTop||0});if(history.length>32)history.shift();}page=value;scroll.scrollTop=0;}return true;},
+      get canBack(){return history.some(entry=>legal(entry.page))||page!==null;},
+      back(){while(history.length){const entry=history.pop();if(legal(entry.page)){page=entry.page;scroll.scrollTop=entry.top;return true;}}if(page!==null){page=null;scroll.scrollTop=0;return true;}return false;},
+      reset(){page=null;history.length=0;}
+    });
     const update=mount(scroll,route);if(typeof update!=='function')throw Error('Core section needs an update client');
-    const b=button(title,()=>select(id));b.id='coreTab_'+id;b.setAttribute('role','tab');b.setAttribute('aria-controls',scroll.id);
+    const b=button(title,()=>{sectionHistory.length=0;select(id);});b.id='coreTab_'+id;b.setAttribute('role','tab');b.setAttribute('aria-controls',scroll.id);
     b.onkeydown=e=>{const ids=[...sections.keys()].filter(key=>sections.get(key).available()),i=ids.indexOf(id);let target;if(e.key==='ArrowRight')target=ids[(i+1)%ids.length];if(e.key==='ArrowLeft')target=ids[(i+ids.length-1)%ids.length];if(e.key==='Home')target=ids[0];if(e.key==='End')target=ids.at(-1);if(target){e.preventDefault();select(target);sections.get(target).b.focus();}};
     sections.set(id,{title,b,scroll,update,available,route});for(const key of routeOrder)if(sections.has(key))tabs.append(sections.get(key).b);stage.append(scroll);return true;
   }
   function select(id){if(!sections.has(id)||!sections.get(id).available())return false;tab=id;for(const [key,s]of sections){const active=key===tab;s.scroll.hidden=!active;s.b.classList.toggle('active',active);s.b.setAttribute('aria-selected',String(active));s.b.setAttribute('aria-pressed',String(active));s.b.tabIndex=active?0:-1;}dirty=true;render();return true;}
+  function navigate(id){if(!sections.get(id)?.available()||id===tab)return false;sectionHistory.push(tab);if(sectionHistory.length>16)sectionHistory.shift();return select(id);}
+  function back(){const current=sections.get(tab);if(current?.route.back()){render();return true;}while(sectionHistory.length){const id=sectionHistory.pop();if(sections.get(id)?.available())return select(id);}return false;}
   function chapter(v=GameCampaign.view()){return GameCampaign.definitions.chapters.find(c=>c.id===v.chapter);}
   function status(){return GameCampaign.access(GameActors.local,BunkerLayout.core.id);}
   function renderTracker(){
@@ -114,7 +124,7 @@ window.CommandCoreUI=(()=>{
   function renderJournal(){if(!journal.classList.contains('open'))return;put(journal.querySelector('.v09Title'),t('campaign.tab.chapters'));const v=GameCampaign.view();journalUpdate({v,c:chapter(v),a:status(),f:GameCampaign.facts()});}
   function showJournal(){if(!GameState.session.ready||playerDead||window.MainMenu?.active)return false;closeOverlay(overlay);GameMovement.openUI();GameCampaign.refresh(true);openOverlay(journal);renderJournal();return true;}
   registerSection('base','campaign.tab.base',(container,route)=>{
-    const views=node('nav',null,'coreBaseViews'),scroll=node('div'),control=node('div');const overview=button('control.overview',()=>{route.setPage('overview');render();}),controlButton=button('control.title',()=>{route.setPage('control|bunker:1|workshop');render();});views.append(overview,controlButton);container.append(views,scroll,control);let controlUpdate=null;
+    const views=node('nav',null,'coreBaseViews'),scroll=node('div'),control=node('div');const overview=button('control.overview',()=>{route.setPage('overview');render();}),controlButton=button('control.title',()=>{route.setPage('control|bunker:1|workshop');render();});const construction=button('placement.title',()=>navigate('construction'));views.append(overview,controlButton,construction);container.append(views,scroll,control);let controlUpdate=null;
     const cards=new Map();let locale='';
     const renderOverview=()=>{
       const groups=GameBaseOverview.snapshot();
@@ -135,7 +145,7 @@ window.CommandCoreUI=(()=>{
       }
       for(const g of groups)for(const row of g.rows){const r=cards.get(g.id+'/'+row.id);put(r.title,row.title);put(r.value,row.value);put(r.detail,row.detail);}
     };
-    return context=>{const showControl=route.page?.startsWith('control|');scroll.hidden=!!showControl;control.hidden=!showControl;put(overview,t('control.overview'));put(controlButton,t('control.title'));overview.classList.toggle('selected',!showControl);controlButton.classList.toggle('selected',!!showControl);if(showControl){if(!controlUpdate&&window.GameBaseControlUI)controlUpdate=GameBaseControlUI.mount(control,route,()=>overlay.classList.contains('open')&&tab==='base'&&!control.hidden);controlUpdate?.();}else renderOverview(context);};
+    return context=>{const showControl=route.page?.startsWith('control|');scroll.hidden=!!showControl;control.hidden=!showControl;put(overview,t('control.overview'));put(controlButton,t('control.title'));put(construction,t('placement.title'));overview.classList.toggle('selected',!showControl);controlButton.classList.toggle('selected',!!showControl);if(showControl){if(!controlUpdate&&window.GameBaseControlUI)controlUpdate=GameBaseControlUI.mount(control,route,()=>overlay.classList.contains('open')&&tab==='base'&&!control.hidden);controlUpdate?.();}else renderOverview(context);};
   },()=>true,page=>page==='overview'||page.startsWith('control|')&&!!window.GameBaseControl?.levels.some(l=>page.split('|')[1]===l.id&&l.zones.includes(page.split('|')[2])));
   function render(){
     if(!overlay.classList.contains('open'))return;dirty=false;
@@ -145,6 +155,7 @@ window.CommandCoreUI=(()=>{
     if(!sections.get(tab)?.available()){const fallback=[...sections.keys()].find(id=>sections.get(id).available());if(fallback)select(fallback);}
     const context={v,c:chapter(v),a:status(),f:GameCampaign.facts()};
     if(lastLanguage!==I18n.language){lastLanguage=I18n.language;for(const s of sections.values())s.update(context);}else sections.get(tab).update(context);
+    put(backButton,t('core.back'));backButton.disabled=!(sections.get(tab)?.route.canBack||sectionHistory.length);put(pathLabel,t(sections.get(tab).title));navigation.setAttribute('aria-label',t('core.navigation'));
   }
   function show(which,readOnly=false){
     if(readOnly)return showJournal();
@@ -153,18 +164,18 @@ window.CommandCoreUI=(()=>{
     syncLocation();window.GameChapterOne?.visit(GameActors.localId,BunkerLayout.core.id);GameCampaign.refresh(true);GameMovement.openUI();openOverlay(overlay);select(sections.has(which)?which:sections.get(tab)?.available()?tab:'base');return true;
   }
   function tick(){window.GameBaseControlUI?.tick();window.GamePlacementUI?.tick();syncLocation();renderTracker();renderJournal();if(overlay.classList.contains('open'))render();}
-  function reset(){window.GamePlacementUI?.cancel();closeOverlay(overlay);closeOverlay(journal);journalPage=null;dirty=true;lastTracker='';trackerExpanded=!!window.GameChapterOne?.active&&GameCampaign.view().chapter==='chapter_1';tab='base';previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values()){s.route.reset();s.scroll.scrollTop=0;}renderTracker();}
+  function reset(){window.GamePlacementUI?.cancel();closeOverlay(overlay);closeOverlay(journal);journalPage=null;dirty=true;lastTracker='';trackerExpanded=!!window.GameChapterOne?.active&&GameCampaign.view().chapter==='chapter_1';tab='base';sectionHistory.length=0;previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values()){s.route.reset();s.scroll.scrollTop=0;}renderTracker();}
   GameCampaign.subscribe(()=>{dirty=true;renderTracker();});
   I18n.onChange(()=>{lastTracker='';dirty=true;V09Power.devices[GameCampaign.powerId].name=t('bunker.core.name');renderTracker();render();renderJournal();});
   v09Style(`
-:is(#commandCoreOverlay,#campaignJournalOverlay){position:fixed;inset:0;padding:0;overflow:hidden;--core-top:max(28px,calc(var(--v011-game-top,10px) + 18px),calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 12px));--core-bottom:max(12px,env(safe-area-inset-bottom,0px))}
-:is(#commandCoreOverlay,#campaignJournalOverlay) .v09Panel{position:absolute;left:50%;top:calc(var(--core-top) + (100dvh - var(--core-top) - var(--core-bottom) - min(760px,100dvh - var(--core-top) - var(--core-bottom)))/2);transform:translateX(-50%);margin:0;width:min(720px,calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)));height:min(760px,calc(100vh - var(--core-top) - var(--core-bottom)));height:min(760px,calc(100dvh - var(--core-top) - var(--core-bottom)));max-height:none;min-height:0;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;text-align:left;background:linear-gradient(145deg,#142b30,#101e26);border:1px solid #66827a66;border-radius:14px;box-shadow:0 20px 60px #0009}
+:is(#commandCoreOverlay,#campaignJournalOverlay){position:fixed;inset:0;padding:0;overflow:hidden;--core-top:max(28px,calc(var(--v011-game-top,10px) + 18px),calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 12px));--core-bottom:calc(12px + max(env(safe-area-inset-bottom,0px),var(--v011-safe-bottom,0px)));--core-left:calc(12px + max(env(safe-area-inset-left,0px),var(--v011-safe-left,0px)));--core-right:calc(12px + max(env(safe-area-inset-right,0px),var(--v011-safe-right,0px)))}
+:is(#commandCoreOverlay,#campaignJournalOverlay) .v09Panel{position:absolute;left:calc(var(--core-left) + (100vw - var(--core-left) - var(--core-right))/2);top:calc(var(--core-top) + (100dvh - var(--core-top) - var(--core-bottom) - min(760px,100dvh - var(--core-top) - var(--core-bottom)))/2);transform:translateX(-50%);margin:0;width:min(720px,calc(100vw - var(--core-left) - var(--core-right)));height:min(760px,calc(100vh - var(--core-top) - var(--core-bottom)));height:min(760px,calc(100dvh - var(--core-top) - var(--core-bottom)));max-height:none;min-height:0;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;text-align:left;background:linear-gradient(145deg,#142b30,#101e26);border:1px solid #66827a66;border-radius:14px;box-shadow:0 20px 60px #0009}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .v09Header{height:48px;flex:0 0 48px;box-sizing:border-box;padding:0 0 10px;margin:0}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .v09Title{font-size:19px;line-height:1.2;margin:0}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .v09Body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
 :is(#commandCoreOverlay,#campaignJournalOverlay) [hidden]{display:none!important}
-:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs{display:flex;gap:8px;flex:0 0 48px;align-items:center}
-:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs button{flex:1;min-width:0;margin:0;height:38px;min-height:38px;padding:6px;font-size:13px}
+:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;flex:0 0 48px;align-items:center;overflow:visible;white-space:normal}
+:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs button{flex:1;min-width:0;margin:0;height:44px;min-height:44px;padding:4px;font-size:12px;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs .active{border-color:#95b7a2;background:#304b42;color:#eef4d9}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .coreSections{flex:1;min-height:0;position:relative;overflow:hidden}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .coreScroll{position:absolute;inset:0;box-sizing:border-box;overflow-x:hidden;overflow-y:scroll;overscroll-behavior:contain;scrollbar-gutter:stable;overflow-anchor:none;padding:4px 8px 16px 0;touch-action:pan-y}
@@ -224,5 +235,10 @@ body.v0161Modal #campaignTracker,body:has(.overlay.open) #campaignTracker{displa
 @media(max-height:500px){:is(#commandCoreOverlay,#campaignJournalOverlay) .v09Panel{padding:10px}:is(#commandCoreOverlay,#campaignJournalOverlay) .v09Header{height:38px;flex-basis:38px}:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs{flex-basis:44px}:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignLinks{flex-basis:40px}}
 `);
   v09Style('.coreRoomEditor{display:grid;grid-template-columns:1fr 1fr;gap:8px;border:1px solid #486254;border-radius:9px;padding:10px;margin:10px 0}.coreRoomEditor h4,.coreRoomEditor small{grid-column:1/-1;margin:0;font-size:12px}.coreRoomEditor select,.coreRoomEditor input{min-width:0;background:#193036;color:#e3ebdd;border:1px solid #597268;border-radius:5px;padding:8px}.coreRoomEditor button{margin:0!important;min-height:36px}.trackerPanel{color:#f0f2e6;text-shadow:0 1px 2px #000}');
-  select('base');renderTracker();return Object.freeze({show,showJournal,tick,reset,syncLocation,registerSection,refreshTracker:renderTracker});
+  v09Style(`#commandCoreOverlay .coreNavigation{display:flex;align-items:center;gap:10px;flex:0 0 42px;min-height:42px;border-bottom:1px solid #ffffff18;margin-bottom:4px}#commandCoreOverlay .coreNavigation span{font-size:12px;color:#b7cabc}#commandCoreOverlay .coreBack{min-height:36px;min-width:84px;margin:0;padding:6px 10px;font:inherit;font-size:12px;border:1px solid #536d64;border-radius:6px;background:#233d36;color:#e4ebdf;touch-action:manipulation}#commandCoreOverlay .coreBack:disabled{opacity:.35}#commandCoreOverlay .coreBack:focus-visible{outline:2px solid #c5dca5}.coreBaseViews{flex-wrap:wrap}.coreBaseViews button{min-width:85px!important}@media(max-height:500px){#commandCoreOverlay .coreNavigation{flex-basis:38px;min-height:38px}#commandCoreOverlay .campaignLinks{flex-basis:36px}}`);
+  // On a short viewport the Back action shares the header instead of taking
+  // another content row. Only the redundant section label is hidden; every
+  // navigation action stays available in the same component.
+  v09Style(`@media(max-height:500px){#commandCoreOverlay .coreNavigation{position:absolute;top:10px;left:10px;min-height:36px;height:36px;margin:0;border:0;z-index:2}#commandCoreOverlay .coreNavigation span{display:none}#commandCoreOverlay .coreScroll{padding-bottom:8px}#commandCoreOverlay .v09Title{margin-left:94px;font-size:16px}#commandCoreOverlay .coreBack{min-width:84px}}`);
+  select('base');renderTracker();return Object.freeze({show,showJournal,tick,reset,syncLocation,registerSection,navigate,back,refreshTracker:renderTracker});
 })();
