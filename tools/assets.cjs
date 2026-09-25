@@ -41,6 +41,7 @@ function validate(m,base=root){
   }
   for(const next of d.prefetch||[])if(!m.images[next]||next===id)problem(id,'invalid prefetch reference');
  }
+ for(const [id,d]of Object.entries(m.videos||{})){if(!resourcePath(id,d.path,/\.mp4$/))continue;if(!Array.isArray(d.size)||d.size.length!==2||!d.size.every(positive)||!positive(d.durationMs))problem(id,'invalid video metadata');try{const b=fs.readFileSync(path.join(base,d.path));if(b.length!==d.bytes||require('node:crypto').createHash('sha256').update(b).digest('hex')!==d.sha256)problem(id,'video bytes/hash differ');}catch(e){problem(id,'missing video');}}
  for(const group of ['art','icons','walls'])for(const [key,id]of Object.entries(m[group]))if(!m.images[id])problem(group+'.'+key,'unknown resource');
  // Frame groups are explicit; gameplay timing remains in the existing owners.
  for(const [key,id]of Object.entries(m.art)){

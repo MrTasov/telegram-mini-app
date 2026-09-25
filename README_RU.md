@@ -1,55 +1,50 @@
-# LAST BASE 0.37.0 — Stage F
+# LAST BASE 0.37.1 — Stage F Final
 
-Основа: принятая **0.36.1 Stage E Corrective**. Добавлены вступление New Game с
-пропуском и **Command Core → Архив**. Подробности и результаты проверок:
-[STAGE_F_REPORT_RU.md](STAGE_F_REPORT_RU.md),
+Основа — принятая **0.37.0 Stage F**. Два финальных изменения: официальное
+вступительное видео и повторное открытие прочитанных записей Архива.
+[Итоговый отчёт](STAGE_F_FINAL_REPORT_RU.md),
 [контракты Stage F](docs/STAGE_F_CONTRACT_RU.md).
-Ранние отчёты описывают исторические сборки. После Stage F разработка остановлена
-для ручной проверки; Stage G и Level 2 не начаты.
+Предыдущие отчёты и performance results относятся к указанным в них версиям.
+**Stage G и Level 2 не начаты.**
 
 ## Запуск и обновление
 
 Загрузите содержимое ZIP на GitHub с прежней структурой папок. Игра уже собрана;
 `index.html`, `js/`, `styles/`, `assets/` должны поставляться вместе.
 Локально: `python -m http.server 8000`, затем `http://localhost:8000/`.
-HTTP необходим для корректной загрузки аудио; `file://` может блокировать fetch.
-Для сохранения слотов используйте прежний origin сайта и данные браузера.
+Используйте HTTP: `file://` может блокировать загрузку ресурсов.
+Для сохранения слотов оставьте прежний origin сайта и данные браузера.
 
-Save Format **17** добавляет owner Archive через migration **16 → 17**.
-Существующие equipment/inventory/placements/Research/Chapter/Base Control не
-переносятся в новую систему. Старые saves не запускают Intro. Для возврата к
-0.36.1 нужен экспорт старого слота: предыдущая версия не читает формат 17.
+Save Format **17**, migration **16→17** и все прежние migrations сохранены.
+Для слотов 0.37.0 новая миграция не нужна. Старые слоты не запускают Intro.
 
-## Что проверить
+## Два изменения
 
-1. New Game: 18-секундное текстовое Intro, Pause/Resume, Skip, Escape/× на PC.
-   После него начинается существующий Chapter 1 revision 6.
-2. Continue старого слота: сразу игра, без Intro. Continue прерванного Intro
-   тоже не воспроизводит его автоматически.
-3. Запитанный физический Core → Архив: документы, категории, Back, повторный
-   просмотр вступления. Первый исследовательский журнал появляется после Research.
-4. RU/EN, portrait/landscape, safe areas Telegram, читаемость и управление на
-   реальном телефоне. Нативная визуальная проверка этой среды не заменяет устройство.
+1. **New Game** запускает официальный MP4 длительностью 21,25 секунды.
+   Исходный `END VIDEO.mp4` скопирован в `assets/video/last-base-intro.mp4`
+   без редактирования и перекодирования. Доступны «Пауза/Продолжить»,
+   «Пропустить» и Escape/×. После окончания или пропуска начинается существующий
+   Chapter 1 revision 6. Continue не повторяет Intro.
+2. **Core → Архив**: вся карточка записи нажимается. «НОВОЕ» исчезает после
+   первого чтения, документ остаётся доступным после повторного открытия и
+   Save/Load. Прежний ручной повторный просмотр вступления сохранён.
 
-Настоящих сюжетных изображений, видео или озвучки в этой версии нет. Текст и
-субтитры доступны; media adapter подготовлен к отдельной поставке контента.
+Если браузер требует дополнительный жест для видео, нажмите «Продолжить».
+При ошибке загрузки остаются текстовое вступление и пропуск. RU/EN-субтитры
+сохранены. Реальное воспроизведение, звук, portrait/landscape и safe areas
+проверьте на PC, телефоне и в Telegram; автоматические тесты моделируют эти API.
 
-## Сохранённый игровой цикл
+## Остальные системы
 
 **Resources → Core/Construction → Craft → Inventory → Place → Installed Instance
 → Hold Pick Up 3 sec → Inventory → Place**. Research открывает право изготовления;
-Archive не выдаёт предметов и не меняет этот цикл. Utility/Weapon Workbench,
-Head Equipment/Flashlight Module, инструменты Lv.0–5, room names и общий
-Base Control для Core/Remote сохранены. Farm/Animals остаются на паузе до Level 2.
+Archive не выдаёт предметов. Utility/Weapon Workbench, Tactical Flashlight,
+инструменты Lv.0–5, room names, Base Control/Core/Remote и Chapter 1 не изменены.
+Farm/Animals остаются на паузе до будущего Level 2.
 
-## Разработка и QA
+## QA
 
-Node 20+, `npm install`, `npm run build`. `npm test` запускает полный набор;
-`npm run test:f` — проверки Intro/Archive. Исторические gameplay suites проходят
-реальную кнопку Skip через тестовый adapter; новые Stage F cases проверяют
-непропущенное Intro отдельно. Performance запускается отдельно от regression:
-`npm run bench:f`, `node qa/stage-f-ui-performance.cjs`,
-`node qa/stage-f-story-performance.cjs`.
-
-Network transport не добавлен. Авторизация, request/revision/idempotency и
-разделение общих открытий/личного просмотра сохраняют multiplayer-readiness.
+Node 20+, `npm install`, `npm run build`, `npm run test:f:final`.
+Выполнены только затронутые regression/save проверки. Полный regression и
+performance pass предыдущей версии не выдаются за результаты 0.37.1.
+Для будущего полного запуска сохранена команда `npm test`.

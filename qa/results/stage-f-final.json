@@ -1,0 +1,99 @@
+{
+  "version": "0.37.1",
+  "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+  "passed": 22,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "official_video_exact_bytes_and_catalog",
+      "status": "PASS"
+    },
+    {
+      "id": "boot_is_lazy_no_video_for_menu_or_continue",
+      "status": "PASS"
+    },
+    {
+      "id": "new_game_plays_official_inline_media_and_freezes_world",
+      "status": "PASS"
+    },
+    {
+      "id": "completion_uses_ended_not_old_18s_timer_or_buffer_wait",
+      "status": "PASS"
+    },
+    {
+      "id": "video_exit_skip_frees_source_once_and_persists",
+      "status": "PASS"
+    },
+    {
+      "id": "video_exit_escape_frees_source_once_and_persists",
+      "status": "PASS"
+    },
+    {
+      "id": "video_exit_close_frees_source_once_and_persists",
+      "status": "PASS"
+    },
+    {
+      "id": "native_play_policy_block_requires_explicit_resume",
+      "status": "PASS"
+    },
+    {
+      "id": "manual_pause_hidden_resume_preserves_pause_and_volume",
+      "status": "PASS"
+    },
+    {
+      "id": "media_error_fallback_and_skip_never_softlock",
+      "status": "PASS"
+    },
+    {
+      "id": "media_pending_fallback_and_skip_never_softlock",
+      "status": "PASS"
+    },
+    {
+      "id": "late_play_promise_after_skip_cannot_restart_or_mutate",
+      "status": "PASS"
+    },
+    {
+      "id": "pending_intro_continue_and_live_load_do_not_replay",
+      "status": "PASS"
+    },
+    {
+      "id": "native_error_after_play_falls_back_and_releases",
+      "status": "PASS"
+    },
+    {
+      "id": "archive_reread_save_load_ru_1280x800",
+      "status": "PASS"
+    },
+    {
+      "id": "archive_reread_save_load_ru_390x844",
+      "status": "PASS"
+    },
+    {
+      "id": "archive_reread_save_load_ru_844x390",
+      "status": "PASS"
+    },
+    {
+      "id": "archive_reread_save_load_en_1280x800",
+      "status": "PASS"
+    },
+    {
+      "id": "archive_reread_save_load_en_390x844",
+      "status": "PASS"
+    },
+    {
+      "id": "archive_reread_save_load_en_844x390",
+      "status": "PASS"
+    },
+    {
+      "id": "archive_manual_replay_ended_stays_read_and_clickable",
+      "status": "PASS"
+    },
+    {
+      "id": "0370_save_unchanged_owners_and_no_format_bump",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Modeled HTMLVideoElement lifecycle; native browser/Telegram playback and device audio require manual verification. Original MP4 is separately inspected/decoded without rewriting."
+  ]
+}

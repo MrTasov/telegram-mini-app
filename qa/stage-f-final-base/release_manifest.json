@@ -1,66 +1,72 @@
 {
-  "version": "0.37.1",
-  "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
-  "passed": true,
-  "baseline": "LAST_BASE_0.37.0_Stage_F_GitHub.zip",
-  "baselineSha256": "442e45cbbb52f6b612c7f43ba1ad568390c56c70c4c3eb01c040c075444c069d",
-  "baselineRuntimeSha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d",
-  "scope": "Official Intro video + Archive rereading only",
-  "regressionGroups": 8,
-  "automatedAssertions": 725,
-  "allGroupsSameRuntime": true,
-  "fullRegressionRepeated": false,
-  "performanceRepeated": false,
-  "historicalBaselineFullPass": {
-    "version": "0.37.0",
-    "runtimeSha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d",
-    "groups": 59,
-    "checks": 12904,
-    "errors": 0
-  },
-  "officialVideo": {
-    "file": "assets/video/last-base-intro.mp4",
-    "bytes": 18124094,
-    "sha256": "b5a6fca2bceb66546dce80d09523ec7acc1440d780326860b39650a782185790",
-    "durationMs": 21250,
-    "byteIdenticalToUserAttachment": true,
-    "transcoded": false,
-    "decodeToNullPassed": true
-  },
-  "introAutomaticTrigger": "New Game only",
-  "continueReplaysIntro": false,
-  "manualArchiveReplayRetained": true,
-  "archiveReadEntriesReopenable": true,
+  "version": "0.37.0",
+  "patch": "stage-f",
+  "reference": "LAST_BASE_0.36.1_Stage_E_Corrective_GitHub.zip",
+  "referenceSha256": "ac1ffa81d421f3b885e91c0d463f676dbdce26489d568cd1b9dace36b844aced",
+  "builtAt": "2026-09-25T06:25:39.766Z",
+  "runtimeSha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d",
   "saveVersion": 17,
-  "newMigration": false,
-  "storySchema": 1,
-  "storyContentRevision": 1,
-  "chapterContentRevision": 6,
-  "acceptedAudioSourcesUnchanged": true,
-  "acceptedGameplayDomainsUnchanged": true,
-  "browserVisualQAPassed": false,
-  "nativeVideoPlaybackVerified": false,
-  "physicalAudioVerified": false,
-  "report": "STAGE_F_FINAL_REPORT_RU.md",
-  "stageGStarted": false,
-  "level2Implemented": false,
-  "nextStageStarted": false,
+  "equipmentSchema": 3,
+  "placementSchema": 2,
+  "chapterSchema": 2,
+  "layout": "R3",
+  "campaignContentRevision": 6,
+  "retainedCampaignContentRevisions": [
+    3,
+    4,
+    5
+  ],
+  "authoredEquipmentInstances": 18,
+  "registryCap": 48,
+  "maximumCurrentEquipment": 42,
+  "constructionTypes": [
+    "furnace",
+    "craft_bench",
+    "utility_workbench",
+    "storage_crate"
+  ],
+  "utilityBuildableTypes": [
+    "base_lamp"
+  ],
+  "placementRooms": [
+    "workshop",
+    "room4",
+    "room5",
+    "room6",
+    "room7",
+    "storage",
+    "reserve_l1"
+  ],
+  "smallCorridorTypes": [
+    "storage_crate",
+    "base_lamp"
+  ],
+  "realBackpackSlots": true,
+  "pickupHoldMs": 3000,
+  "sharedBaseControl": true,
+  "roomPriorityGameplay": false,
+  "carriedSchema": 1,
+  "controlSchema": 1,
+  "roomNamesPersistent": true,
+  "craftGoesToInventory": true,
+  "sameInstancePackUp": true,
+  "packedPower": false,
+  "destructiveDismantle": false,
   "manualAcceptance": "pending",
-  "limitations": [
-    "Modeled DOM/HTMLVideoElement/WebAudio; no native browser, physical phone, Telegram playback or listening certification."
-  ],
-  "patch": "stage-f-final",
-  "builtAt": "2026-09-25T07:04:05.229Z",
-  "stageFStarted": true,
+  "nextStageStarted": false,
+  "level2Implemented": false,
+  "farmAnimalsPaused": true,
+  "toolLevels": {
+    "min": 0,
+    "max": 5
+  },
+  "coreUIState": "transient; reset when leaving Level 1 or loading",
   "automatedGatePassed": true,
-  "validationReport": "qa/results/stage-f-final-release-validation.json",
-  "regressionSummary": "qa/results/stage-f-final-summary.json",
-  "historicalPerformance": [
-    "qa/results/stage-f-performance.json",
-    "qa/results/stage-f-ui-performance.json",
-    "qa/results/stage-f-story-performance.json",
-    "qa/results/stage-f-movement-tail-performance.json"
-  ],
+  "automatedAssertions": 12904,
+  "regressionGroups": 59,
+  "validationReport": "qa/results/stage-f-final-validation.json",
+  "performanceComparison": "qa/results/stage-f-performance.json",
+  "report": "STAGE_F_REPORT_RU.md",
   "files": [
     {
       "file": ".gitignore",
@@ -1139,13 +1145,8 @@
     },
     {
       "file": "assets/manifest.json",
-      "bytes": 279405,
-      "sha256": "d8fbc8e6782d68ecc03ae94661c1944216f5f20ce00752a0f5bd66cd94b13006"
-    },
-    {
-      "file": "assets/video/last-base-intro.mp4",
-      "bytes": 18124094,
-      "sha256": "b5a6fca2bceb66546dce80d09523ec7acc1440d780326860b39650a782185790"
+      "bytes": 279123,
+      "sha256": "6841bc3e8432051c1d737d69213fc76aa2e8be5934973c7442d313cd863799da"
     },
     {
       "file": "AUDIO_AUDIT_RU.md",
@@ -1215,7 +1216,7 @@
     {
       "file": "dev.html",
       "bytes": 15789,
-      "sha256": "e01b226bc30d1215ec7db077fc267a41153b470f75e9983db8e74ef626486960"
+      "sha256": "bc52364d2ee730a2b9f96bab5e0ca9fdbbb4b92ff0432c7f1bc2535f34b8e7c1"
     },
     {
       "file": "docs/art-source/utility_workbench_source.png",
@@ -1489,8 +1490,8 @@
     },
     {
       "file": "docs/STAGE_F_CONTRACT_RU.md",
-      "bytes": 8861,
-      "sha256": "3e2a09ddca30f7cba61e9ebd73258ddc9d2aecebba7d0797e5549bcefce539ac"
+      "bytes": 7637,
+      "sha256": "d9ad21a82137c8e6992e05042b0c6fa7507d10514884e38c607fe3a939930469"
     },
     {
       "file": "docs/STAGE1_RU.md",
@@ -1625,27 +1626,27 @@
     {
       "file": "index.html",
       "bytes": 15751,
-      "sha256": "d4a2b7e48c9704ca58ae576b627596479af161a66588f843c3ed65cbabeaadf7"
+      "sha256": "f5e1cde683c13bfd546c0b0c843e1cceba703ecfa423d047d3932c7a98e4363e"
     },
     {
       "file": "js/build-info.json",
-      "bytes": 18462,
-      "sha256": "09e6d1832f6f223ac17388aabc6928058c7c58df56eb8cda93d0f9a8f9724730"
+      "bytes": 18309,
+      "sha256": "4d4db9742666ce86d490d7d4d22eafd16f754854b4c6fd6f125db039c0bda7f1"
     },
     {
       "file": "js/game.js",
-      "bytes": 1953735,
-      "sha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952"
+      "bytes": 1949610,
+      "sha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d"
     },
     {
       "file": "js/game.js.map",
-      "bytes": 2099766,
-      "sha256": "d7c8a017033ba6c3e3b04df1a851acdb0bd6467a3006f84dead5199239386dcb"
+      "bytes": 2095402,
+      "sha256": "9d7537c092e250f89e5861ff088a3c7100e69d847be2a6129bd30106dd56db2a"
     },
     {
       "file": "locales/en.json",
-      "bytes": 128045,
-      "sha256": "a48ebee71fe77514bd0853925f9b5f20ee435c44f7b74c5d7d5da0d98a91f4ac"
+      "bytes": 127984,
+      "sha256": "179562631b96e06abdedabfc49f6da27c3d2015b51be03cfd2f206d559fe282d"
     },
     {
       "file": "locales/legacy.json",
@@ -1659,8 +1660,8 @@
     },
     {
       "file": "locales/ru.json",
-      "bytes": 188062,
-      "sha256": "a33628eefa1a6ec4c42c6b3ee9b935afa8e8785d94d2044795d3d6f284efb932"
+      "bytes": 187951,
+      "sha256": "ae72c7cc8be87461be635d15c1d052b150cfc0f5538a71090fc7376a7f2e384f"
     },
     {
       "file": "locales/sources.json",
@@ -1684,8 +1685,8 @@
     },
     {
       "file": "package.json",
-      "bytes": 3387,
-      "sha256": "bd206a6f3819c568b056bba818cb48c39c2b43ad4e45e57e02ee72fdde410075"
+      "bytes": 3249,
+      "sha256": "efdcf7ab4b233c02af90c5b3d0f189c64de957314c491c0a63338de5e4190239"
     },
     {
       "file": "PLAYER_VISUAL_CHANGESET.json",
@@ -1859,8 +1860,8 @@
     },
     {
       "file": "qa/campaign-source-contract.cjs",
-      "bytes": 2870,
-      "sha256": "74c0ba3d57a336e257d26c76dcb2861a007c432a50733a06534c08f5994184af"
+      "bytes": 2694,
+      "sha256": "f0ed44de74e350cff86086080267baaece3ad3cd6a1934c0c6860432f08abbff"
     },
     {
       "file": "qa/campaign-source-reference.json",
@@ -3015,7 +3016,7 @@
     {
       "file": "qa/results/main-menu.json",
       "bytes": 9831,
-      "sha256": "4ee8d46b9e604feb83dc1ef0f7cdccae76084a4cb9d3b09ad31ed54a8156b6e6"
+      "sha256": "66e4649949ac13e4a6b81d156d3766a4a8ff4b6154e268b9cc199c8b9fc98681"
     },
     {
       "file": "qa/results/main-menu.log",
@@ -4145,7 +4146,7 @@
     {
       "file": "qa/results/stage-e-audio-corrective.json",
       "bytes": 1887,
-      "sha256": "81e0538ed766fb9ddd818fb537796ddfce61327d2e31ebe71ae6897a07ddb0dc"
+      "sha256": "e308c9304a73165e8bbd4e713718b544e006e262dca408b21bd5938511fe6f49"
     },
     {
       "file": "qa/results/stage-e-audio-corrective.log",
@@ -4185,7 +4186,7 @@
     {
       "file": "qa/results/stage-e-corrective.json",
       "bytes": 2148,
-      "sha256": "6174f7dcc17909bd5c0e6c0d8fe74f07b4451fc25d95f9d98b428923020cfe64"
+      "sha256": "37401e04176f1bff5768fcefadef0cb7abc486b795c14fbc6f9441c7c02c6fa3"
     },
     {
       "file": "qa/results/stage-e-corrective.log",
@@ -4233,74 +4234,9 @@
       "sha256": "d06afd9347b768e47cf706e48aa6a708b5b6f480a92e73b900b28ff924a880c7"
     },
     {
-      "file": "qa/results/stage-f-final-check-build.log",
-      "bytes": 57,
-      "sha256": "cc28fd4d02d3eac8a86171ece8d149859509a7cfc2a79578bec126f138698632"
-    },
-    {
-      "file": "qa/results/stage-f-final-check-main-menu.log",
-      "bytes": 41,
-      "sha256": "269f347fcd8e6596ef947dd58ff203bcccdaa6d66c9929bf01c63a9c2f06bfc4"
-    },
-    {
-      "file": "qa/results/stage-f-final-check-stage-e-audio-corrective.log",
-      "bytes": 40,
-      "sha256": "d85589398e851def24179c8d82652c070d567b770dc1afcc1f7a91cecc773b54"
-    },
-    {
-      "file": "qa/results/stage-f-final-check-stage-e-corrective.log",
-      "bytes": 40,
-      "sha256": "292e26ce19d74a28186c7add93fe73d22f04776df861a6498d47b81875511d7f"
-    },
-    {
-      "file": "qa/results/stage-f-final-check-stage-f-final.log",
-      "bytes": 40,
-      "sha256": "402c85c0ec5db00608804fef5800e4b5bcf25578d47d6ad99aad25b5fe22e328"
-    },
-    {
-      "file": "qa/results/stage-f-final-check-stage-f.log",
-      "bytes": 3669,
-      "sha256": "ce2a40e65ec0983e89c5d13d50c9c6a8bf79f66653ed1077d75fe78926f48cee"
-    },
-    {
-      "file": "qa/results/stage-f-final-check-state-saves.log",
-      "bytes": 40,
-      "sha256": "2beee9d25b6b4343fd8a9296083ab173911f9f768a68111ea180a8ba3ff0b427"
-    },
-    {
-      "file": "qa/results/stage-f-final-check-verification.log",
-      "bytes": 50,
-      "sha256": "407157d320b60393f07437f1decf5d9455a729ee70bc5b981ea9241de4b5bf05"
-    },
-    {
-      "file": "qa/results/stage-f-final-checkpoint.json",
-      "bytes": 3436,
-      "sha256": "f02b4d1a6af66b44a8f5ab14def9fd01375d55bfd717bba76896dd47c02eb45c"
-    },
-    {
-      "file": "qa/results/stage-f-final-media.json",
-      "bytes": 811,
-      "sha256": "377c095715f331be94ad3642b9660fc5a95c72d17aeb458683d4bff20a238e36"
-    },
-    {
-      "file": "qa/results/stage-f-final-release-validation.json",
-      "bytes": 1877,
-      "sha256": "6214070542835383847c1c9c4c1dbcea589e065e35c65bd8901d02a163cda998"
-    },
-    {
-      "file": "qa/results/stage-f-final-summary.json",
-      "bytes": 3436,
-      "sha256": "f02b4d1a6af66b44a8f5ab14def9fd01375d55bfd717bba76896dd47c02eb45c"
-    },
-    {
       "file": "qa/results/stage-f-final-validation.json",
       "bytes": 2026,
       "sha256": "6698a5c5a94e0708d96cf0184b612f5e733a7378063cef7003d39bdd5d8c6389"
-    },
-    {
-      "file": "qa/results/stage-f-final.json",
-      "bytes": 2495,
-      "sha256": "f539a12a5e57849d1eb0d5a059c7c1356b2169ccf1a75c4906cea88cd07473e3"
     },
     {
       "file": "qa/results/stage-f-first-pass-diagnostics.json",
@@ -4345,7 +4281,7 @@
     {
       "file": "qa/results/stage-f.json",
       "bytes": 5082,
-      "sha256": "c20fea597c323475a3d07ee2c8ca8ad68ea1f954c926a8a43153a10b1f8b46df"
+      "sha256": "e06a35bf5eb7d38f5a29b17e7bfd3f70c20afb506a57fb4e329c46fd856299a8"
     },
     {
       "file": "qa/results/stage-f.log",
@@ -4735,7 +4671,7 @@
     {
       "file": "qa/results/state-saves.json",
       "bytes": 5319,
-      "sha256": "262ded5fe116099198c2ac771bb22805cd0395e71f69d2922a0217abcda66cba"
+      "sha256": "2a4e700e4bbb0b7704f588adc4562678ab3d7e00438a3e101d690845e23db071"
     },
     {
       "file": "qa/results/state-saves.log",
@@ -4764,8 +4700,8 @@
     },
     {
       "file": "qa/results/verification.json",
-      "bytes": 42263,
-      "sha256": "e63a98baa0ab60eb3eef83544418b0419d65a7005f0dcbcdff0d0379a31747fe"
+      "bytes": 42190,
+      "sha256": "8d5b6368f686fca1c453cacce3bafcf9508d88cc132ef9ec3938b5109a0219c0"
     },
     {
       "file": "qa/results/verification.log",
@@ -4824,8 +4760,8 @@
     },
     {
       "file": "qa/run.cjs",
-      "bytes": 9461,
-      "sha256": "8d193dee7ea67827ca44b00fb0c9726ac858c193ad3f21bbbab606362d918cbe"
+      "bytes": 9388,
+      "sha256": "0a9cc25ae7f7274ab243e34efbff59c9669a71f69bf5d5d9335669d49dbb6886"
     },
     {
       "file": "qa/runtime.cjs",
@@ -6668,66 +6604,6 @@
       "sha256": "a2e90e9108eb5abd8bf60db0f26172743e070c52513ab8809d791096bac672ae"
     },
     {
-      "file": "qa/stage-f-final-base/index.html",
-      "bytes": 15751,
-      "sha256": "f5e1cde683c13bfd546c0b0c843e1cceba703ecfa423d047d3932c7a98e4363e"
-    },
-    {
-      "file": "qa/stage-f-final-base/js/build-info.json",
-      "bytes": 18309,
-      "sha256": "4d4db9742666ce86d490d7d4d22eafd16f754854b4c6fd6f125db039c0bda7f1"
-    },
-    {
-      "file": "qa/stage-f-final-base/js/game.js",
-      "bytes": 1949610,
-      "sha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d"
-    },
-    {
-      "file": "qa/stage-f-final-base/js/game.js.map",
-      "bytes": 2095402,
-      "sha256": "9d7537c092e250f89e5861ff088a3c7100e69d847be2a6129bd30106dd56db2a"
-    },
-    {
-      "file": "qa/stage-f-final-base/package.json",
-      "bytes": 3249,
-      "sha256": "efdcf7ab4b233c02af90c5b3d0f189c64de957314c491c0a63338de5e4190239"
-    },
-    {
-      "file": "qa/stage-f-final-base/release_manifest.json",
-      "bytes": 281281,
-      "sha256": "0167e7bf9f234546e21db69a0d2e700d262e251acae4a464a4e53affa9330ceb"
-    },
-    {
-      "file": "qa/stage-f-final-base/styles/base.css",
-      "bytes": 13012,
-      "sha256": "cba810b82988eda390807f6f5dca6593ec58748c5198d87ee760c21c5dfda6f0"
-    },
-    {
-      "file": "qa/stage-f-final-base/styles/hud.css",
-      "bytes": 5461,
-      "sha256": "edbd9155f57a7c8ba587a76b6e8a5cef9862806d75e8eaef327411a02b311c04"
-    },
-    {
-      "file": "qa/stage-f-final-base/styles/main-menu.css",
-      "bytes": 5441,
-      "sha256": "a2e90e9108eb5abd8bf60db0f26172743e070c52513ab8809d791096bac672ae"
-    },
-    {
-      "file": "qa/stage-f-final-checks.cjs",
-      "bytes": 3030,
-      "sha256": "703272c82c23d3a6e181151bb592fa5c5c17315c1289768d7d6c1aeb8a7e5339"
-    },
-    {
-      "file": "qa/stage-f-final-source-reference.json",
-      "bytes": 2984,
-      "sha256": "e1330aa68fb8c8b82d3840730b59934067377ef5c73f6f7d0f3582c8922545d5"
-    },
-    {
-      "file": "qa/stage-f-final.cjs",
-      "bytes": 11908,
-      "sha256": "d398ec69b2d2fb47362ef731278056801b6c0a1e6f22a8b32bea0f4562fc6e55"
-    },
-    {
       "file": "qa/stage-f-movement-performance.cjs",
       "bytes": 4341,
       "sha256": "14f009d84fd9c526d6f044b9c9db6b6ba9b1ead2f188d9742855997ef362db06"
@@ -6759,8 +6635,8 @@
     },
     {
       "file": "qa/stage-f.cjs",
-      "bytes": 21261,
-      "sha256": "7820514d4537ef5aa0a44d9b4766b852104dd7398484b8babc7f56b34ddfcd64"
+      "bytes": 20886,
+      "sha256": "d112cedb1365033b6f1d7d224c6e786d5bdcbd57653b2d54a17513c7846ba247"
     },
     {
       "file": "qa/stage0/audit/assets.json",
@@ -7393,11 +7269,6 @@
       "sha256": "edb41b741abad5494a2e4ad720f88c062877512b41b09b13d2b4ab15759c035e"
     },
     {
-      "file": "qa/story-video-harness.cjs",
-      "bytes": 1579,
-      "sha256": "f04e3a6e48dc36a878bd6fd76b16abb180029fe5be20889a44c77aefe8f2ae5c"
-    },
-    {
       "file": "qa/systems.cjs",
       "bytes": 13412,
       "sha256": "c02fb3f7e473fb48b33776df3f4ec35377ce44c738cd5ecebc6b03b36e33b35a"
@@ -7429,13 +7300,13 @@
     },
     {
       "file": "README_RU.md",
-      "bytes": 3785,
-      "sha256": "aadd8703485b0ca7aae234e6070ceced13d4a442fac8ee5454a086089e750e10"
+      "bytes": 4243,
+      "sha256": "23c3bda1f7e9cd4514f6c99e759f1ce87f6764d2a52643379f79be3fae0c3333"
     },
     {
       "file": "README.md",
-      "bytes": 2411,
-      "sha256": "3dc36dd38f95717b3012bb04c351d17049f5608e55d0d09cb3cd59ece4a9ee8a"
+      "bytes": 1860,
+      "sha256": "42fb4322d51d1e152cb4e23caab898b2a2373eaa47ee1e90dfd775d1b691d826"
     },
     {
       "file": "src/assets/catalog.js",
@@ -7444,8 +7315,8 @@
     },
     {
       "file": "src/assets/manifest.js",
-      "bytes": 95554,
-      "sha256": "cf44b9bfa66336ada97e8e6b3d570399f740f101929aaf90ea88c66d4636156a"
+      "bytes": 95355,
+      "sha256": "daa3b10f02724e99fe3c3ac485bff3e3c99f7f31c3b04a2d1ba3e5858ef4f9e2"
     },
     {
       "file": "src/assets/resources.js",
@@ -7689,8 +7560,8 @@
     },
     {
       "file": "src/i18n/catalogs.js",
-      "bytes": 417401,
-      "sha256": "90a5af04555fcd488e99917ce41b4dd6f452b4f7ea455c72bb272ecba5d8260e"
+      "bytes": 417237,
+      "sha256": "3e427189cac9d9ef26bf52f26aab7685c77ba303bbe916ece6526c026d1dfc25"
     },
     {
       "file": "src/i18n/runtime.js",
@@ -7749,8 +7620,8 @@
     },
     {
       "file": "src/manifest.json",
-      "bytes": 3192,
-      "sha256": "acfb8d51112c71261062f48bc3381108e05d131eb9bf45b29cd17a179344721b"
+      "bytes": 3170,
+      "sha256": "8f7834570e008b7bc0c8e1686c9718e5491e53fe688fa8d40e297577670aa1c5"
     },
     {
       "file": "src/player/controls.js",
@@ -7785,7 +7656,7 @@
     {
       "file": "src/save/envelope.js",
       "bytes": 2824,
-      "sha256": "f09324090871ed6029ad18b023224ef5b165449922776283a2ff7f3670e127a5"
+      "sha256": "dd6a743aa1518cb1caec0379b30adad7a5832ac6ce45fc1205f0b4aa0315ee55"
     },
     {
       "file": "src/save/finalize.js",
@@ -7795,7 +7666,7 @@
     {
       "file": "src/save/format.js",
       "bytes": 3671,
-      "sha256": "4a3ba417488ec3ac1fc50a931c6963498dc38f30551fd32710f297fb3f7f25f7"
+      "sha256": "59bd36452dc2c4e142b22c3502849f8899a742ec6bc95c277d241063454aa392"
     },
     {
       "file": "src/save/legacy-progress.js",
@@ -7814,8 +7685,8 @@
     },
     {
       "file": "src/save/slots.js",
-      "bytes": 30885,
-      "sha256": "f6f31a4a29af733cd38b4ae657df3ce2ea47d74281fb0f7b092f39a4db5768d1"
+      "bytes": 30882,
+      "sha256": "973fd6b78b1cdab051dfab62d37264254d4f552207805d67afe7b1436d48b9ab"
     },
     {
       "file": "src/simulation/commands.js",
@@ -7849,8 +7720,8 @@
     },
     {
       "file": "src/story/definitions.js",
-      "bytes": 1824,
-      "sha256": "1648b3ffd95d94a38394d8021fefc0b84b710d025386907202f5dd38121ba3e5"
+      "bytes": 1779,
+      "sha256": "3749c8906e0ff01d23432a206e785572134ba9909c2143418df7cb991e8e790f"
     },
     {
       "file": "src/story/domain.js",
@@ -7859,8 +7730,8 @@
     },
     {
       "file": "src/story/player.js",
-      "bytes": 8982,
-      "sha256": "d0946884706a4d4a28cd4b4f772f1772f1da88d03e913218bb45afab06803ef7"
+      "bytes": 8032,
+      "sha256": "4a929eededed24a8d4b2b2bdacf5b84c8e18d19fa6bb73b72fa23630d8140c2e"
     },
     {
       "file": "src/story/runtime.js",
@@ -7868,14 +7739,9 @@
       "sha256": "8901092e0cc258d55953ed859d38c3c93af723dbbaa7cf12006189ed75a3e58a"
     },
     {
-      "file": "src/story/video.js",
-      "bytes": 2433,
-      "sha256": "6dd62a5fda9f27dafb47ab564c4c5e58ab07d2107fd00809d5e55bb7cf7a03b2"
-    },
-    {
       "file": "src/ui/archive.js",
-      "bytes": 5374,
-      "sha256": "e7fd1b10b590898eb2b6276eeabcb7ead0cd0c5a27a52ab1c6be6a98a8823a04"
+      "bytes": 5043,
+      "sha256": "e049ea18bddbfa22d0b0e6e766aff32e401e5c283f95619843cc295b935e38b9"
     },
     {
       "file": "src/ui/base-control.js",
@@ -8133,16 +7999,6 @@
       "sha256": "9cd341f102eca03493bd8999f8e14729488caa79e78775d56ff0b9e5fd36945a"
     },
     {
-      "file": "STAGE_F_FINAL_CHANGESET.json",
-      "bytes": 11495,
-      "sha256": "0742c7a63934e44e9fb7c37be5a8efce168ebe5e53c7e995e5ea280c40b53b1e"
-    },
-    {
-      "file": "STAGE_F_FINAL_REPORT_RU.md",
-      "bytes": 9948,
-      "sha256": "ed41e4fcc5436cb3850cb53f5bd89c069b7862bea3aed308c938e1c04b63cdc4"
-    },
-    {
       "file": "STAGE_F_REPORT_RU.md",
       "bytes": 23657,
       "sha256": "5686ca56d95b614554ecf312c3e0c8b42356a40bbcd29805c7830a20e0f2eb6a"
@@ -8169,8 +8025,8 @@
     },
     {
       "file": "tools/assets.cjs",
-      "bytes": 10475,
-      "sha256": "3a53735ef93cb58fccbed86a497f1265e24ee03c747710a24b55e4df9051c947"
+      "bytes": 10014,
+      "sha256": "2cff58ce8e6e5ed32e1091432c37ec57ac73fc0acfb015e78c324804ce0266a7"
     },
     {
       "file": "tools/audio-corrective-preparation.json",
@@ -8288,11 +8144,6 @@
       "sha256": "cf61c1b8d0d03e78a9fe1b5c2cdbaf10e7b774d09229f2474038aa70352978e5"
     },
     {
-      "file": "tools/package-stage-f-final.cjs",
-      "bytes": 8537,
-      "sha256": "54d9f266518fbe6d8b5ced05dfd328460c473a3cd4f5421795a49a0ac856d76a"
-    },
-    {
       "file": "tools/package-stage-f.cjs",
       "bytes": 7742,
       "sha256": "ce5d6e02b994f3a5956787f5863eb2e6515ef18add9c387c2d8e3f51abf789f5"
@@ -8338,11 +8189,6 @@
       "sha256": "28932c28385afa441c8916c54cf51e7db199639f6dfe06f0b3132effbe47d4d3"
     },
     {
-      "file": "tools/stage-f-final-reference.cjs",
-      "bytes": 1208,
-      "sha256": "ea204c54d5aba0ff19fbd1e29c24455053ca3c7ac7b394aaca6ffdeba211d454"
-    },
-    {
       "file": "tools/stage-f-reference.cjs",
       "bytes": 1195,
       "sha256": "01b3e0f07ecf700f8edd97b1e1de223b223e692def8a18fc918135b4d078e90d"
@@ -8357,5 +8203,51 @@
       "bytes": 5822,
       "sha256": "f8c3ff410643f9543d98259269ebefa7538db0afa1b1c5e1476418d3639a2535"
     }
+  ],
+  "researchSchema": 1,
+  "researchContentRevision": 1,
+  "researchProjects": 4,
+  "blueprints": 2,
+  "finiteSources": 3,
+  "sourceDataTotal": 65,
+  "researchCostTotal": 60,
+  "blueprintConsumption": false,
+  "researchCreatesEquipment": false,
+  "productionAvailability": "shared data-driven policy over accepted Craft/Inventory/Placement",
+  "legacyResearchMigration": "preserve existing production rights; no Data, Blueprints or completed research grants",
+  "stageFStarted": true,
+  "performanceFollowUps": [
+    "qa/results/stage-f-ui-performance.json",
+    "qa/results/stage-f-story-performance.json",
+    "qa/results/stage-f-movement-tail-performance.json"
+  ],
+  "browserVisualQAPassed": false,
+  "physicalAudioVerified": false,
+  "reportedPCSilenceRootCause": "unconfirmed",
+  "passed": true,
+  "baseline": "LAST_BASE_0.36.1_Stage_E_Corrective_GitHub.zip",
+  "baselineSha256": "ac1ffa81d421f3b885e91c0d463f676dbdce26489d568cd1b9dace36b844aced",
+  "storyCases": 53,
+  "allGroupsSameRuntime": true,
+  "performanceScenes": 12,
+  "performanceUITabCases": 12,
+  "performanceMovementRows": 4,
+  "performancePassMeaning": "coverage/error checks; includes unfavorable timing results; not a browser or real-device FPS guarantee",
+  "storySchema": 1,
+  "storyContentRevision": 1,
+  "storyEntries": 4,
+  "introDurationMs": 18000,
+  "introMedia": "localized text, no generated assets",
+  "introOnLegacyContinue": false,
+  "sharedUnlocksPersonalWatched": true,
+  "chapterContentRevision": 6,
+  "stageGStarted": false,
+  "limitations": [
+    "CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.",
+    "Moving-light scenes include continuously changing drone positions and player aim; night scene runs all eight searchlights.",
+    "Command dispatch excludes OS/browser delivery. Navigation covers complete path queries.",
+    "Heap deltas include harness and serialization allocations, not a browser/device memory budget.",
+    "Maximum-equipment comparison enables the same eight lamps in both versions; production is queued but deliberately disabled so power allocation policy does not confound render cost.",
+    "Modeled DOM; excludes native CSS layout, codecs and device GPU. No new media assets or decoders are shipped."
   ]
 }

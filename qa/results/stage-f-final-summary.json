@@ -1,0 +1,108 @@
+{
+  "version": "0.37.1",
+  "scope": "targeted-final-two-changes",
+  "startedAt": "2026-09-25T06:58:30.508Z",
+  "finishedAt": "2026-09-25T07:01:46.584Z",
+  "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+  "runtimeUnchanged": true,
+  "complete": true,
+  "passed": true,
+  "groups": 8,
+  "checks": 725,
+  "failedChecks": 0,
+  "runs": [
+    {
+      "id": "build",
+      "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 0,
+      "failedChecks": 0,
+      "elapsedMs": 347,
+      "log": "qa/results/stage-f-final-check-build.log",
+      "report": null
+    },
+    {
+      "id": "verification",
+      "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 449,
+      "failedChecks": 0,
+      "elapsedMs": 373,
+      "log": "qa/results/stage-f-final-check-verification.log",
+      "report": "qa/results/verification.json"
+    },
+    {
+      "id": "stage-f",
+      "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 53,
+      "failedChecks": 0,
+      "elapsedMs": 15623,
+      "log": "qa/results/stage-f-final-check-stage-f.log",
+      "report": "qa/results/stage-f.json"
+    },
+    {
+      "id": "stage-f-final",
+      "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 22,
+      "failedChecks": 0,
+      "elapsedMs": 33175,
+      "log": "qa/results/stage-f-final-check-stage-f-final.log",
+      "report": "qa/results/stage-f-final.json"
+    },
+    {
+      "id": "state-saves",
+      "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 58,
+      "failedChecks": 0,
+      "elapsedMs": 13915,
+      "log": "qa/results/stage-f-final-check-state-saves.log",
+      "report": "qa/results/state-saves.json"
+    },
+    {
+      "id": "main-menu",
+      "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 106,
+      "failedChecks": 0,
+      "elapsedMs": 111992,
+      "log": "qa/results/stage-f-final-check-main-menu.log",
+      "report": "qa/results/main-menu.json"
+    },
+    {
+      "id": "stage-e-audio-corrective",
+      "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 17,
+      "failedChecks": 0,
+      "elapsedMs": 12537,
+      "log": "qa/results/stage-f-final-check-stage-e-audio-corrective.log",
+      "report": "qa/results/stage-e-audio-corrective.json"
+    },
+    {
+      "id": "stage-e-corrective",
+      "runtimeSha256": "f150417f1d5fa1899eb91fd2a2575d180848cd0322bcc41676f8306b27aee952",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 20,
+      "failedChecks": 0,
+      "elapsedMs": 8111,
+      "log": "qa/results/stage-f-final-check-stage-e-corrective.log",
+      "report": "qa/results/stage-e-corrective.json"
+    }
+  ],
+  "fullRegressionRepeated": false,
+  "performanceRepeated": false,
+  "limitations": [
+    "Modeled DOM/HTMLVideoElement/WebAudio; no native browser, physical phone, Telegram playback or listening certification."
+  ]
+}

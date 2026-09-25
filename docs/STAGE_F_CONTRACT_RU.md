@@ -1,14 +1,16 @@
-# Stage F — Intro и Archive, 0.37.0
+# Stage F — Intro и Archive, 0.37.1 Final
 
-Authoritative input: **0.36.1 Stage E Corrective**. Runtime baseline SHA-256:
-`016d446011c4dfe3b6939fde050e2d1b27dc0614dea6316b8dff250edb86f3f4`.
+Stage F основан на 0.36.1; финальные два изменения — на принятой **0.37.0 Stage F**.
+Runtime непосредственной основы SHA-256:
+`201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d`.
 
 ## Разделение ответственности
 
 - `src/story/definitions.js`: записи, категории, условия открытия, ключи RU/EN, временные интервалы субтитров, необязательная ссылка на media.
 - `src/story/domain.js`: чистый authoritative owner открытий и персональных отметок. Без DOM, производства, инвентаря, медиадекодеров или паузы мира.
 - `src/story/runtime.js`: текущие факты Chapter/Research, локальная авторизация, команды, save adapter.
-- `src/story/player.js`: одна локальная поверхность просмотра; управление Play/Pause/Skip/Close и жизненным циклом будущего media adapter.
+- `src/story/player.js`: одна локальная поверхность просмотра; управление Play/Pause/Skip/Close и жизненным циклом media adapter.
+- `src/story/video.js`: ленивый нативный HTMLVideoElement, локальный media clock, browser policy, громкость и освобождение источника.
 - `src/ui/archive.js`: клиент существующего Command Core с общими routes, Back, session state и внутренней прокруткой.
 
 `log.*` — отдельное пространство идентификаторов. Оно не является research ID,
@@ -57,19 +59,28 @@ Continue незаконченного Intro → `interrupted`, без автом
 
 ## Presentation и будущие медиа
 
-Сейчас Intro — 18 секунд, четыре текстовых кадра RU/EN, Pause/Resume и Skip;
-пропуск сразу возвращает существующее начало Chapter 1. Изображения, озвучка и
-видео не поставляются и не генерируются. Текст записи всегда читается в Archive.
+В 0.37.1 подключён официальный ролик пользователя: `assets/video/last-base-intro.mp4`,
+21,25 секунды, без изменения байтов. Автоматический показ — только New Game.
+Окончание определяется событием `ended`; субтитры — по `currentTime`. Прежний
+таймер текстового Intro не может обрезать видео. Continue не запускает показ.
+Прежнее явное действие повторного просмотра в Archive сохранено.
 
-Media descriptor хранит kind/assetId/alt. Изображения используют существующий
-Asset Manifest/GameAssets. Audio/video предусмотрены через registerMediaAdapter;
-реальный нативный adapter и настоящие media будут отдельной поставкой. Их отсутствие
-или ошибка возвращают текстовый fallback и не блокируют выход.
+Media descriptor хранит kind/assetId/alt. MP4 зарегистрирован в optional-разделе
+`videos` Asset Manifest; загрузка начинается только при открытии плеера.
+Изображения используют GameAssets; audio adapter остаётся будущим расширением.
+Ошибка видео возвращает текстовый fallback и Skip. Запрет autoplay показывает
+«Продолжить» и ожидает жест пользователя; обход политики браузера не применяется.
 
-Один активный handle; переключение/закрытие/restore освобождают его. Контракт
-передаёт master volume и visibility/manual pause, требует dispose. Синхронная
-ошибка во время создания не оставляет handle жить после fallback. Поздний callback
-проверяет generation. Новые AudioContext и постоянные timers/RAF не создаются.
+Один активный handle; закрытие/restore освобождают видео, события и источник.
+Контракт передаёт master volume и visibility/manual pause, требует dispose,
+поддерживает `timeMs`, `onEnded`, `onBlocked`, `onError`. Поздние callbacks
+проверяют generation/attempt. Дополнительного AudioContext/RAF нет. Единственный
+15-секундный watchdog ожидания начала воспроизведения очищается при playing,
+pause, ошибке или dispose; в обычном gameplay он не работает.
+
+Карточка Archive — единая нативная кнопка. Отметка read меняет подпись, но не
+доступность документа; повторное чтение не отправляет лишнюю команду. Формат
+состояния Archive, actor/request/revision/idempotency и migrations не меняются.
 
 В текущем single-player используется явная причина `story:local`. Закрытие
 освобождает только её. При будущем сетевом transport этот локальный presentation
@@ -80,10 +91,10 @@ adapter необходимо заменить политикой локальн�
 
 **Roadmap intent preserved / implementation adapted to current accepted architecture.**
 
-Цель Intro/первого Log/Archive/субтитров/персонального просмотра сохранена. Старое
-указание об обязательном внешнем видео заменено актуальным решением пользователя:
-текст и документы сейчас, настоящие media позже, без обязательного AI-видео для
-каждой главы. Сценарный текст входит в Stage F для ручной приёмки; генерации assets
-нет. Research и Construction из 0.36.1 не заменяются.
+Цель Intro/первого Log/Archive/субтитров/персонального просмотра сохранена.
+Обязательные AI-видео для каждой главы не добавлены. По финальному запросу
+пользователя добавлен только предоставленный официальный Intro; дальнейшие
+записи остаются текстовыми. Новые изображения/озвучка не генерировались.
+Research и Construction из принятой архитектуры не заменяются.
 
 Stage G, Level 2, Farm/Animals и дальнейшее сюжетное раскрытие не реализованы.
