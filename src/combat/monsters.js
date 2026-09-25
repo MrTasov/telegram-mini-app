@@ -108,6 +108,7 @@ window.V017Monsters=(()=>{
       const blocker=V015Base.blocker(z,{x:o.x+o.w/2,y:o.y+o.h/2});
       if((!blocker||blocker.wall?.id===o.id)&&lineClear(z.x,z.y,p.x,p.y,0,'surface',o.id)){if(window.V018Build)V018Build.damage(o,blast.wallDamage*boost);else V015Base.damage(o,blast.wallDamage*boost);}
     }
+    window.GameDefense?.blast(z,blast.wallRange*boost,blast.wallDamage*boost);
     return true;
   }
   const oldHit=hitZombie;hitZombie=function(z,...args){if(z)prepare(z);const alive=z?.alive,out=oldHit(z,...args);if(alive&&!z.alive){const r=prepare(z);r.deadAt=performance.now();r.deathAngle=angleOf(r.angle-Math.PI/2);r.jump=null;r.target=null;if(stats(z,false).behavior==='explosive')explode(z);}return out;};
@@ -193,6 +194,7 @@ window.V017Monsters=(()=>{
           r.angle=Math.atan2(wall.y+wall.h/2-z.y,wall.x+wall.w/2-z.x);continue;
         }
       }else{z.state='wander';r.target=null;r.lastSeen=null;}
+      const defenseTarget=window.GameDefense?.breachTarget(z,now,s);if(defenseTarget){target=defenseTarget;z.state='chase';}
       let angle;
       if(target)angle=Math.atan2(target.y-z.y,target.x-z.x);
       else {if(now>z.nextWanderChange){const h=hash(r.id+Math.floor(now/1000));z.wanderAngle=h*Math.PI*2;z.nextWanderChange=now+4000+h*3000;r.pauseUntil=now+600+hash(r.id*11+Math.floor(now/1000))*1600;}if(now<r.pauseUntil)continue;angle=z.wanderAngle;}

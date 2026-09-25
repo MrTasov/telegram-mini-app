@@ -1,0 +1,143 @@
+{
+  "version": "0.39.0",
+  "runtimeSha256": "05deb52e31b631278e2f861da8e57b13a99cf9679a326c9f7db9b6dd429628b7",
+  "passed": 33,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "baseline_0380_exact",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions_power_cost_DPS_and_no_gate",
+      "status": "PASS"
+    },
+    {
+      "id": "automatic_turret_craft_inventory_place_pickup_same_instance_save",
+      "status": "PASS"
+    },
+    {
+      "id": "heavy_turret_craft_inventory_place_pickup_same_instance_save",
+      "status": "PASS"
+    },
+    {
+      "id": "searchlight_craft_inventory_place_pickup_same_instance_save",
+      "status": "PASS"
+    },
+    {
+      "id": "damage_destroy_rebuild_keeps_identity_ammo_upgrade",
+      "status": "PASS"
+    },
+    {
+      "id": "rebuild_occupied_no_spend_and_critical_routes",
+      "status": "PASS"
+    },
+    {
+      "id": "no_remote_scene_placement_and_no_overlap",
+      "status": "PASS"
+    },
+    {
+      "id": "repair_material_shortage_and_missing_hammer_atomic",
+      "status": "PASS"
+    },
+    {
+      "id": "duplicate_conflict_stale_remote_actor_and_save_receipts",
+      "status": "PASS"
+    },
+    {
+      "id": "local_Core_Remote_share_switch_state_and_saved_direction",
+      "status": "PASS"
+    },
+    {
+      "id": "searchlight_rotated_bunker_power_aim_and_shadow_geometry",
+      "status": "PASS"
+    },
+    {
+      "id": "turret_damage_real_power_ammo_LOS_and_disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "breach_actual_enemy_attack_and_destroyed_recoverable",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_wall_support_loss_and_same_id_replacement",
+      "status": "PASS"
+    },
+    {
+      "id": "migration_0380_all_old_owners_intact_and_identity_ammo_level",
+      "status": "PASS"
+    },
+    {
+      "id": "atomic_save_reject_hp",
+      "status": "PASS"
+    },
+    {
+      "id": "atomic_save_reject_ammo",
+      "status": "PASS"
+    },
+    {
+      "id": "atomic_save_reject_angle",
+      "status": "PASS"
+    },
+    {
+      "id": "atomic_save_reject_duplicate",
+      "status": "PASS"
+    },
+    {
+      "id": "atomic_save_reject_missing_receipts",
+      "status": "PASS"
+    },
+    {
+      "id": "atomic_save_reject_unknown_type",
+      "status": "PASS"
+    },
+    {
+      "id": "UI_ru_1280",
+      "status": "PASS"
+    },
+    {
+      "id": "UI_ru_390",
+      "status": "PASS"
+    },
+    {
+      "id": "UI_ru_844",
+      "status": "PASS"
+    },
+    {
+      "id": "UI_en_1280",
+      "status": "PASS"
+    },
+    {
+      "id": "UI_en_390",
+      "status": "PASS"
+    },
+    {
+      "id": "UI_en_844",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_wall_deck_click_opens_without_forced_descent",
+      "status": "PASS"
+    },
+    {
+      "id": "navigation_checks_candidate_position_not_current_player",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_paid_output_collects_once_as_same_instance_token",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_stored_turret_migrates_without_loss_with_full_backpack",
+      "status": "PASS"
+    },
+    {
+      "id": "no_console_errors",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "UI uses modeled DOM; native Canvas checks are separate. Physical PC/mobile/Telegram acceptance remains manual."
+  ]
+}

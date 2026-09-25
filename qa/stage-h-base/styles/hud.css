@@ -1,0 +1,76 @@
+/* Display-only layout; existing controls, input targets and game coordinates stay intact. */
+:root{
+  --hud-safe-left:max(env(safe-area-inset-left,0px),var(--v011-safe-left,0px));
+  --hud-safe-right:max(env(safe-area-inset-right,0px),var(--v011-safe-right,0px));
+  --hud-safe-bottom:max(env(safe-area-inset-bottom,0px),var(--v011-safe-bottom,0px));
+  --hud-font:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+#hud,body #heldItemName{
+  font-family:var(--hud-font);font-weight:550;font-variant-numeric:tabular-nums lining-nums;
+  color:#f1f4ee;text-shadow:0 1px 2px #000,0 0 1px #000;
+  -webkit-text-stroke:.25px #10221acc;paint-order:stroke fill;
+  background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none;
+  pointer-events:none;user-select:none;
+}
+body #hud{
+  position:fixed;left:calc(var(--hud-safe-left) + 12px);right:auto;
+  top:max(env(safe-area-inset-top,0px),calc(var(--v011-game-top) - 7px))!important;display:flex;flex-direction:column;gap:0;
+  padding:0;margin:0;font-size:10px;line-height:13px;width:max-content;opacity:.7;
+}
+#hud #v016WorldClock,#hudPerformance{
+  display:grid;grid-template-columns:2.6em 3ch 5ch 2ch;column-gap:.18em;align-items:baseline;
+}
+#hudDayLabel,#hudFPSLabel{grid-column:1;font-size:.9em;letter-spacing:.03em}
+#hudDay,#hudFPS{grid-column:2;text-align:left;white-space:nowrap}
+#hudTime{grid-column:3/5;text-align:left;white-space:nowrap}
+#hudFrameTime{grid-column:3;text-align:right;white-space:nowrap}
+#hudFrameUnit{grid-column:4;font-size:.9em}
+#hud #hudPerformance[data-fps="false"]{grid-template-columns:5ch 2ch}
+#hudPerformance[data-fps="false"] #hudFrameTime{grid-column:1;text-align:left}
+#hudPerformance[data-fps="false"] #hudFrameUnit{grid-column:2}
+body #heldItemName{
+  display:grid;grid-template-columns:minmax(0,1fr) 5ch 4ch;gap:6px;align-items:baseline;
+  width:min(220px,62vw);font-size:12px!important;line-height:17px;
+  bottom:calc(94px + var(--hud-safe-bottom))!important;z-index:115;
+  left:calc(50% + (var(--hud-safe-left) - var(--hud-safe-right))/2);transform:translateX(-50%);
+}
+#equippedItemName{color:#d9e2da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#heldItemName #ammoHud,#hudReserve{
+  position:static!important;display:block;top:auto!important;left:auto;right:auto;
+  background:none;border:0;padding:0;margin:0;border-radius:0;font:inherit;
+  white-space:nowrap;text-align:right;color:inherit;box-shadow:none;
+}
+#heldItemName #hudReserve{color:#c8d4ca}
+body #heldItemName[data-firearm="false"]{grid-template-columns:minmax(0,1fr);text-align:center}
+#heldItemName[data-firearm="false"] #equippedItemName{text-transform:uppercase}
+#hud[hidden],#hud [hidden],#heldItemName[hidden],#heldItemName [hidden],#v010Minimap[hidden],#locationName{display:none!important}
+#versionBadge{display:none}
+/* Same combat-HUD safe origin for item text, vitals and quick slots. */
+body #v163Vitals{bottom:calc(60px + var(--hud-safe-bottom))!important;left:calc(50% + (var(--hud-safe-left) - var(--hud-safe-right))/2)}
+body #hotbar{bottom:calc(12px + var(--hud-safe-bottom))!important;left:calc(50% + (var(--hud-safe-left) - var(--hud-safe-right))/2)}
+/* Route-stop previously crossed the taller item line on PC; keep a clear gap. */
+body #v014RouteStop{bottom:calc(120px + var(--hud-safe-bottom))!important;left:calc(50% + (var(--hud-safe-left) - var(--hud-safe-right))/2)}
+#displaySettings .settingTitle{margin:0 0 5px;font:600 12px var(--hud-font);letter-spacing:.08em}
+.displaySetting{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:44px;font-size:13px}
+.displaySetting button{flex:0 0 68px;min-height:36px;padding:5px 8px;border:1px solid #71867b;border-radius:6px;background:#20352e;color:#d7e1d7;font:600 11px var(--hud-font);cursor:pointer;touch-action:manipulation}
+.displaySetting button[aria-checked="true"]{background:#3c5945;border-color:#a0b498;color:#eff6e9}
+.displaySetting button:focus-visible{outline:2px solid #e0c991;outline-offset:2px}
+#displaySaveStatus{font-size:11px;line-height:1.4;color:#e1bc8c;margin:5px 0 0}
+#displaySaveStatus[hidden]{display:none}
+@media(orientation:landscape) and (max-height:550px){
+  #hud{font-size:10px!important;line-height:13px}body #heldItemName{font-size:11px!important;line-height:16px}
+}
+@media(max-width:360px){body #heldItemName{width:min(220px,68vw);gap:5px;font-size:11px!important}}
+/* Portrait text fits between the existing .18w/.82w joystick centers (92px circles).
+   Safe-area changes can move the bar vertically through those circles. */
+@media(orientation:portrait){
+  body[data-control-mode="MOBILE"] #heldItemName{width:min(180px,calc(64vw - 112px));grid-template-columns:minmax(0,1fr) 5ch 4ch;gap:4px;font-size:11px!important}
+  body[data-control-mode="MOBILE"] #heldItemName[data-firearm="false"]{grid-template-columns:minmax(0,1fr)}
+}
+@media(orientation:portrait) and (max-width:360px){
+  body[data-control-mode="MOBILE"] #heldItemName[data-firearm="true"]{grid-template-columns:5ch 4ch;justify-content:space-between;row-gap:0}
+  body[data-control-mode="MOBILE"] #heldItemName[data-firearm="true"] #equippedItemName{grid-column:1/-1;text-align:center}
+  body[data-control-mode="MOBILE"] #heldItemName[data-firearm="true"] #ammoHud{grid-column:1;text-align:left}
+  body[data-control-mode="MOBILE"] #heldItemName[data-firearm="true"] #hudReserve{grid-column:2}
+  body[data-control-mode="MOBILE"] #v014RouteStop{bottom:calc(138px + var(--hud-safe-bottom))!important}
+}

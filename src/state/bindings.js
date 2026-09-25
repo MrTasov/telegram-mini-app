@@ -38,7 +38,7 @@ GameState.register('drones',{
 },{source:'drones/companion.js',saved:['robots014'],transient:['route','motion','return progress','UI selection','combat clocks']});
 
 GameState.register('turrets',{
-  get guns(){return window.V016Turret?.guns;},get system(){return window.V016Turret;}
+  get guns(){return window.GameDefense?GameDefense.guns():window.V016Turret?.guns;},get system(){return window.GameDefense||window.V016Turret;}
 },{source:'base/turrets.js',saved:['turret016'],transient:['placement','target','obstacle cache','muzzle flash']});
 
 GameState.register('power',{

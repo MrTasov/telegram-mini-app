@@ -49,17 +49,17 @@ if(phase>=3){
  ok('drone.ammoFromDefinitionIncludingRetiredPin',`(()=>{const d=V014Robots;d.definition.combat.ammoType='qa_round';scene=d.state.scene;player.x=d.state.x;player.y=d.state.y;d.state.ammo=0;bag=[{type:'ammo',qty:30},{type:'qa_round',qty:7},{type:'qa_round',qty:6,locked:true}];const done=d.reload();d.definition.combat.ammoType='ammo';return done&&d.state.ammo===13&&bag[0].qty===30&&bag[2]===null;})()`);
  ok('drone.independentFireInterval',`(()=>{const old=V09Craft.weapons.rifle_ak74.delay;V09Craft.weapons.rifle_ak74.delay=987;const unchanged=V014Robots.combat.intervalMs===155;V09Craft.weapons.rifle_ak74.delay=old;return unchanged;})()`);
  reset();
- E(`ITEM.qa_turret={name:'QA turret',deployable:true,turret:{...V016Turret.definition,idPrefix:'qa_mount_',combat:{...V016Turret.combat,ammoType:'qa_round',damage:7,capacity:10,range:220,intervalMs:50}}};bag=[];addItem('qa_turret',2);window.qaTurretItems=bag.filter(Boolean);`);
- ok('turrets.newTypeUsesExistingEngine','qaTurretItems.length===2&&qaTurretItems.every(V016Turret.validItem)');
- ok('turrets.typeAndInstanceAreSeparate',`qaTurretItems[0].type==='qa_turret'&&qaTurretItems[0].turretData.type==='qa_turret'&&qaTurretItems[0].turretData.id!==qaTurretItems[1].turretData.id&&qaTurretItems[0].turretData.id.startsWith('qa_mount_')`);
- ok('turrets.mismatchedTypeRejected',`!V016Turret.validItem({...qaTurretItems[0],type:'hmg016'})`);
- ok('turrets.definitionDamageAndCapacity',`V016Turret.damage({...qaTurretItems[0].turretData,level:5})===11&&!V016Turret.validItem({...qaTurretItems[0],turretData:{...qaTurretItems[0].turretData,ammo:11}})`);
- ok('turrets.packExistingPhysicalInstance',`(()=>{scene='surface';const t=V016Turret.guns[0];player.x=t.x;player.y=t.y;window.qaPlacementPoint={x:t.x,y:t.y};const id=t.id;return V016Turret.pack(t)&&bag.some(s=>s?.turretData?.id===id);})()`);
- ok('turrets.placeNewType',`V016Turret.startPlacement(qaTurretItems[0])&&V016Turret.selectPoint(qaPlacementPoint.x,qaPlacementPoint.y)&&V016Turret.place()`);
- ok('turrets.reloadOwnAmmoOnly',`(()=>{window.qaPlaced=V016Turret.guns.find(t=>t.type==='qa_turret');addItem('qa_round',15);addItem('ammo',20);return V016Turret.reload(qaPlaced)===10&&qaPlaced.ammo===10&&bagCount('qa_round')===5&&bagCount('ammo')===20;})()`);
- ok('turrets.roundtripNewTypeAndID',`(()=>{const id=qaPlaced.id;restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())));window.qaPlaced=V016Turret.guns.find(t=>t.id===id);return qaPlaced?.type==='qa_turret'&&qaPlaced.ammo===10;})()`);
- ok('turrets.duplicateInstanceRejected',`(()=>{const d=captureGameProgress();d.turret016.guns.push({...d.turret016.guns[0]});try{decodeGameProgress(JSON.stringify(d));return false;}catch{return true;}})()`);
- ok('turrets.unloadAndRepackIdentity',`(()=>{const id=qaPlaced.id;player.x=qaPlaced.x;player.y=qaPlaced.y;return V016Turret.unload(qaPlaced)===10&&V016Turret.pack(qaPlaced)&&bag.some(s=>s?.type==='qa_turret'&&s.turretData.id===id&&s.turretData.ammo===0);})()`);
+ // Stage H replaces wall-only deployment with the shared equipment lifecycle.
+ ok('turrets.newTypeUsesExistingEngine',"Object.keys(DefenseDefinitions.types).filter(k=>DefenseDefinitions.types[k].ammoType).length===2");
+ ok('turrets.typeAndInstanceAreSeparate',"GameEquipment.get('hmg016_1').typeId==='heavy_turret'&&GameEquipment.get('hmg016_1').id!=='heavy_turret'");
+ ok('turrets.mismatchedTypeRejected',"(()=>{const d=captureGameProgress();d.equipment032.instances.find(r=>r.id==='hmg016_1').typeId='automatic_turret';try{decodeGameProgress(JSON.stringify(d));return false}catch{return true}})()");
+ ok('turrets.definitionDamageAndCapacity',"DefenseDefinitions.types.automatic_turret.damage===45&&DefenseDefinitions.types.heavy_turret.capacity===600");
+ ok('turrets.existingPhysicalInstanceMigrated',"GameEquipment.get('hmg016_1').placement==='installed'&&captureGameProgress().turret016.guns.length===0");
+ ok('turrets.sharedPlacementTypes',"GamePlacement.rules.automatic_turret.craftable&&GamePlacement.rules.heavy_turret.craftable");
+ ok('turrets.ammoFromDefinition',"DefenseDefinitions.types.automatic_turret.ammoType==='ammo'&&DefenseDefinitions.types.heavy_turret.ammoType==='ammo'");
+ ok('turrets.roundtripTypeAndID',"(()=>{const r=JSON.stringify(GameEquipment.get('hmg016_1'));restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())));return JSON.stringify(GameEquipment.get('hmg016_1'))===r;})()");
+ ok('turrets.duplicateInstanceRejected',"(()=>{const d=captureGameProgress();d.equipment032.instances.push({...d.equipment032.instances.find(r=>r.id==='hmg016_1')});try{decodeGameProgress(JSON.stringify(d));return false;}catch{return true;}})()");
+ ok('turrets.sharedPowerReference',"GameEquipment.get('hmg016_1').refs.device==='hmg016_1'&&V09Power.devices.hmg016_1.watts===.7");
  reset();E('delete ITEM.qa_turret;delete ITEM.qa_robot;');
 }
 if(phase>=4){

@@ -38,10 +38,10 @@ window.V016Lighting=(()=>{
   function buffer(){const w=Math.max(1,Math.ceil(screenWidth)),h=Math.max(1,Math.ceil(screenHeight));if(!mask){mask=canvasOf(w,h);maskContext=mask.getContext('2d');}if(mask.width!==w)mask.width=w;if(mask.height!==h)mask.height=h;return maskContext;}
   function sprite(kind){
     if(sprites.has(kind))return sprites.get(kind);const v=canvasOf(256,256),c=v.getContext('2d');
-    if(kind==='flashlight'){
+    if(kind==='flashlight'||kind==='searchlight'){
       // Bake the angular and radial falloff once. A single clipped blit then
       // replaces sixteen full-radius blends per frame, with no extra buffer.
-      const pixels=c.createImageData(256,256),half=V091Light.halfAngle;
+      const pixels=c.createImageData(256,256),half=kind==='searchlight'?.48:V091Light.halfAngle;
       for(let y=0;y<256;y++)for(let x=0;x<256;x++){
         const dx=x+.5-128,dy=y+.5-128,r=Math.hypot(dx,dy)/128,a=Math.abs(Math.atan2(dy,dx)),i=(y*256+x)*4;
         const radial=r<=.77?1:r<=.92?1-(r-.77)/.15*(1-189/255):Math.max(0,(1-r)/.08)*(189/255);
@@ -61,11 +61,11 @@ window.V016Lighting=(()=>{
   function shape(s,dynamic=false){
     const revision=[scene,geometryRevision,gateOpen,V091Fortress.innerGateOpen,...v09Doors.map(d=>Math.round(d.open*20))].join('|');
     if(revision!==shadowRevision){shadowShapes.clear();shadowRevision=revision;droneKey='';}
-    const key=dynamic?[revision,Math.round(s.x/2),Math.round(s.y/2),s.range].join(':'):s.id;
+    const key=dynamic?[revision,Math.round(s.x/2),Math.round(s.y/2),s.range].join(':'):[s.id,s.x,s.y,s.angle,s.range].join(':');
     if(dynamic&&key===droneKey)return droneShape;if(!dynamic&&shadowShapes.has(key))return shadowShapes.get(key);
-    const solids=nearSolids(s.x,s.y,s.range).filter(o=>o.id!==s.instanceId&&!(scene==='surface'&&s.kind==='wall'&&(o.kind==='baseDecor015'||String(o.id).startsWith('v015prop_')||o.id==='well09'))),points=[],half=s.kind==='flood'?.85:Math.PI,n=s.kind==='flood'?40:64;
+    const solids=nearSolids(s.x,s.y,s.range).filter(o=>o.id!==s.instanceId&&!(scene==='surface'&&s.kind==='wall'&&(o.kind==='baseDecor015'||String(o.id).startsWith('v015prop_')||o.id==='well09'))),points=[],half=s.kind==='searchlight'?.48:s.kind==='flood'?.85:Math.PI,n=s.kind==='searchlight'?56:s.kind==='flood'?40:64;
     for(let i=0;i<=n;i++){const angle=s.angle-half+2*half*i/n;points.push(V091Light.cast(s.x,s.y,angle,s.range,solids));}
-    const result={x:s.x,y:s.y,points};if(dynamic){droneKey=key;droneShape=result;}else shadowShapes.set(key,result);return result;
+    const result={x:s.x,y:s.y,points};if(dynamic){droneKey=key;droneShape=result;}else {if(shadowShapes.size>=96)shadowShapes.clear();shadowShapes.set(key,result);}return result;
   }
   function clipShape(c,s,dynamic=false){const p=shape(s,dynamic);c.beginPath();c.moveTo(p.x,p.y);for(const v of p.points)c.lineTo(v.x,v.y);c.closePath();c.clip();}
   // A moving radial light needs continuous body silhouettes, not quantized
@@ -100,7 +100,7 @@ window.V016Lighting=(()=>{
     }
     c.fill();c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-over';droneKey=key;droneShape={x:s.x,y:s.y};droneMetrics.updates++;droneMetrics.lastX=s.x;droneMetrics.lastY=s.y;return droneLayer;
   }
-  function paintFixture(c,s,kind='white'){c.save();clipShape(c,s);if(s.kind==='flood'){
+  function paintFixture(c,s,kind='white'){c.save();clipShape(c,s);if(s.kind==='searchlight'){const m=c.getTransform(),co=Math.cos(s.angle),si=Math.sin(s.angle),r=s.range,k=r/128;c.setTransform(m.a*co*k,m.d*si*k,-m.a*si*k,m.d*co*k,(s.x-r*co+r*si)*m.a+m.e,(s.y-r*si-r*co)*m.d+m.f);c.drawImage(sprite('searchlight'),0,0);}else if(s.kind==='flood'){
       // Both ovals fit wholly inside the cast sector: the broad wash has a
       // tangent half-angle of .819 < .85 and ends before the cast range.
       // Thus angular clipping cannot cut across a bright part of the wash.
@@ -150,16 +150,21 @@ window.V016Lighting=(()=>{
     // before the world-to-mask transform, including all diagonal aim angles.
     const scale=r/128;c.setTransform(m.a*co*scale,m.d*si*scale,-m.a*si*scale,m.d*co*scale,(beam.ox-r*co+r*si)*m.a+m.e,(beam.oy-r*si-r*co)*m.d+m.f);
     c.drawImage(sprite('flashlight'),0,0);c.restore();}
+  function searchlights(served=supplied()){return (window.GameDefense?.records()||[]).filter(r=>r.typeId==='searchlight'&&r.transform.scene===scene&&GameDefense.operational(r)&&served.has(r.refs.device)).map(r=>({id:r.id,instanceId:r.id,...GameDefense.pivot(r),angle:r.state.settings.angle,kind:'searchlight',range:1100}));}
   function illuminate(){
     const c=buffer(),zoom=V010Camera.zoom,view=V010Camera.view(),served=supplied();c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,mask.width,mask.height);c.setTransform(zoom,0,0,zoom,-camera.x*zoom,-camera.y*zoom);
     if(scene==='bunker'){bunkerMask(c,served);portalLight(c,served);c.save();c.globalCompositeOperation='destination-out';for(const r of GameEquipment.records)if(r.typeId==='base_lamp'&&r.placement==='installed'&&served.has(r.refs.device)){const p=GameEquipment.center(r.id);if(visibleOnScreen(p.x,p.y,190))paintFixture(c,{id:r.id,instanceId:r.id,...p,range:170,angle:0,kind:'radial'},'white');}c.restore();}else{const dark=(1-daylight())*.64;c.fillStyle='rgba(6,15,31,'+dark+')';c.fillRect(camera.x,camera.y,view.w,view.h);if(dark>.001){c.save();c.globalCompositeOperation='destination-out';for(const s of fixtures())if(active(s,served)&&visibleOnScreen(s.x,s.y,s.range+20))paintFixture(c,s,s.kind==='flood'?'flood':'white');c.restore();}}
+    const spots=searchlights(served);c.save();c.globalCompositeOperation='destination-out';for(const s of spots)if(visibleOnScreen(s.x,s.y,s.range))paintFixture(c,s,'searchlight');c.restore();
     const beam=V091Light.cone();flashlight(c,beam);localBounce(c,beam?.bounce);if(droneActive()){const d=V014Robots.state,s={x:d.x,y:d.y,range:275,angle:0,kind:'drone'};c.save();c.globalCompositeOperation='destination-out';c.setTransform(1,0,0,1,0,0);c.drawImage(droneField(s),(s.x-s.range-camera.x)*zoom,(s.y-s.range-camera.y)*zoom,s.range*2*zoom,s.range*2*zoom);c.restore();}
     c.setTransform(1,0,0,1,0,0);ctx.save();try{ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.drawImage(mask,camera.x,camera.y,view.w,view.h);}finally{ctx.restore();}
+    // A restrained additive wash makes the powered stand visibly brighter,
+    // sharing exactly the same occlusion geometry as its darkness-mask beam.
+    ctx.save();ctx.globalCompositeOperation='screen';ctx.globalAlpha=.24;for(const s of spots)if(visibleOnScreen(s.x,s.y,s.range))paintFixture(ctx,s,'searchlight');ctx.restore();
   }
   V091Light.illuminate=illuminate;
   const oldUpdate=update;update=function(...args){const result=oldUpdate(...args);tick(16.667*frameScale);return result;};
   GameSave.extend('capture','render.lighting',function(oldCapture){const d=oldCapture();d.lighting016=capture();return d;});
   GameSave.extend('decode','render.lighting',function(oldDecode,raw){const probe=JSON.parse(raw);validate(probe.lighting016);return oldDecode(raw);});
   GameSave.extend('restore','render.lighting',function(oldRestore,d){validate(d.lighting016);oldRestore(d);restore(d.lighting016);});
-  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,doorLeaks,droneActive,drawFixtures,illuminate,get day(){return WorldClock.day;},maskImage:()=>mask,droneMetrics:()=>({...droneMetrics}),cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:28,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:5,droneShapes:droneShape?1:0,droneLimit:1,droneBytes:droneLayer?droneLayer.width*droneLayer.height*4:0,width:mask?.width||0,height:mask?.height||0})};
+  hud();return{dayMs,capture,validate,restore,tick,daylight,fixtures,active,doorLeaks,droneActive,drawFixtures,searchlights,lightShape:shape,illuminate,get day(){return WorldClock.day;},maskImage:()=>mask,droneMetrics:()=>({...droneMetrics}),cacheInfo:()=>({shadows:shadowShapes.size,shadowLimit:96,rooms:roomMasks.size,roomLimit:18,sprites:sprites.size,spriteLimit:6,droneShapes:droneShape?1:0,droneLimit:1,droneBytes:droneLayer?droneLayer.width*droneLayer.height*4:0,width:mask?.width||0,height:mask?.height||0})};
 })();

@@ -18,6 +18,11 @@ configs.environmentAssumptions={equipment:'starter gear; balanced variant and sp
 
 const expected=JSON.parse(fs.readFileSync(path.join(__dirname,'stage0/audit/configurations.json'))),actual=JSON.parse(JSON.stringify(configs));
 const version=actual.version;actual.version=expected.version; // Release metadata and the explicitly versioned envelope are the only additions.
+assert.equal(actual.items.hmg016.name,'Тяжёлая турель');actual.items.hmg016.name=expected.items.hmg016.name;
+assert.equal(actual.save.schemas.defense039,1);delete actual.save.schemas.defense039;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='defense039');
+assert.equal(actual.power.devices.find(d=>d.id==='hmg016_1').watts,.7);actual.power.devices=actual.power.devices.filter(d=>d.id!=='hmg016_1');
+assert.equal(actual.recipes.hmg016.retiredBuildable,'heavy_turret');delete actual.recipes.hmg016.retiredBuildable;
+actual.exposedAPIs.V016Turret=actual.exposedAPIs.V016Turret.filter(k=>!['newData','starter'].includes(k));
 // Stage E adds a capability gate, not a change to price/time/output or stats.
 assert.deepEqual(actual.recipes.rifle_m4.availability,JSON.parse(E('JSON.stringify(ResearchDefinitions.bindings.recipes.rifle_m4)')));
 delete actual.recipes.rifle_m4.availability;

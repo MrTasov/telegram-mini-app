@@ -32,6 +32,26 @@ for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs'])
  // Project only added level-zero tool metadata in the disposable oracle.
  if(name==='perimeter020.cjs')code=code.replace("JSON.stringify(raw.bag)===JSON.stringify(legacy.bag)","JSON.stringify(require("+JSON.stringify(path.join(__dirname,'stage-c2-contract.cjs'))+").project({bag:raw.bag}).bag)===JSON.stringify(legacy.bag)");
  if(name==='perimeter020.cjs')code=code.replace("JSON.stringify(raw.robots014)===JSON.stringify(legacy.robots014)","JSON.stringify({...raw.robots014,x:0,y:0})===JSON.stringify({...legacy.robots014,x:0,y:0})");
+ // H: frozen sources stay untouched. Current snapshots now own legacy HMG
+ // state in the equipment registry; new placement uses Craft/Inventory/Place.
+ if(name==='perimeter020.cjs'){
+  code=code.replaceAll('V016Turret.guns[0].ammo===137','GameDefense.guns()[0].ammo===137').replaceAll('V016Turret.guns[0].level===4','GameDefense.guns()[0].level===4').replaceAll("V016Turret.guns[0].wallId===","GameDefense.guns()[0].wallId===").replaceAll('V016Turret.guns[1].','GameDefense.guns()[1].');
+ }
+ if(name==='wall_behaviors020.cjs'){
+  const a=code.indexOf(' // Real inventory -> seam mount'),b=code.indexOf(' // Elevated movement',a);
+  code=code.slice(0,a)+` // Stage H shared placement and same-instance hold pickup.
+ fresh();E("scene='bunker';player.x=1210;player.y=680;bag=[];for(const c of storageChests)c.items=[];for(const type of ['iron','copper','parts'])addItem(type,200);window.crafted=GamePlacement.request('heavy_turret','craft');window.gunId=crafted.instanceId;");
+ check('craft creates one carried instance',E('crafted.ok&&GameCarried.owns(gunId)'));
+ E("scene='surface';player.x=800;player.y=850");
+ check('shared physical placement commits',E("GamePlacement.request(gunId,'place',GamePlacement.centered('heavy_turret','yard',450,350)).ok"));
+ check('placing consumes inventory marker once',E("!GameCarried.owns(gunId)&&GameEquipment.get(gunId).placement==='installed'"));
+ E("window.rgun=JSON.parse(JSON.stringify(GameEquipment.get(gunId)));rgun.state.settings.ammo=43;rgun.state.level=3;GameEquipment.change(rgun);window.mounted020=JSON.stringify(captureGameProgress());restoreGameProgress(decodeGameProgress(mounted020));");
+ check('save retains ammo upgrade and transform',E("GameEquipment.get(gunId).state.settings.ammo===43&&GameEquipment.get(gunId).state.level===3"));
+ E("player.x=450;player.y=402;window.hold=GamePlacement.beginPickup(gunId)");r.advance(3001);
+ check('three-second hold packs instance',E("GamePlacement.request(gunId,'pack',null,hold.token).ok"));
+ check('packing preserves exactly one physical instance',E("GameCarried.owns(gunId)&&GameEquipment.get(gunId).placement==='packed'&&GameEquipment.get(gunId).state.settings.ammo===43"));
+`+code.slice(b);
+ }
  fs.writeFileSync(path.join(game,'qa',name),adaptAssetWaits(code));
 }
 let character=fs.readFileSync(path.join(baseline,'tools/behavior.cjs'),'utf8');
@@ -57,6 +77,7 @@ character=character.slice(0,farmStart)+` const farmCases=${farmCases};
 `+character.slice(farmEnd);
 character=character.replace("executeInteraction(interactionObjects().find(o=>o.id==='exit'));","player.x=bunker.entrance.x;player.y=bunker.entrance.y+45;executeInteraction(interactionObjects().find(o=>o.id==='exit'));");
 character=character.replace('player.x=1264;player.y=740;','player.x=V014Robots.dockPosition().x;player.y=V014Robots.dockPosition().y+35;');
+character=character.replace('V016Turret.guns[0].ammo=137;V016Turret.guns[0].level=3;',"const q=JSON.parse(JSON.stringify(GameEquipment.get('hmg016_1')));q.state.settings.ammo=137;q.state.level=3;GameEquipment.change(q);");
 fs.writeFileSync(path.join(work,'tools/behavior.cjs'),adaptAssetWaits(character));
 const results=[];
 for(const [name,script,report]of [

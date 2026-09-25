@@ -11,7 +11,7 @@ window.GameBaseControl=(()=>{
       const def=EquipmentInstances.definitions[r.typeId],base={id:r.id,instanceId:r.id,...location(r),name:I18n.t('build.type.'+r.typeId),typeId:r.typeId};
       if(r.typeId==='generator')out.push({...base,kind:'generator',action:'generator',on:V09Power.running});
       else if(r.typeId==='reserve_battery')out.push({...base,kind:'battery',action:'battery',on:V010Energy.battery.enabled});
-      else if(r.refs.device){devices.add(r.refs.device);const d=V09Power.devices[r.refs.device];if(d&&def.powerKW>0)out.push({...base,kind:r.typeId==='base_lamp'?'lamp':'consumer',action:'power',deviceId:d.id,on:d.enabled,watts:d.watts});}
+      else if(r.refs.device){devices.add(r.refs.device);const d=V09Power.devices[r.refs.device];if(d&&def.powerKW>0)out.push({...base,kind:r.typeId==='base_lamp'?'lamp':DefenseDefinitions.types[r.typeId]?.ammoType?'turret':r.typeId==='searchlight'?'searchlight':'consumer',action:'power',deviceId:d.id,on:d.enabled,watts:d.watts,...(DefenseDefinitions.types[r.typeId]?{broken:r.state.condition.hp<=0||r.state.settings.fallen,ammo:DefenseDefinitions.types[r.typeId].ammoType?r.state.settings.ammo:undefined}: {})});}
     }
     for(const d of Object.values(V09Power.devices)){
       if(devices.has(d.id)||GameEquipment.get(d.id)||d.id===GameCampaign.powerId||d.id.startsWith('door_')||d.watts<=0||!BunkerLayout.roomActive(d.room)||d.present&&!d.present())continue;

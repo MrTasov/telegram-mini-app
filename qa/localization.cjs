@@ -49,7 +49,7 @@ for(let i=0;i<10;i++)englishUI('farm.'+i,`player.x=getFarmBeds()[0].x+20;player.
 for(const tab of ['achievements','stats','research','orders','journal'])englishUI('progression.'+tab,`V010Progression.show('${tab}');`);
 for(const station of ['furnace','craft_bench','feed_craft']){
  englishUI('craft.'+station,`V09Craft.open('${station}');`);
- const recipes=E(`Object.entries(V09Craft.recipes).filter(([,r])=>r.station==='${station}').map(([id])=>id)`);
+ const recipes=E(`Object.entries(V09Craft.recipes).filter(([,r])=>r.station==='${station}'&&!r.retiredBuildable).map(([id])=>id)`);
  for(const id of recipes)englishUI('recipe.'+id,`V09Craft.open('${station}');document.querySelector('[data-recipe="${id}"]').click();`);
 }
 for(const type of E('Object.keys(ITEM)'))check('ui.en.item.'+type,()=>{reset();const node=r.doc.createElement('div');r.doc.body.append(node);r.context.itemCard=node;E(`I18n.assign(itemCard,'innerHTML',V011UI.cardHTML({type:${JSON.stringify(type)},qty:1,level:0}));`);assert.deepEqual(scan(node),[]);node.remove();});

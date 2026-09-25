@@ -7,6 +7,7 @@ const EquipmentInstances=(()=>{
   const freeze=x=>{for(const v of Object.values(x))if(v&&typeof v==='object')freeze(v);return Object.freeze(x);};
   const rooms=BunkerLayout.roomData.filter(r=>r.id!=='corridor').map(r=>r.id);
   const definitions=freeze({
+    ...Object.fromEntries(Object.entries(DefenseDefinitions.types).map(([id,d])=>[id,{...d,range:64}])) ,
     furnace:{footprint:{w:130,h:195},recipeStation:'furnace',powerKW:6,name:'Плавильная печь',range:48},
     craft_bench:{footprint:{w:260,h:173},recipeStation:'craft_bench',powerKW:2,name:'Оружейный станок',range:48},
     utility_workbench:{footprint:{w:134,h:88},body:{x:5,y:5,w:124,h:78},recipeStation:'utility_workbench',powerKW:0,name:'Рабочий верстак',range:48,art:'utility_workbench'},
@@ -33,6 +34,7 @@ const EquipmentInstances=(()=>{
   // Room display names confer no placement permissions. Singular energy
   // owners keep their identity; future adapters reuse this same capability port.
   const placement=freeze({
+    ...Object.fromEntries(Object.entries(DefenseDefinitions.types).map(([id,d])=>[id,{limit:d.limit,cost:d.cost,rooms:id==='searchlight'?['yard',...rooms,'corridor']:['yard'],craftable:true,guard:'empty',art:d.art}])) ,
     furnace:{limit:4,cost:{iron:20,parts:6,concrete:8},rooms,craftable:true,guard:'production',art:'furnace'},
     utility_workbench:{limit:4,cost:{iron:4,wood:6},rooms,craftable:true,guard:'production',art:'utility_workbench'},
     craft_bench:{limit:4,cost:{iron:16,wood:12,parts:4},rooms,craftable:true,guard:'production',art:'workbench'},
@@ -57,15 +59,15 @@ const EquipmentInstances=(()=>{
     const refsFor=(type,id,storageIndex)=>{
       const def=definitions[type];if(def.recipeStation)return {job:id,queue:id,output:id,refund:id,device:id};
       if(type==='storage_crate')return {container:'storage:'+storageIndex};
-      if(type==='base_lamp')return {device:id};return {};
+      if(type==='base_lamp'||DefenseDefinitions.types[type])return {device:id};return {};
     };
     function validate(list,legacy=false){
-      if(!Array.isArray(list)||list.length<seeds.length||list.length>48||new Set(list.map(r=>r?.id)).size!==list.length)throw Error('Invalid equipment IDs');
+      if(!Array.isArray(list)||list.length<seeds.length||list.length>192||new Set(list.map(r=>r?.id)).size!==list.length)throw Error('Invalid equipment IDs');
       const incoming=new Map(list.map(r=>[r?.id,r]));
       if(seeds.some(r=>!incoming.has(r.id)))throw Error('Missing authored equipment');
       for(const r of list){
         const seed=seedIndex.get(r.id),def=definitions[r.typeId],rule=placement[r.typeId],t=r.transform;
-        if(!def||!/^\w[\w:-]{0,79}$/.test(r.id)||!r.refs||!t||![t.x,t.y].every(Number.isFinite)||Math.abs(t.x)>10000||Math.abs(t.y)>10000||!turns.includes(t.rotation)||t.scene!=='bunker'||Object.keys(t).sort().join()!=='room,rotation,scene,x,y')throw Error('Invalid equipment transform');
+        if(!def||!/^\w[\w:-]{0,79}$/.test(r.id)||!r.refs||!t||![t.x,t.y].every(Number.isFinite)||Math.abs(t.x)>10000||Math.abs(t.y)>10000||!turns.includes(t.rotation)||!['bunker','surface'].includes(t.scene)||((t.scene==='surface')!==(t.room==='yard'))||Object.keys(t).sort().join()!=='room,rotation,scene,x,y')throw Error('Invalid equipment transform');
         if(legacy){if(!seed||Object.keys(r).sort().join()!=='id,refs,transform,typeId'||r.typeId!==seed.typeId||!equalFields(r.transform,seed.transform)||!equalFields(r.refs,seed.refs))throw Error('Invalid legacy equipment');continue;}
         if(Object.keys(r).sort().join()!=='id,ownerId,placement,refs,state,transform,typeId'||!['installed','packed'].includes(r.placement))throw Error('Invalid equipment presence');
         if(r.placement==='installed'?r.ownerId!==null:typeof r.ownerId!=='string'||!/^player:[\w:-]{1,72}$/.test(r.ownerId))throw Error('Invalid equipment owner');
@@ -73,12 +75,12 @@ const EquipmentInstances=(()=>{
         const index=r.typeId==='storage_crate'?Number(r.refs.container?.slice(8)):undefined;
         if(!seed&&r.typeId==='storage_crate'&&(!Number.isInteger(index)||index<14||index>29))throw Error('Invalid storage index');
         const refs=seed?.refs||refsFor(r.typeId,r.id,index);
-        if(seed?r.typeId!==seed.typeId:!rule||!new RegExp('^build:'+r.typeId+':[1-9][0-9]?$').test(r.id))throw Error('Invalid equipment type');
+        if(seed?r.typeId!==seed.typeId:!rule||!(new RegExp('^build:'+r.typeId+':[1-9][0-9]?$').test(r.id)||r.typeId==='heavy_turret'&&/^hmg016_[1-9]\d{0,7}$/.test(r.id)))throw Error('Invalid equipment type');
         if(Object.keys(refs).sort().join()!==Object.keys(r.refs).sort().join()||Object.keys(refs).some(k=>r.refs[k]!==refs[k]))throw Error('Invalid equipment references');
         if(!rule){if(!seed||!equalFields(t,seed.transform)||r.placement!=='installed')throw Error('Protected equipment');}
         else if(!(seed&&seed.transform.room==='farm')&&!rule.rooms.includes(t.room))throw Error('Invalid placement room');
       }
-      if(!legacy)for(const [type,rule]of Object.entries(placement))if(list.filter(r=>r.typeId===type).length>Math.max(rule.limit,seeds.filter(r=>r.typeId===type).length))throw Error('Equipment limit');
+      if(!legacy)for(const [type,rule]of Object.entries(placement))if(list.filter(r=>r.typeId===type&&!/^hmg016_/.test(r.id)).length>Math.max(rule.limit,seeds.filter(r=>r.typeId===type).length))throw Error('Equipment limit');
       for(const role of ['job','queue','output','refund','container','device']){const refs=list.map(r=>r.refs[role]).filter(v=>v!==undefined);if(refs.some(v=>typeof v!=='string'||!v)||new Set(refs).size!==refs.length)throw Error('Duplicate equipment '+role+' reference');}
       return true;
     }
@@ -100,7 +102,7 @@ const EquipmentInstances=(()=>{
       present:id=>!index.has(id)||index.get(id).placement==='installed',fixture,point,center,withArt,capture,validate,restore,change,withValidation,
       get validationRecords(){return [...(validation||index).values()];},get validationProductionIds(){return [...(validation||index).values()].filter(r=>definitions[r.typeId].recipeStation).map(r=>r.id);},
       validationType:id=>definitions[(validation||index).get(id)?.typeId]?.recipeStation,
-      create(typeId,transform,ownerId=null,storageIndex){let n=1;while(index.has('build:'+typeId+':'+n))n++;const id='build:'+typeId+':'+n;return {id,typeId,transform:copy(transform),refs:refsFor(typeId,id,storageIndex),placement:ownerId?'packed':'installed',ownerId,state:state()};},
+      create(typeId,transform,ownerId=null,storageIndex){let n=1;while(index.has('build:'+typeId+':'+n))n++;const id='build:'+typeId+':'+n;return {id,typeId,transform:copy(transform),refs:refsFor(typeId,id,storageIndex),placement:ownerId?'packed':'installed',ownerId,state:DefenseDefinitions.types[typeId]?{...state(),condition:{hp:DefenseDefinitions.types[typeId].hp,maxHp:DefenseDefinitions.types[typeId].hp},settings:{angle:0,ammo:0,mountWall:'',fallen:false}}:state()};},
       inventory:actorId=>capture().filter(r=>r.placement==='packed'&&r.ownerId===actorId)
     });
   }

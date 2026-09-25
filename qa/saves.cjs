@@ -3,8 +3,9 @@ const {setup}=require('./runtime.cjs'),root=path.resolve(__dirname,'..');process
 const fixtureDir=path.join(__dirname,'stage0/fixtures'),index=JSON.parse(fs.readFileSync(path.join(fixtureDir,'index.json')));
 const r=setup('index.html'),E=s=>r.eval(s),checks=[];
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.message.slice(0,1800)});}}
+r.context.projectH=require('./stage-h-contract.cjs').project;
 const json=v=>JSON.parse(JSON.stringify(v));
-function projection(){return json(E(`(()=>{const d=captureGameProgress();return {player:{scene:d.player.scene,health:d.player.health},bag:d.bag,equipment:d.equipment,quick:d.quick013,storage:d.storage,drone:d.robots014,walls:d.base015,doors:d.building018,turrets:d.turret016,farm:d.farm.map(s=>({crop:s.crop,harvestLeft:s.harvestLeft})),plantDurations:d.farm014.beds.map(a=>a?.map(p=>({duration:p.duration,planted:p.planted,harvested:p.harvested,qty:p.qty}))??null),jobs:d.v09.crafting,craft:d.v010.modules.craft};})()`));}
+function projection(){return json(E(`(()=>{const d=projectH(captureGameProgress());return {player:{scene:d.player.scene,health:d.player.health},bag:d.bag,equipment:d.equipment,quick:d.quick013,storage:d.storage,drone:d.robots014,walls:d.base015,doors:d.building018,turrets:d.turret016,farm:d.farm.map(s=>({crop:s.crop,harvestLeft:s.harvestLeft})),plantDurations:d.farm014.beds.map(a=>a?.map(p=>({duration:p.duration,planted:p.planted,harvested:p.harvested,qty:p.qty}))??null),jobs:d.v09.crafting,craft:d.v010.modules.craft};})()`));}
 for(const fixture of index.fixtures){
  const raw=fs.readFileSync(path.join(fixtureDir,fixture.id+'.json'),'utf8');
  check(fixture.id+'.oldSaveLoads',()=>{assert.ok(E(`decodeGameProgress(${JSON.stringify(raw)})`));E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(raw)}));`);});

@@ -14,7 +14,7 @@ function fresh(which='bunker'){
 }
 function place(id){
  E(`window.testObject=interactionObjects().find(o=>o.id===${JSON.stringify(id)});if(!testObject)throw Error('Missing interaction '+${JSON.stringify(id)});window.testPosition=false;
- if(testObject.kind==='hmg016'){player.wallLevel=true;player.x=testObject.x;player.y=testObject.y+22;testPosition=true;}else{
+ if(testObject.kind==='hmg016'||GameEquipment.get(testObject.id)?.state.settings.mountWall){player.wallLevel=true;player.x=testObject.x;player.y=testObject.y+22;testPosition=true;}else{
  outer:for(let dy=-100;dy<=(testObject.h||0)+100;dy+=5)for(let dx=-100;dx<=(testObject.w||0)+100;dx+=5){const x=testObject.x+dx,y=testObject.y+dy;if(!worldCollision(x,y,player.radius,scene)&&canInteract(testObject,x,y)){player.x=x;player.y=y;testPosition=true;break outer;}}}
  // Teleporting a test fixture must settle the following camera before a tap.
  // Otherwise the stale view can put the world object underneath a fixed stick.
@@ -33,7 +33,7 @@ function outside(pointerType='mouse'){
  gesture(E('({x:player.x+240,y:player.y-180})'),pointerType);
 }
 try{
- const cases=[['craft_bench','v09CraftOverlay'],['furnace','v09CraftOverlay'],...Array.from({length:8},(_,i)=>['chest'+i,'storageOverlay']),['generator','v09GeneratorOverlay'],['tank','v09GeneratorOverlay'],['battery','v010BatteryOverlay'],['robots014_dock','v0151Station'],['upgrade0161','v0161UpgradePanel'],['hmg016_1','v016TurretPanel']];
+ const cases=[['craft_bench','v09CraftOverlay'],['furnace','v09CraftOverlay'],...Array.from({length:8},(_,i)=>['chest'+i,'storageOverlay']),['generator','v09GeneratorOverlay'],['tank','v09GeneratorOverlay'],['battery','v010BatteryOverlay'],['robots014_dock','v0151Station'],['upgrade0161','v0161UpgradePanel'],['hmg016_1','defenseOverlay']];
  for(const pointerType of ['mouse','touch'])for(const [id,expected]of cases){
   fresh(id==='hmg016_1'?'surface':'bunker');
   // Test the station's uncovered pad; the drone itself has its own panel.
@@ -96,11 +96,11 @@ try{
  // Pointer retargeted to the new overlay by the browser is still the opener.
  fresh();const turret=placeAfterSurface();
  const pt=E(`worldToScreen(${turret.x},${turret.y})`),ev={pointerType:'mouse',pointerId:1,detail:1,clientX:pt.x,clientY:pt.y};
- r.emit('pointerdown',canvas,ev);const overlay=r.doc.getElementById('v016TurretPanel');r.emit('pointerup',overlay,ev);r.emit('click',overlay,ev);
- check('modal.retargetedOpenerStaysOpen',openIds().includes('v016TurretPanel'));
+ r.emit('pointerdown',canvas,ev);const overlay=r.doc.getElementById('defenseOverlay');r.emit('pointerup',overlay,ev);r.emit('click',overlay,ev);
+ check('modal.retargetedOpenerStaysOpen',openIds().includes('defenseOverlay'));
  r.emit('keydown',r.doc,{key:'Escape'});check('modal.escapeCloses',openIds().length===0);
  // Native no-click pointer sequences must not swallow the next fresh gesture.
- gesture(turret,'touch',{noClick:true});check('modal.touchNoCompatibilityClick',openIds().includes('v016TurretPanel'));outside('touch');check('modal.touchNextDismiss',openIds().length===0);
+ gesture(turret,'touch',{noClick:true});check('modal.touchNoCompatibilityClick',openIds().includes('defenseOverlay'));outside('touch');check('modal.touchNextDismiss',openIds().length===0);
  // Click-only keyboard/accessibility activation keeps working.
  r.emit('click',r.doc.getElementById('settingsButton'),{detail:0});check('modal.keyboardSettings',openIds().includes('settingsOverlay'));
  r.emit('click',r.doc.getElementById('closeSettings'),{detail:0});check('modal.keyboardClose',openIds().length===0);

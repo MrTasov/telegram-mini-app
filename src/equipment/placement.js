@@ -8,8 +8,8 @@ window.GamePlacement=(()=>{
   const overlap=(a,b,pad=0)=>a.x<b.x+b.w+pad&&a.x+a.w>b.x-pad&&a.y<b.y+b.h+pad&&a.y+a.h>b.y-pad;
   const footprint=r=>GameFootprints.forRecord(r);
   function protectedArea(room){if(room==='corridor'){const r=BunkerLayout.rooms.corridor;return {x:(r.left+r.right)/2-56,y:r.top,w:112,h:r.bottom-r.top};}const d=BunkerLayout.door(room);return d.horizontal?{x:d.x-24,y:d.y-62,w:d.w+48,h:d.h+124}:{x:d.x-62,y:d.y-24,w:d.w+124,h:d.h+48};}
-  function protectedAreas(room){if(room!=='corridor')return [protectedArea(room)];return [protectedArea(room),...zones.map(protectedArea),...[BunkerLayout.core,BunkerLayout.up,BunkerLayout.down,...BunkerLayout.stairs].map(b=>({x:b.x-45,y:b.y-45,w:b.w+90,h:b.h+90}))];}
-  function centered(typeId,room,x,y,turn=0){const rotation=EquipmentInstances.turns[turn],b=footprint({typeId,transform:{x:0,y:0,rotation,room}});return {x:Math.round((x-b.w/2-b.x)/2)*2,y:Math.round((y-b.h/2-b.y)/2)*2,rotation,scene:'bunker',room};}
+  function protectedAreas(room){if(room==='yard')return GameSurfacePlacement.protectedAreas();if(room!=='corridor')return [protectedArea(room)];return [protectedArea(room),...zones.map(protectedArea),...[BunkerLayout.core,BunkerLayout.up,BunkerLayout.down,...BunkerLayout.stairs].map(b=>({x:b.x-45,y:b.y-45,w:b.w+90,h:b.h+90}))];}
+  function centered(typeId,room,x,y,turn=0){const rotation=EquipmentInstances.turns[turn],b=footprint({typeId,transform:{x:0,y:0,rotation,room}});return {x:Math.round((x-b.w/2-b.x)/2)*2,y:Math.round((y-b.h/2-b.y)/2)*2,rotation,scene:room==='yard'?'surface':'bunker',room};}
   function blockedByWork(id,data){
     if(!EquipmentInstances.definitions[(data?.equipment032.instances||GameEquipment.capture()).find(r=>r.id===id)?.typeId]?.recipeStation)return false;
     const q=data?.v010?.modules?.craft||V09Craft.craftQueue.capture(),job=data?data.v09.crafting.jobs[id]:V09Craft.craftQueue.getJob(id);
@@ -48,7 +48,7 @@ window.GamePlacement=(()=>{
     return interactionObjects('bunker').filter(o=>!GameEquipment.get(o.id)&&!records.some(v=>v.id===o.id)&&!o.id.startsWith('v09door_')&&!o.id.startsWith('switch_')&&!o.id.startsWith('lamp_')&&o.x>r.left+25&&o.x+(o.w||0)<r.right-25&&o.y>r.top+25&&o.y+(o.h||0)<r.bottom-25).every(o=>queue.some(i=>{const p=pos(i),q=contactPoint(o,p.x,p.y);return Math.hypot(p.x-q.x,p.y-q.y)<(o.range||50);}));
   }
   function checkRecord(record,records,occupants=true){
-    checks++;const rule=Object.hasOwn(rules,record.typeId)?rules[record.typeId]:null,t=record.transform;
+    checks++;if(record.transform?.scene==='surface')return GameSurfacePlacement.checkRecord(record,records,occupants);const rule=Object.hasOwn(rules,record.typeId)?rules[record.typeId]:null,t=record.transform;
     if(!rule||!t||t.scene!=='bunker'||!rule.rooms.includes(t.room)||!EquipmentInstances.turns.includes(t.rotation)||![t.x,t.y].every(Number.isFinite))return fail('room');
     const r=BunkerLayout.rooms[t.room],body=footprint(record);
     if(body.x<r.left+10||body.y<r.top+10||body.x+body.w>r.right-10||body.y+body.h>r.bottom-10)return fail('bounds');
@@ -60,14 +60,14 @@ window.GamePlacement=(()=>{
   function check(selection,transform,occupants=true){
     if(typeof selection!=='string'||!transform||Object.keys(transform).sort().join()!=='room,rotation,scene,x,y')return fail('invalid_command');
     const r=GameEquipment.get(selection);if(!r||!rules[r.typeId])return fail('type');if(r.placement!=='packed')return fail('installed');
-    return checkRecord({...copy(r),placement:'installed',ownerId:null,transform:copy(transform)},GameEquipment.capture(),occupants);
+    const record={...copy(r),placement:'installed',ownerId:null,transform:copy(transform)};if(DefenseDefinitions.types[r.typeId]){record.state.settings.mountWall='';record.state.settings.fallen=false;}return checkRecord(record,GameEquipment.capture(),occupants);
   }
-  function access(actor){return !actor.dead&&actor.scene==='bunker'&&(actor.entity.floor??1)===1;}
+  function access(actor){return !actor.dead&&(actor.scene==='surface'&&!V013City.floor||actor.scene==='bunker'&&(actor.entity.floor??1)===1);}
   function coreAccess(actor){return GameCampaign.access(actor,BunkerLayout.core.id,false).available;}
-  function make(typeId,actorId){const rule=rules[typeId];if(!rule?.craftable)return fail('type');if(GameEquipment.ids.length>=48||GameEquipment.capture().filter(r=>r.typeId===typeId).length>=rule.limit)return fail('limitReached');
+  function make(typeId,actorId){const rule=rules[typeId];if(!rule?.craftable)return fail('type');if(GameEquipment.ids.length>=192||GameEquipment.capture().filter(r=>r.typeId===typeId).length>=rule.limit)return fail('limitReached');
     if(window.GameAvailability&&!GameAvailability.buildable(typeId).available)return fail('researchLocked');
     if(GameCarried.free()<0)return fail('inventoryFull');
-    const record=GameEquipment.create(typeId,centered(typeId,'reserve_l1',1900,480),actorId,typeId==='storage_crate'?storageChests.length:undefined),next=GameEquipment.capture().concat(record);GameEquipment.validate(next);
+    const record=GameEquipment.create(typeId,centered(typeId,rule.rooms.includes('reserve_l1')?'reserve_l1':rule.rooms[0],1900,480),actorId,typeId==='storage_crate'?storageChests.length:undefined),next=GameEquipment.capture().concat(record);GameEquipment.validate(next);
     if(Object.entries(rule.cost).some(([t,n])=>V010Inventory.materialCount(t)<n))return fail('materials');
     if(window.GameChapterOne&&!GameChapterOne.spendAllowed(rule.cost,1,typeId))return fail('bootstrapReserve');
     if(!V010Inventory.consumeMaterials(rule.cost,1,typeId))return fail('materials');
@@ -78,7 +78,7 @@ window.GamePlacement=(()=>{
     if(c.action==='rename'){if(!coreAccess(actor))return fail('out_of_reach');const room=c.instanceId.slice(5),name=p.name;if(!validRoomName(name))return fail('roomName');roomNames[room]=copy(name);return {ok:true,room};}
     const r=GameEquipment.get(c.instanceId);if(!r||!rules[r.typeId])return fail('protected');
     if(c.action==='pack'){if(r.placement!=='installed')return fail('packed');if(!GameEquipmentRuntime.access(actor,r))return fail('out_of_reach');const reason=packReason(r);if(reason)return fail(reason);if(GameCarried.free()<0)return fail('inventoryFull');const hold=pickups.get(actor.id);if(!hold||hold.id!==r.id||hold.token!==p.pickupToken||performance.now()-hold.startedAt<3000)return fail('holdRequired');if(!pickupValid(actor,hold))return fail('pickupChanged');GameEquipment.change({...copy(r),placement:'packed',ownerId:actor.id});if(!GameCarried.add(r.id))throw Error('Carried slot changed during synchronous pickup');pickups.delete(actor.id);}
-    else if(c.action==='place'){if(r.ownerId!==actor.id||!GameCarried.owns(r.id))return fail('actor_denied');const result=check(c.instanceId,p.transform);if(!result.ok)return result;GameEquipment.change(result.record);GameCarried.remove(r.id);window.GameChapterOne?.recordAction('placed',result.record);}
+    else if(c.action==='place'){if(r.ownerId!==actor.id||!GameCarried.owns(r.id))return fail('actor_denied');if(p.transform?.scene!==actor.scene)return fail('room');const result=check(c.instanceId,p.transform);if(!result.ok)return result;if(DefenseDefinitions.types[r.typeId]){result.record.state.settings.mountWall='';result.record.state.settings.fallen=false;}GameEquipment.change(result.record);GameCarried.remove(r.id);window.GameChapterOne?.recordAction('placed',result.record);}
     else return fail('action');
     V09Craft.syncInstances();window.GameMovable?.sync();invalidateGeometry();return {ok:true,instanceId:r.id,placement:c.action==='pack'?'packed':'installed'};
   }
@@ -91,7 +91,7 @@ window.GamePlacement=(()=>{
   function cancelPickup(actorId=GameActors.localId){pickups.delete(actorId);}
   function pollPickup(token,actorId=GameActors.localId){const h=pickups.get(actorId),a=GameActors.get(actorId);return !!h&&h.token===token&&!!a&&pickupValid(a,h);}
   function validRoomName(n){return !!n&&Object.keys(n).sort().join()==='custom,preset'&&(n.preset===null||roomPresets.includes(n.preset))&&typeof n.custom==='string'&&n.custom.length<=24&&!/[<>\u0000-\u001f\u007f]/.test(n.custom)&&(n.preset===null?!!n.custom.trim():n.custom==='');}
-  function roomName(id){const n=roomNames[id];return n?(n.preset?I18n.t('build.room.'+n.preset):n.custom):I18n.t('core.room.'+id);}
+  function roomName(id){const n=roomNames[id];if(id==='yard')return I18n.t('control.surface');return n?(n.preset?I18n.t('build.room.'+n.preset):n.custom):I18n.t('core.room.'+id);}
   function rename(room,name){return execute({actorId:GameActors.localId,instanceId:'room:'+room,action:'rename',payload:{geometry:geometryRevision,name},expectedRevision:commands.revision,requestId:'room-name:'+commands.revision+':'+(++sequence)});}
   // Historical 12 -> 13 remains intact; 13 -> 14 adds carried ownership/state.
   function migrate(d){const e=d.equipment032;if(!e||e.schema!==1)throw Error('Missing legacy equipment');EquipmentInstances.createRegistry(EquipmentInstances.defaults).validate(e.instances,true);e.schema=2;for(const r of e.instances)r.placement='installed';d.placement035={schema:1,commands:{revision:0,receipts:[]}};}

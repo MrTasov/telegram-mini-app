@@ -98,7 +98,7 @@ const V09Craft = (() => {
   function start(id,recipe=selected[id],batches=selectedBatches(id)){
     if(stationType(id)==='feed_craft'&&!AgricultureTime.available)return false;
     const r=RECIPES[recipe];
-    if(!GameEquipment.present(id)||!stations().includes(id)||!r||r.station!==stationType(id)||!availableRecipe(r)||!Number.isInteger(batches)||batches<1||batches>MAX_BATCHES||queueExtra[id].length>=30)return false;
+    if(!GameEquipment.present(id)||!stations().includes(id)||!r||r.retiredBuildable||r.station!==stationType(id)||!availableRecipe(r)||!Number.isInteger(batches)||batches<1||batches>MAX_BATCHES||queueExtra[id].length>=30)return false;
     if(window.GameChapterOne&&!GameChapterOne.spendAllowed(r.input,batches,r.output)){message(I18n.t('build.bootstrapReserve'));return false;}
     if(!commitIngredients(r.input,batches,r.output)){message('Не хватает доступных материалов в рюкзаке и на складе');render();return false;}
     const j=makeJob(recipe,batches);
@@ -113,6 +113,7 @@ const V09Craft = (() => {
     if(id==='feed_craft')syncFeed(getJob(id));
   }
   function receiveOutput(type,qty){
+    if(type==='hmg016'&&window.GameDefense)return GameDefense.receiveLegacy(qty);
     if(type==='base_lamp')return GameMovable.receive(type,qty);
     const left=addItem(type,qty);
     for(const item of bag)if(item?.type===type)window.V010Combat?.ensure(item);
@@ -240,7 +241,7 @@ const V09Craft = (() => {
     const {device,list,scroll,actions}=craftView;
     const leftScroll=list.scrollTop||0,rightScroll=craftView.detailRecipe===selected[id]?(scroll.scrollTop||0):0;
     v09UpdateDeviceRow(device);
-    const recipes=Object.entries(RECIPES).filter(([,r])=>r.station===stationType(id)),recipeKeys=recipes.map(([key,r])=>key+':'+r.category).join('|');
+    const recipes=Object.entries(RECIPES).filter(([,r])=>r.station===stationType(id)&&!r.retiredBuildable),recipeKeys=recipes.map(([key,r])=>key+':'+r.category).join('|');
     if(craftView.recipeKeys!==recipeKeys){
       list.replaceChildren();craftView.buttons.clear();let category='';
       for(const [key,r] of recipes){

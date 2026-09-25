@@ -1,11 +1,11 @@
 {
-  "version": "0.38.0",
+  "version": "0.39.0",
   "reference": "0.24.1 fixed Stage 4",
   "languages": [
     "en",
     "ru"
   ],
-  "catalogKeys": 2248,
+  "catalogKeys": 2301,
   "uiCoverage": [
     "startup",
     "settings.PC",
@@ -68,11 +68,10 @@
     "recipe.rifle_m4",
     "recipe.helmet1",
     "recipe.magazine_module",
-    "recipe.hmg016",
     "craft.feed_craft",
     "recipe.feed"
   ],
-  "passed": 4787,
+  "passed": 4892,
   "failed": 0,
   "checks": [
     {
@@ -9080,6 +9079,218 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.en.defense.health",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.power",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.combat",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.destroyed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.fallen",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.fallenShort",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.off",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.noPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.active",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.onAction",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.offAction",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.load",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.unload",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.repair",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.rebuild",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.upgrade",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.pickup",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.aim",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.left",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.right",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.direction",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.degrees",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.repairHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.pickupHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.upgradeHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.invalid_command",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.world_changed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.already_full",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.hammer",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.fallen",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.materials",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.ammo",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.inventoryFull",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.max_level",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.repair_first",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.out_of_reach",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.stale_revision",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.actor_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.request_conflict",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.world_paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.missing_instance",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.occupied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.overlap",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.passage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.bounds",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.defense.error.door",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.automatic_turret",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.automatic_turret",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.heavy_turret",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.heavy_turret",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.searchlight",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.searchlight",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.surfaceOnly",
+      "status": "PASS"
+    },
+    {
       "id": "catalog.ru.legacy.6c127073fb4b",
       "status": "PASS"
     },
@@ -18072,6 +18283,218 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.ru.defense.health",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.power",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.combat",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.destroyed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.fallen",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.fallenShort",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.off",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.noPower",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.active",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.onAction",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.offAction",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.load",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.unload",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.repair",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.rebuild",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.upgrade",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.pickup",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.aim",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.left",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.right",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.direction",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.degrees",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.repairHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.pickupHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.upgradeHint",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.invalid_command",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.world_changed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.already_full",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.hammer",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.fallen",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.materials",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.ammo",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.inventoryFull",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.max_level",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.repair_first",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.out_of_reach",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.stale_revision",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.actor_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.request_conflict",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.world_paused",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.missing_instance",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.occupied",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.overlap",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.passage",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.bounds",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.defense.error.door",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.automatic_turret",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.automatic_turret",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.heavy_turret",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.heavy_turret",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.searchlight",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.searchlight",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.surfaceOnly",
+      "status": "PASS"
+    },
+    {
       "id": "ui.en.startup",
       "status": "PASS"
     },
@@ -18313,10 +18736,6 @@
     },
     {
       "id": "ui.en.recipe.magazine_module",
-      "status": "PASS"
-    },
-    {
-      "id": "ui.en.recipe.hmg016",
       "status": "PASS"
     },
     {

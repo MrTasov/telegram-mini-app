@@ -8,7 +8,7 @@ const storage=runtime=>Object.fromEntries(runtime.storage);
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack.slice(0,2200)});}}
 const restore=d=>E(`restoreGameProgress(${JSON.stringify(d)})`);
 const frozen=rawFixture('rifle_ak74_37_60'),fixture=JSON.parse(frozen);
-check('owners.oneReferencePerLiveContainer',()=>assert.equal(E(`GameState.player.entity===player&&GameState.inventory.bag===bag&&GameState.inventory.storage===storageChests&&GameState.inventory.equipment===equipment&&GameState.inventory.quick===V013Inventory.items&&GameState.enemies.actors===zombies&&GameState.farm.beds===farmState&&GameState.drones.companion===V014Robots.state&&GameState.turrets.guns===V016Turret.guns&&GameState.power.battery===V010Energy.battery`),true));
+check('owners.oneReferencePerLiveContainer',()=>assert.equal(E(`GameState.player.entity===player&&GameState.inventory.bag===bag&&GameState.inventory.storage===storageChests&&GameState.inventory.equipment===equipment&&GameState.inventory.quick===V013Inventory.items&&GameState.enemies.actors===zombies&&GameState.farm.beds===farmState&&GameState.drones.companion===V014Robots.state&&GameState.turrets.system===GameDefense&&GameState.turrets.guns.every(g=>GameEquipment.get(g.id).state.settings.ammo===g.ammo)&&GameState.power.battery===V010Energy.battery`),true));
 check('owners.replacementDoesNotLeaveStaleReferences',()=>{
  E('window.__oldBag=bag;window.__oldZombies=zombies;window.__oldFarm=farmState;window.__oldStorage=storageChests;');restore(fixture);
  assert.equal(E(`bag!==__oldBag&&zombies!==__oldZombies&&farmState!==__oldFarm&&storageChests!==__oldStorage&&GameState.inventory.bag===bag&&GameState.inventory.storage===storageChests&&GameState.enemies.actors===zombies&&GameState.farm.beds===farmState`),true);
@@ -24,7 +24,7 @@ check('owners.sessionIsSingleSourceOfTruth',()=>{
 });
 check('owners.noLateRegistration',()=>assert.throws(()=>E(`GameState.register('extra',{}, {source:'test'})`)));
 check('owners.sealedViews',()=>assert.equal(E('Object.isFrozen(GameState)&&Object.isFrozen(GameState.inventory)&&Object.isSealed(GameState.session)'),true));
-check('registry.historicalOrderIsExplicit',()=>assert.deepEqual(copy(E('GameSave.describe()')),Object.fromEntries(Object.entries(require('./save-adapters.json').order).map(([k,v])=>[k,[...v,'bunker.level1','campaign.foundation','equipment.instances','inventory.head-modules','base.recovery','campaign.chapter-one','equipment.placement','inventory.buildables','base.control','research.foundation','world.exploration','story.archive']]))));
+check('registry.historicalOrderIsExplicit',()=>assert.deepEqual(copy(E('GameSave.describe()')),Object.fromEntries(Object.entries(require('./save-adapters.json').order).map(([k,v])=>[k,[...v,'bunker.level1','campaign.foundation','equipment.instances','inventory.head-modules','base.recovery','campaign.chapter-one','equipment.placement','inventory.buildables','base.control','research.foundation','world.exploration','story.archive','defense.foundation']]))));
 check('registry.singleSharedModuleRegistry',()=>assert.equal(E('V010.modules===GameSave.modules&&Object.isFrozen(V010.modules)'),true));
 check('registry.moduleRestoreOrder',()=>assert.deepEqual(copy(E('GameSave.moduleOrder')),['world','inventory','craft','combat','energy','progression','camera']));
 check('registry.rejectDuplicateOrLateHooks',()=>assert.throws(()=>E(`GameSave.extend('capture','save.slots',next=>next())`)));

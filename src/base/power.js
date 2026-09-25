@@ -49,7 +49,7 @@ function devicePowered(id){return !!V09Power.devices[id]&&V09Power.allocation().
 function registerEquipmentPowerDevice(instanceId,active){
   const instance=GameEquipment.get(instanceId),def=GameEquipment.definition(instanceId);
   if(!instance?.refs.device||!Number.isFinite(def.powerKW))throw Error('Equipment has no power adapter');
-  const device=registerPowerDevice(instance.refs.device,instance.transform.room,def.powerKW,active,def.name);Object.defineProperty(device,'room',{configurable:true,enumerable:true,get:()=>GameEquipment.get(instanceId)?.transform.room||instance.transform.room});device.present=()=>GameEquipment.present(instanceId);return device;
+  const device=registerPowerDevice(instance.refs.device,instance.transform.room,def.powerKW,active,def.name);Object.defineProperty(device,'room',{configurable:true,enumerable:true,get:()=>GameEquipment.get(instanceId)?.transform.room||instance.transform.room});device.present=()=>GameEquipment.present(instanceId)&&(!DefenseDefinitions.types[GameEquipment.get(instanceId)?.typeId]||(GameEquipment.get(instanceId).state.condition.hp>0&&!GameEquipment.get(instanceId).state.settings.fallen));return device;
 }
 V09Power.powered=devicePowered;
 function v09PowerChanged(){V09Power.allocation();queueGameSave();v09RefreshPowerUI();}

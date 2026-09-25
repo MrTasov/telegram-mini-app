@@ -16,6 +16,7 @@ window.GameEquipmentRuntime=(()=>{
   function power(instanceId){const r=GameEquipment.get(instanceId);return r?.refs.device?Object.freeze({instanceId,id:r.refs.device,get device(){return V09Power.devices[r.refs.device];},get powered(){return devicePowered(r.refs.device);}}):null;}
   function access(actor,instance){
     if(!GameEquipment.present(instance.id)||actor.dead||actor.scene!==instance.transform.scene||!BunkerLayout.roomActive(instance.transform.room))return false;
+    if(instance.transform.scene==='surface'&&window.GameDefense)return GameDefense.reachable(actor,instance);
     const p=actor.entity,target={...GameFootprints.body(instance.id),range:GameEquipment.definition(instance.id).range};
     const contact=contactPoint(target,p.x,p.y);
     return distance(p.x,p.y,contact.x,contact.y)<=target.range&&lineClear(p.x,p.y,contact.x,contact.y,0,actor.scene,instance.typeId==='drone_station'?instance.id+'_body':instance.id);

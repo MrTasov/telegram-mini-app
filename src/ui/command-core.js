@@ -16,7 +16,8 @@ window.CommandCoreUI=(()=>{
   const trackerItems=node('div',null,'trackerItems'),trackerOpen=button('campaign.tracker.open',()=>showJournal(),'trackerOpen');trackerPanel.append(trackerItems,trackerOpen);
   const feedback=node('div',null,'trackerFeedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
   tracker.append(trackerToggle,trackerPanel,feedback);trackerToggle.setAttribute('aria-controls',trackerPanel.id);
-  let trackerExpanded=false,previousObjectives=null,feedbackUntil=0,viewEpoch=0;const celebrated=new Set(),objectiveExpanded=new Set();
+  // Session preference: scene/Core resets never change the tracker disclosure.
+  let trackerExpanded=true,previousObjectives=null,feedbackUntil=0,viewEpoch=0;const celebrated=new Set(),objectiveExpanded=new Set();
   const legacyLinks=[['campaign.achievements','achievements']].map(([key,legacy])=>{
     const b=button(key,()=>{closeOverlay(overlay);V010Progression.show(legacy);});links.append(b);return {b,key};
   });
@@ -164,7 +165,7 @@ window.CommandCoreUI=(()=>{
     syncLocation();window.GameChapterOne?.visit(GameActors.localId,BunkerLayout.core.id);GameCampaign.refresh(true);GameMovement.openUI();openOverlay(overlay);select(sections.has(which)?which:sections.get(tab)?.available()?tab:'base');return true;
   }
   function tick(){window.GameBaseControlUI?.tick();window.GamePlacementUI?.tick();syncLocation();renderTracker();renderJournal();if(overlay.classList.contains('open'))render();}
-  function reset(){window.GamePlacementUI?.cancel();closeOverlay(overlay);closeOverlay(journal);journalPage=null;dirty=true;lastTracker='';trackerExpanded=!!window.GameChapterOne?.active&&GameCampaign.view().chapter==='chapter_1';tab='base';sectionHistory.length=0;previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values()){s.route.reset();s.scroll.scrollTop=0;}renderTracker();}
+  function reset(){window.GamePlacementUI?.cancel();closeOverlay(overlay);closeOverlay(journal);journalPage=null;dirty=true;lastTracker='';tab='base';sectionHistory.length=0;previousObjectives=GameCampaign.view().objectives;feedbackUntil=0;celebrated.clear();objectiveExpanded.clear();viewEpoch++;for(const s of sections.values()){s.route.reset();s.scroll.scrollTop=0;}renderTracker();}
   GameCampaign.subscribe(()=>{dirty=true;renderTracker();});
   I18n.onChange(()=>{lastTracker='';dirty=true;V09Power.devices[GameCampaign.powerId].name=t('bunker.core.name');renderTracker();render();renderJournal();});
   v09Style(`
@@ -217,11 +218,11 @@ window.CommandCoreUI=(()=>{
 :is(#commandCoreOverlay,#campaignJournalOverlay) .coreChapterHero .coreMainGoal{color:#dbe6ce;margin-top:12px;font-size:12px;border-left:2px solid #a0b783;padding-left:10px}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .coreProgressTrack{height:4px;background:#091a21;border-radius:2px;margin-top:8px;overflow:hidden}:is(#commandCoreOverlay,#campaignJournalOverlay) .coreProgressFill{height:100%;background:#a3bf88}
 body #v010Trackers{overflow:visible;max-height:none;top:calc(var(--v011-game-top,10px) + 24px)}
-#campaignTracker{position:relative;pointer-events:auto;color:#e4e9dc;text-align:left;height:27px;width:182px;max-width:calc(100vw - 150px);font-size:11px}
+#campaignTracker{position:relative;pointer-events:auto;color:#e4e9dc;text-align:left;height:25px;width:150px;max-width:calc(100vw - 150px);font-size:11px}
 #campaignTracker[hidden],#campaignTracker [hidden]{display:none!important}
-#campaignTracker .trackerChip{height:27px;width:100%;display:flex;align-items:center;gap:5px;padding:3px 6px;border:1px solid #82948055;border-radius:7px;background:#10212780;color:#dbe6d2;text-align:left;font:inherit;touch-action:manipulation}
+#campaignTracker .trackerChip{height:25px;width:100%;display:flex;align-items:center;gap:5px;padding:3px 6px;border:1px solid #82948055;border-radius:7px;background:#10212766;color:#dbe6d2;text-align:left;font:inherit;touch-action:manipulation}
 #campaignTracker .trackerChip b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;font-size:10px;text-shadow:0 1px 2px #000}#campaignTracker .trackerMark{font-size:16px;width:16px;color:#bdd5a5}
-#campaignTracker .trackerPanel{position:absolute;top:31px;left:0;width:208px;max-width:calc(100vw - 150px);height:174px;display:flex;flex-direction:column;box-sizing:border-box;padding:6px;border:1px solid #72866d66;border-radius:8px;background:#10212780;box-shadow:0 6px 20px #0005}
+#campaignTracker .trackerPanel{position:absolute;top:29px;left:0;width:170px;max-width:calc(100vw - 150px);height:162px;display:flex;flex-direction:column;box-sizing:border-box;padding:6px;border:1px solid #72866d66;border-radius:8px;background:#10212766;box-shadow:0 6px 20px #0005}
 #campaignTracker .trackerItems{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
 #campaignTracker .trackerInstruction{font-size:10px;line-height:1.3;color:#f0f2df;margin:5px 2px 10px;overflow-wrap:anywhere}
 #campaignTracker .trackerObjective{display:flex;gap:6px;padding:4px 2px;border-bottom:1px solid #ffffff10;font-size:11px;line-height:1.3}#campaignTracker .trackerObjective span{flex:1}#campaignTracker .trackerObjective small{color:#afc49d;font-size:9px;max-width:65px;text-align:right;font-variant-numeric:tabular-nums}
@@ -230,7 +231,7 @@ body #v010Trackers{overflow:visible;max-height:none;top:calc(var(--v011-game-top
 #campaignTracker.completed .trackerChip{border-color:#bddda8;background:#294934e8}@keyframes objectiveConfirm{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 body.v0161Modal #campaignTracker,body:has(.overlay.open) #campaignTracker{display:none!important}
 @media(max-width:480px){:is(#commandCoreOverlay,#campaignJournalOverlay) .v09Panel{padding:12px}:is(#commandCoreOverlay,#campaignJournalOverlay) .v09Title{font-size:17px}:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignBaseGrid{grid-template-columns:1fr}:is(#commandCoreOverlay,#campaignJournalOverlay) .coreChapterHero{padding:12px}}
-@media(max-width:480px){#campaignTracker{width:150px}#campaignTracker .trackerPanel{width:205px;max-width:calc(100vw - 120px)}#campaignTracker .trackerFeedback{width:130px}:is(#commandCoreOverlay,#campaignJournalOverlay) .coreChapterHero{padding:11px}:is(#commandCoreOverlay,#campaignJournalOverlay) h3{font-size:19px}}
+@media(max-width:480px){#campaignTracker{width:140px}#campaignTracker .trackerPanel{width:170px;max-width:calc(100vw - 120px)}#campaignTracker .trackerFeedback{width:130px}:is(#commandCoreOverlay,#campaignJournalOverlay) .coreChapterHero{padding:11px}:is(#commandCoreOverlay,#campaignJournalOverlay) h3{font-size:19px}}
 @media(prefers-reduced-motion:reduce){#campaignTracker .trackerFeedback{animation:none}}
 @media(max-height:500px){:is(#commandCoreOverlay,#campaignJournalOverlay) .v09Panel{padding:10px}:is(#commandCoreOverlay,#campaignJournalOverlay) .v09Header{height:38px;flex-basis:38px}:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs{flex-basis:44px}:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignLinks{flex-basis:40px}}
 `);

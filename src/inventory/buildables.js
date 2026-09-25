@@ -22,7 +22,7 @@ window.GameCarried=(()=>{
   }
   function validate(d){
     const state=d.carry0353,actor=d.identity027?.playerId||'player:1';
-    if(!state||state.schema!==1||Object.keys(state).sort().join()!=='legacyOverflow,schema'||!Array.isArray(state.legacyOverflow)||state.legacyOverflow.length>48)throw Error('Invalid carried equipment state');
+    if(!state||state.schema!==1||Object.keys(state).sort().join()!=='legacyOverflow,schema'||!Array.isArray(state.legacyOverflow)||state.legacyOverflow.length>192)throw Error('Invalid carried equipment state');
     const markers=[];const visit=(v,path)=>{if(!v||typeof v!=='object')return;if(is(v)){if(!/^bag\.\d+$/.test(path)||Object.keys(v).sort().join()!=='instanceId,qty,type'||v.qty!==1||typeof v.instanceId!=='string')throw Error('Invalid carried equipment marker');markers.push(v.instanceId);return;}for(const [k,c]of Object.entries(v))visit(c,path?path+'.'+k:k);};visit(d,'');
     const ids=markers.concat(state.legacyOverflow),records=d.equipment032.instances.filter(r=>r.placement==='packed');
     if(ids.some(id=>typeof id!=='string')||new Set(ids).size!==ids.length||ids.length!==records.length||records.some(r=>r.ownerId!==actor||!ids.includes(r.id)))throw Error('Missing or duplicate carried instance');

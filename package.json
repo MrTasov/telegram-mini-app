@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "private": true,
-  "description": "LAST BASE 0.38.0 \u2014 Stage G: World Map, Sectors and Exploration",
+  "description": "LAST BASE 0.39.0 — Stage H: Surface Defense",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -53,7 +53,10 @@
     "package:f:final": "node tools/package-stage-f-final.cjs",
     "test:g": "node qa/stage-g.cjs && node qa/stage-g-routes.cjs",
     "bench:g": "node --expose-gc qa/stage-g-performance.cjs",
-    "package:g": "node tools/package-stage-g.cjs"
+    "package:g": "node tools/package-stage-g.cjs",
+    "test:h": "node qa/stage-h-prerequisites.cjs && node qa/stage-h.cjs && node qa/stage-h-visuals.cjs",
+    "bench:h": "node --expose-gc qa/stage-h-performance.cjs",
+    "package:h": "node tools/package-stage-h.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

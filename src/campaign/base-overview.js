@@ -36,9 +36,9 @@ window.GameBaseOverview=(()=>{
     }
     const gates=V015Base.sections.filter(s=>s.gate),open=gates.filter(s=>V015Base.isOpen(s)).length;
     add(g,'gates',t('gates'),t('gates.detail',{open:num(open),total:num(gates.length)}));
-    const guns=V016Turret.guns;
+    const guns=window.GameDefense?GameDefense.guns():V016Turret.guns;
     add(g,'turrets',t('turrets'),t('turrets.value',{ready:num(guns.filter(s=>s.enabled&&!s.fallen&&s.ammo>0).length),total:num(guns.length)}),t('turrets.detail',{ammo:num(guns.reduce((n,s)=>n+s.ammo,0)),fallen:num(guns.filter(s=>s.fallen).length)}));
-    const lights=Object.values(V09Power.devices).filter(d=>d.room==='yard');
+    const lights=Object.values(V09Power.devices).filter(d=>d.room==='yard'&&(d.id.startsWith('spot_')||GameEquipment.get(d.id)?.typeId==='searchlight')&&(!d.present||d.present()));
     add(g,'surfaceLights',t('surfaceLights'),t('devices.served',{on:num(lights.filter(d=>a.served.has(d.id)).length),total:num(lights.length)}));
     g=group('rooms');
     for(const room of BunkerLayout.roomData){

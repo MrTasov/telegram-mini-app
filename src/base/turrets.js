@@ -57,14 +57,15 @@ window.V016Turret=(()=>{
       const hit=ray(t,z,o,1);if(hit!==null&&hit<.9999)return false;
     }return true;
   }
-  function reachable(t){
-    if(scene!=='surface'||playerDead||distance(player.x,player.y,t.x,t.y)>132)return false;
+  function reachable(t,actor){
+    const entity=actor?.entity||player,which=actor?.scene??scene,dead=actor?.dead??playerDead;
+    if(which!=='surface'||dead||distance(entity.x,entity.y,t.x,t.y)>132)return false;
     // Wall controls are reachable from the adjacent ground or deck. Only the
     // supporting corner slabs are exempt; intervening walls/objects still block.
     for(const o of [...surfaceWalls(),...solidObjects('surface')]){
       if(o.id===t.wallId||eligible(o)&&fits(t,o))continue;
       if(o.group==='outer'&&distance(t.x,t.y,clamp(t.x,o.x,o.x+o.w),clamp(t.y,o.y,o.y+o.h))<35)continue;
-      const hit=ray(player,t,o,0);if(hit!==null&&hit<.98)return false;
+      const hit=ray(entity,t,o,0);if(hit!==null&&hit<.98)return false;
     }return true;
   }
   function candidate(x,y){
@@ -225,6 +226,6 @@ window.V016Turret=(()=>{
   GameSave.extend('decode','base.turrets',function(decodeOld,raw){const d=decodeOld(raw);validate(d.turret016,d);if(!d.turret016){const tokens=[];const walk=v=>{if(!v||typeof v!=='object')return;if(isType(v.type)&&Object.hasOwn(v,'qty'))tokens.push(v);else for(const q of Object.values(v))walk(q);};walk(d);if(tokens.length)throw Error('Отсутствует состояние пулемётов');}return d;});
   GameSave.extend('restore','base.turrets',function(restoreOld,d){d=V015Base.migrateGame(d);validate(d.turret016,d);restoreOld(d);guns.splice(0,guns.length,...copy(d.turret016?.guns||[starter()]));nextId=d.turret016?.nextId||2;runtime.clear();selected=null;cancelPlacement();obstacleRevision=-1;settleUnsupported();});
   v09Style('#v016TurretPanel .v09Panel{width:min(410px,94vw);padding:14px;border-radius:13px}#v016TurretPanel p{font-size:12px;line-height:1.5;margin:10px 0}.v016GunHero{display:flex;align-items:center;gap:10px}.v016GunHero>.itemIcon{width:105px;height:82px;object-fit:contain}.v016GunHero b{font-size:12px}.v016GunHero small{display:block;font-size:10px;color:#9caf9f;margin-top:5px}.v016GunActions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.v016GunActions .menuButton{font-size:11px;min-height:40px;margin:0;padding:7px}.v016GunNote{color:#9fb1a4}#v016Placement{position:fixed;z-index:9500;left:50%;top:calc(var(--v011-hud-top,10px) + 42px);transform:translateX(-50%);width:min(460px,calc(100vw - 24px));box-sizing:border-box;background:#182a2af2;border:1px solid #9ba784;border-radius:10px;padding:9px;text-align:center;color:#e0e7cc;font:11px Arial}.v016PlacementActions{display:flex;justify-content:center;gap:4px;margin-top:7px}.v016PlacementActions .menuButton{margin:0;font-size:11px;padding:5px 8px;min-height:36px;width:auto;min-width:32px}#v016PlaceConfirm{background:#476344}');
-  return {type:TYPE,definition,isType,typeOf,definitionFor,combatFor,damage,combat,guns,validItem,capture,validate,candidate,placementProblem,startPlacement,selectPoint,place,cancelPlacement,pack,reload,unload,setEnabled,applyEnabled,reachable,clear,support,settleUnsupported,tick,shootAt,open,draw,paint,get placement(){return placement;},get nextId(){return nextId;}};
+  return {type:TYPE,definition,isType,typeOf,definitionFor,combatFor,damage,combat,guns,newData,starter,validItem,capture,validate,candidate,placementProblem,startPlacement,selectPoint,place,cancelPlacement,pack,reload,unload,setEnabled,applyEnabled,reachable,clear,support,settleUnsupported,tick,shootAt,open,draw,paint,get placement(){return placement;},get nextId(){return nextId;}};
 })();
 
