@@ -86,6 +86,9 @@ function setup(file,initialStorage={},options={}){
    const code=src?fs.readFileSync(scriptFile,'utf8'):m[2];
    vm.runInContext(options.transformScript?options.transformScript(code,scriptFile):code,context,{filename:scriptFile,timeout:20000});loadedScripts.push(scriptFile);
  }
+ // Historical gameplay suites exercise the real Skip path after New Game.
+ // Stage F presentation tests explicitly opt in with storyIntro:true.
+ if(context.StoryPlayer&&options.storyIntro!==true)vm.runInContext('(()=>{const original=StoryPlayer;window.StoryPlayer=Object.freeze({...original,startIntro(){const opened=original.startIntro();if(opened)original.skip();return opened;},get active(){return original.active;}})})()',context);
  // Legacy gameplay suites intentionally exercise their historical post-launch
  // setup. Menu-specific suites opt out and assert the real untouched boot state.
  if(context.MainMenu&&options.mainMenu!==true){vm.runInContext('loadGameProgress();MainMenu.sessionSelected();',context,{timeout:20000});}

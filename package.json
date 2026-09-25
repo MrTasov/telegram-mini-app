@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.36.1",
+  "version": "0.37.0",
   "private": true,
-  "description": "LAST BASE 0.36.1 \u2014 Stage E Corrective: shared Research UI, Core navigation and audio recovery.",
+  "description": "LAST BASE 0.37.0 \u2014 Stage F: New Game intro and personal Archive.",
   "scripts": {
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
@@ -45,7 +45,10 @@
     "test:e:corrective": "node qa/stage-e-corrective.cjs && node qa/stage-e-audio-corrective.cjs",
     "bench:e:corrective": "node --expose-gc qa/stage-e-corrective-performance.cjs && node --expose-gc qa/stage-e-corrective-ui-performance.cjs",
     "package:e:corrective": "node tools/package-stage-e-corrective.cjs",
-    "bench:e:corrective:tail": "node --expose-gc qa/stage-e-corrective-tail-performance.cjs"
+    "bench:e:corrective:tail": "node --expose-gc qa/stage-e-corrective-tail-performance.cjs",
+    "test:f": "node qa/stage-f.cjs",
+    "bench:f": "node --expose-gc qa/stage-f-performance.cjs",
+    "package:f": "node tools/package-stage-f.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

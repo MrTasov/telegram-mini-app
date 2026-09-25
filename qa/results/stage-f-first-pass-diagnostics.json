@@ -1,0 +1,1912 @@
+{
+  "note": "Initial historical expectations lacked additive story037 owner, fifth Core tab, and unused future-route fixture. Runtime unchanged during QA adapter corrections.",
+  "runtimeSha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d",
+  "results": {
+    "stage-d": {
+      "version": "0.37.0",
+      "runtimeSha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d",
+      "passed": 4,
+      "failed": 12,
+      "checks": [
+        {
+          "id": "baseline.delivered_0351_immutable",
+          "status": "PASS"
+        },
+        {
+          "id": "defaults.identity_layout_and_farm_pause",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.delivered_dynamic_furnace_installed",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:12:591\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:12:78)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.delivered_dynamic_furnace_packed",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:12:591\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:12:78)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.delivered_dynamic_craft_bench_installed",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 88,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:12:591\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:12:78)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.delivered_dynamic_craft_bench_packed",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 88,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:12:591\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:12:78)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.production_job",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:13:578\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:13:53)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.production_queue",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:13:578\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:13:53)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.production_output",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:13:578\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:13:53)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.production_refund",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:13:578\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:13:53)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.historical_recipe_owner_hammer",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 94,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:14:210\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:14:72)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.historical_recipe_owner_fishing_rod",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 90,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:14:210\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:14:72)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.historical_recipe_owner_flashlight",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:14:210\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:14:72)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "migration.historical_recipe_owner_head_mount",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at migrate (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:9:350)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:14:210\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-d.cjs:14:72)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+        },
+        {
+          "id": "scope.fixed_infrastructure_cannot_be_packed",
+          "status": "PASS"
+        },
+        {
+          "id": "runtime.clean",
+          "status": "PASS"
+        }
+      ]
+    },
+    "stage-c2-prerequisites": {
+      "version": "0.37.0",
+      "passed": 24,
+      "failed": 1,
+      "checks": [
+        {
+          "id": "gather.axe.level0.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.axe.level1.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.axe.level2.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.axe.level3.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.axe.level4.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.axe.level5.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.pickaxe.level0.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.pickaxe.level1.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.pickaxe.level2.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.pickaxe.level3.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.pickaxe.level4.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.pickaxe.level5.impact_yield_speed",
+          "status": "PASS"
+        },
+        {
+          "id": "save.no_duplicate_impact.-1",
+          "status": "PASS"
+        },
+        {
+          "id": "save.no_duplicate_impact.1",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.full_bag_no_resource_loss_and_partial_capacity",
+          "status": "PASS"
+        },
+        {
+          "id": "gather.ui_parallel_pause_and_actor_guard",
+          "status": "PASS"
+        },
+        {
+          "id": "upgrade.axe.station_cost_level5_and_reload",
+          "status": "PASS"
+        },
+        {
+          "id": "upgrade.pickaxe.station_cost_level5_and_reload",
+          "status": "PASS"
+        },
+        {
+          "id": "tool_card.ru",
+          "status": "PASS"
+        },
+        {
+          "id": "tool_card.en",
+          "status": "PASS"
+        },
+        {
+          "id": "core.remembers_tabs_and_scroll_until_level_exit",
+          "status": "PASS"
+        },
+        {
+          "id": "core.future_sections_generic_page_validation_and_floor_scope",
+          "status": "FAIL",
+          "error": "/workspace/scratch/a6d22bff5614/stage_f_0370/js/game.js:14910\n    if(!routes.has(id)||sections.has(id)||typeof mount!=='function')throw Error('Invalid Core section');\n                                                                    ^\n\nError: Invalid Core section\n    at Object.registerSection (/workspace/scratch/a6d22bff5614/stage_f_0370/js/game.js:14910:75)\n    at evalmachine.<anonymous>:1:58\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at Object.eval (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/runtime.cjs:105:692)\n    at E (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-c2-prerequisites.cjs:2:69)\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-c2-prerequisites.cjs:18:81\n    at test (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-c2-prerequisites.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-c2-prerequisites.cjs:18:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)"
+        },
+        {
+          "id": "core.no_saved_UI_state_restore_resets",
+          "status": "PASS"
+        },
+        {
+          "id": "legacy_gather_migration_pure_and_progress",
+          "status": "PASS"
+        },
+        {
+          "id": "runtime.clean",
+          "status": "PASS"
+        }
+      ]
+    },
+    "stage-ab-corrective": {
+      "version": "0.37.0",
+      "passed": 32,
+      "failed": 2,
+      "checks": [
+        {
+          "id": "baseline.immutable",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.all_owners.workshop",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.all_owners.kitchen",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.all_owners.hall",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.all_owners.energy",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.reject_forged_old_transform",
+          "status": "PASS"
+        },
+        {
+          "id": "geometry.shell_stairs_core_art_unchanged",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.command_core_l1",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.furnace",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.craft_bench",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.generator",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.tank",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.battery",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.upgrade0161",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.chest0",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.robots014_dock_body",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.medical_table",
+          "status": "PASS"
+        },
+        {
+          "id": "body.shared_collision_and_light.bed",
+          "status": "PASS"
+        },
+        {
+          "id": "body.transparent_sprite_margin_is_walkable.command_core_l1",
+          "status": "PASS"
+        },
+        {
+          "id": "body.transparent_sprite_margin_is_walkable.craft_bench",
+          "status": "PASS"
+        },
+        {
+          "id": "body.transparent_sprite_margin_is_walkable.furnace",
+          "status": "PASS"
+        },
+        {
+          "id": "body.transparent_sprite_margin_is_walkable.generator",
+          "status": "PASS"
+        },
+        {
+          "id": "body.transparent_sprite_margin_is_walkable.upgrade0161",
+          "status": "PASS"
+        },
+        {
+          "id": "navigation.player_and_drone_both_swapped_rooms",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.moved_station_explicit_actor_once_and_after_load",
+          "status": "PASS"
+        },
+        {
+          "id": "tracker.collapsed_toggle_hide_and_independent_progress",
+          "status": "PASS"
+        },
+        {
+          "id": "tracker.confirmation_expires_without_objective_rollback",
+          "status": "PASS"
+        },
+        {
+          "id": "campaign.optional_extension_no_new_gate_or_reward",
+          "status": "PASS"
+        },
+        {
+          "id": "core.fixed_nodes_compact_objectives_chapter_selection.ru",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 4\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-ab-corrective.cjs:36:519\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-ab-corrective.cjs:6:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-ab-corrective.cjs:35:31)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "core.fixed_nodes_compact_objectives_chapter_selection.en",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 4\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-ab-corrective.cjs:36:519\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-ab-corrective.cjs:6:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-ab-corrective.cjs:35:31)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "core.stable_viewport_constraints_and_hud_css",
+          "status": "PASS"
+        },
+        {
+          "id": "audio.scene_floor_and_elevation_isolation",
+          "status": "PASS"
+        },
+        {
+          "id": "audio.day_removed_dayX_untouched_and_replacements_real",
+          "status": "PASS"
+        },
+        {
+          "id": "console.clean",
+          "status": "PASS"
+        }
+      ]
+    },
+    "stage-b": {
+      "version": "0.37.0",
+      "passed": 56,
+      "failed": 2,
+      "checks": [
+        {
+          "id": "baseline.sha256",
+          "status": "PASS"
+        },
+        {
+          "id": "default_world.has_only_existing_instances",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.0311.additive_pure_repeatable",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-b.cjs:15:283\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-b.cjs:6:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-b.cjs:15:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "migration.0311.active_paused_queue_output_refund_feed_and_item",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 90,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-b.cjs:18:105\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-b.cjs:6:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-b.cjs:16:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "transform.old_coordinates.furnace",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.craft_bench",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.feed_craft",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.upgrade0161",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.tank",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.generator",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.battery",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.robots014_dock",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest0",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest1",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest2",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest3",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest4",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest5",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest6",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest7",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest8",
+          "status": "PASS"
+        },
+        {
+          "id": "transform.old_coordinates.chest9",
+          "status": "PASS"
+        },
+        {
+          "id": "geometry.preserved_shell_and_shared_new_physical_bodies",
+          "status": "PASS"
+        },
+        {
+          "id": "geometry.collision_grid_and_routes",
+          "status": "PASS"
+        },
+        {
+          "id": "container.live_refs_survive_restore",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.explicit_actor_instance_repeat_and_reload",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.denied_no_expense.foreign_actor",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.denied_no_expense.missing_instance",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.denied_no_expense.distance",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.denied_no_expense.dead",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.denied_no_expense.surface",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.denied_no_expense.inactive_feed",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.denied_no_expense.pause",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.atomic_materials_and_full_inventory_output",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.cancel_refund_is_conserved_once",
+          "status": "PASS"
+        },
+        {
+          "id": "power_off.roundtrip_and_no_free_progress",
+          "status": "PASS"
+        },
+        {
+          "id": "upgrade.power_depends_on_shared_item_not_open_window",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.missing",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.schema",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.duplicate_id",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.unknown_type",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.protected_moved",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.rotation",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.room",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.job_ref",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.device_ref",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.container_ref",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.extra_instance",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.negative_revision",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject_without_world_or_slot_mutation.future",
+          "status": "PASS"
+        },
+        {
+          "id": "two_instances.same_production_code_isolated_jobs_output_pause_power",
+          "status": "PASS"
+        },
+        {
+          "id": "two_instances.renderer_collision_interaction_share_transform",
+          "status": "PASS"
+        },
+        {
+          "id": "pure_authority.two_actor_conflict_and_permission",
+          "status": "PASS"
+        },
+        {
+          "id": "two_instances.actual_renderer_and_audio_observer_anchors",
+          "status": "PASS"
+        },
+        {
+          "id": "receipts.bounded_and_evicted_request_stays_stale",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.production_uses_instance_command_and_remains_localized",
+          "status": "PASS"
+        },
+        {
+          "id": "stage_A_and_content_files_unchanged",
+          "status": "PASS"
+        },
+        {
+          "id": "console.clean",
+          "status": "PASS"
+        }
+      ]
+    },
+    "campaign": {
+      "version": "0.37.0",
+      "passed": 45,
+      "failed": 6,
+      "checks": [
+        {
+          "id": "conditions.AND_OR_and_explanations",
+          "status": "PASS"
+        },
+        {
+          "id": "definitions.reject.unknownFact",
+          "status": "PASS"
+        },
+        {
+          "id": "definitions.reject.unknownObjective",
+          "status": "PASS"
+        },
+        {
+          "id": "definitions.reject.objectiveCycle",
+          "status": "PASS"
+        },
+        {
+          "id": "definitions.reject.chapterCycle",
+          "status": "PASS"
+        },
+        {
+          "id": "definitions.reject.unknownChapter",
+          "status": "PASS"
+        },
+        {
+          "id": "definitions.reject.duplicateObjective",
+          "status": "PASS"
+        },
+        {
+          "id": "definitions.reject.unreachable",
+          "status": "PASS"
+        },
+        {
+          "id": "definitions.reject.transientDependency",
+          "status": "PASS"
+        },
+        {
+          "id": "semantics.current_reverts_once_stays_after_ignores_history",
+          "status": "PASS"
+        },
+        {
+          "id": "ready_is_not_transition_and_snapshots_are_pure",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.closed_UI_two_actors_duplicate_and_stale",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reject.foreign",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reject.dead",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reject.permissions",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reject.stale",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reject.wrongChapter",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reject.wrongTarget",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reject.badRequest",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reject.wrongType",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.revalidate.power",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.revalidate.distance",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.revalidate.target",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.reused_id_different_payload_rejected",
+          "status": "PASS"
+        },
+        {
+          "id": "restore_never_emits_or_grants_and_duplicate_survives",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject.futureSchema",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject.futureContent",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject.unknownActive",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject.unknownObjective",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject.missingObjective",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject.forgedCompletion",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject.negativeBaseline",
+          "status": "PASS"
+        },
+        {
+          "id": "save.reject.invalidBoolean",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.R2_decode_is_additive_and_pure",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:25:296\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:25:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "migration.old_R2_restore_preserves_equipment_progress_and_geometry",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:26:424\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:26:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "migration.no_starter_rewards_or_backdated_actions",
+          "status": "PASS"
+        },
+        {
+          "id": "save.current_missing_owner_rejected_before_live_or_slot_changes",
+          "status": "PASS"
+        },
+        {
+          "id": "new_game_has_separate_profile_no_damage_and_no_old_completion",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.offline_journal_and_physical_Core_display_goals",
+          "status": "PASS"
+        },
+        {
+          "id": "events_and_polling_update_closed_UI_without_item_transfer_credit",
+          "status": "PASS"
+        },
+        {
+          "id": "Core.consumer_uses_existing_network_independent_of_UI",
+          "status": "PASS"
+        },
+        {
+          "id": "commands.full_inventory_has_no_partial_expense_and_no_new_reward",
+          "status": "PASS"
+        },
+        {
+          "id": "save_transition_roundtrip_and_duplicate_restores_once",
+          "status": "PASS"
+        },
+        {
+          "id": "power_off_and_distance_rechecked_on_commit",
+          "status": "PASS"
+        },
+        {
+          "id": "pause_hidden_resume_does_not_advance_campaign",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.localized_tabs_and_legacy_access.ru.PC",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 4\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:37:401\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:37:69)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "UI.localized_tabs_and_legacy_access.ru.MOBILE",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 4\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:37:401\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:37:69)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "UI.localized_tabs_and_legacy_access.en.PC",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 4\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:37:401\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:37:69)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "UI.localized_tabs_and_legacy_access.en.MOBILE",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 4\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:37:401\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/campaign.cjs:37:69)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "snapshots_do_not_mutate_campaign_or_random_sequence",
+          "status": "PASS"
+        },
+        {
+          "id": "console.clean",
+          "status": "PASS"
+        }
+      ]
+    },
+    "stage-a-corrective": {
+      "version": "0.37.0",
+      "passed": 28,
+      "failed": 5,
+      "checks": [
+        {
+          "id": "migration.original_A.fresh",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:17:121\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:12:56)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "migration.original_A.power",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:17:121\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:12:56)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "migration.original_A.ore",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:17:121\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:12:56)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "migration.original_A.completed",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:17:121\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:12:56)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "migration.reject_corrupt_original_before_mutation",
+          "status": "PASS"
+        },
+        {
+          "id": "migration.current_missing_optional_is_invalid",
+          "status": "PASS"
+        },
+        {
+          "id": "content.seven_objectives_and_optional_compatibility",
+          "status": "PASS"
+        },
+        {
+          "id": "content.shared_wood_not_backpack_and_reverts_on_consumption",
+          "status": "PASS"
+        },
+        {
+          "id": "content.iron_activation_baseline_ignores_old_production_and_transfers",
+          "status": "PASS"
+        },
+        {
+          "id": "content.actual_furnace_output_completes_once_without_collection",
+          "status": "PASS"
+        },
+        {
+          "id": "content.battery_once_survives_discharge_and_load",
+          "status": "PASS"
+        },
+        {
+          "id": "content.perimeter_current_reverts_and_repairs",
+          "status": "PASS"
+        },
+        {
+          "id": "stairs.whole_visual_area.exit",
+          "status": "PASS"
+        },
+        {
+          "id": "stairs.whole_visual_area.stairs_down_locked",
+          "status": "PASS"
+        },
+        {
+          "id": "stairs.gap_is_not_a_target",
+          "status": "PASS"
+        },
+        {
+          "id": "stairs.up_action_from_foot_and_top_without_tiny_circle",
+          "status": "PASS"
+        },
+        {
+          "id": "stairs.locked_routes_to_seal_without_entering_level2",
+          "status": "PASS"
+        },
+        {
+          "id": "geometry_and_assets_unchanged",
+          "status": "PASS"
+        },
+        {
+          "id": "base.all_existing_systems_and_read_only",
+          "status": "PASS"
+        },
+        {
+          "id": "base.battery.empty",
+          "status": "PASS"
+        },
+        {
+          "id": "base.battery.charging",
+          "status": "PASS"
+        },
+        {
+          "id": "base.battery.discharging",
+          "status": "PASS"
+        },
+        {
+          "id": "base.battery.off",
+          "status": "PASS"
+        },
+        {
+          "id": "base.fuel_units_and_retired_room_switch_ignored",
+          "status": "PASS"
+        },
+        {
+          "id": "base.production_power_pause_and_ready",
+          "status": "PASS"
+        },
+        {
+          "id": "base.drone_location_and_fallen_defense",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.localized_compact_and_stable_nodes.ru.PC",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.localized_compact_and_stable_nodes.ru.MOBILE",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.localized_compact_and_stable_nodes.en.PC",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.localized_compact_and_stable_nodes.en.MOBILE",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.optional_progress_updates_without_revision_change",
+          "status": "PASS"
+        },
+        {
+          "id": "UI.only_implemented_routes_and_legacy_screens",
+          "status": "FAIL",
+          "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 4\n\n    at /workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:54:113\n    at check (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:5:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/stage_f_0370/qa/stage-a-corrective.cjs:54:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        },
+        {
+          "id": "console.clean",
+          "status": "PASS"
+        }
+      ],
+      "limitations": [
+        "DOM persistence checked in a model; pixel layout requires the optional browser gate and physical device review."
+      ]
+    },
+    "balance": {
+      "version": "0.37.0",
+      "passed": 0,
+      "failed": 1,
+      "scope": "Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.",
+      "addedDefinitionFields": {
+        "items": [
+          "ammo",
+          "stackMax",
+          "caliber",
+          "drone",
+          "turret",
+          "moduleSlot",
+          "moduleSlots"
+        ],
+        "weapons": [
+          "category",
+          "reloadMs",
+          "noise",
+          "heldStyle",
+          "visualRecoil",
+          "recoilLabel",
+          "magazineTypes",
+          "defaultMagazine",
+          "extendedMagazine"
+        ]
+      },
+      "addedEnemyFields": [
+        "spawnOrder",
+        "behavior",
+        "healthColor",
+        "leap",
+        "blast"
+      ],
+      "addedAPIs": {
+        "V09World": [],
+        "V020Walls": [],
+        "V091Fortress": [],
+        "V091Loot": [],
+        "V091Equipment": [],
+        "V09Saves": [],
+        "V010": [],
+        "V010Inventory": [],
+        "V010Combat": [
+          "upgradeRules",
+          "upgradeProfile",
+          "maxUpgradeLevel",
+          "equipmentStats",
+          "equipmentSnapshot",
+          "syncAmmo",
+          "itemView"
+        ],
+        "V010World": [],
+        "V010Energy": [],
+        "V010Progression": [
+          "count",
+          "isLegacyUnlocked"
+        ],
+        "V010Camera": [
+          "resetTouch",
+          "touchActive"
+        ],
+        "V0105": [
+          "hitTarget",
+          "selectTarget"
+        ],
+        "V011Art": [
+          "frame"
+        ],
+        "V011UI": [],
+        "V011CraftUI": [],
+        "V011Farm": [
+          "config"
+        ],
+        "V011World": [],
+        "V011Rooms": [
+          "floorCacheInfo"
+        ],
+        "V011Living": [],
+        "V012Expansion": [],
+        "V012Map": [],
+        "V012Windows": [],
+        "V012Effects": [],
+        "V012Fishing": [],
+        "V014Fish": [],
+        "V013Inventory": [],
+        "V013Lake": [],
+        "V013City": [],
+        "V0141DroneMotion": [],
+        "V014Robots": [
+          "type",
+          "instanceId",
+          "definition",
+          "ownsToken",
+          "repairCost",
+          "canRepair"
+        ],
+        "V014Controls": [
+          "release",
+          "releaseInput"
+        ],
+        "V014Energy": [],
+        "V0141DroneUI": [],
+        "V0141Farm": [],
+        "V0141Map": [],
+        "V0141Trees": [],
+        "V015Base": [
+          "health"
+        ],
+        "V0151Station": [],
+        "V016Lighting": [
+          "doorLeaks",
+          "droneMetrics"
+        ],
+        "V016Turret": [
+          "type",
+          "definition",
+          "isType",
+          "typeOf",
+          "definitionFor",
+          "combatFor",
+          "applyEnabled"
+        ],
+        "V0161UI": [
+          "topOverlay"
+        ],
+        "V0161Migration": [],
+        "V0161Upgrade": [],
+        "V0162Quick": [],
+        "V0162Magazines": [],
+        "V0163Loot": [],
+        "V0163Vitals": [],
+        "V017Monsters": [
+          "dayX",
+          "typeAt",
+          "visualCacheStats"
+        ],
+        "V018Build": [
+          "health",
+          "definition",
+          "maxLevel",
+          "applyRepair",
+          "applyUpgrade"
+        ]
+      },
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    dayXEnemies: {\n      bloater: {\n        art: 'bloater',\n        chaseSpeed: 1.5750000000000002,\n...\n        robots014: 1,\n+       story037: 1,\n        turret016: 1,\n        upgrade0161: 1,\n        v010: 1,\n        v091: 1,\n        v09: 1,\n...\n        'building018',\n+       'story037'\n      ]\n    },\n    turret: {\n      ammoType: 'ammo',\n      capacity: 600,\n",
+      "consoleErrors": []
+    },
+    "differential": {
+      "reference": "0.21.0 manually accepted on desktop and phone",
+      "candidate": "0.37.0",
+      "ignoredFields": [
+        "gameVersion (release metadata)",
+        "saveVersion (new envelope version)"
+      ],
+      "passed": 1,
+      "failed": 160,
+      "checks": [
+        {
+          "id": "freshGame.fullPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.craft_in_progress.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 7,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.craft_in_progress.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 7,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.craft_in_progress.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 7,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_0.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_0.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_0.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_1.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_1.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_1.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_2.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_2.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_2.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_3.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_3.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_3.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_4.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_4.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_4.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_5.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_5.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_5.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_6.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_6.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_6.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_7.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_7.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_7.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_8.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_8.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_8.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_9.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_9.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.crop_9.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.damaged_base_turret.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.damaged_base_turret.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.damaged_base_turret.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.day_x.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.day_x.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.day_x.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_charging.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_charging.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_charging.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_empty_far.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_empty_far.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_empty_far.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_packed.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_packed.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.drone_packed.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.equipment_storage.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 65,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.equipment_storage.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 65,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.equipment_storage.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 65,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.fish_instances.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        fishEntries: [\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.fish_instances.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        fishEntries: [\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.fish_instances.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        fishEntries: [\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.fresh_game.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.fresh_game.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.fresh_game.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.full_backpack.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.full_backpack.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.full_backpack.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.legacy_0.19.1.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.legacy_0.19.1.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.legacy_0.19.1.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_ak74_37_60.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_ak74_37_60.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_ak74_37_60.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_ak74_no_magazine.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_ak74_no_magazine.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_ak74_no_magazine.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_m4_37_60.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_m4_37_60.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_m4_37_60.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_m4_no_magazine.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_m4_no_magazine.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage0.rifle_m4_no_magazine.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.craft_in_progress.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 7,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.craft_in_progress.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 7,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.craft_in_progress.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 7,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_0.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_0.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_0.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_1.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_1.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_1.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_2.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_2.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_2.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_3.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_3.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_3.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_4.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_4.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_4.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_5.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_5.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_5.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_6.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_6.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_6.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_7.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_7.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_7.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_8.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_8.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_8.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_9.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_9.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.crop_9.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.damaged_base_turret.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.damaged_base_turret.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.damaged_base_turret.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.day_x.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.day_x.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.day_x.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_charging.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_charging.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_charging.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_empty_far.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_empty_far.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_empty_far.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_packed.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_packed.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.drone_packed.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.equipment_storage.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 65,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.equipment_storage.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 65,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.equipment_storage.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 65,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.fish_instances.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        fishEntries: [\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.fish_instances.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        fishEntries: [\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.fish_instances.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        fishEntries: [\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.fresh_game.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.fresh_game.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.fresh_game.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.full_backpack.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.full_backpack.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.full_backpack.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 100,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.legacy_0.19.1.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.legacy_0.19.1.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.legacy_0.19.1.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_ak74_37_60.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_ak74_37_60.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_ak74_37_60.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_ak74_no_magazine.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_ak74_no_magazine.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_ak74_no_magazine.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_m4_37_60.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_m4_37_60.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_m4_37_60.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_m4_no_magazine.json.decodedPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_m4_no_magazine.json.restoredPayload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "stage1.rifle_m4_no_magazine.json.newRoundtrip",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 16,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "simulation.surfaceMovement",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "simulation.craftingProgress",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 7,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "simulation.droneCharging",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "simulation.emptyDrone",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      null,\n      null,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "simulation.droneFollowing",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "simulation.dayX",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "simulation.growingCrop",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 1,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "transactions.inventoryTransferAndQuickSlots",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: null,\n    bag: [\n      {\n        qty: 64,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "transactions.magazineRemovalAndReload",
+          "status": "FAIL",
+          "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 53,\n...\n    ],\n+   story037: {\n+     commands: {\n+       receipts: [],\n+       revision: 0\n+     },\n+     contentRevision: 1,\n+     players: [\n+       {\n+         actorId: 'player:1',\n+         intro: 'legacy',\n+         read: [],\n+         watched: []\n+       }\n+     ],\n+     schema: 1,\n+     unlocked: [\n+       'log.arrival'\n+     ]\n+   },\n    trees: [\n      {\n        felled: false,\n        id: 'tree0',\n        regrowMs: 0,\n"
+        },
+        {
+          "id": "console.noErrors",
+          "status": "PASS"
+        }
+      ]
+    }
+  }
+}

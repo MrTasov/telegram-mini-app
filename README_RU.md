@@ -1,44 +1,55 @@
-# LAST BASE 0.32.0 — Stage B
+# LAST BASE 0.37.0 — Stage F
 
-Отдельная GitHub-ready сборка на основе 0.31.1 Stage A Corrective. Stage A
-условно принят **только для продолжения разработки**; ручная приёмка остаётся
-открытой. Проверяйте A Corrective и B вместе. **После B разработка остановлена:
-C1, Building/Placement и окончательный Chapter 1 не начаты.**
+Основа: принятая **0.36.1 Stage E Corrective**. Добавлены вступление New Game с
+пропуском и **Command Core → Архив**. Подробности и результаты проверок:
+[STAGE_F_REPORT_RU.md](STAGE_F_REPORT_RU.md),
+[контракты Stage F](docs/STAGE_F_CONTRACT_RU.md).
+Ранние отчёты описывают исторические сборки. После Stage F разработка остановлена
+для ручной проверки; Stage G и Level 2 не начаты.
 
-## Обновление и запуск
+## Запуск и обновление
 
-Распакуйте ZIP и загрузите его содержимое на GitHub с прежней структурой папок.
-`index.html` находится в корне; `js/`, `styles/` и `assets/` нужны вместе.
-Игра уже собрана. Локальный HTTP-запуск: `python -m http.server 8000`,
-затем `http://localhost:8000/`. Node.js нужен только для разработки и QA.
+Загрузите содержимое ZIP на GitHub с прежней структурой папок. Игра уже собрана;
+`index.html`, `js/`, `styles/`, `assets/` должны поставляться вместе.
+Локально: `python -m http.server 8000`, затем `http://localhost:8000/`.
+HTTP необходим для корректной загрузки аудио; `file://` может блокировать fetch.
+Для сохранения слотов используйте прежний origin сайта и данные браузера.
 
-Сохраните прежний адрес сайта и данные браузера. Перед ручной проверкой
-экспортируйте важный слот. SaveFormat **6 → 7** добавляет таблицу экземпляров;
-очереди, output, возвраты, предметы, питание и кампания остаются у прежних owners.
-Старые версии не читают новый формат; для отката нужен экспорт до обновления.
+Save Format **17** добавляет owner Archive через migration **16 → 17**.
+Существующие equipment/inventory/placements/Research/Chapter/Base Control не
+переносятся в новую систему. Старые saves не запускают Intro. Для возврата к
+0.36.1 нужен экспорт старого слота: предыдущая версия не читает формат 17.
 
-## Изменения
+## Что проверить
 
-- Разделены тип, устойчивый instance ID и transform существующего оборудования.
-  Renderer, collision, interaction, audio и power adapters используют общий источник.
-- Производство адресует экземпляр, рецепты — тип. Вторая печь существует только
-  в изолированном QA-мире; в обычной игре новых станков нет.
-- Команды имеют actorId, instanceId, requestId и expectedRevision. Повтор
-  запроса не повторяет расход или выдачу; receipts переживают save/load.
-- Станок усиления запрашивает 2 кВт, пока в нём лежит предмет, независимо от окна.
-  Пустой станок эту мощность не потребляет. Прежний выключатель сохранён.
-- Сохранены Level 1 R2, полная hit area лестницы, стабильное окно Command Core,
-  «Главы»/«База» и Objectives из 0.31.1.
+1. New Game: 18-секундное текстовое Intro, Pause/Resume, Skip, Escape/× на PC.
+   После него начинается существующий Chapter 1 revision 6.
+2. Continue старого слота: сразу игра, без Intro. Continue прерванного Intro
+   тоже не воспроизводит его автоматически.
+3. Запитанный физический Core → Архив: документы, категории, Back, повторный
+   просмотр вступления. Первый исследовательский журнал появляется после Research.
+4. RU/EN, portrait/landscape, safe areas Telegram, читаемость и управление на
+   реальном телефоне. Нативная визуальная проверка этой среды не заменяет устройство.
 
-Нет свободного размещения, новых рецептов, повреждённого старта или изменения Day X.
-Это multiplayer-readiness, **не сетевая игра**: чужой actorId отклоняется.
+Настоящих сюжетных изображений, видео или озвучки в этой версии нет. Текст и
+субтитры доступны; media adapter подготовлен к отдельной поставке контента.
 
-## Проверки
+## Сохранённый игровой цикл
 
-`npm run build` — сборка; `npm test` — полная регрессия;
-`npm run test:equipment` — Stage B; `npm run bench:equipment` — сравнение с 0.31.1.
+**Resources → Core/Construction → Craft → Inventory → Place → Installed Instance
+→ Hold Pick Up 3 sec → Inventory → Place**. Research открывает право изготовления;
+Archive не выдаёт предметов и не меняет этот цикл. Utility/Weapon Workbench,
+Head Equipment/Flashlight Module, инструменты Lv.0–5, room names и общий
+Base Control для Core/Remote сохранены. Farm/Animals остаются на паузе до Level 2.
 
-Итоги и ручной checklist: `STAGE_B_REPORT_RU.md`.
-Контракт: `docs/STAGE_B_EQUIPMENT_CONTRACT_RU.md`.
-Отчёты Stage A сохранены как исторические документы. Моделируемые DOM/WebAudio
-и native Canvas2D не заменяют ручную проверку браузера, телефона, CSS и звука.
+## Разработка и QA
+
+Node 20+, `npm install`, `npm run build`. `npm test` запускает полный набор;
+`npm run test:f` — проверки Intro/Archive. Исторические gameplay suites проходят
+реальную кнопку Skip через тестовый adapter; новые Stage F cases проверяют
+непропущенное Intro отдельно. Performance запускается отдельно от regression:
+`npm run bench:f`, `node qa/stage-f-ui-performance.cjs`,
+`node qa/stage-f-story-performance.cjs`.
+
+Network transport не добавлен. Авторизация, request/revision/idempotency и
+разделение общих открытий/личного просмотра сохраняют multiplayer-readiness.

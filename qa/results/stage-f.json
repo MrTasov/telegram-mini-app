@@ -1,0 +1,223 @@
+{
+  "version": "0.37.0",
+  "runtimeSha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d",
+  "passed": 53,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "baseline.exact_accepted_0361",
+      "status": "PASS"
+    },
+    {
+      "id": "boot.no_intro_or_world_start_before_new_game",
+      "status": "PASS"
+    },
+    {
+      "id": "new_game.selected_slot_starts_intro_and_existing_chapter",
+      "status": "PASS"
+    },
+    {
+      "id": "intro.world_resources_and_time_remain_frozen",
+      "status": "PASS"
+    },
+    {
+      "id": "intro.pause_resume_and_visibility_do_not_fast_forward",
+      "status": "PASS"
+    },
+    {
+      "id": "intro.button_skip_commits_once_resumes_and_saves",
+      "status": "PASS"
+    },
+    {
+      "id": "intro.escape_completion",
+      "status": "PASS"
+    },
+    {
+      "id": "intro.close_completion",
+      "status": "PASS"
+    },
+    {
+      "id": "intro.natural_completion",
+      "status": "PASS"
+    },
+    {
+      "id": "intro.skip_preserves_other_pause_reason",
+      "status": "PASS"
+    },
+    {
+      "id": "continue.pending_intro_is_interrupted_not_replayed",
+      "status": "PASS"
+    },
+    {
+      "id": "load_in_game_cancels_intro_and_settles_pending",
+      "status": "PASS"
+    },
+    {
+      "id": "failed_decode_during_intro_does_not_cancel_live_intro",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.0361_preserves_every_accepted_owner",
+      "status": "PASS"
+    },
+    {
+      "id": "continue.0361_never_auto_plays",
+      "status": "PASS"
+    },
+    {
+      "id": "migration.0353_chain_keeps_research_entitlements",
+      "status": "PASS"
+    },
+    {
+      "id": "research_first_unlock_is_free_to_read_no_extra_items_data_or_recipe",
+      "status": "PASS"
+    },
+    {
+      "id": "discovery.monotonic_authoritative_facts",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.shared_unlocks_personal_read_watched_late_join",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.duplicate_after_save_conflict_and_stale",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_locked",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_foreign",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_unauthorized",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_distance",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_target",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_malformed",
+      "status": "PASS"
+    },
+    {
+      "id": "authority.reject_non_playable",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime_access_power",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime_access_surface",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime_access_dead",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime_access_paused",
+      "status": "PASS"
+    },
+    {
+      "id": "save.strict_validation_atomic_and_no_media_bytes",
+      "status": "PASS"
+    },
+    {
+      "id": "receipt_window_bounded_and_eviction_does_not_repeat_marks",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.shared_navigation_desktop_ru",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.shared_navigation_desktop_en",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.shared_navigation_portrait_ru",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.shared_navigation_portrait_en",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.shared_navigation_small_ru",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.shared_navigation_small_en",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.shared_navigation_landscape_ru",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.shared_navigation_landscape_en",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.replay_completed_personal_watched_saved",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.idle_no_DOM_rebuild_no_progress_mutation",
+      "status": "PASS"
+    },
+    {
+      "id": "archive.session_back_and_reset_on_leaving_bunker",
+      "status": "PASS"
+    },
+    {
+      "id": "intro.locales_all_subtitles_and_controls",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.no_generated_or_mandatory_media_and_localized_keys",
+      "status": "PASS"
+    },
+    {
+      "id": "definitions.reject_malformed_data",
+      "status": "PASS"
+    },
+    {
+      "id": "media_adapter.missing_bounded_cleanup",
+      "status": "PASS"
+    },
+    {
+      "id": "media_adapter.sync-error_bounded_cleanup",
+      "status": "PASS"
+    },
+    {
+      "id": "media_adapter.async-error_bounded_cleanup",
+      "status": "PASS"
+    },
+    {
+      "id": "media_adapter.normal_bounded_cleanup",
+      "status": "PASS"
+    },
+    {
+      "id": "audio_all_accepted_sources_byte_identical",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.no_console_errors",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Deterministic DOM/audio ports. CSS layout, native codecs and real device audio require browser/device verification."
+  ]
+}

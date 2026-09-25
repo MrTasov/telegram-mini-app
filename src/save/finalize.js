@@ -27,7 +27,8 @@ GameSave.seal({
     "equipment.placement",
     "inventory.buildables",
     "base.control",
-    "research.foundation"
+    "research.foundation",
+    "story.archive"
   ],
   "decode": [
     "save.slots",
@@ -58,7 +59,8 @@ GameSave.seal({
     "equipment.placement",
     "inventory.buildables",
     "base.control",
-    "research.foundation"
+    "research.foundation",
+    "story.archive"
   ],
   "restore": [
     "save.slots",
@@ -90,7 +92,8 @@ GameSave.seal({
     "equipment.placement",
     "inventory.buildables",
     "base.control",
-    "research.foundation"
+    "research.foundation",
+    "story.archive"
   ]
 });
 GameState.seal();

@@ -42,7 +42,7 @@ window.CommandCoreUI=(()=>{
     const update=mount(scroll,route);if(typeof update!=='function')throw Error('Core section needs an update client');
     const b=button(title,()=>{sectionHistory.length=0;select(id);});b.id='coreTab_'+id;b.setAttribute('role','tab');b.setAttribute('aria-controls',scroll.id);
     b.onkeydown=e=>{const ids=[...sections.keys()].filter(key=>sections.get(key).available()),i=ids.indexOf(id);let target;if(e.key==='ArrowRight')target=ids[(i+1)%ids.length];if(e.key==='ArrowLeft')target=ids[(i+ids.length-1)%ids.length];if(e.key==='Home')target=ids[0];if(e.key==='End')target=ids.at(-1);if(target){e.preventDefault();select(target);sections.get(target).b.focus();}};
-    sections.set(id,{title,b,scroll,update,available,route});for(const key of routeOrder)if(sections.has(key))tabs.append(sections.get(key).b);stage.append(scroll);return true;
+    sections.set(id,{title,b,scroll,update,available,route});for(const key of routeOrder)if(sections.has(key))tabs.append(sections.get(key).b);tabs.style.setProperty('--core-tab-columns',String([...sections.values()].filter(s=>s.available()).length));stage.append(scroll);return true;
   }
   function select(id){if(!sections.has(id)||!sections.get(id).available())return false;tab=id;for(const [key,s]of sections){const active=key===tab;s.scroll.hidden=!active;s.b.classList.toggle('active',active);s.b.setAttribute('aria-selected',String(active));s.b.setAttribute('aria-pressed',String(active));s.b.tabIndex=active?0:-1;}dirty=true;render();return true;}
   function navigate(id){if(!sections.get(id)?.available()||id===tab)return false;sectionHistory.push(tab);if(sectionHistory.length>16)sectionHistory.shift();return select(id);}
@@ -174,7 +174,7 @@ window.CommandCoreUI=(()=>{
 :is(#commandCoreOverlay,#campaignJournalOverlay) .v09Title{font-size:19px;line-height:1.2;margin:0}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .v09Body{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
 :is(#commandCoreOverlay,#campaignJournalOverlay) [hidden]{display:none!important}
-:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;flex:0 0 48px;align-items:center;overflow:visible;white-space:normal}
+:is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs{display:grid;grid-template-columns:repeat(var(--core-tab-columns,4),minmax(0,1fr));gap:4px;flex:0 0 48px;align-items:center;overflow:visible;white-space:normal}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs button{flex:1;min-width:0;margin:0;height:44px;min-height:44px;padding:4px;font-size:12px;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .campaignTabs .active{border-color:#95b7a2;background:#304b42;color:#eef4d9}
 :is(#commandCoreOverlay,#campaignJournalOverlay) .coreSections{flex:1;min-height:0;position:relative;overflow:hidden}
@@ -240,5 +240,6 @@ body.v0161Modal #campaignTracker,body:has(.overlay.open) #campaignTracker{displa
   // another content row. Only the redundant section label is hidden; every
   // navigation action stays available in the same component.
   v09Style(`@media(max-height:500px){#commandCoreOverlay .coreNavigation{position:absolute;top:10px;left:10px;min-height:36px;height:36px;margin:0;border:0;z-index:2}#commandCoreOverlay .coreNavigation span{display:none}#commandCoreOverlay .coreScroll{padding-bottom:8px}#commandCoreOverlay .v09Title{margin-left:94px;font-size:16px}#commandCoreOverlay .coreBack{min-width:84px}}`);
+  v09Style('@media(max-width:360px){#commandCoreOverlay .campaignTabs{grid-template-columns:repeat(3,minmax(0,1fr));flex-basis:96px;align-content:start}}');
   select('base');renderTracker();return Object.freeze({show,showJournal,tick,reset,syncLocation,registerSection,navigate,back,refreshTracker:renderTracker});
 })();

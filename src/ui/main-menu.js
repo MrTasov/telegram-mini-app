@@ -40,10 +40,10 @@ window.MainMenu=(()=>{
     if(screen==='new'||screen==='load')renderSlots(data);
   }
   function closePanels(){for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);}
-  function sessionSelected(){
+  function sessionSelected(options={}){
     if(!active||!start||!GameState.session.activeSlot||GameState.session.blocked)return false;
     active=false;busy=false;pending=null;closePanels();root().hidden=true;document.body.classList.remove('main-menu-active');MenuBackground.release();
-    window.GameAudio?.reset();V0161UI.sync();start();window.GameAudioWorld?.tick(true);canvas.focus?.();return true;
+    window.GameAudio?.reset();V0161UI.sync();if(options.intro)window.StoryPlayer?.startIntro();else window.StoryPlayer?.settleContinue();start();window.GameAudioWorld?.tick(true);if(!window.StoryPlayer?.active)canvas.focus?.();return true;
   }
   function run(fn){
     if(!active||busy)return false;busy=true;status(null);
