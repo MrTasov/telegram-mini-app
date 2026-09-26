@@ -175,7 +175,7 @@ window.ActorVisuals=(()=>{
     const layer=mod.effects[hit.material][hit.frame];if(!GameAssets.ready(layer.id))return;
     ctx.save();ctx.translate(impact.point.x,impact.point.y);ctx.scale(.25,.25);drawLayer(layer);ctx.restore();
   }
-  function drawPlayer(aim,item,recoil){const p=pose(item),ok=!!p&&renderPose(p,player.x,player.y,aim,recoil);if(ok)drawContact(p);return ok;}
+  function drawPlayer(aim,item,recoil){const p=pose(item),ok=!!p&&(!!window.HeroVisual?.draw(p,item,aim)||renderPose(p,player.x,player.y,aim,recoil));if(ok)drawContact(p);return ok;}
   function muzzlePoint(){
     const item=heldItem(),p=pose(item),m=p?.record?.gear?.muzzle;
     const recoil=canFire()&&performance.now()-muzzleFlash.time<95?(V09Craft.weapons[item]?.visualRecoil??-2.4):0;
