@@ -126,7 +126,7 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01]|28\.0|29\.0|30\.[01]|31\.[01]|32\.[012]|33\.[01]|34\.0|35\.[123]|36\.[01]|37\.[01]|38\.0|39\.0|40\.[012])))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01]|28\.0|29\.0|30\.[01]|31\.[01]|32\.[012]|33\.[01]|34\.0|35\.[123]|36\.[01]|37\.[01]|38\.0|39\.0|40\.[0123])))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))
@@ -261,7 +261,7 @@ loadGameProgress=function(createIfEmpty=true){
     const id=v09FreeSlot();const raw=v09WriteNewSlot(id,captureGameProgress());
     GameState.session.name=JSON.parse(raw).saveName;
     GameState.session.activeSlot=id;GameState.session.lastVerified=raw;GameState.session.blocked=false;
-    updateSaveStatus(`💾 Слот ${id} · автосохранение каждые 5 секунд.`);
+    updateSaveStatus(`💾 Слот ${id} · автосохранение примерно каждые 15 секунд.`);
     return false;
   }catch(error){GameState.session.blocked=true;v09ReportStorageFailure();return false;}
 };
@@ -278,15 +278,18 @@ saveGameProgress=function(manual=false){
     }
     localStorage.setItem(v09SlotKey(GameState.session.activeSlot),raw);
     GameState.session.lastVerified=raw;
+    v09CancelPendingSave();GameState.session.dirty=false;
     updateSaveStatus(I18n.message('save.status',{name:GameState.session.name||v091DefaultName(GameState.session.activeSlot),time:I18n.dateParam(Date.now(),{hour:'2-digit',minute:'2-digit'})}));
     if(manual)message(I18n.message('save.success',{name:GameState.session.name||v091DefaultName(GameState.session.activeSlot)}));
     return true;
   }catch(error){v09ReportStorageFailure(manual);return false;}
 };
 queueGameSave=function(){
-  if(!GameState.session.ready||GameState.session.blocked||GameState.session.transaction||GameState.session.timer!==null)return;
+  if(!GameState.session.ready||GameState.session.blocked||GameState.session.transaction||!GameState.session.activeSlot)return;
+  GameState.session.dirty=true;
+  if(GameState.session.timer!==null)return;
   const slot=GameState.session.activeSlot;
-  GameState.session.timer=setTimeout(()=>{GameState.session.timer=null;if(slot===GameState.session.activeSlot)saveGameProgress();},100);
+  GameState.session.timer=setTimeout(()=>{GameState.session.timer=null;if(slot===GameState.session.activeSlot&&GameState.session.dirty&&!saveGameProgress())queueGameSave();},15000);
 };
 flushGameSave=function(){v09CancelPendingSave();return saveGameProgress();};
 function v09BeforeSwitch(){

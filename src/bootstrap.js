@@ -10,10 +10,12 @@ el("saveGameButton").addEventListener("click",()=>saveGameProgress(true));
 document.addEventListener("click",queueGameSave);
 window.addEventListener("pointerup",queueGameSave);
 window.addEventListener("pagehide",()=>{stopControls(true);flushGameSave();});
+window.addEventListener("beforeunload",()=>flushGameSave());
 document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){stopControls(true);flushGameSave();}else{V09World.tickMining();updateChop();flushGameSave();}
+  if(document.hidden){stopControls(true);flushGameSave();}else{V09World.tickMining();updateChop();queueGameSave();}
 });
-setInterval(()=>{if(!document.hidden)saveGameProgress();},5000);
+// Continuous world timers/position also become dirty; never serialize on this pulse.
+setInterval(()=>{if(!document.hidden&&!GameFlow.paused)queueGameSave();},5000);
 updateAmmoHud();
 
 /* =====================================================

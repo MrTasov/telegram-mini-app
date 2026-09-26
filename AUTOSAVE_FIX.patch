@@ -1,0 +1,25 @@
+--- a/src/state/owners.js
++++ b/src/state/owners.js
+@@ -5,9 +5,9 @@
+   const owners=new Map();
+   let sealed=false;
+   const session={ready:false,blocked:false,timer:null,lastVerified:null,
+-    activeSlot:null,name:'',transaction:false};
++    activeSlot:null,name:'',transaction:false,dirty:false};
+   owners.set('session',Object.freeze({id:'session',source:'state/owners.js',saved:Object.freeze([]),
+-    transient:Object.freeze(['ready','blocked','timer','lastVerified','activeSlot','name','transaction'])}));
++    transient:Object.freeze(['ready','blocked','timer','lastVerified','activeSlot','name','transaction','dirty'])}));
+   const api={session,
+     register(id,view,contract){
+       if(sealed||owners.has(id)||Object.hasOwn(api,id))throw Error('Duplicate or late state owner: '+id);
+--- a/qa/state-saves.cjs
++++ b/qa/state-saves.cjs
+@@ -72,7 +72,7 @@
+ check('restore.subsequentAutosaveWorksOnce',()=>{
+  let writes=0;const write=r.context.localStorage.setItem;
+  r.context.localStorage.setItem=(k,v)=>{if(k==='survival_base_v09_slot_1')writes++;return write(k,v);};
+- E('queueGameSave();queueGameSave();queueGameSave()');r.flushTimers(100);r.context.localStorage.setItem=write;
++ E('queueGameSave();queueGameSave();queueGameSave()');r.flushTimers(15000);r.context.localStorage.setItem=write;
+  assert.equal(writes,1);assert.equal(JSON.parse(r.storage.get('survival_base_v09_slot_1')).saveVersion,r.eval('SaveFormat.version'));
+ });
+ check('slots.continueAcceptedStage1',()=>{

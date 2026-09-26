@@ -2,7 +2,7 @@
 window.GameDevUI=(()=>{
  const text=(ru,en)=>I18n.language==='ru'?ru:en;
  const node=(tag,label)=>{const n=document.createElement(tag);if(label)n.textContent=label;return n;};
- const version=node('button','LAST BASE 0.40.2');version.id='qaVersion';version.type='button';version.setAttribute('data-i18n-skip','');version.style.cssText='background:transparent;border:0;color:#9aabaa;font-size:11px;padding:10px;min-height:36px';
+ const version=node('button','LAST BASE 0.40.3');version.id='qaVersion';version.type='button';version.setAttribute('data-i18n-skip','');version.style.cssText='background:transparent;border:0;color:#9aabaa;font-size:11px;padding:10px;min-height:36px';
  el('settingsOverlay').querySelector('.panel').append(version);
  const badge=node('button','DEV/TEST');badge.id='qaBadge';badge.type='button';badge.hidden=true;badge.setAttribute('data-i18n-skip','');document.body.append(badge);
  const live=node('div');live.id='qaLiveMetrics';live.hidden=true;live.setAttribute('data-i18n-skip','');document.body.append(live);

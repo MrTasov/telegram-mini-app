@@ -249,7 +249,8 @@ function resizeCanvas(){
       window.innerHeight
     );
 
-  const ratio = Math.max(1,Math.min(window.devicePixelRatio||1,3,Math.sqrt(8000000/(screenWidth*screenHeight))));
+  const MAX_CANVAS_DPR = 2;
+  const ratio = Math.max(1,Math.min(window.devicePixelRatio||1,MAX_CANVAS_DPR,Math.sqrt(8000000/(screenWidth*screenHeight))));
 
   canvas.width =
     Math.floor(

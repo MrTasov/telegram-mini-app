@@ -5,9 +5,9 @@ const GameState=(()=>{
   const owners=new Map();
   let sealed=false;
   const session={ready:false,blocked:false,timer:null,lastVerified:null,
-    activeSlot:null,name:'',transaction:false};
+    activeSlot:null,name:'',transaction:false,dirty:false};
   owners.set('session',Object.freeze({id:'session',source:'state/owners.js',saved:Object.freeze([]),
-    transient:Object.freeze(['ready','blocked','timer','lastVerified','activeSlot','name','transaction'])}));
+    transient:Object.freeze(['ready','blocked','timer','lastVerified','activeSlot','name','transaction','dirty'])}));
   const api={session,
     register(id,view,contract){
       if(sealed||owners.has(id)||Object.hasOwn(api,id))throw Error('Duplicate or late state owner: '+id);

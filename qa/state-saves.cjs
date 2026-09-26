@@ -72,7 +72,7 @@ check('restore.cancelsPendingSaveAndCleansTransaction',()=>{
 check('restore.subsequentAutosaveWorksOnce',()=>{
  let writes=0;const write=r.context.localStorage.setItem;
  r.context.localStorage.setItem=(k,v)=>{if(k==='survival_base_v09_slot_1')writes++;return write(k,v);};
- E('queueGameSave();queueGameSave();queueGameSave()');r.flushTimers(100);r.context.localStorage.setItem=write;
+ E('queueGameSave();queueGameSave();queueGameSave()');r.flushTimers(15000);r.context.localStorage.setItem=write;
  assert.equal(writes,1);assert.equal(JSON.parse(r.storage.get('survival_base_v09_slot_1')).saveVersion,r.eval('SaveFormat.version'));
 });
 check('slots.continueAcceptedStage1',()=>{
