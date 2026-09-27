@@ -6,6 +6,13 @@ const env={...process.env,LAST_BASE_TEST_LANGUAGE:process.env.LAST_BASE_TEST_LAN
 // not erase the provenance of the pass. The release still requires all groups.
 const checkpoint=path.join(out,'run-checkpoint.json');
 const jobs=[
+ ['siege-corrective','qa/siege-corrective.cjs',[]],
+ ['siege-navigation','qa/siege-navigation.cjs',[]],
+ ['dayx-corrective','qa/dayx-corrective.cjs',[]],
+ ['dayx-save-dev','qa/dayx-save-dev.cjs',[]],
+ ['dayx-audio','qa/dayx-audio.cjs',[]],
+ ['stage-i2','qa/stage-i2.cjs',[]],
+ ['stage-i2-combat','qa/stage-i2-combat.cjs',[]],
  ['perf-visuals','qa/perf-visuals.cjs',[]],
  ['perf-corrective','qa/perf-corrective-tests.cjs',[]],
  ['perf-equivalence','qa/perf-equivalence.cjs',[]],
@@ -101,7 +108,7 @@ async function run(index){
  const concurrency=Math.max(1,Math.min(3,Number(process.env.LAST_BASE_TEST_JOBS)||1));let next=0;
  await Promise.all(Array.from({length:concurrency},async()=>{while(next<jobs.length)await run(next++);}));
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
-const reports=[read('perf-visuals.json'),read('perf-corrective-tests.json'),read('perf-equivalence.json'),read('dev-qa.json'),read('stage-i1.json'),read('stage-h-corrective.json'),read('stage-h.json'),read('stage-h-prerequisites.json'),read('stage-h-visuals.json'),read('stage-g.json'),read('stage-g-routes.json'),read('stage-f-final.json'),read('stage-f.json'),read('stage-e-corrective.json'),read('stage-e-audio-corrective.json'),read('stage-e.json'),read('stage-d-complete.json'),read('stage-d-corrective.json'),read('stage-d.json'),read('stage-d-repair.json'),read('stage-d-visuals.json'),read('stage-c2.json'),read('stage-c2-prerequisites.json'),read('stage-c1-light-modules.json'),read('stage-c1-recovery.json'),read('stage-a-corrective.json'),read('campaign.json'),read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
+const reports=[read('siege-corrective.json'),read('siege-navigation.json'),read('dayx-corrective.json'),read('dayx-save-dev.json'),read('dayx-audio.json'),read('stage-i2.json'),read('stage-i2-combat.json'),read('perf-visuals.json'),read('perf-corrective-tests.json'),read('perf-equivalence.json'),read('dev-qa.json'),read('stage-i1.json'),read('stage-h-corrective.json'),read('stage-h.json'),read('stage-h-prerequisites.json'),read('stage-h-visuals.json'),read('stage-g.json'),read('stage-g-routes.json'),read('stage-f-final.json'),read('stage-f.json'),read('stage-e-corrective.json'),read('stage-e-audio-corrective.json'),read('stage-e.json'),read('stage-d-complete.json'),read('stage-d-corrective.json'),read('stage-d.json'),read('stage-d-repair.json'),read('stage-d-visuals.json'),read('stage-c2.json'),read('stage-c2-prerequisites.json'),read('stage-c1-light-modules.json'),read('stage-c1-recovery.json'),read('stage-a-corrective.json'),read('campaign.json'),read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
 reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'),read('player-visual-fix.json'),read('corrective-performance.json'),read('corrective-visuals.json'),read('polish.json'),read('polish-visuals.json'),read('audio-unlock.json'),read('hud-display.json'));
 reports.push(read('audio-pass.json'),read('bunker-level1.json'),read('bunker-floor-cache.json'),read('bunker-r2.json'),read('stage-b.json'));
 reports.push(read('stage-ab-corrective.json'),read('stage-ab-light-audio.json'));

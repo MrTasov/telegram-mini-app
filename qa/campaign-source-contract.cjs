@@ -2,6 +2,7 @@
 // Historical source fixtures and their hashes remain unchanged.
 const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 exports.assertSource=(file,expected)=>{
+ const siege=require('./siege-source-reference.json');if(siege.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),siege.files[file].after,file+' declared Siege corrective');return;}
  const dayxCorrective=require('./dayx-source-reference.json');
  if(dayxCorrective.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),dayxCorrective.files[file].after,file+' attached hero-memory baseline + declared Day X corrective');return;}
  const currentBaseline=require('./stage-i2-code-reference.json');

@@ -8,7 +8,7 @@ window.V010Combat=(() => {
   // One rule per existing enhancement family. Definitions may override a rule;
   // all released limits and costs remain the original Level 0..5 values.
   const upgradeRules={
-    weapon:{maxLevel:5,cost:{iron:32,copper:16,parts:10},rarePerLevel:3,stats:{damagePerLevel:.05,sturdyDamage:.02,minSpread:.006}},
+    weapon:{maxLevel:5,cost:{iron:32,copper:16,parts:10},rarePerLevel:3,stats:{damagePerLevel:.10,sturdyDamage:.02,minSpread:.006}},
     tool:{maxLevel:5,cost:{iron:25,copper:12,parts:8},rarePerLevel:2},
     equipment:{maxLevel:5,cost:{iron:25,copper:12,parts:8},rarePerLevel:2},
     drone:{maxLevel:5,cost:{iron:30,copper:18,parts:12},rarePerLevel:4},

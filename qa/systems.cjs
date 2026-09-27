@@ -33,9 +33,9 @@ if(phase>=2){
  reset();
  ok('enemies.singleExistingRegistry','V017Monsters.specs===V010World.TYPES');
  check('enemies.originalSpawnOrder',()=>assert.deepEqual(json(E('Array.from({length:10},(_,i)=>V017Monsters.typeAt(i))')),['normal','heavy','fast','leaper','bloater','normal','heavy','fast','leaper','bloater']));
- for(const type of ['normal','heavy','fast','leaper','bloater'])ok('dayX.'+type,`(()=>{const a=V017Monsters.stats('${type}',false),b=V017Monsters.stats('${type}',true);return b.hp===a.hp*1.5&&b.damage===a.damage*1.5&&b.speed===a.speed*1.5&&b.chaseSpeed===a.chaseSpeed*1.5&&b.cooldown===a.cooldown/1.5;})()`);
- ok('enemies.newTypeSharedWithSaveValidator',`(()=>{V017Monsters.specs.qa_enemy={...V017Monsters.specs.normal,spawnOrder:5,hp:160,damage:15};const s=V017Monsters.stats('qa_enemy',true);return V010World.TYPES.qa_enemy===V017Monsters.specs.qa_enemy&&s.hp===240&&s.damage===22.5&&V017Monsters.typeAt(5)==='qa_enemy';})()`);
- ok('enemies.changedDefinitionInvalidatesRaidStats',`(()=>{V017Monsters.specs.qa_enemy.hp=180;return V017Monsters.stats('qa_enemy',true).hp===270;})()`);
+ for(const type of ['normal','heavy','fast','leaper','bloater'])ok('dayX.'+type,`(()=>{const a=V017Monsters.stats('${type}',false),b=V017Monsters.stats('${type}',true);return b.hp===a.hp*WorldEvents.siegeMultiplier()&&b.damage===a.damage*WorldEvents.siegeMultiplier()&&b.speed===a.speed*1.6&&b.chaseSpeed===a.chaseSpeed*1.6&&b.cooldown===a.cooldown/1.5;})()`);
+ ok('enemies.newTypeSharedWithSaveValidator',`(()=>{V017Monsters.specs.qa_enemy={...V017Monsters.specs.normal,spawnOrder:5,hp:160,damage:15};const s=V017Monsters.stats('qa_enemy',true);return V010World.TYPES.qa_enemy===V017Monsters.specs.qa_enemy&&s.hp===160*WorldEvents.siegeMultiplier()&&s.damage===15*WorldEvents.siegeMultiplier()&&V017Monsters.typeAt(5)==='qa_enemy';})()`);
+ ok('enemies.changedDefinitionInvalidatesRaidStats',`(()=>{V017Monsters.specs.qa_enemy.hp=180;return V017Monsters.stats('qa_enemy',true).hp===180*WorldEvents.siegeMultiplier();})()`);
  ok('enemies.typeIsNotInstanceIdentity',`(()=>{const a=makeZombie(2000,2000),b=makeZombie(2100,2000);a.type=b.type='qa_enemy';return V017Monsters.prepare(a).id!==V017Monsters.prepare(b).id&&a.type===b.type;})()`);
  ok('enemies.behaviorInheritedWithoutIDBranch',`(()=>{V017Monsters.specs.qa_leaper={...V017Monsters.specs.leaper};V017Monsters.specs.qa_blast={...V017Monsters.specs.bloater};return V017Monsters.stats('qa_leaper',true).leap.speed===4&&V017Monsters.stats('qa_blast',true).blast.wallDamage===320;})()`);
  E('delete V017Monsters.specs.qa_enemy;delete V017Monsters.specs.qa_leaper;delete V017Monsters.specs.qa_blast;');
@@ -53,9 +53,9 @@ if(phase>=3){
  ok('turrets.newTypeUsesExistingEngine',"Object.keys(DefenseDefinitions.types).filter(k=>DefenseDefinitions.types[k].ammoType).length===2");
  ok('turrets.typeAndInstanceAreSeparate',"GameEquipment.get('hmg016_1').typeId==='heavy_turret'&&GameEquipment.get('hmg016_1').id!=='heavy_turret'");
  ok('turrets.mismatchedTypeRejected',"(()=>{const d=captureGameProgress();d.equipment032.instances.find(r=>r.id==='hmg016_1').typeId='automatic_turret';try{decodeGameProgress(JSON.stringify(d));return false}catch{return true}})()");
- ok('turrets.definitionDamageAndCapacity',"DefenseDefinitions.types.automatic_turret.damage===45&&DefenseDefinitions.types.heavy_turret.capacity===600");
+ ok('turrets.definitionDamageAndCapacity',"DefenseDefinitions.types.automatic_turret.damage===30&&DefenseDefinitions.types.heavy_turret.capacity===600");
  ok('turrets.existingPhysicalInstanceMigrated',"GameEquipment.get('hmg016_1').placement==='installed'&&captureGameProgress().turret016.guns.length===0");
- ok('turrets.sharedPlacementTypes',"GamePlacement.rules.automatic_turret.craftable&&GamePlacement.rules.heavy_turret.craftable");
+ ok('turrets.sharedPlacementTypes',"GamePlacement.rules.automatic_turret.craftable&&!GamePlacement.rules.heavy_turret.craftable&&GamePlacement.rules.heavy_turret.transformFrom==='automatic_turret'");
  ok('turrets.ammoFromDefinition',"DefenseDefinitions.types.automatic_turret.ammoType==='ammo'&&DefenseDefinitions.types.heavy_turret.ammoType==='ammo'");
  ok('turrets.roundtripTypeAndID',"(()=>{const r=JSON.stringify(GameEquipment.get('hmg016_1'));restoreGameProgress(decodeGameProgress(JSON.stringify(captureGameProgress())));return JSON.stringify(GameEquipment.get('hmg016_1'))===r;})()");
  ok('turrets.duplicateInstanceRejected',"(()=>{const d=captureGameProgress();d.equipment032.instances.push({...d.equipment032.instances.find(r=>r.id==='hmg016_1')});try{decodeGameProgress(JSON.stringify(d));return false;}catch{return true;}})()");
@@ -71,7 +71,7 @@ if(phase>=4){
  ok('destructibles.destroyAndRepairSameObject',`(()=>{const r=V018Build.record('qa_structure'),h=V015Base.health;const destroyed=V018Build.damage(r.id,1000)&&V018Build.isBroken(r.id);const n=h.restoreHP(r.object,700);return destroyed&&n===200&&r.object.hp===200&&!V018Build.isBroken(r.id);})()`);
  ok('destructibles.invalidDamageIsAtomic',`(()=>{const r=V018Build.record('qa_structure'),before=JSON.stringify(r.object);return !V018Build.damage(r.id,NaN)&&!V018Build.damage(r.id,-1)&&JSON.stringify(r.object)===before;})()`);
  E("V018Build.structures.delete('qa_structure');delete V015Base.health.types.qa_object;");
- ok('upgrades.sharedExistingRules','V014Robots.definition.upgrades===V010Combat.upgradeRules.drone&&V016Turret.definition.upgrades===V010Combat.upgradeRules.turret');
+ ok('upgrades.sharedExistingRules','V014Robots.definition.upgrades===V010Combat.upgradeRules.drone&&V016Turret.definition.upgrades===V010Combat.upgradeRules.turret&&V016Turret.damage({level:5})===V016Turret.damage({level:0})');
  for(const type of ['rifle_ak74','rifle_m4','helmet1','vest5','boots1','pants1'])ok('upgrades.originalCap.'+type,`V010Combat.maxUpgradeLevel({type:'${type}'})===5&&!V010Combat.validateItem({type:'${type}',qty:1,level:6})`);
  ok('upgrades.customDefinitionLevelAndCost',`(()=>{V09Craft.weapons.qa_gun_a.upgrades={...V010Combat.upgradeRules.weapon,maxLevel:7,cost:{iron:1},rarePerLevel:0};return V010Combat.maxUpgradeLevel({type:'qa_gun_a'})===7&&V0161Upgrade.cost({type:'qa_gun_a',level:6}).iron===7&&V010Combat.validateItem({type:'qa_gun_a',qty:1,level:7})&&!V010Combat.validateItem({type:'qa_gun_a',qty:1,level:8});})()`);
  ok('upgrades.realCradleUsesDefinition',`(()=>{const u=V0161Upgrade;scene='bunker';player.x=u.station.x+u.station.w/2;player.y=u.station.y+u.station.h+25;V09Power.running=true;V09Power.fuel=80;bag=[];addItem('qa_gun_a',1,{level:6});addItem('iron',7);const s=V010Combat.ensure(bag[0]),id=s.uid;return u.deposit('bag',0)&&u.upgrade()&&u.slots[0].uid===id&&u.slots[0].level===7&&bagCount('iron')===0&&!u.upgrade();})()`);

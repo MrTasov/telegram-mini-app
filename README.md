@@ -1,3 +1,16 @@
+# LAST BASE 0.41.2 — Siege Corrective
+
+Authoritative baseline: uploaded 0.41.1 with Claude patch already included. Save Format 22. Steel: **3 Iron + 1 Coal → 1 Steel, 4000 ms**.
+
+- Ready runtime: serve `index.html`, `js/`, `styles/`, `assets/` over HTTP(S).
+- Build: `npm run build`; verify: `node tools/build.cjs --check`.
+- Targeted: `npm run test:siege`; full historical pass: `npm test`.
+- 120-enemy frame diagnostic: `npm run bench:siege` (not phone FPS).
+- Current results and limitations: [RU report](LAST_BASE_0.41.2_SIEGE_REPORT_RU.md).
+- Historical reports and telemetry below are retained with their original provenance.
+
+---
+
 # LAST BASE 0.41.1 — Day X Corrective
 
 Authoritative input: `LAST_BASE_0_41_0_hero_memory_PATCH.zip` (0.41.0 I2 + Claude packed hero memory patch).

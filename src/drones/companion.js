@@ -6,7 +6,7 @@ window.V014Robots=(()=>{
   ITEM[TYPE]={name:'Дрон-компаньон',icon:'🛸',robot:true,description:'Заряд, улучшения и весь груз сохраняются внутри. Можно запустить рядом с собой.',drone:{
     instanceId:INSTANCE_ID,upgrades:V010Combat.upgradeRules.drone,
     modules:{body:'Корпус',battery:'Аккумулятор',cargo:'Контейнер',weapon:'Оружие',engine:'Двигатель'},
-    combat:{ammoType:'ammo',capacity:600,damage:20,damagePerLevel:.2,intervalMs:155,range:270},
+    combat:{ammoType:'ammo',capacity:600,damage:20,damagePerLevel:.12,intervalMs:155,range:270},
     repair:{material:'parts',durabilityPerUnit:25},
     body:{hp:100,hpPerLevel:25,armorPerLevel:6},cargo:{base:12,levelStride:2,perStride:6},
     battery:{factor:2.5,perLevel:.3,chargeSeconds:180,shotCost:.025,idleDrain:.08,lightDrain:.018,blockedDrain:.003},

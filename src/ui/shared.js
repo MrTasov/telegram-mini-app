@@ -1,5 +1,6 @@
 // 0.9 shared UI and item definitions. Loaded before progress restoration.
 Object.assign(ITEM, {
+  steel:{name:'Сталь',icon:'🔩'},
   iron:{name:'Железо',icon:'🔩'}, copper:{name:'Медь',icon:'🟠'},
   iron_ore:{name:'Железная руда',icon:'🪨'}, copper_ore:{name:'Медная руда',icon:'🟤'},
   pickaxe:{name:'Кирка',icon:'⛏️',hand:true}, remote:{name:'Пульт базы',icon:'📟',hand:true},

@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.41.1",
+  "version": "0.41.2",
   "private": true,
-  "description": "LAST BASE 0.41.1 — Day X Corrective",
+  "description": "LAST BASE 0.41.2 — Siege Corrective",
   "scripts": {
     "test:i2": "node qa/stage-i2.cjs && node qa/stage-i2-combat.cjs",
     "bench:i2": "node qa/stage-i2-performance.cjs",
@@ -69,7 +69,9 @@
     "bench:perf-corrective": "node qa/perf-corrective.cjs after",
     "test:dayx": "node qa/dayx-corrective.cjs && node qa/dayx-save-dev.cjs && node qa/dayx-audio.cjs",
     "bench:dayx": "node qa/dayx-performance.cjs",
-    "qa:dayx:full": "node qa/dayx-full-run.cjs"
+    "qa:dayx:full": "node qa/dayx-full-run.cjs",
+    "test:siege": "node qa/siege-corrective.cjs && node qa/siege-navigation.cjs && node qa/dayx-save-dev.cjs && node qa/dayx-audio.cjs",
+    "bench:siege": "node qa/siege-performance.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

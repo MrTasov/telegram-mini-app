@@ -1,7 +1,7 @@
 {
   "patch": "visual-audio-polish-1",
-  "passed": 29,
-  "failed": 0,
+  "passed": 28,
+  "failed": 1,
   "audio": {
     "requests": 57,
     "maxActiveSources": 8,
@@ -31,7 +31,8 @@
     },
     {
       "id": "assets.noDuplicateImages",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n186 !== 185\n\n    at /workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/polish.cjs:49:46\n    at check (/workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/polish.cjs:6:27)\n    at main (/workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/polish.cjs:49:2)"
     },
     {
       "id": "gameplay.definitionsAndMiningOwnersByteIdentical",

@@ -73,10 +73,29 @@ window.GamePlacement=(()=>{
     if(!V010Inventory.consumeMaterials(rule.cost,1,typeId))return fail('materials');
     if(typeId==='storage_crate')storageChests.push({name:'',icon:'📦',items:[]});GameEquipment.change(record);if(!GameCarried.add(record.id))throw Error('Carried slot changed during synchronous craft');V09Craft.syncInstances();window.GameMovable?.sync();window.GameChapterOne?.recordAction('crafted',record);return {ok:true,instanceId:record.id,placement:'packed'};
   }
+  function transform(r,actor){
+    const typeId=Object.keys(rules).find(id=>rules[id].transformFrom===r?.typeId),rule=rules[typeId];
+    if(!rule)return fail('type');if(r.placement!=='packed')return fail('installed');
+    if(r.ownerId!==actor.id||!bag.some(s=>GameCarried.is(s)&&s.instanceId===r.id))return fail('actor_denied');
+    if(GameEquipment.records.filter(v=>v.typeId===typeId).length>=rule.limit)return fail('limitReached');
+    if(window.GameAvailability&&!GameAvailability.buildable(typeId).available)return fail('researchLocked');
+    if(Object.entries(rule.cost).some(([t,n])=>V010Inventory.materialCount(t)<n))return fail('materials');
+    if(window.GameChapterOne&&!GameChapterOne.spendAllowed(rule.cost,1,typeId))return fail('bootstrapReserve');
+    const record=GameEquipment.create(typeId,centered(typeId,'yard',500,400),actor.id);
+    record.state.settings.ammo=r.state.settings.ammo;
+    // Converting a damaged case does not repair it for free.
+    record.state.condition.hp=record.state.condition.maxHp*r.state.condition.hp/r.state.condition.maxHp;
+    const next=GameEquipment.capture().filter(v=>v.id!==r.id).concat(record);GameEquipment.validate(next);
+    if(!V010Inventory.consumeMaterials(rule.cost,1,typeId))return fail('materials');
+    GameEquipment.restore(next);if(!GameCarried.replace(r.id,record.id))throw Error('Carried source changed during synchronous transform');
+    const enabled=V09Power.devices[r.refs.device]?.enabled??true;V09Craft.syncInstances();GameMovable.sync();V09Power.devices[record.refs.device].enabled=enabled;
+    return {ok:true,instanceId:record.id,consumedInstanceId:r.id,placement:'packed'};
+  }
   function perform(c,actor){const p=c.payload||{};if(p.geometry!==geometryRevision)return fail('world_changed');
     if(c.action==='craft'){if(!coreAccess(actor))return fail('out_of_reach');return make(c.instanceId.slice(8),actor.id);}
     if(c.action==='rename'){if(!coreAccess(actor))return fail('out_of_reach');const room=c.instanceId.slice(5),name=p.name;if(!validRoomName(name))return fail('roomName');roomNames[room]=copy(name);return {ok:true,room};}
     const r=GameEquipment.get(c.instanceId);if(!r||!rules[r.typeId])return fail('protected');
+    if(c.action==='transform'){if(!coreAccess(actor))return fail('out_of_reach');return transform(r,actor);}
     if(c.action==='pack'){if(r.placement!=='installed')return fail('packed');if(!GameEquipmentRuntime.access(actor,r))return fail('out_of_reach');const reason=packReason(r);if(reason)return fail(reason);if(GameCarried.free()<0)return fail('inventoryFull');const hold=pickups.get(actor.id);if(!hold||hold.id!==r.id||hold.token!==p.pickupToken||performance.now()-hold.startedAt<3000)return fail('holdRequired');if(!pickupValid(actor,hold))return fail('pickupChanged');GameEquipment.change({...copy(r),placement:'packed',ownerId:actor.id});if(!GameCarried.add(r.id))throw Error('Carried slot changed during synchronous pickup');pickups.delete(actor.id);}
     else if(c.action==='place'){if(r.ownerId!==actor.id||!GameCarried.owns(r.id))return fail('actor_denied');if(p.transform?.scene!==actor.scene)return fail('room');const result=check(c.instanceId,p.transform);if(!result.ok)return result;if(DefenseDefinitions.types[r.typeId]){result.record.state.settings.fallen=false;}GameEquipment.change(result.record);GameCarried.remove(r.id);window.GameChapterOne?.recordAction('placed',result.record);}
     else return fail('action');

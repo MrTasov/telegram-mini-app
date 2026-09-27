@@ -15,7 +15,7 @@ window.V016Turret=(()=>{
   // Old payloads keep their implicit hmg type byte-for-byte. A different type
   // carries its explicit content ID independently of its instance ID.
   const typeTag=type=>type===TYPE?{}:{type};
-  const damage=t=>Math.round(combatFor(t).damage*(1+definitionFor(t).damagePerLevel*(t?.level||0)));
+  const damage=t=>combatFor(t).damage;
   function validData(t,expectedType=typeOf(t)){const def=definitionFor(t);return !!t&&!!def&&typeOf(t)===expectedType&&typeof t.id==='string'&&t.id.startsWith(def.idPrefix)&&/^[1-9]\d{0,7}$/.test(t.id.slice(def.idPrefix.length))&&Number.isInteger(t.ammo)&&t.ammo>=0&&t.ammo<=def.combat.capacity&&Number.isFinite(t.angle)&&Math.abs(t.angle)<=Math.PI+1e-8&&typeof t.enabled==='boolean'&&(t.level===undefined||Number.isInteger(t.level)&&t.level>=0&&t.level<=def.upgrades.maxLevel);}
   function validItem(s){return !!s&&isType(s.type)&&s.qty===1&&validData(s.turretData,s.type);}
   function newData(type=TYPE){return {...typeTag(type),id:ITEM[type].turret.idPrefix+nextId++,ammo:0,angle:-Math.PI/2,enabled:true};}

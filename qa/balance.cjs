@@ -20,7 +20,7 @@ const expected=JSON.parse(fs.readFileSync(path.join(__dirname,'stage0/audit/conf
 const version=actual.version;actual.version=expected.version; // Release metadata and the explicitly versioned envelope are the only additions.
 assert.equal(actual.items.hmg016.name,'Тяжёлая турель');actual.items.hmg016.name=expected.items.hmg016.name;
 assert.equal(actual.save.schemas.activity040,1);delete actual.save.schemas.activity040;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='activity040');
-assert.equal(actual.save.schemas.signal041,1);delete actual.save.schemas.signal041;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='signal041');
+assert.equal(actual.save.schemas.signal041,2);delete actual.save.schemas.signal041;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='signal041');
 assert.equal(actual.save.schemas.defense039,1);delete actual.save.schemas.defense039;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='defense039');
 assert.equal(actual.power.devices.find(d=>d.id==='hmg016_1').watts,.7);actual.power.devices=actual.power.devices.filter(d=>d.id!=='hmg016_1');
 assert.equal(actual.recipes.hmg016.retiredBuildable,'heavy_turret');delete actual.recipes.hmg016.retiredBuildable;
@@ -63,6 +63,10 @@ actual.recipes.hammer.input=expected.recipes.hammer.input;actual.recipes.hammer.
 for(const id of ['workshop','storage','room4','room5','room6','room7'])actual.power.rooms[id]=expected.power.rooms[id];
 // 0.40.2 explicitly requested Hammer percent/levels and AK +30% rate.
 assert.equal(actual.weapons.rifle_ak74.delay,155/1.3);actual.weapons.rifle_ak74.delay=expected.weapons.rifle_ak74.delay;for(let i=0;i<6;i++){assert.equal(actual.effectiveWeapons.rifle_ak74[i].delay,155/1.3);actual.effectiveWeapons.rifle_ak74[i].delay=expected.effectiveWeapons.rifle_ak74[i].delay;}assert.deepEqual(actual.items.hammer.repairTool.fractions,[.05,.07,.10,.12,.13,.15]);delete actual.items.hammer.repairTool;delete actual.items.hammer.upgrades;actual.items.hammer.description=expected.items.hammer.description;
+// Explicit Siege corrective deltas: assert, then project only changed fields.
+assert.equal(actual.recipes.steel.ms,4000);assert.deepEqual(actual.recipes.steel.input,{iron:3,coal:1});delete actual.recipes.steel;delete actual.items.steel;
+for(const [type,list]of Object.entries(actual.effectiveWeapons))for(let level=0;level<6;level++){assert.equal(list[level].damage,Math.round(actual.weapons[type].damage*(1+level*.1)));list[level].damage=expected.effectiveWeapons[type][level].damage;}
+for(const [type,stats]of Object.entries(actual.dayXEnemies))for(const k of ['hp','damage','speed','chaseSpeed']){assert.equal(stats[k],actual.enemies[type][k]*(k==='speed'||k==='chaseSpeed'?1.6:1.2));stats[k]=expected.dayXEnemies[type][k];}
 let error=null;try{assert.deepEqual(actual,expected);}catch(e){error=e.message;}
 fs.writeFileSync(path.join(__dirname,'results/configurations.json'),JSON.stringify(configs,null,2)+'\n');
 const report={version,passed:error?0:1,failed:error?1:0,scope:'Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.',addedDefinitionFields:definitionFields,addedEnemyFields:['spawnOrder','behavior','healthColor','leap','blast'],addedAPIs,error,consoleErrors:r.errors};

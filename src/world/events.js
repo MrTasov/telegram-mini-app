@@ -5,14 +5,16 @@
 window.WorldEvents=(()=>{
   const definitions=new Map(),overrides=new Map(),listeners=new Set(),cache=new WeakMap();
   const none=Object.freeze({});
-  const dayX=Object.freeze({intervalDays:SignalDefinitions.intervalDays,startMinute:0,endMinute:SignalDefinitions.endMinute,hp:1.5,damage:1.5,speed:SignalDefinitions.zombieSpeed,chaseSpeed:SignalDefinitions.zombieSpeed,cooldownRate:1.5,mechanics:1.5,population:96,ordinaryPopulation:48,maxPopulation:144});
+  const siegeMultiplier=(day=WorldClock.day)=>Math.round(Math.min(SignalDefinitions.siegeCap,SignalDefinitions.siegeBase+SignalDefinitions.siegeStep*Math.max(0,Math.floor(day/SignalDefinitions.intervalDays)-1))*100)/100;
+  const dayX=Object.freeze({intervalDays:SignalDefinitions.intervalDays,startMinute:0,endMinute:SignalDefinitions.endMinute,get hp(){return siegeMultiplier();},get damage(){return siegeMultiplier();},speed:SignalDefinitions.zombieSpeed,chaseSpeed:SignalDefinitions.zombieSpeed,cooldownRate:1.5,mechanics:1.5,population:96,ordinaryPopulation:48,maxPopulation:144});
   const xModifiers=Object.freeze({'enemy.hp':dayX.hp,'enemy.damage':dayX.damage,'enemy.speed':dayX.speed,'enemy.chaseSpeed':dayX.chaseSpeed,'enemy.cooldownRate':dayX.cooldownRate,'enemy.mechanics':dayX.mechanics,'spawn.intensity':2,'spawn.siege':true});
+  let modifierDay=-1,scaledModifiers;function siegeModifiers(){if(modifierDay!==WorldClock.day){modifierDay=WorldClock.day;scaledModifiers=Object.freeze({...xModifiers,'enemy.hp':siegeMultiplier(),'enemy.damage':siegeMultiplier()});}return scaledModifiers;}
   let current=Object.freeze({revision:0,ids:Object.freeze([]),modifiers:none}),signature='';
   function matches(id,day,minute){const def=definitions.get(id);return !!(def&&Number.isSafeInteger(day)&&day>0&&Number.isFinite(minute)&&minute>=0&&minute<1440&&def.schedule({day,minute}));}
   function refresh(){
     const ids=[];for(const [id]of definitions)if(overrides.has(id)?overrides.get(id):matches(id,WorldClock.day,WorldClock.minute))ids.push(id);
-    const next=ids.join('|');if(next===signature)return current;
-    const modifiers={};for(const id of ids)for(const [key,value]of Object.entries(definitions.get(id).modifiers))modifiers[key]=typeof value==='boolean'?!!modifiers[key]||value:(modifiers[key]??1)*value;
+    const next=ids.join('|')+(ids.includes('day_x')?':'+siegeMultiplier():'');if(next===signature)return current;
+    const modifiers={};for(const id of ids)for(const [key,value]of Object.entries(id==='day_x'?siegeModifiers():definitions.get(id).modifiers))modifiers[key]=typeof value==='boolean'?!!modifiers[key]||value:(modifiers[key]??1)*value;
     signature=next;current=Object.freeze({revision:current.revision+1,ids:Object.freeze(ids),modifiers:Object.freeze(modifiers)});
     for(const fn of listeners)fn(current);return current;
   }
@@ -32,7 +34,7 @@ window.WorldEvents=(()=>{
   }
   register({id:'day_x',schedule:({day,minute})=>day%dayX.intervalDays===0&&minute>=dayX.startMinute&&minute<dayX.endMinute,modifiers:xModifiers});
   WorldClock.onChange(refresh);
-  const api={dayX,none,xModifiers,register,matches,enemyStats,
+  const api={dayX,none,get xModifiers(){return siegeModifiers();},siegeMultiplier,register,matches,enemyStats,
     isActive:id=>current.ids.includes(id),value:(key,fallback=1)=>current.modifiers[key]??fallback,
     setQAEvent(id,value){if(!window.GameDevQA?.authorized()||!definitions.has(id)||![null,true,false].includes(value))return false;if(value===null)overrides.delete(id);else overrides.set(id,value);refresh();return true;},
     snapshot:()=>current,definitions:()=>[...definitions.values()].map(d=>({id:d.id,modifiers:d.modifiers})),

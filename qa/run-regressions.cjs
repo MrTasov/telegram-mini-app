@@ -19,7 +19,7 @@ for(const dir of [path.join(game,'qa'),path.join(work,'tools')])for(const name o
 // Await the resource owner's decode/validation, without changing any baseline assertion.
 // Stage 6 explicitly changes the Day X window. Exercise historical raid checks
 // at 03:00, inside both contracts; frozen inputs/assertions remain on disk.
-function adaptAssetWaits(code){return code.replace(/day:10,minute:(?:1380|480)/g,'day:10,minute:180').replaceAll('Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode())','(window.GameAssets?Object.values(AssetManifest.art).map(id=>GameAssets.load(id)):Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode()))').replaceAll('[1,2,3,4,5].map(n=>V020Walls.image(n).decode())','(window.GameAssets?Object.values(AssetManifest.walls).map(id=>GameAssets.load(id)):[1,2,3,4,5].map(n=>V020Walls.image(n).decode()))');}
+function adaptAssetWaits(code){return code.replaceAll('hp===630','hp===504').replace("V017Monsters.stats(\"heavy\").hp',630","V017Monsters.stats(\"heavy\").hp',504").replace(/day:10,minute:(?:1380|480)/g,'day:10,minute:180').replaceAll('Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode())','(window.GameAssets?Object.values(AssetManifest.art).map(id=>GameAssets.load(id)):Object.keys(V011Art.sources).map(k=>V011Art.image(k).decode()))').replaceAll('[1,2,3,4,5].map(n=>V020Walls.image(n).decode())','(window.GameAssets?Object.values(AssetManifest.walls).map(id=>GameAssets.load(id)):[1,2,3,4,5].map(n=>V020Walls.image(n).decode()))');}
 for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs']){
  let code=fs.readFileSync(path.join(baseline,'baseline_0.20.0/qa',name),'utf8');
  code=code.replaceAll("captureGameProgress().gameVersion==='0.20.0'",`captureGameProgress().gameVersion==='${version}'`);
@@ -35,14 +35,14 @@ for(const name of ['perimeter020.cjs','wall_behaviors020.cjs','target0191.cjs'])
  // H: frozen sources stay untouched. Current snapshots now own legacy HMG
  // state in the equipment registry; new placement uses Craft/Inventory/Place.
  if(name==='perimeter020.cjs'){
-  code=code.replaceAll('V016Turret.guns[0].ammo===137','GameDefense.guns()[0].ammo===137').replaceAll('V016Turret.guns[0].level===4','GameDefense.guns()[0].level===4').replaceAll("V016Turret.guns[0].wallId===","GameDefense.guns()[0].wallId===").replaceAll('V016Turret.guns[1].','GameDefense.guns()[1].');
+  code=code.replaceAll('V016Turret.guns[0].ammo===137','GameDefense.guns()[0].ammo===137').replaceAll('V016Turret.guns[0].level===4',"GameEquipment.get('hmg016_1').state.level===4").replaceAll("V016Turret.guns[0].wallId===","GameDefense.guns()[0].wallId===").replaceAll('V016Turret.guns[1].level===2',"GameEquipment.get('hmg016_2').state.level===2").replaceAll('V016Turret.guns[1].','GameDefense.guns()[1].');
  }
  if(name==='wall_behaviors020.cjs'){
   // Approved percent-per-impact repair: wait ten real Lv.0 impacts, same 5000 HP / 5 concrete.
   code=code.replaceAll('i<50;i++','i<114;i++').replace('in five seconds','in ten animation impacts');
   const a=code.indexOf(' // Real inventory -> seam mount'),b=code.indexOf(' // Elevated movement',a);
   code=code.slice(0,a)+` // Stage H shared placement and same-instance hold pickup.
- fresh();E("scene='bunker';player.x=1210;player.y=680;bag=[];for(const c of storageChests)c.items=[];for(const type of ['iron','copper','parts'])addItem(type,200);window.crafted=GamePlacement.request('heavy_turret','craft');window.gunId=crafted.instanceId;");
+ fresh();E("scene='bunker';player.x=1210;player.y=680;bag=[];for(const c of storageChests)c.items=[];for(const type of ['iron','copper','parts','steel','advanced_parts'])addItem(type,100);window.source=GamePlacement.request('automatic_turret','craft');window.crafted=GamePlacement.request(source.instanceId,'transform');window.gunId=crafted.instanceId;");
  check('craft creates one carried instance',E('crafted.ok&&GameCarried.owns(gunId)'));
  E("scene='surface';player.x=800;player.y=850");
  check('shared physical placement commits',E("GamePlacement.request(gunId,'place',GamePlacement.centered('heavy_turret','yard',450,350)).ok"));

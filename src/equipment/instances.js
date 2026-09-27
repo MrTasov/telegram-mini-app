@@ -34,7 +34,7 @@ const EquipmentInstances=(()=>{
   // Room display names confer no placement permissions. Singular energy
   // owners keep their identity; future adapters reuse this same capability port.
   const placement=freeze({
-    ...Object.fromEntries(Object.entries(DefenseDefinitions.types).map(([id,d])=>[id,{limit:d.limit,cost:d.cost,rooms:id==='searchlight'?['yard',...rooms,'corridor']:['yard'],craftable:true,guard:'empty',art:d.art}])) ,
+    ...Object.fromEntries(Object.entries(DefenseDefinitions.types).map(([id,d])=>[id,{limit:d.limit,cost:d.cost,rooms:id==='searchlight'?['yard',...rooms,'corridor']:['yard'],craftable:d.craftable!==false,transformFrom:d.transformFrom,guard:'empty',art:d.art}])) ,
     furnace:{limit:4,cost:{iron:20,parts:6,concrete:8},rooms,craftable:true,guard:'production',art:'furnace'},
     utility_workbench:{limit:4,cost:{iron:4,wood:6},rooms,craftable:true,guard:'production',art:'utility_workbench'},
     craft_bench:{limit:4,cost:{iron:16,wood:12,parts:4},rooms,craftable:true,guard:'production',art:'workbench'},

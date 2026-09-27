@@ -1,7 +1,7 @@
 // Stage 5 integration checks: real UI builders, save owners and Canvas output.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 process.chdir(path.resolve(__dirname,'..'));const {setup}=require('./runtime.cjs'),checks=[],coverage=[];
-const copy=v=>JSON.parse(JSON.stringify(v)),clean=require('./world-farm-contract.cjs').project;
+const copy=v=>JSON.parse(JSON.stringify(v)),clean=require('./stage-i2-contract.cjs').project;
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.stack?.slice(0,2500)});}}
 const r=setup('index.html',{}, {language:'en'}),E=s=>r.eval(s),fresh=E('JSON.stringify(captureGameProgress())');
 const catalog=require('../tools/locales.cjs').validate();

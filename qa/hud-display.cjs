@@ -8,7 +8,7 @@ const r=setup('index.html',{}, {language:'en'}),E=s=>r.eval(s),node=id=>r.doc.ge
 const initial=E('JSON.stringify(captureGameProgress())');
 function restore(){E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(initial)}));for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);document.hidden=false;playerDead=false;`);}
 function equip(type){E(`if(!bagCount('${type}'))addItem('${type}',1);V013Inventory.equip('${type}');updateAmmoHud();`);assert.equal(E('heldItem()'),type);}
-check('defaults.normalHUDOnDiagnosticsOff',()=>assert.deepEqual(copy(E('GameHUD.settings')),{minimap:true,dayTime:true,fps:false,frameTime:false,equippedItem:true,objectives:true}));
+check('defaults.normalHUDOnDiagnosticsOff',()=>assert.deepEqual(copy(E('GameHUD.settings')),{minimap:true,dayTime:true,fps:false,frameTime:false,equippedItem:true,objectives:true,turretRanges:false}));
 check('structure.onlyClockAndPerformanceInTopNoImagesInEquipped',()=>{
  assert.deepEqual(node('hud').children.map(n=>n.id),['v016WorldClock','hudPerformance']);
  assert.equal(node('ammoHud').parentNode,node('heldItemName'));assert.equal(node('locationName').parentNode,node('game'));

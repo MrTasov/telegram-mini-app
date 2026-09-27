@@ -34,7 +34,7 @@ const scenarios=[
 for(const s of scenarios)check('simulation.'+s.id,()=>{
  restore(fixture(s.fixture));both(s.start);
  for(let i=0;i<s.frames;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
- compare({enemyLimit:s.id==='dayX'?JSON.parse(fixture('day_x')).zombies.filter(z=>z.alive).length:undefined,surveyClock:s.id==='surfaceMovement',droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
+ compare({historicalPopulation:s.id!=='dayX',siegeClockStart:s.id==='dayX'?180:undefined,enemyLimit:s.id==='dayX'?JSON.parse(fixture('day_x')).zombies.filter(z=>z.alive).length:undefined,surveyClock:s.id==='surfaceMovement',droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
 });
 check('transactions.inventoryTransferAndQuickSlots',()=>{
  restore(fixture('equipment_storage'));both('V010Inventory.transfer("bag",0,0,1)');compare();
@@ -49,7 +49,8 @@ const gear=a.eval("Object.keys(ITEM).filter(t=>ITEM[t].equip||V09Craft.weapons[t
 for(const type of gear)for(let level=0;level<=5;level++)for(const variant of ['balanced','sturdy','light'])for(const specialization of ['balanced','vitality','speed'])check(`stats.${type}.${level}.${variant}.${specialization}`,()=>{
  const code=`V010Combat.getItemStats(${JSON.stringify({type,level,variant,specialization,modules:{},magazineType:'magazine_standard',rounds:0})})`,expected=json(a.eval(code)),actual=json(b.eval(code));
  if(type==='rifle_ak74'){assert.equal(actual.delay,expected.delay/1.3);actual.delay=expected.delay;} // approved fire-rate correction, other fields remain exact
- for(const key of meta)delete actual[key];assert.deepEqual(actual,expected);
+ for(const key of meta)delete actual[key]; if(a.eval('!!V09Craft.weapons['+JSON.stringify(type)+']')){const base=a.eval('V09Craft.weapons['+JSON.stringify(type)+'].damage');assert.equal(actual.damage,Math.round(base*(1+.10*level+(variant==='sturdy'?.02:0))));expected.damage=actual.damage;} // approved weapon Lv.0–5 curve; every other field remains exact
+assert.deepEqual(actual,expected);
 });
 for(const day of [1,10,11])check('simulation.allEnemyBehaviors.day'+day,()=>{
  restore(fixture('fresh_game'));
@@ -59,7 +60,15 @@ for(const day of [1,10,11])check('simulation.allEnemyBehaviors.day'+day,()=>{
  try{
  both(`scene='surface';player.x=800;player.y=850;player.health=player.maxHealth;menuOpen=false;stopControls(true);V016Lighting.restore({schema:1,day:${day},minute:180});zombies=['normal','heavy','fast','leaper','bloater'].map((type,i)=>{const z=makeZombie(760+i*30,800);z.type=type;V017Monsters.prepare(z);return z;});void 0;`); // Compare outcomes below, not absolute wall-clock versus pause-aware timestamp origins.
  for(let i=0;i<180;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
- compare({enemyLimit:5});
+ if(day===10){
+  // Siege deliberately changes speed, HP/damage and clock; byte-identical battle
+  // outcomes against 0.23.1 are no longer a valid contract. Other days remain exact.
+  const old=json(a.eval('captureGameProgress()')),now=json(b.eval('captureGameProgress()'));
+  assert.ok(Math.abs((now.lighting016.minute-180)*3-(old.lighting016.minute-180))<.03);
+  assert.ok(now.zombies.slice(0,5).every(z=>Number.isFinite(z.health)&&z.health>=0));
+  assert.ok(now.base015.sections.every(w=>w.hp>=0));
+  assert.equal(b.eval('WorldEvents.isActive("day_x")'),true);
+ }else compare({enemyLimit:5});
  }finally{for(const runtime of [a,b])runtime.eval('Math.random=oracleRandom;');}
 });
 check('dayX.transitionsPreserveHealthRatios',()=>{

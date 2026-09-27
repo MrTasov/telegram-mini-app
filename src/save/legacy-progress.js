@@ -98,7 +98,7 @@ function decodeGameProgressBase(raw){
     !d.loot.every((o,i)=>o&&o.id===scavenges[i].id&&typeof o.searched==="boolean"&&
       slots(o.loot,12)&&(o.searched||o.loot.length===0)))fail();
   if(!Array.isArray(d.zombies)||d.zombies.length>SignalDefinitions.actorSaveLimit||!d.zombies.every(z=>
-    position(z)&&number(z.health,0,630)&&typeof z.alive==="boolean"&&
+    position(z)&&number(z.health,0,Math.max(630,...Object.values(window.V017Monsters?.specs||{}).map(s=>s.hp*SignalDefinitions.siegeCap)))&&typeof z.alive==="boolean"&&
     z.alive===(z.health>0)&&['wander','chase'].includes(z.state)))fail();
   const l=d.livestock;
   if(!l||typeof l.alive!=="boolean"||typeof l.warned!=="boolean"||

@@ -2,7 +2,7 @@
 window.GameHUD=(()=>{
   'use strict';
   const storageKey='last_base_display_v1';
-  const defaults=Object.freeze({minimap:true,dayTime:true,fps:false,frameTime:false,equippedItem:true,objectives:true});
+  const defaults=Object.freeze({minimap:true,dayTime:true,fps:false,frameTime:false,equippedItem:true,objectives:true,turretRanges:false});
   const settings={...defaults};
   try{const saved=JSON.parse(localStorage.getItem(storageKey));if(saved&&typeof saved==='object')for(const key of Object.keys(defaults))if(typeof saved[key]==='boolean')settings[key]=saved[key];}catch(_){}
   const top=el('hud'),clock=el('v016WorldClock'),perf=el('hudPerformance'),equipped=el('heldItemName'),mini=el('v010Minimap');

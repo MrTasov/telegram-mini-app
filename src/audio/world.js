@@ -1,8 +1,8 @@
 /* Presentation-only observer. It reads existing states at 10 Hz; no new RAF/timer. */
 window.GameAudioWorld=(()=>{
-  let next=0,lastPlace=null,lastPower=null,lastDrone=null,lastChicken=-Infinity,lastDistant=-Infinity;
+  let next=0,lastPlace=null,lastPower=null,lastDrone=null,lastChicken=-Infinity,lastDistant=-Infinity,hordeLeft=0,nextHorde=0;
   const doors=new WeakMap(),dayXOwner={};
-  function reset(){next=0;lastPlace=null;lastPower=null;lastDrone=null;lastChicken=-Infinity;lastDistant=-Infinity;}
+  function reset(){next=0;lastPlace=null;lastPower=null;lastDrone=null;lastChicken=-Infinity;lastDistant=-Infinity;hordeLeft=0;nextHorde=0;}
   function door(object,opening,which='bunker',broken=false){
     if(broken){doors.delete(object);return;}
     const prev=doors.has(object)?doors.get(object):object.open>.5;doors.set(object,opening);
@@ -11,15 +11,16 @@ window.GameAudioWorld=(()=>{
   function tick(force=false){
     if(!GameAudio.sync())return;
     const now=performance.now();if(!force&&now<next)return;next=now+100;
-    if(window.MainMenu?.active){if(lastPlace!=='menu')GameAudio.play('menu');GameAudio.loop('ambience',null);GameAudio.dayXHum(false);for(const key of ['rotor','generator','machine','water','shower'])GameAudio.loop(key,null);lastPlace='menu';return;}
+    if(window.MainMenu?.active){if(lastPlace!=='menu')GameAudio.play('menu');GameAudio.loop('ambience',null);GameAudio.loop('siege',null);GameAudio.dayXHum(false);for(const key of ['rotor','generator','machine','water','shower'])GameAudio.loop(key,null);lastPlace='menu';return;}
     if(playerDead){GameAudio.reset();return;}
     const zone=GameAudio.listenerZone(),place=zone.scene+':'+zone.floor,underground=scene==='bunker',interior=scene==='surface'&&!!zone.floor,dayX=WorldEvents.isActive('day_x');
     const ambience=underground||interior?'bunker':WorldClock.minute>=360&&WorldClock.minute<1200?null:'night';
     if(lastPlace!==null&&lastPlace!==place){GameAudio.reset();}lastPlace=place;
-    GameAudio.loop('ambience',ambience);GameAudio.dayXHum(dayX);
-    if(dayX&&now-lastDistant>=SignalDefinitions.hordeIntervalMs){
-      if(GameAudio.play('dayXHorde',{owner:dayXOwner,volume:underground?.22:.7,rate:.65+GameAudio.random()*.3,lowpass:underground?260:650}))lastDistant=now;
-    }
+    GameAudio.loop('ambience',dayX&&!underground&&!interior?null:ambience);GameAudio.loop('siege',dayX?'dayX':null,{scene:'surface',floor:0,dayXLeak:true});GameAudio.dayXHum(dayX);
+    const heavy=SignalDefinitions.phases[Math.min(5,Math.floor(WorldClock.minute/60))]?.target>=100;
+    if(dayX&&now-lastDistant>=(heavy?SignalDefinitions.hordeHeavyIntervalMs:SignalDefinitions.hordeIntervalMs)){lastDistant=now;hordeLeft=heavy?2+Math.floor(GameAudio.random()*2):1;nextHorde=now;}
+    if(dayX&&hordeLeft&&now>=nextHorde){GameAudio.play('dayXHorde',{owner:dayXOwner,volume:underground?.22:.7,rate:.65+GameAudio.random()*.3,lowpass:underground?420:SignalDefinitions.hordeLowpass});hordeLeft--;nextHorde=now+750+GameAudio.random()*250;}
+    if(!dayX)hordeLeft=0;
     const gen=BunkerLayout.fixture('generator'),shower=V011Living.shower;
     const power=!!(V09Power.running&&V09Power.fuel>0);
     if(lastPower!==null&&lastPower!==power)GameAudio.play(power?'powerStart':'powerStop',{x:gen.x+gen.w/2,y:gen.y+gen.h/2,scene:'bunker',radius:480});lastPower=power;

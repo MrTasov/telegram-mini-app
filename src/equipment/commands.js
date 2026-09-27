@@ -16,12 +16,12 @@ const EquipmentCommands=(()=>{
       const fail=reason=>({ok:false,reason,revision});
       if(!command||typeof command.actorId!=='string'||typeof command.instanceId!=='string'||typeof command.requestId!=='string'||!command.requestId||command.requestId.length>100||!Number.isSafeInteger(command.expectedRevision)||typeof command.action!=='string')return fail('invalid_command');
       const actor=ports.actor(command.actorId);if(!actor||!ports.authorized(actor))return fail('actor_denied');
-      const instance=registry.get(command.instanceId);if(!instance)return fail('missing_instance');
       const signature=JSON.stringify([command.instanceId,command.action,command.payload??null,command.expectedRevision]);if(signature.length>4096)return fail('invalid_command');
       const old=receipts.find(r=>r.actorId===command.actorId&&r.requestId===command.requestId);
       if(old)return old.signature===signature?{...copy(old.result),replayed:true}:fail('request_conflict');
       if(command.expectedRevision!==revision)return fail('stale_revision');
       if(revision===Number.MAX_SAFE_INTEGER)return fail('revision_limit');
+      const instance=registry.get(command.instanceId);if(!instance)return fail('missing_instance');
       if(!ports.access(actor,instance))return fail('out_of_reach');
       const result=ports.perform(command,actor,instance);if(!result?.ok)return fail(result?.reason||'operation_denied');
       revision++;const out={...result,revision};receipts.push({actorId:command.actorId,requestId:command.requestId,signature,revision,result:copy(out)});if(receipts.length>MAX_RECEIPTS)receipts.shift();ports.changed?.();return out;

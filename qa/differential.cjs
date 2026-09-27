@@ -34,7 +34,7 @@ const scenarios=[
 for(const s of scenarios)check('simulation.'+s.id,()=>{
  restore(fixture(s.fixture));both(s.start);
  for(let i=0;i<s.frames;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
- compare({enemyLimit:s.id==='dayX'?JSON.parse(fixture('day_x')).zombies.filter(z=>z.alive).length:undefined,surveyClock:s.id==='surfaceMovement',droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
+ compare({historicalPopulation:s.id!=='dayX',siegeClockStart:s.id==='dayX'?180:undefined,enemyLimit:s.id==='dayX'?JSON.parse(fixture('day_x')).zombies.filter(z=>z.alive).length:undefined,surveyClock:s.id==='surfaceMovement',droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
 });
 check('transactions.inventoryTransferAndQuickSlots',()=>{
  restore(fixture('equipment_storage'));both('V010Inventory.transfer("bag",0,0,1)');compare();

@@ -19,7 +19,7 @@ const GameAudio=window.GameAudio=(()=>{
   define('reloadOut magazineUnload','reloadOut',.40,'combat',90,4);define('reloadIn magazineLoad','reloadIn',.43,'combat',90,4);define('reloadBolt','reloadBolt',.36,'combat',90,4);
   define('hit','hit',.36,'enemy',65,3);define('playerHit','playerHit',.45,'combat',180,5);
   define('zombie','zombie zombie2 zombie3',.33,'groan',1800,1);
-  define('dayXHorde','zombie zombie2 zombie3 zombieAttack',SignalDefinitions.hordeGain,'groan',SignalDefinitions.hordeIntervalMs,1);
+  define('dayXHorde','zombie zombie2 zombie3 zombieAttack',SignalDefinitions.hordeGain,'groan',700,1);
   define('zombieAggro','zombie2 zombie3',.32,'enemy',500,2);define('zombieAttack','zombieAttack',.38,'enemy',160,3);define('zombieDeath','zombieDeath',.37,'enemy',140,3);
   define('leaperJump','leaperJump',.38,'enemy',300,3);define('bloaterFuse','bloaterFuse',.42,'enemy',200,4);define('explosion','explosion',.62,'combat',180,5);
   define('impactStone','impactStone',.33);define('impactMetal hammer constructionHit','impactMetal',.35);define('treeBreak','treeBreak',.48,'world',400,3);define('rockBreak constructionBreak','rockBreak',.45,'world',250,3);
@@ -70,7 +70,7 @@ const GameAudio=window.GameAudio=(()=>{
   function cleanup(v){
     if(v.done)return;v.done=true;voices.delete(v);tails.delete(v);
     if(v.channel&&loops.get(v.channel)===v)loops.delete(v.channel);
-    try{v.source.disconnect();v.filter?.disconnect();v.gain.disconnect();}catch(_){}
+    try{v.lfo?.stop();v.lfo?.disconnect();v.lfoGain?.disconnect();v.source.disconnect();v.filter?.disconnect();v.gain.disconnect();}catch(_){}
   }
   function stop(v){if(!v||v.done)return;cleanup(v);try{v.source.stop(0);}catch(_){};}
   function ready(){return !document.hidden&&masterVolume>0&&audioCtx?.state==='running';}
@@ -110,7 +110,7 @@ const GameAudio=window.GameAudio=(()=>{
     const key='dayxHum';let v=loops.get(key);
     if(!on||!ready()){if(v)stop(v);return false;}if(v)return true;
     if(!audioCtx.createOscillator||loops.size>=limits.loops)return false;
-    try{const source=audioCtx.createOscillator(),gain=audioCtx.createGain();source.type='sine';source.frequency.value=SignalDefinitions.humHz;gain.gain.value=SignalDefinitions.humGain*(scene==='bunker'?.35:1);source.connect(gain);gain.connect(output());v={source,gain,done:false,channel:key,zone:listenerZone(),clip:'synth-dayx'};source.onended=()=>cleanup(v);loops.set(key,v);source.start();return true;}catch(_){return false;}
+    try{const source=audioCtx.createOscillator(),gain=audioCtx.createGain(),filter=audioCtx.createBiquadFilter(),lfo=audioCtx.createOscillator(),lfoGain=audioCtx.createGain();source.type='triangle';source.frequency.value=SignalDefinitions.humHz;filter.type='lowpass';filter.frequency.value=SignalDefinitions.humLowpass;gain.gain.value=SignalDefinitions.humGain*(scene==='bunker'?.35:1);lfo.frequency.value=SignalDefinitions.humLfoHz;lfoGain.gain.value=gain.gain.value*.18;lfo.connect(lfoGain);lfoGain.connect(gain.gain);source.connect(filter);filter.connect(gain);gain.connect(output());v={source,gain,filter,lfo,lfoGain,done:false,channel:key,zone:listenerZone(),clip:'synth-dayx'};source.onended=()=>cleanup(v);loops.set(key,v);source.start();lfo.start();return true;}catch(_){return false;}
   }
   function dayXStart(){
     if(!ready()||!audioCtx.createOscillator||voices.size>=limits.oneShots)return false;

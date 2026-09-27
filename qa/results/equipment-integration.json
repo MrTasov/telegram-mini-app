@@ -1,8 +1,8 @@
 {
   "reference": "0.29.0 MASTER integrated",
   "revision": 4,
-  "passed": 37,
-  "failed": 0,
+  "passed": 36,
+  "failed": 1,
   "newAtlasDecodedBytes": 18264064,
   "checks": [
     {
@@ -131,7 +131,8 @@
     },
     {
       "id": "cache.lazyStartupAndNoRepeatedRequests",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n185 !== 186\n\n    at /workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/equipment-integration.cjs:115:222\n    at check (/workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/equipment-integration.cjs:5:39)\n    at main (/workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/equipment-integration.cjs:113:8)"
     },
     {
       "id": "viewport.pc.renderAndSavedStateUnchanged",

@@ -5,6 +5,7 @@ const V09Craft = (() => {
  concrete:{station:'furnace',category:'Строительство',name:'Бетон',input:{stone:GameplayBalance.processing.stone},output:'concrete',qty:1,ms:2000},
  fishing_rod:{station:'craft_bench',category:'Инструменты',name:'Удочка',input:{wood:10,parts:2},output:'fishing_rod',qty:1,ms:4000},
     feed: {station:'feed_craft',category:'Корм',name:'Корм для животных',input:{grain:10},output:'animal_feed',qty:20,ms:2500},
+    steel:{station:'furnace',category:'Металлы',name:'Сталь',input:{iron:GameplayBalance.processing.steelIron,coal:GameplayBalance.processing.steelCoal},output:'steel',qty:GameplayBalance.processing.steelQty,ms:GameplayBalance.processing.steelMs},
     iron: {station:'furnace',category:'Металлы',name:'Железо',input:{iron_ore:GameplayBalance.processing.ironOre},output:'iron',qty:1,ms:2000},
     copper: {station:'furnace',category:'Металлы',name:'Медь',input:{copper_ore:GameplayBalance.processing.copperOre},output:'copper',qty:1,ms:2000},
     gunpowder:{station:'furnace',category:'Материалы',name:'Порох',input:{coal:GameplayBalance.processing.coal},output:'gunpowder',qty:GameplayBalance.processing.gunpowder,ms:GameplayBalance.processing.gunpowderMs},

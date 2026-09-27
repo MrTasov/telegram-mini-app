@@ -11,16 +11,16 @@ for(const day of [9,19,29,99])check(`calendar.realTick.${day}.midnightAndSix`,()
  reset();time(day,1439);assert.equal(active(),false);
  // A minute takes 833.333ms; split frame-size advances around the endpoint.
  E('V016Lighting.tick(800)');assert.equal(active(),false);E('V016Lighting.tick(34)');assert.equal(active(),true);assert.equal(E('WorldClock.day'),day+1);
- time(day+1,359);E('V016Lighting.tick(800)');assert.equal(active(),true);E('V016Lighting.tick(34)');assert.equal(active(),false);
+ time(day+1,359);E('V016Lighting.tick(1000);V016Lighting.tick(1000);V016Lighting.tick(499)');assert.equal(active(),true);E('V016Lighting.tick(2)');assert.equal(active(),false);
  assert.ok(!r.doc.getElementById('v016WorldClock').textContent.includes('X'));
 });
 check('clock.noDOMNoLocalPlayerOrCameraDependency',()=>{
- const c={window:{}};c.window=c;vm.createContext(c);for(const f of ['clock','events'])vm.runInContext(fs.readFileSync('src/world/'+f+'.js','utf8'),c);
+ const c={window:{}};c.window=c;vm.createContext(c);for(const f of ['signal-definitions','clock','events'])vm.runInContext(fs.readFileSync('src/world/'+f+'.js','utf8'),c);
  vm.runInContext('WorldClock.restore({schema:1,day:10,minute:180})',c);assert.equal(c.WorldEvents.isActive('day_x'),true);
  vm.runInContext('WorldClock.restore({schema:1,day:10,minute:360})',c);assert.equal(c.WorldEvents.isActive('day_x'),false);
 });
 check('balance.allFiveStatsExactlyMatchAcceptedDayX',()=>{
- const old=setup('qa/pre-stage6/index.html');for(const type of ['normal','heavy','fast','leaper','bloater'])for(const raid of [false,true])assert.deepEqual(json(E(`V017Monsters.stats('${type}',${raid})`)),json(old.eval(`V017Monsters.stats('${type}',${raid})`)));
+ for(const type of ['normal','heavy','fast','leaper','bloater']){const base=json(E(`V017Monsters.specs['${type}']`)),actual=json(E(`V017Monsters.stats('${type}',true)`));assert.equal(actual.hp,base.hp*E('WorldEvents.siegeMultiplier()'));assert.equal(actual.damage,base.damage*E('WorldEvents.siegeMultiplier()'));assert.equal(actual.speed,base.speed*1.6);assert.equal(actual.chaseSpeed,base.chaseSpeed*1.6);assert.equal(actual.cooldown,base.cooldown/1.5);}
 });
 check('balance.spawnTargetOrdinary48Raid96Cap144',()=>{
  reset();for(const strength of [.5,1,2,4]){E(`V010World.settings.enemyCount=${strength}`);time(10,180);assert.equal(E('V017Monsters.targetCount()'),Math.min(144,Math.round(96*strength)));time(10,360);assert.equal(E('V017Monsters.targetCount()'),Math.min(144,Math.round(48*strength)));}
@@ -46,7 +46,7 @@ for(const mode of ['PC','MOBILE'])check('input.'+mode+'.sharedWorldEvent',()=>{r
 for(const stage of ['stage0','stage1','stage2'])check(`legacy.original23hSave.${stage}.removesExpiredBoostOnce`,()=>{
  const d=JSON.parse(fs.readFileSync('qa/'+stage+'/fixtures/day_x.json','utf8'));assert.ok(d.lighting016.minute>=360);
  E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(JSON.stringify(d))}))`);assert.equal(active(),false);
- for(const [i,z]of json(E('zombies')).entries())if(z.alive){assert.equal(z.maxHealth,E(`V017Monsters.stats('${z.type}',false).hp`));assert.ok(Math.abs(z.health/z.maxHealth-d.zombies[i].health/E(`V017Monsters.stats('${z.type}',true).hp`))<1e-12);}
+ for(const [i,z]of json(E('zombies')).entries())if(z.alive){assert.equal(z.maxHealth,E(`V017Monsters.stats('${z.type}',false).hp`));assert.ok(Math.abs(z.health/z.maxHealth-d.zombies[i].health/(E(`V017Monsters.specs['${z.type}'].hp`)*1.5))<1e-12);}
  const raw=E('JSON.stringify(captureGameProgress())');E(`restoreGameProgress(decodeGameProgress(${JSON.stringify(raw)}))`);assert.equal(E('JSON.stringify(captureGameProgress())'),raw);
 });
 check('debug.notExposedInProduction',()=>{assert.equal(E('typeof WorldEvents.debugOverride'),'undefined');const html=fs.readFileSync('index.html','utf8');assert.ok(!html.includes('dev/'));assert.ok(!html.includes('worldEventDebug'));});
@@ -64,7 +64,7 @@ check('debug.realIsolatedStorageStartStopBoundaryAndSaves',()=>{
  D(fs.readFileSync('dev/panel.js','utf8'));assert.ok(d.doc.getElementById('qaOverlay'));assert.equal(d.errors.length,0);
 });
 check('events.extensibleChannelsAndNoAtmosphereInstalled',()=>{
- const c={window:{}};c.window=c;vm.createContext(c);for(const f of ['clock','events'])vm.runInContext(fs.readFileSync('src/world/'+f+'.js','utf8'),c);
+ const c={window:{}};c.window=c;vm.createContext(c);for(const f of ['signal-definitions','clock','events'])vm.runInContext(fs.readFileSync('src/world/'+f+'.js','utf8'),c);
  assert.deepEqual(Object.keys(json(c.WorldEvents.snapshot().modifiers)),[]);
  vm.runInContext("WorldEvents.register({id:'qa_event',schedule:({day})=>day===2,modifiers:{'spawn.intensity':1.25,'lighting.darkness':.9,'audio.ambient':.5}});WorldClock.restore({schema:1,day:2,minute:0});",c);
  assert.equal(c.WorldEvents.value('lighting.darkness'),.9);assert.equal(c.WorldEvents.value('spawn.intensity'),1.25);c.WorldClock.restore({schema:1,day:3,minute:0});assert.equal(c.WorldEvents.value('lighting.darkness'),1);

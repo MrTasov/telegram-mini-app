@@ -12,6 +12,7 @@ window.GameCarried=(()=>{
   const owns=id=>bag.some(s=>is(s)&&s.instanceId===id)||legacyOverflow.includes(id);
   function add(id){const at=free();if(at<0||owns(id))return false;bag[at]=token(id);return true;}
   function remove(id){const at=bag.findIndex(s=>is(s)&&s.instanceId===id);if(at>=0){bag[at]=null;return true;}const i=legacyOverflow.indexOf(id);if(i<0)return false;legacyOverflow.splice(i,1);return true;}
+  function replace(oldId,newId){const at=bag.findIndex(s=>is(s)&&s.instanceId===oldId);if(at<0||owns(newId))return false;bag[at]=token(newId);return true;}
   function migrate(d){
     const overflow=[],capacity=ITEM[d.equipment.backpack.type].capacity;
     for(const r of d.equipment032.instances.filter(r=>r.placement==='packed')){
@@ -33,5 +34,5 @@ window.GameCarried=(()=>{
   GameSave.extend('decode','inventory.buildables',function(previous,raw){const d=previous(raw);validate(d);return d;});
   GameSave.extend('restore','inventory.buildables',function(previous,d){validate(d);const out=previous(d);legacyOverflow=copy(d.carry0353.legacyOverflow);return out;});
   GameState.register('carried',{capture},{source:'inventory/buildables.js',saved:['carry0353'],transient:[]});
-  return Object.freeze({TYPE,is,token,title,html,free,owns,add,remove,migrate,validate,capture,get overflow(){return [...legacyOverflow];}});
+  return Object.freeze({TYPE,is,token,title,html,free,owns,add,remove,replace,migrate,validate,capture,get overflow(){return [...legacyOverflow];}});
 })();

@@ -28,9 +28,6 @@ window.GameDefense=(()=>{
   if(c.action==='unload'){
    if(!r.state.settings.ammo)return fail('ammo');const left=addItem(d.ammoType,r.state.settings.ammo),units=r.state.settings.ammo-left;if(!units)return fail('inventoryFull');next.state.settings.ammo=left;change(next);return {ok:true,units};
   }
-  if(c.action==='upgrade'){
-   if(r.state.level>=DefenseDefinitions.maxLevel)return fail('max_level');if(r.state.condition.hp<r.state.condition.maxHp)return fail('repair_first');const level=r.state.level+1,cost={...Object.fromEntries(Object.entries(DefenseDefinitions.upgrade).map(([k,v])=>[k,v*level])),...(level>=4?{advanced_parts:(level-3)*5}:{})};if(!V010Inventory.consumeMaterials(cost,1,'defense:upgrade'))return fail('materials');next.state.level++;change(next);GameAudio.play('upgrade');return {ok:true,cost};
-  }
   return fail('unknown_action');
  }
  const commands=EquipmentCommands.create(GameEquipment,{actor:id=>GameActors.get(id),authorized:a=>a.id===GameActors.localId,access:reachable,perform,changed:()=>{queueGameSave();renderBag();window.GameDefenseUI?.refresh();}});
@@ -48,7 +45,7 @@ window.GameDefense=(()=>{
  }
  function shoot(r,z){const d=defs[r.typeId],p=pivot(r);if(!d.ammoType||!operational(r)||r.transform.scene!=='surface'||GameFlow.paused||!devicePowered(r.refs.device)||r.state.settings.ammo<=0||!z?.alive||z.health<=0||Math.hypot(z.x-p.x,z.y-p.y)>d.range||!clear(r,z))return false;
   let first=z,at=1;const dx=z.x-p.x,dy=z.y-p.y,len=dx*dx+dy*dy;for(const q of zombies)if(q.alive&&q.health>0&&len){const u=clamp(((q.x-p.x)*dx+(q.y-p.y)*dy)/len,0,1);if(u<at&&Math.hypot(p.x+u*dx-q.x,p.y+u*dy-q.y)<(q.radius||16)){at=u;first=q;}}
-  const n=copy(r);n.state.settings.ammo--;const v=transient(r.id);n.state.settings.angle=v.angle??r.state.settings.angle;change(n);v.shot=d.intervalMs/1000;v.flash=.07;v.tracer={x:first.x,y:first.y};hitZombie(first,Math.round(d.damage*(1+DefenseDefinitions.damagePerLevel*r.state.level)),{fixedDamage:true});GameAudio.play('turretFire',{...p,scene:'surface',radius:660});createNoise(p.x,p.y,600);metrics.shots++;return true;
+  const n=copy(r);n.state.settings.ammo--;const v=transient(r.id);n.state.settings.angle=v.angle??r.state.settings.angle;change(n);v.shot=d.intervalMs/1000;v.flash=.07;v.tracer={x:first.x,y:first.y};hitZombie(first,d.damage,{fixedDamage:true});GameAudio.play('turretFire',{...p,scene:'surface',radius:660});createNoise(p.x,p.y,600);metrics.shots++;return true;
  }
  function acquire(r,v){const p=pivot(r),d=defs[r.typeId];if(v.target?.alive&&v.target.health>0&&Math.hypot(v.target.x-p.x,v.target.y-p.y)<=d.range&&clear(r,v.target))return v.target;const a=GameEnemyIndex.query(p.x,p.y,d.range).filter(z=>z.alive&&z.health>0&&(z.x-p.x)**2+(z.y-p.y)**2<=d.range*d.range).sort((a,b)=>(a.x-p.x)**2+(a.y-p.y)**2-(b.x-p.x)**2-(b.y-p.y)**2||GameEnemyIndex.order(a)-GameEnemyIndex.order(b));for(let i=0;i<Math.min(8,a.length);i++){const z=a[v.cursor++%a.length];metrics.scans++;if(clear(r,z))return z;}return null;}
  function settle(){for(const r of records())if(r.placement==='installed'&&r.state.settings.mountWall&&V015Base.byId.get(r.state.settings.mountWall)?.hp<=0){const n=copy(r),p=pivot(r),a=Math.atan2(600-p.y,800-p.x),q=V015Base.freePoint(p.x+Math.cos(a)*72,p.y+Math.sin(a)*72,10);if(q){n.transform.x+=q.x-p.x;n.transform.y+=q.y-p.y;}n.state.settings.mountWall='';n.state.settings.fallen=true;change(n,{geometry:true});}}
@@ -62,7 +59,7 @@ window.GameDefense=(()=>{
  }
  function blast(z,range,amount){for(const r of records()){if(!operational(r)||r.transform.scene!=='surface')continue;const p=pivot(r);if(Math.hypot(p.x-z.x,p.y-z.y)<=range&&GameActivity.clear(z.x,z.y,p.x,p.y,0,r.id))damage(r.id,amount);}}
  function receiveLegacy(qty){let left=qty;while(left>0&&GameCarried.free()>=0&&GameEquipment.ids.length<192){const r=legacyRecord(V016Turret.newData(),GameActors.localId,true);GameEquipment.change(r);GameCarried.add(r.id);left--;}GameMovable.sync();return left;}
- function guns(){return records().filter(r=>defs[r.typeId].ammoType&&r.placement==='installed').map(r=>({id:r.id,type:r.typeId,...pivot(r),ammo:r.state.settings.ammo,angle:r.state.settings.angle,level:r.state.level,enabled:operational(r)&&devicePowered(r.refs.device),fallen:r.state.settings.fallen||r.state.condition.hp===0,wallId:r.state.settings.mountWall||null}));}
+ function guns(){return records().filter(r=>defs[r.typeId].ammoType&&r.placement==='installed').map(r=>({id:r.id,type:r.typeId,...pivot(r),ammo:r.state.settings.ammo,angle:r.state.settings.angle,enabled:operational(r)&&devicePowered(r.refs.device),fallen:r.state.settings.fallen||r.state.condition.hp===0,wallId:r.state.settings.mountWall||null}));}
  function fresh(){return {schema:1,commands:{revision:0,receipts:[]}};}
  function legacyRecord(g,actor,packed=false){const d=defs.heavy_turret;return {id:g.id,typeId:'heavy_turret',transform:{x:(g.x??500)-60,y:(g.y??400)-48,rotation:0,scene:'surface',room:'yard'},refs:{device:g.id},placement:packed?'packed':'installed',ownerId:packed?actor:null,state:{level:g.level||0,condition:{hp:d.hp,maxHp:d.hp},modules:[],settings:{ammo:g.ammo,angle:g.angle,mountWall:packed?'':g.wallId||'',fallen:!packed&&!!g.fallen}}};}
  function migrate(data){

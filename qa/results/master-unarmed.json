@@ -1,8 +1,8 @@
 {
-  "version": "0.41.0",
+  "version": "0.41.2",
   "reference": "frozen 0.29.0 before MASTER integration",
-  "passed": 33,
-  "failed": 0,
+  "passed": 32,
+  "failed": 1,
   "rates": [
     {
       "fps": 60,
@@ -275,7 +275,8 @@
     },
     {
       "id": "cache.noRepeatedRequestsAfterMovementRestAndEquipmentChanges",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n185 !== 186\n\n    at /workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/master-unarmed.cjs:148:53\n    at check (/workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/master-unarmed.cjs:8:39)\n    at main (/workspace/scratch/a6d22bff5614/siege_corrective_0412/qa/master-unarmed.cjs:145:8)"
     },
     {
       "id": "console.allCandidateAndFrozenRuntimesClean",
