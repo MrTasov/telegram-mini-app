@@ -175,9 +175,10 @@ window.ActorVisuals=(()=>{
     const layer=mod.effects[hit.material][hit.frame];if(!GameAssets.ready(layer.id))return;
     ctx.save();ctx.translate(impact.point.x,impact.point.y);ctx.scale(.25,.25);drawLayer(layer);ctx.restore();
   }
-  function drawPlayer(aim,item,recoil){const p=pose(item),ok=!!p&&(!!window.HeroVisual?.draw(p,item,aim)||renderPose(p,player.x,player.y,aim,recoil));if(ok)drawContact(p);return ok;}
+  function drawPlayer(aim,item,recoil){const p=pose(item),ok=!!window.HeroVisual?.draw(p,item,aim)||!!p&&renderPose(p,player.x,player.y,aim,recoil);if(ok&&p)drawContact(p);return ok;}
   function muzzlePoint(){
-    const item=heldItem(),p=pose(item),m=p?.record?.gear?.muzzle;
+    const item=heldItem(),hero=window.HeroVisual?.muzzle(item);if(hero)return hero;
+    const p=pose(item),m=p?.record?.gear?.muzzle;
     const recoil=canFire()&&performance.now()-muzzleFlash.time<95?(V09Craft.weapons[item]?.visualRecoil??-2.4):0;
     if(!m){
       const def=weaponVfx[item];if(!def)return null;
@@ -251,7 +252,7 @@ window.ActorVisuals=(()=>{
     if(heldItem()!=='fishing_rod'||scene!=='surface'||playerDead)return false;
     const caught=catchState(performance.now()),state=window.V012Fishing?.state,spot=caught?.spot||state?.spot;
     if(!spot)return false;const p=pose('fishing_rod');if(!p?.record?.fishing||!layersReady(p.record))return false;
-    const f=p.record.fishing,from=worldPoint(p,f.lineFrom),wait=mod.items.fishing_rod.action.frames[0].fishing;
+    const f=p.record.fishing,from=window.HeroVisual?.rodTip()||worldPoint(p,f.lineFrom),wait=mod.items.fishing_rod.action.frames[0].fishing;
     const pull=clamp((wait.lineTo[1]-f.lineTo[1])/145,0,1),near=worldPoint(p,f.lineTo),to={x:spot.waterX+(near.x-spot.waterX)*pull,y:spot.waterY+(near.y-spot.waterY)*pull};
     ctx.save();ctx.lineWidth=.85;ctx.strokeStyle='rgba(223,235,218,.8)';ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.quadraticCurveTo((from.x+to.x)/2,(from.y+to.y)/2+5,to.x,to.y);ctx.stroke();
     if(caught&&f.fishVisible&&GameAssets.ready(mod.fish.id)){
