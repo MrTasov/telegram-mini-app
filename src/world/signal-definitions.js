@@ -1,6 +1,6 @@
 /* All Day X balance lives here. WorldClock alone changes speed; combat stays real-time. */
 const SignalDefinitions=Object.freeze({schema:2,maxThreat:100,noticeMinutes:1440,warningMinutes:1440,imminentMinutes:360,historyLimit:8,
- intervalDays:10,endMinute:360,clockSlowdown:3,zombieSpeed:1.2,
+ intervalDays:10,endMinute:360,clockSlowdown:3,zombieSpeed:1.8,
  ordinaryCap:144,populationReserve:16,maxParticipants:120,actorSaveLimit:512,receiptLimit:1024,
  ordinaryPopulationIntervalMs:1800,passageRefreshMs:500,reinforcementIntervalMs:2500,groupSize:6,refillThreshold:.8,ringMin:2300,ringMax:2900,playerSpawnDistance:900,
  retirementIntervalMs:4000,retirementBatch:2,retirementDistance:1900,
