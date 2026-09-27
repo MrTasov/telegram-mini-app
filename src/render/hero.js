@@ -66,13 +66,40 @@ window.HeroVisual=(()=>{
     if(moving){const name=(g.run?'run':'walk')+suffix,rel=relative();return {name,frame:stride(name,rel.fwd<-.2?-1:1)};}
     return {name:'idle'+suffix,frame:wrap(now/cfg.idleMs*N,N)};
   }
+  // Hero sheets have their own small cache so that sheets of items no longer held can be
+  // released (decoded RGBA is the real cost on phones, not the download size).
+  const sheets=new Map(),BASE=new Set(['idle','walk','run']);
+  function sheet(name){
+    let r=sheets.get(name);if(r)return r;
+    const id=cfg.sheets[name],d=AssetManifest.images[id];if(!d)return null;
+    // Base sheets are never released: they live in the shared GameAssets cache, as does any
+    // sheet something else has already requested there (one Image per resource).
+    if(BASE.has(name)||GameAssets.stats().entries.some(e=>e.id===id)){
+      r={shared:true,get ready(){return GameAssets.ready(id);},get im(){return GameAssets.image(id);},frames:d.atlas.frames};sheets.set(name,r);return r;
+    }
+    const im=new Image();r={im,ready:false,failed:false,frames:d.atlas.frames};sheets.set(name,r);
+    im.decoding='async';
+    im.onload=()=>{const done=()=>{if(sheets.get(name)===r)r.ready=!!im.naturalWidth;};typeof im.decode==='function'?im.decode().then(done,done):done();};
+    im.onerror=()=>{r.failed=true;};im.src=d.path;return r;
+  }
+  const ready=name=>!!sheet(name)?.ready;
+  function release(name){const r=sheets.get(name);if(!r)return;sheets.delete(name);if(r.shared)return;r.im.onload=null;r.im.onerror=null;if(typeof r.im.removeAttribute==='function')r.im.removeAttribute('src');}
   // Last drawn frame's attachment points in the world (muzzle for shots, rod tip for the line).
   let lastTip=null,lastTipAt=0;
+  const used=new Map();
+  // While an item sheet (re)loads, keep showing the hero from an already decoded base sheet.
+  function fallback(choice,now){
+    const g=gait,name=player.moving&&g.speed>6?(g.run?'run':'walk'):'idle';
+    if(!ready(name))return null;
+    return {name,frame:name==='idle'?wrap(now/cfg.idleMs*N,N):wrap(g.phase*N,N)};
+  }
   function draw(p,item,aim){
-    const now=performance.now(),choice=pick(item,p,now);if(!choice)return false;
-    const id=cfg.sheets[choice.name];if(!id)return false;
-    if(!GameAssets.ready(id)){void GameAssets.load(id);return false;}
-    const im=GameAssets.image(id),F=frameSize(choice.name),col=choice.frame%COLS,row=Math.floor(choice.frame/COLS),x=info(choice.name);
+    const now=performance.now();let choice=pick(item,p,now);if(!choice)return false;
+    if(!cfg.sheets[choice.name])return false;
+    if(!ready(choice.name)){choice=fallback(choice,now);if(!choice)return false;}
+    used.set(choice.name,now);
+    const r=sheet(choice.name),im=r.im,F=frameSize(choice.name),cell=r.frames[choice.frame],x=info(choice.name);
+    if(!cell)return false;
     // While working, the modular stance offset keeps the strike on the tree or stone.
     let ox=0,oy=0;if(p?.working){const w=ActorVisuals.worldPoint(p,actors.modular.pivot);ox=w.x-player.x;oy=w.y-player.y;}
     // Aiming sheets turn back by the barrel's yaw so the muzzle points exactly at the aim.
@@ -81,7 +108,8 @@ window.HeroVisual=(()=>{
     ctx.save();ctx.translate(player.x+ox,player.y+oy);
     ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(visualScale,4*visualScale,17*visualScale,12*visualScale,0,0,TAU);ctx.fill();
     ctx.rotate(angle);ctx.scale(s,s);
-    ctx.drawImage(im,col*F,row*F,F,F,-F/2,-py,F,F);
+    // Frames are trimmed and packed; ox/oy place the trimmed cel back inside its F×F cell.
+    ctx.drawImage(im,cell.x,cell.y,cell.w,cell.h,-F/2+cell.ox,-py+cell.oy,cell.w,cell.h);
     ctx.restore();
     const t=x.tips?.[choice.frame];
     if(t){const c=Math.cos(angle),sn=Math.sin(angle),u=t[0]*unit,v=t[1]*unit;lastTip={x:player.x+ox+u*c-v*sn,y:player.y+oy+u*sn+v*c,item,scene:typeof scene==='undefined'?null:scene};lastTipAt=now;}else lastTip=null;
@@ -90,13 +118,25 @@ window.HeroVisual=(()=>{
   function tipFor(item){return lastTip&&lastTip.item===item&&performance.now()-lastTipAt<250&&lastTip.scene===(typeof scene==='undefined'?null:scene)?{x:lastTip.x,y:lastTip.y}:null;}
   // Startup requests only the sheet actually drawn; walk and run are prefetched once a
   // hero frame has been shown, and an item's sheets the first time it is held.
+  const itemSheets=item=>{
+    const gun=cfg.guns?.[item],tool=item==='fishing_rod'?'rod':cfg.tools[item];
+    return (gun?Object.keys(cfg.sheets).filter(n=>n.startsWith(gun+'_')):tool?['idle_','walk_','run_','strike_'].map(n=>n+tool).concat(tool==='rod'?['fish_cast','fish_wait','fish_reel']:[]):[]).filter(n=>cfg.sheets[n]);
+  };
   let warmedBase=false,warmedItem=null;
   function warm(item,drawn){
-    if(drawn&&!warmedBase){warmedBase=true;for(const n of ['idle','walk','run'])void GameAssets.load(cfg.sheets[n]);}
+    if(drawn&&!warmedBase){warmedBase=true;for(const n of BASE)sheet(n);}
     if(!drawn||!item||item===warmedItem)return;warmedItem=item;
-    const gun=cfg.guns?.[item],tool=item==='fishing_rod'?'rod':cfg.tools[item];
-    const names=gun?Object.keys(cfg.sheets).filter(n=>n.startsWith(gun+'_')):tool?['idle_','walk_','run_','strike_'].map(n=>n+tool).concat(tool==='rod'?['fish_cast','fish_wait','fish_reel']:[]):[];
-    for(const n of names)if(cfg.sheets[n])void GameAssets.load(cfg.sheets[n]);
+    const now=performance.now();for(const n of itemSheets(item)){used.set(n,now);sheet(n);}
   }
-  return Object.freeze({draw:(p,item,aim)=>{const ok=draw(p,item,aim);warm(item,ok);return ok;},muzzle:item=>cfg.guns?.[item]?tipFor(item):null,rodTip:()=>tipFor('fishing_rod'),config:cfg});
+  // Decoded sheets cost memory (RGBA), not download size. Sheets of items that are no longer
+  // held are released after a minute; the base sheets and the held item's sheets stay.
+  const RELEASE_MS=60000;let sweptAt=0;
+  function sweep(item,now){
+    if(now-sweptAt<5000)return;sweptAt=now;
+    const keep=new Set(item?itemSheets(item):[]);
+    for(const [n,t] of used)if(!BASE.has(n)&&!keep.has(n)&&now-t>RELEASE_MS){used.delete(n);release(n);}
+    // Holding a released item again prefetches its sheets again.
+    if(warmedItem&&warmedItem!==item)warmedItem=null;
+  }
+  return Object.freeze({loaded:()=>[...sheets].filter(([,r])=>r.ready).map(([n])=>n),draw:(p,item,aim)=>{const ok=draw(p,item,aim);warm(item,ok);sweep(item,performance.now());return ok;},muzzle:item=>cfg.guns?.[item]?tipFor(item):null,rodTip:()=>tipFor('fishing_rod'),config:cfg});
 })();
