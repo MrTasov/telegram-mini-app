@@ -1,9 +1,11 @@
 {
   "name": "last-base",
-  "version": "0.40.3",
+  "version": "0.41.0",
   "private": true,
-  "description": "LAST BASE 0.40.3 \u2014 Performance & Gameplay Corrective",
+  "description": "LAST BASE 0.41.0 — Stage I2: Signal / Threat / Day X",
   "scripts": {
+    "test:i2": "node qa/stage-i2.cjs && node qa/stage-i2-combat.cjs",
+    "bench:i2": "node qa/stage-i2-performance.cjs",
     "build": "node tools/build.cjs",
     "check": "node tools/build.cjs --check && node qa/verify.cjs",
     "test": "node qa/run.cjs",

@@ -32,6 +32,7 @@ GameSave.seal({
     "story.archive",
     "defense.foundation",
     "simulation.activity",
+    "world.signal",
     "dev.qa"
   ],
   "decode": [
@@ -104,6 +105,7 @@ GameSave.seal({
     "story.archive",
     "defense.foundation",
     "simulation.activity",
+    "world.signal",
     "dev.qa"
   ]
 });

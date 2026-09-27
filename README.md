@@ -1,3 +1,15 @@
+# LAST BASE 0.41.0 — Stage I2
+
+Current baseline: the user-uploaded `LAST_BASE_0_40_3_new_character_v5.zip`, including Claude's character/animation/icon changes. Save Format 21. Ready runtime: `index.html` + `js/` + `styles/` + `assets/`, served over HTTP(S).
+
+[Stage I2 report (RU)](LAST_BASE_0.41.0_REPORT_RU.md). `npm run test:i2` checks Signal/Threat/Day X, DEV time targets, migration and off-zone consequences. `npm run bench:i2` is a bounded update/capture diagnostic against the exact uploaded runtime, not phone FPS. `npm test` runs the inherited regression suites.
+
+Day X remains every tenth day, 00:00–06:00. Signal warns 48/24/6 game hours ahead. DEV time jumps simulate toward a target; they are not instant. Background, explicit pause or death pauses the job. Next stages are not implemented.
+
+The material below documents earlier releases; its version/status claims are historical.
+
+---
+
 # LAST BASE 0.40.2 — Performance & Gameplay Corrective
 
 Текущий отчёт: [PERFORMANCE_GAMEPLAY_REPORT_RU.md](PERFORMANCE_GAMEPLAY_REPORT_RU.md). Открывайте `index.html` через HTTP(S); готовый runtime уже собран. Новые проверки: `npm run test:perf-corrective`; сравнение производительности: `npm run bench:perf-corrective`. Save Format 20, Stage I2 не начат.

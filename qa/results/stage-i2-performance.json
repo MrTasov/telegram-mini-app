@@ -1,0 +1,92 @@
+{
+  "version": "0.41.0",
+  "baselineSha256": "f830a4f61dffb170e3f315f5830a46740690ec6d12b6244c27824174fa53151c",
+  "runtimeSha256": "c05535ebc3a96fb641acf47e88d9da63bbfdf681b5e8fe297de323cf5f99dd15",
+  "scope": "Day X, 50 initial real enemies, authoritative update + capture; modeled DOM, DPR3 device/capped2 canvas. No draw/FPS/native browser claim.",
+  "rows": [
+    {
+      "which": "before",
+      "scene": "surface",
+      "initialEnemies": 50,
+      "living": 58,
+      "dayX": true,
+      "updateMs": {
+        "samples": 150,
+        "p50": 4.370347000000038,
+        "p95": 8.481021000000055
+      },
+      "captureMs": {
+        "samples": 10,
+        "p50": 1.440299999999752,
+        "p95": 1.7135319999997591
+      },
+      "saveBytes": 89053,
+      "deviceDpr": 3,
+      "renderDpr": 2,
+      "errors": []
+    },
+    {
+      "which": "after",
+      "scene": "surface",
+      "initialEnemies": 50,
+      "living": 58,
+      "dayX": true,
+      "updateMs": {
+        "samples": 150,
+        "p50": 4.548635000000104,
+        "p95": 8.572938999999906
+      },
+      "captureMs": {
+        "samples": 10,
+        "p50": 1.4858890000000429,
+        "p95": 1.9132429999999658
+      },
+      "saveBytes": 90264,
+      "deviceDpr": 3,
+      "renderDpr": 2,
+      "errors": []
+    },
+    {
+      "which": "before",
+      "scene": "bunker",
+      "initialEnemies": 50,
+      "living": 58,
+      "dayX": true,
+      "updateMs": {
+        "samples": 150,
+        "p50": 3.6671069999999872,
+        "p95": 7.482686000000058
+      },
+      "captureMs": {
+        "samples": 10,
+        "p50": 1.5332809999999881,
+        "p95": 1.77824099999998
+      },
+      "saveBytes": 88626,
+      "deviceDpr": 3,
+      "renderDpr": 2,
+      "errors": []
+    },
+    {
+      "which": "after",
+      "scene": "bunker",
+      "initialEnemies": 50,
+      "living": 58,
+      "dayX": true,
+      "updateMs": {
+        "samples": 150,
+        "p50": 3.7788450000000466,
+        "p95": 7.686029999999846
+      },
+      "captureMs": {
+        "samples": 10,
+        "p50": 1.7050199999998767,
+        "p95": 1.9296180000001186
+      },
+      "saveBytes": 89828,
+      "deviceDpr": 3,
+      "renderDpr": 2,
+      "errors": []
+    }
+  ]
+}

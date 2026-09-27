@@ -129,9 +129,13 @@ window.GameDevQA=(()=>{
  function runFrame(tick){
   if(!enabled){tick();return;}if(GameFlow.paused)return;
   const start=rawNow(),realDelta=Math.max(1,start-lastFrameRaw);lastFrameRaw=start;
-  const originalScale=frameScale,desired=rate==='MAX'?STEP*240:clamp(originalScale*STEP,1,50)*rate;let elapsed=0,steps=0;
-  try{while(elapsed+1e-7<desired&&steps<240&&(steps===0||rawNow()-start<12)&&!GameFlow.paused){
-   let ms=Math.min(STEP,desired-elapsed);if(target!==null){const left=remainingMinutes()*WorldClock.dayMs/1440;if(left<=.0001){if(left>0)WorldClock.advance(left+1e-7);target=null;rate=1;break;}ms=Math.min(ms,left);}
+  const originalScale=frameScale,desired=target!==null?60000:rate==='MAX'?STEP*240:clamp(originalScale*STEP,1,50)*rate;let elapsed=0,steps=0;
+  try{while(elapsed+1e-7<desired&&steps<(target!==null?600:240)&&(steps===0||rawNow()-start<12)&&!GameFlow.paused){
+   // Target jobs use bounded simulation steps, never render frames or a Day assignment.
+   // Combat/projectiles keep the released two-frame ceiling; quiet steps match
+   // the 100 ms cap of power, production, drone and activity owners.
+   const quantum=target===null?STEP:WorldEvents.isActive('day_x')||bullets.length||scene==='surface'?STEP*2:100;
+   let ms=Math.min(quantum,desired-elapsed);if(target!==null){const left=remainingMinutes()*WorldClock.dayMs/1440;if(left<=.0001){if(left>0)WorldClock.advance(left+1e-7);target=null;rate=1;break;}ms=Math.min(ms,left);}
    virtual+=ms;stepMs=ms;frameScale=ms/STEP;
    if(firing&&rightAimActive&&!menuOpen&&!playerDead)shoot();tick();elapsed+=ms;steps++;
    if(target!==null&&WorldClock.day*1440+WorldClock.minute>=target-1e-7){const rest=remainingMinutes()*WorldClock.dayMs/1440;if(rest>0)WorldClock.advance(rest+1e-7);target=null;rate=1;break;}
@@ -150,5 +154,5 @@ window.GameDevQA=(()=>{
    const out=previous(d);window.GameDevUI?.refresh();return out;
   }finally{restoring=false;}});
  GameState.register('devQA',{capture},{source:'dev/runtime.js',saved:['devQA0401'],transient:['panel','enabled','speed','target time','performance metrics']});
- return Object.freeze({enable,disable,execute,request,authorized,capture,validate,catalog,runFrame,metrics,rawNow,get enabled(){return enabled;},get marked(){return !!state;},get revision(){return commands.revision;},get stepMs(){return stepMs;}});
+ return Object.freeze({enable,disable,execute,request,authorized,capture,validate,catalog,runFrame,metrics,rawNow,get enabled(){return enabled;},get marked(){return !!state;},get revision(){return commands.revision;},get stepMs(){return stepMs;},get catchingUp(){return enabled&&target!==null;}});
 })();

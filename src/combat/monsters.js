@@ -113,11 +113,12 @@ window.V017Monsters=(()=>{
     window.GameDefense?.blast(z,blast.wallRange*boost,blast.wallDamage*boost);
     return true;
   }
-  const oldHit=hitZombie;hitZombie=function(z,...args){if(z)prepare(z);const alive=z?.alive,out=oldHit(z,...args);if(alive&&!z.alive){const r=prepare(z);r.deadAt=performance.now();r.deathAngle=angleOf(r.angle-Math.PI/2);r.jump=null;r.target=null;if(stats(z,false).behavior==='explosive')explode(z);}return out;};
+  const oldHit=hitZombie;hitZombie=function(z,...args){if(z)prepare(z);const alive=z?.alive,out=oldHit(z,...args);if(alive&&!z.alive){window.GameSignal?.killed(z);const r=prepare(z);r.deadAt=performance.now();r.deathAngle=angleOf(r.angle-Math.PI/2);r.jump=null;r.target=null;if(stats(z,false).behavior==='explosive')explode(z);}return out;};
   function detonate(z){explode(z);if(z.alive)hitZombie(z,z.health+1,{fixedDamage:true});}
   function sideCounts(){const out={N:0,E:0,S:0,W:0};for(const z of zombies)if(z.alive)out[prepare(z).side]++;return out;}
   function spawn(index,near=isDayX()||index%2===0,side=null){
-    const type=typeAt(index),s=stats(type);let p=null;
+    const plan=window.GameSignal?.spawnPlan(index);if(plan&&!plan.allowed)return null;
+    const type=plan?.type||typeAt(index),s=stats(type);side=side||plan?.side;let p=null;
     if(isDayX()&&!side){const counts=sideCounts();side=[...SIDES].sort((a,b)=>counts[a]-counts[b])[0];}
     for(let a=0;a<64&&!p;a++){
       let x,y;
@@ -127,7 +128,7 @@ window.V017Monsters=(()=>{
       if(!worldCollision(x,y,s.radius,'surface')&&(!sameLevel()||Math.hypot(x-player.x,y-player.y)>380)&&(!sameLevel()||!visibleOnScreen(x,y,110)))p={x,y};
     }
     if(!p)return null;
-    const z=makeZombie(p.x,p.y);z.type=type;z.worldId='m19_'+(++serial);const r=prepare(z);if(side)r.side=side;return z;
+    const z=makeZombie(p.x,p.y);z.type=type;z.worldId='m19_'+(++serial);const r=prepare(z);if(side)r.side=side;window.GameSignal?.admitted(z);return z;
   }
   function population(now,force=false){
     if(!force&&now-lastPopulation<1800)return;lastPopulation=now;
@@ -156,7 +157,7 @@ window.V017Monsters=(()=>{
   function updateMonsters(){
     syncEvent();const raid=isDayX();
     if(GameFlow.paused)return;
-    const now=GameActivity.now(),boost=factor();GameActivity.begin(Math.min(2,Math.max(0,frameScale))*16.667);population(now);
+    const now=GameActivity.now(),boost=factor();GameActivity.begin(Math.min(window.GameDevQA?.catchingUp?6:2,Math.max(0,frameScale))*16.667);population(now);
     for(const list of neighbors.values()){list.length=0;neighborPool.push(list);}neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,neighborPool.pop()||[]);neighbors.get(key).push(z);}
     for(const z of zombies){
       const r=prepare(z);if(!z.alive)continue;if(!sameLevel())r.sees=false;const dt=GameActivity.step(z,r);if(!dt)continue;const s=stats(z),d=dist(z,player);

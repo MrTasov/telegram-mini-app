@@ -32,7 +32,7 @@ async function main(){
   const previous=require('./walk-sound-reference.json').actors;
   assert.ok(Math.abs(previous.unarmed.cycleDistance/cfg.unarmed.cycleDistance-3)<1e-12);
   assert.ok(Math.abs(previous.modular.cycleDistance/cfg.modular.cycleDistance-3)<1e-12);
-  const normalized=plain(cfg);normalized.unarmed.cycleDistance=previous.unarmed.cycleDistance;normalized.modular.cycleDistance=previous.modular.cycleDistance;
+  require('./stage-i2-accepted-assets.cjs').verify();const normalized=plain(cfg);delete normalized.hero;normalized.unarmed.cycleDistance=previous.unarmed.cycleDistance;normalized.modular.cycleDistance=previous.modular.cycleDistance;
   assert.deepEqual(normalized,previous);
  });
  check('audio.footstepGainHalvedAndWorkGainUnchanged',()=>{

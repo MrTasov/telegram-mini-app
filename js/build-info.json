@@ -1,8 +1,8 @@
 {
-  "version": "0.40.3",
+  "version": "0.41.0",
   "format": "classic-script-concatenation",
-  "bodySha256": "0406b923059fc5757e899128afd201a579d9179b61c7f7e4d8b042abc1505b44",
-  "bundleSha256": "f830a4f61dffb170e3f315f5830a46740690ec6d12b6244c27824174fa53151c",
+  "bodySha256": "bfa6b8643658ed11acf2b4c2e52317e94acb7b2b269ef1f7cbdf498f4ec25e9e",
+  "bundleSha256": "c05535ebc3a96fb641acf47e88d9da63bbfdf681b5e8fe297de323cf5f99dd15",
   "files": [
     {
       "file": "src/config/gameplay.js",
@@ -11,8 +11,8 @@
     },
     {
       "file": "src/i18n/catalogs.js",
-      "bytes": 436852,
-      "sha256": "4e9f0601bf287ba74a2668a8140ab03baaa1e1998e807f70dae8cb7d7cf527ef"
+      "bytes": 443307,
+      "sha256": "7684f892e29dcbd56bd5a986f44a6f56464ea03085351513e247403ecd1ff3e8"
     },
     {
       "file": "src/i18n/runtime.js",
@@ -26,13 +26,13 @@
     },
     {
       "file": "src/save/format.js",
-      "bytes": 4101,
-      "sha256": "afe24a07fb1372ca8a308bd25b09d19025fae06961afb3e9214ce28b5cba3ff5"
+      "bytes": 4255,
+      "sha256": "a6e2cea59185cae93e6a5e54f2115f8f6a4c918c6653e0e6a64a473a9dc7f8ed"
     },
     {
       "file": "src/save/pipeline.js",
-      "bytes": 4538,
-      "sha256": "63929bfde32d343d09ab8ffe72f7f1590796acd75112d8d417a5c3863ff28b66"
+      "bytes": 4572,
+      "sha256": "6bac9114777875352cc4b2341129f79af677947446b3bb07312faf9041b6e3cd"
     },
     {
       "file": "src/assets/manifest.js",
@@ -48,6 +48,11 @@
       "file": "src/world/clock.js",
       "bytes": 1138,
       "sha256": "535b4b425babd5bdf81b13b3bc7814d9c5fc41ce0cf19e590eff375ce02f2756"
+    },
+    {
+      "file": "src/world/signal-definitions.js",
+      "bytes": 693,
+      "sha256": "931876df7716bcdd3c2329f3549120ba964f4e70297344f1f7438c26dcb4a2a8"
     },
     {
       "file": "src/world/events.js",
@@ -201,8 +206,8 @@
     },
     {
       "file": "src/save/slots.js",
-      "bytes": 31145,
-      "sha256": "7df13b44d9bc362cdeb074e37c55215c3e15e39c9930d9a2edf170ffdc430969"
+      "bytes": 31151,
+      "sha256": "b9026a9656ee81ce43a33958c1df9c469038b9d753a033285b3c58e17ce508cf"
     },
     {
       "file": "src/inventory/registry-slots.js",
@@ -242,7 +247,7 @@
     {
       "file": "src/save/envelope.js",
       "bytes": 2845,
-      "sha256": "9adee2b284b430d9f41a01edde4dbd77cec13c653e1bd9183d8597923e951907"
+      "sha256": "30b66b8ab6ccf2047ca32fc9965c8e2cc512b72f7f19901b69966b2e3032c2d6"
     },
     {
       "file": "src/ui/context-map.js",
@@ -396,8 +401,8 @@
     },
     {
       "file": "src/combat/monsters.js",
-      "bytes": 27620,
-      "sha256": "dde37cd17bcc18b45d7ca14d26228cdd8a1bdf2fbf2f401ba5c3c37519307260"
+      "bytes": 27832,
+      "sha256": "695d4d34da2d4b0696db87544d02a56ab3e2f61521d3c4b3d0fa88538e1fefe0"
     },
     {
       "file": "src/base/construction.js",
@@ -571,8 +576,8 @@
     },
     {
       "file": "src/story/definitions.js",
-      "bytes": 1890,
-      "sha256": "9ed2f928ba6e2a8e80643424611424252903cf21ad57f822aca038dbbec443fa"
+      "bytes": 2143,
+      "sha256": "a192c395cb11ed8f2bbb94123fd18245d54f17c52407236e753972f9537ac24b"
     },
     {
       "file": "src/story/domain.js",
@@ -581,8 +586,8 @@
     },
     {
       "file": "src/story/runtime.js",
-      "bytes": 3184,
-      "sha256": "ee431c1c44b54bd1d3dfe7d001d1c83e61c54efd5288925a1154b229f95a2274"
+      "bytes": 3308,
+      "sha256": "2f6835548e89e5ac58add81998d61835af41e547a461643048e7e67785237519"
     },
     {
       "file": "src/story/player.js",
@@ -601,8 +606,8 @@
     },
     {
       "file": "src/ui/exploration.js",
-      "bytes": 9755,
-      "sha256": "4dcb0437c81477aff458f5d8e2ac1316bc384aff362d4ee850ce946b99950a94"
+      "bytes": 9853,
+      "sha256": "1af347abcf4088a36b65a5658051369571035103d3569ec22a4b74b2a6fc54d7"
     },
     {
       "file": "src/defense/runtime.js",
@@ -625,19 +630,24 @@
       "sha256": "a93c03b71b830f9b55b72db5f7b95ccb2ce5a3b4d1c8f29356cf0daa8f181c9c"
     },
     {
+      "file": "src/world/signal.js",
+      "bytes": 6381,
+      "sha256": "fb413bbb38d50879290d3d175b49845003c37fbcdd2d37eca95cbb7f28d0025e"
+    },
+    {
       "file": "src/dev/runtime.js",
-      "bytes": 16971,
-      "sha256": "4af3d3b0aabfb98c575a31c530f73015fcb823ecf932182518ef76a26d821b86"
+      "bytes": 17415,
+      "sha256": "c81c00438a3e91c26fdbbab4808068576dde935212d3d48195c394c5c8904248"
     },
     {
       "file": "src/save/new-game.js",
-      "bytes": 2498,
-      "sha256": "97ba194f54f488fe375ad398bd75c0b23d675688e7cf55eba1953ccec238e9f0"
+      "bytes": 2529,
+      "sha256": "b7d4d02c21d3baeb4893c47f832a93a90bdfae7dcd48b5323b839a1460fa0c1c"
     },
     {
       "file": "src/save/finalize.js",
-      "bytes": 2525,
-      "sha256": "5f69f81dcd533aae6f106cd2924b6278bdc6dd431a1c8abee38a6f1893d15017"
+      "bytes": 2565,
+      "sha256": "dd1d12c315e571ebff9a2617f679cbbf57cc67349285d2d930e90204bc523151"
     },
     {
       "file": "src/ui/main-menu.js",
@@ -650,9 +660,14 @@
       "sha256": "71da0f9b81795f1332fcbc888906576f60eced058e064e4a7311b246569e4fd5"
     },
     {
+      "file": "src/ui/signal.js",
+      "bytes": 3441,
+      "sha256": "3eaf57e29c095387a2e1b684767df8f1ddc04c8eecfaac1a6345197d510e9e08"
+    },
+    {
       "file": "src/dev/ui.js",
-      "bytes": 16852,
-      "sha256": "6d8151ef618b4dbfa512eb14f28198716952ff0120480fcadab9b21647ca0dad"
+      "bytes": 17470,
+      "sha256": "5c7b83463c032235d650b4bb3aab0ea064f1406df7ef48b7562e23e6d52edcc9"
     },
     {
       "file": "src/dev/performance.js",

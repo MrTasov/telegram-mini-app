@@ -1,0 +1,56 @@
+{
+  "passed": 8,
+  "failed": 3,
+  "checks": [
+    {
+      "id": "source.gameplayOwnersByteIdenticalToDeliveredEquipmentBuild",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: src/bootstrap.js\n+ actual - expected\n\n+ '5b929e7d2c12bc783e4d724210d5139ad7726a6c8f9bb34461499c10e7acd33b'\n- '79cb84052cafdb5ced88d215bb79cae6f4dde054b4b2b23741fc1a5e9e651257'\n\n    at exports.assertSource (/workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/campaign-source-contract.cjs:31:14)\n    at exports.assertSource (/workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/bunker-contract.cjs:31:475)\n    at exports.assertSource (/workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/audio-contract.cjs:7:40)\n    at exports.assertSource (/workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/hud-contract.cjs:9:39)\n    at /workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:11:233\n    at check (/workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:5:39)\n    at /workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:9:8"
+    },
+    {
+      "id": "scale.unarmedAllFramesAndAllModularStatesExactly165percent",
+      "status": "PASS"
+    },
+    {
+      "id": "scale.sleepExactly165percentSameFourBreathingFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "helmet.equippedProtectionDoesNotPaintAnOvalOverHair",
+      "status": "PASS"
+    },
+    {
+      "id": "tool.axe.twelvePosesThreeViewsPalmsAndRealContact",
+      "status": "PASS"
+    },
+    {
+      "id": "tool.pickaxe.twelvePosesThreeViewsPalmsAndRealContact",
+      "status": "PASS"
+    },
+    {
+      "id": "work.repeatedCyclesKeepStancePlantedThenEaseOut",
+      "status": "PASS"
+    },
+    {
+      "id": "fish.visibleCatchExactlyDoubleSizeIndependentOfPlayerScale",
+      "status": "PASS"
+    },
+    {
+      "id": "cache.sharedViewsLoadedOnceNoPerFrameImages",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(bytes<40*1024*1024)\n\n    at /workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:71:188\n    at check (/workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:5:39)\n    at /workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:68:8"
+    },
+    {
+      "id": "fallback.M4ScaleAndMuzzleRemainAligned",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n\n    at /workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:75:50\n    at check (/workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:5:39)\n    at /workspace/scratch/a6d22bff5614/i2_uploaded_qa/qa/player-visual-fix.cjs:73:8"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Native Canvas2D with modeled DOM. Physical phone/Telegram WebView manual acceptance remains."
+  ]
+}

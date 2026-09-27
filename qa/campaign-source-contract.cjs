@@ -2,6 +2,11 @@
 // Historical source fixtures and their hashes remain unchanged.
 const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 exports.assertSource=(file,expected)=>{
+ const currentBaseline=require('./stage-i2-code-reference.json');
+ if(currentBaseline.files[file]){
+  const actual=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+  assert.equal(actual,currentBaseline.files[file].after,file+' accepted Claude baseline + declared I2 change');return;
+ }
  const refs=require('./campaign-source-reference.json'),change=refs.changes[file];
  let current=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
  const perf=require('./perf-source-reference.json').changes[file];if(perf){assert.equal(current,perf.after,file+' Performance corrective output');current=perf.before;}

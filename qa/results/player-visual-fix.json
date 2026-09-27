@@ -1,6 +1,6 @@
 {
-  "passed": 11,
-  "failed": 0,
+  "passed": 9,
+  "failed": 2,
   "checks": [
     {
       "id": "source.gameplayOwnersByteIdenticalToDeliveredEquipmentBuild",
@@ -36,11 +36,13 @@
     },
     {
       "id": "cache.sharedViewsLoadedOnceNoPerFrameImages",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(bytes<40*1024*1024)\n\n    at /workspace/scratch/a6d22bff5614/stage_i2_0410/qa/player-visual-fix.cjs:71:188\n    at check (/workspace/scratch/a6d22bff5614/stage_i2_0410/qa/player-visual-fix.cjs:5:39)\n    at /workspace/scratch/a6d22bff5614/stage_i2_0410/qa/player-visual-fix.cjs:68:8"
     },
     {
       "id": "fallback.M4ScaleAndMuzzleRemainAligned",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n\n    at /workspace/scratch/a6d22bff5614/stage_i2_0410/qa/player-visual-fix.cjs:75:50\n    at check (/workspace/scratch/a6d22bff5614/stage_i2_0410/qa/player-visual-fix.cjs:5:39)\n    at /workspace/scratch/a6d22bff5614/stage_i2_0410/qa/player-visual-fix.cjs:73:8"
     },
     {
       "id": "console.clean",

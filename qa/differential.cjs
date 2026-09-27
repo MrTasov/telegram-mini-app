@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..');process.chdir(root);
 const {setup}=require('./runtime.cjs'),a=setup('qa/stage1/index.html'),b=setup('index.html'),checks=[];
 const json=v=>JSON.parse(JSON.stringify(v));
-const normalized=require('./world-farm-contract.cjs').project;
+const normalized=require('./stage-i2-contract.cjs').project;
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.message.slice(0,4000)});}}
 function both(code){const aa=a.eval(code),bb=b.eval(code);assert.deepEqual(json(bb??null),json(aa??null));}
 function compare(options){assert.deepEqual(normalized(b.eval('captureGameProgress()'),options),normalized(a.eval('captureGameProgress()'),options));}
@@ -34,7 +34,7 @@ const scenarios=[
 for(const s of scenarios)check('simulation.'+s.id,()=>{
  restore(fixture(s.fixture));both(s.start);
  for(let i=0;i<s.frames;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
- compare({surveyClock:s.id==='surfaceMovement',droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
+ compare({enemyLimit:s.id==='dayX'?JSON.parse(fixture('day_x')).zombies.filter(z=>z.alive).length:undefined,surveyClock:s.id==='surfaceMovement',droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
 });
 check('transactions.inventoryTransferAndQuickSlots',()=>{
  restore(fixture('equipment_storage'));both('V010Inventory.transfer("bag",0,0,1)');compare();

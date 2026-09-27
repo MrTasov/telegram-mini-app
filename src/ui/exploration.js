@@ -15,7 +15,7 @@ window.GameExplorationUI=(()=>{
   function distance(p){const from=scene==='surface'?player:ExplorationDefinitions.home,dx=p.x-from.x,dy=p.y-from.y,dirs=['east','southeast','south','southwest','west','northwest','north','northeast'],index=(Math.round(Math.atan2(dy,dx)/(Math.PI/4))+8)%8;return t('exploration.direction',{direction:t('exploration.direction.'+dirs[index]),distance:I18n.number(Math.round(Math.hypot(dx,dy))) });}
   function render(host,selected,goto){
     const known=game.sectors.filter(s=>game.known(s.id)),sector=selected?known.find(s=>s.id===selected):null;
-    host.replaceChildren();renders++;host.append(node('h3',t(sector?.title||'exploration.title')),node('p',t('exploration.description'),'coreHint'));
+    host.replaceChildren();renders++;if(!sector)window.GameSignalUI?.mount(host);host.append(node('h3',t(sector?.title||'exploration.title')),node('p',t('exploration.description'),'coreHint'));
     const navigation=node('div',null,'explorationActions');navigation.append(button(t('exploration.home'),()=>{V010Camera.showMap('surface');mark(ExplorationDefinitions.home);}),button(t('exploration.map'),()=>{V010Camera.showMap('surface');setDrawer(false);}));host.append(navigation);
     if(!sector){host.append(node('p',t('exploration.progress',{known:I18n.number(known.length),visited:I18n.number(game.sectors.filter(s=>game.visited(s.id)).length)}),'coreHint'));
       for(const s of known){const b=button('',()=>goto(s.id),'explorationCard');b.dataset.sector=s.id;b.append(node('strong',t(s.title)),node('span',t(game.visited(s.id)?'exploration.visited':'exploration.known')),node('small',t(game.allowed(s.id)?'exploration.access.open':'exploration.access.locked')));host.append(b);}
@@ -35,7 +35,7 @@ window.GameExplorationUI=(()=>{
   }
   let signature='';
   function refresh(force=false){toggle.textContent=t('exploration.sectors');toggle.setAttribute('aria-label',t('exploration.sectors'));home.textContent=t('exploration.home');back.textContent=t('core.back');back.disabled=!page;toMap.textContent=t('exploration.map');bar.setAttribute('aria-label',t('exploration.navigation'));drawer.setAttribute('aria-label',t('exploration.title'));
-    if(!drawerOpen)return;if(page&&!validPage(page))page=null;const key=[game.epoch,GameResearch.epoch,I18n.language,page].join('|');if(!force&&key===signature)return;signature=key;const top=body.scrollTop;render(body,page,id=>{page=id;body.scrollTop=0;refresh(true);});body.scrollTop=top;
+    if(!drawerOpen)return;if(page&&!validPage(page))page=null;const key=[game.epoch,GameResearch.epoch,I18n.language,page,window.GameSignalUI?.key()].join('|');if(!force&&key===signature)return;signature=key;const top=body.scrollTop;render(body,page,id=>{page=id;body.scrollTop=0;refresh(true);});body.scrollTop=top;
   }
   function drawMap(c,scale,mini){
     // Sector geometry remains authoritative for exploration; the player map
@@ -43,7 +43,7 @@ window.GameExplorationUI=(()=>{
     c.save();const origin=ExplorationDefinitions.home;c.fillStyle='#9ed5a4';c.strokeStyle='#102f27';c.lineWidth=1/scale;c.beginPath();c.rect(origin.x-4/scale,origin.y-4/scale,8/scale,8/scale);c.fill();c.stroke();
     for(const s of game.sites){if(!game.siteHint(s.id)||game.claimed(s.id)||mini&&!game.siteKnown(s.id))continue;const p=game.siteKnown(s.id)?s:s.approach,r=(mini?3:4)/scale;c.fillStyle=game.siteKnown(s.id)?'#b0e5d5':'#d6ba83';c.beginPath();c.moveTo(p.x,p.y-r);c.lineTo(p.x+r,p.y);c.lineTo(p.x,p.y+r);c.lineTo(p.x-r,p.y);c.closePath();c.fill();c.stroke();}c.restore();
   }
-  CommandCoreUI.registerSection('map-signals','exploration.map',(host,route)=>{let key='';return ()=>{const next=[game.epoch,GameResearch.epoch,route.page,I18n.language].join('|');if(next===key)return;key=next;const top=host.scrollTop;render(host,route.page,id=>{route.setPage(id);key='';CommandCoreUI.tick();});host.scrollTop=top;};},()=>true,validPage);
+  CommandCoreUI.registerSection('map-signals','exploration.map',(host,route)=>{let key='';return ()=>{const next=[game.epoch,GameResearch.epoch,route.page,I18n.language,window.GameSignalUI?.key()].join('|');if(next===key)return;key=next;const top=host.scrollTop;render(host,route.page,id=>{route.setPage(id);key='';CommandCoreUI.tick();});host.scrollTop=top;};},()=>true,validPage);
   I18n.onChange(()=>refresh(true));game.subscribe(()=>refresh());GameResearch.subscribe(()=>refresh());
   const oldShow=V010Camera.showMap;V010Camera.showMap=function(...args){page=null;setDrawer(false);const out=oldShow(...args);refresh();return out;};
   el('v010MapClose').addEventListener('click',()=>setDrawer(false));

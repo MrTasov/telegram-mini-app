@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..');process.chdir(root);
 const {setup}=require('./runtime.cjs'),a=setup('qa/controls-base/index.html'),b=setup('index.html'),checks=[];
 const json=v=>JSON.parse(JSON.stringify(v));
-const normalized=require('./world-farm-contract.cjs').project;
+const normalized=require('./stage-i2-contract.cjs').project;
 function check(id,fn){try{fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.message.slice(0,4000)});}}
 function both(code){const aa=a.eval(code),bb=b.eval(code);assert.deepEqual(json(bb??null),json(aa??null));}
 function compare(options){assert.deepEqual(normalized(b.eval('captureGameProgress()'),options),normalized(a.eval('captureGameProgress()'),options));}
@@ -34,7 +34,7 @@ const scenarios=[
 for(const s of scenarios)check('simulation.'+s.id,()=>{
  restore(fixture(s.fixture));both(s.start);
  for(let i=0;i<s.frames;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
- compare({surveyClock:s.id==='surfaceMovement',droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
+ compare({enemyLimit:s.id==='dayX'?JSON.parse(fixture('day_x')).zombies.filter(z=>z.alive).length:undefined,surveyClock:s.id==='surfaceMovement',droneMotion:s.id==='droneFollowing',growthClock:s.id==='growingCrop'});
 });
 check('transactions.inventoryTransferAndQuickSlots',()=>{
  restore(fixture('equipment_storage'));both('V010Inventory.transfer("bag",0,0,1)');compare();
@@ -59,12 +59,12 @@ for(const day of [1,10,11])check('simulation.allEnemyBehaviors.day'+day,()=>{
  try{
  both(`scene='surface';player.x=800;player.y=850;player.health=player.maxHealth;menuOpen=false;stopControls(true);V016Lighting.restore({schema:1,day:${day},minute:180});zombies=['normal','heavy','fast','leaper','bloater'].map((type,i)=>{const z=makeZombie(760+i*30,800);z.type=type;V017Monsters.prepare(z);return z;});void 0;`); // Outcomes below remain compared; transient timestamps use a pause-aware clock in I1.
  for(let i=0;i<180;i++){a.advance(16.667);b.advance(16.667);both('frameScale=1;update();');}
- compare();
+ compare({enemyLimit:5});
  }finally{for(const runtime of [a,b])runtime.eval('Math.random=oracleRandom;');}
 });
 check('dayX.transitionsPreserveHealthRatios',()=>{
  restore(fixture('day_x'));
- for(const day of [11,20,21]){both(`V016Lighting.restore({schema:1,day:${day},minute:180});zombies.forEach(z=>V017Monsters.prepare(z));`);compare();}
+ for(const day of [11,20,21]){both(`V016Lighting.restore({schema:1,day:${day},minute:180});zombies.forEach(z=>V017Monsters.prepare(z));`);compare({signalJournal:true});}
 });
 check('console.noErrors',()=>{assert.deepEqual(a.errors,[]);assert.deepEqual(b.errors,[]);});
 const result={reference:'0.23.1 manually accepted',candidate:require('../package.json').version,ignoredFields:['gameVersion (release metadata)','Approved patch contracts: world-farm-contract.cjs and bunker-contract.cjs; current R1 migration tested separately'],passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status!=='PASS').length,checks};
