@@ -11,7 +11,7 @@ window.GameDevQA=(()=>{
  function disable(){if(enabled)stopClock();enabled=false;window.GameDevUI?.refresh();}
  const catalog={resources:()=>Object.keys(ITEM).filter(t=>!ITEM[t].deployable&&t!==GameCarried.TYPE&&!['drone014','base_lamp'].includes(t)&&!EquipmentInstances.definitions[t]),buildables:()=>Object.keys(GamePlacement.rules)};
  function validate(s){if(s===undefined)return true;
-  if(!s||Object.keys(s).sort().join()!=='commands,enemies,events,label,schema,sourceSlot'||s.schema!==1||s.label!=='DEV/TEST'||s.sourceSlot!==null&&(!Number.isInteger(s.sourceSlot)||s.sourceSlot<1||s.sourceSlot>5)||!Array.isArray(s.enemies)||s.enemies.length>144||new Set(s.enemies).size!==s.enemies.length||s.enemies.some(id=>typeof id!=='string'||!/^enemy:\d+$/.test(id))||!s.events||Array.isArray(s.events)||Object.entries(s.events).some(([id,v])=>!WorldEvents.definitions().some(d=>d.id===id)||typeof v!=='boolean'))throw Error('Invalid DEV/TEST save');
+  if(!s||Object.keys(s).sort().join()!=='commands,enemies,events,label,schema,sourceSlot'||s.schema!==1||s.label!=='DEV/TEST'||s.sourceSlot!==null&&(!Number.isInteger(s.sourceSlot)||s.sourceSlot<1||s.sourceSlot>5)||!Array.isArray(s.enemies)||s.enemies.length>SignalDefinitions.actorSaveLimit||new Set(s.enemies).size!==s.enemies.length||s.enemies.some(id=>typeof id!=='string'||!/^enemy:\d+$/.test(id))||!s.events||Array.isArray(s.events)||Object.entries(s.events).some(([id,v])=>!WorldEvents.definitions().some(d=>d.id===id)||typeof v!=='boolean'))throw Error('Invalid DEV/TEST save');
   commands.validate(s.commands);return true;
  }
  const capture=()=>state?{...copy(state),enemies:state.enemies.filter(id=>zombies.some(z=>z.instanceId===id)),commands:commands.capture()}:undefined;
@@ -66,12 +66,12 @@ window.GameDevQA=(()=>{
   const r=GameEquipment.create(type,GamePlacement.centered(type,rule.rooms[0],1900,480),GameActors.localId,type==='storage_crate'?storageChests.length:undefined);
   GameEquipment.validate(GameEquipment.capture().concat(r));if(type==='storage_crate')storageChests.push({name:'',icon:'📦',items:[]});GameEquipment.change(r);if(!GameCarried.add(r.id))throw Error('QA carried slot');V09Craft.syncInstances();GameMovable.sync();return {ok:true,instanceId:r.id};
  }
- const spawnCapacity=()=>144-zombies.filter(z=>z.alive).length;
+ const spawnCapacity=()=>GameSignal.cap()-zombies.filter(z=>z.alive).length;
  function spawn(n,type='mixed'){
   const kinds=Object.keys(V017Monsters.specs).sort((a,b)=>V017Monsters.specs[a].spawnOrder-V017Monsters.specs[b].spawnOrder);
   if(![1,10,25,50,80].includes(n)||type!=='mixed'&&!kinds.includes(type))return {ok:false,reason:'selection'};
   if(spawnCapacity()<n)return {ok:false,reason:'limit'};
-  state.enemies=state.enemies.filter(id=>zombies.some(z=>z.instanceId===id));let added=0;for(let i=0;i<n;i++){const index=type==='mixed'?serial++:kinds.indexOf(type)+kinds.length*(++serial);const z=GameActivity.ground(()=>V017Monsters.spawn(index,true));if(!z)continue;if(zombies.length<144)zombies.push(z);else{const at=zombies.findIndex(old=>!old.alive);if(at<0)break;stopZombieAudio(zombies[at]);zombies[at]=z;}state.enemies.push(z.instanceId);added++;}
+  state.enemies=state.enemies.filter(id=>zombies.some(z=>z.instanceId===id));let added=0;for(let i=0;i<n;i++){const index=type==='mixed'?serial++:kinds.indexOf(type)+kinds.length*(++serial);const z=GameActivity.ground(()=>V017Monsters.spawn(index,true));if(!z)continue;if(zombies.length<SignalDefinitions.actorSaveLimit)zombies.push(z);else{const at=zombies.findIndex(old=>!old.alive);if(at<0)break;stopZombieAudio(zombies[at]);zombies[at]=z;}state.enemies.push(z.instanceId);added++;}
   return added?{ok:true,count:added}:{ok:false,reason:'space'};
  }
  function event(id,value){if(!WorldEvents.setQAEvent(id,value))return {ok:false,reason:'selection'};if(value===null)delete state.events[id];else state.events[id]=value;return {ok:true};}
@@ -135,10 +135,10 @@ window.GameDevQA=(()=>{
    // Combat/projectiles keep the released two-frame ceiling; quiet steps match
    // the 100 ms cap of power, production, drone and activity owners.
    const quantum=target===null?STEP:WorldEvents.isActive('day_x')||bullets.length||scene==='surface'?STEP*2:100;
-   let ms=Math.min(quantum,desired-elapsed);if(target!==null){const left=remainingMinutes()*WorldClock.dayMs/1440;if(left<=.0001){if(left>0)WorldClock.advance(left+1e-7);target=null;rate=1;break;}ms=Math.min(ms,left);}
+   let ms=Math.min(quantum,desired-elapsed);if(target!==null){const left=WorldClock.realMsForMinutes(remainingMinutes());if(left<=.0001){if(left>0)WorldClock.advance(left+1e-7);target=null;rate=1;break;}ms=Math.min(ms,left);}
    virtual+=ms;stepMs=ms;frameScale=ms/STEP;
    if(firing&&rightAimActive&&!menuOpen&&!playerDead)shoot();tick();elapsed+=ms;steps++;
-   if(target!==null&&WorldClock.day*1440+WorldClock.minute>=target-1e-7){const rest=remainingMinutes()*WorldClock.dayMs/1440;if(rest>0)WorldClock.advance(rest+1e-7);target=null;rate=1;break;}
+   if(target!==null&&WorldClock.day*1440+WorldClock.minute>=target-1e-7){const rest=WorldClock.realMsForMinutes(remainingMinutes());if(rest>0)WorldClock.advance(rest+1e-7);target=null;rate=1;break;}
   }}finally{const extra=Math.max(0,elapsed-realDelta);if(extra>0){for(const o of scavenges)if(o.searched&&o.searchedAt!==null)o.searchedAt=Math.max(0,o.searchedAt-extra);V091Loot.refresh();}stepMs=0;frameScale=originalScale;stats={updateMs:rawNow()-start,steps,simulatedMs:elapsed,actualRate:elapsed/realDelta};}
  }
  function metrics(){const living=zombies.filter(z=>z.alive),turrets=GameDefense.records().filter(r=>DefenseDefinitions.types[r.typeId].ammoType&&GameDefense.operational(r)&&devicePowered(r.refs.device));

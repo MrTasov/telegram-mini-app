@@ -97,7 +97,7 @@ function decodeGameProgressBase(raw){
   if(!Array.isArray(d.loot)||d.loot.length!==scavenges.length||
     !d.loot.every((o,i)=>o&&o.id===scavenges[i].id&&typeof o.searched==="boolean"&&
       slots(o.loot,12)&&(o.searched||o.loot.length===0)))fail();
-  if(!Array.isArray(d.zombies)||d.zombies.length>144||!d.zombies.every(z=>
+  if(!Array.isArray(d.zombies)||d.zombies.length>SignalDefinitions.actorSaveLimit||!d.zombies.every(z=>
     position(z)&&number(z.health,0,630)&&typeof z.alive==="boolean"&&
     z.alive===(z.health>0)&&['wander','chase'].includes(z.state)))fail();
   const l=d.livestock;

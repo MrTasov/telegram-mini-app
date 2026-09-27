@@ -194,7 +194,7 @@ window.V011World=(()=>{
     if(!Array.isArray(d.doors)||d.doors.length>buildings.length||new Set(d.doors.map(v=>v?.id)).size!==d.doors.length||d.doors.some(v=>!v||!byId.has(v.id)||typeof v.open!=='boolean'))throw Error('Некорректные двери зданий');
     const expected=new Set(extraContainers().map(f=>f.id));
     if(!Array.isArray(d.containers)||d.containers.length>expected.size||new Set(d.containers.map(v=>v?.id)).size!==d.containers.length||d.containers.some(v=>!v||!expected.has(v.id)||typeof v.searched!=='boolean'||!Array.isArray(v.loot)||v.loot.length>12||!v.searched&&v.loot.length||v.loot.some(s=>!s||!Object.hasOwn(ITEM,s.type)||!Number.isInteger(s.qty)||s.qty<1||s.qty>STACK_MAX||window.V010Combat&&V010Combat.validateItem(s)===false)||v.searchedAt!==null&&(!Number.isFinite(v.searchedAt)||v.searchedAt<0||v.searchedAt>Number.MAX_SAFE_INTEGER)))throw Error('Некорректный лут комнат');
-    if(!Array.isArray(d.corpses)||d.corpses.length>144||new Set(d.corpses.map(c=>c.i)).size!==d.corpses.length||d.corpses.some(c=>!Number.isInteger(c.i)||c.i<0||c.i>=144||!Number.isFinite(c.at)||c.at<0||c.at>Number.MAX_SAFE_INTEGER))throw Error('Некорректное время тел');return true;
+    if(!Array.isArray(d.corpses)||d.corpses.length>SignalDefinitions.actorSaveLimit||new Set(d.corpses.map(c=>c.i)).size!==d.corpses.length||d.corpses.some(c=>!Number.isInteger(c.i)||c.i<0||c.i>=SignalDefinitions.actorSaveLimit||!Number.isFinite(c.at)||c.at<0||c.at>Number.MAX_SAFE_INTEGER))throw Error('Некорректное время тел');return true;
   }
   
   GameSave.extend('capture','world.interiors',function(oldCapture){const d=oldCapture();d.world011=capture();return d;});

@@ -1,3 +1,19 @@
+# LAST BASE 0.41.1 — Day X Corrective
+
+Authoritative input: `LAST_BASE_0_41_0_hero_memory_PATCH.zip` (0.41.0 I2 + Claude packed hero memory patch).
+
+Six bounded reinforcement phases, 15-minute production Day X, understated day HUD/notifications and shared-owner atmosphere. Save Format 22 migrates 21 and all earlier supported formats. Core gameplay and hero/media assets are preserved.
+
+- Build: `npm run build` (generated `js/game.js`).
+- Targeted checks: `npm run test:dayx`.
+- Full real simulation + telemetry: `npm run qa:dayx:full` (bounded long test, no phone FPS claim).
+- Short CPU comparison: `npm run bench:dayx`.
+- RU release details: `LAST_BASE_0.41.1_DAY_X_REPORT_RU.md`.
+
+The material below describes previous releases and is retained as history.
+
+---
+
 # LAST BASE 0.41.0 — Stage I2
 
 Current baseline: the user-uploaded `LAST_BASE_0_40_3_new_character_v5.zip`, including Claude's character/animation/icon changes. Save Format 21. Ready runtime: `index.html` + `js/` + `styles/` + `assets/`, served over HTTP(S).

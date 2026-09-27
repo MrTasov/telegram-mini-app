@@ -248,7 +248,7 @@ const V010World = (()=>{
   function validate(d){
     if(!d||d.schema!==1||!d.settings||!Object.keys(defaults).every(k=>[.5,1,1.5,2].includes(d.settings[k])))throw new Error('Неверные настройки мира');
     if(!d.events||!Object.keys(events).every(k=>typeof d.events[k]==='boolean')||!Array.isArray(d.shortcuts)||d.shortcuts.length!==shortcuts.length||!d.shortcuts.every((s,i)=>s?.id===shortcuts[i].id&&typeof s.open==='boolean'))throw new Error('Неверные события мира');
-    if(!Array.isArray(d.types)||d.types.length>144||!d.types.every(t=>Object.hasOwn(TYPES,t)))throw new Error('Неверные типы противников');
+    if(!Array.isArray(d.types)||d.types.length>SignalDefinitions.actorSaveLimit||!d.types.every(t=>Object.hasOwn(TYPES,t)))throw new Error('Неверные типы противников');
     if(!Array.isArray(d.caches)||d.caches.length!==caches.length||!d.caches.every((c,i)=>c?.id===caches[i].id&&typeof c.name==='string'&&c.name.length<=64&&typeof c.icon==='string'&&c.icon.length<=64&&Array.isArray(c.items)&&c.items.length<=60&&c.items.every(s=>s===null||s&&Object.hasOwn(ITEM,s.type)&&Number.isInteger(s.qty)&&s.qty>0&&s.qty<=(itemStackLimit(s.type,true))&&(!window.V010Combat||V010Combat.validateItem(s)!==false))))throw new Error('Неверные запасы укрытий');return true;
   }
   function capture(){return {schema:1,settings:{...settings},events:{...events},shortcuts:shortcuts.map(s=>({id:s.id,open:s.open})),types:zombies.map(z=>z.type||'normal'),caches:caches.map(c=>({id:c.id,name:c.name,icon:c.icon,items:clone(c.items)}))};}

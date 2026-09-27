@@ -1,24 +1,31 @@
-/* Read-only presentation over the world authority. Same content in HUD,
-   world map and the existing Map / Signals Core route. */
+/* Read-only Day X presentation. No persistent Threat panel or numeric score. */
 window.GameSignalUI=(()=>{
  const t=(k,p)=>I18n.t(k,p),node=(tag,text)=>{const n=document.createElement(tag);if(text)n.textContent=text;return n;};
- const chip=node('button');chip.id='signalChip';chip.type='button';chip.setAttribute('data-i18n-skip','');el('v010Trackers').append(chip);
- const overlay=v09Overlay('signalOverlay',t('signal.title')),body=overlay.querySelector('.v09Body');let signature='';
+ const vignette=node('div');vignette.id='dayXVignette';vignette.setAttribute('aria-hidden','true');el('game').append(vignette);
+ const alert=node('div');alert.id='dayXNotice';alert.setAttribute('role','status');alert.setAttribute('aria-live','polite');alert.setAttribute('data-i18n-skip','');document.body.append(alert);
+ let until=0,noticeKey=null,noticeDay=0,lastPhase='';
  const key=()=>[GameSignal.epoch,WorldClock.day,Math.floor(WorldClock.minute),I18n.language].join('|');
- function summary(v){return t('signal.phase.'+v.phase)+' · '+t('signal.threat',{n:v.threat});}
- function mount(host){const v=GameSignal.view(),card=node('section');card.className='signalCard';card.append(node('h3',t('signal.title')),node('strong',summary(v)));
+ function mount(host){const v=GameSignal.view(),card=node('section');card.className='signalCard';card.append(node('h3',t('signal.title')));
   card.append(node('p',v.phase==='attack'?t('signal.until'):t('signal.countdown',{day:v.nextDay,h:Math.floor(v.left/60),m:Math.floor(v.left%60)})));
-  if(v.phase!=='quiet'){card.append(node('p',t(v.profile.title)),node('p',t('signal.directions',{sides:v.profile.sides.map(s=>t('signal.side.'+s)).join(', ')})));}
-  card.append(node('p',t('signal.prepare')),node('small',t('signal.explain')));
-  if(v.wave)card.append(node('p',t('signal.wave',{n:v.wave.admitted.length,max:v.wave.limit,kills:v.wave.killed.length})));
-  if(v.last){card.append(node('h4',t('signal.last',{day:v.last.day})),node('p',t('signal.result.'+v.last.outcome)),node('p',t('signal.result.stats',{kills:v.last.kills,remaining:v.last.remaining,hp:v.last.lostHP})),node('small',t('signal.recovery')));}
-  host.append(card);
+  card.append(node('p',t('signal.prepare')));
+  if(v.last){card.append(node('h4',t('signal.last',{day:v.last.day})),node('p',t('signal.result.'+v.last.outcome)),node('p',t('signal.result.stats',{kills:v.last.kills,remaining:v.last.remaining,hp:v.last.lostHP})));}host.append(card);
  }
- function refresh(){const k=key();if(signature===k)return;signature=k;const v=GameSignal.view();chip.textContent=summary(v);chip.dataset.phase=v.phase;chip.setAttribute('aria-label',t('signal.title')+' · '+summary(v));
-  if(overlay.classList.contains('open')){overlay.querySelector('.v09Title').textContent=t('signal.title');const top=body.scrollTop;body.replaceChildren();mount(body);body.scrollTop=top;}
+ function notice(k,day){noticeKey=k;noticeDay=day;until=performance.now()+SignalDefinitions.noticeMs;alert.textContent=t('dayx.notice.'+k,{day});alert.hidden=false;}
+ function reset(){until=0;noticeKey=null;alert.hidden=true;refresh();}
+ function refresh(){const v=GameSignal.view(false),running=GameState.session.ready&&!window.MainMenu?.active&&!window.StoryPlayer?.active;
+  if(v.phase!==lastPhase){lastPhase=v.phase;el('hudDay').dataset.dayx=v.phase;el('hudDayLabel').dataset.dayx=v.phase;}
+  vignette.hidden=!(running&&v.phase==='attack'&&scene==='surface');alert.hidden=!running||!noticeKey||performance.now()>=until;
  }
- chip.onclick=()=>{openOverlay(overlay);signature='';refresh();};
- const tick=update;update=function(...args){const result=tick(...args);refresh();return result;};I18n.onChange(()=>{signature='';refresh();});
- v09Style(`#signalChip{display:block;width:min(210px,42vw);margin-top:5px;padding:7px 9px;min-height:36px;border:1px solid #718b76;border-radius:6px;background:#15281bb3;color:#dbe9c4;font:11px/1.3 Arial;text-align:left;touch-action:manipulation}#signalChip[data-phase=warning],#signalChip[data-phase=imminent]{border-color:#d6ac5f;color:#ffdd99}#signalChip[data-phase=attack]{border-color:#df7664;color:#ffb3a6}.signalCard{padding:12px;margin:8px 0;background:#20332e;border:1px solid #677c68;border-radius:8px;color:#e3edda;line-height:1.5;overflow-wrap:anywhere}.signalCard p{font-size:13px;margin:8px 0}.signalCard small{font-size:11px;color:#c0cabc}#signalOverlay .v09Panel{box-sizing:border-box;width:min(560px,calc(100vw - 20px));height:min(620px,calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--tg-content-safe-area-inset-top,0px)));display:flex;flex-direction:column;overflow:hidden}#signalOverlay .v09Header{flex:none}#signalOverlay .v09Body{min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}`);
- refresh();return Object.freeze({mount,key,refresh});
+ const tick=update;update=function(...args){const result=tick(...args);refresh();return result;};I18n.onChange(()=>{if(noticeKey)alert.textContent=t('dayx.notice.'+noticeKey,{day:noticeDay});refresh();});
+ v09Style(`
+ #dayXVignette{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,rgba(35,0,3,.35) 74%,rgba(49,0,4,.9) 100%);opacity:${SignalDefinitions.vignetteOpacity};animation:dayxPulse ${SignalDefinitions.vignettePulseSeconds}s ease-in-out infinite}
+ #dayXVignette[hidden],#dayXNotice[hidden]{display:none!important}
+ @keyframes dayxPulse{0%,100%{opacity:${SignalDefinitions.vignetteOpacity*.7}}50%{opacity:${SignalDefinitions.vignetteOpacity}}}
+ [data-dayx=warning]{color:#e6aca5!important}[data-dayx=imminent]{color:#f2786f!important}[data-dayx=attack]{color:#ff4944!important}
+ #dayXNotice{position:fixed;z-index:19;top:calc(76px + env(safe-area-inset-top) + var(--tg-content-safe-area-inset-top,0px));left:50%;transform:translateX(-50%);max-width:94vw;pointer-events:none;white-space:nowrap;color:#ff8d80;text-shadow:0 1px 3px #140000;font:300 clamp(10px,2.7vw,14px)/1.4 Arial;letter-spacing:.07em}
+ @media(max-height:480px){#dayXNotice{top:calc(49px + env(safe-area-inset-top) + var(--tg-content-safe-area-inset-top,0px));font-size:11px}}
+ @media(prefers-reduced-motion:reduce){#dayXVignette{animation:none}}
+ .signalCard{padding:12px;margin:8px 0;background:#20332e;border:1px solid #677c68;border-radius:8px;color:#e3edda;line-height:1.5;overflow-wrap:anywhere}.signalCard p{font-size:13px;margin:8px 0}
+ `);
+ reset();return Object.freeze({mount,key,refresh,notice,reset});
 })();

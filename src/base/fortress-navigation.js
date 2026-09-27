@@ -230,7 +230,7 @@
   }
   function jumpInward(){const point=inwardLanding();if(!point){message('Во дворе нет свободного места для приземления');return false;}return beginTransition(point,false,'jump');}
   const jumpButton=document.createElement('button');jumpButton.id='v091JumpInward';jumpButton.type='button';jumpButton.className='v091WallButton';I18n.assign(jumpButton,"textContent",'↘ Спрыгнуть во двор');I18n.setAttr(jumpButton,'aria-label','Спрыгнуть со стены внутрь двора');
-  jumpButton.addEventListener('pointerdown',e=>e.stopPropagation());jumpButton.addEventListener('click',e=>{e.stopPropagation();jumpInward();});document.body.appendChild(jumpButton);
+  jumpButton.addEventListener('pointerdown',e=>e.stopPropagation());jumpButton.addEventListener('click',e=>{e.stopPropagation();jumpInward();});/* Hidden action retained for the existing movement/touch descent. */
   const oldPlayerUpdate=updatePlayer;
   updatePlayer=function(){
     if(transition){

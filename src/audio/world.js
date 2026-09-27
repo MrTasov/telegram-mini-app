@@ -1,7 +1,7 @@
 /* Presentation-only observer. It reads existing states at 10 Hz; no new RAF/timer. */
 window.GameAudioWorld=(()=>{
   let next=0,lastPlace=null,lastPower=null,lastDrone=null,lastChicken=-Infinity,lastDistant=-Infinity;
-  const doors=new WeakMap();
+  const doors=new WeakMap(),dayXOwner={};
   function reset(){next=0;lastPlace=null;lastPower=null;lastDrone=null;lastChicken=-Infinity;lastDistant=-Infinity;}
   function door(object,opening,which='bunker',broken=false){
     if(broken){doors.delete(object);return;}
@@ -11,13 +11,15 @@ window.GameAudioWorld=(()=>{
   function tick(force=false){
     if(!GameAudio.sync())return;
     const now=performance.now();if(!force&&now<next)return;next=now+100;
-    if(window.MainMenu?.active){if(lastPlace!=='menu')GameAudio.play('menu');GameAudio.loop('ambience',null);for(const key of ['rotor','generator','machine','water','shower'])GameAudio.loop(key,null);lastPlace='menu';return;}
+    if(window.MainMenu?.active){if(lastPlace!=='menu')GameAudio.play('menu');GameAudio.loop('ambience',null);GameAudio.dayXHum(false);for(const key of ['rotor','generator','machine','water','shower'])GameAudio.loop(key,null);lastPlace='menu';return;}
     if(playerDead){GameAudio.reset();return;}
     const zone=GameAudio.listenerZone(),place=zone.scene+':'+zone.floor,underground=scene==='bunker',interior=scene==='surface'&&!!zone.floor,dayX=WorldEvents.isActive('day_x');
-    const ambience=underground&&dayX?'dayX':underground||interior?'bunker':dayX?'dayX':WorldClock.minute>=360&&WorldClock.minute<1200?null:'night';
+    const ambience=underground||interior?'bunker':WorldClock.minute>=360&&WorldClock.minute<1200?null:'night';
     if(lastPlace!==null&&lastPlace!==place){GameAudio.reset();}lastPlace=place;
-    GameAudio.loop('ambience',ambience,underground&&dayX?{scene:'surface',floor:0,dayXLeak:true}:{});
-    if(underground&&dayX&&now-lastDistant>11000){const z=zombies.find(z=>z.alive&&z.type==='heavy'&&Math.hypot(z.x-800,z.y-650)<1500);if(z&&GameAudio.play('zombie',{x:z.x,y:z.y,scene:'surface',floor:0,dayXLeak:true,owner:z,rate:.76}))lastDistant=now;}
+    GameAudio.loop('ambience',ambience);GameAudio.dayXHum(dayX);
+    if(dayX&&now-lastDistant>=SignalDefinitions.hordeIntervalMs){
+      if(GameAudio.play('dayXHorde',{owner:dayXOwner,volume:underground?.22:.7,rate:.65+GameAudio.random()*.3,lowpass:underground?260:650}))lastDistant=now;
+    }
     const gen=BunkerLayout.fixture('generator'),shower=V011Living.shower;
     const power=!!(V09Power.running&&V09Power.fuel>0);
     if(lastPower!==null&&lastPower!==power)GameAudio.play(power?'powerStart':'powerStop',{x:gen.x+gen.w/2,y:gen.y+gen.h/2,scene:'bunker',radius:480});lastPower=power;
@@ -52,7 +54,7 @@ window.GameAudioWorld=(()=>{
     }
     lastDrone={hp:d.hp,task:d.task,battery:d.battery,charging:lastDrone?.charging||false};
   }
-  WorldEvents.onChange(()=>{if(!GameSave.restoring)tick(true);});
+  WorldEvents.onChange(()=>{if(!WorldEvents.isActive('day_x')){GameAudio.dayXHum(false);GameAudio.stopOwner(dayXOwner);}if(!GameSave.restoring)tick(true);});
   // Generic UI feedback is limited to real button activation. Specific event
   // handlers emit their own cue before this bubbling listener, suppressing it.
   document.addEventListener('click',event=>{

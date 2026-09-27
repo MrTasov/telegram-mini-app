@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.41.0",
+  "version": "0.41.1",
   "private": true,
-  "description": "LAST BASE 0.41.0 — Stage I2: Signal / Threat / Day X",
+  "description": "LAST BASE 0.41.1 — Day X Corrective",
   "scripts": {
     "test:i2": "node qa/stage-i2.cjs && node qa/stage-i2-combat.cjs",
     "bench:i2": "node qa/stage-i2-performance.cjs",
@@ -66,7 +66,10 @@
     "bench:qa": "node qa/dev-performance.cjs",
     "package:qa": "node tools/package-dev.cjs",
     "test:perf-corrective": "node qa/perf-corrective-tests.cjs",
-    "bench:perf-corrective": "node qa/perf-corrective.cjs after"
+    "bench:perf-corrective": "node qa/perf-corrective.cjs after",
+    "test:dayx": "node qa/dayx-corrective.cjs && node qa/dayx-save-dev.cjs && node qa/dayx-audio.cjs",
+    "bench:dayx": "node qa/dayx-performance.cjs",
+    "qa:dayx:full": "node qa/dayx-full-run.cjs"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

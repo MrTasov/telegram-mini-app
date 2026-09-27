@@ -5,7 +5,7 @@
 window.WorldEvents=(()=>{
   const definitions=new Map(),overrides=new Map(),listeners=new Set(),cache=new WeakMap();
   const none=Object.freeze({});
-  const dayX=Object.freeze({intervalDays:10,startMinute:0,endMinute:360,hp:1.5,damage:1.5,speed:1.5,chaseSpeed:1.5,cooldownRate:1.5,mechanics:1.5,population:96,ordinaryPopulation:48,maxPopulation:144});
+  const dayX=Object.freeze({intervalDays:SignalDefinitions.intervalDays,startMinute:0,endMinute:SignalDefinitions.endMinute,hp:1.5,damage:1.5,speed:SignalDefinitions.zombieSpeed,chaseSpeed:SignalDefinitions.zombieSpeed,cooldownRate:1.5,mechanics:1.5,population:96,ordinaryPopulation:48,maxPopulation:144});
   const xModifiers=Object.freeze({'enemy.hp':dayX.hp,'enemy.damage':dayX.damage,'enemy.speed':dayX.speed,'enemy.chaseSpeed':dayX.chaseSpeed,'enemy.cooldownRate':dayX.cooldownRate,'enemy.mechanics':dayX.mechanics,'spawn.intensity':2,'spawn.siege':true});
   let current=Object.freeze({revision:0,ids:Object.freeze([]),modifiers:none}),signature='';
   function matches(id,day,minute){const def=definitions.get(id);return !!(def&&Number.isSafeInteger(day)&&day>0&&Number.isFinite(minute)&&minute>=0&&minute<1440&&def.schedule({day,minute}));}

@@ -19,6 +19,7 @@ const GameAudio=window.GameAudio=(()=>{
   define('reloadOut magazineUnload','reloadOut',.40,'combat',90,4);define('reloadIn magazineLoad','reloadIn',.43,'combat',90,4);define('reloadBolt','reloadBolt',.36,'combat',90,4);
   define('hit','hit',.36,'enemy',65,3);define('playerHit','playerHit',.45,'combat',180,5);
   define('zombie','zombie zombie2 zombie3',.33,'groan',1800,1);
+  define('dayXHorde','zombie zombie2 zombie3 zombieAttack',SignalDefinitions.hordeGain,'groan',SignalDefinitions.hordeIntervalMs,1);
   define('zombieAggro','zombie2 zombie3',.32,'enemy',500,2);define('zombieAttack','zombieAttack',.38,'enemy',160,3);define('zombieDeath','zombieDeath',.37,'enemy',140,3);
   define('leaperJump','leaperJump',.38,'enemy',300,3);define('bloaterFuse','bloaterFuse',.42,'enemy',200,4);define('explosion','explosion',.62,'combat',180,5);
   define('impactStone','impactStone',.33);define('impactMetal hammer constructionHit','impactMetal',.35);define('treeBreak','treeBreak',.48,'world',400,3);define('rockBreak constructionBreak','rockBreak',.45,'world',250,3);
@@ -88,7 +89,7 @@ const GameAudio=window.GameAudio=(()=>{
       if(!pool.length){stats.dropped++;return false;}stop(pool[0]);stats.stolen++;
     }
     let index=Math.floor(random()*clips.length);if(clips.length>1&&index===lastVariant.get(name))index=(index+1)%clips.length;
-    const v=create(clips[index],def.gain*(opts.volume??1)*distance,opts.rate??(name.startsWith('shot')||name==='gunshot'?1:.97+random()*.06),false,space.lowpass);if(!v)return false;
+    const v=create(clips[index],def.gain*(opts.volume??1)*distance,opts.rate??(name.startsWith('shot')||name==='gunshot'?1:.97+random()*.06),false,space.lowpass||opts.lowpass||0);if(!v)return false;
     Object.assign(v,{family:def.family,priority:def.priority,owner:opts.owner,name,opts:{...opts},zone:listenerZone()});voices.add(v);lastVariant.set(name,index);cooldowns.set(key,time+def.cooldown);stats.peakOneShots=Math.max(stats.peakOneShots,voices.size);lastFeedback=time;
     if(cooldowns.size>256)for(const [k,t]of cooldowns)if(t<=time)cooldowns.delete(k);
     return true;
@@ -104,6 +105,16 @@ const GameAudio=window.GameAudio=(()=>{
     }
     if(loops.size>=limits.loops)return false;
     const v=create(def[0],volume,1,true,space.lowpass);if(!v)return false;v.channel=channel;v.zone=listenerZone();loops.set(channel,v);stats.peakLoops=Math.max(stats.peakLoops,loops.size);return true;
+  }
+  function dayXHum(on){
+    const key='dayxHum';let v=loops.get(key);
+    if(!on||!ready()){if(v)stop(v);return false;}if(v)return true;
+    if(!audioCtx.createOscillator||loops.size>=limits.loops)return false;
+    try{const source=audioCtx.createOscillator(),gain=audioCtx.createGain();source.type='sine';source.frequency.value=SignalDefinitions.humHz;gain.gain.value=SignalDefinitions.humGain*(scene==='bunker'?.35:1);source.connect(gain);gain.connect(output());v={source,gain,done:false,channel:key,zone:listenerZone(),clip:'synth-dayx'};source.onended=()=>cleanup(v);loops.set(key,v);source.start();return true;}catch(_){return false;}
+  }
+  function dayXStart(){
+    if(!ready()||!audioCtx.createOscillator||voices.size>=limits.oneShots)return false;
+    try{const source=audioCtx.createOscillator(),gain=audioCtx.createGain();source.type='sine';source.frequency.setValueAtTime(180,audioCtx.currentTime);source.frequency.linearRampToValueAtTime(65,audioCtx.currentTime+1.1);gain.gain.setValueAtTime(.055,audioCtx.currentTime);gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+1.2);source.connect(gain);gain.connect(output());const v={source,gain,done:false,family:'world',priority:3,zone:listenerZone(),started:now(),name:'dayxStart',opts:{}};voices.add(v);source.onended=()=>cleanup(v);source.start();source.stop(audioCtx.currentTime+1.21);return true;}catch(_){return false;}
   }
   function stopOwner(owner){for(const v of voices)if(v.owner===owner)stop(v);}
   function reset(){for(const v of [...voices,...loops.values(),...tails])stop(v);for(const key of animationVoices.keys())stopAnimationSound(key);cooldowns.clear();lastVariant.clear();reloads=new WeakMap();window.GameAudioWorld?.reset();}
@@ -146,7 +157,7 @@ const GameAudio=window.GameAudio=(()=>{
     }));})().finally(()=>{preloading=null;});return preloading;
   }
   function inspect(){return {...stats,oneShots:voices.size,loops:loops.size,tails:tails.size,animation:[...animationVoices.values()].filter(v=>v.source).length,buffers:Object.keys(audioBuffers).length,families:Object.fromEntries(['combat','enemy','groan','animal','world','ui'].map(k=>[k,[...voices].filter(v=>v.family===k).length])),loopKeys:[...loops.keys()],context:audioCtx?.state||'locked',master:masterVolume,outputGain:bus?.gain.value??null,gestureSeen:audioGestureSeen,resumeError:audioResumeError,contextError:audioContextError,failed:[...audioFailures].map(([clip,error])=>({clip,...error})),missing:Object.keys(AUDIO_FILES).filter(k=>!audioBuffers[k])};}
-  return {play,loop,reset,sync,preload,stopOwner,positional,spatial,listenerZone,sourceZone,output,random,limits,cues,inspect,reload,releaseGraph};
+  return {play,loop,dayXHum,dayXStart,reset,sync,preload,stopOwner,positional,spatial,listenerZone,sourceZone,output,random,limits,cues,inspect,reload,releaseGraph};
 })();
 function ensureAudioContext(){
   if(audioCtx?.state==='closed'){GameAudio.releaseGraph();audioCtx=null;}

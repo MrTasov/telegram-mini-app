@@ -68,6 +68,9 @@ window.V017Monsters=(()=>{
   function passage(z,wall){
     if(gapRevision!==geometryRevision){gapRevision=geometryRevision;gapCandidates=V015Base.sections.filter(o=>o.hp<=0||V015Base.isOpen(o));}
     const r=prepare(z),inner=insideOuter(z);if(insideInner(z))return null;
+    const now=GameActivity.now(),wallId=wall?.id||null;
+    if(r.passageRevision===geometryRevision&&r.passageInner===inner&&r.passageWall===wallId&&now<r.passageUntil)return r.passageCache;
+    r.passageRevision=geometryRevision;r.passageInner=inner;r.passageWall=wallId;r.passageUntil=now+SignalDefinitions.passageRefreshMs;
     let best=null,cost=Infinity;
     for(const o of gapCandidates){
       if(!(o.sides?o.sides.includes(r.side):o.side===r.side)||(inner?o.group!=='inner':!['outer','gate'].includes(o.group)||o.id==='v091innerGate')||o.hp>0&&!V015Base.isOpen(o))continue;
@@ -84,7 +87,7 @@ window.V017Monsters=(()=>{
         if(d<cost&&(!wall||d<dist(z,wallApproach(z,wall))+150)&&lineClear(outside.x,outside.y,inside.x,inside.y,z.radius,'surface')&&lineClear(z.x,z.y,outside.x,outside.y,z.radius,'surface')){best={wall:o,outside,inside};cost=d;}
       }
     }
-    return best;
+    r.passageCache=best;return best;
   }
   function move(z,a,step,straight=false){
     const r=prepare(z),sign=r.id%2?1:-1;
@@ -122,34 +125,40 @@ window.V017Monsters=(()=>{
     if(isDayX()&&!side){const counts=sideCounts();side=[...SIDES].sort((a,b)=>counts[a]-counts[b])[0];}
     for(let a=0;a<64&&!p;a++){
       let x,y;
-      if(near){const front=side||SIDES[(index+a)%4],t=hash(index*71+a+serial),extra=Math.floor(a/8)*300;
+      if(plan?.far){
+        const front=side||'N',base={N:-Math.PI/2,E:0,S:Math.PI/2,W:Math.PI}[front],angle=base+(hash(index*71+a+serial)-.5)*1.35;
+        const radius=SignalDefinitions.ringMin+hash(index+a*7+serial)*(SignalDefinitions.ringMax-SignalDefinitions.ringMin);x=800+Math.cos(angle)*radius;y=600+Math.sin(angle)*radius;
+      }else if(near){const front=side||SIDES[(index+a)%4],t=hash(index*71+a+serial),extra=Math.floor(a/8)*300;
         if(front==='W'){x=70-t*230-extra;y=60+hash(index+a*7)*1100;}else if(front==='E'){x=1530+t*260+extra;y=60+hash(index+a*7)*1100;}else if(front==='N'){x=80+t*1430;y=20-hash(index+a*7)*250-extra;}else{x=80+t*1430;y=1300+hash(index+a*7)*280+extra;}}
       else {const base=V010World.spawnAt(index+a);x=base.x;y=base.y;}
-      if(!worldCollision(x,y,s.radius,'surface')&&(!sameLevel()||Math.hypot(x-player.x,y-player.y)>380)&&(!sameLevel()||!visibleOnScreen(x,y,110)))p={x,y};
+      if(!worldCollision(x,y,s.radius,'surface')&&(!sameLevel()||Math.hypot(x-player.x,y-player.y)>(plan?.far?SignalDefinitions.playerSpawnDistance:380))&&(!sameLevel()||!visibleOnScreen(x,y,110)))p={x,y};
     }
     if(!p)return null;
     const z=makeZombie(p.x,p.y);z.type=type;z.worldId='m19_'+(++serial);const r=prepare(z);if(side)r.side=side;window.GameSignal?.admitted(z);return z;
   }
   function population(now,force=false){
-    if(!force&&now-lastPopulation<1800)return;lastPopulation=now;
-    const count=targetCount();let living=zombies.filter(z=>z.alive).length,added=0,removed=0;
-    // Preserve the released population/corpse pool policy. Surplus actors retire only
-    // out of sight, without fake kills, rewards, blood or death explosions.
-    for(let i=zombies.length-1;i>=0&&living>count&&removed<4;i--){
+    const assault=!!window.GameSignal?.active(),interval=assault?SignalDefinitions.reinforcementIntervalMs:SignalDefinitions.ordinaryPopulationIntervalMs;
+    if(!force&&now-lastPopulation<interval)return;lastPopulation=now;
+    const count=assault?GameSignal.cap():targetCount(),cap=window.GameSignal?.cap()||dayX.maxPopulation;
+    let living=zombies.reduce((n,z)=>n+!!z.alive,0),added=0,removed=0;
+    // Never retire a live actor during Day X, including a lower-pressure phase.
+    if(!isDayX())for(let i=zombies.length-1;i>=0&&living>count&&removed<SignalDefinitions.retirementBatch;i--){
       const z=zombies[i],r=prepare(z),drone=window.V014Robots?.state;
-      if(!z.alive||GameActivity.engaged(z,r)&&isDayX()||r.sees||r.fuse||r.jump||window.V0105?.target===z||drone?.task==='attack'&&drone.targetId===z.instanceId||sameLevel()&&(dist(z,player)<700||visibleOnScreen(z.x,z.y,130)))continue;
+      if(!z.alive||r.sees||r.fuse||r.jump||r.sawPlayerAt&&now-r.sawPlayerAt<10000||window.V0105?.target===z||drone?.task==='attack'&&drone.targetId===z.instanceId||Math.hypot(z.x-800,z.y-600)<SignalDefinitions.retirementDistance||sameLevel()&&(dist(z,player)<900||visibleOnScreen(z.x,z.y,180))||GameActivity.contexts().some(a=>a.kind==='equipment'&&dist(z,a)<a.radius))continue;
       z.alive=false;z.health=0;z.state='wander';z.corpseAt011=Date.now()-CORPSE_MS;r.retired=true;r.deadAt=performance.now()-CORPSE_MS;r.target=null;r.fuse=0;r.jump=null;stopZombieAudio(z);living--;removed++;
     }
-    for(let i=0;i<zombies.length&&living<count&&added<4;i++){
+    const batch=assault?SignalDefinitions.groupSize:4;
+    for(let i=0;i<zombies.length&&living<count&&living<cap&&added<batch;i++){
       const z=zombies[i],r=prepare(z);if(z.alive||!r.retired&&performance.now()-r.deadAt<CORPSE_MS)continue;
-      const next=spawn(i);if(next){zombies[i]=next;living++;added++;}
+      const next=spawn(i);if(next){stopZombieAudio(z);zombies[i]=next;living++;added++;}else break;
     }
-    while(living<count&&zombies.length<144&&added<4){const z=spawn(zombies.length);if(!z)break;zombies.push(z);living++;added++;}
+    while(living<count&&living<cap&&zombies.length<SignalDefinitions.actorSaveLimit&&added<batch){const z=spawn(zombies.length);if(!z)break;zombies.push(z);living++;added++;}
+    window.GameSignal?.batchComplete(added);
     if(added||removed)queueGameSave();
   }
   function syncEvent(){
     const raid=isDayX();
-    if(lastRaid!==raid){if(lastRaid!==null)message(raid?'День X · монстры усилены на 50%':'День X закончился');lastRaid=raid;lastPopulation=-Infinity;for(const z of zombies)prepare(z);}
+    if(lastRaid!==raid){lastRaid=raid;lastPopulation=-Infinity;for(const z of zombies)prepare(z);}
   }
   // Stats switch at the exact clock boundary. Keep the existing notification
   // timing in the simulation tick (restore/preview must not add journal rows).
@@ -183,7 +192,7 @@ window.V017Monsters=(()=>{
           z.lastAttack=now;r.attack=now+400;GameAudio.play('zombieAttack',{x:z.x,y:z.y,scene:'surface',owner:z});damagePlayer(s.damage*V010World.settings.enemyStrength);
         }
       }else if(raid){
-        z.state='chase';wall=chooseWall(z,now);if(wall)target=wallApproach(z,wall);
+        z.state='chase';if(Math.hypot(z.x-800,z.y-600)>SignalDefinitions.retirementDistance){move(z,Math.atan2(600-z.y,800-z.x),s.chaseSpeed*.5*dt);continue;}wall=chooseWall(z,now);if(wall)target=wallApproach(z,wall);
         const gap=passage(z,wall);
         if(gap){target=lineClear(z.x,z.y,gap.inside.x,gap.inside.y,z.radius,'surface')?gap.inside:gap.outside;wall=null;}
         if(!target)target=r.sees?player:{x:800,y:590};
@@ -284,7 +293,7 @@ window.V017Monsters=(()=>{
   });
   function validate(d){
     if(!d)return;const m=d.monsters017;if(!m)return;
-    if(![1,2].includes(m.schema)||!Array.isArray(d.zombies)||!Array.isArray(m.types)||m.types.length!==d.zombies.length||m.types.length>144)throw Error('Неверные данные монстров');
+    if(![1,2].includes(m.schema)||!Array.isArray(d.zombies)||!Array.isArray(m.types)||m.types.length!==d.zombies.length||m.types.length>SignalDefinitions.actorSaveLimit)throw Error('Неверные данные монстров');
     if(m.schema===2&&(!Array.isArray(m.actors)||m.actors.length!==m.types.length||m.actors.some((p,i)=>!p||typeof p.raid!=='boolean'||!SIDES.includes(p.side)||!Number.isInteger(p.variant)||p.variant<0||p.variant>2||!Number.isFinite(p.deathAngle)||p.deathAngle<0||p.deathAngle>=Math.PI*2||!Number.isFinite(p.corpseMs)||p.corpseMs<0||p.corpseMs>CORPSE_MS||typeof p.retired!=='boolean'||p.retired&&d.zombies[i].alive||d.zombies[i].alive&&p.corpseMs!==0)))throw Error('Неверное состояние монстров');
     if(m.types.some((t,i)=>!specs[t]||d.zombies[i].health>stats(t,m.schema===2&&m.actors[i].raid).hp||d.v010?.modules?.world?.types?.[i]!==t))throw Error('Неверные данные монстров');
   }
