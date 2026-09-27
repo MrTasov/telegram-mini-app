@@ -265,7 +265,7 @@ loadGameProgress=function(createIfEmpty=true){
     return false;
   }catch(error){GameState.session.blocked=true;v09ReportStorageFailure();return false;}
 };
-saveGameProgress=function(manual=false){
+saveGameProgress=(()=>{let decodedRaw=null;return function(manual=false){
   if(GameState.session.transaction)return false;
   if(!GameState.session.ready||GameState.session.blocked||!GameState.session.activeSlot){
     if(manual)message('Откройте «Сохранения»: выберите игру или создайте свободный слот.');return false;
@@ -273,17 +273,18 @@ saveGameProgress=function(manual=false){
   try{
     const raw=JSON.stringify(captureGameProgress());decodeGameProgress(raw);
     if(GameState.session.lastVerified){
-      decodeGameProgress(GameState.session.lastVerified);
+      // The previous autosave already passed this decoder in this session; only re-check other strings.
+      if(GameState.session.lastVerified!==decodedRaw)decodeGameProgress(GameState.session.lastVerified);
       localStorage.setItem(v09BackupKey(GameState.session.activeSlot),GameState.session.lastVerified);
     }
     localStorage.setItem(v09SlotKey(GameState.session.activeSlot),raw);
-    GameState.session.lastVerified=raw;
+    GameState.session.lastVerified=raw;decodedRaw=raw;
     v09CancelPendingSave();GameState.session.dirty=false;
     updateSaveStatus(I18n.message('save.status',{name:GameState.session.name||v091DefaultName(GameState.session.activeSlot),time:I18n.dateParam(Date.now(),{hour:'2-digit',minute:'2-digit'})}));
     if(manual)message(I18n.message('save.success',{name:GameState.session.name||v091DefaultName(GameState.session.activeSlot)}));
     return true;
   }catch(error){v09ReportStorageFailure(manual);return false;}
-};
+};})();
 queueGameSave=function(){
   if(!GameState.session.ready||GameState.session.blocked||GameState.session.transaction||!GameState.session.activeSlot)return;
   GameState.session.dirty=true;

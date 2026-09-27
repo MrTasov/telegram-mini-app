@@ -22,8 +22,8 @@ window.GameSignalUI=(()=>{
  #dayXVignette[hidden],#dayXNotice[hidden]{display:none!important}
  @keyframes dayxPulse{0%,100%{opacity:${SignalDefinitions.vignetteOpacity*.7}}50%{opacity:${SignalDefinitions.vignetteOpacity}}}
  [data-dayx=warning]{color:#e6aca5!important}[data-dayx=imminent]{color:#f2786f!important}[data-dayx=attack]{color:#ff4944!important}
- #dayXNotice{position:fixed;z-index:19;top:calc(76px + env(safe-area-inset-top) + var(--tg-content-safe-area-inset-top,0px));left:50%;transform:translateX(-50%);max-width:94vw;pointer-events:none;white-space:nowrap;color:#ff8d80;text-shadow:0 1px 3px #140000;font:300 clamp(10px,2.7vw,14px)/1.4 Arial;letter-spacing:.07em}
- @media(max-height:480px){#dayXNotice{top:calc(49px + env(safe-area-inset-top) + var(--tg-content-safe-area-inset-top,0px));font-size:11px}}
+ #dayXNotice{position:fixed;z-index:19;top:calc(3px + env(safe-area-inset-top) + var(--tg-content-safe-area-inset-top,0px));left:calc(130px + env(safe-area-inset-left));right:calc(12px + env(safe-area-inset-right));text-align:center;overflow:hidden;text-overflow:ellipsis;pointer-events:none;white-space:nowrap;color:#ff8d80;text-shadow:0 1px 3px #140000;font:300 clamp(10px,3vw,13px)/1.1 Arial;letter-spacing:.03em}
+ @media(max-height:480px){#dayXNotice{font-size:12px}}
  @media(prefers-reduced-motion:reduce){#dayXVignette{animation:none}}
  .signalCard{padding:12px;margin:8px 0;background:#20332e;border:1px solid #677c68;border-radius:8px;color:#e3edda;line-height:1.5;overflow-wrap:anywhere}.signalCard p{font-size:13px;margin:8px 0}
  `);

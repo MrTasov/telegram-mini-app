@@ -70,7 +70,7 @@ window.V017Monsters=(()=>{
     const r=prepare(z),inner=insideOuter(z);if(insideInner(z))return null;
     const now=GameActivity.now(),wallId=wall?.id||null;
     if(r.passageRevision===geometryRevision&&r.passageInner===inner&&r.passageWall===wallId&&now<r.passageUntil)return r.passageCache;
-    r.passageRevision=geometryRevision;r.passageInner=inner;r.passageWall=wallId;r.passageUntil=now+SignalDefinitions.passageRefreshMs;
+    r.passageRevision=geometryRevision;r.passageInner=inner;r.passageWall=wallId;r.passageUntil=now+SignalDefinitions.passageRefreshMs*(.5+hash(r.id*13));/* staggered: a horde must not refresh every route in one frame */
     let best=null,cost=Infinity;
     for(const o of gapCandidates){
       if(!(o.sides?o.sides.includes(r.side):o.side===r.side)||(inner?o.group!=='inner':!['outer','gate'].includes(o.group)||o.id==='v091innerGate')||o.hp>0&&!V015Base.isOpen(o))continue;
@@ -194,7 +194,7 @@ window.V017Monsters=(()=>{
       }else if(raid){
         z.state='chase';if(Math.hypot(z.x-800,z.y-600)>SignalDefinitions.retirementDistance){move(z,Math.atan2(600-z.y,800-z.x),s.chaseSpeed*.5*dt);continue;}wall=chooseWall(z,now);if(wall)target=wallApproach(z,wall);
         const gap=passage(z,wall);
-        if(gap){target=lineClear(z.x,z.y,gap.inside.x,gap.inside.y,z.radius,'surface')?gap.inside:gap.outside;wall=null;}
+        if(gap){/* The line through a breach is re-tested at the sensing cadence, not every frame (hundreds of collision probes per zombie). */if(r.gapFor!==gap||now>=r.gapUntil){r.gapFor=gap;r.gapUntil=now+190+hash(r.id)*100;r.gapClear=lineClear(z.x,z.y,gap.inside.x,gap.inside.y,z.radius,'surface');}target=r.gapClear?gap.inside:gap.outside;wall=null;}
         if(!target)target=r.sees?player:{x:800,y:590};
         // Airlock panels can block a southern squad's approach. Damage only
         // the first actual obstruction, never strike through it at another wall.
