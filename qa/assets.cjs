@@ -8,7 +8,7 @@ const plain=v=>JSON.parse(JSON.stringify(v)),sha=b=>crypto.createHash('sha256').
 async function check(id,fn){try{await fn();checks.push({id,status:'PASS'});}catch(e){checks.push({id,status:'FAIL',error:e.message.slice(0,2500)});}}
 const mutate=fn=>{const m=plain(catalog);fn(m);return m;};
 async function main(){
- await check('catalog.valid',()=>assert.equal(validate(catalog).images,202));
+ await check('catalog.valid',()=>assert.equal(validate(catalog).images,208)); // +6 zombie atlases (visual pass 1)
  await check('catalog.generatedFresh',()=>generate(true));
  for(const f of migration.files)await check('migration.'+f.id,()=>{assert.equal(sha(fs.readFileSync(f.path)),f.sha256);assert.ok(!fs.existsSync(f.old));});
  await check('catalog.allShippedImagesRegistered',()=>{const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(x=>x.isDirectory()?walk(d+'/'+x.name):[d+'/'+x.name]);assert.deepEqual(walk('assets').filter(f=>/\.(png|webp|gif)$/.test(f)).sort(),Object.values(catalog.images).map(d=>d.path).sort());});
