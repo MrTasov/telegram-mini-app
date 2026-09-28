@@ -129,6 +129,7 @@ window.V011World=(()=>{
   };
   function freshLoot(f){
     const rows=f.lootKind==='food'?[['food',3,8],['water',2,5]]:f.lootKind==='medicine'?[['meds',2,5],['medicinal_herbs',3,8]]:f.lootKind==='fuel'?[['fuel',5,12],['parts',2,4]]:f.lootKind==='tools'?[['parts',3,7],['iron',3,9]]:f.lootKind==='parts'?[['iron',4,10],['copper',2,5]]:[['meds',1,3],['food',2,4]];
+    if(f.lootKind==='food'&&Math.random()<GameplayBalance.survival.loot.furniture)rows.push(['energy_drink',GameplayBalance.survival.loot.qty,GameplayBalance.survival.loot.qty]);
     return rows.map(([type,min,max])=>({type,qty:min+Math.floor(Math.random()*(max-min+1))}));
   }
   const oldOpenLoot=openLoot;

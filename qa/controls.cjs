@@ -80,7 +80,7 @@ check('mobile.editorStillOpens',()=>{fresh('MOBILE');r.emit('click',r.doc.getEle
 // Same touch samples and simulation steps on the accepted build and candidate.
 const a=setup('qa/stage3/index.html'),b=setup('index.html',{[key]:'MOBILE'});
 for(const runtime of [a,b])runtime.eval("for(const o of document.querySelectorAll('.overlay.open'))closeOverlay(o);stopControls(true);scene='surface';player.x=800;player.y=850;frameScale=1;zombies=[];V013Inventory.equip('rifle_ak74');V010Combat.currentWeapon().rounds=30;lastShot=0;updateCamera();");
-const snap=runtime=>clone(runtime.eval('({moveX,moveY,movePower,player,aimPower,rightAimActive,firing,leftPointerId,rightPointerId,rounds:V010Combat.currentWeapon()?.rounds,bullets})'));
+const snap=runtime=>{const s=clone(runtime.eval('({moveX,moveY,movePower,player,aimPower,rightAimActive,firing,leftPointerId,rightPointerId,rounds:V010Combat.currentWeapon()?.rounds,bullets})'));delete s.player.hunger;delete s.player.thirst;return s;}; // Survival needs are separately tested; compare unchanged touch movement.
 for(const [id,type,side,dx,dy,pointerId]of [
  ['leftBegin','pointerdown','left',22,0,8],['leftMove','pointermove','left',24,12,8],['rightBegin','pointerdown','right',30,0,9],['rightMove','pointermove','right',0,30,9],['rightRelease','pointerup','right',0,30,9],['leftRelease','pointerup','left',24,12,8]
 ])check('mobile.baselineExact.'+id,()=>{for(const q of [a,b]){const c=q.eval('joystickCenters().'+side);q.emit(type,q.doc.getElementById('canvas'),{pointerType:'touch',pointerId,clientX:c.x+dx,clientY:c.y+dy});}assert.deepEqual(snap(b),snap(a));});

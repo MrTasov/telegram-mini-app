@@ -26,7 +26,7 @@ window.GameMovable=(()=>{
   function draw(){
     for(const r of GameEquipment.records.filter(active)){
       if(r.typeId==='storage_crate'){const f=BunkerLayout.authored(r.id)||{x:0,y:0,w:68,h:50},index=Number(r.refs.container.slice(8));ctx.save();ctx.translate(r.transform.x,r.transform.y);ctx.rotate(r.transform.rotation);V011Rooms.chest(index,{x:34,y:25},storageChests[index]);ctx.restore();}
-      if(['utility_workbench','base_lamp'].includes(r.typeId))drawSimple(r);
+      if(['utility_workbench','base_lamp','kitchen_stove','med_lab'].includes(r.typeId))drawSimple(r);
     }
     V011Rooms.energy();
   }

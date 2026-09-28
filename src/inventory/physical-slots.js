@@ -16,11 +16,11 @@ window.V013Inventory=(()=>{
   const oldRender=renderQuickSlots;renderQuickSlots=function(){oldRender();for(const id of ['hotbar','quickSlots'])for(const [i,b]of [...el(id).children].entries()){b.oncontextmenu=e=>{e.preventDefault();if(items[i])openHandAssignment(items[i].type);};}};
   const tools=el('inventoryGrid').previousElementSibling||el('inventoryGrid').parentNode;
   const manage=v09Button('Быстрые слоты',()=>{const o=v09Overlay('v013Hands','Быстрые слоты'),body=o.querySelector('.v09Body');body.replaceChildren();items.forEach((s,i)=>{const b=v09Button((i+1)+' · '+(s?ITEM[s.type].name:'Пусто'),()=>window.V0162Quick?V0162Quick.open(i):s&&openHandAssignment(s.type));body.append(b);});openOverlay(o);});tools.append(manage);
-  ITEM.cooked_fish={name:'Жареная рыба',icon:'🍽️',description:'Порция из 0,5 кг рыбы.'};V092_ICONS.cooked_fish=V011Art.sources.fish;
+  ITEM.cooked_fish={category:'food',name:'Жареная рыба',icon:'🍽️',description:'Порция из 0,5 кг рыбы.'};V092_ICONS.cooked_fish=V011Art.sources.fish;
   let reserve=0;
   function fishWeight(){return reserve+bag.reduce((n,s)=>n+(s?.type==='fish'?V014Fish.weight(s):0),0);}
   function cook(count,index=null){
-    if(scene!=='bunker'){message('Приготовление доступно на базе');return false;}
+    if(!window.GameSurvival?.kitchenNearby()){message(I18n.t('survival.needKitchen'));return false;}
     const selected=Number.isInteger(index)?bag[index]:null;if(Number.isInteger(index)&&selected?.type!=='fish')return false;
     const available=selected?(selected.qty):bag.reduce((n,s)=>n+(s?.type==='fish'?s.qty:0),0);
     count=count===undefined?available:Math.floor(Number(count));if(!Number.isInteger(count)||count<1||count>available){message('Выберите количество доступной рыбы');return false;}

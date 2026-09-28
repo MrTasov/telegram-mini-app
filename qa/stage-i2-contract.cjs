@@ -5,7 +5,7 @@ exports.project=(value,options={})=>{
  const d=require('./world-farm-contract.cjs').project(value,options),limit=options.enemyLimit??((options.historicalPopulation||options.fresh)?48:undefined);
  // Compare HP ratios to the historical 1.5 balance ONLY in this old oracle.
  // Direct save/Siege tests verify unprojected values, migrations and all actors.
- const current=/^0\.41\.[2-9]$/.test(value.gameVersion||'');
+ const current=/^0\.(?:41\.[2-9]|42\.\d+)$/.test(value.gameVersion||'');
  if(current&&value.monsters017?.schema===2){const n=Math.floor((value.lighting016?.day||1)/10),scale=Math.round(Math.min(2,1.2+.1*Math.max(0,n-1))*100)/100;for(let i=0;i<d.zombies.length;i++)if(value.monsters017.actors[i]?.raid)d.zombies[i].health=d.zombies[i].health/scale*1.5;}
  for(const z of d.zombies||[])z.health=Math.round(z.health*1e8)/1e8;
  if(options.siegeClockStart!==undefined&&value.signal041?.schema===2)d.lighting016.minute=options.siegeClockStart+(d.lighting016.minute-options.siegeClockStart)*3;

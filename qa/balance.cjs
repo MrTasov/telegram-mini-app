@@ -67,6 +67,11 @@ assert.equal(actual.weapons.rifle_ak74.delay,155/1.3);actual.weapons.rifle_ak74.
 assert.equal(actual.recipes.steel.ms,4000);assert.deepEqual(actual.recipes.steel.input,{iron:3,coal:1});delete actual.recipes.steel;delete actual.items.steel;
 for(const [type,list]of Object.entries(actual.effectiveWeapons))for(let level=0;level<6;level++){assert.equal(list[level].damage,Math.round(actual.weapons[type].damage*(1+level*.1)));list[level].damage=expected.effectiveWeapons[type][level].damage;}
 for(const [type,stats]of Object.entries(actual.dayXEnemies))for(const k of ['hp','damage','speed','chaseSpeed']){assert.equal(stats[k],actual.enemies[type][k]*(k==='speed'||k==='chaseSpeed'?1.6:1.2));stats[k]=expected.dayXEnemies[type][k];}
+// Survival additions have their own unprojected behavior/save tests.
+assert.equal(actual.save.schemas.survival042,1);delete actual.save.schemas.survival042;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='survival042');
+assert.ok(actual.player.hunger>99&&actual.player.hunger<=100);assert.ok(actual.player.thirst>99&&actual.player.thirst<=100);delete actual.player.hunger;delete actual.player.thirst;
+for(const id of Object.keys(E('GameplayBalance.survival.recipes')))delete actual.recipes[id];
+for(const id of Object.keys(E('GameplayBalance.survival.uses'))){if(!expected.items[id])delete actual.items[id];else{delete actual.items[id].category;if(['food','meds'].includes(id))actual.items[id].name=expected.items[id].name;}}
 let error=null;try{assert.deepEqual(actual,expected);}catch(e){error=e.message;}
 fs.writeFileSync(path.join(__dirname,'results/configurations.json'),JSON.stringify(configs,null,2)+'\n');
 const report={version,passed:error?0:1,failed:error?1:0,scope:'Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.',addedDefinitionFields:definitionFields,addedEnemyFields:['spawnOrder','behavior','healthColor','leap','blast'],addedAPIs,error,consoleErrors:r.errors};

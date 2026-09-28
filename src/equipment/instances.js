@@ -7,6 +7,7 @@ const EquipmentInstances=(()=>{
   const freeze=x=>{for(const v of Object.values(x))if(v&&typeof v==='object')freeze(v);return Object.freeze(x);};
   const rooms=BunkerLayout.roomData.filter(r=>r.id!=='corridor').map(r=>r.id);
   const definitions=freeze({
+    ...GameplayBalance.survival.stations,
     ...Object.fromEntries(Object.entries(DefenseDefinitions.types).map(([id,d])=>[id,{...d,range:64}])) ,
     furnace:{footprint:{w:130,h:195},recipeStation:'furnace',powerKW:6,name:'Плавильная печь',range:48},
     craft_bench:{footprint:{w:260,h:173},recipeStation:'craft_bench',powerKW:2,name:'Оружейный станок',range:48},
@@ -34,6 +35,7 @@ const EquipmentInstances=(()=>{
   // Room display names confer no placement permissions. Singular energy
   // owners keep their identity; future adapters reuse this same capability port.
   const placement=freeze({
+    ...GameplayBalance.survival.placement,
     ...Object.fromEntries(Object.entries(DefenseDefinitions.types).map(([id,d])=>[id,{limit:d.limit,cost:d.cost,rooms:id==='searchlight'?['yard',...rooms,'corridor']:['yard'],craftable:d.craftable!==false,transformFrom:d.transformFrom,guard:'empty',art:d.art}])) ,
     furnace:{limit:4,cost:{iron:20,parts:6,concrete:8},rooms,craftable:true,guard:'production',art:'furnace'},
     utility_workbench:{limit:4,cost:{iron:4,wood:6},rooms,craftable:true,guard:'production',art:'utility_workbench'},

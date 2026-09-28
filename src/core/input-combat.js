@@ -398,7 +398,7 @@ function updatePlayer(){
   GamePassages.approach(navigation);
   updateAutoWalk();
   player.moving = movePower > JOY_DEAD;
-  player.running = movePower >= RUN_THRESHOLD;
+  player.running = movePower >= RUN_THRESHOLD && (player.thirst??100)>0;
 
   if(!player.moving){
     return;
@@ -415,6 +415,7 @@ function updatePlayer(){
   const newMaxSpeed=player.runSpeed*.60;
   const normalizedPower=clamp((movePower-JOY_DEAD)/(1-JOY_DEAD),0,1);
   let speed=newMaxSpeed*(.20+.80*normalizedPower)*frameScale;
+  if(window.GameSurvival){if(player.thirst===0)speed=Math.min(speed,newMaxSpeed*GameplayBalance.survival.thirstSpeedCap*frameScale);speed*=GameSurvival.moveFactor();}
   if(navigation){const p=navigation.points[navigation.index];if(p)speed=Math.min(speed,distance(player.x,player.y,p.x,p.y));}
   const oldX=player.x,oldY=player.y;
 
@@ -498,7 +499,8 @@ function damagePlayer(amount){
   // 0.7.0: body armor reduces incoming damage. Durability is intentionally
   // not consumed yet; we first test the core equipment/armor loop.
   const armorPct=equippedArmor();
-  const finalDamage=Math.max(1,Math.round(amount*(1-armorPct/100)));
+  window.SurvivalUse?.cancel();
+  const finalDamage=Math.max(1,Math.round(amount*(1-armorPct/100))*(window.GameSurvival?.active('vitality')?GameplayBalance.survival.effects.vitality.damageFactor:1));
   cancelChop();
   player.health -= finalDamage;
 
@@ -543,6 +545,7 @@ function damagePlayer(amount){
 function killPlayer(){
 
   playerDead = true;
+  window.GameSurvival?.onDeath();
   window.GameChapterOne?.onDeath();
 
   movePower = 0;

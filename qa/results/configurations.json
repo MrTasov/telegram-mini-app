@@ -1,5 +1,5 @@
 {
-  "version": "0.41.2",
+  "version": "0.42.0",
   "items": {
     "hammer": {
       "name": "Молот",
@@ -101,8 +101,9 @@
       "icon": "⚙️"
     },
     "food": {
-      "name": "Еда",
-      "icon": "🥫"
+      "name": "Консервы",
+      "icon": "🥫",
+      "category": "food"
     },
     "potato": {
       "name": "Картофель",
@@ -110,11 +111,13 @@
     },
     "carrot": {
       "name": "Морковь",
-      "icon": "🥕"
+      "icon": "🥕",
+      "category": "food"
     },
     "tomato": {
       "name": "Помидоры",
-      "icon": "🍅"
+      "icon": "🍅",
+      "category": "food"
     },
     "corn": {
       "name": "Кукуруза",
@@ -134,7 +137,8 @@
     },
     "berries": {
       "name": "Ягоды",
-      "icon": "🍓"
+      "icon": "🍓",
+      "category": "food"
     },
     "medicinal_herbs": {
       "name": "Лекарственные растения",
@@ -215,8 +219,9 @@
       "level": 1
     },
     "meds": {
-      "name": "Медикаменты",
-      "icon": "💊"
+      "name": "Аптечка",
+      "icon": "💊",
+      "category": "healing"
     },
     "fuel": {
       "name": "Топливо",
@@ -235,7 +240,8 @@
     },
     "milk": {
       "name": "Молоко",
-      "icon": "🥛"
+      "icon": "🥛",
+      "category": "drink"
     },
     "animal_feed": {
       "name": "Корм для животных",
@@ -243,7 +249,8 @@
     },
     "water": {
       "name": "Вода",
-      "icon": "💧"
+      "icon": "💧",
+      "category": "drink"
     },
     "beef": {
       "name": "Говядина",
@@ -310,6 +317,96 @@
       "name": "Куриное мясо",
       "icon": "🍗"
     },
+    "omelet": {
+      "name": "Омлет",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "fried_chicken": {
+      "name": "Жареная курица",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "steak": {
+      "name": "Стейк",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "roasted_corn": {
+      "name": "Жареная кукуруза",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "bread": {
+      "name": "Хлеб",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "berry_porridge": {
+      "name": "Каша с ягодами",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "bean_soup": {
+      "name": "Фасолевый суп",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "fish_soup": {
+      "name": "Уха",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "vegetable_stew": {
+      "name": "Овощное рагу",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "tomato_juice": {
+      "name": "Томатный сок",
+      "icon": "🥤",
+      "category": "drink"
+    },
+    "berry_mors": {
+      "name": "Ягодный морс",
+      "icon": "🥤",
+      "category": "drink"
+    },
+    "herbal_tea": {
+      "name": "Травяной чай",
+      "icon": "🥤",
+      "category": "drink"
+    },
+    "regen_injector": {
+      "name": "Регенерация",
+      "icon": "💉",
+      "category": "healing"
+    },
+    "vitality_injector": {
+      "name": "Живучесть",
+      "icon": "🧪",
+      "category": "buff"
+    },
+    "adrenaline_injector": {
+      "name": "Адреналин",
+      "icon": "🧪",
+      "category": "buff"
+    },
+    "weapon_oil": {
+      "name": "Оружейное масло",
+      "icon": "🧪",
+      "category": "buff"
+    },
+    "meat_stew": {
+      "name": "Мясное рагу",
+      "icon": "🍲",
+      "category": "food"
+    },
+    "energy_drink": {
+      "name": "Энергетик",
+      "icon": "🥤",
+      "category": "drink"
+    },
     "helmet1": {
       "name": "Тактический шлем",
       "icon": "🪖",
@@ -344,6 +441,7 @@
       "description": "Съёмный магазин АК / M4 · 60 патронов. После установки зарядите подходящими патронами."
     },
     "cooked_fish": {
+      "category": "food",
       "name": "Жареная рыба",
       "icon": "🍽️",
       "description": "Порция из 0,5 кг рыбы."
@@ -463,6 +561,259 @@
     }
   },
   "recipes": {
+    "omelet": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Омлет",
+      "input": {
+        "eggs": 2,
+        "milk": 1
+      },
+      "output": "omelet",
+      "qty": 1,
+      "ms": 5000
+    },
+    "fried_chicken": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Жареная курица",
+      "input": {
+        "chicken_meat": 1
+      },
+      "output": "fried_chicken",
+      "qty": 1,
+      "ms": 8000
+    },
+    "steak": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Стейк",
+      "input": {
+        "beef": 1
+      },
+      "output": "steak",
+      "qty": 1,
+      "ms": 8000
+    },
+    "roasted_corn": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Жареная кукуруза",
+      "input": {
+        "corn": 2
+      },
+      "output": "roasted_corn",
+      "qty": 1,
+      "ms": 5000
+    },
+    "bread": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Хлеб",
+      "input": {
+        "grain": 4,
+        "eggs": 1,
+        "water": 1
+      },
+      "output": "bread",
+      "qty": 2,
+      "ms": 10000
+    },
+    "berry_porridge": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Каша с ягодами",
+      "input": {
+        "grain": 3,
+        "milk": 1,
+        "berries": 1
+      },
+      "output": "berry_porridge",
+      "qty": 1,
+      "ms": 8000
+    },
+    "bean_soup": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Фасолевый суп",
+      "input": {
+        "beans": 3,
+        "onion": 1,
+        "tomato": 1,
+        "water": 1
+      },
+      "output": "bean_soup",
+      "qty": 2,
+      "ms": 12000
+    },
+    "fish_soup": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Уха",
+      "input": {
+        "cooked_fish": 1,
+        "potato": 1,
+        "carrot": 1,
+        "onion": 1,
+        "water": 1
+      },
+      "output": "fish_soup",
+      "qty": 2,
+      "ms": 12000
+    },
+    "vegetable_stew": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Овощное рагу",
+      "input": {
+        "potato": 2,
+        "carrot": 2,
+        "onion": 1,
+        "tomato": 1,
+        "water": 1
+      },
+      "output": "vegetable_stew",
+      "qty": 2,
+      "ms": 15000
+    },
+    "meat_stew_beef": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Мясное рагу · говядина",
+      "input": {
+        "beef": 1,
+        "potato": 1,
+        "beans": 1,
+        "onion": 1,
+        "water": 1
+      },
+      "output": "meat_stew",
+      "qty": 2,
+      "ms": 20000
+    },
+    "meat_stew_chicken": {
+      "station": "kitchen",
+      "category": "Еда",
+      "name": "Мясное рагу · курица",
+      "input": {
+        "chicken_meat": 1,
+        "potato": 1,
+        "beans": 1,
+        "onion": 1,
+        "water": 1
+      },
+      "output": "meat_stew",
+      "qty": 2,
+      "ms": 20000
+    },
+    "tomato_juice": {
+      "station": "kitchen",
+      "category": "Напитки",
+      "name": "Томатный сок",
+      "input": {
+        "tomato": 3
+      },
+      "output": "tomato_juice",
+      "qty": 1,
+      "ms": 5000
+    },
+    "berry_mors": {
+      "station": "kitchen",
+      "category": "Напитки",
+      "name": "Ягодный морс",
+      "input": {
+        "berries": 3,
+        "water": 1
+      },
+      "output": "berry_mors",
+      "qty": 2,
+      "ms": 5000
+    },
+    "herbal_tea": {
+      "station": "kitchen",
+      "category": "Напитки",
+      "name": "Травяной чай",
+      "input": {
+        "water": 1,
+        "medicinal_herbs": 2
+      },
+      "output": "herbal_tea",
+      "qty": 1,
+      "ms": 8000
+    },
+    "meds": {
+      "station": "medical",
+      "category": "Лечение",
+      "name": "Аптечка",
+      "input": {
+        "medicinal_herbs": 4,
+        "water": 1
+      },
+      "output": "meds",
+      "qty": 1,
+      "ms": 12000
+    },
+    "regen_injector": {
+      "station": "medical",
+      "category": "Лечение",
+      "name": "Регенерация",
+      "input": {
+        "medicinal_herbs": 6,
+        "water": 1
+      },
+      "output": "regen_injector",
+      "qty": 1,
+      "ms": 15000
+    },
+    "vitality_injector": {
+      "station": "medical",
+      "category": "Бафы",
+      "name": "Живучесть",
+      "input": {
+        "meds": 1,
+        "medicinal_herbs": 4,
+        "parts": 2
+      },
+      "output": "vitality_injector",
+      "qty": 1,
+      "ms": 20000
+    },
+    "adrenaline_injector": {
+      "station": "medical",
+      "category": "Бафы",
+      "name": "Адреналин",
+      "input": {
+        "medicinal_herbs": 3,
+        "parts": 1,
+        "copper": 1
+      },
+      "output": "adrenaline_injector",
+      "qty": 1,
+      "ms": 15000
+    },
+    "weapon_oil": {
+      "station": "craft_bench",
+      "category": "Бафы",
+      "name": "Оружейное масло",
+      "input": {
+        "technical_crop": 3,
+        "coal": 1
+      },
+      "output": "weapon_oil",
+      "qty": 1,
+      "ms": 10000
+    },
+    "feed_corn": {
+      "station": "feed_craft",
+      "category": "Корм",
+      "name": "Корм из кукурузы",
+      "input": {
+        "corn": 10
+      },
+      "output": "animal_feed",
+      "qty": 20,
+      "ms": 2500
+    },
     "hammer": {
       "station": "utility_workbench",
       "category": "Инструменты",
@@ -2640,7 +2991,9 @@
     "lastFootstep": 0,
     "lastDamage": 0,
     "walkAnimation": 0,
-    "wallLevel": false
+    "wallLevel": false,
+    "hunger": 99.99907405555555,
+    "thirst": 99.99861108333333
   },
   "farm": [
     {
@@ -2804,6 +3157,7 @@
       "defense039",
       "activity040",
       "signal041",
+      "survival042",
       "identity027",
       "saveVersion"
     ],
@@ -2842,6 +3196,7 @@
       "defense039": 1,
       "activity040": 1,
       "signal041": 2,
+      "survival042": 1,
       "identity027": 1
     },
     "registeredModules": [

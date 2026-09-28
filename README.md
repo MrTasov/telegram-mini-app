@@ -1,3 +1,19 @@
+# LAST BASE 0.42.0 — Survival Stage
+
+Authoritative input: uploaded `01-LAST_BASE_0.41.2_Siege_Corrective_GitHub.zip`, SHA-256 `9aec9a41654e66335798a740bb4b9c57887643b54f1535f612bdd31fb6465f91`.
+Save Format 23; migration 22→23 and all existing migrations retained. Steel remains **3 Iron + 1 Coal → 1 Steel, 4000 ms**.
+
+- Serve `index.html`, `js/`, `styles/`, `assets/` over HTTP(S).
+- Build: `npm run build`; verify generated runtime: `node tools/build.cjs --check`.
+- Survival checks: `npm run test:survival`; full historical suite: `npm test`.
+- Frame comparison against this exact input: `npm run bench:survival` (native Canvas diagnostic, not phone FPS).
+- Owners/balance, measured results and limitations: [RU report](LAST_BASE_0.42.0_SURVIVAL_REPORT_RU.md).
+- Survival station art is temporary, as requested. Farm/Animals remain paused. No next Stage.
+
+Earlier reports below retain their original provenance.
+
+---
+
 # LAST BASE 0.41.2 — Siege Corrective
 
 Authoritative baseline: uploaded 0.41.1 with Claude patch already included. Save Format 22. Steel: **3 Iron + 1 Coal → 1 Steel, 4000 ms**.

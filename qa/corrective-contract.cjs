@@ -6,7 +6,7 @@ exports.resourceProjection=value=>{
  if(d.v09?.world?.ores)d.v09.world.ores=d.v09.world.ores.filter(o=>!/^stone_corrective_\d+$/.test(o.id));
  return d;
 };
-exports.snapshot=value=>{value=JSON.parse(JSON.stringify(value));value.save=exports.resourceProjection(value.save);if(value.scene==='bunker'&&value.player){delete value.player.x;delete value.player.y;}return value;};
+exports.snapshot=value=>{value=JSON.parse(JSON.stringify(value));value.save=exports.resourceProjection(value.save);if(value.player){delete value.player.hunger;delete value.player.thirst;}if(value.scene==='bunker'&&value.player){delete value.player.x;delete value.player.y;}return value;};
 exports.sourceChanges=new Set([
  ...require('./polish-contract.cjs').sourceChanges,
  'src/config/gameplay.js','src/core/world-inventory.js','src/core/loop-viewport.js',

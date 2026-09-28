@@ -33,6 +33,7 @@ GameSave.seal({
     "defense.foundation",
     "simulation.activity",
     "world.signal",
+    "player.survival",
     "dev.qa"
   ],
   "decode": [
@@ -68,6 +69,7 @@ GameSave.seal({
     "world.exploration",
     "story.archive",
     "defense.foundation",
+    "player.survival",
     "dev.qa"
   ],
   "restore": [
@@ -106,6 +108,7 @@ GameSave.seal({
     "defense.foundation",
     "simulation.activity",
     "world.signal",
+    "player.survival",
     "dev.qa"
   ]
 });

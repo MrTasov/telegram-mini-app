@@ -80,6 +80,9 @@ character=character.slice(0,farmStart)+` const farmCases=${farmCases};
 character=character.replace("executeInteraction(interactionObjects().find(o=>o.id==='exit'));","player.x=bunker.entrance.x;player.y=bunker.entrance.y+45;executeInteraction(interactionObjects().find(o=>o.id==='exit'));");
 character=character.replace('player.x=1264;player.y=740;','player.x=V014Robots.dockPosition().x;player.y=V014Robots.dockPosition().y+35;');
 character=character.replace('V016Turret.guns[0].ammo=137;V016Turret.guns[0].level=3;',"const q=JSON.parse(JSON.stringify(GameEquipment.get('hmg016_1')));q.state.settings.ammo=137;q.state.level=3;GameEquipment.change(q);");
+// Survival requires an installed, powered kitchen; keep the historical gram oracle.
+const kitchenFixture="{const room=BunkerLayout.rooms.room6;let tr=null;const q=GameEquipment.create('kitchen_stove',GamePlacement.centered('kitchen_stove','room6',room.left+100,room.top+100),GameActors.localId);q.placement='packed';GameEquipment.change(q);GameCarried.add(q.id);GameMovable.sync();for(let y=room.top+40;y<room.bottom-30&&!tr;y+=24)for(let x=room.left+40;x<room.right-30&&!tr;x+=24){const p=GamePlacement.centered('kitchen_stove','room6',x,y);if(GamePlacement.check(q.id,p).ok)tr=p;}if(!GamePlacement.request(q.id,'place',tr).ok)throw Error('QA kitchen placement');const p=GameFootprints.front(GameEquipment.get(q.id));player.x=p.x;player.y=p.y;V09Power.running=true;V09Power.fuel=30;V09Power.devices[q.id].enabled=true;}";
+character=character.replace("check('fish.cook'",'E('+JSON.stringify(kitchenFixture)+");check('fish.cook'");
 fs.writeFileSync(path.join(work,'tools/behavior.cjs'),adaptAssetWaits(character));
 const results=[];
 for(const [name,script,report]of [

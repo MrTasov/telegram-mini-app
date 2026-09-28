@@ -1,0 +1,142 @@
+{
+  "complete": true,
+  "scope": "90 measured frames after 30 warmup, timers flushed. Native Canvas2D; modeled DOM. Bunker: old furnace + weapon bench versus new kitchen + medical lab, both with 2 powered running jobs. Siege: same 120 physical actors. Not phone/browser FPS.",
+  "rows": [
+    {
+      "scenario": "bunker",
+      "version": "0.42.0",
+      "runtimeSha256": "ff3821b7b9282b8bcffbc452e98354528cedacb13a3c3d8e62a09630f6fdae88",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "jobs": [
+        {
+          "id": "build:kitchen_stove:1",
+          "powered": true,
+          "remaining": 50000
+        },
+        {
+          "id": "build:med_lab:1",
+          "powered": true,
+          "remaining": 120000
+        }
+      ],
+      "jobsEnd": [
+        {
+          "id": "build:kitchen_stove:1",
+          "powered": true,
+          "remaining": 47999.959999999846
+        },
+        {
+          "id": "build:med_lab:1",
+          "powered": true,
+          "remaining": 117999.95999999985
+        }
+      ],
+      "aliveAtEnd": 4,
+      "timerP50": 0.005621999999675609,
+      "updateP50": 4.591212000000269,
+      "updateP95": 9.673045999999886,
+      "drawP50": 13.279169999999795,
+      "drawP95": 16.89513099999931,
+      "frameP50": 18.134141999999883,
+      "frameP95": 23.42198899999994,
+      "maxFrame": 30.72352200000023,
+      "errors": []
+    },
+    {
+      "scenario": "bunker",
+      "version": "uploaded 0.41.2",
+      "runtimeSha256": "5082c6a15ff058512ed8658421b6512cda0337c78bab94f5f0bd7ddef55e97bb",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "jobs": [
+        {
+          "id": "furnace",
+          "powered": true,
+          "remaining": 20000
+        },
+        {
+          "id": "craft_bench",
+          "powered": true,
+          "remaining": 100000
+        }
+      ],
+      "jobsEnd": [
+        {
+          "id": "furnace",
+          "powered": true,
+          "remaining": 17999.959999999846
+        },
+        {
+          "id": "craft_bench",
+          "powered": true,
+          "remaining": 97999.95999999985
+        }
+      ],
+      "aliveAtEnd": 4,
+      "timerP50": 0.0062629999993077945,
+      "updateP50": 4.926973999999973,
+      "updateP95": 10.477979000000232,
+      "drawP50": 12.799557000000277,
+      "drawP95": 22.28800599999886,
+      "frameP50": 18.969065999999657,
+      "frameP95": 35.44407500000034,
+      "maxFrame": 136.53460200000154,
+      "errors": []
+    },
+    {
+      "scenario": "siege",
+      "version": "0.42.0",
+      "runtimeSha256": "ff3821b7b9282b8bcffbc452e98354528cedacb13a3c3d8e62a09630f6fdae88",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "jobs": null,
+      "jobsEnd": null,
+      "aliveAtEnd": 120,
+      "timerP50": 0.006798000000344473,
+      "updateP50": 6.75905000000057,
+      "updateP95": 13.269646999999168,
+      "drawP50": 39.05556799999977,
+      "drawP95": 53.33077100000082,
+      "frameP50": 46.55194599999959,
+      "frameP95": 62.16167300000052,
+      "maxFrame": 75.86276600000019,
+      "errors": []
+    },
+    {
+      "scenario": "siege",
+      "version": "uploaded 0.41.2",
+      "runtimeSha256": "5082c6a15ff058512ed8658421b6512cda0337c78bab94f5f0bd7ddef55e97bb",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "jobs": null,
+      "jobsEnd": null,
+      "aliveAtEnd": 120,
+      "timerP50": 0.006299000000581145,
+      "updateP50": 6.241868999997678,
+      "updateP95": 10.99096500000087,
+      "drawP50": 24.258456999999908,
+      "drawP95": 35.7861269999994,
+      "frameP50": 30.332397000001947,
+      "frameP95": 45.341864000001806,
+      "maxFrame": 70.44114500000069,
+      "errors": []
+    }
+  ]
+}

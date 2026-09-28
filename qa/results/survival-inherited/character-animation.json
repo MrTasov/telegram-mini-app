@@ -1,0 +1,114 @@
+{
+  "version": "0.29.0",
+  "reference": "0.28.0",
+  "passed": 21,
+  "failed": 3,
+  "memory": {
+    "oldZombieDecodedBytes": 31457280,
+    "newZombieAndPlayerDecodedBytes": 93118976,
+    "sleepBlendCanvasBytes": 221184,
+    "deltaBytes": 61882880,
+    "scope": "RGBA pixel estimate, corpse and all other shared images unchanged; not process RSS"
+  },
+  "checks": [
+    {
+      "id": "gameplay.exactSpecs",
+      "status": "PASS"
+    },
+    {
+      "id": "save.028FullCaptureCompatible",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.exact028.PC",
+      "status": "PASS"
+    },
+    {
+      "id": "simulation.exact028.MOBILE",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    activeHandSlot: 0,\n    bag: [\n      {\n        qty: 60,\n...\n        {\n+         corpseMs: 0,\n-         corpseMs: 90000,\n-         deathAngle: 3.1045036835881774,\n          raid: false,\n+         retired: false,\n-         retired: true,\n          side: 'N',\n          variant: 0\n        },\n        {\n+         corpseMs: 0,\n-         corpseMs: 90000,\n-         deathAngle: 6.237446244478317,\n          raid: false,\n+         retired: false,\n-         retired: true,\n          side: 'N',\n          variant: 1\n        },\n        {\n          corpseMs: 90000,\n...\n        {\n-         at: 1789819111800.036,\n-         i: 48\n-       },\n-       {\n-         at: 1789819111800.036,\n-         i: 49\n-       },\n-       {\n          at: 1789819110000,\n          i: 50\n        },\n        {\n          at: 1789819110000,\n...\n      {\n+       alive: true,\n+       health: 75,\n-       alive: false,\n-       health: 0,\n        state: 'wander'\n      },\n      {\n+       alive: true,\n+       health: 240,\n-       alive: false,\n-       health: 0,\n        state: 'wander'\n      },\n      {\n        alive: false,\n        health: 0,\n\n    at /workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:14:111\n    at check (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:5:39)\n    at main (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:12:42)"
+    },
+    {
+      "id": "render.noGameplayMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "walk.twelveMasterFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "walk.backwardsUsesSameAimAndPhase",
+      "status": "PASS"
+    },
+    {
+      "id": "tools.sharedCarryBodyAndTwelveStrikePhases",
+      "status": "PASS"
+    },
+    {
+      "id": "idle.plantedSeparatePose",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.unarmed",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.rifle_ak74",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.axe",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.pickaxe",
+      "status": "PASS"
+    },
+    {
+      "id": "pixels.distinct.hammer",
+      "status": "PASS"
+    },
+    {
+      "id": "attachment.commonRootAllRotations",
+      "status": "PASS"
+    },
+    {
+      "id": "sleep.liveRestOwnerFourFramesLoop",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.normal.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.heavy.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.fast.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.leaper.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "enemy.bloater.walkAttackCorpseHitbox",
+      "status": "PASS"
+    },
+    {
+      "id": "cache.noRepeatedLoadsOnPoseChanges",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n185 !== 186\n\n    at /workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:58:346\n    at check (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:5:39)\n    at main (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:58:8)"
+    },
+    {
+      "id": "memory.characterAtlasesWithin40MiB",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(newBytes<40*1024*1024)\n\n    at /workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:60:62\n    at check (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:5:39)\n    at main (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/character-animation.cjs:60:8)"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ]
+}

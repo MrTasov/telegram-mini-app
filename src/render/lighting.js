@@ -10,7 +10,7 @@ window.V016Lighting=(()=>{
   const capture=WorldClock.capture,validate=WorldClock.validate;
   function hud(){window.GameHUD?.refreshClock();}
   function restore(d){WorldClock.restore(d);saveElapsed=0;shadowShapes.clear();droneKey='';hud();}
-  function tick(ms){if(document.hidden||playerDead)return;const dt=WorldClock.advance(ms);saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
+  function tick(ms){if(document.hidden||playerDead||GameFlow.paused)return;const before=WorldClock.day*1440+WorldClock.minute,dt=WorldClock.advance(ms);window.GameSurvival?.tick(dt,WorldClock.day*1440+WorldClock.minute-before);saveElapsed+=dt;if(saveElapsed>=15000){saveElapsed%=15000;queueGameSave();}hud();}
   WorldEvents.onChange(hud);
   // Existing left/right yard circuits retain their save IDs, priority, battery
   // fallback and switches. Each supplies ten wall lamps and four floods.

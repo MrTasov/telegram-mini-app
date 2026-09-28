@@ -1,11 +1,11 @@
 {
-  "version": "0.41.2",
+  "version": "0.42.0",
   "reference": "0.24.1 fixed Stage 4",
   "languages": [
     "en",
     "ru"
   ],
-  "catalogKeys": 2347,
+  "catalogKeys": 2415,
   "uiCoverage": [
     "startup",
     "settings.PC",
@@ -63,6 +63,7 @@
     "recipe.copper",
     "recipe.gunpowder",
     "craft.craft_bench",
+    "recipe.weapon_oil",
     "recipe.ammo",
     "recipe.ammo556",
     "recipe.rifle_ak74",
@@ -70,9 +71,10 @@
     "recipe.helmet1",
     "recipe.magazine_module",
     "craft.feed_craft",
+    "recipe.feed_corn",
     "recipe.feed"
   ],
-  "passed": 4986,
+  "passed": 5142,
   "failed": 0,
   "checks": [
     {
@@ -9476,6 +9478,278 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.en.survival.needKitchen",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.lowHunger",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.lowThirst",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.full",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.eat",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.drink",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.inject",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.interrupted",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.thirst",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.filter.all",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.filter.food",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.filter.drink",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.filter.healing",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.filter.buff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.effect.tea",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.effect.regen",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.effect.energy",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.effect.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.effect.adrenaline",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.effect.oil",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.omelet",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.fried_chicken",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.steak",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.roasted_corn",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.bread",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.berry_porridge",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.bean_soup",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.fish_soup",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.vegetable_stew",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.tomato_juice",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.berry_mors",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.herbal_tea",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.regen_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.vitality_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.adrenaline_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.weapon_oil",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.meat_stew",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.item.energy_drink",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.kitchen_stove",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.description.med_lab",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.6e9ea6a54b9d",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.4e0daab109b6",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.0cf73c42262a",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.fe13a32665e2",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.38ef3ee715ed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.8406c2b533ef",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.74da2159009d",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.dc047887633f",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.f9e62848b45d",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.2788bb36197d",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.07f9ad7ba9b7",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.097cd72d3410",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.5deb05e50d34",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.32661228428f",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.f9a8b05f19b3",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.c579565c2f23",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.62de727c1aa5",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.8b9a02cdda7c",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.0246e3ec81aa",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.b211aa0c7372",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.be6f4c7ff0dc",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.81247c5f4170",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.3bf6a0bc5282",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.6612ef91722c",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.2f90c44f3e77",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.survival.text.24a8a9364f09",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.kitchen_stove",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.en.build.type.med_lab",
+      "status": "PASS"
+    },
+    {
       "id": "catalog.ru.legacy.6c127073fb4b",
       "status": "PASS"
     },
@@ -18864,6 +19138,278 @@
       "status": "PASS"
     },
     {
+      "id": "catalog.ru.survival.needKitchen",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.lowHunger",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.lowThirst",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.full",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.eat",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.drink",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.inject",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.interrupted",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.thirst",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.filter.all",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.filter.food",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.filter.drink",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.filter.healing",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.filter.buff",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.effect.tea",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.effect.regen",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.effect.energy",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.effect.vitality",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.effect.adrenaline",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.effect.oil",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.omelet",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.fried_chicken",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.steak",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.roasted_corn",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.bread",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.berry_porridge",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.bean_soup",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.fish_soup",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.vegetable_stew",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.tomato_juice",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.berry_mors",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.herbal_tea",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.regen_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.vitality_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.adrenaline_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.weapon_oil",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.meat_stew",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.item.energy_drink",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.kitchen_stove",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.description.med_lab",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.6e9ea6a54b9d",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.4e0daab109b6",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.0cf73c42262a",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.fe13a32665e2",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.38ef3ee715ed",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.8406c2b533ef",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.74da2159009d",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.dc047887633f",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.f9e62848b45d",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.2788bb36197d",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.07f9ad7ba9b7",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.097cd72d3410",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.5deb05e50d34",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.32661228428f",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.f9a8b05f19b3",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.c579565c2f23",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.62de727c1aa5",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.8b9a02cdda7c",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.0246e3ec81aa",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.b211aa0c7372",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.be6f4c7ff0dc",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.81247c5f4170",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.3bf6a0bc5282",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.6612ef91722c",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.2f90c44f3e77",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.survival.text.24a8a9364f09",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.kitchen_stove",
+      "status": "PASS"
+    },
+    {
+      "id": "catalog.ru.build.type.med_lab",
+      "status": "PASS"
+    },
+    {
       "id": "ui.en.startup",
       "status": "PASS"
     },
@@ -19088,6 +19634,10 @@
       "status": "PASS"
     },
     {
+      "id": "ui.en.recipe.weapon_oil",
+      "status": "PASS"
+    },
+    {
       "id": "ui.en.recipe.ammo",
       "status": "PASS"
     },
@@ -19113,6 +19663,10 @@
     },
     {
       "id": "ui.en.craft.feed_craft",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.recipe.feed_corn",
       "status": "PASS"
     },
     {
@@ -19333,6 +19887,78 @@
     },
     {
       "id": "ui.en.item.chicken_meat",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.omelet",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.fried_chicken",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.steak",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.roasted_corn",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.bread",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.berry_porridge",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.bean_soup",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.fish_soup",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.vegetable_stew",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.tomato_juice",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.berry_mors",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.herbal_tea",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.regen_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.vitality_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.adrenaline_injector",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.weapon_oil",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.meat_stew",
+      "status": "PASS"
+    },
+    {
+      "id": "ui.en.item.energy_drink",
       "status": "PASS"
     },
     {

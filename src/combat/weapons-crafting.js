@@ -92,18 +92,18 @@ window.V010Combat=(() => {
   function gunSpec(item){
     if(typeof item==='string')item=bag.find(s=>s?.type===item)||{type:item};
     const g=GUNS[item?.type];if(!g)return null;const m=item.modules||{},level=clamp(Number(item.level)||0,0,maxUpgradeLevel(item)),rules=upgradeProfile(item).stats||upgradeRules.weapon.stats,head=equipment.head?getItemStats(equipment.head).accuracy||0:0;
-    return {...g,damage:Math.round(g.damage*(1+level*rules.damagePerLevel+(item.variant==='sturdy'?rules.sturdyDamage:0))),mag:V09Craft.magazineCapacity(item),reloadMs:g.reloadMs,spread:Math.max(rules.minSpread,g.spread*(1-head)),recoil:g.recoil,noise:g.noise,modules:copy(m)};
+    return {...g,damage:Math.round(g.damage*(1+level*rules.damagePerLevel+(item.variant==='sturdy'?rules.sturdyDamage:0)+(window.GameSurvival?.active('oil')?GameplayBalance.survival.effects.oil.damageBonus:0))),mag:V09Craft.magazineCapacity(item),reloadMs:g.reloadMs/(window.GameSurvival?.active('adrenaline')?GameplayBalance.survival.effects.adrenaline.reloadRate:1),spread:Math.max(rules.minSpread,g.spread*(1-head)),recoil:g.recoil,noise:g.noise,modules:copy(m)};
   }
   function equipmentSnapshot(){
     let hp=100,armor=0,speed=0,accuracy=0;
     for(const item of Object.values(equipment)){if(!item)continue;const s=getItemStats(item);hp+=s.hp||0;armor+=s.armor||0;speed+=s.speed||0;accuracy+=s.accuracy||0;}
-    return {hp:Math.min(500,hp),armor:Math.min(80,armor),speed:Math.min(.2,speed),accuracy:Math.min(.18,accuracy)};
+    return {hp:Math.min(500,hp)+(window.GameSurvival?.active('vitality')?GameplayBalance.survival.effects.vitality.maxHP:0),armor:Math.min(80,armor),speed:Math.min(.2,speed),accuracy:Math.min(.18,accuracy)};
   }
   // Called by equipment mutations/restoration, never by a card or renderer.
   function refreshStats(){
     for(const item of Object.values(equipment))ensure(item);
     const s=equipmentSnapshot();player.maxHealth=s.hp;player.health=Math.min(player.health,s.hp);
-    player.walkSpeed=BASE_SPEED.walk*(1+s.speed);player.runSpeed=BASE_SPEED.run*(1+s.speed);
+    const rate=window.GameSurvival?.active('adrenaline')?GameplayBalance.survival.effects.adrenaline.speed:1;player.walkSpeed=BASE_SPEED.walk*(1+s.speed)*rate;player.runSpeed=BASE_SPEED.run*(1+s.speed)*rate;
     const h=el('healthText');if(h)I18n.assign(h,"textContent",'❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth));
     return s;
   }
@@ -116,7 +116,7 @@ window.V010Combat=(() => {
   function setPractice(on){if(on&&!practiceAllowed()){message('Подойдите к тренировочной площадке');return false;}cancelReload();practice=!!on;trainingRounds=30;practiceHits=0;practiceDamage=0;updateAmmoHud();return true;}
   canFire=function(){const s=currentWeapon();return !!s&&gunSpec(s).mag>0;};
   reloadWeapon=function(){
-    const item=ensure(currentWeapon());if(!item||menuOpen||playerDead||document.hidden||reloading)return false;const g=gunSpec(item),rounds=practice?trainingRounds:item.rounds;
+    const item=ensure(currentWeapon());if(!item||menuOpen||playerDead||document.hidden||reloading||window.SurvivalUse?.active)return false;const g=gunSpec(item),rounds=practice?trainingRounds:item.rounds;
     if(!g.mag||rounds>=g.mag)return false;if(!practice&&bagCount(g.ammo)<=0){message('Нет патронов '+g.caliber);return false;}
     reloading={uid:item.uid,type:item.type,remainingMs:g.reloadMs,totalMs:g.reloadMs,practice};GameAudio.reload(reloading,true);updateAmmoHud();return true;
   };
@@ -146,7 +146,7 @@ window.V010Combat=(() => {
     return true;
   }
   shoot=function(){
-    if(menuOpen||playerDead||document.hidden||window.V091Fortress?.transitioning)return;const item=ensure(currentWeapon());if(!item||reloading)return;const g=gunSpec(item),now=performance.now();
+    if(menuOpen||playerDead||document.hidden||window.SurvivalUse?.active||window.V091Fortress?.transitioning)return;const item=ensure(currentWeapon());if(!item||reloading)return;const g=gunSpec(item),now=performance.now();
     if(!g.mag||now-lastShot<g.delay)return;
     if((practice?trainingRounds:item.rounds)<=0){GameAudio.play('dryFire');reloadWeapon();return;}
     if(lastUid!==item.uid||now-lastShot>420)burst=0;burst=Math.min(7,burst+1);lastUid=item.uid;lastShot=now;
@@ -156,7 +156,7 @@ window.V010Combat=(() => {
       trainingRounds--;const tx=practiceTarget.x+10-player.x,ty=practiceTarget.y+16-player.y,dist=Math.hypot(tx,ty),along=tx*dx+ty*dy,across=Math.abs(tx*dy-ty*dx);
       if(along>0&&dist<g.range&&across<18&&lineClear(player.x,player.y,practiceTarget.x+10,practiceTarget.y+16,2,'surface')){practiceHits++;practiceDamage=g.damage;GameAudio.play('impactMetal',{x:practiceTarget.x,y:practiceTarget.y,scene:'surface'});}
     }else{
-      item.rounds--;const contact=window.V014Controls?.contactTarget();if(contact)hitZombie(contact,g.damage);else if(muzzleClear(player.x,player.y,x,y,2))bullets.push(projectile={x,y,dx:dx*12,dy:dy*12,radius:3,life:g.range/12,damage:g.damage,weapon:item.type,wallLevel:!!window.V091Fortress?.isElevated?.()});
+      item.rounds--;window.GameSurvival?.shot();const contact=window.V014Controls?.contactTarget();if(contact)hitZombie(contact,g.damage);else if(muzzleClear(player.x,player.y,x,y,2))bullets.push(projectile={x,y,dx:dx*12,dy:dy*12,radius:3,life:g.range/12,damage:g.damage,weapon:item.type,wallLevel:!!window.V091Fortress?.isElevated?.()});
       createNoise(player.x,player.y,g.noise);emit('combatshot',{weapon:item.type});queueGameSave();
     }
     muzzleFlash.time=now;muzzleFlash.x=x;muzzleFlash.y=y;window.ActorVisuals?.weaponShot(projectile,angle,now,item.type);playGunshot();syncAmmo();updateAmmoHud();

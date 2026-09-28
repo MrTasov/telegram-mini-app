@@ -16,7 +16,7 @@ window.GameBaseOverview=(()=>{
     add(g,'grid',t('grid'),t('grid.load',{load:num(a.load,2),supply:num(a.supply,2)}),t('grid.demand',{demand:num(a.demand,2),waiting:num(a.shed.length)}));
     add(g,'core',I18n.t('bunker.core.name'),t(deviceStatus(GameCampaign.powerId)),t('core.demand'));
     g=group('workshop');
-    for(const id of GameEquipment.productionIds.filter(id=>['furnace','craft_bench','utility_workbench'].includes(GameEquipment.recipeStation(id)))){
+    for(const id of GameEquipment.productionIds.filter(id=>GameEquipment.recipeStation(id)!=='feed_craft')){
       const key=GameEquipment.recipeStation(id)==='furnace'?'furnace':'bench';
       const q=V09Craft.craftQueue,j=q.getJob(id),ready=Object.values(q.readyItems(id)).reduce((n,v)=>n+v,0),queued=q.queues[id].length;
       const status=q.paused[id]?'paused':deviceStatus(id)==='working'?'working':j?deviceStatus(id):ready?'outputReady':deviceStatus(id);

@@ -1,0 +1,130 @@
+{
+  "patch": "visual-audio-polish-1",
+  "passed": 28,
+  "failed": 1,
+  "audio": {
+    "requests": 57,
+    "maxActiveSources": 8,
+    "reusedGainNodes": 54,
+    "htmlAudioInstances": 0
+  },
+  "checks": [
+    {
+      "id": "scope.onlyDeclaredPresentationSourcesChanged",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.requiredWavFilesDecodedOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "walk.cycleExactlyThreeTimesFasterWithoutChangingFramesOrOtherActions",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.footstepGainHalvedAndWorkGainUnchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.softFootstepHasSmoothBoundariesAndNoClipping",
+      "status": "PASS"
+    },
+    {
+      "id": "assets.noDuplicateImages",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n186 !== 185\n\n    at /workspace/scratch/a6d22bff5614/survival_input_0412/qa/polish.cjs:49:46\n    at check (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/polish.cjs:6:27)\n    at main (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/polish.cjs:49:2)"
+    },
+    {
+      "id": "gameplay.definitionsAndMiningOwnersByteIdentical",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.tree.realCyclesSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.stone.realCyclesSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.iron_ore.realCyclesSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.copper_ore.realCyclesSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.coal.realCyclesSynchronizedHits",
+      "status": "PASS"
+    },
+    {
+      "id": "gathering.realTreeYieldAtImpact",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.stepsFollowForwardAndBackwardContactPhases.1",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.stepsFollowForwardAndBackwardContactPhases.-1",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.blockedPlayerDoesNotPlaySteps",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.hiddenAndMutedStopAllVoices",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.1000ContactsBoundedSourcesAndReusableGains",
+      "status": "PASS"
+    },
+    {
+      "id": "audio.resumeDoesNotReplayOldMiningHit",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.rifle_ak74.muzzleAndTrajectory.idle",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.rifle_ak74.muzzleAndTrajectory.walk",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.rifle_m4.muzzleAndTrajectory.idle",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.rifle_m4.muzzleAndTrajectory.walk",
+      "status": "PASS"
+    },
+    {
+      "id": "weapon.AKSpriteMuzzleAndWorldAnchorMatchAllWalkFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "scale.idleUnchangedMovementOnlySharedLayerTransform",
+      "status": "PASS"
+    },
+    {
+      "id": "scale.corpseExactly120percentOfPrevious",
+      "status": "PASS"
+    },
+    {
+      "id": "corpse.cacheSharedByTypeAndPoseAndReplacedOnZoom",
+      "status": "PASS"
+    },
+    {
+      "id": "console.noErrors",
+      "status": "PASS"
+    },
+    {
+      "id": "combat.seededShotsIdenticalDamageAmmoSpreadAndProjectileStates",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "passed": 9,
+  "failed": 2,
+  "checks": [
+    {
+      "id": "source.gameplayOwnersByteIdenticalToDeliveredEquipmentBuild",
+      "status": "PASS"
+    },
+    {
+      "id": "scale.unarmedAllFramesAndAllModularStatesExactly165percent",
+      "status": "PASS"
+    },
+    {
+      "id": "scale.sleepExactly165percentSameFourBreathingFrames",
+      "status": "PASS"
+    },
+    {
+      "id": "helmet.equippedProtectionDoesNotPaintAnOvalOverHair",
+      "status": "PASS"
+    },
+    {
+      "id": "tool.axe.twelvePosesThreeViewsPalmsAndRealContact",
+      "status": "PASS"
+    },
+    {
+      "id": "tool.pickaxe.twelvePosesThreeViewsPalmsAndRealContact",
+      "status": "PASS"
+    },
+    {
+      "id": "work.repeatedCyclesKeepStancePlantedThenEaseOut",
+      "status": "PASS"
+    },
+    {
+      "id": "fish.visibleCatchExactlyDoubleSizeIndependentOfPlayerScale",
+      "status": "PASS"
+    },
+    {
+      "id": "cache.sharedViewsLoadedOnceNoPerFrameImages",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(bytes<40*1024*1024)\n\n    at /workspace/scratch/a6d22bff5614/survival_input_0412/qa/player-visual-fix.cjs:71:188\n    at check (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/player-visual-fix.cjs:5:39)\n    at /workspace/scratch/a6d22bff5614/survival_input_0412/qa/player-visual-fix.cjs:68:8"
+    },
+    {
+      "id": "fallback.M4ScaleAndMuzzleRemainAligned",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n\n    at /workspace/scratch/a6d22bff5614/survival_input_0412/qa/player-visual-fix.cjs:75:50\n    at check (/workspace/scratch/a6d22bff5614/survival_input_0412/qa/player-visual-fix.cjs:5:39)\n    at /workspace/scratch/a6d22bff5614/survival_input_0412/qa/player-visual-fix.cjs:73:8"
+    },
+    {
+      "id": "console.clean",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Native Canvas2D with modeled DOM. Physical phone/Telegram WebView manual acceptance remains."
+  ]
+}

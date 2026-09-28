@@ -1,0 +1,54 @@
+{
+  "runtimeSha256": "5082c6a15ff058512ed8658421b6512cda0337c78bab94f5f0bd7ddef55e97bb",
+  "inputZIPsha256": "9aec9a41654e66335798a740bb4b9c57887643b54f1535f612bdd31fb6465f91",
+  "runs": [
+    {
+      "id": "character-animation",
+      "exitCode": 1,
+      "passed": 21,
+      "failed": 3,
+      "failingChecks": [
+        "simulation.exact028.MOBILE",
+        "cache.noRepeatedLoadsOnPoseChanges",
+        "memory.characterAtlasesWithin40MiB"
+      ]
+    },
+    {
+      "id": "master-unarmed",
+      "exitCode": 1,
+      "passed": 32,
+      "failed": 1,
+      "failingChecks": [
+        "cache.noRepeatedRequestsAfterMovementRestAndEquipmentChanges"
+      ]
+    },
+    {
+      "id": "equipment-integration",
+      "exitCode": 1,
+      "passed": 36,
+      "failed": 1,
+      "failingChecks": [
+        "cache.lazyStartupAndNoRepeatedRequests"
+      ]
+    },
+    {
+      "id": "player-visual-fix",
+      "exitCode": 1,
+      "passed": 9,
+      "failed": 2,
+      "failingChecks": [
+        "cache.sharedViewsLoadedOnceNoPerFrameImages",
+        "fallback.M4ScaleAndMuzzleRemainAligned"
+      ]
+    },
+    {
+      "id": "polish",
+      "exitCode": 1,
+      "passed": 28,
+      "failed": 1,
+      "failingChecks": [
+        "assets.noDuplicateImages"
+      ]
+    }
+  ]
+}

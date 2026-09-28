@@ -210,7 +210,7 @@ window.V011Living=(()=>{
     // Only simulated foreground time counts; suspend/reload never grants free HP.
     const dt=clamp(Number(ms)||0,0,100)/1000;elapsed+=dt;lastSave+=dt;
     if(mode==='rest'){
-      player.health=Math.min(player.maxHealth,player.health+dt);
+      if((player.hunger??100)>0)player.health=Math.min(player.maxHealth,player.health+dt);
       const h=el('healthText');if(h)I18n.assign(h,"textContent",'❤️ '+Math.round(player.health)+'/'+Math.round(player.maxHealth));
     }else{
       dirt=Math.max(0,dirt-dt*.05);

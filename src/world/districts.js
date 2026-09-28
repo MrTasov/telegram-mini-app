@@ -69,14 +69,14 @@ const V010World = (()=>{
     const rows=[],put=(type,min,max,chance=1)=>{if(Math.random()<chance)rows.push({type,qty:min+Math.floor(Math.random()*(max-min+1))});};
     switch(o.zone){
       case 'pharmacy':put('meds',6,14);put('medicinal_herbs',8,20);put('water',5,12,.8);break;
-      case 'market':put('food',10,22);put('water',12,25);put('potato',6,14,.8);put('grain',10,18,.8);break;
+      case 'market':put('energy_drink',GameplayBalance.survival.loot.qty,GameplayBalance.survival.loot.qty,GameplayBalance.survival.loot.market);put('food',10,22);put('water',12,25);put('potato',6,14,.8);put('grain',10,18,.8);break;
       case 'fuel':put('fuel',18,30);put('parts',3,8);put('iron',4,10,.6);break;
       case 'mill':put('wood',22,40);put('parts',2,6,.8);put('iron',4,9,.8);break;
       case 'substation':put('copper',12,24);put('parts',5,10);if(ITEM.advanced_parts)put('advanced_parts',1,2,.5);put('fuel',4,10,.5);break;
       case 'warehouse':if(ITEM.advanced_parts)put('advanced_parts',1,3,o.id==='lockedwarehouse10'?1:.5);put('parts',7,15);put('iron',12,22);put('copper',7,14);put('vest2',1,1,.15);break;
-      case 'supply':if(ITEM.advanced_parts)put('advanced_parts',1,2);put('meds',3,6);put('ammo',20,45);put('ammo556',20,45);put('parts',6,12);break;
+      case 'supply':put('energy_drink',GameplayBalance.survival.loot.qty,GameplayBalance.survival.loot.qty,GameplayBalance.survival.loot.supply);if(ITEM.advanced_parts)put('advanced_parts',1,2);put('meds',3,6);put('ammo',20,45);put('ammo556',20,45);put('parts',6,12);break;
       case 'garage':put('parts',3,10);put('iron',5,14);put('fuel',3,14,.5);break;
-      default:put('food',4,10);put('water',5,12,.7);put('wood',5,12,.6);put('meds',1,4,.4);
+      default:put('energy_drink',GameplayBalance.survival.loot.qty,GameplayBalance.survival.loot.qty,GameplayBalance.survival.loot.default);put('food',4,10);put('water',5,12,.7);put('wood',5,12,.6);put('meds',1,4,.4);
     }
     if(window.V010Combat?.rollFoundItem)rows.forEach(s=>{if(ITEM[s.type]?.equip||ITEM[s.type]?.hand&&s.type.startsWith('rifle_'))V010Combat.rollFoundItem(s);});
     return rows;

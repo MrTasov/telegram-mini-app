@@ -76,7 +76,7 @@ function decodeGameProgressBase(raw){
   if(!d||![1,2].includes(d.schema)||!number(d.savedAt,0,Number.MAX_SAFE_INTEGER))fail();
   const p=d.player;
   if(!position(p)||!['surface','bunker'].includes(p.scene)||
-     !number(p.health,0,500)||typeof p.dead!=="boolean"||
+     !number(p.health,0,500+GameplayBalance.survival.effects.vitality.maxHP)||typeof p.dead!=="boolean"||
      p.dead!==(p.health===0)||!number(p.aimX,-1,1)||!number(p.aimY,-1,1))fail();
   if(!d.equipment||!Object.keys(equipment).every(slot=>{
     const item=d.equipment[slot];

@@ -6,7 +6,7 @@ window.GameGathering=(()=>{
   const selected=type=>window.V010Inventory?.selectedItem(type)||null;
   function stats(item){const d=definition(item?.type);if(!d)return null;const s=V010Combat.getItemStats(item);return {yield:s.gatheringYield,speed:s.gatheringSpeed,duration:d.cycleMs/s.gatheringSpeed};}
   function phase(type){const a=AssetManifest.actors.modular.items[type].action;return a.durations.slice(0,a.impactFrame).reduce((n,v)=>n+v,0)/a.duration;}
-  function start(type,id){const item=selected(type);if(!item||heldItem()!==type||GameFlow.paused)return null;V010Combat.ensure(item);contact=null;return {id,toolId:item.uid,actorId:GameActors.localId,elapsed:0,duration:stats(item).duration,at:Date.now(),impacted:false};}
+  function start(type,id){const item=selected(type);if(!item||heldItem()!==type||GameFlow.paused||window.SurvivalUse?.active)return null;V010Combat.ensure(item);contact=null;return {id,toolId:item.uid,actorId:GameActors.localId,elapsed:0,duration:stats(item).duration,at:Date.now(),impacted:false};}
   function valid(job,type){const item=selected(type);return !!(job&&item&&heldItem()===type&&job.actorId===GameActors.localId&&job.toolId===item.uid&&Math.abs(job.duration-stats(item).duration)<.001);}
   function sound(job,type,target){
     contact={job:{...job},type,target,x:player.x,y:player.y,scene,at:Date.now()};
@@ -16,7 +16,7 @@ window.GameGathering=(()=>{
     const now=Date.now(),delta=window.GameDevQA?.stepMs||Math.max(0,now-job.at);job.at=now;
     if(GameFlow.paused||GameSave.restoring)return;
     const rate=type==='pickaxe'?(V010World.settings.miningRate*(V09Craft.craftQueue.upgrades.tools?1.2:1)):1;
-    let remaining=delta*rate,steps=0;
+    let remaining=delta*rate*(window.GameSurvival?.gatheringRate()??1),steps=0;
     while(remaining>0&&steps++<128){
       const boundary=job.impacted?job.duration:job.duration*phase(type),dt=Math.min(remaining,Math.max(0,boundary-job.elapsed));job.elapsed+=dt;remaining-=dt;
       if(job.elapsed+1e-7<boundary)break;
