@@ -7,8 +7,11 @@ window.ZombieVisual=(()=>{
   const actors=AssetManifest.actors,unit=(actors.hero?.worldPerUnit||.75)*(actors.visualScale||1);
   // World size relative to the hero, the part of the death clip used as a hit flinch, and the
   // travelled speed (world px/s) above which the run sheet replaces the walk sheet.
-  const TYPE={walker:{scale:.8,hit:4,run:60},runner:{scale:.78,hit:4,run:50},brute:{scale:.88,hit:6,run:70}};
-  const RATE_MIN=.6,RATE_MAX=1.6;
+  const TYPE={walker:{scale:.8,hit:4,run:60},runner:{scale:1.1,hit:4,run:50},brute:{scale:.88,hit:6,run:70}};
+  // TEMPO speeds idle/walk/run clips (attack stays locked to the damage tick); DEATH_SPEED
+  // shortens the fall; a corpse turns translucent only after it has settled (SETTLE_MS).
+  const RATE_MIN=.6,RATE_MAX=1.6,TEMPO=1.2,DEATH_SPEED=1.4,SETTLE_MS=500;
+  const pxOf=art=>cfg.types[art].pxPerUnit||cfg.pxPerUnit;
   const HIT_MS=280,HIT_GAP=400,IDLE_BELOW=4,TAU=Math.PI*2;
   const marks=new WeakMap();
   function mark(z){let v=marks.get(z);if(!v){v={hitAt:-1e9,walk:null,t:0,speed:0,phase:Math.random(),run:false,seed:Math.random()*4000};marks.set(z,v);}return v;}
@@ -38,10 +41,10 @@ window.ZombieVisual=(()=>{
     // recovery and wind-up fill the gap to the next tick.
     const s=M.stats(z),cd=Math.max(300,s.cooldown||1000),since=now-(z.lastAttack||-1e9);
     if(since>=0&&since<cd*1.15&&(r.attack>now-cd*1.15)){const a=A.attack,i=(a.impact+Math.floor(since/cd*a.n))%a.n;return {name:'attack',i};}
-    if(v.speed<IDLE_BELOW){const a=A.idle;return {name:'idle',i:Math.floor((perf+v.seed)/a.durationMs*a.n)%a.n};}
+    if(v.speed<IDLE_BELOW){const a=A.idle;return {name:'idle',i:Math.floor((perf+v.seed)*TEMPO/a.durationMs*a.n)%a.n};}
     if(v.speed>T.run*1.08)v.run=true;else if(v.speed<T.run*.92)v.run=false;
     const name=v.run?'run':'walk',a=A[name],natural=Math.max(8,a.cycle*unit*T.scale)/a.durationMs*1000,rate=Math.min(RATE_MAX,Math.max(RATE_MIN,v.speed/natural));
-    v.phase=(v.phase+dt/a.durationMs*rate)%1;return {name,i:Math.floor(v.phase*a.n)%a.n};
+    v.phase=(v.phase+dt/a.durationMs*rate*TEMPO)%1;return {name,i:Math.floor(v.phase*a.n)%a.n};
   }
   function draw(c,sc,flash){
     const f=c.f,x=-c.size/2+f.ox,y=-c.size/2+f.oy;
@@ -51,9 +54,9 @@ window.ZombieVisual=(()=>{
   }
   function drawDead(z,art){
     const r=M.state(z),age=performance.now()-r.deadAt;if(r.retired||age>=M.corpseMs)return true;
-    const a=cfg.types[art].anims.death,ms=a.durationMs*.85,i=age<ms?Math.min(a.n-1,Math.floor(age/ms*a.n)):a.n-1,c=cell(art,'death',i);
-    if(!c)return false;const T=TYPE[art],sc=unit*T.scale/cfg.pxPerUnit;
-    ctx.save();ctx.translate(z.x,z.y);ctx.globalAlpha*=M.corpseOpacity(z);
+    const a=cfg.types[art].anims.death,ms=a.durationMs/DEATH_SPEED,i=age<ms?Math.min(a.n-1,Math.floor(age/ms*a.n)):a.n-1,c=cell(art,'death',i);
+    if(!c)return false;const T=TYPE[art],sc=unit*T.scale/pxOf(art),settled=Math.min(1,Math.max(0,(age-ms)/SETTLE_MS));
+    ctx.save();ctx.translate(z.x,z.y);ctx.globalAlpha*=1+(M.corpseOpacity(z)-1)*settled;
     if(i===a.n-1){ctx.save();ctx.translate(2,3);ctx.globalAlpha*=.7;shadow(z.radius*3.2,z.radius*2.3);ctx.restore();}
     ctx.rotate(r.deathAngle);draw(c,sc,0);ctx.restore();return true;
   }
@@ -67,7 +70,7 @@ window.ZombieVisual=(()=>{
     ctx.save();ctx.translate(3,6);shadow(z.radius*2.7,z.radius*1.9);ctx.restore();
     if(p.flash){const dx=z.x-player.x,dy=z.y-player.y,l=Math.hypot(dx,dy)||1,k=5*p.flash;ctx.translate(dx/l*k,dy/l*k);}
     ctx.rotate(r.angle-Math.PI/2);
-    if(c)draw(c,unit*T.scale/cfg.pxPerUnit,p.flash||0);
+    if(c)draw(c,unit*T.scale/pxOf(art),p.flash||0);
     else {ctx.fillStyle=M.specs[z.type].color;ctx.beginPath();ctx.ellipse(0,0,z.radius,z.radius*1.2,0,0,TAU);ctx.fill();}
     ctx.restore();
   };
