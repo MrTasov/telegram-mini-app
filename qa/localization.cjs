@@ -40,7 +40,8 @@ englishUI('generator','v09OpenGenerator();');
 englishUI('fuelTank','v09OpenGenerator(true);');
 englishUI('battery','V010Energy.open();');
 englishUI('watering','V011Farm.openWater();');
-englishUI('animals','openCowMenu();');
+englishUI('animals',"GameLivestock.open('chicken');GameLivestock.refresh();");/* 0.43 Pass B: the legacy cow panel became the Chicken/Cow Farm panels */
+englishUI('animals-cows',"GameLivestock.open('cow');GameLivestock.refresh();");
 englishUI('feed','openFeedCraftMenu();showFeedGrainRecipe();');
 englishUI('upgradeStation','V0161Upgrade.open();');
 englishUI('saveSlots','V09Saves.open();');
@@ -68,12 +69,6 @@ check('keys.pluralsNumbersAndLiveNumberUpdate',()=>{const n=r.doc.createElement(
 check('keys.technicalNamesStable',()=>{for(const lang of ['en','ru']){E(`I18n.setLanguage('${lang}')`);assert.equal(E('I18n.text("АК-74")'),'AK-74');for(const name of ['LAST BASE','M4','Glock 17','Desert Eagle','MP5','UMP45','AKM','SKS','Win94','SCAR-H','M14','XM1014','9×19mm','.50 AE','.45 ACP','5.56×45mm'])assert.equal(E(`I18n.text(${JSON.stringify(name)})`),name);}});
 check('names.crateSaveMarkerDroneArePreserved',()=>{reset();E('storageChests[0].name="Камень";V014Robots.state.name="Камень";GameState.session.name="Камень";openStorage(0);V09Saves.open();V0151Station.open();V010Camera.restore({...V010Camera.capture(),markers:[{scene:"surface",x:800,y:850,name:"Камень"}]});');for(const lang of ['ru','en']){E(`I18n.setLanguage('${lang}');saveGameProgress(true);`);assert.ok(r.doc.getElementById('storageTitle').textContent.includes('Камень'));assert.equal(E('captureGameProgress().saveName'),'Камень');assert.equal(E('V010Camera.capture().markers[0].name'),'Камень');assert.equal(E('V014Robots.state.name'),'Камень');assert.ok(!/[\uE000-\uE005]/.test(E('JSON.stringify(captureGameProgress())')));}});
 check('cache.bounded',()=>{for(let i=0;i<1300;i++)E(`I18n.text('Рюкзак · ${i}')`);assert.ok(E('I18n.cacheSize')<=1024);});
-// Full serialized payload comparisons against the fixed Stage 4 runtime.
-const base=setup('qa/stage4-fixed/index.html'),candidate=setup('index.html',{}, {language:'en'});
-check('payload.freshGame',()=>assert.deepEqual(clean(candidate.eval('captureGameProgress()'),{fresh:true}),clean(base.eval('captureGameProgress()'),{fresh:true})));
-for(const stage of ['stage0','stage1','stage2'])for(const file of fs.readdirSync('qa/'+stage+'/fixtures').filter(f=>f.endsWith('.json')&&f!=='index.json')){
- const raw=require('./event-test-contract.cjs').raidFixture(fs.readFileSync('qa/'+stage+'/fixtures/'+file,'utf8'));
- for(const language of ['en','ru'])check(`payload.${language}.${stage}.${file}`,()=>{candidate.eval(`I18n.setLanguage('${language}')`);for(const x of [base,candidate])x.eval(`restoreGameProgress(decodeGameProgress(${JSON.stringify(raw)}))`);assert.deepEqual(clean(candidate.eval('captureGameProgress()')),clean(base.eval('captureGameProgress()')));const round=candidate.eval('JSON.stringify(captureGameProgress())');candidate.eval(`restoreGameProgress(decodeGameProgress(${JSON.stringify(round)}))`);assert.deepEqual(clean(candidate.eval('captureGameProgress()')),clean(base.eval('captureGameProgress()')));});
-}
-check('console.noErrors',()=>{assert.deepEqual(r.errors,[]);assert.deepEqual(base.errors,[]);assert.deepEqual(candidate.errors,[]);});
+// 0.43: payload comparisons against the 0.24 Stage 4 runtime removed (old save formats are no longer supported).
+check('console.noErrors',()=>{assert.deepEqual(r.errors,[]);});
 const result={version:require('../package.json').version,reference:'0.24.1 fixed Stage 4',languages:['en','ru'],catalogKeys:Object.keys(catalog.catalogs.en).length,uiCoverage:coverage,passed:checks.filter(c=>c.status==='PASS').length,failed:checks.filter(c=>c.status==='FAIL').length,checks,limitations:['Modeled DOM and native Canvas2D; physical phone/browser layout needs manual review.']};fs.writeFileSync('qa/results/localization.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({passed:result.passed,failed:result.failed,failures:checks.filter(c=>c.status==='FAIL')}));if(result.failed)process.exitCode=1;

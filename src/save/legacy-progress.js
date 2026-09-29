@@ -33,13 +33,6 @@ function captureGameProgressBase(){
     })),
     loot:scavenges.map(o=>({id:o.id,searched:o.searched,loot:clone(o.loot||[])})),
     zombies:GameState.enemies.actors.map(z=>({x:z.x,y:z.y,health:z.health,alive:z.alive,state:z.state})),
-    livestock:{
-      animals:clone(livestockAnimals),schema:2,nextCow:GameLivestock.nextCow,reserve:clone(GameLivestock.reserve),alive:livestockAlive,
-      warned:livestockWarned,
-      emptyMs:livestockEmptySince===null?null:saveElapsed(farmNow,livestockEmptySince),
-      eggMs:saveElapsed(farmNow,lastEggProduction),milkMs:saveElapsed(farmNow,lastMilkProduction),
-      needMs:saveElapsed(farmNow,lastLivestockNeed),breedMs:saveElapsed(farmNow,lastCowBreed)
-    },
     feedCraft:pendingFeedCraft?{
       qty:pendingFeedCraft.qty,total:pendingFeedCraft.total,
       remainingMs:clamp(pendingFeedCraft.readyAt-farmNow,0,2500)
@@ -100,15 +93,7 @@ function decodeGameProgressBase(raw){
   if(!Array.isArray(d.zombies)||d.zombies.length>SignalDefinitions.actorSaveLimit||!d.zombies.every(z=>
     position(z)&&number(z.health,0,Math.max(630,...Object.values(window.V017Monsters?.specs||{}).map(s=>s.hp*SignalDefinitions.siegeCap)))&&typeof z.alive==="boolean"&&
     z.alive===(z.health>0)&&['wander','chase'].includes(z.state)))fail();
-  const l=d.livestock;
-  if(!l||typeof l.alive!=="boolean"||typeof l.warned!=="boolean"||
-    !Array.isArray(l.animals)||l.animals.length>71||!l.animals.every(a=>
-      position(a)&&['cow','chicken'].includes(a.kind)&&
-      number(a.vx,-1,1)&&number(a.vy,-1,1)&&number(a.size,1,100))||
-    l.animals.filter(a=>a.kind==="cow").length>COW_MAX||
-    !['eggMs','milkMs','needMs','breedMs'].every(k=>duration(l[k]))||
-    !(l.emptyMs===null||duration(l.emptyMs)))fail();
-  GameLivestock.validate(l);
+  // 0.43 Pass B: the legacy livestock block is no longer validated or restored (GameLivestock owns livestock043).
   if(d.feedCraft!==null){
     const c=d.feedCraft;
     if(!c||!integer(c.qty,1,100000)||!integer(c.total,c.qty,100000)||
@@ -169,17 +154,6 @@ function restoreGameProgressBase(d){
     if(worldCollision(z.x,z.y,17,'surface'))Object.assign(restored,outsideSpawns[i%outsideSpawns.length],{state:'wander'});
     return restored;
   });
-  const l=d.livestock;
-  livestockAnimals.splice(0,livestockAnimals.length,...l.animals.map(a=>
-    ({...a,icon:a.kind==="cow"?"🐄":"🐔"})));
-  livestockAlive=l.alive;
-  GameLivestock.nextCow=d.livestock.nextCow;GameLivestock.reserve=clone(d.livestock.reserve);
-  livestockWarned=l.warned;
-  livestockEmptySince=l.emptyMs===null?null:farmNow-l.emptyMs;
-  lastEggProduction=farmNow-l.eggMs;
-  lastMilkProduction=farmNow-l.milkMs;
-  lastLivestockNeed=farmNow-l.needMs;
-  lastCowBreed=farmNow-l.breedMs;
   pendingFeedCraft=d.feedCraft?{qty:d.feedCraft.qty,total:d.feedCraft.total,
     readyAt:farmNow+d.feedCraft.remainingMs}:null;
   feedCraftBusy=!!pendingFeedCraft;

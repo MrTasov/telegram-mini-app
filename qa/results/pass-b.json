@@ -1,0 +1,161 @@
+{
+  "runtimeSha256": "6c8dcb3e4d7b6434b959b21636ced9c7ac002893771f3caf1ec6b639dd9cf4b5",
+  "passed": 33,
+  "failed": 0,
+  "performance": {
+    "animals0": {
+      "p50": 0.0985,
+      "p95": 0.482,
+      "max": 3.8717
+    },
+    "animals12": {
+      "p50": 0.1139,
+      "p95": 2.6908,
+      "max": 5.5238
+    },
+    "animals18": {
+      "p50": 0.1612,
+      "p95": 1.1354,
+      "max": 4.6442
+    },
+    "powerAllocationCalls": {
+      "framesWithoutStep100": 0,
+      "oneStep18Animals": 1
+    },
+    "thirtyDaySettleMs": 57.24
+  },
+  "checks": [
+    {
+      "name": "start_herd_2_adult_chickens_2_adult_cows_no_rooster",
+      "ok": true
+    },
+    {
+      "name": "l2_systems_flags_toggle_animals_without_rewriting_l2",
+      "ok": true
+    },
+    {
+      "name": "legacy_owners_removed",
+      "ok": true
+    },
+    {
+      "name": "eggs_one_per_adult_hen_per_day_with_offsets_to_storage10",
+      "ok": true
+    },
+    {
+      "name": "brood_1_to_6_free_slot_cap_eggs_debited_single_nest",
+      "ok": true
+    },
+    {
+      "name": "incubation_2_days_85_percent_deterministic_hatch_and_fail",
+      "ok": true
+    },
+    {
+      "name": "brooding_hen_no_eggs_no_movement_no_slaughter",
+      "ok": true
+    },
+    {
+      "name": "chick_juvenile_adult_growth_only_adults_lay",
+      "ok": true
+    },
+    {
+      "name": "min_2_adult_chickens_and_max_12",
+      "ok": true
+    },
+    {
+      "name": "juvenile_and_chick_cannot_be_slaughtered_or_brood",
+      "ok": true
+    },
+    {
+      "name": "milk_1_per_adult_plus_50_percent_second_to_storage11",
+      "ok": true
+    },
+    {
+      "name": "herd_calf_timer_5_to_7_days_deterministic_and_conditions",
+      "ok": true
+    },
+    {
+      "name": "stall_cap_6_calf_juvenile_adult_growth_milk_only_adult",
+      "ok": true
+    },
+    {
+      "name": "cow_slaughter_only_adults_never_below_2",
+      "ok": true
+    },
+    {
+      "name": "exact_feed_water_per_day_and_fractional_chickens",
+      "ok": true
+    },
+    {
+      "name": "capacities_and_manual_feed_loading_from_backpack",
+      "ok": true
+    },
+    {
+      "name": "water_automatic_from_clean_tank_without_power",
+      "ok": true
+    },
+    {
+      "name": "no_food_or_water_pauses_everything_without_death_and_resumes",
+      "ok": true
+    },
+    {
+      "name": "no_power_pauses_all_timers_no_death",
+      "ok": true
+    },
+    {
+      "name": "agriculture_time_only_pause_hidden_death_siege_and_no_offline",
+      "ok": true
+    },
+    {
+      "name": "dev_world_clock_advance_follows_farm_rules",
+      "ok": true
+    },
+    {
+      "name": "pantry_storages_10_11_12_visible_13_retired",
+      "ok": true
+    },
+    {
+      "name": "storage_full_no_loss_no_duplication_for_eggs_and_milk",
+      "ok": true
+    },
+    {
+      "name": "feed_mill_overflow_full_backpack_to_storage12_no_loss_no_dup",
+      "ok": true
+    },
+    {
+      "name": "chickens_stay_inside_no_wall_feeder_cowfarm_crossing_and_spread",
+      "ok": true
+    },
+    {
+      "name": "player_routes_to_nest_feeders_drinkers",
+      "ok": true
+    },
+    {
+      "name": "new_format_roundtrip_exact_mid_brood_and_calf",
+      "ok": true
+    },
+    {
+      "name": "legacy_animal_save_starts_2_plus_2_and_drops_old_fields",
+      "ok": true
+    },
+    {
+      "name": "invalid_livestock_saves_rejected_without_mutation",
+      "ok": true
+    },
+    {
+      "name": "ui_panels_brood_action_ru_en",
+      "ok": true
+    },
+    {
+      "name": "visual_hook_drawLivestockAnimal_and_view_all_modes_stages",
+      "ok": true
+    },
+    {
+      "name": "console_no_errors",
+      "ok": true
+    },
+    {
+      "name": "performance_18_animals_update_and_power_cache",
+      "ok": true
+    }
+  ]
+}

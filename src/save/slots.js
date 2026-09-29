@@ -1,9 +1,7 @@
-/* 0.9.2 — named independent saves, portable backups and chickens. */
+/* 0.9.2 — named independent saves and portable backups (0.43 Pass B: chickens moved to farm/livestock.js). */
 const V09_SAVE_PREFIX='survival_base_v09_slot_';
 const V09_ACTIVE_KEY='survival_base_v09_active_slot';
 const V09_SLOT_COUNT=5;
-const V09_CHICKEN_MAX=50;
-const V09_CHICKEN_BREED_MS=300000;
 // Save bookkeeping is owned by GameState.session.
 // Save bookkeeping is owned by GameState.session.
 const V091_SAVE_NAME_MAX=48;
@@ -14,78 +12,18 @@ function v091CleanSaveName(value){
 }
 function v091DefaultName(id){return 'Сохранение '+(id||1);}
 // Save bookkeeping is owned by GameState.session.
-let v09ChickenBreedMs=0;
-let v09ChickenClock=performance.now();
 
 
 
 
-function v09ChickenCount(){return livestockAnimals.filter(a=>a.kind==='chicken').length;}
-function v09AddChicken(){
-  if(v09ChickenCount()>=V09_CHICKEN_MAX)return false;
-  const f=bunker.farm;
-  const mid=(f.top+f.bottom)/2;
-  livestockAnimals.push({kind:'chicken',icon:'🐔',x:f.left+55+Math.random()*100,
-    y:mid+65+Math.random()*Math.max(10,f.bottom-mid-145),
-    vx:Math.random()>.5?.07:-.07,vy:Math.random()>.5?.05:-.05,size:24});
-  return true;
-}
-const v09OriginalProduction=updateLivestockProduction;
-updateLivestockProduction=function(){
-  v09OriginalProduction();
-  const now=performance.now();
-  const dt=Math.max(0,Math.min(now-v09ChickenClock,1000));
-  v09ChickenClock=now;
-  if(!AgricultureTime.animalsAvailable)return;
-  if(!livestockAlive||v09ChickenCount()<2||v09ChickenCount()>=V09_CHICKEN_MAX||
-    storageCount(12,'animal_feed')<=0||storageCount(13,'water')<=0)return;
-  v09ChickenBreedMs+=dt;
-  if(v09ChickenBreedMs>=V09_CHICKEN_BREED_MS){
-    v09ChickenBreedMs=0;
-    if(v09AddChicken()){
-      message('🐔 В курятнике появилась новая курица.');
-      if(el('cowOverlay').classList.contains('open'))renderCowMenu();
-      queueGameSave();
-    }
-  }
-};
-const v09OriginalCowMenu=renderCowMenu;
-renderCowMenu=function(){
-  v09OriginalCowMenu();
-  const n=v09ChickenCount();
-  const status=el('cowStatus');
-  I18n.assign(status,"innerHTML",status.innerHTML.replace(/🐔 Куры: \d+/,`🐔 Куры: ${n} / ${V09_CHICKEN_MAX}`));
-  const hint=document.createElement('div');
-  hint.className='subtitle';
-  hint.style.margin='8px 0 0';
-  I18n.assign(hint,"textContent",n>=V09_CHICKEN_MAX?'Курятник заполнен.':
-    'Куры размножаются при наличии корма и воды: одна за 5 минут игры.');
-  status.append(hint);
-  const btn=el('v09ChickenSlaughter');
-  if(btn){btn.disabled=n<=2||!livestockAlive;btn.style.opacity=btn.disabled?'.45':'1';}
-};
-const v09ChickenSlaughter=v09Button('🍗 Зарезать курицу · 5 мяса',()=>{
-  const chickens=livestockAnimals.filter(a=>a.kind==='chicken');
-  if(!livestockAlive||chickens.length<=2){message('🐔 Нужно оставить минимум 2 живые курицы.');return;}
-  const food=storageChests[4].items;
-  if(freeItemSpace(bag,'chicken_meat',BAG_SLOTS)+freeItemSpace(food,'chicken_meat',60)<5){
-    message('🎒 Освободите место для 5 куриного мяса в рюкзаке или ящике еды.');return;
-  }
-  const victim=chickens[chickens.length-1];
-  livestockAnimals.splice(livestockAnimals.indexOf(victim),1);
-  const left=addItem('chicken_meat',5);
-  if(left)addToSlots(food,'chicken_meat',left,60);
-  message('🍗 Получено куриного мяса: 5.');renderCowMenu();queueGameSave();
-});
-v09ChickenSlaughter.id='v09ChickenSlaughter';
-el('cowSlaughterBtn').after(v09ChickenSlaughter);
+// 0.43 Pass B removed the 0.9 chicken owner (auto-breeding to 50, slaughter button, cow-menu status).
 
 GameSave.extend('capture','save.slots',function(v09OriginalCapture){
   const d=v09OriginalCapture();
   d.gameVersion='0.9.2';
   d.saveName=GameState.session.name;
   d.v09={schema:1,power:V09Power.snapshot(),world:V09World.capture(),
-    crafting:V09Craft.capture(),chickenBreedMs:v09ChickenBreedMs};
+    crafting:V09Craft.capture()};
   d.v091={schema:1,
     fortress:window.V091Fortress?V091Fortress.capture():{wallLevel:false,innerGateOpen:false},
     loot:window.V091Loot?V091Loot.capture():{objects:scavenges.map(o=>({id:o.id,searchedAt:null}))}};
@@ -139,8 +77,6 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
       Array.from({length:11},(_,i)=>'tree'+i),o=>({id:o.id,felled:false,wood:15,regrowMs:0}));
   }
   d=v09OriginalDecode(JSON.stringify(d));
-  if(d.livestock.animals.filter(a=>a.kind==='chicken').length>V09_CHICKEN_MAX)
-    throw new Error('Too many chickens');
   if(legacy){
     if(legacySchema===1)d.starterPending=d.starterPending.filter(type=>type!=='rifle_m4');
     d.v09=clone(v09NewGameTemplate.v09);
@@ -157,8 +93,8 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
     d.gameVersion='0.9.2';
   }
   const s=d.v09;
-  if(!s||s.schema!==1||!Number.isFinite(s.chickenBreedMs)||s.chickenBreedMs<0||
-    s.chickenBreedMs>V09_CHICKEN_BREED_MS)throw new Error('Invalid 0.9 state');
+  if(!s||s.schema!==1)throw new Error('Invalid 0.9 state');
+  delete s.chickenBreedMs;// 0.43 Pass B: legacy chicken breeding clock is ignored
   if(!s.power||!s.world||!s.crafting)throw new Error('Incomplete 0.9 state');
   if(typeof V09Craft.normalizeSave==='function')s.crafting=V09Craft.normalizeSave(s.crafting)||s.crafting;
   if(V09Power.validate(s.power)===false||V09World.validate(s.world)===false||
@@ -193,7 +129,6 @@ GameSave.extend('restore','save.slots',function(v09OriginalRestore,d){
     if(window.V091Fortress)V091Fortress.restore(d.v091.fortress);
     if(window.V091Loot)V091Loot.restore(d.v091.loot);
     GameState.session.name=v091CleanSaveName(d.saveName);
-    v09ChickenBreedMs=d.v09.chickenBreedMs;v09ChickenClock=performance.now();
     activeStorage=null;assigningHandType=null;
     grantStarterItems();renderQuickSlots();updateAmmoHud();
   }finally{GameState.session.transaction=wasTransaction;}
@@ -426,7 +361,7 @@ v09Style('.v09SaveRow{display:flex;gap:12px;align-items:center;justify-content:s
 window.V09Saves={open(){v09RenderSaveSlots();openOverlay(v09SaveOverlay);},newGame:v09NewGame,
   load:v09ChooseSlot,importRaw:v09ImportSave,download:v09DownloadSave,rename:v091RenameSave,
   get name(){return GameState.session.name;},
-  get activeSlot(){return GameState.session.activeSlot;},get chickenBreedMs(){return v09ChickenBreedMs;}};
+  get activeSlot(){return GameState.session.activeSlot;}};
 
 
 v09Style(".itemIcon{width:44px;height:44px;object-fit:contain;vertical-align:middle;pointer-events:none}.slotArt .itemIcon{width:100%;height:100%}.equipIcon .itemIcon{width:37px;height:37px}.inventoryGrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}.invSlot{box-sizing:border-box;min-height:66px;height:66px;padding:3px;position:relative;overflow:hidden}.invSlot .ico{height:37px;line-height:37px}.invSlot .ico .itemIcon{width:38px;height:38px}.invSlot>div:nth-child(2){font-size:9px;line-height:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.invSlot .qty{font-size:10px;line-height:12px;margin:0}.invSlot>div:only-child{font-size:9px}.v092CraftLayout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;min-height:0;flex:1;margin-top:10px}.v092RecipeList{overflow-y:auto;border-right:1px solid #ffffff16;padding-right:10px}.v092Category{font-size:11px;letter-spacing:.5px;color:#afc1bc;margin:10px 0}.v092Recipe{display:flex;align-items:center;gap:6px;width:100%;padding:7px 4px;margin:4px 0;border:1px solid transparent;border-radius:8px;background:#1c2a30;color:#e3ece8;text-align:left;cursor:pointer;min-height:58px}.v092Recipe.selected{border-color:#c9ac70;background:#34413f}.v092Recipe span{font-size:12px}.v092Recipe small{display:block;color:#a5b7b3;font-size:10px;margin-top:4px}.v092Recipe .itemIcon{width:42px;height:42px;flex-shrink:0}.v092RecipeHero{display:flex;align-items:center;gap:14px;min-height:90px}.v092RecipeHero>.itemIcon{width:85px;height:85px}.v092Materials{display:grid;grid-template-columns:1fr 1fr;gap:6px;min-height:112px;align-content:start}.v092Ingredient{display:flex;align-items:center;gap:6px;background:#1b2b30;border:1px solid #3b5054;border-radius:7px;color:#dce9e4;padding:5px;text-align:left;cursor:pointer;font-size:11px}.v092Ingredient strong{display:block;margin-top:4px}.v092Ingredient .itemIcon{width:34px;height:34px}.v092MaterialHelp{font-size:11px;line-height:1.4;min-height:46px;color:#afc1b9;padding:8px 0}.v092Production{font-size:12px}.v092Production>span{float:right;color:#b3d5be}.v092Production .v09CraftProgress{margin:8px 0}.v092ProductionCounts{margin-top:5px}.v091CraftActions{min-height:160px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-end}.v091CraftActions .v09CraftNote{margin:6px 0}#v09CraftOverlay .v09Panel{width:min(820px,calc(100vw - 20px));height:min(710px,94dvh)}.v091QuantityCount{font-size:13px}.v09CraftQuantity{gap:5px}.v09CraftQuantity button{font-size:12px}.v09CraftShort{color:#efa496}.v09GunStats{min-height:58px}\n@media(max-width:540px){.v092CraftLayout{grid-template-columns:116px minmax(0,1fr);gap:8px}.v092Recipe{flex-direction:column;align-items:flex-start}.v092Recipe .itemIcon{width:38px;height:38px}.v092RecipeList{padding-right:5px}.v092RecipeHero{gap:5px}.v092RecipeHero>.itemIcon{width:48px;height:48px}.v092RecipeHero b{font-size:13px}.v092Materials{grid-template-columns:1fr;min-height:112px}.v092Ingredient{min-height:38px}.v092Production>span{float:none;display:block}.invSlot{height:62px;min-height:62px}.inventoryGrid{gap:3px}.v091CraftActions{min-height:160px}#v09CraftOverlay .v09Panel{padding:10px}.v09CraftQuantity{grid-template-columns:1fr 1fr}}\n@media(max-height:500px){.v091CraftActions{min-height:100px}.v092Production .v09CraftNote{display:none}#v09CraftOverlay .v09Panel{height:96dvh}}\n");

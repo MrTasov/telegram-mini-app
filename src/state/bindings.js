@@ -52,8 +52,8 @@ GameState.register('crafting',{
 
 GameState.register('farm',{
   get beds(){return window.farmState;},get water(){return window.V011Farm?.state;},
-  get animals(){return livestockAnimals;},get system(){return window.V0141Farm;}
-},{source:'farm/growth.js',saved:['farmClock','farm','livestock','v09.chickenBreedMs','farmV011','farm014','farmRecovery0141','farmPlantingStock0141'],transient:['animal poses','visual watering','UI selection']});
+  get system(){return window.V0141Farm;}
+},{source:'farm/growth.js',saved:['farmClock','farm','farmV011','farm014','farmRecovery0141','farmPlantingStock0141'],transient:['visual watering','UI selection']});/* 0.43 Pass B: animals are registered by farm/livestock.js */
 
 GameState.register('progression',{
   get system(){return window.V010Progression;}

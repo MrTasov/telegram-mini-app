@@ -43,7 +43,8 @@ window.GameAudioWorld=(()=>{
     }
     GameAudio.loop('water',farmPoint?'water':null,farmPoint||{});
     const living=V011Living.state();GameAudio.loop('shower',living.mode==='shower'?'shower':null,{x:shower.x+shower.w/2,y:shower.y+shower.h/2,scene:'bunker',radius:240});
-    if(AgricultureTime.animalsAvailable&&scene==='bunker'&&livestockAlive&&now-lastChicken>=17000){const p=livestockAudioCenter('chicken');if(GameAudio.play('chicken',{...p,scene:'bunker',radius:285}))lastChicken=now;}
+    // 0.43 Pass B: chicken ambience stays here; its source state is the new GameLivestock owner.
+    if(window.GameLivestock?.active()&&scene==='bunker'&&GameLivestock.list('chicken').length&&now-lastChicken>=17000){const p=GameLivestock.audioCenter('chicken');if(GameAudio.play('chicken',{...p,scene:'bunker',radius:285}))lastChicken=now;}
     const d=V014Robots.state,flight=!d.packed&&d.hp>0&&d.battery>0&&!['docked','docking','disabled'].includes(d.task);
     GameAudio.loop('rotor',flight?'rotor':null,{x:d.x,y:d.y,scene:d.scene,radius:360});
     if(lastDrone){

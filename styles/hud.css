@@ -74,3 +74,9 @@ body #v014RouteStop{bottom:calc(120px + var(--hud-safe-bottom))!important;left:c
   body[data-control-mode="MOBILE"] #heldItemName[data-firearm="true"] #hudReserve{grid-column:2}
   body[data-control-mode="MOBILE"] #v014RouteStop{bottom:calc(138px + var(--hud-safe-bottom))!important}
 }
+
+/* 0.43 Phase 0 final: the transition fade is a body-level layer. While shown (and through the whole
+   fade-in) it sits above the game HUD (campaign panel, minimap, bars, hotbar, badges; all <= 9998) and
+   below real modals (>= 10050). z-index drops back only after the 0.35 s opacity transition. Timing unchanged. */
+#fade{transition:opacity .35s,z-index 0s linear .35s;}
+#fade.show{z-index:10000;transition:opacity .35s,z-index 0s;}

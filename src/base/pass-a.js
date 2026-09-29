@@ -6,7 +6,7 @@ window.BunkerPassA=(()=>{
  function readyAt(i,n){if(rot[i].readyAt===null)rot[i].readyAt=n;}
  const rotten=i=>rot[i]?.rotten===true,remaining=i=>rot[i].readyAt===null?null:Math.max(0,rot[i].readyAt+B.spoilDays*WorldClock.dayMs-AgricultureTime.now());
  function tick(){const now=AgricultureTime.now(),dt=Math.max(0,now-at);at=now;if(GameSave.restoring||GameFlow.paused||document.hidden||playerDead)return;
-  if(dt&&devicePowered('water_system')){const n=Math.min(B.cleanCapacity-water.clean,dt/WorldClock.dayMs*B.waterPerDay);water.clean+=n;water.produced+=n;}
+  if(dt&&L2Systems.water&&devicePowered('water_system')){const n=Math.min(B.cleanCapacity-water.clean,dt/WorldClock.dayMs*B.waterPerDay);water.clean+=n;water.produced+=n;}
   // Stored clean water reaches the irrigation buffer by gravity pipes; only Pump/Purifier need power.
   {const n=Math.min(water.clean,B.waterCapacity-V011Farm.state.water);water.clean-=n;V011Farm.state.water+=n;}
   V011Farm.settle(now);for(let i=0;i<5;i++){if(farmState[i].crop===null){rot[i]=fresh();continue;}if(!V011Farm.ready(i))continue;readyAt(i,now);const left=remaining(i);if(left<=0)rot[i].rotten=true;else if(left<=B.warnDays*WorldClock.dayMs&&!rot[i].warned){rot[i].warned=true;V010.log(tr('spoilWarning',{n:i+1}));}}

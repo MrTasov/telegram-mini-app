@@ -76,15 +76,14 @@ function updateTrees(){
   }
 }
 function update(){
+  V09Power.frame=(V09Power.frame||0)+1; // one power distribution per simulated step (base/battery.js)
   updatePointerFollow();
   updateTrees();
   grantStarterItems();
   updatePlayer();
   updateChop();
   updateFeedCraft();
-  updateLivestockProduction();
-  updateLivestockAnimals();
-  updateLivestockAudio();
+  window.GameLivestock?.update(); // 0.43 Pass B: the one Animals owner (production, needs, behaviour, audio)
   stopInvalidZombieAudio();
 
   updateBullets();
@@ -151,7 +150,7 @@ function draw(){
 ===================================================== */
 
 let lastFrameAt=0;
-function gameLoop(timestamp=performance.now()){
+function gameLoop(timestamp=performance.now()){V09Power.frame=(V09Power.frame||0)+1;
   frameScale=lastFrameAt?clamp((timestamp-lastFrameAt)/16.667,.1,3):1;
   lastFrameAt=timestamp;
   window.StoryPlayer?.tick(timestamp);

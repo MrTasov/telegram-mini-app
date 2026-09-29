@@ -35,6 +35,7 @@ GameSave.seal({
     "world.signal",
     "player.survival",
     "bunker.pass-a",
+    "farm.livestock",
     "dev.qa"
   ],
   "decode": [
@@ -72,6 +73,7 @@ GameSave.seal({
     "defense.foundation",
     "player.survival",
     "bunker.pass-a",
+    "farm.livestock",
     "dev.qa"
   ],
   "restore": [
@@ -112,6 +114,7 @@ GameSave.seal({
     "world.signal",
     "player.survival",
     "bunker.pass-a",
+    "farm.livestock",
     "dev.qa"
   ]
 });

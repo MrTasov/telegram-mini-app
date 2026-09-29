@@ -72,7 +72,6 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
 
 <div id="damageFlash"></div>
 <div id="message"></div>
-<div id="fade">ПОДЗЕМНАЯ БАЗА</div>
 
 
 <div id="farmOverlay" class="overlay">
@@ -307,18 +306,7 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
   <button id="feedCraftClose" class="menuButton">Закрыть</button>
 </div></div>
 
-<div id="cowOverlay" class="overlay"><div class="panel">
-  <h2>🐄🐔 ЖИВОТНЫЕ</h2>
-  <div class="subtitle">ЕДИНЫЙ ЦЕНТР УПРАВЛЕНИЯ</div>
-  <div id="cowStatus" style="margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.15);border-radius:10px"></div>
-  <button id="cowMilkBtn" class="menuButton">🥛 Забрать молоко</button>
-  <button id="animalEggBtn" class="menuButton">🥚 Забрать яйца</button>
-  <button id="animalFeedBtn" class="menuButton">🌾 Положить корм</button>
-  <button id="animalWaterBtn" class="menuButton">💧 Налить воду</button>
-  <button id="cowSlaughterBtn" class="menuButton">🥩 Зарезать корову</button>
-  <div class="subtitle" style="margin-top:10px">Минимум 2 коровы сохраняются для размножения.</div>
-  <button id="cowClose" class="menuButton">Закрыть</button>
-</div></div>
+<!-- 0.43 Pass B: the legacy livestock panel (cowOverlay) was replaced by the GameLivestock panels. -->
 
 <div id="handAssignOverlay" class="overlay"><div class="panel">
 <h2 id="handAssignTitle"></h2><div id="handAssignArt"></div><div class="subtitle">Назначить предмет в быстрый слот</div>
@@ -347,6 +335,8 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
 </div>
 
 </div>
+<!-- 0.43 Phase 0 final: the fade is a body-level layer so it can cover the HUD (body-level, z <= 9998) during transitions. -->
+<div id="fade">ПОДЗЕМНАЯ БАЗА</div>
 
 <script src="js/game.js?v=0.43.0-stage-d"></script>
 

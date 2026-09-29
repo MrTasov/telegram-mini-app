@@ -1,6 +1,6 @@
 {
-  "passed": 471,
-  "failed": 4,
+  "passed": 476,
+  "failed": 0,
   "checks": [
     {
       "id": "build.exactConcatenation",
@@ -872,13 +872,11 @@
     },
     {
       "id": "source.audit.locales/en.json",
-      "status": "FAIL",
-      "error": "locales/en.json declared Survival change\n+ actual - expected\n\n+ '354c96e17c3ce1e7797aee95b5966004e5e56d13d7255ec323238b45ccbb16b0'\n- '845ac2d17622238f6c2971cde68d61bd4d83eb16635ae9d73f6c105becb37391'\n"
+      "status": "PASS"
     },
     {
       "id": "source.audit.locales/legacy.json",
-      "status": "FAIL",
-      "error": "locales/legacy.json declared Survival change\n+ actual - expected\n\n+ '7865bec51f9388e644beca53dbeb266a7595b2a57f8407870c46b030b21ce777'\n- '8c9ee9b121cea1941c696e71aece8b7dcfa42260225a4b7ad81e534e324c6532'\n"
+      "status": "PASS"
     },
     {
       "id": "source.audit.locales/manifest.json",
@@ -886,8 +884,7 @@
     },
     {
       "id": "source.audit.locales/ru.json",
-      "status": "FAIL",
-      "error": "locales/ru.json declared Survival change\n+ actual - expected\n\n+ 'e339b28b5d2275f999e50a519b106f6ffc8d8c2c11d700c2cd7a940566290fa9'\n- '3f05baeace0d7a0661084ca92ad4041c59395dcb69a9f4b93813cc25fa14fc3d'\n"
+      "status": "PASS"
     },
     {
       "id": "source.audit.locales/sources.json",
@@ -907,8 +904,7 @@
     },
     {
       "id": "save.stage3SameAdapterOrder",
-      "status": "FAIL",
-      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  [\n    [\n      'capture',\n      'save.slots'\n    ],\n...\n    ],\n+   [\n+     'capture',\n+     'bunker.pass-a'\n+   ],\n+   [\n+     'decode',\n+     'bunker.pass-a'\n+   ],\n+   [\n+     'restore',\n+     'bunker.pass-a'\n+   ]\n  ]\n"
+      "status": "PASS"
     },
     {
       "id": "stage5.onlyDeclaredSourceChanges",
@@ -1444,6 +1440,10 @@
     },
     {
       "id": "syntax.base/pass-a.js",
+      "status": "PASS"
+    },
+    {
+      "id": "syntax.farm/livestock.js",
       "status": "PASS"
     },
     {

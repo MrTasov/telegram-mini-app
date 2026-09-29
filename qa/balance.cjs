@@ -79,6 +79,10 @@ actual.power.devices=expected.power.devices;actual.power.rooms=expected.power.ro
 assert.equal(actual.save.schemas.bunker043,1);delete actual.save.schemas.bunker043;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='bunker043');
 // 0.43 Phase 0: player base speed x1.30 is deliberate (qa/phase0.cjs); everything else in player stays compared.
 assert.ok(Math.abs(actual.player.walkSpeed-expected.player.walkSpeed*1.3)<1e-9&&Math.abs(actual.player.runSpeed-expected.player.runSpeed*1.3)<1e-9);actual.player.walkSpeed=expected.player.walkSpeed;actual.player.runSpeed=expected.player.runSpeed;
+// 0.43 Pass B Animals: the legacy livestock owner (V011Farm animal drawing/troughs, the 0.9 chicken clock, the
+// 'livestock' save block) was replaced by GameLivestock/livestock043; covered exactly by qa/pass-b.cjs.
+for(const [id,removed]of Object.entries({V011Farm:['draw','drawAnimal','troughs','cowStalls'],V09Saves:['chickenBreedMs']}))if(expected.exposedAPIs[id])expected.exposedAPIs[id]=expected.exposedAPIs[id].filter(k=>!removed.includes(k));
+assert.equal(actual.save.schemas.livestock043,1);delete actual.save.schemas.livestock043;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='livestock043');expected.save.topKeys=expected.save.topKeys.filter(k=>k!=='livestock');
 let error=null;try{assert.deepEqual(actual,expected);}catch(e){error=e.message;}
 fs.writeFileSync(path.join(__dirname,'results/configurations.json'),JSON.stringify(configs,null,2)+'\n');
 const report={version,passed:error?0:1,failed:error?1:0,scope:'Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.',addedDefinitionFields:definitionFields,addedEnemyFields:['spawnOrder','behavior','healthColor','leap','blast'],addedAPIs,error,consoleErrors:r.errors};

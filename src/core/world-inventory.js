@@ -140,8 +140,7 @@ function solidObjects(which){
   const feed=feedCraftStationPos();
   return [
     ...fixtures,
-    {id:'livestock',x:(bunker.farm.cropLeft??90)-37,y:(bunker.farm.top+bunker.farm.bottom)/2-28,w:50,h:56},
-    ...chests.flatMap((p,i)=>i===10||i===11?[]:[{id:'chest'+i,x:p.x-(i<10?34:30),y:p.y-(i<10?25:22),w:i<10?68:60,h:i<10?50:44}]),
+        ...chests.flatMap((p,i)=>i===13?[]:[{id:'chest'+i,x:p.x-34,y:p.y-25,w:68,h:50}]),/* 0.43 Pass B: #10–#12 are Pantry crates; #13 retired */
     // Crop surfaces are walkable; interaction targets remain registered.
     {id:'feed_craft',x:feed.x-28,y:feed.y-23,w:56,h:46}
   ];

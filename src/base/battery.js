@@ -13,7 +13,16 @@ const V010Energy=(()=>{
     const seconds=Math.ceil(battery.charge/kw*3600);
     return seconds>=3600?`≈ ${Math.floor(seconds/3600)} ч ${Math.floor(seconds%3600/60)} мин`:seconds>=60?`≈ ${Math.ceil(seconds/60)} мин`:`≈ ${seconds} сек`;
   }
-  function allocation(dt=1/60){
+  // Power is read ~20 times per frame (devicePowered, lights, turrets, UI). A read without an
+  // explicit dt reuses one result per frame; any change of generator, fuel, battery or a
+  // device switch or equipment change (place, pack, damage) invalidates it at once. Ticks that pass dt always compute fresh.
+  let memo=null,memoKey='';
+  function memoStamp(){let s=(V09Power.frame||0)+'|'+(window.GameEquipment?GameEquipment.epoch:0)+'|'+V09Power.running+'|'+V09Power.supply+'|'+(V09Power.fuel>0)+'|'+battery.enabled+'|'+(battery.charge>0)+'|';for(const d of Object.values(V09Power.devices))s+=d.enabled?1:0;return s;}
+  function allocation(dt){
+    if(dt===undefined){const key=memoStamp();if(memo&&key===memoKey)return memo;memo=compute(1/60);memoKey=key;return memo;}
+    return compute(dt);
+  }
+  function compute(dt=1/60){
     dt=Math.max(.001,Math.min(.1,Number(dt)||1/60));
     const generator=GameEquipment.present('generator')&&GameEquipment.present('tank')&&V09Power.running&&V09Power.fuel>0?V09Power.supply:0;
     const batterySupply=GameEquipment.present('battery')&&battery.enabled&&battery.charge>0?Math.min(battery.maxDischarge,battery.charge*3600/dt):0;
@@ -99,11 +108,7 @@ const V010Energy=(()=>{
     edge('fuelLow',V09Power.running&&V09Power.fuel>0&&V09Power.fuel<=2,'Топливо заканчивается: заправьте генератор.');
     edge('batteryLow',a.batteryOutput>0&&battery.charge/battery.capacity<=.1,'Низкий заряд резервной батареи.');
     edge('shed',a.shed.length>0&&a.supply>0,I18n.t('control.overloaded'));
-    if(AgricultureTime.animalsAvailable&&typeof livestockAlive!=='undefined'&&livestockAlive){
-      const count=(i,type)=>(storageChests[i]?.items||[]).reduce((n,s)=>n+(s?.type===type?s.qty:0),0);
-      edge('feed',count(12,'animal_feed')===0,'Ферма: у животных закончился корм.');
-      edge('water',count(13,'water')===0,'Ферма: у животных закончилась вода.');
-    }
+    // 0.43 Pass B: feeder/drinker notifications are owned by GameLivestock (state change + cooldown).
     if(AgricultureTime.available&&Array.isArray(window.farmState))window.farmState.forEach((s,i)=>{const ready=s?.crop!==null&&s?.crop!==undefined&&V011Farm.ready(i)&&!window.BunkerPassA?.rotten(i);if(ready&&!harvestSeen[i])log('Ферма: урожай на грядке '+(i+1)+' созрел.');harvestSeen[i]=ready;});
   }
   powerTick=function(dt){

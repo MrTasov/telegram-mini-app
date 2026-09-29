@@ -164,7 +164,7 @@ function drawL2Furniture(){
 }
 function drawBunker(){
  const floor=BunkerLayout.floorAt(player.x,player.y),bounds=BunkerLayout.floorBounds[floor];ctx.fillStyle='#101417';ctx.fillRect(bounds.x-150,bounds.y-150,bounds.w+300,bounds.h+300);
- for(const r of BunkerLayout.roomData)if(r.floor===floor){V011Rooms.floor(r.id,bunker[r.id]);ctx.fillStyle='#bdccc7';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(GamePlacement.roomName(r.id),r.x+r.w/2,r.y+(r.id==='corridor'?150:r.id==='storage'?150:r.id==='pantry'?150:r.id==='water_room'?200:48));}/* 0.43 Phase 0: Pantry and Water Room names sit below their top-wall furniture */
+ for(const r of BunkerLayout.roomData)if(r.floor===floor){V011Rooms.floor(r.id,bunker[r.id]);ctx.fillStyle='#bdccc7';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(GamePlacement.roomName(r.id),r.x+r.w/2,r.y+(r.id==='corridor'?150:r.id==='storage'?150:r.id==='pantry'?150:r.id==='water_room'?200:r.id==='chicken_farm'?300:r.id==='cow_farm'?300:48));}/* 0.43 Phase 0: Pantry and Water Room names sit below their top-wall furniture */
  V09Craft.drawWorkshop();window.GameMovable?.draw();
  // 0.43 Phase 0: the L1 hall keeps no props (its cabinet is now the Medical room's medicine cabinet).
  // The bed lies along the bedroom's bottom wall, pillow toward the bath; kitchen/medical furniture below.
@@ -174,7 +174,7 @@ function drawBunker(){
  if(floor===2){V011Farm.drawBeds();const f=GameEquipment.fixture('feed_craft');if(GameEquipment.present('feed_craft')){ctx.fillStyle='#58736a';ctx.fillRect(f.x,f.y,f.w,f.h);ctx.fillStyle='#bbc7af';ctx.beginPath();ctx.arc(f.x+22,f.y+22,16,0,Math.PI*2);ctx.fill();ctx.font='10px Arial';ctx.fillText(I18n.text('Кормодробилка'),f.x+28,f.y+65);}
   for(const [i,o]of BunkerPassA.fixtures.entries()){ctx.fillStyle='#516863';ctx.fillRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#a0b4a5';ctx.lineWidth=3;ctx.strokeRect(o.x+4,o.y+4,o.w-8,o.h-8);if(!i){V011Art.draw('tank',o.x,o.y,o.w,o.h);ctx.fillStyle='#69bdc0';ctx.fillRect(o.x+o.w-12,o.y+12,5,(o.h-24)*BunkerPassA.water.clean/100);}else{ctx.fillStyle='#25464a';ctx.fillRect(o.x+10,o.y+10,o.w-20,18);}ctx.fillStyle='#d5e0d0';ctx.font='10px Arial';{const text=I18n.t(['farm.cleanTank','farm.pump','farm.purifier'][i]),q=BunkerLayout.rooms.water_room,half=ctx.measureText(text).width/2+30;/* 0.43 Phase 0: keep the caption inside the narrow Water Room */ctx.fillText(text,Math.max(q.left+half,Math.min(q.right-half,o.x+o.w/2)),i?o.y-7:o.y+o.h+15);}}
   const bd=V011Living.bathDoor;ctx.fillStyle='#667b78';ctx.fillRect(bd.x,bd.y,bd.w,bd.h*(1-V011Living.state().doorProgress));
-  const c=bunker.cow_farm;ctx.strokeStyle='#8d9b83';ctx.lineWidth=3;for(let i=0;i<6;i++)ctx.strokeRect(c.left+24+i%3*136,c.top+95+Math.floor(i/3)*148,116,124);
+  window.GameLivestock?.draw();/* 0.43 Pass B: stalls, nest, feeders/drinkers, Pantry #10–#12 and the animals */
   const up=BunkerPassA.up;ctx.fillStyle='#263a3e';ctx.fillRect(up.x,up.y,up.w,up.h);for(let i=0;i<9;i++){ctx.fillStyle=i%2?'#6f837c':'#53665f';ctx.fillRect(up.x+12,up.y+12+i*17,106,12);}ctx.fillStyle='#d8e6d9';ctx.fillText(I18n.t('bunker.l2.up'),4700,-185);
  }
  for(const w of BunkerLayout.wallSegments)if(BunkerLayout.floorAt(w.x1,w.y1)===floor)V011Rooms.wall(w.x1,w.y1,w.x2,w.y2);if(floor===1)BunkerState.draw();

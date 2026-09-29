@@ -18,9 +18,8 @@ function interactionObjects(which=scene){
   const f=bunker.farm,feed=feedCraftStationPos();
   return [
     {id:'exit',kind:'surface',name:'На поверхность',x:bunker.entrance.x,y:bunker.entrance.y,r:28,range:48},
-    ...getChestPositions().flatMap((p,i)=>i===10||i===11?[]:[{id:'chest'+i,kind:'storage',name:storageChests[i].name,ref:i,x:p.x-34,y:p.y-25,w:68,h:50,range:44}]),
+    ...getChestPositions().flatMap((p,i)=>i===13?[]:[{id:'chest'+i,kind:'storage',name:storageChests[i].name,ref:i,x:p.x-34,y:p.y-25,w:68,h:50,range:44}]),
     ...getFarmBeds().map((b,i)=>({...b,id:'bed'+i,kind:'farm',name:'Грядка '+(i+1),ref:i,range:45})),
-    {id:'livestock',kind:'livestock_manager',name:'Животные',x:(f.cropLeft??90)-37,y:(f.top+f.bottom)/2-28,w:50,h:56,range:58},
     {id:'feed_craft',kind:'feed_craft',name:'Кормодробилка',x:feed.x-28,y:feed.y-23,w:56,h:46,range:44},
     ...solidObjects('bunker').filter(o=>['technical','ammunition','tools','workbench'].includes(o.id)).map(o=>({...o,kind:'workshop',name:'Мастерская',range:46}))
   ];
@@ -57,7 +56,6 @@ function executeInteraction(target){
   else if(target.kind==='tree')useTree(target.ref);
   else if(target.kind==='search')startSearch(target.ref);
   else if(target.kind==='workshop')openOverlay(el('workshopOverlay'));
-  else if(target.kind==='livestock_manager')openCowMenu();
   else if(target.kind==='feed_craft')openFeedCraftMenu();
 }
 function cancelNavigation(){navigation=null;movePower=0;moveX=0;moveY=0;}
@@ -151,7 +149,7 @@ function updateAutoWalk(){
   if(!rightAimActive){player.aimX=moveX;player.aimY=moveY;}
 }
 function updateAction(){
-  const icons={gate:gateOpen?'🔒':'🔓',bunker:'↧',surface:'↥',storage:'📦',farm:'🌱',tree:'🪓',search:'🔎',workshop:'🔧',livestock_manager:'🐄',feed_craft:'🌾'};
+  const icons={gate:gateOpen?'🔒':'🔓',bunker:'↧',surface:'↥',storage:'📦',farm:'🌱',tree:'🪓',search:'🔎',workshop:'🔧',livestock_chickens:'🐔',livestock_cows:'🐄',feed_craft:'🌾'};
   const near=interactionObjects().filter(o=>canInteract(o,player.x,player.y));
   near.sort((a,b)=>{const p=contactPoint(a,player.x,player.y),q=contactPoint(b,player.x,player.y);return distance(player.x,player.y,p.x,p.y)-distance(player.x,player.y,q.x,q.y);});
   interactionTarget=near[0]||null;currentAction=interactionTarget?.kind||null;currentActionObject=interactionTarget;
@@ -176,229 +174,24 @@ function getChestPositions(){
     {x:s.left+435,y:s.bottom-58},
     {x:185, y:bunker.farm.bottom-30},
     {x:bunker.farm.right-95, y:bunker.farm.bottom-30},
-    {x:-102, y:bunker.farm.bottom-88}, // chicken egg inventory — bottom-left corner
-    {x:-102, y:bunker.farm.top+88},    // cow milk inventory — top-left corner
-    {x:-72, y:bunker.farm.top+350},    // feed inventory — center
-    {x:18,  y:bunker.farm.top+350}     // water inventory — center
+    // 0.43 Pass B: #10 eggs, #11 milk and #12 animal feed are visible crates on the Pantry's bottom wall.
+    {x:bunker.pantry.left+115, y:bunker.pantry.bottom-38},
+    {x:bunker.pantry.left+310, y:bunker.pantry.bottom-38},
+    {x:bunker.pantry.left+395, y:bunker.pantry.bottom-38},
+    {x:-72, y:bunker.farm.top+350}     // #13: retired (no longer an animal-water source), not placed in the world
   ].map((p,i)=>GameEquipment.center('chest'+i)||p);
 }
 
 // =====================================================
-// LIVESTOCK AMBIENT AUDIO
+// 0.43 Pass B: the legacy livestock owner (real-time eggs/milk, auto-breeding, starvation,
+// wandering and cow audio) was replaced by farm/livestock.js (GameLivestock).
+// The released cow-audio clock drew one Math.random() here at load; keep that draw so the shared
+// gameplay RNG stream (weapon spread, loot, zombies) stays byte-identical to earlier releases.
+const livestockLoadRandom=Math.random();
 // =====================================================
-// Chickens: continuous quiet loop with a deliberately small hearing radius.
-// Cows: short moo at random 3–15 second intervals, also only audible nearby.
-// Keep both the initialization and every due-time Math.random call exactly as
-// released: this legacy clock shares gameplay RNG. Audible rarity belongs to
-// GameAudio's animal limiter, not to a replacement clock.
-let nextCowMooAt=Date.now()+3000+Math.random()*12000;
-function livestockAudioCenter(kind){
-  const f=bunker.farm;
-  const left=f.left+18, right=(f.cropLeft??90)-12;
-  const top=f.top+42, bottom=f.bottom-42;
-  const mid=(top+bottom)/2;
-  return kind==="cow"
-    ? {x:(left+right)/2,y:(top+mid)/2}
-    : {x:(left+right)/2,y:(mid+bottom)/2};
-}
-
-function stopChickenAmbient(){GameAudio.loop('animals',null);}
-function updateLivestockAudio(){if(!AgricultureTime.animalsAvailable)return;
-  if(scene!=="bunker"||!livestockAlive)return;
-  const now=Date.now();
-  if(now>=nextCowMooAt){
-    if(AgricultureTime.animalsAvailable)GameAudio.play('cow',{...livestockAudioCenter('cow'),scene:'bunker',radius:310});
-    nextCowMooAt=now+3000+Math.random()*12000;
-  }
-}
-
-// =====================================================
-// LIVESTOCK SYSTEM — production, feed/water, starvation and wandering
-// =====================================================
-const LIVESTOCK_EGG_MS=30000;        // test: eggs slowly accumulate
-const LIVESTOCK_MILK_MS=45000;       // test: milk slowly accumulates
-const LIVESTOCK_NEED_MS=300000;      // test: consume once every 5 minutes
-const LIVESTOCK_STARVE_MS=48*60*60*1000; // ~2 real days without either need
-let lastEggProduction=AgricultureTime.now();
-let lastMilkProduction=AgricultureTime.now();
-let lastLivestockNeed=AgricultureTime.now();
-let livestockEmptySince=null;
-let livestockWarned=false;
-let livestockAlive=true;
-
 function storageCount(index,type){
   const ch=storageChests[index];
   return ch ? ch.items.filter(s=>s?.type===type).reduce((a,s)=>a+s.qty,0) : 0;
-}
-
-function updateLivestockNeeds(){
-  if(!AgricultureTime.animalsAvailable)return;
-  if(!livestockAlive) return;
-  const now=AgricultureTime.now();
-
-  if(now-lastLivestockNeed>=LIVESTOCK_NEED_MS){
-    const ticks=Math.floor((now-lastLivestockNeed)/LIVESTOCK_NEED_MS);
-    for(let i=0;i<ticks;i++){
-      removeFromSlots(storageChests[12].items,"animal_feed",1);
-      removeFromSlots(storageChests[13].items,"water",1);
-    }
-    lastLivestockNeed+=ticks*LIVESTOCK_NEED_MS;
-  }
-
-  const feed=storageCount(12,"animal_feed");
-  const water=storageCount(13,"water");
-  const empty=(feed<=0 || water<=0);
-
-  if(empty){
-    if(livestockEmptySince===null) livestockEmptySince=now;
-    if(!livestockWarned){
-      message(feed<=0 && water<=0
-        ? "⚠️ ВНИМАНИЕ: закончились корм и вода для животных!"
-        : feed<=0
-          ? "⚠️ ВНИМАНИЕ: закончился корм для животных!"
-          : "⚠️ ВНИМАНИЕ: закончилась вода для животных!");
-      livestockWarned=true;
-    }
-    if(now-livestockEmptySince>=LIVESTOCK_STARVE_MS){
-      livestockAlive=false;
-      message("☠️ Животные погибли: слишком долго не было корма или воды.");
-    }
-  }else{
-    livestockEmptySince=null;
-    livestockWarned=false;
-  }
-}
-
-function updateLivestockProduction(){
-  if(!AgricultureTime.animalsAvailable)return;
-  updateLivestockNeeds();
-  updateCowBreeding();
-  if(!livestockAlive) return;
-
-  // Production pauses if either food or water is empty.
-  if(storageCount(12,"animal_feed")<=0 || storageCount(13,"water")<=0) return;
-
-  const now=AgricultureTime.now();
-  if(now-lastEggProduction>=LIVESTOCK_EGG_MS){
-    const ticks=Math.floor((now-lastEggProduction)/LIVESTOCK_EGG_MS);
-    addToSlots(storageChests[10].items,"eggs",ticks*2,60);
-    lastEggProduction+=ticks*LIVESTOCK_EGG_MS;
-  }
-  if(now-lastMilkProduction>=LIVESTOCK_MILK_MS){
-    const ticks=Math.floor((now-lastMilkProduction)/LIVESTOCK_MILK_MS);
-    addToSlots(storageChests[11].items,"milk",ticks,60);
-    lastMilkProduction+=ticks*LIVESTOCK_MILK_MS;
-  }
-}
-
-// Slow autonomous animal movement inside their own pens.
-const livestockAnimals=[
-  {kind:"cow",icon:"🐄",x:-82,y:-810,vx:.10,vy:.06,size:31},
-  {kind:"cow",icon:"🐄",x:-8,y:-755,vx:-.07,vy:.08,size:31},
-  {kind:"cow",icon:"🐄",x:-70,y:-690,vx:.08,vy:-.06,size:31},
-  {kind:"chicken",icon:"🐔",x:-92,y:-520,vx:.08,vy:.05,size:24},
-  {kind:"chicken",icon:"🐔",x:-28,y:-490,vx:-.07,vy:.06,size:24},
-  {kind:"chicken",icon:"🐔",x:34,y:-525,vx:.06,vy:-.05,size:24},
-  {kind:"chicken",icon:"🐔",x:-58,y:-450,vx:-.05,vy:-.07,size:24},
-  {kind:"chicken",icon:"🐔",x:20,y:-425,vx:.06,vy:.04,size:24},
-  {kind:"chicken",icon:"🐔",x:-95,y:-390,vx:.05,vy:-.05,size:24},
-  {kind:"chicken",icon:"🐔",x:-32,y:-365,vx:-.06,vy:.05,size:24},
-  {kind:"chicken",icon:"🐔",x:32,y:-385,vx:.05,vy:.06,size:24},
-  {kind:"chicken",icon:"🐔",x:-72,y:-330,vx:.06,vy:-.04,size:24},
-  {kind:"chicken",icon:"🐔",x:8,y:-315,vx:-.05,vy:-.04,size:24}
-];
-
-const COW_BREED_MS=600000; // test: herd can grow by one cow every 10 minutes
-const COW_MAX=GameplayBalance.animals.cowMax;
-// Existing livestock owns six persistent stalls and a legacy-only reserve.
-const GameLivestock={nextCow:1,reserve:[],
-  slot(){const used=new Set(livestockAnimals.filter(a=>a.kind==='cow').map(a=>a.stallId));return Array.from({length:COW_MAX},(_,i)=>'cow_slot_'+(i+1)).find(id=>!used.has(id));},
-  assign(a){a.instanceId='cow:'+this.nextCow++;a.typeId='cow';a.stallId=this.slot();return a;},
-  migrate(d){const l=d.livestock;if(!l||!Array.isArray(l.animals))return;
-    const cows=l.animals.filter(a=>a?.kind==='cow');if(cows.length>21)throw Error('Invalid legacy herd');
-    if(l.schema===undefined){l.schema=2;l.nextCow=1;l.reserve=[];cows.forEach((a,i)=>{a.instanceId='cow:'+l.nextCow++;a.typeId='cow';a.stallId=i<COW_MAX?'cow_slot_'+(i+1):null;});l.reserve=cows.slice(COW_MAX);l.animals=l.animals.filter(a=>a.kind!=='cow'||!l.reserve.includes(a));}
-  },
-  validate(l){const cows=l.animals.filter(a=>a.kind==='cow'),all=[...cows,...(l.reserve||[])];
-    if(l.schema!==2||!Number.isSafeInteger(l.nextCow)||l.nextCow<1||!Array.isArray(l.reserve)||l.reserve.length>15||all.length>21||new Set(all.map(a=>a.instanceId)).size!==all.length||new Set(cows.map(a=>a.stallId)).size!==cows.length||all.some(a=>a.kind!=='cow'||a.typeId!=='cow'||!/^cow:[1-9][0-9]*$/.test(a.instanceId)||Number(a.instanceId.slice(4))>=l.nextCow)||cows.some(a=>!/^cow_slot_[1-9][0-9]*$/.test(a.stallId)||Number(a.stallId.slice(9))>COW_MAX)||l.reserve.some(a=>a.stallId!==null||![a.x,a.y,a.vx,a.vy,a.size].every(Number.isFinite)||Math.abs(a.vx)>1||Math.abs(a.vy)>1||a.size<1||a.size>100))throw Error('Invalid cow stalls');
-  },
-  restoreReserve(){if(!this.reserve.length||cowCount()>=COW_MAX)return false;const a=this.reserve.shift();a.stallId=this.slot();livestockAnimals.push(a);renderCowMenu();queueGameSave();return true;}
-};
-for(const a of livestockAnimals)if(a.kind==='cow'){a.instanceId='cow:'+GameLivestock.nextCow++;a.typeId='cow';a.stallId='cow_slot_'+(Number(a.instanceId.slice(4)));}
-let lastCowBreed=AgricultureTime.now();
-
-function cowCount(){
-  return livestockAnimals.filter(a=>a.kind==="cow").length;
-}
-function addCow(){if(!AgricultureTime.animalsAvailable)return;
-  if(cowCount()>=COW_MAX) return false;
-  const f=bunker.farm;
-  livestockAnimals.push(GameLivestock.assign({
-    kind:"cow",icon:"🐄",
-    x:f.left+55+Math.random()*110,
-    y:f.top+100+Math.random()*170,
-    vx:(Math.random()>.5?.08:-.08),
-    vy:(Math.random()>.5?.06:-.06),
-    size:31
-  }));
-  return true;
-}
-function updateCowBreeding(){
-  if(!AgricultureTime.animalsAvailable)return;
-  if(!livestockAlive || cowCount()<2) return;
-  if(storageCount(12,"animal_feed")<=0 || storageCount(13,"water")<=0) return;
-  const now=AgricultureTime.now();
-  if(now-lastCowBreed>=COW_BREED_MS){
-    if(addCow()) message("🐄 В стаде появилась новая корова.");
-    lastCowBreed=now;
-  }
-}
-
-function renderCowMenu(){
-  const n=cowCount();
-  const chickens=livestockAnimals.filter(a=>a.kind==="chicken").length;
-  const milk=storageCount(11,"milk");
-  const eggs=storageCount(10,"eggs");
-  I18n.assign(el("cowStatus"),"innerHTML",`<b>🐄 Коровы: ${n} / ${COW_MAX}</b><br>`+
-    `🐔 Куры: ${chickens}<br>`+
-    `🥛 Накоплено молока: ${milk}<br>`+
-    `🥚 Накоплено яиц: ${eggs}<br>`+
-    `🌾 Корм: ${storageCount(12,"animal_feed")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("animal_feed")})</span><br>`+
-    `💧 Вода: ${storageCount(13,"water")} / 100 <span style="opacity:.65">(рюкзак: ${bagCount("water")})</span>`);
-  el("cowSlaughterBtn").disabled=n<=GameplayBalance.animals.cowMin;
-  el("cowSlaughterBtn").style.opacity=n<=GameplayBalance.animals.cowMin?".45":"1";
-  let reserve=el('cowReserve028');if(!reserve){reserve=v09Button('',()=>GameLivestock.restoreReserve());reserve.id='cowReserve028';el('cowSlaughterBtn').after(reserve);}
-  reserve.hidden=!GameLivestock.reserve.length;reserve.disabled=n>=COW_MAX;I18n.assign(reserve,'textContent',I18n.message('animals.reserve',{count:GameLivestock.reserve.length}));
-}
-
-function openCowMenu(){if(!AgricultureTime.animalsAvailable)return;
-  renderCowMenu();
-  openOverlay(el("cowOverlay"));
-}
-
-function updateLivestockAnimals(){
-  if(!AgricultureTime.animalsAvailable)return;
-  if(!livestockAlive || scene!=="bunker") return;
-  const f=bunker.farm;
-  const left=f.left+38, right=(f.cropLeft??90)-32;
-  const top=f.top+68, bottom=f.bottom-68;
-  const mid=(top+bottom)/2;
-
-  for(const a of livestockAnimals){
-    const minY=a.kind==="cow"?top:mid+40;
-    const maxY=a.kind==="cow"?mid-40:bottom;
-    a.x+=a.vx; a.y+=a.vy;
-    if(a.x<left){a.x=left;a.vx=Math.abs(a.vx)}
-    if(a.x>right){a.x=right;a.vx=-Math.abs(a.vx)}
-    if(a.y<minY){a.y=minY;a.vy=Math.abs(a.vy)}
-    if(a.y>maxY){a.y=maxY;a.vy=-Math.abs(a.vy)}
-    if(Math.random()<0.002){
-      a.vx+=(Math.random()-.5)*.05;
-      a.vy+=(Math.random()-.5)*.05;
-      const sp=Math.hypot(a.vx,a.vy)||1;
-      const max=.12;
-      if(sp>max){a.vx=a.vx/sp*max;a.vy=a.vy/sp*max}
-    }
-  }
 }
 
 function feedCraftStationPos(){
@@ -503,7 +296,7 @@ function nearestStorageChest(){
   let best=null, bestD=Infinity;
 
   for(let i=0;i<ps.length;i++){
-    if(i===10 || i===11) continue; // eggs/milk are now collected only from unified control
+    if(i===13) continue; // 0.43 Pass B: #13 is retired
     const p=ps[i];
     if(
       player.x >= p.x-halfW-margin &&
