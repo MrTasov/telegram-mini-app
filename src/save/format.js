@@ -11,11 +11,19 @@ const SaveFormat=(()=>{
     let version=Object.hasOwn(data,'saveVersion')?data.saveVersion:0;
     if(!Number.isInteger(version)||version<0||version>VERSION)throw Error('Unsupported save format version');
     if(context)context.sourceVersion=version;
+    const inputVersion=version;
     while(version<VERSION){
       const migration=migrations.find(m=>m.from===version);
       if(!migration)throw Error('Missing save migration');
       data=migration.apply(data);version=migration.to;
     }
+    // 0.43 Phase 0 removed the Pantry<->farm doors. Saves written before still carry their records;
+    // drop them here, before the power, construction and base-control owners check exact door sets.
+    const removedDoors=['v09door_pantry_chicken','v09door_pantry_cow'];
+    if(Array.isArray(data.v09?.power?.doors))data.v09.power.doors=data.v09.power.doors.filter(d=>!removedDoors.includes(d?.id));
+    if(Array.isArray(data.building018?.doors))data.building018.doors=data.building018.doors.filter(d=>!removedDoors.includes(d?.id));
+    if(data.control0353?.autoOpen&&typeof data.control0353.autoOpen==='object')for(const id of removedDoors)delete data.control0353.autoOpen[id];
+    if(inputVersion===VERSION)window.BunkerPassA?.phase0Layout?.(data);
     // Pin was UI-only metadata. Ignore it in any imported version and container.
     function unpin(value){if(!value||typeof value!=='object')return;if(typeof value.type==='string')delete value.locked;for(const v of Object.values(value))if(v&&typeof v==='object')unpin(v);}
     unpin(data);return JSON.stringify(data);

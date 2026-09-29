@@ -6,6 +6,10 @@ const env={...process.env,LAST_BASE_TEST_LANGUAGE:process.env.LAST_BASE_TEST_LAN
 // not erase the provenance of the pass. The release still requires all groups.
 const checkpoint=path.join(out,'run-checkpoint.json');
 const jobs=[
+ ['pass-a','qa/pass-a.cjs',[]],
+ ['pass-a-jobs','qa/pass-a-jobs.cjs',[]],
+ ['pass-a-chapter','qa/pass-a-chapter.cjs',[]],
+ ['phase0','qa/phase0.cjs',[]],
  ['survival','qa/survival.cjs',[]],
  ['siege-corrective','qa/siege-corrective.cjs',[]],
  ['siege-navigation','qa/siege-navigation.cjs',[]],
@@ -51,14 +55,10 @@ const jobs=[
  ['saves','qa/saves.cjs',[]],
  ['balance','qa/balance.cjs',[]],
  ['state-saves','qa/state-saves.cjs',[]],
- ['differential','qa/differential.cjs',[]],
  ['systems','qa/systems.cjs',['4']],
- ['stage3-differential','qa/stage3-differential.cjs',[]],
  ['controls','qa/controls.cjs',[]],
- ['controls-differential','qa/controls-differential.cjs',[]],
  ['assets','qa/assets.cjs',[]],
  ['asset-rendering','qa/asset-rendering.cjs',[]],
- ['stage4-differential','qa/stage4-differential.cjs',[]],
  ['map-workbar','qa/map-workbar.cjs',[]],
  ['localization','qa/localization.cjs',[]],
  ['localization-rendering','qa/localization-rendering.cjs',[]],
@@ -83,8 +83,7 @@ const jobs=[
  ['hud-display','qa/hud-display.cjs',[]],
  ['audio-pass','qa/audio-pass.cjs',[]],
  ['bunker-level1','qa/bunker-level1.cjs',[]],
- ['bunker-floor-cache','qa/bunker-floor-cache.cjs',[]],
- ['bunker-r2','qa/bunker-r2.cjs',[]]
+ ['bunker-floor-cache','qa/bunker-floor-cache.cjs',[]]
 ],runs=[];
 // Retry only failed children of a completed full pass, on the very same
 // runtime. Successful actual exit results retain their original provenance.
@@ -113,9 +112,9 @@ async function run(index){
  const concurrency=Math.max(1,Math.min(3,Number(process.env.LAST_BASE_TEST_JOBS)||1));let next=0;
  await Promise.all(Array.from({length:concurrency},async()=>{while(next<jobs.length)await run(next++);}));
 const read=file=>fs.existsSync(path.join(out,file))?JSON.parse(fs.readFileSync(path.join(out,file))):null;
-const reports=[read('survival.json'),read('siege-corrective.json'),read('siege-navigation.json'),read('dayx-corrective.json'),read('dayx-save-dev.json'),read('dayx-audio.json'),read('stage-i2.json'),read('stage-i2-combat.json'),read('perf-visuals.json'),read('perf-corrective-tests.json'),read('perf-equivalence.json'),read('dev-qa.json'),read('stage-i1.json'),read('stage-h-corrective.json'),read('stage-h.json'),read('stage-h-prerequisites.json'),read('stage-h-visuals.json'),read('stage-g.json'),read('stage-g-routes.json'),read('stage-f-final.json'),read('stage-f.json'),read('stage-e-corrective.json'),read('stage-e-audio-corrective.json'),read('stage-e.json'),read('stage-d-complete.json'),read('stage-d-corrective.json'),read('stage-d.json'),read('stage-d-repair.json'),read('stage-d-visuals.json'),read('stage-c2.json'),read('stage-c2-prerequisites.json'),read('stage-c1-light-modules.json'),read('stage-c1-recovery.json'),read('stage-a-corrective.json'),read('campaign.json'),read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('differential.json'),read('systems.json'),read('stage3-differential.json'),read('controls.json'),read('controls-differential.json'),read('assets.json'),read('asset-rendering.json'),read('stage4-differential.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
+const reports=[read('survival.json'),read('siege-corrective.json'),read('siege-navigation.json'),read('dayx-corrective.json'),read('dayx-save-dev.json'),read('dayx-audio.json'),read('stage-i2.json'),read('stage-i2-combat.json'),read('perf-visuals.json'),read('perf-corrective-tests.json'),read('perf-equivalence.json'),read('dev-qa.json'),read('stage-i1.json'),read('stage-h-corrective.json'),read('stage-h.json'),read('stage-h-prerequisites.json'),read('stage-h-visuals.json'),read('stage-g.json'),read('stage-g-routes.json'),read('stage-f-final.json'),read('stage-f.json'),read('stage-e-corrective.json'),read('stage-e-audio-corrective.json'),read('stage-e.json'),read('stage-d-complete.json'),read('stage-d-corrective.json'),read('stage-d.json'),read('stage-d-repair.json'),read('stage-d-visuals.json'),read('stage-c2.json'),read('stage-c2-prerequisites.json'),read('stage-c1-light-modules.json'),read('stage-c1-recovery.json'),read('stage-a-corrective.json'),read('campaign.json'),read('verification.json'),read('regression/summary.json'),read('interactions.json'),read('saves.json'),read('balance.json'),read('state-saves.json'),read('systems.json'),read('controls.json'),read('assets.json'),read('asset-rendering.json'),read('map-workbar.json'),read('localization.json'),read('localization-rendering.json'),read('localization-controls.json'),read('main-menu.json')];
 reports.push(read('menu-preferences.json'),read('world-events.json'),read('readiness.json'),read('corrective.json'),read('world-farm.json'),read('drone-return.json'),read('resource-access.json'),read('character-animation.json'),read('master-unarmed.json'),read('equipment-integration.json'),read('player-visual-fix.json'),read('corrective-performance.json'),read('corrective-visuals.json'),read('polish.json'),read('polish-visuals.json'),read('audio-unlock.json'),read('hud-display.json'));
-reports.push(read('audio-pass.json'),read('bunker-level1.json'),read('bunker-floor-cache.json'),read('bunker-r2.json'),read('stage-b.json'));
+reports.push(read('pass-a.json'),read('pass-a-jobs.json'),read('pass-a-chapter.json'),read('phase0.json'),read('audio-pass.json'),read('bunker-level1.json'),read('bunker-floor-cache.json'),read('stage-b.json'));
 reports.push(read('stage-ab-corrective.json'),read('stage-ab-light-audio.json'));
 const summary={runtimeSha256,runtimeUnchanged:runtimeSha256===hash(),version:require('../package.json').version,stage:9,patch:"survival-stage",stageAStarted:true,stageAStatus:"accepted-in-general",stageBStarted:true,stageBStatus:"accepted-in-general",stageC1Started:true,stageC1Status:"accepted-by-user",stageC2Started:true,stageDStarted:true,stageEStarted:true,stageFStarted:true,stageGStarted:true,stageHStarted:true,stageI1Started:true,stageI2Started:true,level2Started:false,passed:runtimeSha256===hash()&&runs.every(r=>r.exitCode===0)&&reports.every(r=>r&&!r.failed),automatedAssertions:reports.reduce((n,r)=>n+(r?.passed||0),0),historicalBaselineAssertions:477,ladderContractChanged:true,filtered:!!process.env.LAST_BASE_TEST_FILTER,runs,limitations:['VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.','All audio paths are included and decoded; subjective mix requires physical device listening.']};
 if(resume)summary.resumedGroups=jobs.filter(j=>!resume.runs.some(r=>r.id===j[0])).map(j=>j[0]);

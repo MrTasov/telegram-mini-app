@@ -3,7 +3,7 @@ window.V010Combat=(() => {
   'use strict';
   const emit=(name,data)=>window.V010?.emit?.(name,data);
   const copy=o=>JSON.parse(JSON.stringify(o));
-  const BASE_SPEED={walk:3.15,run:5.25};
+  const BASE_SPEED={walk:4.095,run:6.825};/* 0.43 Phase 0: player base speed x1.30 (was 3.15/5.25); equipment and adrenaline modifiers still apply on top */
   const GUNS=V09Craft.weapons;
   // One rule per existing enhancement family. Definitions may override a rule;
   // all released limits and costs remain the original Level 0..5 values.

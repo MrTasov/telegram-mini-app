@@ -72,6 +72,13 @@ assert.equal(actual.save.schemas.survival042,1);delete actual.save.schemas.survi
 assert.ok(actual.player.hunger>99&&actual.player.hunger<=100);assert.ok(actual.player.thirst>99&&actual.player.thirst<=100);delete actual.player.hunger;delete actual.player.thirst;
 for(const id of Object.keys(E('GameplayBalance.survival.recipes')))delete actual.recipes[id];
 for(const id of Object.keys(E('GameplayBalance.survival.uses'))){if(!expected.items[id])delete actual.items[id];else{delete actual.items[id].category;if(['food','meds'].includes(id))actual.items[id].name=expected.items[id].name;}}
+// 0.43 Bunker L1+L2 Pass A: crop times, L2 beds, L2 power rooms/devices, plant waste and the bunker043 save block are deliberate and tested in qa/pass-a*.cjs.
+for(let i=0;i<actual.farm.length;i++){assert.equal(actual.farm[i].growMs,E(`farmGrowMs(${i})`));actual.farm[i].growMs=expected.farm[i].growMs;}
+assert.equal(actual.farmBeds.length,5);actual.farmBeds=expected.farmBeds;assert.ok(actual.items.plant_waste);delete actual.items.plant_waste;
+actual.power.devices=expected.power.devices;actual.power.rooms=expected.power.rooms;
+assert.equal(actual.save.schemas.bunker043,1);delete actual.save.schemas.bunker043;actual.save.topKeys=actual.save.topKeys.filter(k=>k!=='bunker043');
+// 0.43 Phase 0: player base speed x1.30 is deliberate (qa/phase0.cjs); everything else in player stays compared.
+assert.ok(Math.abs(actual.player.walkSpeed-expected.player.walkSpeed*1.3)<1e-9&&Math.abs(actual.player.runSpeed-expected.player.runSpeed*1.3)<1e-9);actual.player.walkSpeed=expected.player.walkSpeed;actual.player.runSpeed=expected.player.runSpeed;
 let error=null;try{assert.deepEqual(actual,expected);}catch(e){error=e.message;}
 fs.writeFileSync(path.join(__dirname,'results/configurations.json'),JSON.stringify(configs,null,2)+'\n');
 const report={version,passed:error?0:1,failed:error?1:0,scope:'Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.',addedDefinitionFields:definitionFields,addedEnemyFields:['spawnOrder','behavior','healthColor','leap','blast'],addedAPIs,error,consoleErrors:r.errors};

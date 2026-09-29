@@ -37,7 +37,9 @@ function message(text){
    TRANSITIONS
 ===================================================== */
 
-function transition(title,callback){
+// timing is optional: the surface <-> bunker hatch keeps its 400/260 ms; bunker floors use a
+// shorter 300/200 ms hold, about 0.85 s in total with the 0.35 s CSS fade.
+function transition(title,callback,timing={hold:400,after:260}){
 
   const fade =
     el("fade");
@@ -64,11 +66,11 @@ function transition(title,callback){
           );
 
         },
-        260
+        timing.after
       );
 
     },
-    400
+    timing.hold
   );
 
 }
@@ -137,14 +139,40 @@ actionButton.addEventListener('pointerdown',function(e){
 
 function drawSurface(){window.V015Base?.drawGround();}
 
+// 0.43 Phase 0: simple code-drawn furniture for the L2 kitchen and medical room (visual only; the
+// footprints are the existing layout fixtures, so collision and drawing are the same objects).
+function drawL2Furniture(){
+ const box=(x,y,w,h,fill,stroke,r=4)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke();}};
+ const k=BunkerLayout.fixture('kitchen'),fr=BunkerLayout.fixture('fridge'),d=BunkerLayout.fixture('dining'),m=BunkerLayout.fixture('medical_table');
+ for(const f of [k,fr,d,m])V011Rooms.shadow(f.x,f.y,f.w,f.h,10,f.room);
+ // Kitchen counter: worktop, sink, cutting board and a row of drawer fronts. It stops short of the
+ // ceiling lamp's service point at x 4300, so the lamp stays reachable.
+ box(k.x,k.y,k.w,k.h,'#4f5e59','#7d8f86',5);box(k.x+5,k.y+5,k.w-10,k.h-26,'#a4aea3',null,3);
+ box(k.x+20,k.y+14,70,40,'#6f8a8f','#c9d6d2',6);box(k.x+30,k.y+22,50,24,'#3d5358',null,5);
+ box(k.x+104,k.y+18,60,34,'#8a6a47','#b89569',3);box(k.x+178,k.y+16,58,36,'#c9ccc2','#e4e6dc',3);
+ for(let x=k.x+10;x<k.x+k.w-40;x+=54){box(x,k.y+k.h-18,46,12,'#3e4b47',null,2);box(x+18,k.y+k.h-14,10,3,'#c3b58e',null,1);}
+ // Fridge: two doors and handles.
+ box(fr.x,fr.y,fr.w,fr.h,'#b8c2bd','#e2e8e2',6);ctx.fillStyle='#7b8a85';ctx.fillRect(fr.x+4,fr.y+58,fr.w-8,3);box(fr.x+fr.w-14,fr.y+18,5,30,'#5d6b67',null,2);box(fr.x+fr.w-14,fr.y+72,5,60,'#5d6b67',null,2);
+ // Dining table with four chairs (the chairs sit inside the table's footprint).
+ for(const [cx,cy] of [[d.x+38,d.y],[d.x+d.w-80,d.y],[d.x+38,d.y+d.h-22],[d.x+d.w-80,d.y+d.h-22]])box(cx,cy,42,22,'#5b4a3a','#8a7156',4);
+ box(d.x,d.y+24,d.w,d.h-48,'#7a5e43','#a8845d',6);for(const [px,py] of [[d.x+58,d.y+44],[d.x+d.w-58,d.y+44],[d.x+58,d.y+d.h-44],[d.x+d.w-58,d.y+d.h-44]]){ctx.fillStyle='#d9ddd3';ctx.beginPath();ctx.arc(px,py,9,0,Math.PI*2);ctx.fill();}
+ // Medical work surface: steel top, first-aid box, instrument tray and bottles.
+ box(m.x,m.y,m.w,m.h,'#6d7b7a','#a9b8b6',5);box(m.x+5,m.y+5,m.w-10,m.h-10,'#b7c3c1',null,3);
+ box(m.x+18,m.y+14,54,42,'#e8ece6','#b44a42',4);ctx.fillStyle='#c0433b';ctx.fillRect(m.x+40,m.y+22,10,26);ctx.fillRect(m.x+32,m.y+30,26,10);
+ box(m.x+92,m.y+20,72,30,'#8d9c9b','#d2dbd8',3);for(let i=0;i<4;i++){ctx.fillStyle='#eef2ee';ctx.fillRect(m.x+100+i*16,m.y+26,3,18);}
+ for(let i=0;i<3;i++){ctx.fillStyle=['#6b9fb0','#c9a04a','#8fb58a'][i];ctx.beginPath();ctx.arc(m.x+190+i*16,m.y+m.h/2,6,0,Math.PI*2);ctx.fill();}
+}
 function drawBunker(){
  const floor=BunkerLayout.floorAt(player.x,player.y),bounds=BunkerLayout.floorBounds[floor];ctx.fillStyle='#101417';ctx.fillRect(bounds.x-150,bounds.y-150,bounds.w+300,bounds.h+300);
- for(const r of BunkerLayout.roomData)if(r.floor===floor){V011Rooms.floor(r.id,bunker[r.id]);ctx.fillStyle='#bdccc7';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(GamePlacement.roomName(r.id),r.x+r.w/2,r.y+(r.id==='corridor'?150:r.id==='storage'?150:48));}
+ for(const r of BunkerLayout.roomData)if(r.floor===floor){V011Rooms.floor(r.id,bunker[r.id]);ctx.fillStyle='#bdccc7';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(GamePlacement.roomName(r.id),r.x+r.w/2,r.y+(r.id==='corridor'?150:r.id==='storage'?150:r.id==='pantry'?150:r.id==='water_room'?200:48));}/* 0.43 Phase 0: Pantry and Water Room names sit below their top-wall furniture */
  V09Craft.drawWorkshop();window.GameMovable?.draw();
- const props=floor===1?[['cabinet','cabinet']]:[['medical_bed','bed'],['bed','bed'],['shower','shower'],['toilet','toilet'],['living_sink','sink']];
- for(const [id,art]of props){const f=BunkerLayout.fixture(id);V011Rooms.shadow(f.x,f.y,f.w,f.h,12,f.room);ctx.save();if(id==='medical_bed'){ctx.translate(f.x,f.y+f.h);ctx.rotate(-Math.PI/2);V011Art.draw(art,0,0,f.h,f.w);}else if(!V011Art.draw(art,f.x,f.y,f.w,f.h)){ctx.fillStyle='#718780';ctx.fillRect(f.x,f.y,f.w,f.h);}ctx.restore();}
+ // 0.43 Phase 0: the L1 hall keeps no props (its cabinet is now the Medical room's medicine cabinet).
+ // The bed lies along the bedroom's bottom wall, pillow toward the bath; kitchen/medical furniture below.
+ const props=floor===1?[]:[['bed','bed'],['shower','shower'],['toilet','toilet'],['living_sink','sink'],['cabinet','wardrobe']];
+ for(const [id,art]of props){const f=BunkerLayout.fixture(id);V011Rooms.shadow(f.x,f.y,f.w,f.h,12,f.room);ctx.save();if(id==='bed'&&f.w>f.h){ctx.translate(f.x,f.y+f.h);ctx.rotate(-Math.PI/2);V011Art.draw(art,0,0,f.h,f.w);}else if(!V011Art.draw(art,f.x,f.y,f.w,f.h)){ctx.fillStyle='#718780';ctx.fillRect(f.x,f.y,f.w,f.h);}ctx.restore();}
+ if(floor===2)drawL2Furniture();
  if(floor===2){V011Farm.drawBeds();const f=GameEquipment.fixture('feed_craft');if(GameEquipment.present('feed_craft')){ctx.fillStyle='#58736a';ctx.fillRect(f.x,f.y,f.w,f.h);ctx.fillStyle='#bbc7af';ctx.beginPath();ctx.arc(f.x+22,f.y+22,16,0,Math.PI*2);ctx.fill();ctx.font='10px Arial';ctx.fillText(I18n.text('Кормодробилка'),f.x+28,f.y+65);}
-  for(const [i,o]of BunkerPassA.fixtures.entries()){ctx.fillStyle='#516863';ctx.fillRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#a0b4a5';ctx.lineWidth=3;ctx.strokeRect(o.x+4,o.y+4,o.w-8,o.h-8);if(!i){V011Art.draw('tank',o.x,o.y,o.w,o.h);ctx.fillStyle='#69bdc0';ctx.fillRect(o.x+o.w-12,o.y+12,5,(o.h-24)*BunkerPassA.water.clean/100);}else{ctx.fillStyle='#25464a';ctx.fillRect(o.x+10,o.y+10,o.w-20,18);}ctx.fillStyle='#d5e0d0';ctx.font='10px Arial';ctx.fillText(I18n.t(['farm.cleanTank','farm.pump','farm.purifier'][i]),o.x+o.w/2,o.y+o.h+15);}
+  for(const [i,o]of BunkerPassA.fixtures.entries()){ctx.fillStyle='#516863';ctx.fillRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#a0b4a5';ctx.lineWidth=3;ctx.strokeRect(o.x+4,o.y+4,o.w-8,o.h-8);if(!i){V011Art.draw('tank',o.x,o.y,o.w,o.h);ctx.fillStyle='#69bdc0';ctx.fillRect(o.x+o.w-12,o.y+12,5,(o.h-24)*BunkerPassA.water.clean/100);}else{ctx.fillStyle='#25464a';ctx.fillRect(o.x+10,o.y+10,o.w-20,18);}ctx.fillStyle='#d5e0d0';ctx.font='10px Arial';{const text=I18n.t(['farm.cleanTank','farm.pump','farm.purifier'][i]),q=BunkerLayout.rooms.water_room,half=ctx.measureText(text).width/2+30;/* 0.43 Phase 0: keep the caption inside the narrow Water Room */ctx.fillText(text,Math.max(q.left+half,Math.min(q.right-half,o.x+o.w/2)),i?o.y-7:o.y+o.h+15);}}
   const bd=V011Living.bathDoor;ctx.fillStyle='#667b78';ctx.fillRect(bd.x,bd.y,bd.w,bd.h*(1-V011Living.state().doorProgress));
   const c=bunker.cow_farm;ctx.strokeStyle='#8d9b83';ctx.lineWidth=3;for(let i=0;i<6;i++)ctx.strokeRect(c.left+24+i%3*136,c.top+95+Math.floor(i/3)*148,116,124);
   const up=BunkerPassA.up;ctx.fillStyle='#263a3e';ctx.fillRect(up.x,up.y,up.w,up.h);for(let i=0;i<9;i++){ctx.fillStyle=i%2?'#6f837c':'#53665f';ctx.fillRect(up.x+12,up.y+12+i*17,106,12);}ctx.fillStyle='#d8e6d9';ctx.fillText(I18n.t('bunker.l2.up'),4700,-185);

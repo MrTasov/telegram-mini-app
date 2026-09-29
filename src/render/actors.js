@@ -265,7 +265,10 @@ window.ActorVisuals=(()=>{
     stance=null;
     const id=cfg.body.sleep;if(!GameAssets.ready(id))return false;
     const anim=cfg.sleep,t=(ms%anim.cycleMs)/anim.cycleMs*anim.count,index=loop(t,anim.count),fraction=t-Math.floor(t),im=GameAssets.image(id);
-    const b=GameAssets.frame(id,index),height=anim.worldHeight*visualScale,s=height/b.h,x=bed.x+(bed.w-b.w*s)/2+(anim.xOffset||0),y=bed.y+(bed.h-height)/2+(anim.yOffset||0);
+    // 0.43 Phase 0: a bed lying along a wall (w>h) is drawn as a vertical bed turned -90 degrees,
+    // the same transform as its art, so the head stays on the pillow end. Visual only.
+    const turned=bed.w>bed.h,frame=turned?{x:0,y:0,w:bed.h,h:bed.w}:bed;
+    const b=GameAssets.frame(id,index),height=anim.worldHeight*visualScale,s=height/b.h,x=frame.x+(frame.w-b.w*s)/2+(anim.xOffset||0),y=frame.y+(frame.h-height)/2+(anim.yOffset||0)+(turned?14:0);/* 0.43 Phase 0: +14 world px toward the feet puts the head on the pillow, not the headboard */
     // Blend premultiplied pixels offscreen so breathing never makes the body
     // translucent against the mattress. One reusable 192x288 canvas, allocated
     // only on the first sleep draw; no Image or canvas allocation per frame.
@@ -274,7 +277,7 @@ window.ActorVisuals=(()=>{
     c.globalCompositeOperation='copy';c.globalAlpha=1-fraction;c.drawImage(im,b.x,b.y,b.w,b.h,0,0,b.w,b.h);
     c.globalCompositeOperation='lighter';c.globalAlpha=fraction;c.drawImage(im,next.x,next.y,next.w,next.h,0,0,next.w,next.h);
     c.globalAlpha=1;c.globalCompositeOperation='source-over';
-    ctx.save();ctx.beginPath();ctx.rect(bed.x,bed.y,bed.w,bed.h);ctx.clip();ctx.drawImage(sleepCanvas,x,y,b.w*s,b.h*s);ctx.restore();return true;
+    ctx.save();if(turned){ctx.translate(bed.x,bed.y+bed.h);ctx.rotate(-Math.PI/2);}ctx.beginPath();ctx.rect(frame.x,frame.y,frame.w,frame.h);ctx.clip();ctx.drawImage(sleepCanvas,x,y,b.w*s,b.h*s);ctx.restore();return true;
   }
   // Initial warmup is small; selecting an item warms only its shared carry/work
   // atlases. GameAssets owns every Image and settled promise, including errors.

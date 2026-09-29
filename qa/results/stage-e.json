@@ -1,11 +1,34 @@
 {
   "version": "0.43.0",
-  "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-  "passed": 13,
-  "failed": 27,
+  "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+  "passed": 38,
+  "failed": 0,
   "boundaries": [
     "fresh",
-    "legacy-tech-rights"
+    "held-packet",
+    "submitted-packet",
+    "full-bag-unlock",
+    "unlock-receipt",
+    "researched-buildable-carried",
+    "researched-buildable-used",
+    "researched-buildable-picked-up",
+    "researched-buildable-replaced",
+    "paid-drone-upgrade",
+    "legacy-tech-rights",
+    "UI-PC-ru",
+    "UI-PC-en",
+    "UI-MOBILE-ru",
+    "UI-MOBILE-en",
+    "UI-route-transient",
+    "chapter-tools-no-research",
+    "chapter-functional-repairs",
+    "chapter-finished-without-research",
+    "precision-blueprint-discovered",
+    "precision-unlocked",
+    "M4-paid-job",
+    "M4-equipped",
+    "source-station-carried",
+    "source-station-reinstalled"
   ],
   "checks": [
     {
@@ -18,38 +41,31 @@
     },
     {
       "id": "sources.held_actor_packet_then_submission_blueprint_once",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:23:85\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:23:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "sources.full_bag_never_loses_or_duplicates_progression",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:24:163\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:24:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "availability.data_blueprint_prerequisite_rejected_without_debit",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'campaign.reason.distance'\n- 'research.error.data'\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:25:133\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:25:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "unlock.not_free_item_and_duplicate_after_load",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:26:67\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:26:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "availability.locked_buildable_direct_command_and_recipe",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'out_of_reach'\n- 'researchLocked'\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:27:170\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:27:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "research_full_building_cycle_no_new_craft_route",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:28:73\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:28:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "drone_existing_effects_gated_then_paid_upgrade_only",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:29:266\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:29:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "basic_chapter1_recipes_never_research_gated",
@@ -57,43 +73,35 @@
     },
     {
       "id": "authority.reject_distance",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:97)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "authority.reject_power",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:97)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "authority.reject_dead",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:97)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "authority.reject_paused",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:97)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "authority.reject_foreign",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:97)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "authority.reject_target",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:97)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "authority.reject_unknown",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:97)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "authority.reject_payload",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:31:97)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "authority.pure_two_actors_shared_progress_personal_packet",
@@ -113,23 +121,11 @@
     },
     {
       "id": "save.validation_conservation_and_receipts_atomic",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:36:70\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:36:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "save.capture_is_pure_and_new_game_resets_only_research",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:37:76\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:37:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
-    },
-    {
-      "id": "migration.0353_preserves_every_existing_owner_and_paid_jobs",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: v09\n+ actual - expected\n... Skipped lines\n\n  {\n    chickenBreedMs: 0,\n    crafting: {\n      feed: null,\n      jobs: {\n...\n        'build:utility_workbench:1': true,\n+       animal_system: true,\n        command_core_l1: true,\n        craft_bench: true,\n+       door_chicken_farm: true,\n+       door_cow_farm: true,\n+       door_empty_l1: true,\n        door_farm: false,\n+       door_pantry: true,\n        door_reserve_l1: false,\n        door_room4: false,\n        door_room5: true,\n        door_room6: false,\n        door_room7: false,\n+       door_side_corridor: true,\n        door_storage: true,\n+       door_water_room: true,\n        door_workshop: true,\n        feed_craft: false,\n        furnace: true,\n        irrigation014: false,\n+       light_bathroom: true,\n+       light_chicken_farm: true,\n        light_corridor: true,\n+       light_cow_farm: true,\n+       light_empty_l1: true,\n        light_farm: false,\n+       light_l2_corridor: true,\n+       light_pantry: true,\n        light_reserve_l1: false,\n        light_room4: false,\n        light_room5: true,\n        light_room6: false,\n        light_room7: false,\n+       light_side_corridor: true,\n        light_storage: true,\n+       light_water_room: true,\n        light_workshop: false,\n        robot_drone_charge: false,\n        spot_left: false,\n        spot_right: false,\n        upgrade0161: false,\n+       water_system: true\n      },\n      doors: [\n        {\n          away: 0,\n          id: 'v09door_room6',\n...\n        },\n+       {\n+         away: 0,\n+         id: 'v09door_empty_l1',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_water_room',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_side_corridor',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_chicken_farm',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_cow_farm',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry_chicken',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry_cow',\n+         manual: false,\n+         open: 0\n+       }\n      ],\n      fuel: 100,\n      roomEnabled: {\n+       bathroom: true,\n+       chicken_farm: true,\n        corridor: true,\n+       cow_farm: true,\n+       empty_l1: true,\n        farm: true,\n+       l2_corridor: true,\n+       pantry: true,\n        reserve_l1: true,\n        room4: true,\n        room5: true,\n        room6: true,\n        room7: true,\n+       side_corridor: true,\n        storage: true,\n+       water_room: true,\n        workshop: true,\n        yard: true\n      },\n      running: true\n    },\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:40:1337\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:40:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
-    },
-    {
-      "id": "migration.entitlement_prerequisites_do_not_softlock_research",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:41:186\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:41:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "legacy_four_TECH_preserved_and_single_availability_policy",
@@ -137,28 +133,23 @@
     },
     {
       "id": "UI.physical_core_localized_and_fixed_shell_PC_ru",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:44:465\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:44:65)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "UI.physical_core_localized_and_fixed_shell_PC_en",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:44:465\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:44:65)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "UI.physical_core_localized_and_fixed_shell_MOBILE_ru",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:44:465\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:44:65)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "UI.physical_core_localized_and_fixed_shell_MOBILE_en",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:44:465\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:44:65)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "UI.route_detail_restores_and_resets_on_departure_load",
-      "status": "FAIL",
-      "error": "TypeError: Cannot read properties of null (reading 'querySelector')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:45:236\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:45:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "UI.remote_and_tracker_never_expose_research_commands",
@@ -170,13 +161,11 @@
     },
     {
       "id": "chapter1_real_new_game_then_blueprint_research_M4_craft_load",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:14:110)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:50:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:49:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "source.held_packet_survives_station_pack_and_resume",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:59:80\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:59:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "authority.malformed_and_cyclic_payload_rejected_atomically",
@@ -188,8 +177,7 @@
     },
     {
       "id": "save.corrupt_receipt_payload_result_and_revision_rejected",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"campaign.reason.distance\",\"revision\":0}\n\nfalse !== true\n\n    at accept (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:10:68)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:62:79\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:4:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs:62:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "runtime.no_console_errors",

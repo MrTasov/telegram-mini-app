@@ -2,6 +2,8 @@
 // Historical source fixtures and their hashes remain unchanged.
 const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 exports.assertSource=(file,expected)=>{
+ const phase043=require('./phase0-043-source-reference.json');if(phase043.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),phase043.files[file].after,file+' declared 0.43 Phase 0');return;}
+ const corr043=require('./corrective-043-source-reference.json');if(corr043.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),corr043.files[file].after,file+' declared 0.43 Pass A corrective');return;}
  const passA=require('./pass-a-source-reference.json');if(passA.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),passA.files[file].after,file+' attached Claude baseline / declared Pass A output');return;}
  const visual=require('./visual-source-reference.json');if(visual.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),visual.files[file].after,file+' declared Visual pass');return;}
  const survival=require('./survival-source-reference.json');if(survival.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),survival.files[file].after,file+' declared Survival change');return;}

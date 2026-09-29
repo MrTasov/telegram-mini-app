@@ -21,8 +21,8 @@ const player = {
   health:100,
   maxHealth:100,
 
-  walkSpeed:3.15,
-  runSpeed:5.25,
+  walkSpeed:4.095,/* 0.43 Phase 0: same as V010Combat BASE_SPEED */
+  runSpeed:6.825,
 
   aimX:0,
   aimY:-1,

@@ -16,7 +16,7 @@ window.BunkerState=(()=>{
   executeInteraction=function(target){
     if(target&&layout.removed(target.id)&&scene==='bunker')return;
     if(target?.id===layout.core.id||target?.id===layout.down.id){
-      if(!menuOpen&&!playerDead&&scene==='bunker'&&canInteract(target,player.x,player.y)){if(target.id===layout.core.id)window.CommandCoreUI?.show();else window.BunkerPassA?.go(2);}
+      if(!menuOpen&&!playerDead&&scene==='bunker'&&canInteract(target,player.x,player.y)){if(target.id===layout.core.id)window.CommandCoreUI?.show();else window.BunkerPassA?.travel(2);}
       return;
     }
     return oldExecute(target);

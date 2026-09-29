@@ -1,16 +1,31 @@
 {
   "version": "0.43.0",
-  "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-  "passed": 18,
-  "failed": 33,
+  "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+  "passed": 51,
+  "failed": 0,
   "boundaries": [
     "new-game",
+    "carried",
+    "installed",
+    "pickup",
+    "replaced",
+    "hold-cancelled-load",
+    "pickup-receipt",
+    "ui-pickup",
     "independent-switches",
+    "battery-new-zone",
+    "independent-consumers",
+    "room-name",
     "control-receipt",
     "door-auto-off",
     "yard-controls",
+    "corridor-storage",
+    "legacy-overflow",
     "legacy-content5",
-    "long-control-receipt"
+    "long-control-receipt",
+    "coalesced-preview-place",
+    "partial-lamp-claim",
+    "all-lamps-claimed"
   ],
   "checks": [
     {
@@ -23,93 +38,75 @@
     },
     {
       "id": "inventory.real_slot_reference_no_duplicate_state",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:17:96\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:17:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "inventory.full_craft_atomic",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'out_of_reach'\n- 'inventoryFull'\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:18:253\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:18:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "inventory.no_transfer_destroy_or_quickslots_for_buildables",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:19:89\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:19:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "inventory.tokens_corrupt_duplicate_missing_reject_pure",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:20:76\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:20:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.hold_required_physical_distance",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:21:69\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:21:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.three_seconds_authority_and_same_state",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:22:76\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:22:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.full_inventory_keeps_world_intact",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:23:71\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:23:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.cancel_move",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:24:111\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:24:58)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.cancel_state",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:24:111\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:24:58)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.cancel_job",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:24:111\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:24:58)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.cancel_save-load",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:24:111\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:24:58)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.capacity_rechecked_after_hold",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:25:67\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:25:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.receipt_replay_survives_load",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:26:66\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:26:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.actor_validation",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:27:54\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:27:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.ui_short_tap_regular_action",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:28:65\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:28:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.ui_early_release_cancels",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:29:62\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:29:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.ui_confirmation_cancel_and_confirm",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:30:72\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:30:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.mobile_action_press_release_and_hold",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:31:74\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:31:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "UI.tracker_journal_no_core_or_operational_routes",
@@ -137,18 +134,15 @@
     },
     {
       "id": "control.moved_instance_new_room_same_identity",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"bounds\",\"revision\":1}\n\nfalse !== true\n\n    at place (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:8:227)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:38:225\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:38:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "control.multiple_production_instances_independent",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:478)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:39:87\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:39:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "control.rename_does_not_rewire",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:40:105\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:40:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "control.revision_idempotency_and_save",
@@ -164,8 +158,7 @@
     },
     {
       "id": "placement.small_corridor_only_critical_paths_protected",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:44:85\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:44:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "UI.localization_core_remote_journal_ru",
@@ -177,8 +170,7 @@
     },
     {
       "id": "migration.0352.packed_full_bag_escrow_no_losses",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"bounds\",\"revision\":1}\n\nfalse !== true\n\n    at place (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:8:227)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:46:891\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:46:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "migration.0352.chapter5_keeps_route",
@@ -186,38 +178,31 @@
     },
     {
       "id": "pickup.actual_world_pointer_PC",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:49:98\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:49:35)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.actual_world_pointer_MOBILE",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:49:98\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:49:35)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.gesture_cancel_pointercancel",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:50:125\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:50:68)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.gesture_cancel_blur",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:50:125\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:50:68)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.gesture_cancel_joystick",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:50:125\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:50:68)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "pickup.gesture_cancel_multitouch",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:50:125\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:50:68)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "control.UI_buttons_use_authority_and_core_route_memory",
-      "status": "FAIL",
-      "error": "TypeError: Cannot read properties of null (reading 'querySelector')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:51:354\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:51:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "control.long_request_receipt_and_world_state_change",
@@ -225,18 +210,15 @@
     },
     {
       "id": "migration.power_uses_imported_transform_not_live_registry",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:478)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:54:517\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:54:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "placement.pointer_burst_coalesced_authority_rechecks_commit",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:55:90\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:55:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "inventory.lamp_output_partial_capacity_no_duplicate_instances",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: {\"ok\":false,\"reason\":\"out_of_reach\",\"revision\":0}\n\nfalse !== true\n\n    at craft (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:7:931)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:57:92\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs:57:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "control.save_invalid_mode_atomic",

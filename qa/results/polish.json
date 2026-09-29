@@ -1,7 +1,7 @@
 {
   "patch": "visual-audio-polish-1",
-  "passed": 27,
-  "failed": 2,
+  "passed": 26,
+  "failed": 3,
   "audio": {
     "requests": 57,
     "maxActiveSources": 8,
@@ -32,7 +32,7 @@
     {
       "id": "assets.noDuplicateImages",
       "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n196 !== 195\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish.cjs:49:46\n    at check (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish.cjs:6:27)\n    at main (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish.cjs:49:2)"
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n196 !== 195\n\n    at /home/claude/g432/qa/polish.cjs:49:46\n    at check (/home/claude/g432/qa/polish.cjs:6:27)\n    at main (/home/claude/g432/qa/polish.cjs:49:2)"
     },
     {
       "id": "gameplay.definitionsAndMiningOwnersByteIdentical",
@@ -104,7 +104,8 @@
     },
     {
       "id": "weapon.AKSpriteMuzzleAndWorldAnchorMatchAllWalkFrames",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "evalmachine.<anonymous>:1\n({a:muzzleMatrix.a,b:muzzleMatrix.b,c:muzzleMatrix.c,d:muzzleMatrix.d,e:muzzleMatrix.e,f:muzzleMatrix.f})\n                 ^\n\nTypeError: Cannot read properties of null (reading 'a')\n    at evalmachine.<anonymous>:1:18\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at Object.eval (/home/claude/g432/qa/runtime.cjs:105:692)\n    at E (/home/claude/g432/qa/polish.cjs:20:48)\n    at J (/home/claude/g432/qa/polish.cjs:20:67)\n    at /home/claude/g432/qa/polish.cjs:89:99\n    at check (/home/claude/g432/qa/polish.cjs:6:27)\n    at main (/home/claude/g432/qa/polish.cjs:85:2)"
     },
     {
       "id": "scale.idleUnchangedMovementOnlySharedLayerTransform",
@@ -117,7 +118,7 @@
     {
       "id": "corpse.cacheSharedByTypeAndPoseAndReplacedOnZoom",
       "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 15\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish.cjs:97:150\n    at check (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish.cjs:6:27)\n    at main (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish.cjs:95:2)"
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 15\n\n    at /home/claude/g432/qa/polish.cjs:97:150\n    at check (/home/claude/g432/qa/polish.cjs:6:27)\n    at main (/home/claude/g432/qa/polish.cjs:95:2)"
     },
     {
       "id": "console.noErrors",

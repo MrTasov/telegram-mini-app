@@ -1,5 +1,5 @@
 {
-  "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+  "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
   "runtimeUnchanged": true,
   "version": "0.43.0",
   "stage": 9,
@@ -20,535 +20,494 @@
   "stageI2Started": true,
   "level2Started": false,
   "passed": false,
-  "automatedAssertions": 12724,
+  "automatedAssertions": 10619,
   "historicalBaselineAssertions": 477,
   "ladderContractChanged": true,
   "filtered": false,
   "runs": [
     {
-      "id": "survival",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "id": "pass-a",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 19366
+      "elapsedMs": 25436
+    },
+    {
+      "id": "pass-a-jobs",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 2849
+    },
+    {
+      "id": "pass-a-chapter",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 70563
+    },
+    {
+      "id": "phase0",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 79551
+    },
+    {
+      "id": "survival",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 39924
     },
     {
       "id": "siege-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 4094,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/siege-corrective.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 5535
     },
     {
       "id": "siege-navigation",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 1935
+      "elapsedMs": 2310
     },
     {
       "id": "dayx-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 3691,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/dayx-corrective.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 5600
     },
     {
       "id": "dayx-save-dev",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 147264,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/dayx-save-dev.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 189691
     },
     {
       "id": "dayx-audio",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 1573
+      "elapsedMs": 1569
     },
     {
       "id": "stage-i2",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 115440,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-i2.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 140965
     },
     {
       "id": "stage-i2-combat",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 2554
+      "elapsedMs": 2864
     },
     {
       "id": "perf-visuals",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 0,
-      "elapsedMs": 3595
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 1,
+      "elapsedMs": 2654,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/perf-visuals.cjs\nAssertionError [ERR_ASSERTION]: rifle_ak74/idle/0 cropped or alpha changed\n    at /home/claude/g432/qa/perf-visuals.cjs:1:1113 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n"
     },
     {
       "id": "perf-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 10104
+      "elapsedMs": 12017
     },
     {
       "id": "perf-equivalence",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 21804
+      "elapsedMs": 28738
     },
     {
       "id": "dev-qa",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 47350,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/dev-qa.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 61135
     },
     {
       "id": "stage-h-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 5685,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-h-corrective.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 7627
     },
     {
       "id": "stage-i1",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 8561,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-i1.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 19689
     },
     {
       "id": "stage-h",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 8121,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-h.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 19698
     },
     {
       "id": "stage-h-visuals",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 1915,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-h-visuals.cjs\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-h-visuals.cjs:3:451\n"
+      "elapsedMs": 2154,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/stage-h-visuals.cjs\nError: Cannot find module 'undefined/@napi-rs/canvas'\nRequire stack:\n- /home/claude/g432/qa/stage-h-visuals.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)\n    at Function._load (node:internal/modules/cjs/loader:1192:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at /home/claude/g432/qa/stage-h-visuals.cjs:8:95\n"
     },
     {
       "id": "stage-h-prerequisites",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 1959
+      "elapsedMs": 2192
     },
     {
       "id": "stage-g",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 11501,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-g.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 14977
     },
     {
       "id": "stage-g-routes",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 3091
+      "elapsedMs": 3926
     },
     {
       "id": "stage-f",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 15323,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 21223
     },
     {
       "id": "stage-f-final",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 29797,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 43781
     },
     {
       "id": "stage-e-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 7312,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e-corrective.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 10515
     },
     {
       "id": "stage-e-audio-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 14271
+      "elapsedMs": 17371
     },
     {
       "id": "stage-e",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 6793,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 69459
     },
     {
       "id": "stage-d-complete",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 12676,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-complete.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 22556
     },
     {
       "id": "stage-d-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 18629,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-corrective.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 82374
     },
     {
       "id": "stage-d",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 4782,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 2758
     },
     {
       "id": "stage-d-repair",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 5606,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-repair.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 10071
     },
     {
       "id": "stage-d-visuals",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 1765,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-visuals.cjs\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-d-visuals.cjs:5:445 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n"
+      "elapsedMs": 1458,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/stage-d-visuals.cjs\nAssertionError [ERR_ASSERTION]: full scene must render station over reserve floor: 0\n    at /home/claude/g432/qa/stage-d-visuals.cjs:11:9 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n"
     },
     {
       "id": "stage-c2",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 17905,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-c2.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 40892
     },
     {
       "id": "stage-c2-prerequisites",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 8609,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-c2-prerequisites.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 9994
     },
     {
       "id": "stage-c1-light-modules",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 7775,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-c1-light-modules.cjs\n"
+      "elapsedMs": 9685,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/stage-c1-light-modules.cjs\n"
     },
     {
       "id": "stage-c1-recovery",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 11313,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-c1-recovery.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 14823
     },
     {
       "id": "build",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 251
+      "elapsedMs": 444
     },
     {
       "id": "stage-ab-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 6417,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-ab-corrective.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 7452
     },
     {
       "id": "stage-ab-light-audio",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 3663,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-ab-light-audio.cjs\n"
+      "elapsedMs": 3171,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/stage-ab-light-audio.cjs\n"
     },
     {
       "id": "stage-b",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 9251,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-b.cjs\n"
+      "elapsedMs": 11320,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/stage-b.cjs\n"
     },
     {
       "id": "campaign",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 4960,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/campaign.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 5699
     },
     {
       "id": "stage-a-corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 6445,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-a-corrective.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 7323
     },
     {
       "id": "verification",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 350,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/verify.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 458
     },
     {
       "id": "regressions",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 18117,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/run-regressions.cjs /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/index.html /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/results/regression\n"
+      "elapsedMs": 23186,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/run-regressions.cjs /home/claude/g432/index.html /home/claude/g432/qa/results/regression\n"
     },
     {
       "id": "interactions",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 57893
+      "elapsedMs": 71582
     },
     {
       "id": "saves",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 10187,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/saves.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 12042
     },
     {
       "id": "balance",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 1696,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/balance.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 1393
     },
     {
       "id": "state-saves",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 17099,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/state-saves.cjs\n"
-    },
-    {
-      "id": "differential",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 36455,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/differential.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 18710
     },
     {
       "id": "systems",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 2659
-    },
-    {
-      "id": "stage3-differential",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 54095,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage3-differential.cjs\n"
+      "elapsedMs": 3248
     },
     {
       "id": "controls",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 20960
-    },
-    {
-      "id": "controls-differential",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 52895,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/controls-differential.cjs\n"
+      "elapsedMs": 25223
     },
     {
       "id": "assets",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 0,
-      "elapsedMs": 5641
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 1,
+      "elapsedMs": 6162,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/assets.cjs\n"
     },
     {
       "id": "asset-rendering",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 0,
-      "elapsedMs": 2467
-    },
-    {
-      "id": "stage4-differential",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 53328,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage4-differential.cjs\n"
+      "elapsedMs": 2320,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/asset-rendering.cjs\n"
     },
     {
       "id": "map-workbar",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 13173
+      "elapsedMs": 15653
     },
     {
       "id": "localization",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 78743,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/localization.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 54643
     },
     {
       "id": "localization-rendering",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 3726
+      "elapsedMs": 3171
     },
     {
       "id": "localization-controls",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 90765
+      "elapsedMs": 110805
     },
     {
       "id": "main-menu",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 129232
+      "elapsedMs": 157219
     },
     {
       "id": "menu-preferences",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 18082
+      "elapsedMs": 19085
     },
     {
       "id": "world-events",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 21328
+      "elapsedMs": 27025
     },
     {
       "id": "readiness",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 18620
+      "elapsedMs": 25598
     },
     {
       "id": "corrective",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 20089,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/corrective.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 31770
     },
     {
       "id": "world-farm",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 12221,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/world-farm.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 18686
     },
     {
       "id": "drone-return",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 26947,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/drone-return.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 62718
     },
     {
       "id": "resource-access",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 2599
+      "elapsedMs": 2580
     },
     {
       "id": "character-animation",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 4395,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/character-animation.cjs\n"
+      "elapsedMs": 2639,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/character-animation.cjs\n"
     },
     {
       "id": "master-unarmed",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 13622,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/master-unarmed.cjs\n"
+      "elapsedMs": 30907,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/master-unarmed.cjs\n"
     },
     {
       "id": "equipment-integration",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 25019,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/equipment-integration.cjs\n"
+      "elapsedMs": 38706,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/equipment-integration.cjs\n"
     },
     {
       "id": "player-visual-fix",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 1962,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/player-visual-fix.cjs\n"
+      "elapsedMs": 1749,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/player-visual-fix.cjs\n"
     },
     {
       "id": "corrective-performance",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 6083
+      "elapsedMs": 10435
     },
     {
       "id": "corrective-visuals",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 3171,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/corrective-visuals.cjs\n"
+      "elapsedMs": 1243,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/corrective-visuals.cjs\nTypeError: Cannot read properties of undefined (reading '6')\n    at main (/home/claude/g432/qa/corrective-visuals.cjs:14:97)\n"
     },
     {
       "id": "polish",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 8571,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish.cjs\n"
+      "elapsedMs": 12660,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/polish.cjs\n"
     },
     {
       "id": "polish-visuals",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 1,
-      "elapsedMs": 5121,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish-visuals.cjs\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(Math.abs(b.w/a.w-ratio)<1e-9&&Math.abs(b.h/a.h-ratio)<1e-9)\n\n    at main (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/polish-visuals.cjs:38:97) {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n"
+      "elapsedMs": 2951,
+      "error": "Command failed: /opt/node22/bin/node /home/claude/g432/qa/polish-visuals.cjs\nTypeError: loadImage is not a function\n    at capture (/home/claude/g432/qa/polish-visuals.cjs:5:164)\n    at main (/home/claude/g432/qa/polish-visuals.cjs:14:18)\n"
     },
     {
       "id": "audio-unlock",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 9839
+      "elapsedMs": 11236
     },
     {
       "id": "hud-display",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 10900
+      "elapsedMs": 14852
     },
     {
       "id": "audio-pass",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 6969,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/audio-pass.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 8075
     },
     {
       "id": "bunker-level1",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 8538,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/bunker-level1.cjs\n"
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+      "exitCode": 0,
+      "elapsedMs": 12844
     },
     {
       "id": "bunker-floor-cache",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
       "exitCode": 0,
-      "elapsedMs": 2842
-    },
-    {
-      "id": "bunker-r2",
-      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-      "exitCode": 1,
-      "elapsedMs": 3650,
-      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/bunker-r2.cjs\n"
+      "elapsedMs": 3066
     }
   ],
   "limitations": [

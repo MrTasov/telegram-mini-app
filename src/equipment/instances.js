@@ -5,7 +5,7 @@
 const EquipmentInstances=(()=>{
   const copy=x=>JSON.parse(JSON.stringify(x));
   const freeze=x=>{for(const v of Object.values(x))if(v&&typeof v==='object')freeze(v);return Object.freeze(x);};
-  const rooms=BunkerLayout.roomData.filter(r=>!['corridor','l2_corridor','side_corridor','bathroom','farm','pantry','water_room','chicken_farm','cow_farm'].includes(r.id)).map(r=>r.id);
+  const rooms=BunkerLayout.roomData.filter(r=>!['corridor','l2_corridor','side_corridor','bathroom','room7','farm','pantry','water_room','chicken_farm','cow_farm'].includes(r.id)).map(r=>r.id);/* 0.43 Phase 0: bedroom has no free spot */
   const definitions=freeze({
     ...GameplayBalance.survival.stations,
     ...Object.fromEntries(Object.entries(DefenseDefinitions.types).map(([id,d])=>[id,{...d,range:64}])) ,

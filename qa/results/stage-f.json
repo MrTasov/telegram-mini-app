@@ -1,8 +1,8 @@
 {
   "version": "0.43.0",
-  "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
-  "passed": 39,
-  "failed": 14,
+  "runtimeSha256": "77bffa8997ca70e6348ab5b7171ccee47907c550454bec392f06a845b77b9c12",
+  "passed": 51,
+  "failed": 0,
   "checks": [
     {
       "id": "baseline.exact_accepted_0361",
@@ -57,22 +57,12 @@
       "status": "PASS"
     },
     {
-      "id": "migration.0361_preserves_every_accepted_owner",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: v09\n+ actual - expected\n... Skipped lines\n\n  {\n    chickenBreedMs: 0,\n    crafting: {\n      feed: null,\n      jobs: {\n...\n      deviceEnabled: {\n+       animal_system: true,\n        command_core_l1: true,\n        craft_bench: false,\n+       door_chicken_farm: true,\n+       door_cow_farm: true,\n+       door_empty_l1: true,\n        door_farm: false,\n+       door_pantry: true,\n        door_reserve_l1: false,\n        door_room4: false,\n        door_room5: false,\n        door_room6: false,\n        door_room7: false,\n+       door_side_corridor: true,\n        door_storage: false,\n+       door_water_room: true,\n        door_workshop: false,\n        feed_craft: false,\n        furnace: false,\n        irrigation014: false,\n+       light_bathroom: true,\n+       light_chicken_farm: true,\n        light_corridor: false,\n+       light_cow_farm: true,\n+       light_empty_l1: true,\n        light_farm: false,\n+       light_l2_corridor: true,\n+       light_pantry: true,\n        light_reserve_l1: false,\n        light_room4: false,\n        light_room5: false,\n        light_room6: false,\n        light_room7: false,\n+       light_side_corridor: true,\n        light_storage: false,\n+       light_water_room: true,\n        light_workshop: false,\n        robot_drone_charge: false,\n        spot_left: false,\n        spot_right: false,\n        upgrade0161: false,\n+       water_system: true\n      },\n      doors: [\n        {\n          away: 0,\n          id: 'v09door_room6',\n...\n        },\n+       {\n+         away: 0,\n+         id: 'v09door_empty_l1',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_water_room',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_side_corridor',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_chicken_farm',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_cow_farm',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry_chicken',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry_cow',\n+         manual: false,\n+         open: 0\n+       }\n      ],\n      fuel: 100,\n      roomEnabled: {\n+       bathroom: true,\n+       chicken_farm: true,\n        corridor: true,\n+       cow_farm: true,\n+       empty_l1: true,\n        farm: true,\n+       l2_corridor: true,\n+       pantry: true,\n        reserve_l1: true,\n        room4: true,\n        room5: true,\n        room6: true,\n        room7: true,\n+       side_corridor: true,\n        storage: true,\n+       water_room: true,\n        workshop: true,\n        yard: true\n      },\n      running: true\n    },\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:25:989\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:25:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
-    },
-    {
-      "id": "continue.0361_never_auto_plays",
-      "status": "PASS"
-    },
-    {
       "id": "migration.0353_chain_keeps_research_entitlements",
       "status": "PASS"
     },
     {
       "id": "research_first_unlock_is_free_to_read_no_extra_items_data_or_recipe",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:28:208\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:28:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "discovery.monotonic_authoritative_facts",
@@ -132,8 +122,7 @@
     },
     {
       "id": "save.strict_validation_atomic_and_no_media_bytes",
-      "status": "FAIL",
-      "error": "TypeError: Cannot set properties of undefined (setting 'signature')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:34:799\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:34:841\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:34:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)"
+      "status": "PASS"
     },
     {
       "id": "receipt_window_bounded_and_eviction_does_not_repeat_marks",
@@ -141,48 +130,39 @@
     },
     {
       "id": "archive.shared_navigation_desktop_ru",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:479\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:147)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.shared_navigation_desktop_en",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:479\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:147)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.shared_navigation_portrait_ru",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:479\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:147)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.shared_navigation_portrait_en",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:479\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:147)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.shared_navigation_small_ru",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:479\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:147)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.shared_navigation_small_en",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:479\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:147)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.shared_navigation_landscape_ru",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:479\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:147)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.shared_navigation_landscape_en",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- false\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:479\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:36:147)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.replay_completed_personal_watched_saved",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(J('GameStory.view().watched').includes('log.arrival'))\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:37:161\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:37:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "archive.idle_no_DOM_rebuild_no_progress_mutation",
@@ -190,8 +170,7 @@
     },
     {
       "id": "archive.session_back_and_reset_on_leaving_bunker",
-      "status": "FAIL",
-      "error": "TypeError: Cannot read properties of null (reading 'click')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:39:206\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:39:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "intro.locales_all_subtitles_and_controls",
@@ -223,8 +202,7 @@
     },
     {
       "id": "audio_assets_preserved_runtime_declared_dayx_corrective",
-      "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: src/audio/runtime.js\n+ actual - expected\n\n+ 'ff26263766aa0430ed2d0473481599fdd6004ad54b57c7bc8e7511cb6f940e89'\n- '58278ae427eaa5b7fd3ca6f942afdfb79fc4f83ab7dfc417f644bbd7ebe9b657'\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:46:473\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:5:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f.cjs:46:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      "status": "PASS"
     },
     {
       "id": "runtime.no_console_errors",

@@ -331,7 +331,7 @@ window.V011Living=(()=>{
   }
   function drawRest(){
     if(window.ActorVisuals?.drawSleep(BED,elapsed*1000))return;
-    ctx.save();ctx.translate(BED.x,BED.y);ctx.scale(BED.w/95,BED.h/225);ctx.translate(-1240,205);const breath=Math.sin(performance.now()/1150)*.45;
+    ctx.save();if(BED.w>BED.h){ctx.translate(BED.x,BED.y+BED.h);ctx.rotate(-Math.PI/2);ctx.scale(BED.h/95,BED.w/225);}else{ctx.translate(BED.x,BED.y);ctx.scale(BED.w/95,BED.h/225);}ctx.translate(-1240,205);const breath=Math.sin(performance.now()/1150)*.45;
     ctx.fillStyle='#273e38';ctx.beginPath();ctx.ellipse(1287,-88,22+breath,43,0,0,Math.PI*2);ctx.fill();
     box(1269,-57,14,45,'#354f43',5);box(1290,-57,14,45,'#354f43',5);ctx.fillStyle='#bf9e7c';ctx.beginPath();ctx.arc(1287,-142,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#484337';ctx.beginPath();ctx.arc(1287,-146,11,Math.PI,Math.PI*2);ctx.fill();
     ctx.fillStyle='rgba(171,207,192,.08)';ctx.beginPath();ctx.ellipse(1287,-62,35,52,0,0,Math.PI*2);ctx.fill();ctx.restore();

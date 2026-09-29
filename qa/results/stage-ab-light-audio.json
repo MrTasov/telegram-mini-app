@@ -1,7 +1,7 @@
 {
   "version": "0.43.0",
-  "passed": 11,
-  "failed": 1,
+  "passed": 10,
+  "failed": 2,
   "checks": [
     {
       "id": "audio.floor_isolation_blocks_even_zero_distance",
@@ -29,12 +29,13 @@
     },
     {
       "id": "lighting.powered_rooms_are_visibly_brighter",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(off>190)\n\n    at /home/claude/g432/qa/stage-ab-light-audio.cjs:15:547\n    at check (/home/claude/g432/qa/stage-ab-light-audio.cjs:5:27)\n    at /home/claude/g432/qa/stage-ab-light-audio.cjs:15:2"
     },
     {
       "id": "lighting.drone_lights_floor_shadow_but_not_physical_body",
       "status": "FAIL",
-      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(alpha(1210,615)>180)\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-ab-light-audio.cjs:16:584\n    at check (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-ab-light-audio.cjs:5:27)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-ab-light-audio.cjs:16:2"
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(alpha(1210,615)>180)\n\n    at /home/claude/g432/qa/stage-ab-light-audio.cjs:16:584\n    at check (/home/claude/g432/qa/stage-ab-light-audio.cjs:5:27)\n    at /home/claude/g432/qa/stage-ab-light-audio.cjs:16:2"
     },
     {
       "id": "lighting.drone_subpixel_movement_continuous_without_rays",
