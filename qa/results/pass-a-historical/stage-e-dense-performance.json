@@ -1,0 +1,70 @@
+{
+  "version": "0.36.0",
+  "runtimeSha256": "7e147c04ddb67e03a4c62f7de554c1813987101a0ba59937132e2a51312b486a",
+  "baseline": "immutable delivered 0.35.3",
+  "purpose": "Recheck initial sequential dense-case and operational UI variance with warmed AB/BA sampling",
+  "rows": [
+    {
+      "viewport": "390x844",
+      "instances": 42,
+      "lamps": 8,
+      "before": {
+        "samples": 240,
+        "p50Ms": 29.01046199999837,
+        "p95Ms": 50.25788199999806,
+        "meanMs": 32.136431416666895
+      },
+      "after": {
+        "samples": 240,
+        "p50Ms": 28.71689999999944,
+        "p95Ms": 48.48462499999732,
+        "meanMs": 30.69269531250029
+      },
+      "percent": -1.0119177005831426
+    },
+    {
+      "viewport": "1280x800",
+      "instances": 42,
+      "lamps": 8,
+      "before": {
+        "samples": 240,
+        "p50Ms": 37.34737299999688,
+        "p95Ms": 52.734897999995155,
+        "meanMs": 39.187173087500376
+      },
+      "after": {
+        "samples": 240,
+        "p50Ms": 36.45417599999928,
+        "p95Ms": 58.17888999999559,
+        "meanMs": 40.85917283333292
+      },
+      "percent": -2.3915925759963708
+    }
+  ],
+  "closedResearchFactCalls": 0,
+  "control": {
+    "before": {
+      "samples": 400,
+      "p50Ms": 3.7753839999932097,
+      "p95Ms": 7.036722999997437,
+      "meanMs": 4.228974062499947
+    },
+    "after": {
+      "samples": 400,
+      "p50Ms": 3.892292999997153,
+      "p95Ms": 7.39588399999775,
+      "meanMs": 4.358745974999911
+    }
+  },
+  "errors": [],
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "mode": "Modeled DOM/WebAudio, native Canvas2D, DPR1, warmed 8-pass AB/BA"
+  },
+  "limitations": [
+    "Shared-host CPU timing, not phone/browser FPS.",
+    "First full-pass samples remain in their original report; this is a separately reported repeat."
+  ],
+  "passed": true
+}

@@ -691,21 +691,11 @@ window.farmState = window.farmState || Array.from({length:5},()=>({crop:null,pla
 const FARM_GROW_TIME = 15*60000;
 // Game balance, not a universal agricultural calendar; berries use established seedlings.
 const FARM_CROP_MINUTES=[18,13,16,15,19,10,17,12.5,9.5,20];
-function farmGrowMs(crop){return (FARM_CROP_MINUTES[crop]??15)*60000;}
-function farmElapsed(st,d,now){const total=farmGrowMs(st.crop);const elapsed=d.farmClock===1?st.elapsedMs:Math.min(1,st.elapsedMs/45000)*total;return Math.min(total,elapsed+(AgricultureTime.available?Math.max(0,now-d.savedAt):0));}
-function farmTimeLabel(ms){const sec=Math.max(0,Math.ceil(ms/1000));return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
+function farmGrowMs(crop){return GameplayBalance.farm.crops[farmCrops[crop].itemType].days*WorldClock.dayMs;}
+function farmElapsed(st,d,now){const total=farmGrowMs(st.crop);const elapsed=d.farmClock===1?st.elapsedMs:Math.min(1,st.elapsedMs/45000)*total;return Math.min(total,elapsed);}
+function farmTimeLabel(ms){return I18n.t('farm.gameHours',{n:Math.ceil(ms/WorldClock.dayMs*24*10)/10});}
 
-function getFarmBeds(){
-  const f=bunker.farm;
-  const cropLeft=f.cropLeft ?? 90;
-  return [
-    {x:cropLeft+75,  y:f.top+55, w:205, h:535},
-    {x:cropLeft+305, y:f.top+55, w:205, h:535},
-    {x:cropLeft+535, y:f.top+55, w:205, h:535},
-    {x:cropLeft+765, y:f.top+55, w:205, h:535},
-    {x:cropLeft+995, y:f.top+55, w:205, h:535}
-  ];
-}
+function getFarmBeds(){const f=bunker.farm;return Array.from({length:5},(_,i)=>({x:f.left+22+i*174,y:f.top+190,w:138,h:255}));}
 
 function nearestFarmBed(){
   if(scene!=="bunker") return null;
@@ -739,7 +729,7 @@ function useFarmBed(i){
   if(!st) return;
 
   if(st.crop!==null){
-    const elapsed=Date.now()-st.plantedAt;
+    const elapsed=AgricultureTime.now()-st.plantedAt;
     if(elapsed>=farmGrowMs(st.crop)){
       const crop=window.farmCrops[st.crop];
 

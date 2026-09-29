@@ -1,0 +1,107 @@
+{
+  "version": "0.43.0",
+  "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+  "passed": 14,
+  "failed": 8,
+  "checks": [
+    {
+      "id": "official_video_exact_bytes_and_catalog",
+      "status": "PASS"
+    },
+    {
+      "id": "boot_is_lazy_no_video_for_menu_or_continue",
+      "status": "PASS"
+    },
+    {
+      "id": "new_game_plays_official_inline_media_and_freezes_world",
+      "status": "PASS"
+    },
+    {
+      "id": "completion_uses_ended_not_old_18s_timer_or_buffer_wait",
+      "status": "PASS"
+    },
+    {
+      "id": "video_exit_skip_frees_source_once_and_persists",
+      "status": "PASS"
+    },
+    {
+      "id": "video_exit_escape_frees_source_once_and_persists",
+      "status": "PASS"
+    },
+    {
+      "id": "video_exit_close_frees_source_once_and_persists",
+      "status": "PASS"
+    },
+    {
+      "id": "native_play_policy_block_requires_explicit_resume",
+      "status": "PASS"
+    },
+    {
+      "id": "manual_pause_hidden_resume_preserves_pause_and_volume",
+      "status": "PASS"
+    },
+    {
+      "id": "media_error_fallback_and_skip_never_softlock",
+      "status": "PASS"
+    },
+    {
+      "id": "media_pending_fallback_and_skip_never_softlock",
+      "status": "PASS"
+    },
+    {
+      "id": "late_play_promise_after_skip_cannot_restart_or_mutate",
+      "status": "PASS"
+    },
+    {
+      "id": "pending_intro_continue_and_live_load_do_not_replay",
+      "status": "PASS"
+    },
+    {
+      "id": "native_error_after_play_falls_back_and_releases",
+      "status": "PASS"
+    },
+    {
+      "id": "archive_reread_save_load_ru_1280x800",
+      "status": "FAIL",
+      "error": "TypeError: Cannot read properties of null (reading 'textContent')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:24:19\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:5:37)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:22:92"
+    },
+    {
+      "id": "archive_reread_save_load_ru_390x844",
+      "status": "FAIL",
+      "error": "TypeError: Cannot read properties of null (reading 'textContent')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:24:19\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:5:37)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:22:92"
+    },
+    {
+      "id": "archive_reread_save_load_ru_844x390",
+      "status": "FAIL",
+      "error": "TypeError: Cannot read properties of null (reading 'textContent')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:24:19\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:5:37)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:22:92"
+    },
+    {
+      "id": "archive_reread_save_load_en_1280x800",
+      "status": "FAIL",
+      "error": "TypeError: Cannot read properties of null (reading 'textContent')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:24:19\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:5:37)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:22:92"
+    },
+    {
+      "id": "archive_reread_save_load_en_390x844",
+      "status": "FAIL",
+      "error": "TypeError: Cannot read properties of null (reading 'textContent')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:24:19\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:5:37)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:22:92"
+    },
+    {
+      "id": "archive_reread_save_load_en_844x390",
+      "status": "FAIL",
+      "error": "TypeError: Cannot read properties of null (reading 'textContent')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:24:19\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:5:37)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:22:92"
+    },
+    {
+      "id": "archive_manual_replay_ended_stays_read_and_clickable",
+      "status": "FAIL",
+      "error": "TypeError: Cannot read properties of null (reading 'click')\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:30:142\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:5:37)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:30:7"
+    },
+    {
+      "id": "0370_save_unchanged_owners_with_explicit_G_migration",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: decode v09\n+ actual - expected\n... Skipped lines\n\n  {\n    chickenBreedMs: 0,\n    crafting: {\n      feed: null,\n      jobs: {\n...\n      deviceEnabled: {\n+       animal_system: true,\n        command_core_l1: true,\n        craft_bench: false,\n+       door_chicken_farm: true,\n+       door_cow_farm: true,\n+       door_empty_l1: true,\n        door_farm: false,\n+       door_pantry: true,\n        door_reserve_l1: false,\n        door_room4: false,\n        door_room5: false,\n        door_room6: false,\n        door_room7: false,\n+       door_side_corridor: true,\n        door_storage: false,\n+       door_water_room: true,\n        door_workshop: false,\n        feed_craft: false,\n        furnace: false,\n        irrigation014: false,\n+       light_bathroom: true,\n+       light_chicken_farm: true,\n        light_corridor: false,\n+       light_cow_farm: true,\n+       light_empty_l1: true,\n        light_farm: false,\n+       light_l2_corridor: true,\n+       light_pantry: true,\n        light_reserve_l1: false,\n        light_room4: false,\n        light_room5: false,\n        light_room6: false,\n        light_room7: false,\n+       light_side_corridor: true,\n        light_storage: false,\n+       light_water_room: true,\n        light_workshop: false,\n        robot_drone_charge: false,\n        spot_left: false,\n        spot_right: false,\n        upgrade0161: false,\n+       water_system: true\n      },\n      doors: [\n        {\n          away: 0,\n          id: 'v09door_room6',\n...\n        },\n+       {\n+         away: 0,\n+         id: 'v09door_empty_l1',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_water_room',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_side_corridor',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_chicken_farm',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_cow_farm',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry_chicken',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry_cow',\n+         manual: false,\n+         open: 0\n+       }\n      ],\n      fuel: 100,\n      roomEnabled: {\n+       bathroom: true,\n+       chicken_farm: true,\n        corridor: true,\n+       cow_farm: true,\n+       empty_l1: true,\n        farm: true,\n+       l2_corridor: true,\n+       pantry: true,\n        reserve_l1: true,\n        room4: true,\n        room5: true,\n        room6: true,\n        room7: true,\n+       side_corridor: true,\n        storage: true,\n+       water_room: true,\n        workshop: true,\n        yard: true\n      },\n      running: true\n    },\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:31:816\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:5:37)\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-f-final.cjs:31:7"
+    }
+  ],
+  "limitations": [
+    "Modeled HTMLVideoElement lifecycle; native browser/Telegram playback and device audio require manual verification. Original MP4 is separately inspected/decoded without rewriting."
+  ]
+}

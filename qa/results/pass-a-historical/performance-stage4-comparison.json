@@ -1,0 +1,209 @@
+{
+  "reference": "0.23.1",
+  "candidate": "0.24.0",
+  "pairedScenariosValid": true,
+  "sceneResults": [
+    {
+      "id": "surface_day",
+      "scenario": {
+        "scene": "surface",
+        "zoom": 0.8,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "p50Ms": 26.54965600000014,
+        "p95Ms": 30.727256000000125,
+        "rssBytes": 413462528,
+        "heapBytes": 34947744
+      },
+      "candidate": {
+        "p50Ms": 27.26085699999976,
+        "p95Ms": 35.14336200000025,
+        "rssBytes": 416722944,
+        "heapBytes": 32507936
+      },
+      "p50ChangePercent": 2.6787578716636284,
+      "p95ChangePercent": 14.371950427334323
+    },
+    {
+      "id": "surface_night_day_x",
+      "scenario": {
+        "scene": "surface",
+        "zoom": 0.8,
+        "day": 10,
+        "zombies": 96,
+        "liveZombies": 94,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "p50Ms": 59.6323169999996,
+        "p95Ms": 71.15502600000036,
+        "rssBytes": 496812032,
+        "heapBytes": 50781040
+      },
+      "candidate": {
+        "p50Ms": 59.7233269999997,
+        "p95Ms": 68.66262500000084,
+        "rssBytes": 495509504,
+        "heapBytes": 26718792
+      },
+      "p50ChangePercent": 0.15261858766966174,
+      "p95ChangePercent": -3.5027757561349238
+    },
+    {
+      "id": "bunker_power_drone",
+      "scenario": {
+        "scene": "bunker",
+        "zoom": 0.8,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "p50Ms": 42.8691230000004,
+        "p95Ms": 47.61091300000044,
+        "rssBytes": 509861888,
+        "heapBytes": 54381712
+      },
+      "candidate": {
+        "p50Ms": 43.5330189999986,
+        "p95Ms": 48.26821199999904,
+        "rssBytes": 506601472,
+        "heapBytes": 60880264
+      },
+      "p50ChangePercent": 1.548657760034411,
+      "p95ChangePercent": 1.3805637375586377
+    },
+    {
+      "id": "inventory_open",
+      "scenario": {
+        "scene": "bunker",
+        "zoom": 0.8,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": true
+      },
+      "reference": {
+        "p50Ms": 35.71643999999651,
+        "p95Ms": 41.23453100000188,
+        "rssBytes": 512245760,
+        "heapBytes": 36793824
+      },
+      "candidate": {
+        "p50Ms": 36.03178200000548,
+        "p95Ms": 40.191155000000435,
+        "rssBytes": 509763584,
+        "heapBytes": 54097424
+      },
+      "p50ChangePercent": 0.8829043432352135,
+      "p95ChangePercent": -2.5303452584470976
+    },
+    {
+      "id": "surface_zoom_out",
+      "scenario": {
+        "scene": "surface",
+        "zoom": 0.6,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "p50Ms": 35.3903469999932,
+        "p95Ms": 39.146020000000135,
+        "rssBytes": 522436608,
+        "heapBytes": 47181536
+      },
+      "candidate": {
+        "p50Ms": 35.550803000005544,
+        "p95Ms": 40.53658700000233,
+        "rssBytes": 526032896,
+        "heapBytes": 29874760
+      },
+      "p50ChangePercent": 0.4533891685559732,
+      "p95ChangePercent": 3.5522563979740074
+    }
+  ],
+  "daytimeReverseOrderRecheck": [
+    {
+      "id": "surface_day",
+      "scenario": {
+        "scene": "surface",
+        "zoom": 0.8,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "p50Ms": 26.985869000000093,
+        "p95Ms": 32.88730899999973,
+        "rssBytes": 416600064,
+        "heapBytes": 26699512
+      },
+      "candidate": {
+        "p50Ms": 26.4243749999996,
+        "p95Ms": 30.80623800000012,
+        "rssBytes": 420376576,
+        "heapBytes": 31093808
+      },
+      "p50ChangePercent": -2.0806963822454283,
+      "p95ChangePercent": -6.327884716866395
+    }
+  ],
+  "startup": {
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "dpr": 1
+    },
+    "reference": {
+      "canvasRequests": 50,
+      "compressedCanvasBytes": 20552976,
+      "estimatedCanvasRGBABytes": 128658096,
+      "uniqueCanvasAndDOMFiles": 68,
+      "uniqueCanvasAndDOMBytes": 21394319,
+      "localBootAndDecodeMs": 489.09377099999995,
+      "rssBytes": 332001280
+    },
+    "candidate": {
+      "canvasRequests": 2,
+      "compressedCanvasBytes": 1016726,
+      "estimatedCanvasRGBABytes": 7176192,
+      "uniqueCanvasAndDOMFiles": 20,
+      "uniqueCanvasAndDOMBytes": 1858069,
+      "localBootAndDecodeMs": 422.7513620000001,
+      "rssBytes": 141762560
+    }
+  },
+  "interpretation": "Initial daytime p95 increase did not reproduce in a reverse-order targeted recheck. No sustained slowdown established by these measurements; real phone validation remains manual.",
+  "limitations": [
+    "NOT measured in a browser, WebView, Telegram, or physical phone. No browser FPS assertion.",
+    "Modeled DOM omits layout, paint, native touch and browser compositing. VM crossings and one-pixel raster flush are included.",
+    "Canvas2D runs in this container; timing depends on shared-host CPU load. RSS includes harness and decoded images; not mobile memory.",
+    "Warm scenarios, assets decoded; cache behavior/network startup and audio decoding are not measured.",
+    "Native browser, Telegram and phone validation is not performed by this runner.",
+    "Compare future stages on the same runner with the same seed, scenes and warmup; investigate changes, do not infer phone FPS.",
+    "Local filesystem Image decoding with modeled DOM; not a mobile network/browser startup measurement.",
+    "DOM img URLs are counted; this harness does not decode/layout DOM images.",
+    "RGBA is a width*height*4 estimate for requested Canvas images, not measured browser/GPU memory.",
+    "RSS includes native Canvas/VM/harness and is noisy; phone/WebView memory must be checked manually."
+  ]
+}

@@ -1,3 +1,4 @@
+ITEM.plant_waste={name:'Растительные отходы',icon:'♻',stack:100,discardable:true};
 /* Survival content uses the existing ITEM/recipe owners. */
 (()=>{
  ITEM.omelet={"name": "Омлет", "icon": "🍲", "category": "food"};

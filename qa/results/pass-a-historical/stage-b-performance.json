@@ -1,0 +1,209 @@
+{
+  "version": "0.32.0",
+  "baseline": "immutable delivered Stage A Corrective 0.31.1",
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "mode": "Modeled DOM/WebAudio, native Canvas2D, DPR 1, zoom .65, 120 measured frames per scene/version"
+  },
+  "rows": [
+    {
+      "viewport": "390x844",
+      "scene": "quiet_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 18.245477000000392,
+        "p95Ms": 23.695958000000246,
+        "meanMs": 18.865463941666622
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 17.99256400000013,
+        "p95Ms": 22.194092000000637,
+        "meanMs": 18.46686014999991
+      },
+      "deltaMs": -0.2529130000002624,
+      "percent": -1.38616819938584
+    },
+    {
+      "viewport": "390x844",
+      "scene": "stress_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 31.887760000001435,
+        "p95Ms": 39.50665900000058,
+        "meanMs": 33.05854673333306
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 31.33061099999759,
+        "p95Ms": 39.933515000000625,
+        "meanMs": 32.455028316666734
+      },
+      "deltaMs": -0.5571490000038466,
+      "percent": -1.7472189956391437
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 120,
+        "p50Ms": 19.826372999999876,
+        "p95Ms": 24.325645000000804,
+        "meanMs": 20.166786041666697
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 19.40389800000048,
+        "p95Ms": 24.00687399999879,
+        "meanMs": 20.108127299999918
+      },
+      "deltaMs": -0.42247499999939464,
+      "percent": -2.1308738617971
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "quiet_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 35.406624999995984,
+        "p95Ms": 43.152225999998336,
+        "meanMs": 36.15631563333309
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 34.64987900000415,
+        "p95Ms": 40.17730099999608,
+        "meanMs": 35.433144158333135
+      },
+      "deltaMs": -0.7567459999918356,
+      "percent": -2.137300575787504
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "stress_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 54.444813000001886,
+        "p95Ms": 72.5093410000045,
+        "meanMs": 56.999471125000674
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 56.18242399999872,
+        "p95Ms": 65.6001380000016,
+        "meanMs": 57.024680549999964
+      },
+      "deltaMs": 1.737610999996832,
+      "percent": 3.19150880359671
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 120,
+        "p50Ms": 44.503427000003285,
+        "p95Ms": 50.91787000000477,
+        "meanMs": 45.248711875000055
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 45.82373900001403,
+        "p95Ms": 53.94130000000587,
+        "meanMs": 46.41321409999994
+      },
+      "deltaMs": 1.3203120000107447,
+      "percent": 2.966764784228082
+    }
+  ],
+  "navigation": [
+    {
+      "version": "0.31.1",
+      "reachable": 80,
+      "samples": 80,
+      "p50Ms": 8.14639399999578,
+      "p95Ms": 79.10147799999686,
+      "meanMs": 14.68264653749993
+    },
+    {
+      "version": "0.32.0",
+      "reachable": 80,
+      "samples": 80,
+      "p50Ms": 7.803627999994205,
+      "p95Ms": 77.80562199999986,
+      "meanMs": 14.184454212499986
+    }
+  ],
+  "commands": [
+    {
+      "version": "0.31.1",
+      "samples": 400,
+      "p50Ms": 0.36795400000119116,
+      "p95Ms": 0.5745299999980489,
+      "meanMs": 0.41671124749980665
+    },
+    {
+      "version": "0.32.0",
+      "samples": 400,
+      "p50Ms": 0.356166999990819,
+      "p95Ms": 0.5318160000024363,
+      "meanMs": 0.3829483399999299
+    }
+  ],
+  "serialization": [
+    {
+      "version": "0.31.1",
+      "characters": 65445,
+      "utf8Bytes": 65673,
+      "samples": 100,
+      "p50Ms": 0.6655739999987418,
+      "p95Ms": 1.0733469999977387,
+      "meanMs": 0.7230282599991188
+    },
+    {
+      "version": "0.32.0",
+      "characters": 68551,
+      "utf8Bytes": 68779,
+      "samples": 100,
+      "p50Ms": 0.7935730000026524,
+      "p95Ms": 1.542330000011134,
+      "meanMs": 0.8860231499986548
+    }
+  ],
+  "heaps": [
+    {
+      "version": "0.31.1",
+      "snapshots": 100,
+      "transientHeapDeltaBytes": 35154992,
+      "postGcHeapDeltaBytes": -630776,
+      "gcAvailable": true
+    },
+    {
+      "version": "0.32.0",
+      "snapshots": 100,
+      "transientHeapDeltaBytes": 33248088,
+      "postGcHeapDeltaBytes": 54552,
+      "gcAvailable": true
+    }
+  ],
+  "campaignPoll": {
+    "closed": {
+      "samples": 400,
+      "p50Ms": 0.027360000007320195,
+      "p95Ms": 0.07704399999056477,
+      "meanMs": 0.03691901250022056
+    },
+    "open": {
+      "samples": 400,
+      "p50Ms": 0.5447349999885773,
+      "p95Ms": 0.8141340000001946,
+      "meanMs": 0.5896547350001129
+    }
+  },
+  "errors": [],
+  "limitations": [
+    "These are CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.",
+    "Command dispatch timings exclude OS/browser event delivery. Navigation timings are complete path queries; existing incremental routing is covered by regression tests.",
+    "Heap deltas include harness and serialization allocations; post-GC values are not a browser/device memory budget."
+  ]
+}

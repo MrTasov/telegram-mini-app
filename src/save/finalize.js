@@ -34,6 +34,7 @@ GameSave.seal({
     "simulation.activity",
     "world.signal",
     "player.survival",
+    "bunker.pass-a",
     "dev.qa"
   ],
   "decode": [
@@ -70,6 +71,7 @@ GameSave.seal({
     "story.archive",
     "defense.foundation",
     "player.survival",
+    "bunker.pass-a",
     "dev.qa"
   ],
   "restore": [
@@ -109,6 +111,7 @@ GameSave.seal({
     "simulation.activity",
     "world.signal",
     "player.survival",
+    "bunker.pass-a",
     "dev.qa"
   ]
 });

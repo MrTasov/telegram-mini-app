@@ -1,0 +1,62 @@
+{
+  "complete": false,
+  "startedAt": "2026-09-27T11:42:10.535Z",
+  "runtimeSha256": "5dc68362b7653eb0d1726a0c995358d39bf71cf32094624cd6a58ebc82eeea97",
+  "runs": [
+    {
+      "id": "build",
+      "runtimeSha256": "5dc68362b7653eb0d1726a0c995358d39bf71cf32094624cd6a58ebc82eeea97",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 0,
+      "failedChecks": 0,
+      "elapsedMs": 392,
+      "log": "qa/results/stage-f-final-check-build.log",
+      "report": null
+    },
+    {
+      "id": "verification",
+      "runtimeSha256": "5dc68362b7653eb0d1726a0c995358d39bf71cf32094624cd6a58ebc82eeea97",
+      "exitCode": 1,
+      "passed": false,
+      "checks": 453,
+      "failedChecks": 16,
+      "elapsedMs": 503,
+      "log": "qa/results/stage-f-final-check-verification.log",
+      "report": "qa/results/verification.json"
+    },
+    {
+      "id": "stage-f",
+      "runtimeSha256": "5dc68362b7653eb0d1726a0c995358d39bf71cf32094624cd6a58ebc82eeea97",
+      "exitCode": 1,
+      "passed": false,
+      "checks": 52,
+      "failedChecks": 1,
+      "elapsedMs": 25842,
+      "log": "qa/results/stage-f-final-check-stage-f.log",
+      "report": "qa/results/stage-f.json"
+    },
+    {
+      "id": "stage-f-final",
+      "runtimeSha256": "5dc68362b7653eb0d1726a0c995358d39bf71cf32094624cd6a58ebc82eeea97",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 22,
+      "failedChecks": 0,
+      "elapsedMs": 55520,
+      "log": "qa/results/stage-f-final-check-stage-f-final.log",
+      "report": "qa/results/stage-f-final.json"
+    },
+    {
+      "id": "state-saves",
+      "runtimeSha256": "5dc68362b7653eb0d1726a0c995358d39bf71cf32094624cd6a58ebc82eeea97",
+      "exitCode": 0,
+      "passed": true,
+      "checks": 58,
+      "failedChecks": 0,
+      "elapsedMs": 24792,
+      "log": "qa/results/stage-f-final-check-state-saves.log",
+      "report": "qa/results/state-saves.json"
+    }
+  ]
+}

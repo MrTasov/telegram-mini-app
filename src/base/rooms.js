@@ -35,7 +35,7 @@ window.V011Rooms=(()=>{
     else{ctx.fillStyle=tile(key);ctx.fillRect(r.left+7,r.top+7,r.right-r.left-14,r.bottom-r.top-14);}
     ctx.strokeStyle='#0d1b1c3d';ctx.lineWidth=9;ctx.strokeRect(r.left+14,r.top+14,r.right-r.left-28,r.bottom-r.top-28);
     if(key==='corridor'){line(r.left+22,r.top,r.left+22,r.bottom,'#a4b8ae28',2);line(r.right-22,r.top,r.right-22,r.bottom,'#a4b8ae28',2);for(let y=r.top+100;y<r.bottom;y+=180){rect((r.left+r.right)/2-17,y,34,6,'#9cac9e2b',null,2);}}
-    if(key==='room7'){ctx.fillStyle=tile('room4');const p=BunkerLayout.point('room7',900,95);ctx.fillRect(p.x,p.y,235,150);}
+    if(false){ctx.fillStyle=tile('room4');const p=BunkerLayout.point('room7',900,95);ctx.fillRect(p.x,p.y,235,150);}
     // Placement footprints are shown only by the Construction preview.
     if(key==='storage'){for(const y of [r.top+96,r.bottom-96])line(r.left+35,y,r.right-35,y,'#aab2a22b',2);}
     ctx.restore();
@@ -191,10 +191,7 @@ window.V011Living=(()=>{
     if(!canInteract(fixture,player.x,player.y))return false;
     if(mode===kind){stop();return true;}
     stopControls();cancelChop();cancelSearch();
-    if(kind==='shower'){
-      // Enter through the open southern edge; actual position stays collision-safe.
-      const p=BunkerLayout.point('room7',955,195);if(!worldCollision(p.x,p.y,player.radius,'bunker'))Object.assign(player,p);
-    }
+    if(kind==='shower'){const p={x:SHOWER.x+SHOWER.w/2,y:SHOWER.y+SHOWER.h/2};if(!worldCollision(p.x,p.y,player.radius,'bunker'))Object.assign(player,p);}
     mode=kind;anchor={x:player.x,y:player.y};elapsed=0;lastSave=0;if(kind==='rest')GameAudio.play('sleep');
     player.moving=false;player.running=false;firing=false;
     refresh();queueGameSave();return true;

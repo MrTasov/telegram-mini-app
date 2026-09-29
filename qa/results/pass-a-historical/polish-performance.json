@@ -1,0 +1,65 @@
+{
+  "environment": {
+    "node": "v24.19.0",
+    "viewport": [
+      390,
+      844
+    ],
+    "renderer": "Native Canvas2D + modeled DOM, no physical device/WebView/audio hardware",
+    "samples": "180 frames per scene, first 30 warm-up; run separately from regression tests"
+  },
+  "before": {
+    "ak_walk_20_tracers": {
+      "samples": 150,
+      "p50Ms": 0.7007180000000517,
+      "p95Ms": 0.9817229999998744,
+      "maxMs": 1.7413570000001073
+    },
+    "axe_gathering": {
+      "samples": 150,
+      "p50Ms": 0.5194080000001122,
+      "p95Ms": 0.8528219999998328,
+      "maxMs": 0.9619940000000042
+    },
+    "100_living_100_corpses": {
+      "samples": 150,
+      "p50Ms": 33.97072399999979,
+      "p95Ms": 39.991595999999845,
+      "maxMs": 53.685826999999335
+    },
+    "decodedImageRgbaBytes": 193302480,
+    "imageRequests": 125,
+    "uniqueRequests": 125,
+    "corpseCache": null,
+    "errors": []
+  },
+  "after": {
+    "ak_walk_20_tracers": {
+      "samples": 150,
+      "p50Ms": 0.6852440000002389,
+      "p95Ms": 1.1660259999989648,
+      "maxMs": 1.9841710000000603
+    },
+    "axe_gathering": {
+      "samples": 150,
+      "p50Ms": 0.6253350000006321,
+      "p95Ms": 1.5156029999998282,
+      "maxMs": 2.190803000001324
+    },
+    "100_living_100_corpses": {
+      "samples": 150,
+      "p50Ms": 29.575831000000107,
+      "p95Ms": 37.868037000000186,
+      "maxMs": 49.86779600000045
+    },
+    "decodedImageRgbaBytes": 194187216,
+    "imageRequests": 125,
+    "uniqueRequests": 125,
+    "corpseCache": {
+      "corpseRasters": 15,
+      "corpseRgbaBytes": 172912
+    },
+    "errors": []
+  },
+  "addedDecodedPcmBytes": 105840
+}

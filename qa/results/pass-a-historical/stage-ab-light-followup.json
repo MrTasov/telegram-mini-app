@@ -1,0 +1,52 @@
+{
+  "version": "0.32.1",
+  "reason": "Local drone-light raster optimization after complete regression run",
+  "postFullRunChangedRuntime": [
+    "src/render/lighting.js"
+  ],
+  "passed": true,
+  "runtimeSha256": "14cc0acb61a886aff3d3ff46d92b3cc622c0a7e210dbc7aba6da4f7207cf49a9",
+  "sourceSha256": "2d358edb20cb530ff7a7ba1e8a589eec3d8ad6dd6632a8879872f321f2ec6451",
+  "runs": [
+    {
+      "id": "build",
+      "exitCode": 0,
+      "elapsedMs": 271
+    },
+    {
+      "id": "stage-ab-light-audio",
+      "exitCode": 0,
+      "elapsedMs": 4079
+    },
+    {
+      "id": "stage-ab-corrective",
+      "exitCode": 0,
+      "elapsedMs": 7712
+    },
+    {
+      "id": "stage-b",
+      "exitCode": 0,
+      "elapsedMs": 8543
+    },
+    {
+      "id": "campaign",
+      "exitCode": 0,
+      "elapsedMs": 4535
+    },
+    {
+      "id": "bunker-floor-cache",
+      "exitCode": 0,
+      "elapsedMs": 2849
+    },
+    {
+      "id": "polish",
+      "exitCode": 0,
+      "elapsedMs": 5484
+    },
+    {
+      "id": "asset-rendering",
+      "exitCode": 0,
+      "elapsedMs": 2330
+    }
+  ]
+}

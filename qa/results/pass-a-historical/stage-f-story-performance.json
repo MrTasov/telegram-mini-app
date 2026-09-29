@@ -1,0 +1,58 @@
+{
+  "version": "0.37.0",
+  "runtimeSha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d",
+  "rows": [
+    {
+      "name": "story_closed_tick",
+      "samples": 600,
+      "p50Ms": 0.00022000000012667442,
+      "p95Ms": 0.0003209999999853608
+    },
+    {
+      "name": "intro_paused_tick",
+      "samples": 600,
+      "p50Ms": 0.0004510000001118897,
+      "p95Ms": 0.000550999999859414
+    },
+    {
+      "name": "intro_playing_tick",
+      "samples": 600,
+      "p50Ms": 0.0008110000001124718,
+      "p95Ms": 0.024777999999969325
+    },
+    {
+      "name": "archive_idle_1280x800",
+      "samples": 600,
+      "p50Ms": 1.1067980000002535,
+      "p95Ms": 1.6720410000000356
+    },
+    {
+      "name": "archive_idle_390x844",
+      "samples": 600,
+      "p50Ms": 1.07277699999986,
+      "p95Ms": 1.4997619999999188
+    },
+    {
+      "name": "archive_idle_844x390",
+      "samples": 600,
+      "p50Ms": 1.07869699999992,
+      "p95Ms": 1.5361659999998665
+    },
+    {
+      "name": "story_save_decode",
+      "samples": 60,
+      "p50Ms": 14.151375000000371,
+      "p95Ms": 17.22447000000011
+    }
+  ],
+  "storyBytes": 388,
+  "saveBytes": 69802,
+  "additionalRafRequests": 0,
+  "additionalIntervals": 0,
+  "idleArchiveRebuilds": 0,
+  "errors": [],
+  "passed": true,
+  "limitations": [
+    "Modeled DOM; excludes native CSS layout, codecs and device GPU. No new media assets or decoders are shipped."
+  ]
+}

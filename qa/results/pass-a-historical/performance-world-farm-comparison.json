@@ -1,0 +1,47 @@
+{
+  "reference": "0.27.1",
+  "candidate": "0.28.0",
+  "method": "Sequential VM/native Canvas, same seed, 60 warmup + 180 measured frames, 1280x800 DPR1, 5 planted beds spraying continuously in both versions; PC and MOBILE input profiles.",
+  "modes": {
+    "PC": [
+      {
+        "id": "farm_growing",
+        "beforeP50": 75.19486899999902,
+        "afterP50": 73.92215399999986,
+        "beforeP95": 82.08072600000014,
+        "afterP95": 81.0931929999997,
+        "deltaPercent": -1.6925556449857937
+      },
+      {
+        "id": "surface_day",
+        "beforeP50": 29.007308000000194,
+        "afterP50": 27.451724999998987,
+        "beforeP95": 35.48345999999947,
+        "afterP95": 32.21695599999657,
+        "deltaPercent": -5.362727902917419
+      }
+    ],
+    "MOBILE": [
+      {
+        "id": "farm_growing",
+        "beforeP50": 76.04083699999865,
+        "afterP50": 74.86219399999936,
+        "beforeP95": 85.53256800000054,
+        "afterP95": 84.0758420000002,
+        "deltaPercent": -1.5500131856772015
+      },
+      {
+        "id": "surface_day",
+        "beforeP50": 28.13292899999942,
+        "afterP50": 27.9163890000018,
+        "beforeP95": 31.411917000001267,
+        "afterP95": 32.353618000001006,
+        "deltaPercent": -0.7697030053202991
+      }
+    ]
+  },
+  "limitations": [
+    "No browser layout/compositor, Telegram WebView or physical phone measurement.",
+    "Shared-host timing varies; resource coordinates intentionally differ; identical active irrigation is forced for the farm comparison."
+  ]
+}

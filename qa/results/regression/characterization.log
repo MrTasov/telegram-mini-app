@@ -1,2 +1,16 @@
-{"passed":134,"observedFailures":0,"errors":0,"fixtures":15}
 
+evalmachine.<anonymous>:1
+{const room=BunkerLayout.rooms.room6;let tr=null;const q=GameEquipment.create('kitchen_stove',GamePlacement.centered('kitchen_stove','room6',room.left+100,room.top+100),GameActors.localId);q.placement='packed';GameEquipment.change(q);GameCarried.add(q.id);GameMovable.sync();for(let y=room.top+40;y<room.bottom-30&&!tr;y+=24)for(let x=room.left+40;x<room.right-30&&!tr;x+=24){const p=GamePlacement.centered('kitchen_stove','room6',x,y);if(GamePlacement.check(q.id,p).ok)tr=p;}if(!GamePlacement.request(q.id,'place',tr).ok)throw Error('QA kitchen placement');const p=GameFootprints.front(GameEquipment.get(q.id));player.x=p.x;player.y=p.y;V09Power.running=true;V09Power.fuel=30;V09Power.devices[q.id].enabled=true;}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ^
+
+Error: QA kitchen placement
+    at evalmachine.<anonymous>:1:529
+    at Script.runInContext (node:vm:149:12)
+    at Object.runInContext (node:vm:301:6)
+    at Object.eval (/tmp/last-base-regression-DmZkzy/tools/runtime.cjs:105:692)
+    at E (/tmp/last-base-regression-DmZkzy/tools/behavior.cjs:5:36)
+    at main (/tmp/last-base-regression-DmZkzy/tools/behavior.cjs:66:2)
+    at Object.<anonymous> (/tmp/last-base-regression-DmZkzy/tools/behavior.cjs:130:1)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)

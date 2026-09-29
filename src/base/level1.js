@@ -4,19 +4,19 @@ window.BunkerState=(()=>{
   const layout=BunkerLayout,copy=v=>JSON.parse(JSON.stringify(v));
   let dormantMarkers=[];
   const oldSolids=solidObjects;
-  solidObjects=function(which){const list=oldSolids(which);return which==='bunker'?list.filter(o=>!layout.agricultureId(o.id)&&GameEquipment.present(o.id)).concat(layout.solids).map(o=>GameFootprints.body(o.id)||o):list;};
+  solidObjects=function(which){const list=oldSolids(which);return which==='bunker'?list.filter(o=>!layout.removed(o.id)&&GameEquipment.present(o.id)).concat(layout.solids).map(o=>GameFootprints.body(o.id)||o):list;};
   const oldObjects=interactionObjects;
-  interactionObjects=function(which=scene){const list=oldObjects(which);if(which!=='bunker')return list;return list.filter(o=>!layout.agricultureId(o.id)&&GameEquipment.present(o.id)).map(o=>o.id==='exit'?{
+  interactionObjects=function(which=scene){const list=oldObjects(which);if(which!=='bunker')return list;return list.filter(o=>!layout.removed(o.id)&&GameEquipment.present(o.id)).map(o=>o.id==='exit'?{
     ...o,...layout.stairs[0],id:o.id,kind:o.kind,r:undefined,pickBounds:layout.stairs[0]
   }:GameEquipment.get(o.id)&&GameEquipment.get(o.id).typeId!=='drone_station'?{...o,...GameFootprints.body(o.id),pickBounds:o.pickBounds||o}:o).concat(
     {...layout.core,...GameFootprints.body(layout.core.id),pickBounds:layout.core,name:I18n.t('bunker.core.name')},
-    {...layout.down,pickBounds:layout.stairs[1],name:I18n.t('bunker.down.locked')}
+    {...layout.down,pickBounds:layout.stairs[1],name:I18n.t('bunker.l2.down')}
   );};
   const oldExecute=executeInteraction;
   executeInteraction=function(target){
-    if(target&&layout.agricultureId(target.id)&&scene==='bunker')return;
+    if(target&&layout.removed(target.id)&&scene==='bunker')return;
     if(target?.id===layout.core.id||target?.id===layout.down.id){
-      if(!menuOpen&&!playerDead&&scene==='bunker'&&canInteract(target,player.x,player.y)){if(target.id===layout.core.id)window.CommandCoreUI?.show();else message(I18n.t('bunker.down.locked'));}
+      if(!menuOpen&&!playerDead&&scene==='bunker'&&canInteract(target,player.x,player.y)){if(target.id===layout.core.id)window.CommandCoreUI?.show();else window.BunkerPassA?.go(2);}
       return;
     }
     return oldExecute(target);
@@ -34,7 +34,7 @@ window.BunkerState=(()=>{
     if(!p||p.scene!=='bunker'||!Number.isFinite(p.x)||!Number.isFinite(p.y))return;
     const oldStairs=[{x:980,y:-480,w:180,h:240},{x:1260,y:-480,w:180,h:240}];
     for(let i=0;i<oldStairs.length;i++){const s=oldStairs[i],n=layout.stairs[i];if(p.x>=s.x&&p.x<=s.x+s.w&&p.y>=s.y&&p.y<=s.y+s.h){p.x=n.x+(p.x-s.x)/s.w*n.w;p.y=n.y+(p.y-s.y)/s.h*n.h;return;}}
-    for(const current of layout.roomData){
+    for(const current of layout.legacyRoomData){
       const r={...current,y:current.id==='workshop'?760:current.id==='room6'?-240:current.y};
       if(r.id==='corridor')continue;
       const dx=r.side==='left'?200:r.side==='right'?-200:0,left=r.x-dx;
@@ -84,7 +84,7 @@ window.BunkerState=(()=>{
   }
   function validate(d){
     const s=d.bunker030;
-    if(!s||s.schema!==1||s.layout!==layout.revision||!Number.isFinite(s.agricultureAt)||s.agricultureAt<0||s.agricultureAt>Date.now()+60000||!Array.isArray(s.dormantMarkers)||s.dormantMarkers.length>41||s.dormantMarkers.some(m=>!m||m.scene!=='bunker'||!Number.isFinite(m.x)||!Number.isFinite(m.y)||Math.abs(m.x)>25000||Math.abs(m.y)>25000||(m.name!==undefined&&(typeof m.name!=='string'||m.name.length>36))))throw Error('Invalid Bunker Level 1 state');
+    if(!s||s.schema!==1||s.layout!==layout.revision||!Number.isFinite(s.agricultureAt)||s.agricultureAt<0||s.agricultureAt>Number.MAX_SAFE_INTEGER||!Array.isArray(s.dormantMarkers)||s.dormantMarkers.length>41||s.dormantMarkers.some(m=>!m||m.scene!=='bunker'||!Number.isFinite(m.x)||!Number.isFinite(m.y)||Math.abs(m.x)>25000||Math.abs(m.y)>25000||(m.name!==undefined&&(typeof m.name!=='string'||m.name.length>36))))throw Error('Invalid Bunker Level 1 state');
   }
   function safePosition(source,radius=10,occupied=[]){
     const good=(x,y)=>layout.containsFloor(x,y)&&!worldCollision(x,y,radius,'bunker')&&occupied.every(a=>Math.hypot(x-a.x,y-a.y)>radius+(a.radius||10)+3);
@@ -124,8 +124,8 @@ window.BunkerState=(()=>{
       const step=(h-50)/9;
       for(let n=0;n<9;n++){const sy=y+22+n*step;ctx.fillStyle=n%2?'#566363':'#465454';ctx.fillRect(x+18,sy,w-36,step-5);ctx.fillStyle='#9baba080';ctx.fillRect(x+18,sy,w-36,2);}
       ctx.strokeStyle=up?'#92c3b1':'#b69b69';ctx.lineWidth=3;ctx.strokeRect(x+13,y+13,w-26,h-21);
-      if(!up){ctx.fillStyle='#293b3c';ctx.fillRect(x+9,bottom-41,w-18,30);ctx.strokeStyle='#b4a477';ctx.lineWidth=4;for(let n=0;n<5;n++){ctx.beginPath();ctx.moveTo(x+17+n*21,bottom-16);ctx.lineTo(x+32+n*21,bottom-38);ctx.stroke();}}
-      ctx.fillStyle=up?'#cee5da':'#d8c69e';ctx.textAlign='center';ctx.font='12px Arial';ctx.fillText(I18n.t(up?'bunker.up.label':'bunker.down.label'),x+w/2,bottom+27,w+24);ctx.font='10px Arial';ctx.fillText(I18n.t(up?'bunker.up.destination':'bunker.down.locked'),x+w/2,bottom+46,w+24);
+      if(false){ctx.fillStyle='#293b3c';ctx.fillRect(x+9,bottom-41,w-18,30);ctx.strokeStyle='#b4a477';ctx.lineWidth=4;for(let n=0;n<5;n++){ctx.beginPath();ctx.moveTo(x+17+n*21,bottom-16);ctx.lineTo(x+32+n*21,bottom-38);ctx.stroke();}}
+      ctx.fillStyle=up?'#cee5da':'#d8c69e';ctx.textAlign='center';ctx.font='12px Arial';ctx.fillText(I18n.t(up?'bunker.up.label':'bunker.down.label'),x+w/2,bottom+27,w+24);ctx.font='10px Arial';ctx.fillText(I18n.t(up?'bunker.up.destination':'bunker.l2.down'),x+w/2,bottom+46,w+24);
     }
     const c=layout.core,b=GameFootprints.body(c.id);V011Rooms.shadow(b.x,b.y,b.w,b.h,15,'corridor');
     if(!V011Art.draw('command_core',c.x,c.y,c.w,c.h)){

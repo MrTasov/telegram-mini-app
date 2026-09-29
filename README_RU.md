@@ -1,3 +1,11 @@
+# LAST BASE 0.43.0 — Bunker L1 + L2 Pass A
+
+Текущий отчёт: [PASS_A_REPORT_RU.md](PASS_A_REPORT_RU.md). База: приложенная 0.42.0 Claude. Pass B не реализован. Сохранения мигрируются в формат 24.
+
+Запуск: любой HTTP static server из корня проекта, затем `index.html`. Build: `npm run build`. Целевые тесты: `npm run test:pass-a`. Исторические инструкции ниже относятся к предыдущим версиям; ограничения старых QA-fixtures перечислены в новом отчёте.
+
+---
+
 # LAST BASE 0.41.2 — Siege Corrective
 
 Текущая основа: приложенная 0.41.1 с уже включённым патчем Claude. Save Format 22. Сталь: **3 железа + 1 уголь → 1 сталь за 4000 мс**.

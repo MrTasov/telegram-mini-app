@@ -6,11 +6,11 @@ window.V0141Farm=(()=>{
   function plant(index,crop){
     if(!Number.isInteger(index)||!Number.isInteger(crop)||!farmCrops[crop]||!closeEnough(index)||farmState[index]?.crop!==null)return false;
     if(!V011Farm.beginBed(index,crop))return false;
-    const now=Date.now();for(let i=0;i<50;i++)V011Farm.plantOne(index,i,now);
+    const now=AgricultureTime.now();for(let i=0;i<50;i++)V011Farm.plantOne(index,i,now);
     GameAudio.play('plant');queueGameSave();renderBag();closeOverlay(el('farmOverlay'));message('Посажено: '+farmCrops[crop].name);return true;
   }
   function harvest(index){
-    V011Farm.settle();if(!closeEnough(index)||!V011Farm.ready(index))return 0;
+    V011Farm.settle();if(!closeEnough(index)||!V011Farm.ready(index)||window.BunkerPassA?.rotten(index))return 0;
     const st=farmState[index],type=farmCrops[st.crop].itemType;
     const plants=V011Farm.plants(st),total=plants.reduce((n,p)=>n+(p.planted&&!p.harvested?p.qty:0),0);
     const left=addItem(type,total),moved=total-left;let remaining=moved;
@@ -25,7 +25,7 @@ window.V0141Farm=(()=>{
     const r=el('farmRecovery');if(r){r.hidden=!recovery.length;I18n.assign(r,'textContent','Забрать оставшийся урожай · '+recovery.reduce((n,s)=>n+s.qty,0));}
   }
   function use(index){if(!closeEnough(index))return;V011Farm.settle();const st=farmState[index];if(!st)return;
-    if(st.crop!==null){if(V011Farm.ready(index))harvest(index);else{const wait=Math.max(...V011Farm.plants(st).filter(p=>p.planted&&!p.harvested).map(p=>p.duration-p.elapsed),0);message('До урожая '+farmTimeLabel(wait/(V011Farm.state.water>0&&devicePowered('irrigation014')?1:.35)));}return;}
+    if(window.BunkerPassA?.rotten(index)){BunkerPassA.clear(index);return;}if(st.crop!==null){if(V011Farm.ready(index))harvest(index);else{const wait=Math.max(...V011Farm.plants(st).filter(p=>p.planted&&!p.harvested).map(p=>p.duration-p.elapsed),0);message('До урожая '+farmTimeLabel(wait/(V011Farm.state.water>0&&devicePowered('irrigation014')?1:.35)));}return;}
     window.activeFarmBed=index;I18n.assign(el('farmTitle'),"textContent",'Грядка '+(index+1));refresh();openOverlay(el('farmOverlay'));
   }
   function recover(){if(!AgricultureTime.available)return;for(const s of recovery)s.qty=addItem(s.type,s.qty);recovery=recovery.filter(s=>s.qty);refresh();renderBag();queueGameSave();if(recovery.length)message('Освободите место в рюкзаке');}

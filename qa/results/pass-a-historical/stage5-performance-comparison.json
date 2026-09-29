@@ -1,0 +1,99 @@
+{
+  "reference": "0.24.1",
+  "candidate": "0.25.0",
+  "scenes": [
+    {
+      "id": "surface_day",
+      "beforeP50Ms": 27.59885099999974,
+      "afterP50Ms": 27.40861500000028,
+      "p50ChangePercent": -0.6892895649875497,
+      "beforeP95Ms": 31.272934000000532,
+      "afterP95Ms": 31.375519000000168,
+      "p95ChangePercent": 0.3280312617921721
+    },
+    {
+      "id": "surface_night_day_x",
+      "beforeP50Ms": 60.22703400000319,
+      "afterP50Ms": 59.88829699999951,
+      "p50ChangePercent": -0.5624334746480386,
+      "beforeP95Ms": 68.63567899999907,
+      "afterP95Ms": 66.21150099999977,
+      "p95ChangePercent": -3.5319501975049072
+    },
+    {
+      "id": "bunker_power_drone",
+      "beforeP50Ms": 43.88108999999895,
+      "afterP50Ms": 42.68923300000097,
+      "p50ChangePercent": -2.7161061860542013,
+      "beforeP95Ms": 48.42091100000107,
+      "afterP95Ms": 46.69934000000285,
+      "p95ChangePercent": -3.555428769190616
+    },
+    {
+      "id": "inventory_open",
+      "beforeP50Ms": 36.11389600000257,
+      "afterP50Ms": 35.72841099999641,
+      "p50ChangePercent": -1.0674146040796306,
+      "beforeP95Ms": 43.73825999999826,
+      "afterP95Ms": 39.29777800000011,
+      "p95ChangePercent": -10.15239746619626
+    },
+    {
+      "id": "surface_zoom_out",
+      "beforeP50Ms": 36.13941000000341,
+      "afterP50Ms": 36.423326000003726,
+      "p50ChangePercent": 0.7856132681753447,
+      "beforeP95Ms": 41.30303499999718,
+      "afterP95Ms": 42.31181399999332,
+      "p95ChangePercent": 2.4423846818913075
+    }
+  ],
+  "loading": {
+    "before": {
+      "medianBootMs": 455.81459100000006,
+      "medianHeapGrowthBytes": 12530552,
+      "medianRSSGrowthBytes": 77664256,
+      "canvasRequests": [
+        2,
+        2,
+        2
+      ],
+      "decodedRGBABytes": 7176192,
+      "compressedImageBytes": 1858069,
+      "uniqueImages": 20
+    },
+    "after": {
+      "medianBootMs": 434.373615,
+      "medianHeapGrowthBytes": 15577712,
+      "medianRSSGrowthBytes": 83484672,
+      "canvasRequests": [
+        2,
+        2,
+        2
+      ],
+      "decodedRGBABytes": 7176192,
+      "compressedImageBytes": 1858069,
+      "uniqueImages": 20
+    }
+  },
+  "bundles": {
+    "before": {
+      "bytes": 1049009,
+      "gzipBytes": 335055
+    },
+    "after": {
+      "bytes": 1379205,
+      "gzipBytes": 445423
+    }
+  },
+  "errors": [],
+  "limitations": [
+    "NOT measured in a browser, WebView, Telegram, or physical phone. No browser FPS assertion.",
+    "Modeled DOM omits layout, paint, native touch and browser compositing. VM crossings and one-pixel raster flush are included.",
+    "Canvas2D runs in this container; timing depends on shared-host CPU load. RSS includes harness and decoded images; not mobile memory.",
+    "Warm scenarios, assets decoded; cache behavior/network startup and audio decoding are not measured.",
+    "Native browser, Telegram and phone validation is not performed by this runner.",
+    "Compare future stages on the same runner with the same seed, scenes and warmup; investigate changes, do not infer phone FPS."
+  ],
+  "method": "Three alternating cold processes per build; warm five-scene benchmark, 60 warmup + 180 measured frames, sequential baseline then candidate. Local Canvas2D and modeled DOM, not phone FPS."
+}

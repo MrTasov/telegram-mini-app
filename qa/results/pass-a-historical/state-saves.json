@@ -1,0 +1,241 @@
+{
+  "version": "0.43.0",
+  "passed": 56,
+  "failed": 2,
+  "checks": [
+    {
+      "id": "owners.oneReferencePerLiveContainer",
+      "status": "PASS"
+    },
+    {
+      "id": "owners.replacementDoesNotLeaveStaleReferences",
+      "status": "PASS"
+    },
+    {
+      "id": "owners.allSavedFieldsHaveAnOwner",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'bunker043'\n+ ]\n- []\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/state-saves.cjs:19:9\n    at check (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/state-saves.cjs:8:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/state-saves.cjs:16:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "owners.sessionIsSingleSourceOfTruth",
+      "status": "PASS"
+    },
+    {
+      "id": "owners.noLateRegistration",
+      "status": "PASS"
+    },
+    {
+      "id": "owners.sealedViews",
+      "status": "PASS"
+    },
+    {
+      "id": "registry.historicalOrderIsExplicit",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    capture: [\n      'save.slots',\n      'save.envelope',\n      'ui.context-map',\n...\n      'player.survival',\n+     'bunker.pass-a',\n      'dev.qa'\n    ],\n    decode: [\n      'save.slots',\n      'save.envelope',\n...\n      'player.survival',\n+     'bunker.pass-a',\n      'dev.qa'\n    ],\n    restore: [\n      'save.slots',\n      'save.envelope',\n...\n      'player.survival',\n+     'bunker.pass-a',\n      'dev.qa'\n    ]\n  }\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/state-saves.cjs:27:55\n    at check (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/state-saves.cjs:8:27)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/state-saves.cjs:27:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "registry.singleSharedModuleRegistry",
+      "status": "PASS"
+    },
+    {
+      "id": "registry.moduleRestoreOrder",
+      "status": "PASS"
+    },
+    {
+      "id": "registry.rejectDuplicateOrLateHooks",
+      "status": "PASS"
+    },
+    {
+      "id": "registry.rejectDuplicateOrLateModules",
+      "status": "PASS"
+    },
+    {
+      "id": "format.explicitVersion",
+      "status": "PASS"
+    },
+    {
+      "id": "format.versionSeparatedFromPayloadSchemas",
+      "status": "PASS"
+    },
+    {
+      "id": "format.legacyMigratesWithoutChangingInput",
+      "status": "PASS"
+    },
+    {
+      "id": "format.migrationIsIdempotent",
+      "status": "PASS"
+    },
+    {
+      "id": "format.decodeDoesNotMutateLiveStateOrStorage",
+      "status": "PASS"
+    },
+    {
+      "id": "restore.changedValidatedObjectIsRechecked",
+      "status": "PASS"
+    },
+    {
+      "id": "restore.validEditOfDecodedObjectIsPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.future.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.negative.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.fractional.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.stringVersion.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.nullVersion.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.unknownRelease.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.unknownSchema.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.unknownItem.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.oversizedAmmoStack.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.overfilledMagazine.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.missingMagazineWithRounds.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.invalidDroneBattery.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.packedDroneWithoutToken.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.duplicateDroneToken.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.invalidWallHP.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.missingSubsystem.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.invalidFarmCrop.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.invalidPlayerHP.beforeRestoreMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.null.decodeWithoutMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.array.decodeWithoutMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.invalidJSON.decodeWithoutMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "reject.oversized.decodeWithoutMutation",
+      "status": "PASS"
+    },
+    {
+      "id": "restore.privateObjectsDoNotAliasSave",
+      "status": "PASS"
+    },
+    {
+      "id": "restore.cancelsPendingSaveAndCleansTransaction",
+      "status": "PASS"
+    },
+    {
+      "id": "restore.subsequentAutosaveWorksOnce",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.continueAcceptedStage1",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.corruptPrimaryUsesIndependentBackup",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.unreadableAndFutureSaveNeverOverwritten",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.failedWritePreservesPrimaryAndProgress",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.AtoBtoAAndNoPendingTimerWritesWrongSlot",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.importAllocatesFreeSlotAndRetainsSource",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.invalidImportDoesNotAllocateOrOverwrite",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.newGameDoesNotClonePreviousProgress",
+      "status": "PASS"
+    },
+    {
+      "id": "newGame.templateCannotBeReplacedAfterLoad",
+      "status": "PASS"
+    },
+    {
+      "id": "newGame.templateIsPrivateAndDetached",
+      "status": "PASS"
+    },
+    {
+      "id": "newGame.completePowerAndSavePayload",
+      "status": "PASS"
+    },
+    {
+      "id": "newGame.noInheritedFarmDroneOrEvent",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.fullSlotsPreserved",
+      "status": "PASS"
+    },
+    {
+      "id": "slots.currentFormatSurvivesFullRestart",
+      "status": "PASS"
+    },
+    {
+      "id": "console.noErrors",
+      "status": "PASS"
+    }
+  ]
+}

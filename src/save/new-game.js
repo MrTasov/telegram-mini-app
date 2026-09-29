@@ -14,7 +14,8 @@ window.GameNewGame=(()=>{
     d.v09.power.running=false;d.v09.power.fuel=0;d.v010.modules.energy.battery.charge=0;d.v010.modules.energy.battery.enabled=true;
     for(const id of Object.keys(d.v09.power.deviceEnabled))d.v09.power.deviceEnabled[id]=preset.enabledDevices.includes(id);
     for(const id of Object.keys(d.v09.power.roomEnabled))d.v09.power.roomEnabled[id]=true;
-    for(const door of d.v09.power.doors){door.open=0;door.manual=false;door.away=0;}
+    for(const door of d.v09.power.doors){door.open=BunkerLayout.doorDefinitions.find(d=>d.id===door.id)?.alwaysOpen?1:0;door.manual=false;door.away=0;}
+    for(const id of Object.keys(d.v09.power.deviceEnabled))if(['water_system','irrigation014','animal_system','light_reserve_l1','light_empty_l1'].includes(id)||BunkerLayout.rooms[V09Power.devices[id]?.room]?.floor===2)d.v09.power.deviceEnabled[id]=true;
     d.player.scene='bunker';Object.assign(d.player,BunkerLayout.arrivals[0]);
     d.v091.fortress.wallLevel=false;d.v091.fortress.x=d.player.x;d.v091.fortress.y=d.player.y;
     return d;

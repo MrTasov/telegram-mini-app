@@ -1,0 +1,4175 @@
+{
+  "which": "before",
+  "runtimeSha256": "7287e8929bf4b67f775754648bce80f326e1bf2234edc8e1c96506e9c8d586f2",
+  "scope": "390x844 native Canvas2D original assets, modeled DOM/WebAudio; NOT mobile/browser FPS",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "rows": [
+    {
+      "id": "idle",
+      "which": "before",
+      "n": 0,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 17.251632000000427,
+        "p95": 23.478509999999915,
+        "mean": 18.074243441666635
+      },
+      "update": {
+        "n": 120,
+        "p50": 3.856735999999728,
+        "p95": 8.217791000000034,
+        "mean": 4.242231058333285
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 13.428195999999843,
+        "p95": 17.197427999999945,
+        "mean": 13.832012383333351
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 1786.9310000000037
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 411.3980000000001
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 106.39699999999989
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 69.30000000000001
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 42.159
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 39.516
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 37.858
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 37.533
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 36.928999999999995
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 31.539999999999996
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 27.812
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.795999999999996
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 26.76000000000001
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.421999999999997
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.805
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.720999999999997
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.272000000000002
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.898
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.94
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 13.893
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.219
+        },
+        {
+          "name": "canInteract",
+          "line": 16771,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.359
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.240999999999998
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.399
+        },
+        {
+          "name": "drawWater",
+          "line": 11326,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.387
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.18
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.903999999999998
+        },
+        {
+          "name": "drawProps",
+          "line": 12734,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.9
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.889000000000001
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.869000000000002
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.402
+        },
+        {
+          "name": "ctx.fillText",
+          "line": 9225,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.191999999999998
+        },
+        {
+          "name": "seen",
+          "line": 9119,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.146999999999998
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.129999999999999
+        },
+        {
+          "name": "canInteract",
+          "line": 13236,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.859999999999999
+        },
+        {
+          "name": "actors",
+          "line": 12391,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.6739999999999995
+        },
+        {
+          "name": "getAttribute",
+          "line": 22,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 7.647000000000001
+        },
+        {
+          "name": "ellipse",
+          "line": 5383,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.941999999999998
+        },
+        {
+          "name": "drawInterior",
+          "line": 10498,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.7829999999999995
+        },
+        {
+          "name": "markers",
+          "line": 9378,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.47
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.302
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.117
+        },
+        {
+          "name": "",
+          "line": 2755,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.032
+        },
+        {
+          "name": "worker",
+          "line": 6,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-corrective.cjs",
+          "ms": 5.97
+        },
+        {
+          "name": "line",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.852
+        }
+      ],
+      "heap": {
+        "start": 22057288,
+        "beforeGC": 32965528,
+        "afterGC": 25672600,
+        "retained": 3615312,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 0,
+        "hp": 100,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 6,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    },
+    {
+      "id": "ak_empty",
+      "which": "before",
+      "n": 0,
+      "gun": "rifle_ak74",
+      "frame": {
+        "n": 120,
+        "p50": 17.745796000000155,
+        "p95": 22.571436000000176,
+        "mean": 18.31384342500001
+      },
+      "update": {
+        "n": 120,
+        "p50": 4.024018000000069,
+        "p95": 8.028667000000041,
+        "mean": 4.472130300000064
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 13.487463999999818,
+        "p95": 16.38743499999964,
+        "mean": 13.841713124999945
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 1770.7520000000027
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 437.418
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 98.79799999999999
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 73.64599999999999
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 44.560999999999986
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 40.098
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 35.477999999999994
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 35.25400000000002
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 34.65699999999999
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 33.87200000000001
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 30.904000000000003
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 29.059
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.033999999999992
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 25.148999999999997
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 24.195000000000007
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.402999999999995
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.846999999999998
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.521
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.064999999999996
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.928
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.068999999999999
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.152000000000001
+        },
+        {
+          "name": "metal",
+          "line": 12634,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.902000000000001
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.895
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.691
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 9.668999999999999
+        },
+        {
+          "name": "ellipse",
+          "line": 5383,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.684
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.264
+        },
+        {
+          "name": "ctx.fillText",
+          "line": 9225,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.241999999999999
+        },
+        {
+          "name": "drawCar",
+          "line": 11510,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.207
+        },
+        {
+          "name": "drawSurface",
+          "line": 8646,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.019
+        },
+        {
+          "name": "markers",
+          "line": 9378,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.830000000000001
+        },
+        {
+          "name": "drawWater",
+          "line": 11326,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.601
+        },
+        {
+          "name": "",
+          "line": 12549,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.598
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.158000000000001
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.023999999999999
+        },
+        {
+          "name": "seen",
+          "line": 9119,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.968
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.843
+        },
+        {
+          "name": "interactionObjects",
+          "line": 12548,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.815
+        },
+        {
+          "name": "actors",
+          "line": 12391,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.707
+        },
+        {
+          "name": "interactionObjects",
+          "line": 10134,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.667999999999999
+        },
+        {
+          "name": "drawWalls",
+          "line": 12787,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.492
+        },
+        {
+          "name": "gunSpec",
+          "line": 8182,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.112
+        },
+        {
+          "name": "draw",
+          "line": 9171,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.914999999999999
+        },
+        {
+          "name": "canInteract",
+          "line": 13236,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.8889999999999985
+        }
+      ],
+      "heap": {
+        "start": 22065080,
+        "beforeGC": 59066728,
+        "afterGC": 26366600,
+        "retained": 4301520,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 3,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 12,
+        "initialAmmo": 30,
+        "living": 0,
+        "hp": 100,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 6,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    },
+    {
+      "id": "m4_empty",
+      "which": "before",
+      "n": 0,
+      "gun": "rifle_m4",
+      "frame": {
+        "n": 120,
+        "p50": 17.94386200000008,
+        "p95": 23.590122000000065,
+        "mean": 18.734703925000016
+      },
+      "update": {
+        "n": 120,
+        "p50": 4.117557999999917,
+        "p95": 8.404341999999815,
+        "mean": 4.631430900000006
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 13.552682000000004,
+        "p95": 17.962850999999773,
+        "mean": 14.10327302500001
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 1838.7710000000018
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 426.90200000000056
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 115.80199999999996
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 69.36299999999999
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 46.710000000000015
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 40.567
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 38.857
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 37.829
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 36.53600000000001
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 34.92300000000001
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.969000000000005
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.774
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 28.666999999999998
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 23.78099999999999
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.936999999999994
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.373
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.772999999999998
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 13.719
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.589000000000002
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.056999999999999
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.660000000000002
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.283999999999999
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.282999999999998
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.07
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.633
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.469
+        },
+        {
+          "name": "canInteract",
+          "line": 16771,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.033999999999999
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.577
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.381
+        },
+        {
+          "name": "worker",
+          "line": 6,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-corrective.cjs",
+          "ms": 8.754999999999999
+        },
+        {
+          "name": "",
+          "line": 12549,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.713
+        },
+        {
+          "name": "getAttribute",
+          "line": 22,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 8.663000000000002
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.299999999999999
+        },
+        {
+          "name": "",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 7.783000000000001
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.1290000000000004
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.074
+        },
+        {
+          "name": "ellipse",
+          "line": 5383,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.923000000000001
+        },
+        {
+          "name": "drawCar",
+          "line": 11510,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.923
+        },
+        {
+          "name": "ctx.fillText",
+          "line": 9225,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.805
+        },
+        {
+          "name": "interactionObjects",
+          "line": 13235,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.71
+        },
+        {
+          "name": "geometryFor",
+          "line": 1221,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.3759999999999994
+        },
+        {
+          "name": "",
+          "line": 2755,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.292
+        },
+        {
+          "name": "drawOre",
+          "line": 5488,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.97
+        },
+        {
+          "name": "drawWater",
+          "line": 11326,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.948999999999999
+        },
+        {
+          "name": "interactionObjects",
+          "line": 12548,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.906000000000001
+        }
+      ],
+      "heap": {
+        "start": 22098256,
+        "beforeGC": 30001912,
+        "afterGC": 26327984,
+        "retained": 4229728,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 5,
+      "end": {
+        "weapon": "rifle_m4",
+        "remaining": 4,
+        "initialAmmo": 30,
+        "living": 0,
+        "hp": 100,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 6,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    },
+    {
+      "id": "z10",
+      "which": "before",
+      "n": 10,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 17.58934999999974,
+        "p95": 22.06526699999995,
+        "mean": 18.212961683333354
+      },
+      "update": {
+        "n": 120,
+        "p50": 3.972757999999885,
+        "p95": 7.670473999999558,
+        "mean": 4.406220666666657
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 13.535719999999856,
+        "p95": 15.876211999999668,
+        "mean": 13.806741016666699
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 1823.319000000001
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 421.6439999999997
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 82.21199999999995
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 63.983999999999995
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 52.01200000000001
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 38.801
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 36.629
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 36.251000000000005
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 34.496000000000016
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 32.946000000000005
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 26.418999999999997
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 25.400000000000002
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 24.474999999999998
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 23.113000000000003
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 23.076
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 22.722999999999995
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.513999999999996
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.714999999999996
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.564999999999998
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 16.388999999999996
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.991
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.213
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.059999999999999
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.628
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.274999999999999
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.153999999999998
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.658999999999999
+        },
+        {
+          "name": "",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 10.059999999999999
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.754999999999997
+        },
+        {
+          "name": "actors",
+          "line": 12391,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.630999999999998
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.238
+        },
+        {
+          "name": "markers",
+          "line": 9378,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.769
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.658999999999999
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.022
+        },
+        {
+          "name": "seen",
+          "line": 9119,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.987999999999999
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.957
+        },
+        {
+          "name": "canInteract",
+          "line": 16771,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.63
+        },
+        {
+          "name": "move",
+          "line": 13871,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.854
+        },
+        {
+          "name": "drawWalls",
+          "line": 12787,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.617999999999999
+        },
+        {
+          "name": "draw",
+          "line": 9171,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.404999999999999
+        },
+        {
+          "name": "getAttribute",
+          "line": 22,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 6.370999999999999
+        },
+        {
+          "name": "rectHit",
+          "line": 1179,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.136
+        },
+        {
+          "name": "",
+          "line": 2755,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.797
+        },
+        {
+          "name": "ctx.fillText",
+          "line": 9225,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.786999999999998
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.550999999999999
+        }
+      ],
+      "heap": {
+        "start": 22080288,
+        "beforeGC": 47344720,
+        "afterGC": 26500816,
+        "retained": 4420528,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 10,
+        "hp": 76,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 1806,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    },
+    {
+      "id": "z25",
+      "which": "before",
+      "n": 25,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 20.556107999999767,
+        "p95": 27.359357000000273,
+        "mean": 21.255282450000017
+      },
+      "update": {
+        "n": 120,
+        "p50": 4.479170999999951,
+        "p95": 9.415140000000065,
+        "mean": 5.016320483333342
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 15.925518000000011,
+        "p95": 19.32164499999999,
+        "mean": 16.238961966666675
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 2040.9450000000018
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 412.5849999999999
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 113.21499999999993
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 72.82800000000002
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 62.54799999999999
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 38.67399999999998
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 36.520999999999994
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 36.335
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 36.209
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 32.282
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 30.14399999999999
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.35499999999999
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.352999999999994
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 27.081999999999994
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 23.282
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 21.751999999999995
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 20.609999999999996
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.433999999999997
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.621000000000002
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.434
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.068000000000005
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.841999999999999
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.623
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.449000000000002
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 15.225999999999996
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.870000000000001
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.462000000000005
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.508000000000003
+        },
+        {
+          "name": "rectHit",
+          "line": 1179,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.030000000000001
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.949
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.481000000000002
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.24
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.89
+        },
+        {
+          "name": "drawZombie",
+          "line": 14046,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.347999999999999
+        },
+        {
+          "name": "drawImage",
+          "line": 108,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 8.332999999999998
+        },
+        {
+          "name": "ground",
+          "line": 13765,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.159
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.856
+        },
+        {
+          "name": "seen",
+          "line": 9119,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.601999999999999
+        },
+        {
+          "name": "",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 7.570999999999999
+        },
+        {
+          "name": "interactionObjects",
+          "line": 2751,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.531999999999999
+        },
+        {
+          "name": "draw",
+          "line": 9171,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.521000000000001
+        },
+        {
+          "name": "canInteract",
+          "line": 13236,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.446999999999999
+        },
+        {
+          "name": "",
+          "line": 2755,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.101999999999999
+        },
+        {
+          "name": "ellipse",
+          "line": 5383,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.958
+        },
+        {
+          "name": "get paused",
+          "line": 1679,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.904
+        }
+      ],
+      "heap": {
+        "start": 22112784,
+        "beforeGC": 43299696,
+        "afterGC": 26539464,
+        "retained": 4426680,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 25,
+        "hp": 64,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 4506,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    },
+    {
+      "id": "z50",
+      "which": "before",
+      "n": 50,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 21.670704999999543,
+        "p95": 26.111092999999983,
+        "mean": 22.114730950000023
+      },
+      "update": {
+        "n": 120,
+        "p50": 4.840204000000085,
+        "p95": 9.025403000000097,
+        "mean": 5.226326016666678
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 16.607034000000567,
+        "p95": 19.95379099999991,
+        "mean": 16.888404933333344
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 2199.2850000000058
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 434.31799999999976
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 102.0089999999999
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 68.52699999999999
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 61.83
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 39.59000000000001
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 37.312000000000005
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 36.513
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 33.97000000000001
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 32.183
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 31.574
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 31.507000000000012
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 29.136
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 27.564999999999998
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.466999999999985
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 25.648
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 20.901999999999997
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 20.045
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.576
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.296000000000003
+        },
+        {
+          "name": "rectHit",
+          "line": 1179,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.781
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.493000000000002
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.674999999999999
+        },
+        {
+          "name": "move",
+          "line": 13871,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.205
+        },
+        {
+          "name": "",
+          "line": 334,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.081999999999999
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.928999999999998
+        },
+        {
+          "name": "prepare",
+          "line": 13815,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.733000000000002
+        },
+        {
+          "name": "drawZombie",
+          "line": 14046,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.710000000000003
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.159999999999997
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.096
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.693000000000001
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.597999999999997
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.354999999999999
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 10.853000000000002
+        },
+        {
+          "name": "actors",
+          "line": 12391,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.392999999999999
+        },
+        {
+          "name": "drawInterior",
+          "line": 10498,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.315
+        },
+        {
+          "name": "get paused",
+          "line": 1679,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.075
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.727000000000002
+        },
+        {
+          "name": "drawImage",
+          "line": 108,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 8.373999999999999
+        },
+        {
+          "name": "canInteract",
+          "line": 16771,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.354999999999999
+        },
+        {
+          "name": "drawWalls",
+          "line": 12787,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.202
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.11
+        },
+        {
+          "name": "markers",
+          "line": 9378,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.083
+        },
+        {
+          "name": "geometryFor",
+          "line": 1221,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.603000000000001
+        },
+        {
+          "name": "canInteract",
+          "line": 13236,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.585999999999998
+        }
+      ],
+      "heap": {
+        "start": 22170008,
+        "beforeGC": 48375392,
+        "afterGC": 26604880,
+        "retained": 4434872,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 50,
+        "hp": 64,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 9006,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    },
+    {
+      "id": "z100",
+      "which": "before",
+      "n": 100,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 24.029639000000316,
+        "p95": 29.751111000000492,
+        "mean": 24.57436325833332
+      },
+      "update": {
+        "n": 120,
+        "p50": 5.406556999999793,
+        "p95": 9.274089999999887,
+        "mean": 5.923512449999991
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 18.615128999999797,
+        "p95": 21.273560999999972,
+        "mean": 18.650850808333328
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 2477.841000000011
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 441.2980000000007
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 124.57199999999983
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 91.052
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 65.14000000000001
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 64.635
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 52.618
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 44.91600000000001
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 39.743999999999986
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 39.368
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 37.25899999999999
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 35.794
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 32.75999999999999
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 31.617999999999995
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.93099999999999
+        },
+        {
+          "name": "drawZombie",
+          "line": 14046,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.613999999999997
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 27.108
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.296000000000006
+        },
+        {
+          "name": "move",
+          "line": 13871,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 24.29500000000001
+        },
+        {
+          "name": "",
+          "line": 334,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 23.797
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 23.501999999999995
+        },
+        {
+          "name": "rectHit",
+          "line": 1179,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 22.448999999999998
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 20.345
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.689
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.636
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.365
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.879
+        },
+        {
+          "name": "actors",
+          "line": 12391,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.356999999999992
+        },
+        {
+          "name": "healthBar",
+          "line": 13996,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.985000000000003
+        },
+        {
+          "name": "prepare",
+          "line": 13815,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.844999999999999
+        },
+        {
+          "name": "geometryFor",
+          "line": 1221,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.834000000000001
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.791
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.49
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.255000000000003
+        },
+        {
+          "name": "ground",
+          "line": 13765,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.088999999999999
+        },
+        {
+          "name": "drawImage",
+          "line": 108,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 12.927999999999997
+        },
+        {
+          "name": "draw",
+          "line": 9171,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.155
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.832
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.741
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.995000000000001
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.902999999999999
+        },
+        {
+          "name": "stats",
+          "line": 13801,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.497
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 10.338999999999999
+        },
+        {
+          "name": "gateArt",
+          "line": 12778,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.257999999999997
+        },
+        {
+          "name": "worldCollision",
+          "line": 5694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.978000000000002
+        }
+      ],
+      "heap": {
+        "start": 22282944,
+        "beforeGC": 37028288,
+        "afterGC": 26797712,
+        "retained": 4514768,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 100,
+        "hp": 64,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 18006,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    },
+    {
+      "id": "z25_ak",
+      "which": "before",
+      "n": 25,
+      "gun": "rifle_ak74",
+      "frame": {
+        "n": 120,
+        "p50": 19.39937000000009,
+        "p95": 23.02309400000013,
+        "mean": 19.615562191666683
+      },
+      "update": {
+        "n": 120,
+        "p50": 4.336326999999983,
+        "p95": 8.15730799999983,
+        "mean": 4.7423334499999745
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 14.854999000000134,
+        "p95": 16.41480700000011,
+        "mean": 14.873228741666708
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 1973.7830000000058
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 430.2170000000005
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 96.96699999999989
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 54.42599999999997
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 53.23499999999998
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 42.01
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 37.349
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 36.24499999999999
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 36.18200000000001
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 33.559
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 33.117000000000004
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 29.935000000000006
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 29.047000000000004
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 27.120999999999995
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 21.103
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.494999999999997
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.13799999999999
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.826000000000004
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.739999999999998
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.267000000000001
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.182999999999998
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.895000000000001
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 13.352999999999998
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.35
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.439
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.177999999999999
+        },
+        {
+          "name": "rectHit",
+          "line": 1179,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.161000000000003
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.878
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.700999999999999
+        },
+        {
+          "name": "",
+          "line": 334,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.559000000000001
+        },
+        {
+          "name": "actors",
+          "line": 12391,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.469
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.058
+        },
+        {
+          "name": "drawImage",
+          "line": 108,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 8.965
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.885000000000002
+        },
+        {
+          "name": "seen",
+          "line": 9119,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.235
+        },
+        {
+          "name": "draw",
+          "line": 9171,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.215000000000002
+        },
+        {
+          "name": "prepare",
+          "line": 13815,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.013
+        },
+        {
+          "name": "",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 7.6309999999999985
+        },
+        {
+          "name": "geometryFor",
+          "line": 1221,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.361
+        },
+        {
+          "name": "",
+          "line": 12549,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.163
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.053000000000001
+        },
+        {
+          "name": "getAttribute",
+          "line": 22,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 7.006
+        },
+        {
+          "name": "canInteract",
+          "line": 16771,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.915999999999999
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.8340000000000005
+        },
+        {
+          "name": "drawRoofs",
+          "line": 10512,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.512
+        }
+      ],
+      "heap": {
+        "start": 22119496,
+        "beforeGC": 62138472,
+        "afterGC": 27171200,
+        "retained": 5051704,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 3,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 12,
+        "initialAmmo": 30,
+        "living": 25,
+        "hp": 100,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 4323,
+          "coarse": 7,
+          "skipped": 110
+        }
+      }
+    },
+    {
+      "id": "z50_ak",
+      "which": "before",
+      "n": 50,
+      "gun": "rifle_ak74",
+      "frame": {
+        "n": 120,
+        "p50": 22.11494500000026,
+        "p95": 28.881051000000298,
+        "mean": 23.15359609166664
+      },
+      "update": {
+        "n": 120,
+        "p50": 5.060124999999971,
+        "p95": 8.740826000000197,
+        "mean": 5.593809349999981
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 16.785665000000336,
+        "p95": 22.473441000000093,
+        "mean": 17.559786741666656
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 2340.3990000000063
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 473.75300000000004
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 99.81999999999995
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 66.358
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 62.46400000000003
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 47.17500000000001
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 41.361
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 39.581999999999994
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 36.11399999999999
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 35.32699999999999
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 33.96699999999999
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 33.445
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 29.422
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 29.143999999999995
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 27.732999999999997
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 27.642999999999997
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.179
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 25.662
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 25.162000000000003
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 20.073
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.199000000000005
+        },
+        {
+          "name": "prepare",
+          "line": 13815,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.412999999999997
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.078999999999997
+        },
+        {
+          "name": "healthBar",
+          "line": 13996,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.751999999999997
+        },
+        {
+          "name": "rectHit",
+          "line": 1179,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.32
+        },
+        {
+          "name": "drawImage",
+          "line": 108,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 14.846000000000002
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.689000000000004
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.751
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.584999999999999
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 13.477999999999998
+        },
+        {
+          "name": "drawZombie",
+          "line": 14046,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.467
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.186999999999998
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.3
+        },
+        {
+          "name": "",
+          "line": 334,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.078000000000001
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.640999999999998
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.546
+        },
+        {
+          "name": "move",
+          "line": 13871,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.047
+        },
+        {
+          "name": "canInteract",
+          "line": 13236,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.942
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.769
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.984000000000002
+        },
+        {
+          "name": "getAttribute",
+          "line": 22,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 9.454
+        },
+        {
+          "name": "seen",
+          "line": 9119,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.290000000000001
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.264
+        },
+        {
+          "name": "get records",
+          "line": 1001,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.431
+        },
+        {
+          "name": "drawWater",
+          "line": 11326,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.205
+        }
+      ],
+      "heap": {
+        "start": 22177496,
+        "beforeGC": 35110560,
+        "afterGC": 27298952,
+        "retained": 5121456,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 3,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 12,
+        "initialAmmo": 30,
+        "living": 49,
+        "hp": 100,
+        "shots": 0,
+        "ammo": [],
+        "activity": {
+          "frames": 181,
+          "full": 8809,
+          "coarse": 7,
+          "skipped": 110
+        }
+      }
+    },
+    {
+      "id": "z50_turrets",
+      "which": "before",
+      "n": 50,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 24.268309000000045,
+        "p95": 29.201043000000027,
+        "mean": 24.838808216666695
+      },
+      "update": {
+        "n": 120,
+        "p50": 6.366312999999991,
+        "p95": 9.659019000000626,
+        "mean": 6.778544850000075
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 17.76919699999962,
+        "p95": 21.35697600000003,
+        "mean": 18.06026336666662
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 2344.7680000000114
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 449.98199999999997
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 125.32199999999993
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 108.80499999999998
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 80.222
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 71.07800000000003
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 59.72300000000002
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 44.56000000000001
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 44.434000000000026
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 41.08999999999999
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 38.211
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 37.058
+        },
+        {
+          "name": "rectHit",
+          "line": 1179,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 36.38400000000001
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 36.196999999999996
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 34.693999999999996
+        },
+        {
+          "name": "geometryFor",
+          "line": 1221,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.941000000000006
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.337
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 28.226000000000006
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 27.36399999999999
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.409999999999997
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 21.735000000000007
+        },
+        {
+          "name": "prepare",
+          "line": 13815,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 20.328
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.979999999999997
+        },
+        {
+          "name": "aabb",
+          "line": 951,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.717000000000002
+        },
+        {
+          "name": "drawImage",
+          "line": 108,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 17.828000000000007
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.369
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 15.543999999999999
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.227
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.741
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.070999999999996
+        },
+        {
+          "name": "breachTarget",
+          "line": 16742,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.847999999999999
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.658999999999999
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.488999999999999
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.267
+        },
+        {
+          "name": "move",
+          "line": 13871,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.651999999999997
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.537999999999997
+        },
+        {
+          "name": "",
+          "line": 334,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.373
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.606000000000002
+        },
+        {
+          "name": "worldCollision",
+          "line": 8474,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.503
+        },
+        {
+          "name": "markers",
+          "line": 9378,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.441
+        },
+        {
+          "name": "canInteract",
+          "line": 16771,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.243000000000002
+        },
+        {
+          "name": "proto.save",
+          "line": 16,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/canvas-contract.cjs",
+          "ms": 11.160000000000002
+        },
+        {
+          "name": "drawWalls",
+          "line": 12787,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.436
+        },
+        {
+          "name": "drawZombie",
+          "line": 14046,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.052999999999999
+        },
+        {
+          "name": "worldCollision",
+          "line": 5282,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.040999999999999
+        }
+      ],
+      "heap": {
+        "start": 22292760,
+        "beforeGC": 48063856,
+        "afterGC": 27114112,
+        "retained": 4821352,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 41,
+        "hp": 64,
+        "shots": 33,
+        "ammo": [
+          585,
+          391,
+          591
+        ],
+        "activity": {
+          "frames": 181,
+          "full": 7989,
+          "coarse": 12,
+          "skipped": 178
+        }
+      }
+    },
+    {
+      "id": "z50_lights",
+      "which": "before",
+      "n": 50,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 29.117538000000422,
+        "p95": 36.63797599999998,
+        "mean": 29.83150004166664
+      },
+      "update": {
+        "n": 120,
+        "p50": 7.785646999999699,
+        "p95": 12.727334999999584,
+        "mean": 8.367765424999986
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 21.005073000000266,
+        "p95": 25.822669000000133,
+        "mean": 21.463734616666656
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 2819.2530000000074
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 475.5229999999999
+        },
+        {
+          "name": "worldCollision",
+          "line": 1234,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 153.93599999999986
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 147.14099999999988
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 110.38699999999999
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 67.14099999999996
+        },
+        {
+          "name": "rectHit",
+          "line": 1179,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 66.47699999999999
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 66.25000000000001
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 62.13800000000002
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 53.960000000000015
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 50.616
+        },
+        {
+          "name": "geometryFor",
+          "line": 1221,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 48.79900000000001
+        },
+        {
+          "name": "aabb",
+          "line": 951,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 43.21099999999999
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 41.464
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 37.083
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 33.748999999999995
+        },
+        {
+          "name": "sprite",
+          "line": 12928,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 31.530999999999995
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 29.613
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 26.814000000000007
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.52
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 26.092
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 25.886999999999997
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 24.45799999999999
+        },
+        {
+          "name": "breachTarget",
+          "line": 16742,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 21.856999999999992
+        },
+        {
+          "name": "",
+          "line": 5381,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 21.166
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 20.496
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.471999999999998
+        },
+        {
+          "name": "prepare",
+          "line": 13815,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.760999999999996
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.753
+        },
+        {
+          "name": "worldCollision",
+          "line": 5282,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.551
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.168000000000003
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 15.825999999999997
+        },
+        {
+          "name": "drawZombie",
+          "line": 14046,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.258000000000003
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.699000000000002
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.307999999999998
+        },
+        {
+          "name": "worldCollision",
+          "line": 8474,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.835
+        },
+        {
+          "name": "move",
+          "line": 13871,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.806999999999999
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.605
+        },
+        {
+          "name": "",
+          "line": 334,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.482000000000001
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.778999999999998
+        },
+        {
+          "name": "",
+          "line": 2895,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.679
+        },
+        {
+          "name": "get paused",
+          "line": 1679,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.629999999999999
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.482
+        },
+        {
+          "name": "lineClear",
+          "line": 1254,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.184999999999999
+        },
+        {
+          "name": "markers",
+          "line": 9378,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.843
+        }
+      ],
+      "heap": {
+        "start": 22404880,
+        "beforeGC": 63601208,
+        "afterGC": 27980928,
+        "retained": 5576048,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 37,
+        "hp": 64,
+        "shots": 39,
+        "ammo": [
+          585,
+          390,
+          586,
+          0,
+          0
+        ],
+        "activity": {
+          "frames": 181,
+          "full": 7785,
+          "coarse": 12,
+          "skipped": 178
+        }
+      }
+    },
+    {
+      "id": "offzone",
+      "which": "before",
+      "n": 50,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 17.818657999999687,
+        "p95": 22.768467000000328,
+        "mean": 18.38172689166667
+      },
+      "update": {
+        "n": 120,
+        "p50": 4.411618999999973,
+        "p95": 8.220943000000261,
+        "mean": 4.791468691666682
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 13.267457999999806,
+        "p95": 16.406720999999834,
+        "mean": 13.590258199999987
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 2024.9049999999925
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 430.8930000000006
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 128.29699999999994
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 95.58099999999996
+        },
+        {
+          "name": "rayEntry",
+          "line": 12507,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 55.920999999999985
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 46.034000000000006
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 44.964
+        },
+        {
+          "name": "line",
+          "line": 10563,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 43.894999999999996
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 37.901999999999994
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 30.514
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 24.680999999999994
+        },
+        {
+          "name": "blocker",
+          "line": 12508,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 24.364000000000008
+        },
+        {
+          "name": "rect",
+          "line": 10562,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 23.298000000000002
+        },
+        {
+          "name": "shadow",
+          "line": 10604,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 21.784
+        },
+        {
+          "name": "ctx.fillText",
+          "line": 9225,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.905000000000005
+        },
+        {
+          "name": "drawBunker",
+          "line": 3461,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.365
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 12.844
+        },
+        {
+          "name": "prepare",
+          "line": 13815,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.262000000000002
+        },
+        {
+          "name": "DOMMatrix",
+          "line": 415,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/geometry.js",
+          "ms": 11.793000000000001
+        },
+        {
+          "name": "drawImage",
+          "line": 108,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 11.767999999999999
+        },
+        {
+          "name": "",
+          "line": 8700,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 11.007999999999997
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.067
+        },
+        {
+          "name": "getAttribute",
+          "line": 22,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 9.452000000000002
+        },
+        {
+          "name": "passage",
+          "line": 13851,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.717999999999998
+        },
+        {
+          "name": "",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 8.261000000000001
+        },
+        {
+          "name": "present",
+          "line": 1002,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.248999999999999
+        },
+        {
+          "name": "getTransform",
+          "line": 93,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 8.210999999999999
+        },
+        {
+          "name": "isDayX",
+          "line": 13807,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.166
+        },
+        {
+          "name": "wallApproach",
+          "line": 13830,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.041
+        },
+        {
+          "name": "stats",
+          "line": 13801,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.569000000000001
+        },
+        {
+          "name": "drawRoom",
+          "line": 10814,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.629
+        },
+        {
+          "name": "aabb",
+          "line": 951,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.481
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.4750000000000005
+        },
+        {
+          "name": "draw",
+          "line": 9451,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 6.191
+        },
+        {
+          "name": "fan",
+          "line": 10634,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.915999999999999
+        },
+        {
+          "name": "update",
+          "line": 5345,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.860999999999999
+        },
+        {
+          "name": "chest",
+          "line": 10616,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.851999999999999
+        },
+        {
+          "name": "v09DrawRoomSwitch",
+          "line": 8814,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 5.299
+        },
+        {
+          "name": "proto.restore",
+          "line": 17,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/canvas-contract.cjs",
+          "ms": 5.266
+        },
+        {
+          "name": "proto.roundRect",
+          "line": 8,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/canvas-contract.cjs",
+          "ms": 5.258
+        },
+        {
+          "name": "draw",
+          "line": 9171,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 4.832
+        },
+        {
+          "name": "v09DrawDoor",
+          "line": 10689,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 4.795999999999999
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 4.773999999999999
+        },
+        {
+          "name": "lights",
+          "line": 879,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 4.702
+        },
+        {
+          "name": "fixture",
+          "line": 884,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 4.6899999999999995
+        }
+      ],
+      "heap": {
+        "start": 22335736,
+        "beforeGC": 47127272,
+        "afterGC": 26636128,
+        "retained": 4300392,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 50,
+        "hp": 100,
+        "shots": 0,
+        "ammo": [
+          600,
+          400,
+          600
+        ],
+        "activity": {
+          "frames": 181,
+          "full": 9006,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    },
+    {
+      "id": "return",
+      "which": "before",
+      "n": 50,
+      "gun": null,
+      "frame": {
+        "n": 120,
+        "p50": 21.554017999999814,
+        "p95": 28.58338300000014,
+        "mean": 22.228597241666666
+      },
+      "update": {
+        "n": 120,
+        "p50": 5.415621000000101,
+        "p95": 9.728429999999662,
+        "mean": 5.8751072083333495
+      },
+      "renderAudio": {
+        "n": 120,
+        "p50": 15.432756000000154,
+        "p95": 21.364513999999872,
+        "mean": 16.35349003333332
+      },
+      "top": [
+        {
+          "name": "custom_gc",
+          "line": -1,
+          "url": "",
+          "ms": 2022.8720000000058
+        },
+        {
+          "name": "matches",
+          "line": 31,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 429.9660000000002
+        },
+        {
+          "name": "querySelectorAll",
+          "line": 34,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 127.40999999999993
+        },
+        {
+          "name": "rayEntry",
+          "line": 12507,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 60.599999999999994
+        },
+        {
+          "name": "drawTerrain",
+          "line": 5389,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 53.097999999999985
+        },
+        {
+          "name": "(garbage collector)",
+          "line": -1,
+          "url": "",
+          "ms": 47.617
+        },
+        {
+          "name": "get children",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 44.39600000000001
+        },
+        {
+          "name": "allocation",
+          "line": 8694,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 42.698999999999984
+        },
+        {
+          "name": "updateMonsters",
+          "line": 13938,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 39.623999999999995
+        },
+        {
+          "name": "post",
+          "line": 114,
+          "url": "node:inspector",
+          "ms": 38.615
+        },
+        {
+          "name": "drawMapMarkers",
+          "line": 9394,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 36.993
+        },
+        {
+          "name": "runInContext",
+          "line": -1,
+          "url": "",
+          "ms": 34.808000000000014
+        },
+        {
+          "name": "drawOutskirts",
+          "line": 8623,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 27.938999999999997
+        },
+        {
+          "name": "draw",
+          "line": 11456,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 27.557999999999993
+        },
+        {
+          "name": "interactionObjects",
+          "line": 8481,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 24.703
+        },
+        {
+          "name": "add",
+          "line": 9380,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 21.712999999999994
+        },
+        {
+          "name": "line",
+          "line": 10563,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 21.628
+        },
+        {
+          "name": "rect",
+          "line": 12630,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 19.154
+        },
+        {
+          "name": "drawTerrain",
+          "line": 10998,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 18.074999999999996
+        },
+        {
+          "name": "blocker",
+          "line": 12508,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 17.131999999999998
+        },
+        {
+          "name": "",
+          "line": 8482,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 16.095
+        },
+        {
+          "name": "get id",
+          "line": 18,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 15.561999999999998
+        },
+        {
+          "name": "prepare",
+          "line": 13815,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 15.487
+        },
+        {
+          "name": "distance",
+          "line": 376,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 14.045999999999998
+        },
+        {
+          "name": "enemyStats",
+          "line": 333,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 13.735
+        },
+        {
+          "name": "ctx.fillText",
+          "line": 9225,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 12.368999999999998
+        },
+        {
+          "name": "rect",
+          "line": 10562,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.304
+        },
+        {
+          "name": "tick",
+          "line": 10476,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.110000000000001
+        },
+        {
+          "name": "clamp",
+          "line": 372,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 10.043999999999999
+        },
+        {
+          "name": "getTransform",
+          "line": 93,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/index.js",
+          "ms": 9.805
+        },
+        {
+          "name": "drawSurface",
+          "line": 5525,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.616999999999999
+        },
+        {
+          "name": "passage",
+          "line": 13851,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.460999999999999
+        },
+        {
+          "name": "drawFixtures",
+          "line": 13003,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 9.281
+        },
+        {
+          "name": "wallApproach",
+          "line": 13830,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.735
+        },
+        {
+          "name": "",
+          "line": 13,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/runtime.cjs",
+          "ms": 8.56
+        },
+        {
+          "name": "DOMMatrix",
+          "line": 415,
+          "url": "file:///opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/@napi-rs/canvas/geometry.js",
+          "ms": 8.456000000000001
+        },
+        {
+          "name": "drawDecoration",
+          "line": 12687,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.376999999999999
+        },
+        {
+          "name": "contactPoint",
+          "line": 2768,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.173
+        },
+        {
+          "name": "mapDraw",
+          "line": 9121,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 8.171
+        },
+        {
+          "name": "ground",
+          "line": 13765,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.707
+        },
+        {
+          "name": "line",
+          "line": 10490,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.585999999999999
+        },
+        {
+          "name": "ground",
+          "line": 12386,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.2170000000000005
+        },
+        {
+          "name": "",
+          "line": 8700,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.149999999999999
+        },
+        {
+          "name": "canInteract",
+          "line": 2772,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.049999999999999
+        },
+        {
+          "name": "drawBunker",
+          "line": 3461,
+          "url": "file:///workspace/scratch/a6d22bff5614/perf_corrective_0402/qa/perf-base/js/game.js",
+          "ms": 7.0360000000000005
+        }
+      ],
+      "heap": {
+        "start": 22364424,
+        "beforeGC": 44173736,
+        "afterGC": 27800240,
+        "retained": 5435816,
+        "note": "process-level diagnostic, not device RAM"
+      },
+      "maxBullets": 0,
+      "end": {
+        "weapon": "rifle_ak74",
+        "remaining": 30,
+        "initialAmmo": 30,
+        "living": 50,
+        "hp": 100,
+        "shots": 0,
+        "ammo": [
+          600,
+          400,
+          600
+        ],
+        "activity": {
+          "frames": 181,
+          "full": 9006,
+          "coarse": 2,
+          "skipped": 42
+        }
+      }
+    }
+  ],
+  "complete": true,
+  "runtimeUnchanged": true
+}

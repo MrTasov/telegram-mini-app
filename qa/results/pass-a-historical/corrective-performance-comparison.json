@@ -1,0 +1,149 @@
+{
+  "environment": {
+    "node": "v24.19.0",
+    "kind": "Native Canvas2D and modeled DOM; timings include VM crossings; no browser layout, compositor or physical touch"
+  },
+  "before": {
+    "tap_free": {
+      "input": {
+        "samples": 25,
+        "p50Ms": 2.3159679999998843,
+        "p95Ms": 3.732093999999961,
+        "maxMs": 4.02173300000004
+      },
+      "slices": null,
+      "maxSlices": 0
+    },
+    "tap_detour": {
+      "input": {
+        "samples": 25,
+        "p50Ms": 16.635892000000013,
+        "p95Ms": 22.215949999999793,
+        "maxMs": 24.848657000000003
+      },
+      "slices": null,
+      "maxSlices": 0
+    },
+    "held_free": {
+      "pointerMove": {
+        "samples": 360,
+        "p50Ms": 0.10211100000014994,
+        "p95Ms": 0.14625599999999395,
+        "maxMs": 8.594661000000087
+      },
+      "movementAndContext": {
+        "samples": 360,
+        "p50Ms": 0.868645000000015,
+        "p95Ms": 1.2510419999998703,
+        "maxMs": 2.251361999999972
+      },
+      "searches": 0,
+      "collisionFree": true
+    },
+    "held_obstacle": {
+      "pointerMove": {
+        "samples": 360,
+        "p50Ms": 0.10507600000028106,
+        "p95Ms": 0.18641500000012456,
+        "maxMs": 0.9836159999999836
+      },
+      "movementAndContext": {
+        "samples": 360,
+        "p50Ms": 0.8286260000004404,
+        "p95Ms": 1.1895309999999881,
+        "maxMs": 2.0078309999998964
+      },
+      "searches": 0,
+      "collisionFree": true
+    },
+    "zombies100_corpses100_mobile": {
+      "samples": 120,
+      "p50Ms": 45.20536700000048,
+      "p95Ms": 58.726253999999244,
+      "maxMs": 146.74266699999953
+    },
+    "zombies100_corpses100_pc": {
+      "samples": 120,
+      "p50Ms": 47.03556000000026,
+      "p95Ms": 61.42343799999799,
+      "maxMs": 183.83805200000097
+    },
+    "imageRequests": 125,
+    "uniqueImageRequests": 125,
+    "errors": []
+  },
+  "after": {
+    "tap_free": {
+      "input": {
+        "samples": 25,
+        "p50Ms": 2.1339789999983623,
+        "p95Ms": 3.5039060000017344,
+        "maxMs": 5.077209999999468
+      },
+      "slices": null,
+      "maxSlices": 0
+    },
+    "tap_detour": {
+      "input": {
+        "samples": 25,
+        "p50Ms": 4.0361139999986335,
+        "p95Ms": 5.217541999998502,
+        "maxMs": 5.630402999999205
+      },
+      "slices": {
+        "samples": 223,
+        "p50Ms": 1.8527919999978621,
+        "p95Ms": 2.3822670000008657,
+        "maxMs": 3.525087000001804
+      },
+      "maxSlices": 11
+    },
+    "held_free": {
+      "pointerMove": {
+        "samples": 360,
+        "p50Ms": 0.0955020000001241,
+        "p95Ms": 0.1605280000003404,
+        "maxMs": 0.2997539999996661
+      },
+      "movementAndContext": {
+        "samples": 360,
+        "p50Ms": 0.8989510000028531,
+        "p95Ms": 1.3561579999986861,
+        "maxMs": 2.9823150000011083
+      },
+      "searches": 0,
+      "collisionFree": true
+    },
+    "held_obstacle": {
+      "pointerMove": {
+        "samples": 360,
+        "p50Ms": 0.10980199999903562,
+        "p95Ms": 0.1764210000001185,
+        "maxMs": 0.5314569999973173
+      },
+      "movementAndContext": {
+        "samples": 360,
+        "p50Ms": 0.8504590000011376,
+        "p95Ms": 1.4883429999972577,
+        "maxMs": 2.4142329999995127
+      },
+      "searches": 0,
+      "collisionFree": true
+    },
+    "zombies100_corpses100_mobile": {
+      "samples": 120,
+      "p50Ms": 31.103837999999087,
+      "p95Ms": 34.56721400000242,
+      "maxMs": 36.373287000002165
+    },
+    "zombies100_corpses100_pc": {
+      "samples": 120,
+      "p50Ms": 31.31566600000224,
+      "p95Ms": 35.61351900000227,
+      "maxMs": 37.63030400000207
+    },
+    "imageRequests": 125,
+    "uniqueImageRequests": 125,
+    "errors": []
+  }
+}

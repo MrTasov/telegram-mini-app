@@ -1,8 +1,8 @@
 {
-  "version": "0.42.0",
-  "runtimeSha256": "ff3821b7b9282b8bcffbc452e98354528cedacb13a3c3d8e62a09630f6fdae88",
-  "passed": 20,
-  "failed": 0,
+  "version": "0.43.0",
+  "runtimeSha256": "a1f0ab9b3df6166722abf1e29386645904cbbaa59981fbc5d9522708b5c9e061",
+  "passed": 19,
+  "failed": 1,
   "checks": [
     {
       "id": "same_research_workflow_desktop_ru",
@@ -62,7 +62,8 @@
     },
     {
       "id": "save_0360_exact_domain_owners_and_receipts_preserved",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: player\n+ actual - expected\n\n  {\n    aimX: 0,\n    aimY: -1,\n    dead: false,\n    health: 100,\n    scene: 'bunker',\n+   x: 1205.3072502018574,\n+   y: 400.670699792501\n-   x: 1185.5082603286342,\n-   y: 380.8717099192777\n  }\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e-corrective.cjs:43:413\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e-corrective.cjs:6:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-e-corrective.cjs:41:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
     },
     {
       "id": "safe_area_adapter_browser",

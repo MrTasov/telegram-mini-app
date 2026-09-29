@@ -1,0 +1,43 @@
+{
+  "version": "0.36.1",
+  "realBrowserRenderingVerified": false,
+  "physicalPhoneVerified": false,
+  "physicalTelegramVerified": false,
+  "physicalAudioOutputVerified": false,
+  "attempts": [
+    {
+      "surface": "remote Chrome",
+      "result": "Runtime discovered Chrome; attempted local build navigation did not complete; no actual page screenshot obtained."
+    },
+    {
+      "surface": "local Chromium",
+      "result": "No existing executable; Playwright Chromium download returned invalid ZIP. Installation unavailable."
+    }
+  ],
+  "modelViewports": [
+    [
+      1280,
+      800
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      844,
+      390
+    ]
+  ],
+  "safeAreaAdapterChecks": [
+    "normal browser with SDK is not Telegram",
+    "Telegram portrait top/bottom insets",
+    "Telegram landscape asymmetric left/right insets",
+    "safeAreaChanged refresh"
+  ],
+  "reportedPCSilenceRootCause": "unconfirmed on affected device",
+  "requiredManualAcceptance": [
+    "real CSS rendering and mobile touch",
+    "Telegram WebView safe areas",
+    "PC and phone audio output"
+  ]
+}

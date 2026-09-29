@@ -542,7 +542,7 @@ const GameplayBalance={
       }
     }
   },
-  farm:{waterCapacity:500,irrigationMs:10000,intervalMinMs:60000,intervalMaxMs:120000,waterPerCycle:1,firstMinMs:1000,firstMaxMs:3000,dryGrowth:.35},
+  farm:{"waterCapacity": 40, "cleanCapacity": 100, "waterPerDay": 28, "waterKW": 1, "irrigationKW": 0.8, "animalKW": 0.4, "spoilDays": 2, "warnDays": 0.5, "irrigationMs": 10000, "intervalMinMs": 290000, "intervalMaxMs": 290000, "waterPerCycle": 1, "firstMinMs": 290000, "firstMaxMs": 290000, "dryGrowth": 0.35, "crops": {"carrot": {"days": 1, "yield": 10}, "onion": {"days": 1, "yield": 8}, "beans": {"days": 1.25, "yield": 10}, "potato": {"days": 1.25, "yield": 10}, "grain": {"days": 1.25, "yield": 12}, "corn": {"days": 1.5, "yield": 12}, "tomato": {"days": 1.5, "yield": 9}, "berries": {"days": 1.75, "yield": 8}, "medicinal_herbs": {"days": 2, "yield": 8}, "technical_crop": {"days": 2, "yield": 6}}},
   animals:{cowMin:2,cowMax:6},
   processing:{steelIron:3,steelCoal:1,steelQty:1,steelMs:4000,ironOre:2,copperOre:2,stone:2,coal:1,gunpowder:4,gunpowderMs:2000},
   resources:{coalStack:100,gunpowderStack:1000,coalNodesPerZone:8,coalNodeCapacity:100,spacing:36,treeWood:10,treeChopExtraMs:500,stoneDensity:2},

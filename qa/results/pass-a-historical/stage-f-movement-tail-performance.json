@@ -1,0 +1,30 @@
+{
+  "version": "0.37.0",
+  "runtimeSha256": "201bbd5da6ac2cb7f33528b804f95477ecffe8ea68a7e201204b3d37cbe95a4d",
+  "purpose": "Targeted larger-sample repeat of the observed PC movement p95 increase. Original comparison is retained unchanged.",
+  "passed": true,
+  "rows": [
+    {
+      "version": "0.36.1",
+      "viewport": "1280x800",
+      "playerDistance": 509.86046511628047,
+      "droneDistance": 548.5700110006047,
+      "samples": 240,
+      "p50Ms": 41.52396000000044,
+      "p95Ms": 46.92554400000154,
+      "meanMs": 41.67607450416669
+    },
+    {
+      "version": "0.37.0",
+      "viewport": "1280x800",
+      "playerDistance": 509.86046511628047,
+      "droneDistance": 548.5700110006047,
+      "samples": 240,
+      "p50Ms": 40.94056100000034,
+      "p95Ms": 45.3010749999994,
+      "meanMs": 41.14083591666663
+    }
+  ],
+  "errors": [],
+  "scope": "Actual MOVE, update, following Drone, flashlight and Drone light, audio, native Canvas2D; 240 measured frames per version/viewport, alternating AB/BA. Distances cover measured frames only; no OS/browser input delivery."
+}

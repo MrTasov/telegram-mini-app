@@ -1,0 +1,190 @@
+{
+  "version": "0.43.0",
+  "finalRuntimeSha256": "a67551c9dec868f78e2e21f94efa5adaa77b664f141b6cbad1b687624453429e",
+  "targeted": [
+    {
+      "id": "pass-a",
+      "passed": 21,
+      "failed": 0,
+      "runtimeSha256": "a67551c9dec868f78e2e21f94efa5adaa77b664f141b6cbad1b687624453429e",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "pass-a-jobs",
+      "passed": 1,
+      "failed": 0,
+      "runtimeSha256": "a67551c9dec868f78e2e21f94efa5adaa77b664f141b6cbad1b687624453429e",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "pass-a-chapter",
+      "passed": 3,
+      "failed": 0,
+      "runtimeSha256": "a67551c9dec868f78e2e21f94efa5adaa77b664f141b6cbad1b687624453429e",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "survival",
+      "passed": 27,
+      "failed": 0,
+      "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "siege-corrective",
+      "passed": 12,
+      "failed": 0,
+      "runtimeSha256": "a1f0ab9b3df6166722abf1e29386645904cbbaa59981fbc5d9522708b5c9e061",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "dayx-corrective",
+      "passed": 10,
+      "failed": 0,
+      "runtimeSha256": "a1f0ab9b3df6166722abf1e29386645904cbbaa59981fbc5d9522708b5c9e061",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "stage-i1",
+      "passed": 27,
+      "failed": 1,
+      "runtimeSha256": "a1f0ab9b3df6166722abf1e29386645904cbbaa59981fbc5d9522708b5c9e061",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "stage-e-corrective",
+      "passed": 19,
+      "failed": 1,
+      "runtimeSha256": "a1f0ab9b3df6166722abf1e29386645904cbbaa59981fbc5d9522708b5c9e061",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "stage-f-final",
+      "passed": 21,
+      "failed": 1,
+      "runtimeSha256": "a1f0ab9b3df6166722abf1e29386645904cbbaa59981fbc5d9522708b5c9e061",
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    },
+    {
+      "id": "state-saves",
+      "passed": 58,
+      "failed": 0,
+      "runtimeSha256": null,
+      "note": "See actual report; missing hash is not evidence of final-runtime execution."
+    }
+  ],
+  "fullHistorical": {
+    "groups": 79,
+    "passedGroups": 28,
+    "failedGroups": 51,
+    "passedAssertionsReportedByLegacyRunner": 12724,
+    "runtimeSha256": "23630179065de3382ef6baa59758efe00f69aa1a33b3d9470b379da669ccc697",
+    "allGreen": false
+  },
+  "performance": [
+    {
+      "scenario": "l1",
+      "version": "attached 0.42.0",
+      "runtimeSha256": "f667406be7cbb641fa9497586cb33a18dcec0a4e398d769249f5ba32418a1581",
+      "scope": "Native Canvas2D + modeled DOM. 20 warmup, 80 measured frames, timers flushed. Not device FPS.",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "alive": 0,
+      "updateP50": 3.487368999999944,
+      "updateP95": 7.552413000000342,
+      "drawP50": 9.021699999999782,
+      "drawP95": 10.805083000000195,
+      "frameP50": 12.65455299999985,
+      "frameP95": 17.03081999999995,
+      "errors": []
+    },
+    {
+      "scenario": "l1",
+      "version": "Pass A",
+      "runtimeSha256": "a67551c9dec868f78e2e21f94efa5adaa77b664f141b6cbad1b687624453429e",
+      "scope": "Native Canvas2D + modeled DOM. 20 warmup, 80 measured frames, timers flushed. Not device FPS.",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "alive": 0,
+      "updateP50": 5.185156000000006,
+      "updateP95": 9.074209999999766,
+      "drawP50": 7.961982000000262,
+      "drawP95": 10.066000000000258,
+      "frameP50": 13.156531000000086,
+      "frameP95": 17.58447500000011,
+      "errors": []
+    },
+    {
+      "scenario": "siege120",
+      "version": "attached 0.42.0",
+      "runtimeSha256": "f667406be7cbb641fa9497586cb33a18dcec0a4e398d769249f5ba32418a1581",
+      "scope": "Native Canvas2D + modeled DOM. 20 warmup, 80 measured frames, timers flushed. Not device FPS.",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "alive": 120,
+      "updateP50": 4.90777399999979,
+      "updateP95": 9.078206000000137,
+      "drawP50": 10.800568999999996,
+      "drawP95": 13.087539000000106,
+      "frameP50": 15.862308000000212,
+      "frameP95": 20.738143000000036,
+      "errors": []
+    },
+    {
+      "scenario": "siege120",
+      "version": "Pass A",
+      "runtimeSha256": "a67551c9dec868f78e2e21f94efa5adaa77b664f141b6cbad1b687624453429e",
+      "scope": "Native Canvas2D + modeled DOM. 20 warmup, 80 measured frames, timers flushed. Not device FPS.",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "alive": 120,
+      "updateP50": 6.297743999999966,
+      "updateP95": 10.022676000000047,
+      "drawP50": 10.980375999999978,
+      "drawP95": 12.052464000000327,
+      "frameP50": 17.16712600000028,
+      "frameP95": 20.68777399999999,
+      "errors": []
+    },
+    {
+      "scenario": "l2farm",
+      "version": "Pass A",
+      "runtimeSha256": "a67551c9dec868f78e2e21f94efa5adaa77b664f141b6cbad1b687624453429e",
+      "scope": "Native Canvas2D + modeled DOM. 20 warmup, 80 measured frames, timers flushed. Not device FPS.",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "alive": 0,
+      "updateP50": 5.321797999999944,
+      "updateP95": 8.696719999999914,
+      "drawP50": 10.188140999999632,
+      "drawP95": 12.74333899999965,
+      "frameP50": 15.70539000000008,
+      "frameP95": 20.90894299999991,
+      "errors": []
+    }
+  ],
+  "limitations": [
+    "No Chromium/WebKit or real mobile/Telegram visual/performance QA.",
+    "Historical regression suite contains obsolete geometry/Farm/save/source-identity expectations; original nonzero results retained."
+  ]
+}

@@ -45,10 +45,10 @@ const GameAudio=window.GameAudio=(()=>{
     if(audioCtx.createDynamicsCompressor){compressor=audioCtx.createDynamicsCompressor();compressor.threshold.value=-12;compressor.knee.value=18;compressor.ratio.value=4;compressor.attack.value=.006;compressor.release.value=.18;bus.connect(compressor);compressor.connect(audioCtx.destination);}else bus.connect(audioCtx.destination);
     return bus;
   }
-  function listenerZone(){return {scene,floor:scene==='bunker'?1:window.V013City?.floor||0};}
+  function listenerZone(){return {scene,floor:scene==='bunker'?BunkerLayout.floorAt(player.x,player.y):window.V013City?.floor||0};}
   function sourceZone(opts={}){
     const local=listenerZone(),source=opts.scene||local.scene;
-    const floor=opts.floor??(typeof opts.level==='number'?opts.level:undefined)??(opts.scene?(source==='bunker'?1:0):local.floor);
+    const floor=opts.floor??(typeof opts.level==='number'?opts.level:undefined)??(opts.scene?(source==='bunker'?BunkerLayout.floorAt(opts.x??player.x,opts.y??player.y):0):local.floor);
     return {scene:source,floor};
   }
   function sameZone(opts){const a=listenerZone(),b=sourceZone(opts);return a.scene===b.scene&&a.floor===b.floor;}

@@ -1,0 +1,234 @@
+{
+  "version": "0.31.0",
+  "stage": 7,
+  "patch": "campaign-stage-a",
+  "stageAStarted": true,
+  "stageBStarted": false,
+  "level2Started": false,
+  "passed": false,
+  "automatedAssertions": 11256,
+  "historicalBaselineAssertions": 477,
+  "ladderContractChanged": true,
+  "runs": [
+    {
+      "id": "build",
+      "exitCode": 0,
+      "elapsedMs": 309
+    },
+    {
+      "id": "campaign",
+      "exitCode": 0,
+      "elapsedMs": 4343
+    },
+    {
+      "id": "verification",
+      "exitCode": 0,
+      "elapsedMs": 289
+    },
+    {
+      "id": "regressions",
+      "exitCode": 0,
+      "elapsedMs": 19353
+    },
+    {
+      "id": "interactions",
+      "exitCode": 0,
+      "elapsedMs": 27603
+    },
+    {
+      "id": "saves",
+      "exitCode": 0,
+      "elapsedMs": 7223
+    },
+    {
+      "id": "balance",
+      "exitCode": 0,
+      "elapsedMs": 1385
+    },
+    {
+      "id": "state-saves",
+      "exitCode": 0,
+      "elapsedMs": 15219
+    },
+    {
+      "id": "differential",
+      "exitCode": 0,
+      "elapsedMs": 28339
+    },
+    {
+      "id": "systems",
+      "exitCode": 0,
+      "elapsedMs": 2695
+    },
+    {
+      "id": "stage3-differential",
+      "exitCode": 0,
+      "elapsedMs": 42561
+    },
+    {
+      "id": "controls",
+      "exitCode": 0,
+      "elapsedMs": 18480
+    },
+    {
+      "id": "controls-differential",
+      "exitCode": 0,
+      "elapsedMs": 42739
+    },
+    {
+      "id": "assets",
+      "exitCode": 0,
+      "elapsedMs": 5416
+    },
+    {
+      "id": "asset-rendering",
+      "exitCode": 0,
+      "elapsedMs": 2454
+    },
+    {
+      "id": "stage4-differential",
+      "exitCode": 0,
+      "elapsedMs": 42493
+    },
+    {
+      "id": "map-workbar",
+      "exitCode": 0,
+      "elapsedMs": 9363
+    },
+    {
+      "id": "localization",
+      "exitCode": 0,
+      "elapsedMs": 72508
+    },
+    {
+      "id": "localization-rendering",
+      "exitCode": 0,
+      "elapsedMs": 3794
+    },
+    {
+      "id": "localization-controls",
+      "exitCode": 0,
+      "elapsedMs": 56766
+    },
+    {
+      "id": "main-menu",
+      "exitCode": 0,
+      "elapsedMs": 123088
+    },
+    {
+      "id": "menu-preferences",
+      "exitCode": 0,
+      "elapsedMs": 16332
+    },
+    {
+      "id": "world-events",
+      "exitCode": 0,
+      "elapsedMs": 19266
+    },
+    {
+      "id": "readiness",
+      "exitCode": 0,
+      "elapsedMs": 16861
+    },
+    {
+      "id": "corrective",
+      "exitCode": 0,
+      "elapsedMs": 17718
+    },
+    {
+      "id": "world-farm",
+      "exitCode": 1,
+      "elapsedMs": 18626,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_a/qa/world-farm.cjs\n"
+    },
+    {
+      "id": "drone-return",
+      "exitCode": 0,
+      "elapsedMs": 33289
+    },
+    {
+      "id": "resource-access",
+      "exitCode": 0,
+      "elapsedMs": 2894
+    },
+    {
+      "id": "character-animation",
+      "exitCode": 0,
+      "elapsedMs": 5746
+    },
+    {
+      "id": "master-unarmed",
+      "exitCode": 1,
+      "elapsedMs": 18764,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_a/qa/master-unarmed.cjs\n"
+    },
+    {
+      "id": "equipment-integration",
+      "exitCode": 1,
+      "elapsedMs": 25499,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_a/qa/equipment-integration.cjs\n"
+    },
+    {
+      "id": "player-visual-fix",
+      "exitCode": 1,
+      "elapsedMs": 2264,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_a/qa/player-visual-fix.cjs\n"
+    },
+    {
+      "id": "corrective-performance",
+      "exitCode": 1,
+      "elapsedMs": 5848,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_a/qa/corrective-performance.cjs\n"
+    },
+    {
+      "id": "corrective-visuals",
+      "exitCode": 0,
+      "elapsedMs": 3164
+    },
+    {
+      "id": "polish",
+      "exitCode": 1,
+      "elapsedMs": 5984,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/a6d22bff5614/stage_a/qa/polish.cjs\n"
+    },
+    {
+      "id": "polish-visuals",
+      "exitCode": 0,
+      "elapsedMs": 8285
+    },
+    {
+      "id": "audio-unlock",
+      "exitCode": 0,
+      "elapsedMs": 9081
+    },
+    {
+      "id": "hud-display",
+      "exitCode": 0,
+      "elapsedMs": 10218
+    },
+    {
+      "id": "audio-pass",
+      "exitCode": 0,
+      "elapsedMs": 6195
+    },
+    {
+      "id": "bunker-level1",
+      "exitCode": 0,
+      "elapsedMs": 7631
+    },
+    {
+      "id": "bunker-floor-cache",
+      "exitCode": 0,
+      "elapsedMs": 2707
+    },
+    {
+      "id": "bunker-r2",
+      "exitCode": 0,
+      "elapsedMs": 4156
+    }
+  ],
+  "limitations": [
+    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "All audio paths are included and decoded; subjective mix requires physical device listening."
+  ]
+}

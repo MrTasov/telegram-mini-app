@@ -1,0 +1,38 @@
+{
+ "passed": 6,
+ "failed": 0,
+ "memory": {
+  "allHeroMiB": 52,
+  "baseMiB": 2.9,
+  "largestItemMiB": 12.4,
+  "residentHeroWorstMiB": 27.4,
+  "otherActorsMiB": 36.8,
+  "scope": "RGBA pixel estimate, not process RSS; worst case = base + held item + previous item within its release minute"
+ },
+ "checks": [
+  {
+   "id": "packed.allSheets24FramesInsideCells",
+   "status": "PASS"
+  },
+  {
+   "id": "packed.everyGroupCovered",
+   "status": "PASS"
+  },
+  {
+   "id": "memory.allHeroSheetsWithin56MiB",
+   "status": "PASS"
+  },
+  {
+   "id": "memory.residentHeroWithin28MiB",
+   "status": "PASS"
+  },
+  {
+   "id": "memory.residentActorsWithin72MiB",
+   "status": "PASS"
+  },
+  {
+   "id": "release.policyPresent",
+   "status": "PASS"
+  }
+ ]
+}

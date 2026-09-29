@@ -47,7 +47,7 @@ window.GameEquipmentRuntime=(()=>{
     const result=execute({instanceId,actorId:GameActors.localId,action,payload,expectedRevision:commands.revision,requestId:'equipment-ui:'+commands.revision+':'+(++sequence)});
     if(!result.ok&&result.reason==='out_of_reach')message('Подойдите ближе или нажмите на объект');return result;
   }
-  function fresh(){return {schema:1,instances:JSON.parse(JSON.stringify(EquipmentInstances.defaults)),commands:{revision:0,receipts:[]}};}
+  function fresh(){return {schema:1,instances:JSON.parse(JSON.stringify(EquipmentInstances.legacyDefaults)),commands:{revision:0,receipts:[]}};}
   function migrate(d){
     if(d.equipment032)return;
     d.equipment032=fresh();
@@ -57,7 +57,7 @@ window.GameEquipmentRuntime=(()=>{
   }
   function migrateLayout(d){
     if(!d.equipment032)return;
-    const previous=JSON.parse(JSON.stringify(EquipmentInstances.defaults));
+    const previous=JSON.parse(JSON.stringify(EquipmentInstances.legacyDefaults));
     for(const r of previous)if(r.transform.room==='workshop')r.transform.y+=1000;
     EquipmentInstances.createRegistry(previous).validate(d.equipment032.instances,true);
     for(const r of d.equipment032.instances)if(r.transform.room==='workshop')r.transform.y-=1000;

@@ -93,7 +93,7 @@ window.V017Monsters=(()=>{
     const r=prepare(z),sign=r.id%2?1:-1;
     for(const offset of straight?[0]:[0,.45*sign,-.45*sign,.95*sign,-.95*sign,1.5*sign,-1.5*sign]){
       const angle=a+offset,dx=Math.cos(angle),dy=Math.sin(angle),n=Math.max(1,Math.ceil(step/3));let clear=true;
-      for(let i=1;i<=n;i++)if(worldCollision(z.x+dx*step*i/n,z.y+dy*step*i/n,z.radius,'surface')){clear=false;break;}
+      for(let i=1;i<=n;i++)if(worldCollision(z.x+dx*step*i/n,z.y+dy*step*i/n,z.radius,'surface')||sameLevel()&&Math.hypot(z.x+dx*step*i/n-player.x,z.y+dy*step*i/n-player.y)<z.radius+player.radius){clear=false;break;}
       if(clear){z.x+=dx*step;z.y+=dy*step;r.angle=angle;r.walk+=step;return true;}
     }return false;
   }
@@ -194,7 +194,7 @@ window.V017Monsters=(()=>{
     const now=GameActivity.now(),boost=factor();advanceSiegePaths(now,raid);GameActivity.begin(Math.min(window.GameDevQA?.catchingUp?6:2,Math.max(0,frameScale))*16.667);population(now);
     for(const list of neighbors.values()){list.length=0;neighborPool.push(list);}neighbors.clear();for(const z of zombies)if(z.alive){const key=Math.floor(z.x/80)+','+Math.floor(z.y/80);if(!neighbors.has(key))neighbors.set(key,neighborPool.pop()||[]);neighbors.get(key).push(z);}
     for(const z of zombies){
-      const r=prepare(z);if(!z.alive)continue;if(!sameLevel())r.sees=false;const dt=GameActivity.step(z,r);if(!dt)continue;const s=stats(z),d=dist(z,player);
+      const r=prepare(z);if(!z.alive)continue;if(sameLevel()){const d=dist(z,player),min=z.radius+player.radius;if(d<min){const a=d?Math.atan2(z.y-player.y,z.x-player.x):r.id*2.399,x=player.x+Math.cos(a)*min,y=player.y+Math.sin(a)*min;if(!worldCollision(x,y,z.radius,'surface')){z.x=x;z.y=y;}}}if(!sameLevel())r.sees=false;const dt=GameActivity.step(z,r);if(!dt)continue;const s=stats(z),d=dist(z,player);
       if(sameLevel()&&d<ZOMBIE_AUDIO_RADIUS&&visibleOnScreen(z.x,z.y,60)&&performance.now()>(z.lastGrowl||0)){playZombieBuffer(z);z.lastGrowl=performance.now()+3500+hash(r.id+Math.floor(now/1000))*4500;}
       if(now>=r.nextSense){r.nextSense=now+190+hash(r.id)*100;r.sees=sameLevel()&&!V091Fortress.isElevated()&&d<(V010World.sneaking?130:240)*boost&&lineClear(z.x,z.y,player.x,player.y,0,'surface');}
       if(r.jump){

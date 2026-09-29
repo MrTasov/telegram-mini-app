@@ -1,8 +1,8 @@
 {
   "name": "last-base",
-  "version": "0.42.0",
+  "version": "0.43.0",
   "private": true,
-  "description": "LAST BASE 0.42.0 \u2014 Survival Stage",
+  "description": "LAST BASE 0.43.0 — Bunker L1 + L2 Pass A",
   "scripts": {
     "test:i2": "node qa/stage-i2.cjs && node qa/stage-i2-combat.cjs",
     "bench:i2": "node qa/stage-i2-performance.cjs",
@@ -74,7 +74,9 @@
     "bench:siege": "node qa/siege-performance.cjs",
     "test:survival": "node qa/survival.cjs",
     "bench:survival": "node qa/survival-performance.cjs",
-    "package:survival": "python3 tools/package-survival.py"
+    "package:survival": "python3 tools/package-survival.py",
+    "test:pass-a": "node qa/pass-a.cjs && node qa/pass-a-jobs.cjs && node qa/pass-a-chapter.cjs",
+    "bench:pass-a": "node qa/pass-a-performance.cjs l1 && node qa/pass-a-performance.cjs siege120 && node qa/pass-a-performance.cjs l2farm"
   },
   "devDependencies": {
     "@napi-rs/canvas": "0.1.100"

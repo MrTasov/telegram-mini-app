@@ -1,7 +1,7 @@
 /* 0.9 — room circuits, power controller, lights and automatic sliding doors. */
 const V09Power = {
-  rooms:{workshop:'Мастерская',storage:'Склад',room4:'Медблок',room5:'Энергоблок',room6:'Кухня',room7:'Жилая комната',farm:'Ферма',corridor:'Центральный зал',reserve_l1:'Резервная комната',yard:'Двор'},
-  roomEnabled:{workshop:true,storage:true,room4:true,room5:true,room6:true,room7:true,farm:true,corridor:true,reserve_l1:true,yard:true},
+  rooms:Object.fromEntries([...BunkerLayout.roomData.map(r=>[r.id,r.label]),['yard','Двор']]),
+  roomEnabled:Object.fromEntries([...BunkerLayout.roomData.map(r=>[r.id,true]),['yard',true]]),
   devices:{},running:false,fuel:10,capacity:100,supply:10,pathfinding:false,
   selectedRoom:'workshop',tab:'bunker',uiClock:0,load:0,demand:0,
   allocation(){
@@ -90,14 +90,14 @@ function v09UpdateDeviceRow(row){
 }
 for(const room of Object.keys(V09Power.rooms))if(room!=='yard')registerPowerDevice('light_'+room,room,room==='farm'?.24:room==='corridor'?.18:.12,()=>true,'Освещение');
 const v09Doors=BunkerLayout.doorDefinitions.map(def=>{
-  registerPowerDevice('door_'+def.room,def.room,.06,()=>true,'Раздвижная дверь');
+  registerPowerDevice('door_'+def.room,def.room,.06,()=>!def.alwaysOpen,'Раздвижная дверь');
   return {...def,open:0,away:0,manual:false};
 });
 const v09Spotlights=[{id:'spot_left',x:696,y:1010,angle:1.78},{id:'spot_right',x:904,y:1010,angle:1.36}];
 for(const s of v09Spotlights)registerPowerDevice(s.id,'yard',.45,()=>true,s.id==='spot_left'?'Левый прожектор':'Правый прожектор');
 const v09RoomSwitches=Object.keys(BunkerLayout.rooms).map(BunkerLayout.switchPoint).filter(Boolean);
 function v09DoorPanels(d){
-  if(window.V018Build?.isBroken(d.id))return [];
+  if(d.alwaysOpen||window.V018Build?.isBroken(d.id))return [];
   const closed=1-d.open;
   if(closed<.005)return [];
   return d.horizontal?[{x:d.x,y:d.y,w:d.w*.5*closed,h:d.h},{x:d.x+d.w-d.w*.5*closed,y:d.y,w:d.w*.5*closed,h:d.h}]:[{x:d.x,y:d.y,w:d.w,h:d.h*.5*closed},{x:d.x,y:d.y+d.h-d.h*.5*closed,w:d.w,h:d.h*.5*closed}];
@@ -109,7 +109,7 @@ function powerTick(dt){
   V09Power.allocation();
   const occupants=BunkerLayout.occupants('bunker');
   for(const d of v09Doors){
-    if(!BunkerLayout.roomActive(d.room))continue;
+    if(!BunkerLayout.roomActive(d.room))continue;if(d.alwaysOpen){d.open=1;continue;}
     if(window.V018Build?.isBroken(d.id)){d.open=1;d.away=0;continue;}
     const near=occupants.some(a=>distance(a.x,a.y,d.x+d.w/2,d.y+d.h/2)<116.25);
     const occupied=d.open>.2&&occupants.some(a=>rectHit(a.x,a.y,(a.radius||10)+8,d));
@@ -139,7 +139,7 @@ interactionObjects=function(which=scene){
   const base=v09PowerOldInteractions(which);
   if(which==='surface')return [...base,...v09Spotlights.map(s=>({id:s.id,kind:'v09power_device',device:s.id,name:'Прожектор',x:s.x,y:s.y,r:19,range:58}))];
   return [...v09RoomSwitches.map(s=>({id:'switch_'+s.room,kind:'v09room_switch',room:s.room,name:I18n.t('control.roomLights',{room:V09Power.rooms[s.room]}),x:s.x,y:s.y,r:10,range:48})),...base,
-    ...v09Doors.filter(d=>BunkerLayout.roomActive(d.room)).map(d=>({...d,kind:'v09door',name:devicePowered('door_'+d.room)?'Раздвижная дверь':'Открыть дверь вручную',range:68})),
+    ...v09Doors.filter(d=>!d.alwaysOpen&&BunkerLayout.roomActive(d.room)).map(d=>({...d,kind:'v09door',name:devicePowered('door_'+d.room)?'Раздвижная дверь':'Открыть дверь вручную',range:68})),
     {id:'tank',kind:'v09fuel',name:'Топливный бак',...BunkerLayout.fixture('tank'),range:50},
     {id:'generator',kind:'v09generator',name:'Генератор',...BunkerLayout.fixture('generator'),range:50},
     {id:'battery',kind:'v09battery',name:'Резервная батарея',...BunkerLayout.fixture('battery'),range:50},
@@ -220,7 +220,7 @@ function v09Refuel(amount){
   // Do not consume a whole unit for a fractional gap at the top of the tank.
   const whole=Math.min(n,Math.floor(V09Power.capacity-V09Power.fuel));
   if(whole<=0){message('Бак почти полный');return;}
-  removeFromSlots(bag,'fuel',whole);V09Power.fuel+=whole;GameAudio.play('refuel',{...GameEquipment.center('tank'),scene:'bunker',floor:1});message('Заправлено: '+whole+' топлива');renderBag();v09PowerChanged();
+  removeFromSlots(bag,'fuel',whole);V09Power.fuel+=whole;GameAudio.play('refuel',{...GameEquipment.center('tank'),scene:'bunker'});message('Заправлено: '+whole+' топлива');renderBag();v09PowerChanged();
 }
 function v09OpenDevice(id){
   const d=V09Power.devices[id];if(!d)return;const overlay=v09Overlay('v09PowerDeviceOverlay',d.name),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());body.appendChild(renderDeviceSwitch(id));
@@ -251,6 +251,7 @@ function v09RefreshPowerUI(){
 }
 
 function v09DrawDoor(d){
+  if(d.alwaysOpen)return;
   ctx.save();ctx.lineWidth=2;const powered=devicePowered('door_'+d.room),cx=d.x+d.w/2,cy=d.y+d.h/2;
   ctx.fillStyle='#1c292d';ctx.strokeStyle='#687b7e';ctx.fillRect(d.x-3,d.y-3,d.w+6,d.h+6);ctx.strokeRect(d.x-3,d.y-3,d.w+6,d.h+6);
   ctx.fillStyle='#333c3e';ctx.fillRect(d.x,d.y,d.w,d.h);

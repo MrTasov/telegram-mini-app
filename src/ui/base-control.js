@@ -19,7 +19,7 @@ window.GameBaseControlUI=(()=>{
         map.setAttribute('aria-label',t('map'));map.classList.toggle('surface',area==='surface');
         const level=GameBaseControl.levels.find(l=>l.id===area);
         for(const id of level.zones){const b=node('button','controlZone');b.type='button';b.dataset.controlZone=id;b.textContent=id==='yard'?t('yard'):GamePlacement.roomName(id);b.classList.toggle('selected',id===zone);b.setAttribute('aria-pressed',String(id===zone));
-          if(area==='bunker:1'){const r=BunkerLayout.roomData.find(r=>r.id===id),bounds=BunkerLayout.bounds;b.style.cssText=`left:${(r.x-bounds.x)/bounds.w*96+2}%;top:${(r.y-bounds.y)/bounds.h*96+2}%;width:${r.w/bounds.w*96}%;height:${r.h/bounds.h*96}%`;}
+          if(area.startsWith('bunker:')){const r=BunkerLayout.roomData.find(r=>r.id===id),bounds=BunkerLayout.floorBounds[Number(area.split(':')[1])];b.style.cssText=`left:${(r.x-bounds.x)/bounds.w*96+2}%;top:${(r.y-bounds.y)/bounds.h*96+2}%;width:${r.w/bounds.w*96}%;height:${r.h/bounds.h*96}%`;}
           b.onclick=()=>set(area,id);map.append(b);
         }
         put(heading,zone==='yard'?t('yard'):GamePlacement.roomName(zone));

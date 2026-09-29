@@ -1,7 +1,7 @@
 /* 0.11 — living garden and livestock; all rates use a real-time clock. */
 window.V011Farm=(()=>{
   const config=GameplayBalance.farm,CAPACITY=config.waterCapacity,SPRAY=config.irrigationMs,DRY_RATE=config.dryGrowth;
-  const state={water:CAPACITY,at:AgricultureTime.now(),schema:2,powered:true};
+  const state={water:0,at:AgricultureTime.now(),schema:2,powered:true};
   const grownKey='_v011Growth';
   let lastAnimalAt=performance.now(),lastMenuPaint=0;
   const pose=new WeakMap();
@@ -36,7 +36,7 @@ window.V011Farm=(()=>{
     window.farmState.forEach(st=>{if(st.crop!==null)plants(st);});
     let iterations=0;
     while(left>0&&iterations++<12000){
-      const live=growing();if(!live.length)break;
+      const live=growing();if(!live.length||!running||!powered())break;
       const wet=state.water>=config.waterPerCycle&&powered(),rate=wet?1:DRY_RATE;
       // Reserve water for active sprays without debiting it until completion.
       let reserved=live.filter(st=>timer(st).phase==='spray').length*config.waterPerCycle;
@@ -49,7 +49,7 @@ window.V011Farm=(()=>{
         const q=timer(st);plants(st).forEach(p=>{if(p.planted&&!p.harvested)p.elapsed=Math.min(p.duration,p.elapsed+step*rate);});
         if(running&&(q.phase==='wait'||wet))q.remainingMs=Math.max(0,q.remainingMs-step);
         // Readiness cancels a partial spray; only completed growing cycles cost water.
-        if(plants(st).every(p=>p.harvested||p.planted&&p.elapsed>=p.duration)){delete st.irrigation028;continue;}
+        if(plants(st).every(p=>p.harvested||p.planted&&p.elapsed>=p.duration)){window.BunkerPassA?.readyAt(window.farmState.indexOf(st),now-left+step);delete st.irrigation028;continue;}
         if(running&&wet&&q.phase==='spray'&&q.remainingMs<=.00001){state.water=Math.max(0,state.water-config.waterPerCycle);resetTimer(q);}
       }
       left-=step;
@@ -61,10 +61,10 @@ window.V011Farm=(()=>{
   }
   function beginBed(index,crop){if(!AgricultureTime.available)return false;
     if(!Number.isInteger(index)||index<0||index>=5||!window.farmCrops[crop]||window.farmState[index].crop!==null)return false;
-    window.farmState[index]={crop,plantedAt:AgricultureTime.now(),[grownKey]:0,plants014:Array.from({length:50},()=>({planted:false,harvested:false,elapsed:0,duration:0,qty:1}))};return true;
+    window.farmState[index]={crop,plantedAt:AgricultureTime.now(),[grownKey]:0,plants014:Array.from({length:50},(_,n)=>({planted:false,harvested:n>=config.crops[farmCrops[crop].itemType].yield,elapsed:0,duration:0,qty:1}))};return true;
   }
   function plantOne(index,n,now=AgricultureTime.now()){if(!AgricultureTime.available)return false;
-    settle(now);const st=window.farmState[index],p=plants(st)[n];if(!p||p.planted)return false;
+    settle(now);const st=window.farmState[index],p=plants(st)[n];if(!p||p.planted||p.harvested)return false;
     Object.assign(p,{planted:true,elapsed:0,duration:Math.round(cropTotal(st)*(.9+Math.random()*.2))});if(plants(st).every(p=>p.planted||p.harvested))timer(st);return true;
   }
   function harvestOne(index,n){if(!AgricultureTime.available)return false;const st=window.farmState[index],p=plants(st)[n];if(!p||!p.planted||p.harvested||p.elapsed<p.duration)return 0;p.harvested=true;const qty=p.qty||1;if(plants(st).every(p=>p.harvested||!p.planted))window.farmState[index]={crop:null,plantedAt:0};return qty;}
@@ -113,7 +113,7 @@ window.V011Farm=(()=>{
     settle();let overlay=el('v011Irrigation');
     if(!overlay){
       overlay=v09Overlay('v011Irrigation','Полив огорода');
-      const body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",'<div class="v011FarmTankIcon">'+itemIconHTML('water')+'</div><div id="v011WaterStatus"></div><div class="v011FarmMeter"><i id="v011WaterFill"></i></div><p class="v011FarmHint">Бак автоматического полива. Снабжает грядки водой через электрический насос.<br>Насос · 0,5 кВт во время полива. Без воды или питания рост замедляется.</p><button id="v011WaterRefill" class="menuButton">Пополнить воду</button>');
+      const body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",'<div class="v011FarmTankIcon">'+itemIconHTML('water')+'</div><div id="v011WaterStatus"></div><div class="v011FarmMeter"><i id="v011WaterFill"></i></div><p class="v011FarmHint">Бак автоматического полива. Снабжает грядки водой через электрический насос.<br>Полив и фитосвет · 0,8 кВт. Без питания рост остановлен. Без воды рост замедляется.</p><button id="v011WaterRefill" class="menuButton">Пополнить воду</button>');
       el('v011WaterRefill').addEventListener('click',()=>refill());
     }
     renderWater();openOverlay(overlay);
@@ -136,7 +136,7 @@ window.V011Farm=(()=>{
   
   function validateSave(d){
     const a=d.farmV011;if(a===undefined)return;
-    if(!a||![1,2].includes(a.schema)||!valid(a.water,0,a.schema===1?100:CAPACITY)||!valid(a.at,0,Date.now()+60000)||!Array.isArray(a.grown)||a.grown.length!==5||a.grown.some((v,i)=>!valid(v,0,d.farm[i].crop===null?0:farmGrowMs(d.farm[i].crop))))throw Error('Некорректные данные полива');
+    if(!a||![1,2].includes(a.schema)||!valid(a.water,0,a.schema===1?100:CAPACITY)||!valid(a.at,0,Number.MAX_SAFE_INTEGER)||!Array.isArray(a.grown)||a.grown.length!==5||a.grown.some((v,i)=>!valid(v,0,d.farm[i].crop===null?0:farmGrowMs(d.farm[i].crop))))throw Error('Некорректные данные полива');
   }
   GameSave.extend('capture','farm.growth',function(oldCapture){settle();const d=oldCapture();d.farmV011={schema:2,water:state.water,at:state.at,grown:window.farmState.map(st=>st.crop===null?0:growth(st))};d.farm014={schema:2,beds:window.farmState.map(st=>st.crop===null?null:JSON.parse(JSON.stringify(plants(st)))),irrigation:window.farmState.map(st=>st.irrigation028?{...st.irrigation028}:null)};return d;});
   function validate014(d){const x=d.farm014;if(!x)return;
@@ -150,7 +150,7 @@ window.V011Farm=(()=>{
     validateSave(d);validate014(d);oldRestore(d);const saved=d.farmV011,now=AgricultureTime.now();
     state.water=saved?saved.water:100;state.at=now;
     window.farmState.forEach((st,i)=>{st[grownKey]=st.crop===null?0:saved?saved.grown[i]:clamp(now-st.plantedAt,0,cropTotal(st));if(d.farm014?.beds[i])st.plants014=JSON.parse(JSON.stringify(d.farm014.beds[i]));
-      if(st.crop!==null){const offline=AgricultureTime.available&&saved?Math.max(0,now-saved.at):0,rate=state.water>=config.waterPerCycle&&powered()?1:DRY_RATE;
+      if(st.crop!==null){const offline=0,rate=state.water>=config.waterPerCycle&&powered()?1:DRY_RATE;
         plants(st).forEach(p=>{if(p.planted&&!p.harvested)p.elapsed=Math.min(p.duration,p.elapsed+offline*rate);});
         const q=d.farm014?.schema===2?d.farm014.irrigation[i]:null;if(q)st.irrigation028={...q};else if(AgricultureTime.available&&!ready(i))st.irrigation028=newTimer(i);}
     });
@@ -161,7 +161,7 @@ window.V011Farm=(()=>{
   // presentation and autonomous, frame-rate independent movement are replaced.
   updateLivestockAnimals=function(){
     const now=performance.now(),dt=clamp((now-lastAnimalAt)/1000,0,.12);lastAnimalAt=now;
-    if(!AgricultureTime.available||scene!=='bunker'||!livestockAlive||GameFlow.paused)return;
+    if(!AgricultureTime.animalsAvailable||scene!=='bunker'||!livestockAlive||GameFlow.paused)return;
     const p=habitat(),feed=storageCount(12,'animal_feed')>0,water=storageCount(13,'water')>0;
     const stalls=cowStalls();
     livestockAnimals.forEach((a,i)=>{
@@ -283,16 +283,10 @@ window.V011Farm=(()=>{
       ctx.fillStyle=soil(wet);ctx.fillRect(b.x,b.y,b.w,b.h);
       for(let c=0;c<5;c++){const x=b.x+24+c*(b.w-48)/4;pipe([[x,b.y+32],[x,b.y+b.h-30]],wet?'#211f18':'#30261e',9);pipe([[x+5,b.y+32],[x+5,b.y+b.h-30]],'#80644555',2);}
       const cx=b.x+b.w/2;pipe([[cx,mainY],[cx,b.y+10],[b.x+11,b.y+10]],'#233a34',4);
-      for(let c=0;c<5;c++){
-        const x=b.x+24+c*(b.w-48)/4;pipe([[x,b.y+10],[x,b.y+b.h-33]],'#1c2924',2);
-        for(let r=0;r<10;r++){
-          const y=b.y+52+r*(b.h-94)/9;
-          const individual=st.crop===null?null:plants(st)[c*10+r];if(individual?.planted&&!individual.harvested){const pp=clamp(individual.elapsed/individual.duration,0,1),sprite=plantSprite(st.crop,Math.min(4,Math.floor(pp*5))),size=26+(r*7+c*3)%3;ctx.save();ctx.translate(x,y);ctx.rotate(((r*17+c*11+i*5)%13-6)*.075);ctx.drawImage(sprite,-size/2,-size/2,size,size);ctx.restore();}
-          if(spray&&wet)drawSpray(x,y,i*50+c*10+r);
-        }
-      }
+      const count=st.crop===null?0:config.crops[farmCrops[st.crop].itemType].yield,rows=Math.ceil(count/2);
+      for(let n=0;n<count;n++){const p=plants(st)[n],x=b.x+b.w/2+(n%2?28:-28),y=b.y+50+Math.floor(n/2)*(b.h-94)/Math.max(1,rows-1);if(p?.planted&&!p.harvested){const sprite=plantSprite(st.crop,Math.min(4,Math.floor(p.elapsed/p.duration*5)));ctx.save();ctx.globalAlpha=window.BunkerPassA?.rotten(i)?.55:1;ctx.drawImage(sprite,x-22,y-22,44,44);ctx.restore();if(window.BunkerPassA?.rotten(i)){ctx.fillStyle='#76573599';ctx.fillRect(x-15,y-5,30,8);}}if(spray&&wet)drawSpray(x,y,n);}
       ctx.fillStyle='#bcc9a7';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.text(st.crop===null?'ГРЯДКА '+(i+1):window.farmCrops[st.crop].name),b.x+b.w/2,b.y+21);
-      if(st.crop!==null){ctx.fillStyle=p>=1?'#d4dea0':'#a8baa0';ctx.font='10px Arial';ctx.fillText(I18n.text(p>=1?'ГОТОВО':farmTimeLabel((cropTotal(st)-st[grownKey])/(state.water>0?1:DRY_RATE))),b.x+b.w/2,b.y+b.h-10);}
+      if(st.crop!==null){ctx.fillStyle=p>=1?'#d4dea0':'#a8baa0';ctx.font='10px Arial';ctx.fillText(I18n.text(p>=1?(window.BunkerPassA?.rotten(i)?I18n.t('farm.rotten'):I18n.t('farm.ready')+' '+farmTimeLabel(window.BunkerPassA?.remaining(i)||0)):farmTimeLabel((cropTotal(st)-st[grownKey])/(state.water>0?1:DRY_RATE))),b.x+b.w/2,b.y+b.h-10);}
     });
     const b=tankRect();ctx.fillStyle='#10212366';round(b.x+4,b.y+5,b.w,b.h,8);ctx.fill();const g=ctx.createLinearGradient(b.x,b.y,b.x+b.w,b.y);g.addColorStop(0,'#486c68');g.addColorStop(.5,'#96b4a4');g.addColorStop(1,'#456b67');ctx.fillStyle=g;round(b.x,b.y,b.w,b.h,9);ctx.fill();
     ctx.fillStyle='#173535';round(b.x+28,b.y+12,9,51,3);ctx.fill();ctx.fillStyle='#78c8d2';ctx.fillRect(b.x+30,b.y+61-state.water/CAPACITY*47,5,state.water/CAPACITY*47);ctx.fillStyle='#cadaaf';ctx.fillRect(b.x+29,b.y+14,1,46);
@@ -320,6 +314,6 @@ window.V011Farm=(()=>{
     drawBeds();ctx.restore();
   }
   invalidateGeometry();
-  return {state,settle,plant,beginBed,plantOne,harvestOne,plants,ready,pumpDemand,setPowered:v=>{state.powered=!!v;},progress,spraying,refill,openWater,draw,floor,drawAnimal,tankRect,troughs,cowStalls,validateSave,constants:{CAPACITY,SPRAY,DRY_RATE},config};
+  return {state,settle,plant,beginBed,plantOne,harvestOne,plants,ready,pumpDemand,setPowered:v=>{state.powered=!!v;},progress,spraying,refill,openWater,draw,drawBeds,floor,drawAnimal,tankRect,troughs,cowStalls,validateSave,constants:{CAPACITY,SPRAY,DRY_RATE},config};
 })();
 

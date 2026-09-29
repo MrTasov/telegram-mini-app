@@ -26,7 +26,7 @@ window.CommandCoreUI=(()=>{
   const routeOrder=['construction','base','chapters','research','blueprints','archive','map-signals'],routes=new Set(routeOrder);
   const sections=new Map();let tab='base',sequence=0,dirty=true,lastTracker='',lastLanguage='';
   let scope=null;const sectionHistory=[];
-  const location=()=>GameActors.local.scene==='bunker'&&(GameActors.local.entity.floor??1)===1?'bunker:1':null;
+  const location=()=>GameActors.local.scene==='bunker'&&BunkerLayout.floorAt(GameActors.local.entity.x,GameActors.local.entity.y)===1?'bunker:1':null;
   function syncLocation(){const next=location();if(scope!==next){reset();scope=next;}return next;}
   function registerSection(id,title,mount,available=()=>true,validPage=()=>true){
     if(!routes.has(id)||sections.has(id)||typeof mount!=='function')throw Error('Invalid Core section');

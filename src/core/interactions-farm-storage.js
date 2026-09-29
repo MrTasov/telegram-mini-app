@@ -203,11 +203,11 @@ function livestockAudioCenter(kind){
 }
 
 function stopChickenAmbient(){GameAudio.loop('animals',null);}
-function updateLivestockAudio(){
+function updateLivestockAudio(){if(!AgricultureTime.animalsAvailable)return;
   if(scene!=="bunker"||!livestockAlive)return;
   const now=Date.now();
   if(now>=nextCowMooAt){
-    if(AgricultureTime.available)GameAudio.play('cow',{...livestockAudioCenter('cow'),scene:'bunker',radius:310});
+    if(AgricultureTime.animalsAvailable)GameAudio.play('cow',{...livestockAudioCenter('cow'),scene:'bunker',radius:310});
     nextCowMooAt=now+3000+Math.random()*12000;
   }
 }
@@ -232,7 +232,7 @@ function storageCount(index,type){
 }
 
 function updateLivestockNeeds(){
-  if(!AgricultureTime.available)return;
+  if(!AgricultureTime.animalsAvailable)return;
   if(!livestockAlive) return;
   const now=AgricultureTime.now();
 
@@ -270,7 +270,7 @@ function updateLivestockNeeds(){
 }
 
 function updateLivestockProduction(){
-  if(!AgricultureTime.available)return;
+  if(!AgricultureTime.animalsAvailable)return;
   updateLivestockNeeds();
   updateCowBreeding();
   if(!livestockAlive) return;
@@ -329,7 +329,7 @@ let lastCowBreed=AgricultureTime.now();
 function cowCount(){
   return livestockAnimals.filter(a=>a.kind==="cow").length;
 }
-function addCow(){
+function addCow(){if(!AgricultureTime.animalsAvailable)return;
   if(cowCount()>=COW_MAX) return false;
   const f=bunker.farm;
   livestockAnimals.push(GameLivestock.assign({
@@ -343,7 +343,7 @@ function addCow(){
   return true;
 }
 function updateCowBreeding(){
-  if(!AgricultureTime.available)return;
+  if(!AgricultureTime.animalsAvailable)return;
   if(!livestockAlive || cowCount()<2) return;
   if(storageCount(12,"animal_feed")<=0 || storageCount(13,"water")<=0) return;
   const now=AgricultureTime.now();
@@ -370,13 +370,13 @@ function renderCowMenu(){
   reserve.hidden=!GameLivestock.reserve.length;reserve.disabled=n>=COW_MAX;I18n.assign(reserve,'textContent',I18n.message('animals.reserve',{count:GameLivestock.reserve.length}));
 }
 
-function openCowMenu(){
+function openCowMenu(){if(!AgricultureTime.animalsAvailable)return;
   renderCowMenu();
   openOverlay(el("cowOverlay"));
 }
 
 function updateLivestockAnimals(){
-  if(!AgricultureTime.available)return;
+  if(!AgricultureTime.animalsAvailable)return;
   if(!livestockAlive || scene!=="bunker") return;
   const f=bunker.farm;
   const left=f.left+38, right=(f.cropLeft??90)-32;
@@ -468,7 +468,7 @@ function renderPendingFeedCraft(){
 }
 
 function updateFeedCraft(){
-  if(!AgricultureTime.available)return;
+  if(!AgricultureTime.animalsAvailable)return;
   if(!pendingFeedCraft)return;
   if(el("feedCraftOverlay").classList.contains("open"))renderPendingFeedCraft();
   if(AgricultureTime.now()<pendingFeedCraft.readyAt)return;

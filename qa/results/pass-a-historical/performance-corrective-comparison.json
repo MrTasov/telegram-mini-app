@@ -1,0 +1,67 @@
+{
+  "reference": "0.27.0",
+  "candidate": "0.27.1",
+  "method": "Sequential native Canvas/VM, 60 warmup + 180 measured frames per scene; 1280x800 DPR1. Not physical device FPS.",
+  "modes": {
+    "MOBILE": {
+      "scenes": [
+        {
+          "id": "surface_day",
+          "beforeP50": 30.480391000000054,
+          "afterP50": 29.5014740000006,
+          "deltaPercent": -3.211628748461437,
+          "beforeP95": 39.630888000000596,
+          "afterP95": 37.12953599999946
+        },
+        {
+          "id": "inventory_open",
+          "beforeP50": 37.79508100000021,
+          "afterP50": 39.246069000000716,
+          "deltaPercent": 3.839092182394044,
+          "beforeP95": 43.294230999999854,
+          "afterP95": 43.76842399999987
+        }
+      ],
+      "saveP50": [
+        1.7009680000010121,
+        1.701188999999431
+      ],
+      "loadP50": [
+        74.36672900000121,
+        72.52806799999962
+      ]
+    },
+    "PC": {
+      "scenes": [
+        {
+          "id": "surface_day",
+          "beforeP50": 30.397940000000744,
+          "afterP50": 28.74634500000002,
+          "deltaPercent": -5.433246463413921,
+          "beforeP95": 231.42718000000013,
+          "afterP95": 32.97813100000076
+        },
+        {
+          "id": "inventory_open",
+          "beforeP50": 36.69012400000065,
+          "afterP50": 38.29088600000068,
+          "deltaPercent": 4.362923385050443,
+          "beforeP95": 42.00542399999904,
+          "afterP95": 46.47561400000086
+        }
+      ],
+      "saveP50": [
+        1.6097740000004706,
+        1.888055000003078
+      ],
+      "loadP50": [
+        70.64888699999938,
+        84.04887900000176
+      ]
+    }
+  },
+  "limitations": [
+    "Inventory now intentionally continues world simulation; before/after UI work differs.",
+    "Shared-host CPU and Canvas raster timings; no browser/phone/compositor/network measurement."
+  ]
+}

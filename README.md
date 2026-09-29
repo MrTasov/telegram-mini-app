@@ -1,3 +1,11 @@
+# LAST BASE 0.43.0 — Bunker L1 + L2 Pass A
+
+Текущий отчёт: [PASS_A_REPORT_RU.md](PASS_A_REPORT_RU.md). База: приложенная 0.42.0 Claude. Pass B не реализован. Сохранения мигрируются в формат 24.
+
+Запуск: любой HTTP static server из корня проекта, затем `index.html`. Build: `npm run build`. Целевые тесты: `npm run test:pass-a`. Исторические инструкции ниже относятся к предыдущим версиям; ограничения старых QA-fixtures перечислены в новом отчёте.
+
+---
+
 # LAST BASE 0.42.0 — Survival Stage
 
 Authoritative input: uploaded `01-LAST_BASE_0.41.2_Siege_Corrective_GitHub.zip`, SHA-256 `9aec9a41654e66335798a740bb4b9c57887643b54f1535f612bdd31fb6465f91`.

@@ -1,0 +1,130 @@
+{
+  "reference": "0.22.0",
+  "candidate": "0.23.0",
+  "scenariosMatch": true,
+  "scenes": [
+    {
+      "id": "surface_day",
+      "scenario": {
+        "scene": "surface",
+        "zoom": 0.8,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "median": 39.98183499999959,
+        "p95": 67.58617500000037
+      },
+      "candidate": {
+        "median": 36.89749600000141,
+        "p95": 47.35485699999981
+      },
+      "medianChangePercent": -7.714350779543288,
+      "p95ChangePercent": -29.934107086250172
+    },
+    {
+      "id": "surface_night_day_x",
+      "scenario": {
+        "scene": "surface",
+        "zoom": 0.8,
+        "day": 10,
+        "zombies": 96,
+        "liveZombies": 94,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "median": 83.27877499999886,
+        "p95": 101.02525500000047
+      },
+      "candidate": {
+        "median": 79.32768399999986,
+        "p95": 89.62074199999915
+      },
+      "medianChangePercent": -4.744415368740773,
+      "p95ChangePercent": -11.288774277284686
+    },
+    {
+      "id": "bunker_power_drone",
+      "scenario": {
+        "scene": "bunker",
+        "zoom": 0.8,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "median": 71.63253400000394,
+        "p95": 106.9163469999985
+      },
+      "candidate": {
+        "median": 55.031058000000485,
+        "p95": 82.21903200000088
+      },
+      "medianChangePercent": -23.175888207448516,
+      "p95ChangePercent": -23.099662206002947
+    },
+    {
+      "id": "inventory_open",
+      "scenario": {
+        "scene": "bunker",
+        "zoom": 0.8,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": true
+      },
+      "reference": {
+        "median": 60.020531999995,
+        "p95": 68.03821400000015
+      },
+      "candidate": {
+        "median": 43.889334999999846,
+        "p95": 55.6308299999946
+      },
+      "medianChangePercent": -26.87613132118939,
+      "p95ChangePercent": -18.235904898981502
+    },
+    {
+      "id": "surface_zoom_out",
+      "scenario": {
+        "scene": "surface",
+        "zoom": 0.6,
+        "day": 1,
+        "zombies": 54,
+        "liveZombies": 48,
+        "trees": 320,
+        "ores": 74,
+        "menuOpen": false
+      },
+      "reference": {
+        "median": 51.377702999991016,
+        "p95": 83.7875389999972
+      },
+      "candidate": {
+        "median": 46.96177099999477,
+        "p95": 56.24173699999665
+      },
+      "medianChangePercent": -8.595035866039048,
+      "p95ChangePercent": -32.875774045591044
+    }
+  ],
+  "limitations": [
+    "NOT measured in a browser, WebView, Telegram, or physical phone. No browser FPS assertion.",
+    "Modeled DOM omits layout, paint, native touch and browser compositing. VM crossings and one-pixel raster flush are included.",
+    "Canvas2D runs in this container; timing depends on shared-host CPU load. RSS includes harness and decoded images; not mobile memory.",
+    "Warm scenarios, assets decoded; cache behavior/network startup and audio decoding are not measured.",
+    "Native browser, Telegram and phone validation is not performed by this runner.",
+    "Compare future stages on the same runner with the same seed, scenes and warmup; investigate changes, do not infer phone FPS."
+  ]
+}

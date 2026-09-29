@@ -2,9 +2,9 @@
    Descriptors are views over installed instances and their existing owners. */
 window.GameBaseControl=(()=>{
   const copy=v=>JSON.parse(JSON.stringify(v)),t=(k,p)=>I18n.t('control.'+k,p);let sequence=0,autoOpen={};
-  const levels=Object.freeze([{id:'surface',title:'control.surface',zones:['yard']},{id:'bunker:1',title:'control.level1',zones:BunkerLayout.roomData.map(r=>r.id)}]);
+  const levels=Object.freeze([{id:'surface',title:'control.surface',zones:['yard']},{id:'bunker:1',title:'control.level1',zones:BunkerLayout.roomData.filter(r=>r.floor===1).map(r=>r.id)},{id:'bunker:2',title:'control.level2',zones:BunkerLayout.roomData.filter(r=>r.floor===2).map(r=>r.id)}]);
   const zoneAt=(x,y)=>BunkerLayout.roomData.find(r=>x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)?.id||'corridor';
-  const location=r=>({level:r.transform.scene==='bunker'?'bunker:1':'surface',zone:r.transform.room});
+  const location=r=>({level:r.transform.scene==='bunker'?'bunker:'+BunkerLayout.floorAt(r.transform.x,r.transform.y):'surface',zone:r.transform.room});
   function list(){
     const out=[],devices=new Set();
     for(const r of GameEquipment.records){if(r.placement!=='installed'||!BunkerLayout.roomActive(r.transform.room))continue;
@@ -15,12 +15,12 @@ window.GameBaseControl=(()=>{
     }
     for(const d of Object.values(V09Power.devices)){
       if(devices.has(d.id)||GameEquipment.get(d.id)||d.id===GameCampaign.powerId||d.id.startsWith('door_')||d.watts<=0||!BunkerLayout.roomActive(d.room)||d.present&&!d.present())continue;
-      out.push({id:'device:'+d.id,deviceId:d.id,kind:d.id.startsWith('light_')?'light':'searchlight',action:'power',name:d.id.startsWith('light_')?t('roomLights',{room:GamePlacement.roomName(d.room)}):I18n.text(d.name),level:d.room==='yard'?'surface':'bunker:1',zone:d.room,on:d.enabled,watts:d.watts});
+      out.push({id:'device:'+d.id,deviceId:d.id,kind:d.id.startsWith('light_')?'light':'searchlight',action:'power',name:d.id.startsWith('light_')?t('roomLights',{room:GamePlacement.roomName(d.room)}):I18n.text(d.name),level:d.room==='yard'?'surface':'bunker:'+BunkerLayout.rooms[d.room].floor,zone:d.room,on:d.enabled,watts:d.watts});
     }
-    for(const d of v09Doors.filter(d=>BunkerLayout.roomActive(d.room)))out.push({id:d.id,kind:'door',action:'doorAuto',name:t('door',{room:GamePlacement.roomName(d.room)}),level:'bunker:1',zone:d.room,on:autoOpen[d.id]!==false,autoOpen:autoOpen[d.id]!==false,opened:d.open>.5,mode:autoOpen[d.id]===false?'closed':'auto',broken:V018Build.isBroken(d.id),deviceId:'door_'+d.room});
+    for(const d of v09Doors.filter(d=>!d.alwaysOpen&&BunkerLayout.roomActive(d.room)))out.push({id:d.id,kind:'door',action:'doorAuto',name:t('door',{room:GamePlacement.roomName(d.room)}),level:'bunker:'+BunkerLayout.rooms[d.room].floor,zone:d.room,on:autoOpen[d.id]!==false,autoOpen:autoOpen[d.id]!==false,opened:d.open>.5,mode:autoOpen[d.id]===false?'closed':'auto',broken:V018Build.isBroken(d.id),deviceId:'door_'+d.room});
     for(const g of V015Base.sections.filter(g=>g.gate&&g.gate!=='airlock'))out.push({id:g.id,kind:'gate',action:'gate',name:t('gate.'+g.gate),level:'surface',zone:'yard',on:V015Base.isOpen(g),broken:g.hp<=0});
     for(const g of V016Turret.guns.filter(g=>!g.fallen))out.push({id:g.id,kind:'turret',action:'active',name:I18n.text(ITEM[V016Turret.typeOf(g)].name),level:'surface',zone:'yard',on:g.enabled,ammo:g.ammo});
-    const drone=V014Robots.state;if(!drone.packed)out.push({id:drone.id,kind:'drone',action:'droneCombat',name:drone.name||t('drone'),level:drone.scene==='bunker'?'bunker:1':'surface',zone:drone.scene==='bunker'?zoneAt(drone.x,drone.y):'yard',on:V014Robots.combatEnabled(),light:drone.light,task:drone.task,broken:drone.hp<=0});
+    const drone=V014Robots.state;if(!drone.packed)out.push({id:drone.id,kind:'drone',action:'droneCombat',name:drone.name||t('drone'),level:drone.scene==='bunker'?'bunker:'+BunkerLayout.floorAt(drone.x,drone.y):'surface',zone:drone.scene==='bunker'?zoneAt(drone.x,drone.y):'yard',on:V014Robots.combatEnabled(),light:drone.light,task:drone.task,broken:drone.hp<=0});
     return out;
   }
   const get=id=>list().find(d=>d.id===id);

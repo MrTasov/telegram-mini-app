@@ -5,7 +5,7 @@
 const EquipmentInstances=(()=>{
   const copy=x=>JSON.parse(JSON.stringify(x));
   const freeze=x=>{for(const v of Object.values(x))if(v&&typeof v==='object')freeze(v);return Object.freeze(x);};
-  const rooms=BunkerLayout.roomData.filter(r=>r.id!=='corridor').map(r=>r.id);
+  const rooms=BunkerLayout.roomData.filter(r=>!['corridor','l2_corridor','side_corridor','bathroom','farm','pantry','water_room','chicken_farm','cow_farm'].includes(r.id)).map(r=>r.id);
   const definitions=freeze({
     ...GameplayBalance.survival.stations,
     ...Object.fromEntries(Object.entries(DefenseDefinitions.types).map(([id,d])=>[id,{...d,range:64}])) ,
@@ -32,6 +32,7 @@ const EquipmentInstances=(()=>{
     if(typeId==='reserve_battery')refs.energy='v010.energy.battery';
     return {id,typeId,transform:{x:f.x,y:f.y,rotation:0,scene:'bunker',room:f.room},refs};
   }));
+  const legacyDefaults=freeze(defaults.map(r=>{const f=BunkerLayout.authored(r.id),room=BunkerLayout.fixtureRoom(r.id),[dx,dy]=BunkerLayout.legacyShifts[room]||[0,0];return {...copy(r),transform:{...r.transform,x:f.x+dx,y:f.y+dy,room}};}));
   // Room display names confer no placement permissions. Singular energy
   // owners keep their identity; future adapters reuse this same capability port.
   const placement=freeze({
@@ -40,7 +41,8 @@ const EquipmentInstances=(()=>{
     furnace:{limit:4,cost:{iron:20,parts:6,concrete:8},rooms,craftable:true,guard:'production',art:'furnace'},
     utility_workbench:{limit:4,cost:{iron:4,wood:6},rooms,craftable:true,guard:'production',art:'utility_workbench'},
     craft_bench:{limit:4,cost:{iron:16,wood:12,parts:4},rooms,craftable:true,guard:'production',art:'workbench'},
-    storage_crate:{limit:16,cost:{wood:6,iron:2},rooms:[...rooms,'corridor'],craftable:true,guard:'container',art:'chest'},
+    feed_craft:{limit:1,rooms:['pantry'],guard:'production',art:'utility_workbench'},
+    storage_crate:{limit:16,cost:{wood:6,iron:2},rooms:[...rooms,'pantry','corridor'],craftable:true,guard:'container',art:'chest'},
     generator:{limit:1,rooms,guard:'generator',art:'generator'},
     fuel_tank:{limit:1,rooms,guard:'tank',art:'tank'},
     reserve_battery:{limit:1,rooms,guard:'battery',art:'battery0352'},
@@ -112,7 +114,7 @@ const EquipmentInstances=(()=>{
       inventory:actorId=>capture().filter(r=>r.placement==='packed'&&r.ownerId===actorId)
     });
   }
-  return Object.freeze({definitions,defaults,placement,turns,aabb,createRegistry,state,rooms});
+  return Object.freeze({definitions,defaults,legacyDefaults,placement,turns,aabb,createRegistry,state,rooms});
 })();
 const GameEquipment=EquipmentInstances.createRegistry(EquipmentInstances.defaults);
 window.GameEquipment=GameEquipment;

@@ -1,0 +1,193 @@
+{
+  "patch": "bunker-level1-rework-r2",
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "dpr": 1,
+    "zoom": 0.65,
+    "mode": "Alternating warmed update + audio observer + real Canvas2D draw, 180 measured frames per scene/version"
+  },
+  "baseline": "Immutable delivered LAST_BASE_0.30.0_Bunker_Level_1_Rework_R1",
+  "reusedUnchangedSurfaceAndNavigation": false,
+  "rows": [
+    {
+      "viewport": "390x844",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 180,
+        "p50Ms": 18.314658999999665,
+        "p95Ms": 22.96673699999883,
+        "meanMs": 18.857397633333235
+      },
+      "after": {
+        "samples": 180,
+        "p50Ms": 19.25817300000017,
+        "p95Ms": 24.871023000001514,
+        "meanMs": 19.864504138888858
+      },
+      "p50DeltaMs": 0.9435140000005049,
+      "p50Percent": 5.151687508899405
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_energy",
+      "before": {
+        "samples": 180,
+        "p50Ms": 21.919917000001078,
+        "p95Ms": 26.409206999996968,
+        "meanMs": 22.514264877777837
+      },
+      "after": {
+        "samples": 180,
+        "p50Ms": 21.64052400000037,
+        "p95Ms": 25.520850999997492,
+        "meanMs": 22.078202122222187
+      },
+      "p50DeltaMs": -0.27939300000070943,
+      "p50Percent": -1.2746079284912226
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 180,
+        "p50Ms": 41.55171200000041,
+        "p95Ms": 50.388810000004014,
+        "meanMs": 42.23147403888866
+      },
+      "after": {
+        "samples": 180,
+        "p50Ms": 44.985796000000846,
+        "p95Ms": 50.02417499999865,
+        "meanMs": 45.349328349999915
+      },
+      "p50DeltaMs": 3.434084000000439,
+      "p50Percent": 8.264602912150544
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_energy",
+      "before": {
+        "samples": 180,
+        "p50Ms": 32.50263600000471,
+        "p95Ms": 40.523073999996996,
+        "meanMs": 32.922527700000096
+      },
+      "after": {
+        "samples": 180,
+        "p50Ms": 29.00319699999818,
+        "p95Ms": 34.754533999999694,
+        "meanMs": 29.644034777777577
+      },
+      "p50DeltaMs": -3.4994390000065323,
+      "p50Percent": -10.76663135877971
+    }
+  ],
+  "navigation": [
+    {
+      "to": {
+        "x": 600,
+        "y": 30
+      },
+      "reachable": 20,
+      "samples": 20,
+      "p50Ms": 2.3610910000134027,
+      "p95Ms": 16.758265000011306,
+      "meanMs": 3.2471611000008123
+    },
+    {
+      "to": {
+        "x": 590,
+        "y": 510
+      },
+      "reachable": 20,
+      "samples": 20,
+      "p50Ms": 6.992738000000827,
+      "p95Ms": 51.47391800000332,
+      "meanMs": 9.359689650000655
+    },
+    {
+      "to": {
+        "x": 650,
+        "y": 1050
+      },
+      "reachable": 20,
+      "samples": 20,
+      "p50Ms": 10.465963000009651,
+      "p95Ms": 59.24508700000297,
+      "meanMs": 13.033215049998399
+    },
+    {
+      "to": {
+        "x": 1870,
+        "y": 90
+      },
+      "reachable": 20,
+      "samples": 20,
+      "p50Ms": 4.215852999986964,
+      "p95Ms": 25.208968999999342,
+      "meanMs": 5.463712499998655
+    },
+    {
+      "to": {
+        "x": 1870,
+        "y": 510
+      },
+      "reachable": 20,
+      "samples": 20,
+      "p50Ms": 7.404968000002555,
+      "p95Ms": 42.12756100000115,
+      "meanMs": 9.180668500001776
+    },
+    {
+      "to": {
+        "x": 1870,
+        "y": 1010
+      },
+      "reachable": 20,
+      "samples": 20,
+      "p50Ms": 16.433564999999362,
+      "p95Ms": 77.42200999999477,
+      "meanMs": 19.553519149997737
+    },
+    {
+      "to": {
+        "x": 1260,
+        "y": 1460
+      },
+      "reachable": 20,
+      "samples": 20,
+      "p50Ms": 13.421872999999323,
+      "p95Ms": 53.62588000000687,
+      "meanMs": 15.553985950001515
+    },
+    {
+      "to": {
+        "x": 2034,
+        "y": 195
+      },
+      "reachable": 20,
+      "samples": 20,
+      "p50Ms": 6.669970999995712,
+      "p95Ms": 19.998394999987795,
+      "meanMs": 7.403736599998956
+    }
+  ],
+  "errors": [],
+  "floorCache": {
+    "entries": 1,
+    "bytes": 4671984
+  },
+  "additionalImage": {
+    "path": "assets/images/props/command_core_r2.png",
+    "compressedBytes": 1945110,
+    "width": 1421,
+    "height": 1107,
+    "decodedRgbaBytes": 6292188
+  },
+  "limitations": [
+    "Modeled DOM/WebAudio; no physical browser, WebView, phone GPU or subjective audio measurement.",
+    "Room cameras compare corresponding relocated rooms. Both halls include their respective Command Core sprites. Shared-host p95 includes scheduling noise.",
+    "Navigation queries use open doors; closed-door behavior is covered separately by player and drone integration tests."
+  ]
+}

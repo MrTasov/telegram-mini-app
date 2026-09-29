@@ -36,7 +36,7 @@ updateLivestockProduction=function(){
   const now=performance.now();
   const dt=Math.max(0,Math.min(now-v09ChickenClock,1000));
   v09ChickenClock=now;
-  if(!AgricultureTime.available)return;
+  if(!AgricultureTime.animalsAvailable)return;
   if(!livestockAlive||v09ChickenCount()<2||v09ChickenCount()>=V09_CHICKEN_MAX||
     storageCount(12,'animal_feed')<=0||storageCount(13,'water')<=0)return;
   v09ChickenBreedMs+=dt;
@@ -126,7 +126,7 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
   d.saveName=v091CleanSaveName(d.saveName);
   const legacy=d.v09===undefined;
   const legacySchema=d.schema;
-  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01]|28\.0|29\.0|30\.[01]|31\.[01]|32\.[012]|33\.[01]|34\.0|35\.[123]|36\.[01]|37\.[01]|38\.0|39\.0|40\.[0123]|41\.[012]|42\.0)))$/.test(d.gameVersion||'')))
+  if(!legacy&&(d.schema!==2||!/^0\.(?:9(?:\.\d+)?|(?:10\.[012345]|11\.[01]|12\.[01]|13\.0|14\.[0123]|15\.[012]|16\.[0123]|17\.0|18\.0|(?:19\.[01]|20\.0|21\.0|22\.0|23\.[01]|24\.[01]|25\.[0123]|26\.0|27\.[01]|28\.0|29\.0|30\.[01]|31\.[01]|32\.[012]|33\.[01]|34\.0|35\.[123]|36\.[01]|37\.[01]|38\.0|39\.0|40\.[0123]|41\.[012]|42\.0|43\.0)))$/.test(d.gameVersion||'')))
     throw new Error('Unsupported current save version');
   if(legacy){
     if(![1,2].includes(d.schema)||!/^0\.(7(?:\.1)?|8(?:\.\d+)?)$/.test(d.gameVersion||''))

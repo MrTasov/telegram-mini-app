@@ -1,0 +1,56 @@
+{
+  "version": "0.33.0",
+  "passed": true,
+  "fullCoverageGroups": 48,
+  "automatedAssertions": 11743,
+  "initialFullRun": "qa/results/stage-c1-initial-full-run.json",
+  "followupGroups": [
+    "stage-c1-light-modules",
+    "stage-c1-recovery",
+    "build",
+    "verification",
+    "systems",
+    "equipment-integration",
+    "player-visual-fix",
+    "bunker-level1",
+    "bunker-r2",
+    "readiness",
+    "state-saves",
+    "stage-b",
+    "stage-ab-light-audio",
+    "balance"
+  ],
+  "followupLog": "qa/results/stage-c1-followup-run.log",
+  "runtimeSha256": "3c763920fbe336870505572ee9580b4886127d7ca89c9f88bcdfe4d659307bf9",
+  "finalSummary": "qa/results/summary.json",
+  "corrected": [
+    "Independent default profiles retain the extensible health type registry.",
+    "Statless head mount has no upgrade path or invalid cost.",
+    "Item cards remain read-only before UID assignment.",
+    "Lighting masks blit in pixel coordinates after world-space clipping.",
+    "Historical equality fixtures account only for the authorized flashlight-to-module migration.",
+    "Flashlight falloff is baked once into the existing 256px sprite, reducing per-frame cone blends from sixteen to one."
+  ],
+  "limitations": [
+    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "All audio paths are included and decoded; subjective mix requires physical device listening."
+  ],
+  "lightingFollowup": {
+    "groups": [
+      "stage-c1-light-modules",
+      "build",
+      "verification",
+      "stage-ab-light-audio",
+      "localization-rendering"
+    ],
+    "log": "qa/results/stage-c1-light-optimization-run.log",
+    "reason": "Bounded one-pass flashlight falloff; actual pixel checks for 16 aim angles at 390px and preserved body shadow/bounce."
+  },
+  "performance": {
+    "report": "qa/results/stage-c1-performance.json",
+    "runtimeSha256": "3c763920fbe336870505572ee9580b4886127d7ca89c9f88bcdfe4d659307bf9",
+    "comparedScenes": 12,
+    "passed": true,
+    "reviewed": true
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "version": "0.29.0",
+  "stage": 7,
+  "patch": "hud-display-1",
+  "stage6Started": true,
+  "stage7Started": true,
+  "passed": false,
+  "automatedAssertions": 11318,
+  "historicalBaselineAssertions": 477,
+  "ladderContractChanged": true,
+  "runs": [
+    {
+      "id": "build",
+      "exitCode": 0,
+      "elapsedMs": 198
+    },
+    {
+      "id": "verification",
+      "exitCode": 0,
+      "elapsedMs": 230
+    },
+    {
+      "id": "regressions",
+      "exitCode": 0,
+      "elapsedMs": 21083
+    },
+    {
+      "id": "interactions",
+      "exitCode": 0,
+      "elapsedMs": 33853
+    },
+    {
+      "id": "saves",
+      "exitCode": 0,
+      "elapsedMs": 6994
+    },
+    {
+      "id": "balance",
+      "exitCode": 0,
+      "elapsedMs": 1534
+    },
+    {
+      "id": "state-saves",
+      "exitCode": 0,
+      "elapsedMs": 14663
+    },
+    {
+      "id": "differential",
+      "exitCode": 0,
+      "elapsedMs": 28126
+    },
+    {
+      "id": "systems",
+      "exitCode": 0,
+      "elapsedMs": 2534
+    },
+    {
+      "id": "stage3-differential",
+      "exitCode": 0,
+      "elapsedMs": 41673
+    },
+    {
+      "id": "controls",
+      "exitCode": 0,
+      "elapsedMs": 18722
+    },
+    {
+      "id": "controls-differential",
+      "exitCode": 0,
+      "elapsedMs": 42214
+    },
+    {
+      "id": "assets",
+      "exitCode": 0,
+      "elapsedMs": 5817
+    },
+    {
+      "id": "asset-rendering",
+      "exitCode": 0,
+      "elapsedMs": 2349
+    },
+    {
+      "id": "stage4-differential",
+      "exitCode": 0,
+      "elapsedMs": 41869
+    },
+    {
+      "id": "map-workbar",
+      "exitCode": 0,
+      "elapsedMs": 8952
+    },
+    {
+      "id": "localization",
+      "exitCode": 0,
+      "elapsedMs": 67618
+    },
+    {
+      "id": "localization-rendering",
+      "exitCode": 0,
+      "elapsedMs": 4154
+    },
+    {
+      "id": "localization-controls",
+      "exitCode": 0,
+      "elapsedMs": 63190
+    },
+    {
+      "id": "main-menu",
+      "exitCode": 0,
+      "elapsedMs": 117836
+    },
+    {
+      "id": "menu-preferences",
+      "exitCode": 0,
+      "elapsedMs": 15372
+    },
+    {
+      "id": "world-events",
+      "exitCode": 0,
+      "elapsedMs": 17841
+    },
+    {
+      "id": "readiness",
+      "exitCode": 0,
+      "elapsedMs": 16202
+    },
+    {
+      "id": "corrective",
+      "exitCode": 0,
+      "elapsedMs": 20227
+    },
+    {
+      "id": "world-farm",
+      "exitCode": 0,
+      "elapsedMs": 14457
+    },
+    {
+      "id": "drone-return",
+      "exitCode": 0,
+      "elapsedMs": 45598
+    },
+    {
+      "id": "resource-access",
+      "exitCode": 0,
+      "elapsedMs": 2379
+    },
+    {
+      "id": "character-animation",
+      "exitCode": 0,
+      "elapsedMs": 5720
+    },
+    {
+      "id": "master-unarmed",
+      "exitCode": 1,
+      "elapsedMs": 17652,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/master-unarmed.cjs\n"
+    },
+    {
+      "id": "equipment-integration",
+      "exitCode": 1,
+      "elapsedMs": 25005,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/equipment-integration.cjs\n"
+    },
+    {
+      "id": "player-visual-fix",
+      "exitCode": 1,
+      "elapsedMs": 2187,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/player-visual-fix.cjs\n"
+    },
+    {
+      "id": "corrective-performance",
+      "exitCode": 1,
+      "elapsedMs": 5075,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/corrective-performance.cjs\n"
+    },
+    {
+      "id": "corrective-visuals",
+      "exitCode": 0,
+      "elapsedMs": 3009
+    },
+    {
+      "id": "polish",
+      "exitCode": 1,
+      "elapsedMs": 5595,
+      "error": "Command failed: /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node /workspace/scratch/b2a359e84e10/hud-work/qa/polish.cjs\n"
+    },
+    {
+      "id": "polish-visuals",
+      "exitCode": 0,
+      "elapsedMs": 8004
+    },
+    {
+      "id": "audio-unlock",
+      "exitCode": 0,
+      "elapsedMs": 8741
+    },
+    {
+      "id": "hud-display",
+      "exitCode": 0,
+      "elapsedMs": 10257
+    }
+  ],
+  "limitations": [
+    "VM with modeled DOM, modeled WebAudio lifecycle and real Canvas2D. No native browser/WebView/phone result is implied.",
+    "Six historical optional audio assets remain absent; three new WAV effects are included."
+  ]
+}

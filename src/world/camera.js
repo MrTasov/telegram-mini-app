@@ -17,7 +17,7 @@ const V010Camera=(()=>{
   el('v010ViewMode').onclick=()=>{tilt=tilt===1?.76:1;updateSettings();queueGameSave();};
   el('v010MapCorner').onclick=()=>{corner=corner==='left'?'right':'left';updateSettings();queueGameSave();};
   el('v010OpenMap').onclick=()=>showMap();el('v010MapClose').onclick=()=>{mapOpen=false;closeOverlay(overlay);};
-  function showMap(which=scene){mapScene=['surface','bunker'].includes(which)?which:scene;mapOpen=true;selected=null;mapPan=mapScene==='surface'?{x:800,y:3600}:{x:BunkerLayout.bounds.x+BunkerLayout.bounds.w/2,y:BunkerLayout.bounds.y+BunkerLayout.bounds.h/2};mapZoom=1;openOverlay(overlay);drawFull();}
+  function showMap(which=scene){mapScene=['surface','bunker'].includes(which)?which:scene;mapOpen=true;selected=null;mapPan=mapScene==='surface'?{x:800,y:3600}:{x:bounds('bunker').x+bounds('bunker').w/2,y:bounds('bunker').y+bounds('bunker').h/2};mapZoom=1;openOverlay(overlay);drawFull();}
   let miniDown=null,miniTimer=null;
   const MINI_HOLD_MS=1500;
   function cycleMiniOpacity(){
@@ -60,7 +60,7 @@ const V010Camera=(()=>{
   window.addEventListener('pointermove',e=>{if(!touches.has(e.pointerId))return;touches.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch&&touches.size>=2){const [a,b]=[...touches.values()];setZoom(pinch.zoom*Math.hypot(a.x-b.x,a.y-b.y)/Math.max(1,pinch.distance));e.preventDefault();e.stopImmediatePropagation();}},{passive:false,capture:true});
   function endTouch(e){if(!touches.has(e.pointerId))return;touches.delete(e.pointerId);if(pinch||performance.now()<suppressTouchUntil){e.preventDefault();e.stopImmediatePropagation();objectPointer=null;cancelNavigation();moveX=moveY=movePower=0;suppressTouchUntil=performance.now()+250;if(!touches.size){pinch=null;queueGameSave();}}}
   window.addEventListener('pointerup',endTouch,{passive:false,capture:true});window.addEventListener('pointercancel',endTouch,{passive:false,capture:true});
-  function bounds(which=scene){return which==='surface'?{x:-2800,y:-2400,w:7200,h:12000}:BunkerLayout.bounds;}
+  function bounds(which=scene){return which==='surface'?{x:-2800,y:-2400,w:7200,h:12000}:BunkerLayout.floorBounds[BunkerLayout.floorAt(player.x,player.y)];}
   const point=(x,y)=>({x:(x-camera.x)*zoom,y:(y-camera.y)*zoom});
   const inverse=(x,y)=>({x:x/zoom+camera.x,y:y/zoom+camera.y});
   function view(){return {w:screenWidth/zoom,h:screenHeight/zoom};}
@@ -97,7 +97,7 @@ const V010Camera=(()=>{
       for(const o of scavenges){if(!seen(o.x,o.y)||window.V011World&&!V011World.filters.buildings)continue;c.fillStyle=o.kind==='car'?'#8e9e97':'#a6997e';c.fillRect(o.x,o.y,o.w,o.h);}
       // Resource and threat markers are drawn together below for both map modes.
       const n=window.V010World?.noise;if(n&&performance.now()-n.at<1800){c.strokeStyle='#e9c08880';c.lineWidth=1/scale;c.beginPath();c.globalAlpha=Math.min(1,(1800-(performance.now()-n.at))/500);c.arc(n.followPlayer?player.x:n.x,n.followPlayer?player.y:n.y,n.radius,0,Math.PI*2);c.globalAlpha=1;c.stroke();}
-    }else for(const [id,r] of Object.entries(bunker)){if(!r?.left||!BunkerLayout.roomActive(id))continue;c.fillStyle=!V09Power.roomEnabled[id]?'#2d3937':V09Power.allocation().served.has('light_'+id)?'#607566':'#746f48';c.fillRect(r.left,r.top,r.right-r.left,r.bottom-r.top);c.strokeStyle='#a0b9a8';c.lineWidth=8;c.strokeRect(r.left,r.top,r.right-r.left,r.bottom-r.top);}
+    }else for(const [id,r] of Object.entries(bunker)){if(!r?.left||!BunkerLayout.roomActive(id)||r.floor!==BunkerLayout.floorAt(player.x,player.y))continue;c.fillStyle=!V09Power.roomEnabled[id]?'#2d3937':V09Power.allocation().served.has('light_'+id)?'#607566':'#746f48';c.fillRect(r.left,r.top,r.right-r.left,r.bottom-r.top);c.strokeStyle='#a0b9a8';c.lineWidth=8;c.strokeRect(r.left,r.top,r.right-r.left,r.bottom-r.top);}
     if(!miniMode&&which===scene)window.V0141Map?.drawRange(c,scale);window.V0105?.drawMapMarkers(c,markerScale,miniMode,{x:-ox/scale,y:-oy/scale,w:w/scale,h:h/scale},which);
     if(which==='surface')window.GameExplorationUI?.drawMap(c,scale,miniMode);
     if(which===scene)window.V014Controls?.drawRoute(c,scale);

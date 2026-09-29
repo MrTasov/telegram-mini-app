@@ -1,0 +1,4287 @@
+{
+  "note": "V8 sampled inclusive CPU milliseconds per measured 180-frame run incl. 60 warmup frames; categories overlap and must NOT be summed. Native Canvas/host custom_gc is not identified as JS GC. A zero is below sampling resolution / absent, not proof of free work. Offzone total update is separately recorded in perf JSON.",
+  "profiles": [
+    {
+      "report": "before",
+      "id": "idle",
+      "totalMs": 3307.9530000000227,
+      "inclusiveMs": {
+        "lighting/shadows": 840.9940000000006,
+        "state allocation/validation/power": 19.974000000000004,
+        "render": 1586.2710000000038,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1721.0330000000065,
+        "animations + actor render": 11.102,
+        "I1 scheduling": 6.529,
+        "enemy AI/update": 5.939,
+        "V8 GC": 28.665,
+        "audio": 1.755,
+        "turret targeting/update": 6.977,
+        "muzzle/effects": 0.57
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1721.0330000000065
+        ],
+        [
+          "matches []",
+          419.45100000000053
+        ],
+        [
+          "querySelectorAll []",
+          107.85299999999991
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          66.16500000000002
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          45.194999999999986
+        ],
+        [
+          "post []",
+          38.523
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          37.39000000000001
+        ],
+        [
+          "draw [world/lake-city.js]",
+          36.918
+        ],
+        [
+          "get children []",
+          35.464000000000006
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          34.634
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          34.363
+        ],
+        [
+          "(garbage collector) []",
+          28.665
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          27.069999999999997
+        ],
+        [
+          "runInContext []",
+          26.676000000000002
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          25.902
+        ],
+        [
+          "add [ui/context-map.js]",
+          24.965999999999998
+        ],
+        [
+          "rect [base/structures.js]",
+          21.142
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          17.704
+        ],
+        [
+          "distance [core/runtime.js]",
+          15.31
+        ],
+        [
+          "canInteract [core/interactions-farm-storage.js]",
+          14.555999999999997
+        ]
+      ],
+      "heap": {
+        "start": 22085440,
+        "beforeGC": 33116808,
+        "afterGC": 25712568,
+        "retained": 3627128,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "ak_empty",
+      "totalMs": 3295.3130000000283,
+      "inclusiveMs": {
+        "lighting/shadows": 852.2379999999994,
+        "weapon firing": 28.266999999999992,
+        "projectiles/hits": 34.80200000000001,
+        "world collision": 8.389000000000001,
+        "LOS/raycast": 2.4240000000000004,
+        "muzzle/effects": 12.523000000000001,
+        "audio": 2.955,
+        "render": 1577.878999999999,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1722.7190000000003,
+        "animations + actor render": 6.444999999999999,
+        "V8 GC": 30.977000000000004,
+        "I1 scheduling": 5.277,
+        "enemy AI/update": 4.123,
+        "state allocation/validation/power": 18.994,
+        "turret targeting/update": 2.312
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1722.7190000000003
+        ],
+        [
+          "matches []",
+          403.37400000000054
+        ],
+        [
+          "querySelectorAll []",
+          98.34399999999995
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          62.571000000000005
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          49.41700000000002
+        ],
+        [
+          "get children []",
+          45.33899999999999
+        ],
+        [
+          "post []",
+          38.297
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          35.122
+        ],
+        [
+          "draw [world/lake-city.js]",
+          34.51799999999999
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          32.691
+        ],
+        [
+          "(garbage collector) []",
+          30.977000000000004
+        ],
+        [
+          "runInContext []",
+          29.328999999999997
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          27.759000000000004
+        ],
+        [
+          "rect [base/structures.js]",
+          27.293
+        ],
+        [
+          "add [ui/context-map.js]",
+          23.432000000000006
+        ],
+        [
+          "distance [core/runtime.js]",
+          22.095000000000006
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          21.101000000000003
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          20.238
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          19.811999999999994
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          15.072999999999999
+        ]
+      ],
+      "heap": {
+        "start": 22092176,
+        "beforeGC": 28131248,
+        "afterGC": 26385392,
+        "retained": 4293216,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "m4_empty",
+      "totalMs": 3339.47300000002,
+      "inclusiveMs": {
+        "lighting/shadows": 874.7980000000003,
+        "projectiles/hits": 47.995000000000005,
+        "world collision": 14.738999999999999,
+        "LOS/raycast": 1.779,
+        "weapon firing": 32.106,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1720.0530000000022,
+        "render": 1596.7459999999974,
+        "V8 GC": 30.222999999999992,
+        "turret targeting/update": 4.287,
+        "muzzle/effects": 16.782,
+        "I1 scheduling": 6.133,
+        "enemy AI/update": 5.5489999999999995,
+        "state allocation/validation/power": 19.246,
+        "audio": 5.233999999999999,
+        "animations + actor render": 0.576
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1720.0530000000022
+        ],
+        [
+          "matches []",
+          412.9739999999999
+        ],
+        [
+          "querySelectorAll []",
+          94.5139999999999
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          68.69500000000002
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          47.168000000000006
+        ],
+        [
+          "draw [world/lake-city.js]",
+          43.161000000000016
+        ],
+        [
+          "get children []",
+          40.74
+        ],
+        [
+          "post []",
+          39
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          37.372000000000014
+        ],
+        [
+          "runInContext []",
+          32.334999999999994
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          31.622999999999987
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          31.225000000000005
+        ],
+        [
+          "(garbage collector) []",
+          30.222999999999992
+        ],
+        [
+          "rect [base/structures.js]",
+          28.576
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          23.281999999999996
+        ],
+        [
+          "add [ui/context-map.js]",
+          21.647
+        ],
+        [
+          "distance [core/runtime.js]",
+          21.308
+        ],
+        [
+          "canInteract [core/interactions-farm-storage.js]",
+          19.265
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          19.172
+        ],
+        [
+          "get id []",
+          18.482
+        ]
+      ],
+      "heap": {
+        "start": 22125456,
+        "beforeGC": 30601296,
+        "afterGC": 26351928,
+        "retained": 4226472,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "z10",
+      "totalMs": 3679.581000000016,
+      "inclusiveMs": {
+        "lighting/shadows": 936.5710000000018,
+        "world collision": 31.68499999999999,
+        "enemy AI/update": 67.20600000000002,
+        "I1 scheduling": 68.97500000000002,
+        "audio": 5.298,
+        "LOS/raycast": 4.7379999999999995,
+        "render": 1704.8550000000014,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1936.1210000000015,
+        "animations + actor render": 34.103000000000016,
+        "state allocation/validation/power": 18.455,
+        "V8 GC": 30.901,
+        "enemy target decision": 3.628,
+        "turret targeting/update": 6.004999999999999,
+        "HP indicators": 7.754999999999999,
+        "muzzle/effects": 1.7429999999999999
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1936.1210000000015
+        ],
+        [
+          "matches []",
+          436.24100000000044
+        ],
+        [
+          "querySelectorAll []",
+          110.26099999999997
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          74.20499999999996
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          51.516000000000005
+        ],
+        [
+          "get children []",
+          43.187
+        ],
+        [
+          "post []",
+          38.266
+        ],
+        [
+          "runInContext []",
+          37.354
+        ],
+        [
+          "draw [world/lake-city.js]",
+          36.333999999999996
+        ],
+        [
+          "(garbage collector) []",
+          30.901
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          30.662999999999997
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          30.497
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          27.999999999999996
+        ],
+        [
+          "add [ui/context-map.js]",
+          24.993
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          21.052999999999997
+        ],
+        [
+          "rect [base/structures.js]",
+          19.708999999999996
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          18.339000000000002
+        ],
+        [
+          "distance [core/runtime.js]",
+          18.197000000000006
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          16.655999999999995
+        ],
+        [
+          "mapDraw [world/camera.js]",
+          16.62
+        ]
+      ],
+      "heap": {
+        "start": 22108072,
+        "beforeGC": 31257128,
+        "afterGC": 26546376,
+        "retained": 4438304,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "z25",
+      "totalMs": 4189.647000000018,
+      "inclusiveMs": {
+        "lighting/shadows": 1076.7689999999977,
+        "world collision": 50.52500000000001,
+        "enemy AI/update": 115.85499999999988,
+        "I1 scheduling": 131.1139999999999,
+        "LOS/raycast": 4.164,
+        "audio": 7.106,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2183.7950000000064,
+        "render": 1919.6280000000063,
+        "animations + actor render": 70.56899999999999,
+        "HP indicators": 18.338,
+        "state allocation/validation/power": 30.14499999999999,
+        "V8 GC": 44.447,
+        "turret targeting/update": 6.493000000000001,
+        "enemy target decision": 1.7389999999999999,
+        "muzzle/effects": 1.238
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2183.7950000000064
+        ],
+        [
+          "matches []",
+          460.5139999999997
+        ],
+        [
+          "querySelectorAll []",
+          135.59799999999998
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          72.17999999999994
+        ],
+        [
+          "get children []",
+          61.83000000000003
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          55.558
+        ],
+        [
+          "runInContext []",
+          46.322999999999986
+        ],
+        [
+          "(garbage collector) []",
+          44.447
+        ],
+        [
+          "draw [world/lake-city.js]",
+          42.96899999999999
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          41.12500000000001
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          40.403
+        ],
+        [
+          "add [ui/context-map.js]",
+          34.256
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          33.486999999999995
+        ],
+        [
+          "rect [base/structures.js]",
+          30.46800000000001
+        ],
+        [
+          "post []",
+          29.065
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          29.021
+        ],
+        [
+          "clamp [core/runtime.js]",
+          23.152
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          21.347
+        ],
+        [
+          "allocation [base/battery.js]",
+          18.512999999999995
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          17.614
+        ]
+      ],
+      "heap": {
+        "start": 19601600,
+        "beforeGC": 39754328,
+        "afterGC": 23636480,
+        "retained": 4034880,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "z50",
+      "totalMs": 4602.954000000041,
+      "inclusiveMs": {
+        "lighting/shadows": 1206.9060000000022,
+        "enemy AI/update": 213.82799999999997,
+        "I1 scheduling": 221.676,
+        "world collision": 99.45599999999993,
+        "audio": 5.412,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2405.549000000009,
+        "render": 2085.5500000000034,
+        "animations + actor render": 138.1959999999999,
+        "HP indicators": 29.715999999999994,
+        "V8 GC": 38.496,
+        "state allocation/validation/power": 21.812,
+        "LOS/raycast": 6.344,
+        "muzzle/effects": 1.189,
+        "turret targeting/update": 4.131,
+        "enemy target decision": 1.713
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2405.549000000009
+        ],
+        [
+          "matches []",
+          459.33100000000024
+        ],
+        [
+          "querySelectorAll []",
+          118.39799999999985
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          86.11499999999998
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          72.189
+        ],
+        [
+          "get children []",
+          57.458999999999996
+        ],
+        [
+          "draw [world/lake-city.js]",
+          47.370000000000005
+        ],
+        [
+          "post []",
+          47.003
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          46.492999999999995
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          42.564000000000014
+        ],
+        [
+          "add [ui/context-map.js]",
+          41.782000000000004
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          39.422000000000004
+        ],
+        [
+          "(garbage collector) []",
+          38.496
+        ],
+        [
+          "rect [base/structures.js]",
+          34.297000000000004
+        ],
+        [
+          "runInContext []",
+          33.302
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          29.147000000000002
+        ],
+        [
+          "clamp [core/runtime.js]",
+          29.134000000000007
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          28.793
+        ],
+        [
+          "distance [core/runtime.js]",
+          26.902
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          25.014
+        ]
+      ],
+      "heap": {
+        "start": 22201416,
+        "beforeGC": 49819632,
+        "afterGC": 26681608,
+        "retained": 4480192,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "z100",
+      "totalMs": 4581.869000000037,
+      "inclusiveMs": {
+        "lighting/shadows": 1219.3739999999991,
+        "world collision": 148.8389999999999,
+        "enemy AI/update": 314.92600000000033,
+        "I1 scheduling": 324.77700000000044,
+        "audio": 8.87,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2494.758000000004,
+        "render": 2007.4820000000045,
+        "animations + actor render": 189.83799999999997,
+        "V8 GC": 32.577999999999996,
+        "HP indicators": 46.61900000000001,
+        "state allocation/validation/power": 23.638999999999996,
+        "turret targeting/update": 5.912,
+        "LOS/raycast": 5.851999999999999,
+        "muzzle/effects": 0.586,
+        "enemy target decision": 1.763
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2494.758000000004
+        ],
+        [
+          "matches []",
+          437.47900000000016
+        ],
+        [
+          "querySelectorAll []",
+          110.6739999999999
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          75.38399999999999
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          67.83699999999999
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          63.529999999999994
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          57.54399999999999
+        ],
+        [
+          "post []",
+          44.582
+        ],
+        [
+          "draw [world/lake-city.js]",
+          39.13300000000001
+        ],
+        [
+          "clamp [core/runtime.js]",
+          38.808
+        ],
+        [
+          "runInContext []",
+          36.736
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          35.63500000000001
+        ],
+        [
+          "get children []",
+          35.425000000000004
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          32.82599999999999
+        ],
+        [
+          "(garbage collector) []",
+          32.577999999999996
+        ],
+        [
+          "add [ui/context-map.js]",
+          31.344999999999995
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          28.816999999999997
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          27.847999999999992
+        ],
+        [
+          "drawZombie [combat/monsters.js]",
+          26.770000000000003
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          23.854999999999993
+        ]
+      ],
+      "heap": {
+        "start": 22311208,
+        "beforeGC": 36458904,
+        "afterGC": 26835864,
+        "retained": 4524656,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "z25_ak",
+      "totalMs": 3833.6940000000245,
+      "inclusiveMs": {
+        "lighting/shadows": 982.566,
+        "projectiles/hits": 44.169999999999995,
+        "world collision": 53.17700000000001,
+        "LOS/raycast": 7.598,
+        "weapon firing": 28.294,
+        "audio": 9.510999999999997,
+        "enemy AI/update": 94.81499999999996,
+        "I1 scheduling": 104.72399999999995,
+        "render": 1761.619,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2030.2800000000025,
+        "muzzle/effects": 8.745999999999999,
+        "animations + actor render": 67.684,
+        "HP indicators": 18.44599999999999,
+        "V8 GC": 36.25800000000001,
+        "turret targeting/update": 6.948999999999999,
+        "state allocation/validation/power": 17.540000000000003,
+        "enemy target decision": 0.59
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2030.2800000000025
+        ],
+        [
+          "matches []",
+          411.9020000000002
+        ],
+        [
+          "querySelectorAll []",
+          105.62999999999994
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          67.14500000000005
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          58.873000000000005
+        ],
+        [
+          "get children []",
+          49.64599999999997
+        ],
+        [
+          "runInContext []",
+          40.303
+        ],
+        [
+          "post []",
+          36.642
+        ],
+        [
+          "(garbage collector) []",
+          36.25800000000001
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          35.38099999999998
+        ],
+        [
+          "draw [world/lake-city.js]",
+          35.236000000000004
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          32.889
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          29.975999999999992
+        ],
+        [
+          "add [ui/context-map.js]",
+          29.929999999999993
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          24.892
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          23.370999999999995
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          22.692
+        ],
+        [
+          "rect [base/structures.js]",
+          22.139000000000006
+        ],
+        [
+          "distance [core/runtime.js]",
+          21.043999999999997
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          20.669999999999995
+        ]
+      ],
+      "heap": {
+        "start": 22132576,
+        "beforeGC": 43771704,
+        "afterGC": 27210528,
+        "retained": 5077952,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "z50_ak",
+      "totalMs": 4153.9120000000285,
+      "inclusiveMs": {
+        "lighting/shadows": 1122.696,
+        "audio": 7.712999999999999,
+        "world collision": 80.962,
+        "LOS/raycast": 8.340999999999998,
+        "weapon firing": 29.761999999999993,
+        "projectiles/hits": 46.74799999999999,
+        "enemy AI/update": 163.4839999999999,
+        "I1 scheduling": 171.86399999999983,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2267.0760000000096,
+        "render": 1842.4180000000015,
+        "animations + actor render": 123.88599999999981,
+        "state allocation/validation/power": 24.049000000000003,
+        "V8 GC": 30.391999999999996,
+        "HP indicators": 28.881999999999998,
+        "turret targeting/update": 3.4669999999999996,
+        "muzzle/effects": 4.067,
+        "enemy target decision": 0.61
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2267.0760000000096
+        ],
+        [
+          "matches []",
+          456.0660000000005
+        ],
+        [
+          "querySelectorAll []",
+          110.60399999999989
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          68.97699999999998
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          51.599999999999994
+        ],
+        [
+          "get children []",
+          42.497
+        ],
+        [
+          "draw [world/lake-city.js]",
+          42.09799999999999
+        ],
+        [
+          "post []",
+          37.645
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          34.81199999999998
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          31.452
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          31.16
+        ],
+        [
+          "runInContext []",
+          30.905999999999995
+        ],
+        [
+          "(garbage collector) []",
+          30.391999999999996
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          30.270999999999987
+        ],
+        [
+          "clamp [core/runtime.js]",
+          28.553
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          25.162000000000006
+        ],
+        [
+          "add [ui/context-map.js]",
+          23.25599999999999
+        ],
+        [
+          "canInteract [core/interactions-farm-storage.js]",
+          20.599000000000007
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          19.464
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          19.27499999999999
+        ]
+      ],
+      "heap": {
+        "start": 22193800,
+        "beforeGC": 50719216,
+        "afterGC": 27320304,
+        "retained": 5126504,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "z50_turrets",
+      "totalMs": 4341.499000000058,
+      "inclusiveMs": {
+        "lighting/shadows": 1305.6539999999975,
+        "world collision": 262.7389999999999,
+        "LOS/raycast": 212.6879999999998,
+        "I1 scheduling": 442.1240000000003,
+        "enemy AI/update": 428.83800000000025,
+        "state allocation/validation/power": 38.73600000000001,
+        "audio": 6.232,
+        "turret targeting/update": 36.62100000000001,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2179.339000000002,
+        "render": 1834.1789999999983,
+        "animations + actor render": 147.1559999999999,
+        "V8 GC": 34.058,
+        "HP indicators": 25.538,
+        "enemy target decision": 2.912,
+        "projectiles/hits": 1.139
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2179.339000000002
+        ],
+        [
+          "matches []",
+          411.35500000000025
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          117.30999999999987
+        ],
+        [
+          "querySelectorAll []",
+          109.51999999999994
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          70.78299999999997
+        ],
+        [
+          "clamp [core/runtime.js]",
+          67.608
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          62.79400000000002
+        ],
+        [
+          "draw [world/lake-city.js]",
+          44.449000000000005
+        ],
+        [
+          "get children []",
+          43.272000000000006
+        ],
+        [
+          "post []",
+          42.544
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          42.51800000000002
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          36.486
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          34.466
+        ],
+        [
+          "(garbage collector) []",
+          34.058
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          29.461000000000002
+        ],
+        [
+          "runInContext []",
+          27.544
+        ],
+        [
+          "add [ui/context-map.js]",
+          25.493000000000002
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          24.294999999999995
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          23.918
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          23.874999999999996
+        ]
+      ],
+      "heap": {
+        "start": 22323816,
+        "beforeGC": 49127792,
+        "afterGC": 27126912,
+        "retained": 4803096,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "z50_lights",
+      "totalMs": 5051.102000000051,
+      "inclusiveMs": {
+        "lighting/shadows": 1795.0509999999995,
+        "state allocation/validation/power": 49.22299999999999,
+        "I1 scheduling": 607.3749999999994,
+        "enemy AI/update": 593.5219999999995,
+        "world collision": 381.1690000000003,
+        "LOS/raycast": 309.67099999999976,
+        "audio": 7.165999999999999,
+        "turret targeting/update": 44.939,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2584.3940000000102,
+        "render": 2175.1240000000003,
+        "animations + actor render": 153.1089999999999,
+        "V8 GC": 32.420999999999985,
+        "HP indicators": 25.314999999999998,
+        "projectiles/hits": 2.342,
+        "muzzle/effects": 0.588,
+        "enemy target decision": 1.787
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2584.3940000000102
+        ],
+        [
+          "matches []",
+          434.71500000000026
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          152.62299999999993
+        ],
+        [
+          "clamp [core/runtime.js]",
+          99.786
+        ],
+        [
+          "querySelectorAll []",
+          98.10199999999999
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          74.19299999999998
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          69.63499999999998
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          65.711
+        ],
+        [
+          "post []",
+          48.126
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          48.088
+        ],
+        [
+          "get children []",
+          42.804000000000016
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          40.840000000000025
+        ],
+        [
+          "draw [world/lake-city.js]",
+          37.415
+        ],
+        [
+          "aabb [equipment/instances.js]",
+          35.85399999999999
+        ],
+        [
+          "(garbage collector) []",
+          32.420999999999985
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          32.01599999999999
+        ],
+        [
+          "runInContext []",
+          29.506999999999994
+        ],
+        [
+          "sprite [render/lighting.js]",
+          29.308
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          28.289999999999996
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          25.660999999999994
+        ]
+      ],
+      "heap": {
+        "start": 22433296,
+        "beforeGC": 64605008,
+        "afterGC": 27989064,
+        "retained": 5555768,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "offzone",
+      "totalMs": 3427.3350000000187,
+      "inclusiveMs": {
+        "lighting/shadows": 1418.1710000000003,
+        "audio": 11.113,
+        "enemy AI/update": 185.78600000000006,
+        "I1 scheduling": 192.7700000000001,
+        "LOS/raycast": 76.07999999999998,
+        "enemy target decision": 27.256000000000007,
+        "world collision": 35.007,
+        "turret targeting/update": 6.453,
+        "render": 1561.0419999999972,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1899.043000000002,
+        "state allocation/validation/power": 128.30999999999995,
+        "animations + actor render": 13.493999999999998,
+        "V8 GC": 28.150999999999996,
+        "projectiles/hits": 0.58,
+        "muzzle/effects": 1.37
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1899.043000000002
+        ],
+        [
+          "matches []",
+          406.20800000000025
+        ],
+        [
+          "querySelectorAll []",
+          98.2369999999999
+        ],
+        [
+          "allocation [base/battery.js]",
+          97.39599999999999
+        ],
+        [
+          "line [base/rooms.js]",
+          54.47400000000001
+        ],
+        [
+          "rayEntry [base/structures.js]",
+          53.246999999999986
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          39.827999999999975
+        ],
+        [
+          "post []",
+          38.972
+        ],
+        [
+          "runInContext []",
+          31.849999999999994
+        ],
+        [
+          "get children []",
+          28.320999999999998
+        ],
+        [
+          "(garbage collector) []",
+          28.150999999999996
+        ],
+        [
+          "rect [base/rooms.js]",
+          20.825999999999997
+        ],
+        [
+          "blocker [base/structures.js]",
+          19.260999999999996
+        ],
+        [
+          "get id []",
+          17.883999999999997
+        ],
+        [
+          "shadow [base/rooms.js]",
+          16.304
+        ],
+        [
+          "ctx.fillText [ui/context-map.js]",
+          15.251999999999999
+        ],
+        [
+          "drawBunker [core/rendering.js]",
+          13.956999999999997
+        ],
+        [
+          "(anonymous) [base/level1.js]",
+          11.942999999999998
+        ],
+        [
+          "(anonymous) [base/battery.js]",
+          11.736999999999998
+        ],
+        [
+          "wallApproach [combat/monsters.js]",
+          11.542000000000002
+        ]
+      ],
+      "heap": {
+        "start": 22394752,
+        "beforeGC": 31313160,
+        "afterGC": 26674872,
+        "retained": 4280120,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "return",
+      "totalMs": 3848.4340000000107,
+      "inclusiveMs": {
+        "lighting/shadows": 1311.2919999999947,
+        "audio": 14.429000000000004,
+        "enemy AI/update": 273.661,
+        "I1 scheduling": 288.47499999999997,
+        "LOS/raycast": 112.90799999999992,
+        "enemy target decision": 45.25300000000001,
+        "world collision": 17.627,
+        "turret targeting/update": 7.5329999999999995,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1946.481999999996,
+        "render": 1752.8870000000002,
+        "state allocation/validation/power": 64.10300000000001,
+        "animations + actor render": 32.835,
+        "V8 GC": 41.13200000000001,
+        "muzzle/effects": 2.3689999999999998,
+        "HP indicators": 10.528,
+        "projectiles/hits": 0.597
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1946.481999999996
+        ],
+        [
+          "matches []",
+          422.22999999999996
+        ],
+        [
+          "querySelectorAll []",
+          100.35399999999996
+        ],
+        [
+          "rayEntry [base/structures.js]",
+          93.72499999999994
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          49.53500000000002
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          44.62800000000001
+        ],
+        [
+          "allocation [base/battery.js]",
+          43.28700000000001
+        ],
+        [
+          "get children []",
+          43.252
+        ],
+        [
+          "(garbage collector) []",
+          41.13200000000001
+        ],
+        [
+          "post []",
+          38.988
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          37.48
+        ],
+        [
+          "runInContext []",
+          27.522000000000006
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          23.162000000000003
+        ],
+        [
+          "passage [combat/monsters.js]",
+          22.388
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          22.079000000000004
+        ],
+        [
+          "distance [core/runtime.js]",
+          20.048999999999992
+        ],
+        [
+          "draw [world/lake-city.js]",
+          19.949
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          19.618999999999996
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          18.994999999999997
+        ],
+        [
+          "rect [base/structures.js]",
+          18.980999999999998
+        ]
+      ],
+      "heap": {
+        "start": 22359368,
+        "beforeGC": 44714672,
+        "afterGC": 27824024,
+        "retained": 5464656,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "offzone_combat",
+      "totalMs": 3975.762000000034,
+      "inclusiveMs": {
+        "lighting/shadows": 1920.727,
+        "audio": 11.075999999999999,
+        "enemy AI/update": 674.1900000000003,
+        "I1 scheduling": 684.9900000000004,
+        "world collision": 391.05200000000025,
+        "LOS/raycast": 433.0420000000001,
+        "enemy target decision": 29.163999999999987,
+        "turret targeting/update": 24.666999999999994,
+        "render": 1587.698999999999,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1925.2430000000047,
+        "animations + actor render": 10.364,
+        "state allocation/validation/power": 153.2719999999999,
+        "V8 GC": 32.142,
+        "projectiles/hits": 0.585,
+        "muzzle/effects": 1.165
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1925.2430000000047
+        ],
+        [
+          "matches []",
+          406.0070000000006
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          160.0579999999999
+        ],
+        [
+          "allocation [base/battery.js]",
+          98.68999999999994
+        ],
+        [
+          "querySelectorAll []",
+          94.98699999999998
+        ],
+        [
+          "rayEntry [base/structures.js]",
+          91.82899999999995
+        ],
+        [
+          "clamp [core/runtime.js]",
+          71.409
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          60.65999999999999
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          52.00600000000002
+        ],
+        [
+          "get children []",
+          40.504000000000005
+        ],
+        [
+          "line [base/rooms.js]",
+          38.15099999999999
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          34.821000000000005
+        ],
+        [
+          "runInContext []",
+          32.708
+        ],
+        [
+          "(garbage collector) []",
+          32.142
+        ],
+        [
+          "post []",
+          28.394
+        ],
+        [
+          "rect [base/rooms.js]",
+          24.597999999999995
+        ],
+        [
+          "lineClear [core/world-inventory.js]",
+          21.114999999999995
+        ],
+        [
+          "ctx.fillText [ui/context-map.js]",
+          18.403000000000002
+        ],
+        [
+          "aabb [equipment/instances.js]",
+          17.512
+        ],
+        [
+          "shadow [base/rooms.js]",
+          15.517000000000001
+        ]
+      ],
+      "heap": {
+        "start": 19824392,
+        "beforeGC": 31459872,
+        "afterGC": 23878560,
+        "retained": 4054168,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before",
+      "id": "return_combat",
+      "totalMs": 4260.586000000012,
+      "inclusiveMs": {
+        "lighting/shadows": 1694.5060000000074,
+        "audio": 16.098999999999997,
+        "enemy AI/update": 684.6670000000015,
+        "I1 scheduling": 695.3080000000017,
+        "enemy target decision": 37.583000000000006,
+        "world collision": 368.3200000000007,
+        "LOS/raycast": 431.62800000000055,
+        "turret targeting/update": 23.903999999999996,
+        "state allocation/validation/power": 81.56599999999999,
+        "render": 1744.811000000006,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1941.9730000000086,
+        "V8 GC": 38.525999999999996,
+        "animations + actor render": 27.479,
+        "projectiles/hits": 2.6,
+        "HP indicators": 7.994,
+        "muzzle/effects": 0.601
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1941.9730000000086
+        ],
+        [
+          "matches []",
+          464.268000000001
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          148.40799999999982
+        ],
+        [
+          "querySelectorAll []",
+          95.14899999999999
+        ],
+        [
+          "clamp [core/runtime.js]",
+          82.06599999999996
+        ],
+        [
+          "rayEntry [base/structures.js]",
+          81.2859999999999
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          65.97899999999998
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          53.248
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          45.48799999999997
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          44.852
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          42.19
+        ],
+        [
+          "post []",
+          39.614
+        ],
+        [
+          "(garbage collector) []",
+          38.525999999999996
+        ],
+        [
+          "allocation [base/battery.js]",
+          38.48099999999998
+        ],
+        [
+          "get children []",
+          35.75399999999999
+        ],
+        [
+          "runInContext []",
+          31.648999999999997
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          21.480000000000004
+        ],
+        [
+          "blocker [base/structures.js]",
+          21.436
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          20.836
+        ],
+        [
+          "draw [world/lake-city.js]",
+          20.559000000000005
+        ]
+      ],
+      "heap": {
+        "start": 22366792,
+        "beforeGC": 64455016,
+        "afterGC": 28057672,
+        "retained": 5690880,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "idle",
+      "totalMs": 3264.4640000000268,
+      "inclusiveMs": {
+        "lighting/shadows": 816.6409999999998,
+        "I1 scheduling": 7.548999999999999,
+        "enemy AI/update": 6.372999999999998,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1779.024000000003,
+        "render": 1545.7509999999986,
+        "animations + actor render": 10.649999999999999,
+        "V8 GC": 32.449000000000005,
+        "state allocation/validation/power": 17.281999999999996,
+        "audio": 3.4589999999999996,
+        "turret targeting/update": 1.355
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1779.024000000003
+        ],
+        [
+          "matches []",
+          404.7020000000004
+        ],
+        [
+          "querySelectorAll []",
+          94.10699999999997
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          75.23400000000001
+        ],
+        [
+          "get children []",
+          43.32700000000001
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          38.76899999999999
+        ],
+        [
+          "post []",
+          38.745
+        ],
+        [
+          "draw [world/lake-city.js]",
+          34.605999999999995
+        ],
+        [
+          "(garbage collector) []",
+          32.449000000000005
+        ],
+        [
+          "rect [base/structures.js]",
+          30.321
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          28.772
+        ],
+        [
+          "runInContext []",
+          25.42299999999999
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          23.761999999999997
+        ],
+        [
+          "distance [core/runtime.js]",
+          21.13799999999999
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          21.058000000000003
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          19.991999999999994
+        ],
+        [
+          "add [ui/context-map.js]",
+          16.888999999999996
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          16.644000000000002
+        ],
+        [
+          "contactPoint [core/interactions-farm-storage.js]",
+          15.356
+        ],
+        [
+          "canInteract [core/interactions-farm-storage.js]",
+          13.969000000000001
+        ]
+      ],
+      "heap": {
+        "start": 22127928,
+        "beforeGC": 39490144,
+        "afterGC": 25721496,
+        "retained": 3593568,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "ak_empty",
+      "totalMs": 3355.141000000019,
+      "inclusiveMs": {
+        "lighting/shadows": 898.7909999999998,
+        "weapon firing": 33.327,
+        "projectiles/hits": 56.18800000000001,
+        "world collision": 13.453,
+        "LOS/raycast": 2.957,
+        "audio": 5.298,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1748.331000000002,
+        "render": 1553.7859999999955,
+        "V8 GC": 35.29600000000001,
+        "animations + actor render": 10.885999999999997,
+        "muzzle/effects": 5.257,
+        "state allocation/validation/power": 13.351,
+        "I1 scheduling": 5.773,
+        "enemy AI/update": 5.193999999999999,
+        "turret targeting/update": 1.862
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1748.331000000002
+        ],
+        [
+          "matches []",
+          432.02999999999963
+        ],
+        [
+          "querySelectorAll []",
+          104.93299999999999
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          62.746
+        ],
+        [
+          "draw [world/lake-city.js]",
+          37.80899999999999
+        ],
+        [
+          "post []",
+          37.748
+        ],
+        [
+          "(garbage collector) []",
+          35.29600000000001
+        ],
+        [
+          "runInContext []",
+          32.008
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          31.90999999999999
+        ],
+        [
+          "get children []",
+          31.840999999999998
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          31.48899999999999
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          30.915000000000006
+        ],
+        [
+          "distance [core/runtime.js]",
+          26.018000000000004
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          23.431000000000004
+        ],
+        [
+          "rect [base/structures.js]",
+          22.336
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          22.295999999999996
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          20.043999999999993
+        ],
+        [
+          "add [ui/context-map.js]",
+          19.942999999999998
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          18.569000000000003
+        ],
+        [
+          "drawDecoration [base/structures.js]",
+          15.022999999999998
+        ]
+      ],
+      "heap": {
+        "start": 22129400,
+        "beforeGC": 38425176,
+        "afterGC": 26424136,
+        "retained": 4294736,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "m4_empty",
+      "totalMs": 3246.488000000022,
+      "inclusiveMs": {
+        "lighting/shadows": 869.5699999999995,
+        "world collision": 11.263000000000002,
+        "LOS/raycast": 1.7469999999999999,
+        "weapon firing": 34.22999999999999,
+        "projectiles/hits": 49.214999999999996,
+        "audio": 4.197,
+        "render": 1491.2019999999952,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1722.5379999999989,
+        "V8 GC": 32.87299999999998,
+        "muzzle/effects": 5.781999999999999,
+        "turret targeting/update": 3.2989999999999995,
+        "I1 scheduling": 3.566,
+        "enemy AI/update": 3.566,
+        "state allocation/validation/power": 13.185,
+        "animations + actor render": 0.578
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1722.5379999999989
+        ],
+        [
+          "matches []",
+          429.12900000000064
+        ],
+        [
+          "querySelectorAll []",
+          103.01499999999996
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          58.94599999999999
+        ],
+        [
+          "draw [world/lake-city.js]",
+          43.643000000000015
+        ],
+        [
+          "get children []",
+          40.00600000000001
+        ],
+        [
+          "post []",
+          39.229
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          36.094000000000015
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          33.697999999999986
+        ],
+        [
+          "(garbage collector) []",
+          32.87299999999998
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          31.86
+        ],
+        [
+          "runInContext []",
+          27.163000000000004
+        ],
+        [
+          "rect [base/structures.js]",
+          23.625999999999998
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          20.843000000000007
+        ],
+        [
+          "canInteract [core/interactions-farm-storage.js]",
+          20.58
+        ],
+        [
+          "add [ui/context-map.js]",
+          18.233
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          16.942999999999998
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          16.91
+        ],
+        [
+          "distance [core/runtime.js]",
+          14.984
+        ],
+        [
+          "drawSurface [world/resources.js]",
+          14.792000000000002
+        ]
+      ],
+      "heap": {
+        "start": 22167392,
+        "beforeGC": 35208768,
+        "afterGC": 26351600,
+        "retained": 4184208,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "z10",
+      "totalMs": 3418.830000000009,
+      "inclusiveMs": {
+        "lighting/shadows": 879.5010000000033,
+        "I1 scheduling": 67.34699999999997,
+        "enemy AI/update": 59.75699999999997,
+        "world collision": 29.477,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1877.7490000000078,
+        "render": 1585.929,
+        "animations + actor render": 50.75000000000001,
+        "turret targeting/update": 8.098,
+        "V8 GC": 22.808000000000003,
+        "HP indicators": 7.8469999999999995,
+        "audio": 1.278,
+        "state allocation/validation/power": 13.466,
+        "LOS/raycast": 4.17,
+        "muzzle/effects": 2.442,
+        "enemy target decision": 0.58
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1877.7490000000078
+        ],
+        [
+          "matches []",
+          420.33800000000014
+        ],
+        [
+          "querySelectorAll []",
+          98.03899999999997
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          66.77099999999997
+        ],
+        [
+          "post []",
+          36.282
+        ],
+        [
+          "get children []",
+          32.776
+        ],
+        [
+          "runInContext []",
+          32.168000000000006
+        ],
+        [
+          "draw [world/lake-city.js]",
+          31.489999999999995
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          27.569
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          27.384999999999998
+        ],
+        [
+          "rect [base/structures.js]",
+          23.764000000000003
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          23.369000000000007
+        ],
+        [
+          "(garbage collector) []",
+          22.808000000000003
+        ],
+        [
+          "distance [core/runtime.js]",
+          18.233999999999998
+        ],
+        [
+          "add [ui/context-map.js]",
+          17.268
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          17.189
+        ],
+        [
+          "canInteract [core/interactions-farm-storage.js]",
+          14.164999999999997
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          13.844
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          13.601
+        ],
+        [
+          "get id []",
+          12.961999999999998
+        ]
+      ],
+      "heap": {
+        "start": 22152840,
+        "beforeGC": 44740992,
+        "afterGC": 26580728,
+        "retained": 4427888,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "z25",
+      "totalMs": 3812.500000000028,
+      "inclusiveMs": {
+        "lighting/shadows": 978.5060000000008,
+        "world collision": 50.324999999999996,
+        "enemy AI/update": 115.30499999999996,
+        "I1 scheduling": 123.01299999999995,
+        "audio": 4.627999999999999,
+        "render": 1746.8440000000007,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2071.468000000004,
+        "animations + actor render": 90.02600000000001,
+        "HP indicators": 16.144000000000002,
+        "enemy target decision": 1.7489999999999997,
+        "state allocation/validation/power": 17.477,
+        "V8 GC": 35.437000000000005,
+        "turret targeting/update": 8.246999999999998,
+        "LOS/raycast": 1.765,
+        "muzzle/effects": 1.169
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2071.468000000004
+        ],
+        [
+          "matches []",
+          447.989
+        ],
+        [
+          "querySelectorAll []",
+          105.98699999999998
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          83.64299999999997
+        ],
+        [
+          "post []",
+          39.49
+        ],
+        [
+          "(garbage collector) []",
+          35.437000000000005
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          34.17500000000001
+        ],
+        [
+          "runInContext []",
+          33.138
+        ],
+        [
+          "draw [world/lake-city.js]",
+          32.474000000000004
+        ],
+        [
+          "get children []",
+          32.11
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          31.956000000000003
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          29.709999999999994
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          27.191999999999997
+        ],
+        [
+          "distance [core/runtime.js]",
+          21.423
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          19.99
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          19.731
+        ],
+        [
+          "rect [base/structures.js]",
+          19.546000000000003
+        ],
+        [
+          "get id []",
+          18.423
+        ],
+        [
+          "clamp [core/runtime.js]",
+          17.817
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          16.346
+        ]
+      ],
+      "heap": {
+        "start": 22182264,
+        "beforeGC": 37825848,
+        "afterGC": 26627600,
+        "retained": 4445336,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "z50",
+      "totalMs": 4119.611000000035,
+      "inclusiveMs": {
+        "lighting/shadows": 1045.0779999999995,
+        "audio": 5.77,
+        "world collision": 89.96099999999994,
+        "enemy AI/update": 173.38000000000005,
+        "I1 scheduling": 179.29700000000005,
+        "LOS/raycast": 4.1,
+        "turret targeting/update": 13.609999999999998,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2288.057000000007,
+        "render": 1818.2199999999998,
+        "animations + actor render": 144.974,
+        "state allocation/validation/power": 14.125,
+        "V8 GC": 37.775999999999996,
+        "HP indicators": 31.619000000000007,
+        "muzzle/effects": 2.3659999999999997,
+        "enemy target decision": 1.79,
+        "projectiles/hits": 0.647
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2288.057000000007
+        ],
+        [
+          "matches []",
+          425.0429999999997
+        ],
+        [
+          "querySelectorAll []",
+          100.83399999999997
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          66.732
+        ],
+        [
+          "get children []",
+          44.20399999999999
+        ],
+        [
+          "draw [world/lake-city.js]",
+          42.596000000000004
+        ],
+        [
+          "post []",
+          37.859
+        ],
+        [
+          "(garbage collector) []",
+          37.775999999999996
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          37.747000000000014
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          33.87100000000001
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          31.258000000000013
+        ],
+        [
+          "runInContext []",
+          30.898999999999997
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          28.871
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          27.998000000000005
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          26.449
+        ],
+        [
+          "add [ui/context-map.js]",
+          25.484999999999996
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          23.595
+        ],
+        [
+          "clamp [core/runtime.js]",
+          22.994999999999987
+        ],
+        [
+          "distance [core/runtime.js]",
+          19.595
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          19.293
+        ]
+      ],
+      "heap": {
+        "start": 22238456,
+        "beforeGC": 52573512,
+        "afterGC": 26728048,
+        "retained": 4489592,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "z100",
+      "totalMs": 4636.326000000048,
+      "inclusiveMs": {
+        "lighting/shadows": 1208.9470000000015,
+        "audio": 5.262,
+        "world collision": 140.48799999999986,
+        "enemy AI/update": 288.79999999999984,
+        "I1 scheduling": 307.6689999999999,
+        "LOS/raycast": 6.201999999999999,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2566.7530000000183,
+        "render": 2011.594999999994,
+        "animations + actor render": 228.86100000000005,
+        "V8 GC": 36.94399999999999,
+        "HP indicators": 53.022000000000006,
+        "muzzle/effects": 1.166,
+        "turret targeting/update": 20.995000000000005,
+        "state allocation/validation/power": 13.786999999999997,
+        "projectiles/hits": 0.582,
+        "enemy target decision": 1.7169999999999999
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2566.7530000000183
+        ],
+        [
+          "matches []",
+          440.5170000000001
+        ],
+        [
+          "querySelectorAll []",
+          102.51299999999996
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          69.67799999999998
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          59.58900000000002
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          58.89400000000001
+        ],
+        [
+          "get children []",
+          44.664000000000016
+        ],
+        [
+          "post []",
+          43.657
+        ],
+        [
+          "clamp [core/runtime.js]",
+          41.445000000000014
+        ],
+        [
+          "draw [world/lake-city.js]",
+          37.849
+        ],
+        [
+          "(garbage collector) []",
+          36.94399999999999
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          35.858000000000004
+        ],
+        [
+          "drawZombie [combat/monsters.js]",
+          35.076
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          33.748
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          33.24
+        ],
+        [
+          "runInContext []",
+          30.670999999999996
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          26.675
+        ],
+        [
+          "move [combat/monsters.js]",
+          25.488000000000003
+        ],
+        [
+          "(anonymous) [world/events.js]",
+          23.739
+        ],
+        [
+          "add [ui/context-map.js]",
+          23.64699999999999
+        ]
+      ],
+      "heap": {
+        "start": 22352504,
+        "beforeGC": 51291480,
+        "afterGC": 26899464,
+        "retained": 4546960,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "z25_ak",
+      "totalMs": 3716.5070000000455,
+      "inclusiveMs": {
+        "lighting/shadows": 977.359000000001,
+        "projectiles/hits": 47.60800000000001,
+        "world collision": 52.83199999999999,
+        "LOS/raycast": 7.122,
+        "weapon firing": 33.83700000000001,
+        "muzzle/effects": 5.901,
+        "audio": 9.309,
+        "enemy AI/update": 96.07299999999992,
+        "I1 scheduling": 100.6319999999999,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2019.2210000000007,
+        "render": 1657.124999999997,
+        "animations + actor render": 87.70499999999998,
+        "V8 GC": 38.169,
+        "turret targeting/update": 10.880999999999997,
+        "HP indicators": 15.832999999999998,
+        "state allocation/validation/power": 18.694999999999997,
+        "enemy target decision": 1.182
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2019.2210000000007
+        ],
+        [
+          "matches []",
+          424.0050000000008
+        ],
+        [
+          "querySelectorAll []",
+          123.98499999999977
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          63.44099999999998
+        ],
+        [
+          "post []",
+          40.246
+        ],
+        [
+          "draw [world/lake-city.js]",
+          39.372
+        ],
+        [
+          "(garbage collector) []",
+          38.169
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          30.11000000000001
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          30.023000000000003
+        ],
+        [
+          "get children []",
+          29.479000000000003
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          27.072000000000006
+        ],
+        [
+          "runInContext []",
+          26.671000000000006
+        ],
+        [
+          "add [ui/context-map.js]",
+          25.52
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          22.356
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          21.769000000000005
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          21.674999999999997
+        ],
+        [
+          "rect [base/structures.js]",
+          20.766
+        ],
+        [
+          "clamp [core/runtime.js]",
+          15.641
+        ],
+        [
+          "distance [core/runtime.js]",
+          14.916
+        ],
+        [
+          "line [world/interiors.js]",
+          14.783999999999997
+        ]
+      ],
+      "heap": {
+        "start": 22187592,
+        "beforeGC": 32175952,
+        "afterGC": 27291776,
+        "retained": 5104184,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "z50_ak",
+      "totalMs": 4131.115000000029,
+      "inclusiveMs": {
+        "lighting/shadows": 1060.2600000000004,
+        "projectiles/hits": 58.065000000000026,
+        "world collision": 88.38399999999997,
+        "LOS/raycast": 6.377999999999998,
+        "weapon firing": 33.19599999999999,
+        "audio": 10.104999999999997,
+        "enemy AI/update": 153.27699999999987,
+        "I1 scheduling": 161.96799999999988,
+        "turret targeting/update": 11.727999999999998,
+        "render": 1845.6749999999945,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2261.3920000000085,
+        "animations + actor render": 169.41899999999993,
+        "HP indicators": 32.019999999999996,
+        "V8 GC": 40.29299999999999,
+        "state allocation/validation/power": 14.502,
+        "muzzle/effects": 5.251999999999999
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2261.3920000000085
+        ],
+        [
+          "matches []",
+          438.79200000000037
+        ],
+        [
+          "querySelectorAll []",
+          106.01999999999994
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          69.066
+        ],
+        [
+          "get children []",
+          45.513999999999996
+        ],
+        [
+          "draw [world/lake-city.js]",
+          42.068999999999996
+        ],
+        [
+          "(garbage collector) []",
+          40.29299999999999
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          38.345000000000006
+        ],
+        [
+          "post []",
+          36.935
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          28.025999999999996
+        ],
+        [
+          "runInContext []",
+          27.86
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          27.217000000000006
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          27.091000000000005
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          27.033000000000005
+        ],
+        [
+          "drawZombie [combat/monsters.js]",
+          25.525000000000002
+        ],
+        [
+          "rect [base/structures.js]",
+          24.212
+        ],
+        [
+          "distance [core/runtime.js]",
+          22.179
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          20.341
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          19.202999999999992
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          18.096999999999994
+        ]
+      ],
+      "heap": {
+        "start": 22247472,
+        "beforeGC": 64860912,
+        "afterGC": 27417352,
+        "retained": 5169880,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "z50_turrets",
+      "totalMs": 4299.527000000045,
+      "inclusiveMs": {
+        "lighting/shadows": 1257.0390000000018,
+        "enemy AI/update": 386.25400000000013,
+        "I1 scheduling": 403.32700000000017,
+        "world collision": 261.615,
+        "LOS/raycast": 204.10899999999998,
+        "audio": 8.550999999999998,
+        "turret targeting/update": 27.431000000000004,
+        "render": 1812.7619999999997,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2243.387000000011,
+        "V8 GC": 38.99899999999999,
+        "animations + actor render": 164.40399999999983,
+        "HP indicators": 28.406999999999996,
+        "state allocation/validation/power": 28.191000000000003,
+        "projectiles/hits": 4.132,
+        "enemy target decision": 1.165,
+        "muzzle/effects": 0.599
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2243.387000000011
+        ],
+        [
+          "matches []",
+          405.9099999999998
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          112.54199999999996
+        ],
+        [
+          "querySelectorAll []",
+          110.71999999999994
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          62.942
+        ],
+        [
+          "clamp [core/runtime.js]",
+          57.64799999999999
+        ],
+        [
+          "post []",
+          42.083
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          40.378
+        ],
+        [
+          "(garbage collector) []",
+          38.99899999999999
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          38.20899999999999
+        ],
+        [
+          "draw [world/lake-city.js]",
+          37.801
+        ],
+        [
+          "get children []",
+          37.75699999999999
+        ],
+        [
+          "runInContext []",
+          29.911000000000005
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          28.377
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          27.357999999999983
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          26.193
+        ],
+        [
+          "add [ui/context-map.js]",
+          25.09699999999999
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          24.701
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          22.474999999999998
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          20.316
+        ]
+      ],
+      "heap": {
+        "start": 22375960,
+        "beforeGC": 40521424,
+        "afterGC": 27149696,
+        "retained": 4773736,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "z50_lights",
+      "totalMs": 4906.617000000043,
+      "inclusiveMs": {
+        "lighting/shadows": 1688.269000000001,
+        "I1 scheduling": 521.2260000000003,
+        "enemy AI/update": 508.88900000000035,
+        "world collision": 365.37299999999965,
+        "LOS/raycast": 314.6359999999997,
+        "state allocation/validation/power": 28.918,
+        "audio": 9.613,
+        "turret targeting/update": 34.843,
+        "render": 2122.5700000000024,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2611.869000000018,
+        "animations + actor render": 178.21899999999982,
+        "V8 GC": 34.974,
+        "HP indicators": 30.137999999999995,
+        "enemy target decision": 1.7859999999999998,
+        "projectiles/hits": 2.346,
+        "muzzle/effects": 2.8879999999999995
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2611.869000000018
+        ],
+        [
+          "matches []",
+          448.82400000000007
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          143.68899999999988
+        ],
+        [
+          "querySelectorAll []",
+          96.40699999999988
+        ],
+        [
+          "clamp [core/runtime.js]",
+          83.71999999999994
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          59.629999999999995
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          59.48500000000001
+        ],
+        [
+          "get children []",
+          46.847
+        ],
+        [
+          "draw [world/lake-city.js]",
+          41.333999999999996
+        ],
+        [
+          "post []",
+          41.152
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          38.12
+        ],
+        [
+          "(garbage collector) []",
+          34.974
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          34.37999999999999
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          30.28299999999999
+        ],
+        [
+          "sprite [render/lighting.js]",
+          28.378000000000007
+        ],
+        [
+          "runInContext []",
+          27.999000000000002
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          26.494999999999997
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          25.976999999999997
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          25.332
+        ],
+        [
+          "worldCollision [world/resources.js]",
+          24.999000000000002
+        ]
+      ],
+      "heap": {
+        "start": 22475488,
+        "beforeGC": 35484232,
+        "afterGC": 27992272,
+        "retained": 5516784,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "offzone",
+      "totalMs": 3309.499000000027,
+      "inclusiveMs": {
+        "lighting/shadows": 1295.4770000000015,
+        "audio": 10.444,
+        "enemy AI/update": 108.94299999999987,
+        "I1 scheduling": 118.89399999999985,
+        "enemy target decision": 29.826,
+        "world collision": 39.30200000000002,
+        "turret targeting/update": 20.051000000000002,
+        "render": 1462.9169999999995,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1947.4049999999993,
+        "animations + actor render": 10.509,
+        "LOS/raycast": 9.889999999999999,
+        "V8 GC": 26.378000000000004,
+        "state allocation/validation/power": 31.879999999999995,
+        "muzzle/effects": 0.583
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1947.4049999999993
+        ],
+        [
+          "matches []",
+          416.6120000000007
+        ],
+        [
+          "querySelectorAll []",
+          93.99899999999987
+        ],
+        [
+          "line [base/rooms.js]",
+          47.13199999999999
+        ],
+        [
+          "get children []",
+          44.394
+        ],
+        [
+          "post []",
+          39.186
+        ],
+        [
+          "runInContext []",
+          38.40400000000002
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          34.051
+        ],
+        [
+          "(garbage collector) []",
+          26.378000000000004
+        ],
+        [
+          "allocation [base/battery.js]",
+          19.692999999999998
+        ],
+        [
+          "rect [base/rooms.js]",
+          17.192999999999994
+        ],
+        [
+          "shadow [base/rooms.js]",
+          14.652
+        ],
+        [
+          "drawBunker [core/rendering.js]",
+          13.715999999999998
+        ],
+        [
+          "ctx.fillText [ui/context-map.js]",
+          12.19
+        ],
+        [
+          "getTransform []",
+          11.616
+        ],
+        [
+          "prepare [combat/monsters.js]",
+          11.331999999999999
+        ],
+        [
+          "get id []",
+          9.858
+        ],
+        [
+          "(anonymous) [core/rendering.js]",
+          8.91
+        ],
+        [
+          "tick [world/interiors.js]",
+          8.644
+        ],
+        [
+          "DOMMatrix []",
+          8.311
+        ]
+      ],
+      "heap": {
+        "start": 22418664,
+        "beforeGC": 30537632,
+        "afterGC": 26681696,
+        "retained": 4263032,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "return",
+      "totalMs": 3511.5580000000205,
+      "inclusiveMs": {
+        "lighting/shadows": 1065.9770000000015,
+        "audio": 14.174999999999999,
+        "enemy AI/update": 112.84299999999993,
+        "I1 scheduling": 118.8439999999999,
+        "enemy target decision": 27.274,
+        "world collision": 16.523,
+        "turret targeting/update": 18.782999999999998,
+        "LOS/raycast": 8.354999999999999,
+        "render": 1600.8100000000027,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1918.5370000000082,
+        "V8 GC": 33.759,
+        "animations + actor render": 41.98099999999999,
+        "state allocation/validation/power": 18.717000000000006,
+        "HP indicators": 11.730000000000002,
+        "muzzle/effects": 0.616,
+        "projectiles/hits": 0.575
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1918.5370000000082
+        ],
+        [
+          "matches []",
+          436.06800000000055
+        ],
+        [
+          "querySelectorAll []",
+          96.1459999999999
+        ],
+        [
+          "post []",
+          37.294
+        ],
+        [
+          "get children []",
+          36.833999999999996
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          35.349
+        ],
+        [
+          "(garbage collector) []",
+          33.759
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          32.993
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          26.936000000000003
+        ],
+        [
+          "draw [world/lake-city.js]",
+          24.448000000000004
+        ],
+        [
+          "rect [base/structures.js]",
+          18.352000000000004
+        ],
+        [
+          "wallApproach [combat/monsters.js]",
+          15.766
+        ],
+        [
+          "line [base/rooms.js]",
+          15.588999999999999
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          14.746
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          14.184999999999999
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          13.641
+        ],
+        [
+          "runInContext []",
+          13.54
+        ],
+        [
+          "distance [core/runtime.js]",
+          13.502
+        ],
+        [
+          "allocation [base/battery.js]",
+          13.421999999999999
+        ],
+        [
+          "add [ui/context-map.js]",
+          11.715999999999998
+        ]
+      ],
+      "heap": {
+        "start": 22415144,
+        "beforeGC": 36028336,
+        "afterGC": 27849512,
+        "retained": 5434368,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "offzone_combat",
+      "totalMs": 3807.4420000000378,
+      "inclusiveMs": {
+        "lighting/shadows": 1766.1879999999965,
+        "audio": 9.382000000000001,
+        "enemy AI/update": 549.2560000000004,
+        "I1 scheduling": 557.4800000000005,
+        "world collision": 386.53600000000006,
+        "LOS/raycast": 351.19800000000004,
+        "enemy target decision": 29.273999999999994,
+        "turret targeting/update": 27.689999999999987,
+        "state allocation/validation/power": 44.288000000000004,
+        "render": 1472.636,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1920.3139999999994,
+        "animations + actor render": 14.1,
+        "V8 GC": 32.777999999999984,
+        "projectiles/hits": 0.579,
+        "muzzle/effects": 1.162
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          1920.3139999999994
+        ],
+        [
+          "matches []",
+          417.59400000000085
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          143.6059999999998
+        ],
+        [
+          "querySelectorAll []",
+          117.72999999999988
+        ],
+        [
+          "clamp [core/runtime.js]",
+          91.04099999999998
+        ],
+        [
+          "line [base/rooms.js]",
+          51.286000000000016
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          49.73800000000002
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          47.079000000000015
+        ],
+        [
+          "post []",
+          45.23
+        ],
+        [
+          "runInContext []",
+          37.919999999999995
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          36.702000000000005
+        ],
+        [
+          "get children []",
+          34.663000000000004
+        ],
+        [
+          "(garbage collector) []",
+          32.777999999999984
+        ],
+        [
+          "lineClear [core/world-inventory.js]",
+          22.846000000000007
+        ],
+        [
+          "rect [base/rooms.js]",
+          22.303999999999995
+        ],
+        [
+          "shadow [base/rooms.js]",
+          17.818000000000005
+        ],
+        [
+          "allocation [base/battery.js]",
+          16.439999999999998
+        ],
+        [
+          "worldCollision [world/districts.js]",
+          16.187999999999995
+        ],
+        [
+          "ctx.fillText [ui/context-map.js]",
+          15.767
+        ],
+        [
+          "blocker [base/structures.js]",
+          15.296999999999999
+        ]
+      ],
+      "heap": {
+        "start": 22423376,
+        "beforeGC": 36643824,
+        "afterGC": 26889848,
+        "retained": 4466472,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after",
+      "id": "return_combat",
+      "totalMs": 4211.8700000000445,
+      "inclusiveMs": {
+        "lighting/shadows": 1617.0839999999987,
+        "audio": 15.729999999999997,
+        "enemy AI/update": 593.1529999999996,
+        "I1 scheduling": 602.5339999999995,
+        "world collision": 401.92700000000013,
+        "LOS/raycast": 383.2000000000003,
+        "enemy target decision": 25.858999999999998,
+        "state allocation/validation/power": 35.752,
+        "turret targeting/update": 38.412000000000006,
+        "render": 1721.5800000000004,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2007.8030000000056,
+        "animations + actor render": 41.13500000000001,
+        "projectiles/hits": 3.9779999999999998,
+        "V8 GC": 38.440999999999995,
+        "muzzle/effects": 1.73,
+        "HP indicators": 4.2170000000000005
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2007.8030000000056
+        ],
+        [
+          "matches []",
+          444.90600000000035
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          159.0399999999998
+        ],
+        [
+          "querySelectorAll []",
+          113.2169999999999
+        ],
+        [
+          "clamp [core/runtime.js]",
+          73.13700000000006
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          64.013
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          58.926
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          51.945000000000014
+        ],
+        [
+          "get children []",
+          41.41699999999998
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          39.06400000000001
+        ],
+        [
+          "(garbage collector) []",
+          38.440999999999995
+        ],
+        [
+          "post []",
+          38.331
+        ],
+        [
+          "draw [world/lake-city.js]",
+          25.473
+        ],
+        [
+          "runInContext []",
+          22.337999999999997
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          21.7
+        ],
+        [
+          "rect [base/structures.js]",
+          20.939
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          19.308
+        ],
+        [
+          "lineClear [core/world-inventory.js]",
+          18.958999999999996
+        ],
+        [
+          "prepare [combat/monsters.js]",
+          18.404999999999998
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          17.541999999999994
+        ]
+      ],
+      "heap": {
+        "start": 22419848,
+        "beforeGC": 44215864,
+        "afterGC": 28115040,
+        "retained": 5695192,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before-combat",
+      "id": "offzone_combat",
+      "totalMs": 4118.367000000031,
+      "inclusiveMs": {
+        "lighting/shadows": 1950.1749999999986,
+        "audio": 11.097999999999999,
+        "enemy AI/update": 688.608,
+        "I1 scheduling": 699.205,
+        "LOS/raycast": 443.3139999999999,
+        "world collision": 383.93800000000016,
+        "enemy target decision": 32.225,
+        "turret targeting/update": 26.022000000000002,
+        "state allocation/validation/power": 146.8139999999999,
+        "render": 1631.1340000000005,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2006.0790000000022,
+        "V8 GC": 40.514,
+        "animations + actor render": 14.187,
+        "muzzle/effects": 1.751
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2006.0790000000022
+        ],
+        [
+          "matches []",
+          405.2689999999997
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          140.10799999999992
+        ],
+        [
+          "querySelectorAll []",
+          110.95999999999995
+        ],
+        [
+          "rayEntry [base/structures.js]",
+          98.90599999999995
+        ],
+        [
+          "allocation [base/battery.js]",
+          97.41299999999997
+        ],
+        [
+          "clamp [core/runtime.js]",
+          80.19500000000004
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          54.83200000000003
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          53.639
+        ],
+        [
+          "line [base/rooms.js]",
+          46.64100000000002
+        ],
+        [
+          "get children []",
+          42.229000000000006
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          40.63600000000001
+        ],
+        [
+          "(garbage collector) []",
+          40.514
+        ],
+        [
+          "post []",
+          39.28
+        ],
+        [
+          "runInContext []",
+          32.903999999999996
+        ],
+        [
+          "rect [base/rooms.js]",
+          28.117999999999995
+        ],
+        [
+          "blocker [base/structures.js]",
+          21.796999999999993
+        ],
+        [
+          "shadow [base/rooms.js]",
+          21.436
+        ],
+        [
+          "lineClear [core/world-inventory.js]",
+          21.029999999999994
+        ],
+        [
+          "prepare [combat/monsters.js]",
+          19.99
+        ]
+      ],
+      "heap": {
+        "start": 22368512,
+        "beforeGC": 34356800,
+        "afterGC": 26841712,
+        "retained": 4473200,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before-combat",
+      "id": "return_combat",
+      "totalMs": 4742.485000000041,
+      "inclusiveMs": {
+        "lighting/shadows": 1843.1839999999968,
+        "audio": 15.888000000000002,
+        "enemy AI/update": 712.0260000000009,
+        "I1 scheduling": 728.847000000001,
+        "world collision": 387.50100000000054,
+        "LOS/raycast": 457.5740000000004,
+        "enemy target decision": 33.751,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2128.6519999999955,
+        "render": 1941.2469999999996,
+        "state allocation/validation/power": 90.478,
+        "turret targeting/update": 33.574999999999996,
+        "animations + actor render": 36.441,
+        "V8 GC": 51.12500000000002,
+        "projectiles/hits": 3.008,
+        "HP indicators": 4.029,
+        "muzzle/effects": 0.473
+      },
+      "separationTimer": null,
+      "topSelf": [
+        [
+          "custom_gc []",
+          2128.6519999999955
+        ],
+        [
+          "matches []",
+          469.76700000000056
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          152.34499999999989
+        ],
+        [
+          "querySelectorAll []",
+          142.11899999999983
+        ],
+        [
+          "clamp [core/runtime.js]",
+          93.25999999999999
+        ],
+        [
+          "rayEntry [base/structures.js]",
+          89.57999999999993
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          69.78399999999998
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          64.26399999999998
+        ],
+        [
+          "get children []",
+          61.71899999999998
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          59.425000000000026
+        ],
+        [
+          "(garbage collector) []",
+          51.12500000000002
+        ],
+        [
+          "allocation [base/battery.js]",
+          49.26500000000003
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          46.12499999999999
+        ],
+        [
+          "post []",
+          42.302
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          34.931000000000004
+        ],
+        [
+          "runInContext []",
+          33.903
+        ],
+        [
+          "draw [world/lake-city.js]",
+          29.222000000000005
+        ],
+        [
+          "add [ui/context-map.js]",
+          21.273
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          21.252999999999997
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          20.171
+        ]
+      ],
+      "heap": {
+        "start": 22330104,
+        "beforeGC": 64423712,
+        "afterGC": 28072304,
+        "retained": 5742200,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before-detail",
+      "id": "ak_empty",
+      "totalMs": 3331.44300000002,
+      "inclusiveMs": {
+        "lighting/shadows": 874.210000000002,
+        "world collision": 16.235,
+        "LOS/raycast": 2.992,
+        "weapon firing": 39.33100000000001,
+        "projectiles/hits": 53.17500000000003,
+        "muzzle/effects": 5.784000000000001,
+        "audio": 4.672999999999999,
+        "state allocation/validation/power": 26.685000000000002,
+        "turret targeting/update": 4.0409999999999995,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1739.8869999999918,
+        "render": 1578.4259999999945,
+        "animations + actor render": 11.025999999999998,
+        "V8 GC": 25.375000000000004,
+        "I1 scheduling": 5.978999999999999,
+        "enemy AI/update": 5.381
+      },
+      "separationTimer": {
+        "ms": 0.06526800000006006,
+        "calls": 8
+      },
+      "topSelf": [
+        [
+          "custom_gc []",
+          1739.8869999999918
+        ],
+        [
+          "matches []",
+          418.48199999999997
+        ],
+        [
+          "querySelectorAll []",
+          103.08399999999992
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          62.94000000000002
+        ],
+        [
+          "get children []",
+          45.62400000000002
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          41.94400000000002
+        ],
+        [
+          "post []",
+          39.478
+        ],
+        [
+          "draw [world/lake-city.js]",
+          39.049
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          33.81600000000001
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          28.383000000000006
+        ],
+        [
+          "runInContext []",
+          27.235
+        ],
+        [
+          "(garbage collector) []",
+          25.375000000000004
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          25.132999999999992
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          24.093
+        ],
+        [
+          "drawFixtures [render/lighting.js]",
+          22.844000000000005
+        ],
+        [
+          "rect [base/structures.js]",
+          21.305
+        ],
+        [
+          "(anonymous) [world/resources.js]",
+          21.219
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          20.252999999999993
+        ],
+        [
+          "allocation [base/battery.js]",
+          19.38
+        ],
+        [
+          "markers [ui/context-map.js]",
+          18.442999999999998
+        ]
+      ],
+      "heap": {
+        "start": 22091944,
+        "beforeGC": 42801872,
+        "afterGC": 26383776,
+        "retained": 4291832,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before-detail",
+      "id": "z50_lights",
+      "totalMs": 5004.509000000045,
+      "inclusiveMs": {
+        "lighting/shadows": 1767.0430000000008,
+        "world collision": 364.2970000000001,
+        "LOS/raycast": 299.5940000000002,
+        "I1 scheduling": 589.5739999999988,
+        "enemy AI/update": 576.3809999999991,
+        "state allocation/validation/power": 55.62200000000001,
+        "turret targeting/update": 39.094,
+        "audio": 8.611,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2595.984000000016,
+        "render": 2162.956000000001,
+        "animations + actor render": 150.16899999999993,
+        "V8 GC": 29.447000000000003,
+        "HP indicators": 37.514,
+        "projectiles/hits": 2.354,
+        "muzzle/effects": 3.506,
+        "enemy target decision": 0.577
+      },
+      "separationTimer": {
+        "ms": 18.139734999993152,
+        "calls": 6417
+      },
+      "topSelf": [
+        [
+          "custom_gc []",
+          2595.984000000016
+        ],
+        [
+          "matches []",
+          441.04300000000023
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          143.5349999999999
+        ],
+        [
+          "querySelectorAll []",
+          110.19999999999986
+        ],
+        [
+          "clamp [core/runtime.js]",
+          97.85799999999989
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          71.09599999999999
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          66.71600000000001
+        ],
+        [
+          "drawMapMarkers [ui/context-map.js]",
+          57.304000000000016
+        ],
+        [
+          "get children []",
+          49.15800000000002
+        ],
+        [
+          "post []",
+          40.021
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          39.19599999999999
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          38.35100000000001
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          37.726
+        ],
+        [
+          "draw [world/lake-city.js]",
+          35.163000000000004
+        ],
+        [
+          "runInContext []",
+          32.83699999999999
+        ],
+        [
+          "aabb [equipment/instances.js]",
+          32.48800000000001
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          30.418999999999997
+        ],
+        [
+          "add [ui/context-map.js]",
+          29.869999999999997
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          29.49
+        ],
+        [
+          "(garbage collector) []",
+          29.447000000000003
+        ]
+      ],
+      "heap": {
+        "start": 22434336,
+        "beforeGC": 32974256,
+        "afterGC": 27993384,
+        "retained": 5559048,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "before-detail",
+      "id": "offzone_combat",
+      "totalMs": 3986.5130000000136,
+      "inclusiveMs": {
+        "lighting/shadows": 1950.858000000003,
+        "audio": 14.250999999999998,
+        "enemy AI/update": 662.7620000000011,
+        "I1 scheduling": 674.5040000000013,
+        "LOS/raycast": 422.79300000000006,
+        "world collision": 376.2600000000002,
+        "enemy target decision": 28.594000000000005,
+        "turret targeting/update": 26.429999999999993,
+        "render": 1580.9090000000008,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1938.5890000000006,
+        "animations + actor render": 13.812,
+        "state allocation/validation/power": 146.74899999999994,
+        "V8 GC": 24.499,
+        "muzzle/effects": 1.165,
+        "projectiles/hits": 0.578
+      },
+      "separationTimer": {
+        "ms": 16.41746999997781,
+        "calls": 4036
+      },
+      "topSelf": [
+        [
+          "custom_gc []",
+          1938.5890000000006
+        ],
+        [
+          "matches []",
+          412.87400000000065
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          133.7939999999999
+        ],
+        [
+          "querySelectorAll []",
+          101.92699999999992
+        ],
+        [
+          "rayEntry [base/structures.js]",
+          90.48999999999998
+        ],
+        [
+          "allocation [base/battery.js]",
+          85.309
+        ],
+        [
+          "clamp [core/runtime.js]",
+          78.237
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          60.56499999999999
+        ],
+        [
+          "get children []",
+          52.99300000000002
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          48.912000000000006
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          46.392
+        ],
+        [
+          "line [base/rooms.js]",
+          39.31500000000001
+        ],
+        [
+          "post []",
+          37.707
+        ],
+        [
+          "runInContext []",
+          32.71399999999999
+        ],
+        [
+          "shadow [base/rooms.js]",
+          26.225999999999992
+        ],
+        [
+          "(garbage collector) []",
+          24.499
+        ],
+        [
+          "rect [base/rooms.js]",
+          20.804
+        ],
+        [
+          "lineClear [core/world-inventory.js]",
+          17.914
+        ],
+        [
+          "prepare [combat/monsters.js]",
+          16.703999999999997
+        ],
+        [
+          "aabb [equipment/instances.js]",
+          16.477999999999998
+        ]
+      ],
+      "heap": {
+        "start": 22364784,
+        "beforeGC": 49141696,
+        "afterGC": 26835608,
+        "retained": 4470824,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after-detail",
+      "id": "ak_empty",
+      "totalMs": 3341.1410000000174,
+      "inclusiveMs": {
+        "lighting/shadows": 862.9899999999983,
+        "world collision": 13.124999999999998,
+        "LOS/raycast": 2.3049999999999997,
+        "weapon firing": 33.894,
+        "projectiles/hits": 51.228,
+        "audio": 5.981,
+        "render": 1554.7169999999996,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1798.856000000003,
+        "animations + actor render": 8.291999999999998,
+        "state allocation/validation/power": 11.049,
+        "V8 GC": 26.31299999999999,
+        "turret targeting/update": 2.613,
+        "I1 scheduling": 3.555,
+        "enemy AI/update": 3.555,
+        "muzzle/effects": 0.604
+      },
+      "separationTimer": {
+        "ms": 0.07639599999970415,
+        "calls": 8
+      },
+      "topSelf": [
+        [
+          "custom_gc []",
+          1798.856000000003
+        ],
+        [
+          "matches []",
+          420.4670000000008
+        ],
+        [
+          "querySelectorAll []",
+          96.12899999999992
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          65.30299999999998
+        ],
+        [
+          "post []",
+          42.34
+        ],
+        [
+          "draw [world/lake-city.js]",
+          41.418000000000006
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          37.768000000000015
+        ],
+        [
+          "get children []",
+          37.032
+        ],
+        [
+          "runInContext []",
+          31.869
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          27.108999999999995
+        ],
+        [
+          "(garbage collector) []",
+          26.31299999999999
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          25.44600000000001
+        ],
+        [
+          "rect [base/structures.js]",
+          23.989000000000004
+        ],
+        [
+          "add [ui/context-map.js]",
+          22.478
+        ],
+        [
+          "(anonymous) [core/interactions-farm-storage.js]",
+          21.540000000000003
+        ],
+        [
+          "distance [core/runtime.js]",
+          21.308999999999997
+        ],
+        [
+          "(anonymous) [world/districts.js]",
+          19.554
+        ],
+        [
+          "get id []",
+          15.705999999999998
+        ],
+        [
+          "canInteract [core/interactions-farm-storage.js]",
+          15.507999999999997
+        ],
+        [
+          "line [world/interiors.js]",
+          15.471999999999998
+        ]
+      ],
+      "heap": {
+        "start": 22131416,
+        "beforeGC": 54723344,
+        "afterGC": 26403008,
+        "retained": 4271592,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after-detail",
+      "id": "z50_lights",
+      "totalMs": 4979.00900000005,
+      "inclusiveMs": {
+        "lighting/shadows": 1698.7120000000052,
+        "audio": 7.696999999999999,
+        "world collision": 380.7459999999997,
+        "LOS/raycast": 325.9039999999997,
+        "I1 scheduling": 540.5379999999999,
+        "enemy AI/update": 522.6909999999995,
+        "state allocation/validation/power": 33.161,
+        "turret targeting/update": 39.36000000000002,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 2647.7970000000046,
+        "render": 2182.6700000000014,
+        "animations + actor render": 189.1290000000001,
+        "V8 GC": 30.777999999999988,
+        "HP indicators": 31.772,
+        "projectiles/hits": 2.3739999999999997,
+        "enemy target decision": 0.594,
+        "muzzle/effects": 0.6
+      },
+      "separationTimer": {
+        "ms": 19.049424999980374,
+        "calls": 6417
+      },
+      "topSelf": [
+        [
+          "custom_gc []",
+          2647.7970000000046
+        ],
+        [
+          "matches []",
+          419.9019999999996
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          147.1979999999999
+        ],
+        [
+          "querySelectorAll []",
+          112.50899999999989
+        ],
+        [
+          "clamp [core/runtime.js]",
+          96.08299999999996
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          61.48100000000001
+        ],
+        [
+          "drawTerrain [world/resources.js]",
+          60.803999999999974
+        ],
+        [
+          "post []",
+          46.2
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          44.20600000000001
+        ],
+        [
+          "get children []",
+          42.964999999999996
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          42.552000000000014
+        ],
+        [
+          "draw [world/lake-city.js]",
+          42.16300000000001
+        ],
+        [
+          "interactionObjects [world/districts.js]",
+          33.54
+        ],
+        [
+          "(garbage collector) []",
+          30.777999999999988
+        ],
+        [
+          "drawTerrain [world/expansion.js]",
+          30.683999999999994
+        ],
+        [
+          "drawOutskirts [world/districts.js]",
+          29.543
+        ],
+        [
+          "drawZombie [combat/monsters.js]",
+          29.207
+        ],
+        [
+          "sprite [render/lighting.js]",
+          27.964000000000006
+        ],
+        [
+          "runInContext []",
+          26.037
+        ],
+        [
+          "rect [base/structures.js]",
+          21.745000000000005
+        ]
+      ],
+      "heap": {
+        "start": 22483224,
+        "beforeGC": 52112432,
+        "afterGC": 28003496,
+        "retained": 5520272,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    },
+    {
+      "report": "after-detail",
+      "id": "offzone_combat",
+      "totalMs": 3780.071000000025,
+      "inclusiveMs": {
+        "lighting/shadows": 1764.3790000000033,
+        "audio": 12.327,
+        "enemy AI/update": 552.3960000000004,
+        "I1 scheduling": 561.3900000000003,
+        "world collision": 381.5440000000002,
+        "LOS/raycast": 345.5710000000002,
+        "enemy target decision": 23.854999999999997,
+        "turret targeting/update": 27.052999999999994,
+        "state allocation/validation/power": 40.50900000000001,
+        "render": 1483.5359999999953,
+        "native Canvas/host (custom_gc, NOT V8 GC)": 1907.445,
+        "animations + actor render": 14.470999999999998,
+        "V8 GC": 17.597999999999995,
+        "muzzle/effects": 0.573,
+        "projectiles/hits": 1.096
+      },
+      "separationTimer": {
+        "ms": 16.490963999986207,
+        "calls": 4036
+      },
+      "topSelf": [
+        [
+          "custom_gc []",
+          1907.445
+        ],
+        [
+          "matches []",
+          439.31100000000043
+        ],
+        [
+          "worldCollision [core/world-inventory.js]",
+          151.77099999999987
+        ],
+        [
+          "querySelectorAll []",
+          83.028
+        ],
+        [
+          "clamp [core/runtime.js]",
+          79.25299999999997
+        ],
+        [
+          "line [base/rooms.js]",
+          52.23300000000001
+        ],
+        [
+          "rectHit [core/world-inventory.js]",
+          51.82400000000003
+        ],
+        [
+          "updateMonsters [combat/monsters.js]",
+          48.47700000000002
+        ],
+        [
+          "post []",
+          43.218
+        ],
+        [
+          "get children []",
+          40.277
+        ],
+        [
+          "geometryFor [core/world-inventory.js]",
+          39.247
+        ],
+        [
+          "lineClear [core/world-inventory.js]",
+          31.761000000000003
+        ],
+        [
+          "runInContext []",
+          29.759000000000007
+        ],
+        [
+          "rect [base/rooms.js]",
+          25.539
+        ],
+        [
+          "shadow [base/rooms.js]",
+          19.908
+        ],
+        [
+          "(garbage collector) []",
+          17.597999999999995
+        ],
+        [
+          "prepare [combat/monsters.js]",
+          16.842000000000006
+        ],
+        [
+          "allocation [base/battery.js]",
+          15.468
+        ],
+        [
+          "get id []",
+          15.323999999999998
+        ],
+        [
+          "drawImage []",
+          14.126999999999997
+        ]
+      ],
+      "heap": {
+        "start": 22420016,
+        "beforeGC": 51654736,
+        "afterGC": 26906408,
+        "retained": 4486392,
+        "note": "process-level diagnostic, not device RAM"
+      }
+    }
+  ]
+}

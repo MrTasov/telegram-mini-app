@@ -1,0 +1,142 @@
+{
+  "complete": true,
+  "scope": "90 measured frames after 30 warmup, timers flushed. Native Canvas2D; modeled DOM. Bunker: old furnace + weapon bench versus new kitchen + medical lab, both with 2 powered running jobs. Siege: same 120 physical actors. Not phone/browser FPS.",
+  "rows": [
+    {
+      "scenario": "bunker",
+      "version": "uploaded 0.41.2",
+      "runtimeSha256": "5082c6a15ff058512ed8658421b6512cda0337c78bab94f5f0bd7ddef55e97bb",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "jobs": [
+        {
+          "id": "furnace",
+          "powered": true,
+          "remaining": 20000
+        },
+        {
+          "id": "craft_bench",
+          "powered": true,
+          "remaining": 100000
+        }
+      ],
+      "jobsEnd": [
+        {
+          "id": "furnace",
+          "powered": true,
+          "remaining": 17999.959999999846
+        },
+        {
+          "id": "craft_bench",
+          "powered": true,
+          "remaining": 97999.95999999985
+        }
+      ],
+      "aliveAtEnd": 4,
+      "timerP50": 0.005513000000064494,
+      "updateP50": 4.465280999999777,
+      "updateP95": 10.45839500000011,
+      "drawP50": 12.29229899999973,
+      "drawP95": 17.78762900000038,
+      "frameP50": 17.32667500000025,
+      "frameP95": 25.128103999999894,
+      "maxFrame": 29.56742800000029,
+      "errors": []
+    },
+    {
+      "scenario": "bunker",
+      "version": "0.42.0",
+      "runtimeSha256": "ff3821b7b9282b8bcffbc452e98354528cedacb13a3c3d8e62a09630f6fdae88",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "jobs": [
+        {
+          "id": "build:kitchen_stove:1",
+          "powered": true,
+          "remaining": 50000
+        },
+        {
+          "id": "build:med_lab:1",
+          "powered": true,
+          "remaining": 120000
+        }
+      ],
+      "jobsEnd": [
+        {
+          "id": "build:kitchen_stove:1",
+          "powered": true,
+          "remaining": 47999.959999999846
+        },
+        {
+          "id": "build:med_lab:1",
+          "powered": true,
+          "remaining": 117999.95999999985
+        }
+      ],
+      "aliveAtEnd": 4,
+      "timerP50": 0.0061930000001666485,
+      "updateP50": 4.761341999999786,
+      "updateP95": 11.833056999999826,
+      "drawP50": 11.165050999999949,
+      "drawP95": 22.2894469999992,
+      "frameP50": 16.589085999999952,
+      "frameP95": 39.75869200000034,
+      "maxFrame": 95.62553899999966,
+      "errors": []
+    },
+    {
+      "scenario": "siege",
+      "version": "uploaded 0.41.2",
+      "runtimeSha256": "5082c6a15ff058512ed8658421b6512cda0337c78bab94f5f0bd7ddef55e97bb",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "jobs": null,
+      "jobsEnd": null,
+      "aliveAtEnd": 120,
+      "timerP50": 0.0072089999994204845,
+      "updateP50": 6.395167999999103,
+      "updateP95": 15.323945000000094,
+      "drawP50": 73.47527799999989,
+      "drawP95": 127.07122299999901,
+      "frameP50": 80.31798499999968,
+      "frameP95": 139.65673900000183,
+      "maxFrame": 179.73892999999953,
+      "errors": []
+    },
+    {
+      "scenario": "siege",
+      "version": "0.42.0",
+      "runtimeSha256": "ff3821b7b9282b8bcffbc452e98354528cedacb13a3c3d8e62a09630f6fdae88",
+      "viewport": [
+        390,
+        844
+      ],
+      "requestedDPR": 3,
+      "renderDPR": 2,
+      "jobs": null,
+      "jobsEnd": null,
+      "aliveAtEnd": 120,
+      "timerP50": 0.006486999998742249,
+      "updateP50": 6.326915999998164,
+      "updateP95": 11.767862000000605,
+      "drawP50": 18.231034000000363,
+      "drawP95": 29.01378499999919,
+      "frameP50": 25.432099999998172,
+      "frameP95": 39.30786100000114,
+      "maxFrame": 57.08146900000065,
+      "errors": []
+    }
+  ]
+}

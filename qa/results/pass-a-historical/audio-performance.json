@@ -1,0 +1,109 @@
+{
+  "patch": "audio-pass-recovered-1",
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "zoom": 0.8
+    },
+    "mode": "Alternating paired warmed native Canvas; modeled DOM and WebAudio"
+  },
+  "scenes": [
+    {
+      "name": "quiet_surface",
+      "before": {
+        "samples": 180,
+        "p50Ms": 11.429416000000856,
+        "p95Ms": 15.061436999999387,
+        "meanMs": 11.880113555555587
+      },
+      "after": {
+        "samples": 180,
+        "p50Ms": 11.160820999999487,
+        "p95Ms": 15.150509999999485,
+        "meanMs": 11.927259666666641
+      },
+      "medianDeltaMs": -0.26859500000136904
+    },
+    {
+      "name": "100_zombies_100_corpses",
+      "before": {
+        "samples": 180,
+        "p50Ms": 35.54943800000183,
+        "p95Ms": 43.3351760000005,
+        "meanMs": 36.4663382333335
+      },
+      "after": {
+        "samples": 180,
+        "p50Ms": 35.812040999999226,
+        "p95Ms": 40.30526199999986,
+        "meanMs": 36.02886635555563
+      },
+      "medianDeltaMs": 0.262602999997398
+    },
+    {
+      "name": "working_bunker",
+      "before": {
+        "samples": 180,
+        "p50Ms": 26.17203200000222,
+        "p95Ms": 29.573356000000786,
+        "meanMs": 26.51684795000009
+      },
+      "after": {
+        "samples": 180,
+        "p50Ms": 25.994628000000375,
+        "p95Ms": 30.930492999999842,
+        "meanMs": 26.832907827777994
+      },
+      "medianDeltaMs": -0.1774040000018431
+    }
+  ],
+  "observer": {
+    "samples": 400,
+    "p50Ms": 0.10528799999883631,
+    "p95Ms": 0.21949099999619648,
+    "meanMs": 0.12445485999993253
+  },
+  "audio": {
+    "clips": 58,
+    "bytes": 2791940,
+    "estimatedDecodedBytes48kBefore": 111360,
+    "estimatedDecodedBytes48kAfter": 8336220,
+    "meter": {
+      "peakOneShots": 1,
+      "peakLoops": 2,
+      "requests": 58,
+      "decodes": 58,
+      "dropped": 0,
+      "stolen": 0,
+      "activeLoads": 0,
+      "peakLoads": 2,
+      "oneShots": 0,
+      "loops": 2,
+      "tails": 0,
+      "animation": 0,
+      "buffers": 58,
+      "families": {
+        "combat": 0,
+        "enemy": 0,
+        "groan": 0,
+        "animal": 0,
+        "world": 0,
+        "ui": 0
+      },
+      "loopKeys": [
+        "ambience",
+        "rotor"
+      ],
+      "context": "running"
+    }
+  },
+  "errors": [],
+  "limitations": [
+    "Not real device FPS; WebAudio decoder/mixer CPU is not measured. Shared-host p95 includes scheduling variance.",
+    "Simulation frozen identically to isolate rendering and audio observer overhead. Real phone/PC listening remains manual."
+  ]
+}

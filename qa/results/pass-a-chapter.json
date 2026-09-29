@@ -1,0 +1,36 @@
+{
+  "version": "0.43.0",
+  "runtimeSha256": "a67551c9dec868f78e2e21f94efa5adaa77b664f141b6cbad1b687624453429e",
+  "passed": 3,
+  "failed": 0,
+  "boundaries": [
+    "onboarding-supplies",
+    "onboarding-craft",
+    "onboarding-place",
+    "onboarding-hammer",
+    "onboarding-pickaxe",
+    "onboarding-first-stone-impact",
+    "onboarding-power-core",
+    "onboarding-concrete",
+    "onboarding-partial-repairs",
+    "onboarding-repair-complete",
+    "onboarding-night-start",
+    "onboarding-night-end",
+    "onboarding-confirmed",
+    "early-repair-rebroken"
+  ],
+  "checks": [
+    {
+      "id": "chapter.real_menu_to_crafted_tools_functional_repairs_and_confirmation",
+      "status": "PASS"
+    },
+    {
+      "id": "repair.before_activation_partial_reload_rebroken_no_repeat",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.errors",
+      "status": "PASS"
+    }
+  ]
+}

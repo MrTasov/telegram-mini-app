@@ -1,0 +1,389 @@
+{
+  "benchmarkVersion": 2,
+  "audioBuffers": [
+    57,
+    57
+  ],
+  "resumed": false,
+  "version": "0.35.2",
+  "runtimeSha256": "4ec9c49f1e46c6ffff0decbe85e42d3cc95aa9493b69a6efc18cbda6c39aa824",
+  "baseline": "immutable delivered 0.35.1 Stage D",
+  "environment": {
+    "node": "v24.19.0",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "mode": "Modeled DOM/WebAudio, native Canvas2D, DPR 1, zoom .65, 120 measured frames per scene/version; alternating AB/BA"
+  },
+  "rows": [
+    {
+      "viewport": "390x844",
+      "scene": "quiet_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 17.020297999999457,
+        "p95Ms": 21.951681000000008,
+        "meanMs": 17.405188366666742
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 16.970054999999775,
+        "p95Ms": 22.234575000000405,
+        "meanMs": 17.710102141666674
+      },
+      "deltaMs": -0.05024299999968207,
+      "percent": -0.29519459647348034
+    },
+    {
+      "viewport": "390x844",
+      "scene": "stress_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 30.559160000000702,
+        "p95Ms": 36.553124000001844,
+        "meanMs": 31.102964866666646
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 29.708153999999922,
+        "p95Ms": 36.603721999999834,
+        "meanMs": 30.336360491666543
+      },
+      "deltaMs": -0.8510060000007797,
+      "percent": -2.7847820424408254
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 120,
+        "p50Ms": 19.073655999996845,
+        "p95Ms": 22.935487000002468,
+        "meanMs": 19.485895800000133
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 19.730717000002187,
+        "p95Ms": 26.064814000001206,
+        "meanMs": 20.617847133333303
+      },
+      "deltaMs": 0.6570610000053421,
+      "percent": 3.4448613312804355
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 20.4548790000008,
+        "p95Ms": 25.53598200000124,
+        "meanMs": 21.173106675000206
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 21.314440000001923,
+        "p95Ms": 29.91189300000042,
+        "meanMs": 22.42251215000027
+      },
+      "deltaMs": 0.859561000001122,
+      "percent": 4.202229697868609
+    },
+    {
+      "viewport": "390x844",
+      "scene": "night_combined_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 26.705149000001256,
+        "p95Ms": 34.87249700000393,
+        "meanMs": 27.62783811666662
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 27.490631000000576,
+        "p95Ms": 36.45134700000199,
+        "meanMs": 28.480851749999843
+      },
+      "deltaMs": 0.7854819999993197,
+      "percent": 2.941312928077222
+    },
+    {
+      "viewport": "390x844",
+      "scene": "bunker_door_spill",
+      "before": {
+        "samples": 120,
+        "p50Ms": 19.87085400000069,
+        "p95Ms": 25.010440999998536,
+        "meanMs": 20.599944875000133
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 19.56398099999933,
+        "p95Ms": 26.92456599999423,
+        "meanMs": 20.58649679166653
+      },
+      "deltaMs": -0.3068730000013602,
+      "percent": -1.5443372489242213
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "quiet_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 34.675046999996994,
+        "p95Ms": 44.30037900000025,
+        "meanMs": 36.36916965833364
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 34.972146000000066,
+        "p95Ms": 43.33457199999975,
+        "meanMs": 35.67314889166652
+      },
+      "deltaMs": 0.29709900000307243,
+      "percent": 0.8568092207722033
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "stress_surface",
+      "before": {
+        "samples": 120,
+        "p50Ms": 51.46800799999619,
+        "p95Ms": 57.302207000000635,
+        "meanMs": 51.93541748333361
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 51.144848999989335,
+        "p95Ms": 56.93291099999624,
+        "meanMs": 51.72184084166608
+      },
+      "deltaMs": -0.3231590000068536,
+      "percent": -0.6278832474085227
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_hall",
+      "before": {
+        "samples": 120,
+        "p50Ms": 43.013698000009754,
+        "p95Ms": 47.132918000002974,
+        "meanMs": 43.661311666666975
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 44.114695000011125,
+        "p95Ms": 50.149468999996316,
+        "meanMs": 44.76999876666693
+      },
+      "deltaMs": 1.100997000001371,
+      "percent": 2.559642744506929
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_moving_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 42.19879300000321,
+        "p95Ms": 50.27277999999933,
+        "meanMs": 43.5144817083327
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 41.72597400000086,
+        "p95Ms": 46.530618000004324,
+        "meanMs": 42.036429833333386
+      },
+      "deltaMs": -0.472819000002346,
+      "percent": -1.1204562177935085
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "night_combined_lights",
+      "before": {
+        "samples": 120,
+        "p50Ms": 51.56685799999104,
+        "p95Ms": 59.237192000000505,
+        "meanMs": 52.46690154166802
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 51.82478800001263,
+        "p95Ms": 57.1984999999986,
+        "meanMs": 52.283788616667515
+      },
+      "deltaMs": 0.25793000002158806,
+      "percent": 0.5001856037488928
+    },
+    {
+      "viewport": "1280x800",
+      "scene": "bunker_door_spill",
+      "before": {
+        "samples": 120,
+        "p50Ms": 41.86380600000848,
+        "p95Ms": 47.41378999999142,
+        "meanMs": 43.778805283332865
+      },
+      "after": {
+        "samples": 120,
+        "p50Ms": 42.5634710000013,
+        "p95Ms": 47.3504580000008,
+        "meanMs": 43.02264665833354
+      },
+      "deltaMs": 0.6996649999928195,
+      "percent": 1.671288558887074
+    }
+  ],
+  "navigation": [
+    {
+      "version": "0.35.1",
+      "reachable": 80,
+      "samples": 80,
+      "p50Ms": 8.569091999990633,
+      "p95Ms": 76.23648599997978,
+      "meanMs": 14.681348650001382
+    },
+    {
+      "version": "0.35.2",
+      "reachable": 80,
+      "samples": 80,
+      "p50Ms": 9.454605000006268,
+      "p95Ms": 78.79723299999023,
+      "meanMs": 16.217856737499822
+    }
+  ],
+  "commands": [
+    {
+      "version": "0.35.1",
+      "samples": 400,
+      "p50Ms": 0.37921100002131425,
+      "p95Ms": 0.5647449999814853,
+      "meanMs": 0.4051943449992541
+    },
+    {
+      "version": "0.35.2",
+      "samples": 400,
+      "p50Ms": 0.3803920000209473,
+      "p95Ms": 0.6044030000048224,
+      "meanMs": 0.4195414650003659
+    }
+  ],
+  "serialization": [
+    {
+      "version": "0.35.1",
+      "characters": 69717,
+      "utf8Bytes": 69945,
+      "samples": 100,
+      "p50Ms": 0.8525800000061281,
+      "p95Ms": 1.2123919999867212,
+      "meanMs": 0.8980354000010994
+    },
+    {
+      "version": "0.35.2",
+      "characters": 71645,
+      "utf8Bytes": 71873,
+      "samples": 100,
+      "p50Ms": 0.9031649999960791,
+      "p95Ms": 1.371848000009777,
+      "meanMs": 0.9586379599972861
+    }
+  ],
+  "heaps": [
+    {
+      "version": "0.35.1",
+      "snapshots": 100,
+      "transientHeapDeltaBytes": 35303136,
+      "postGcHeapDeltaBytes": -1159736,
+      "gcAvailable": true
+    },
+    {
+      "version": "0.35.2",
+      "snapshots": 100,
+      "transientHeapDeltaBytes": 36265832,
+      "postGcHeapDeltaBytes": 66528,
+      "gcAvailable": true
+    }
+  ],
+  "placementCheck": {
+    "samples": 120,
+    "p50Ms": 6.14770000000135,
+    "p95Ms": 7.201409000001149,
+    "meanMs": 6.28109836666675
+  },
+  "placementPreview": {
+    "samples": 120,
+    "p50Ms": 0.006889999989653006,
+    "p95Ms": 0.012027999997371808,
+    "meanMs": 0.00867064166692823
+  },
+  "idlePlacementChecks": 0,
+  "maxEquipment": [
+    {
+      "viewport": "390x844",
+      "instances": 42,
+      "placedLamps": 8,
+      "poweredLamps": 8,
+      "denseRoom": {
+        "room": "workshop",
+        "count": 9
+      },
+      "samples": 120,
+      "p50Ms": 33.704996000014944,
+      "p95Ms": 41.13779999999679,
+      "meanMs": 34.48253918333382
+    },
+    {
+      "viewport": "1280x800",
+      "instances": 42,
+      "placedLamps": 8,
+      "poweredLamps": 8,
+      "denseRoom": {
+        "room": "workshop",
+        "count": 9
+      },
+      "samples": 120,
+      "p50Ms": 44.06269099999918,
+      "p95Ms": 52.98877399999765,
+      "meanMs": 44.86609766666564
+    }
+  ],
+  "campaignPoll": {
+    "closed": {
+      "samples": 400,
+      "p50Ms": 0.17941499999142252,
+      "p95Ms": 0.30778500001179054,
+      "meanMs": 0.19879361499959486
+    },
+    "open": {
+      "samples": 400,
+      "p50Ms": 1.4421629999997094,
+      "p95Ms": 2.2170080000068992,
+      "meanMs": 1.5415282524998475
+    }
+  },
+  "droneMetrics": {
+    "updates": 732,
+    "candidateScans": 9,
+    "rayCasts": 0,
+    "lastX": 1162.53,
+    "lastY": 710
+  },
+  "lightingCache": {
+    "shadows": 4,
+    "shadowLimit": 28,
+    "rooms": 16,
+    "roomLimit": 18,
+    "sprites": 5,
+    "spriteLimit": 5,
+    "droneShapes": 1,
+    "droneLimit": 1,
+    "droneBytes": 409600,
+    "width": 1280,
+    "height": 800
+  },
+  "errors": [],
+  "limitations": [
+    "CPU measurements on a shared host, not phone/browser FPS, GPU time or physical touch latency.",
+    "Moving-light scenes include continuously changing drone positions and player aim; night scene runs all eight searchlights.",
+    "Command dispatch excludes OS/browser delivery. Navigation covers complete path queries.",
+    "Heap deltas include harness and serialization allocations, not a browser/device memory budget."
+  ],
+  "passed": true
+}

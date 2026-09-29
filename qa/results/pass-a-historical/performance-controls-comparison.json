@@ -1,0 +1,72 @@
+{
+  "baseline": "0.23.0",
+  "candidate": "0.23.1 MOBILE",
+  "scenes": [
+    {
+      "scene": "surface_day",
+      "baselineP50Ms": 36.32828299999983,
+      "mobileP50Ms": 46.72946400000001,
+      "p50ChangePct": 28.631083390316657,
+      "baselineP95Ms": 47.524013999999625,
+      "mobileP95Ms": 68.46180899999854
+    },
+    {
+      "scene": "surface_night_day_x",
+      "baselineP50Ms": 79.44534699999713,
+      "mobileP50Ms": 81.33408899999995,
+      "p50ChangePct": 2.3774104731431045,
+      "baselineP95Ms": 88.46790799999872,
+      "mobileP95Ms": 91.98810500000036
+    },
+    {
+      "scene": "bunker_power_drone",
+      "baselineP50Ms": 55.04176999999618,
+      "mobileP50Ms": 55.62342400000489,
+      "p50ChangePct": 1.0567501735659235,
+      "baselineP95Ms": 79.85946100000001,
+      "mobileP95Ms": 83.6811549999984
+    },
+    {
+      "scene": "inventory_open",
+      "baselineP50Ms": 44.179989999996906,
+      "mobileP50Ms": 44.25839899999846,
+      "p50ChangePct": 0.1774762737645652,
+      "baselineP95Ms": 67.93349499999749,
+      "mobileP95Ms": 62.44028499999695
+    },
+    {
+      "scene": "surface_zoom_out",
+      "baselineP50Ms": 73.1412249999994,
+      "mobileP50Ms": 46.99187699999311,
+      "p50ChangePct": -35.75185950195188,
+      "baselineP95Ms": 82.41537800000515,
+      "mobileP95Ms": 53.24909699999262
+    }
+  ],
+  "recheckSurfaceDayReverseOrder": {
+    "baseline": {
+      "samples": 180,
+      "meanMs": 65.2125229722222,
+      "p50Ms": 61.679698999999346,
+      "p95Ms": 88.08234300000004,
+      "p99Ms": 127.57635300000038,
+      "maxMs": 166.296832
+    },
+    "mobile": {
+      "samples": 180,
+      "meanMs": 40.51640889444438,
+      "p50Ms": 38.86957699999948,
+      "p95Ms": 49.79111700000067,
+      "p99Ms": 93.90410100000008,
+      "maxMs": 93.96053999999913
+    }
+  },
+  "limitations": [
+    "NOT measured in a browser, WebView, Telegram, or physical phone. No browser FPS assertion.",
+    "Modeled DOM omits layout, paint, native touch and browser compositing. VM crossings and one-pixel raster flush are included.",
+    "Canvas2D runs in this container; timing depends on shared-host CPU load. RSS includes harness and decoded images; not mobile memory.",
+    "Warm scenarios, assets decoded; cache behavior/network startup and audio decoding are not measured.",
+    "Native browser, Telegram and phone validation is not performed by this runner.",
+    "Compare future stages on the same runner with the same seed, scenes and warmup; investigate changes, do not infer phone FPS."
+  ]
+}

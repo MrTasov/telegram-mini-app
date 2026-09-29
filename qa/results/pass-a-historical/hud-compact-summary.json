@@ -1,0 +1,55 @@
+{
+  "patch": "hud-compact-1",
+  "base": "hud-display-1",
+  "passed": true,
+  "fullRegressionSuiteRerun": false,
+  "targetedAssertions": 514,
+  "failedAssertions": 0,
+  "checks": [
+    {
+      "command": "node tools/build.cjs --check",
+      "result": "PASS",
+      "sourceSections": 76
+    },
+    {
+      "command": "node qa/verify.cjs",
+      "passed": 401,
+      "failed": 0
+    },
+    {
+      "command": "node qa/hud-display.cjs",
+      "passed": 113,
+      "failed": 0
+    }
+  ],
+  "inheritedFullRegression": {
+    "patch": "hud-display-1",
+    "automatedAssertions": 11325,
+    "failedAssertions": 0,
+    "groups": 37,
+    "report": "qa/results/summary.json",
+    "rerunForThisFollowup": false
+  },
+  "scopeAudit": {
+    "baselineManifestHashesVerified": 865,
+    "unchangedAssetFiles": 143,
+    "runtimeSourceEdits": [
+      "src/ui/display.js"
+    ],
+    "otherSourceFilesByteIdentical": 76,
+    "saveVersion": 3,
+    "gameVersion": "0.29.0"
+  },
+  "covered": [
+    "RU/EN days 1, 9, 10, 99, 100, 999 and compatibility fallback above 999",
+    "HUD level suffix hidden while weapon.level remains 5",
+    "AK/M4 magazine 0/30/60, reserve 0/9/120/999, actual reload and training ammo",
+    "All 32 independent Display switch combinations, local preferences and save non-mutation",
+    "Frame monitor, minimap visibility, safe-area contract, default portrait joystick clearance at 320/360/390/430/768 CSS px",
+    "Exact build, source hashes, frozen fixtures and asset paths"
+  ],
+  "limitations": [
+    "Modeled DOM and native Canvas, not native browser layout or a physical phone. Readability and customized control placement require manual review.",
+    "Full regression and performance measurements from hud-display-1 are inherited, not rerun or attributed to this follow-up."
+  ]
+}

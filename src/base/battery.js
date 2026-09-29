@@ -99,12 +99,12 @@ const V010Energy=(()=>{
     edge('fuelLow',V09Power.running&&V09Power.fuel>0&&V09Power.fuel<=2,'Топливо заканчивается: заправьте генератор.');
     edge('batteryLow',a.batteryOutput>0&&battery.charge/battery.capacity<=.1,'Низкий заряд резервной батареи.');
     edge('shed',a.shed.length>0&&a.supply>0,I18n.t('control.overloaded'));
-    if(AgricultureTime.available&&typeof livestockAlive!=='undefined'&&livestockAlive){
+    if(AgricultureTime.animalsAvailable&&typeof livestockAlive!=='undefined'&&livestockAlive){
       const count=(i,type)=>(storageChests[i]?.items||[]).reduce((n,s)=>n+(s?.type===type?s.qty:0),0);
       edge('feed',count(12,'animal_feed')===0,'Ферма: у животных закончился корм.');
       edge('water',count(13,'water')===0,'Ферма: у животных закончилась вода.');
     }
-    if(AgricultureTime.available&&Array.isArray(window.farmState))window.farmState.forEach((s,i)=>{const ready=s?.crop!==null&&s?.crop!==undefined&&Date.now()-s.plantedAt>=farmGrowMs(s.crop);if(ready&&!harvestSeen[i])log('Ферма: урожай на грядке '+(i+1)+' созрел.');harvestSeen[i]=ready;});
+    if(AgricultureTime.available&&Array.isArray(window.farmState))window.farmState.forEach((s,i)=>{const ready=s?.crop!==null&&s?.crop!==undefined&&V011Farm.ready(i)&&!window.BunkerPassA?.rotten(i);if(ready&&!harvestSeen[i])log('Ферма: урожай на грядке '+(i+1)+' созрел.');harvestSeen[i]=ready;});
   }
   powerTick=function(dt){
     if(document.hidden||playerDead)return;dt=clamp(Number(dt)||0,0,.1);if(!dt)return;
@@ -118,7 +118,7 @@ const V010Energy=(()=>{
     if(before>0&&battery.charge<=.000000001&&a.batteryOutput>0){battery.charge=0;log('Резервная батарея разряжена.');queueGameSave();}
     const occupants=BunkerLayout.occupants('bunker');
     for(const d of v09Doors){
-      if(!BunkerLayout.roomActive(d.room))continue;
+      if(!BunkerLayout.roomActive(d.room))continue;if(d.alwaysOpen){d.open=1;continue;}
       const near=occupants.some(a=>distance(a.x,a.y,d.x+d.w/2,d.y+d.h/2)<116.25);
       const occupied=d.open>.2&&occupants.some(a=>rectHit(a.x,a.y,(a.radius||10)+8,d));
       const powered=a.served.has('door_'+d.room);

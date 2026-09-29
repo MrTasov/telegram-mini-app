@@ -1,8 +1,8 @@
 {
-  "version": "0.42.0",
-  "runtimeSha256": "ff3821b7b9282b8bcffbc452e98354528cedacb13a3c3d8e62a09630f6fdae88",
-  "passed": 28,
-  "failed": 0,
+  "version": "0.43.0",
+  "runtimeSha256": "a1f0ab9b3df6166722abf1e29386645904cbbaa59981fbc5d9522708b5c9e061",
+  "passed": 27,
+  "failed": 1,
   "checks": [
     {
       "id": "real_update_defense_surface",
@@ -70,7 +70,8 @@
     },
     {
       "id": "legacy_0390_all_owners_preserved",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: v09\n+ actual - expected\n... Skipped lines\n\n  {\n    chickenBreedMs: 0,\n    crafting: {\n      feed: null,\n      jobs: {\n...\n      deviceEnabled: {\n+       animal_system: true,\n        command_core_l1: true,\n        craft_bench: true,\n+       door_chicken_farm: true,\n+       door_cow_farm: true,\n+       door_empty_l1: true,\n        door_farm: true,\n+       door_pantry: true,\n        door_reserve_l1: true,\n        door_room4: true,\n        door_room5: true,\n        door_room6: true,\n        door_room7: true,\n+       door_side_corridor: true,\n        door_storage: true,\n+       door_water_room: true,\n        door_workshop: true,\n        feed_craft: true,\n        furnace: true,\n        hmg016_1: true,\n        irrigation014: true,\n+       light_bathroom: true,\n+       light_chicken_farm: true,\n        light_corridor: true,\n+       light_cow_farm: true,\n+       light_empty_l1: true,\n        light_farm: true,\n+       light_l2_corridor: true,\n+       light_pantry: true,\n        light_reserve_l1: true,\n        light_room4: true,\n        light_room5: true,\n        light_room6: true,\n        light_room7: true,\n+       light_side_corridor: true,\n        light_storage: true,\n+       light_water_room: true,\n        light_workshop: true,\n        robot_drone_charge: true,\n        spot_left: true,\n        spot_right: true,\n        upgrade0161: true,\n+       water_system: true\n      },\n      doors: [\n        {\n          away: 0.016666666666666666,\n          id: 'v09door_room6',\n...\n        },\n+       {\n+         away: 0,\n+         id: 'v09door_empty_l1',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_water_room',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_side_corridor',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_chicken_farm',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_cow_farm',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry_chicken',\n+         manual: false,\n+         open: 0\n+       },\n+       {\n+         away: 0,\n+         id: 'v09door_pantry_cow',\n+         manual: false,\n+         open: 0\n+       }\n      ],\n      fuel: 10,\n      roomEnabled: {\n+       bathroom: true,\n+       chicken_farm: true,\n        corridor: true,\n+       cow_farm: true,\n+       empty_l1: true,\n        farm: true,\n+       l2_corridor: true,\n+       pantry: true,\n        reserve_l1: true,\n        room4: true,\n        room5: true,\n        room6: true,\n        room7: true,\n+       side_corridor: true,\n        storage: true,\n+       water_room: true,\n        workshop: true,\n        yard: true\n      },\n      running: false\n    },\n\n    at /workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-i1.cjs:31:395\n    at test (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-i1.cjs:3:26)\n    at Object.<anonymous> (/workspace/scratch/a6d22bff5614/pass_a_clean_20260929/qa/stage-i1.cjs:31:1)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at "
     },
     {
       "id": "atomic_save_rejection_missing",

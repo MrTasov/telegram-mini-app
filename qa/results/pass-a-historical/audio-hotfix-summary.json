@@ -1,0 +1,41 @@
+{
+  "patch": "audio-unlock-hotfix-1",
+  "passed": true,
+  "automatedAssertions": 515,
+  "buildCheck": "PASS",
+  "runs": [
+    {
+      "suite": "audio-unlock",
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "suite": "polish",
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "suite": "menu-preferences",
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "suite": "controls",
+      "passed": 64,
+      "failed": 0
+    },
+    {
+      "suite": "verification",
+      "passed": 398,
+      "failed": 0
+    }
+  ],
+  "previousFullSuite": {
+    "patch": "visual-audio-polish-1",
+    "passed": 11172,
+    "failed": 0,
+    "rerunForThisHotfix": false
+  },
+  "onlyChangedRuntimeSource": "src/core/runtime.js",
+  "physicalDeviceAudioChecked": false
+}

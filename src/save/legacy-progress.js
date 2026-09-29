@@ -69,7 +69,7 @@ function decodeGameProgressBase(raw){
   const number=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
   const integer=(n,min,max)=>Number.isInteger(n)&&number(n,min,max);
   const duration=n=>number(n,0,MAX_SAVE_ELAPSED);
-  const position=o=>o&&number(o.x,-2800,4400)&&number(o.y,-2400,9600);
+  const position=o=>o&&number(o.x,-2800,o===d.player&&o.scene==='bunker'?6000:4400)&&number(o.y,-2400,9600);
   const slots=(a,max)=>Array.isArray(a)&&a.length<=max&&a.every(s=>
     s===null||(s&&Object.hasOwn(ITEM,s.type)&&integer(s.qty,1,itemStackLimit(s.type,true))));
   const fail=()=>{throw new Error("Invalid or unsupported game save");};
