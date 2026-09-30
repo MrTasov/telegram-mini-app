@@ -1,14 +1,6 @@
 {
   "allocation": {
-    "served": [],
-    "load": 0,
-    "demand": 11.090000000000002,
-    "supply": 10,
-    "generator": 10,
-    "batterySupply": 0,
-    "batteryOutput": 0,
-    "chargeInput": 0,
-    "shed": [
+    "served": [
       "light_corridor",
       "light_workshop",
       "light_room5",
@@ -29,6 +21,8 @@
       "door_workshop",
       "door_room5",
       "door_storage",
+      "door_reserve_l1",
+      "door_empty_l1",
       "door_room6",
       "door_room4",
       "door_room7",
@@ -38,271 +32,287 @@
       "door_chicken_farm",
       "door_cow_farm",
       "door_farm",
+      "spot_left",
+      "spot_right",
       "furnace",
+      "craft_bench",
+      "feed_craft",
+      "robot_drone_charge",
+      "irrigation014",
       "water_system",
       "animal_system",
+      "upgrade0161",
       "command_core_l1",
       "hmg016_1"
-    ]
+    ],
+    "load": 11.090000000000002,
+    "demand": 11.090000000000002,
+    "supply": 20,
+    "generator": 20,
+    "batterySupply": 0,
+    "batteryOutput": 0,
+    "chargeInput": 0,
+    "shed": [],
+    "recovering": false
   },
   "devices": [
     {
       "id": "light_corridor",
       "kW": 0.18,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_workshop",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_room5",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_storage",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_reserve_l1",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_empty_l1",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_l2_corridor",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_room6",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_room4",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_room7",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_bathroom",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_pantry",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_water_room",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_chicken_farm",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_cow_farm",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_side_corridor",
       "kW": 0.12,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "light_farm",
       "kW": 0.24,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_workshop",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_room5",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_storage",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_reserve_l1",
       "kW": 0.06,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_empty_l1",
       "kW": 0.06,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_room6",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_room4",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_room7",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_pantry",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_water_room",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_side_corridor",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_chicken_farm",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_cow_farm",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "door_farm",
       "kW": 0.06,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "spot_left",
       "kW": 0.95,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "spot_right",
       "kW": 0.95,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "furnace",
       "kW": 6,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "craft_bench",
       "kW": 2,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "feed_craft",
       "kW": 1,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "robot_drone_charge",
       "kW": 1,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "irrigation014",
       "kW": 0.8,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "water_system",
       "kW": 1,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "animal_system",
       "kW": 0.4,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "upgrade0161",
       "kW": 2,
       "active": false,
-      "powered": false
+      "powered": true
     },
     {
       "id": "command_core_l1",
       "kW": 0.05,
       "active": true,
-      "powered": false
+      "powered": true
     },
     {
       "id": "hmg016_1",
       "kW": 0.7,
       "active": true,
-      "powered": false
+      "powered": true
     }
   ]
 }

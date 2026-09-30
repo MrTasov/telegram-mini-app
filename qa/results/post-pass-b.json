@@ -1,0 +1,196 @@
+{
+  "runtimeSha256": "2c5cd68687481444dfe94ad7a0dce9ef7973858886e5d68ecb73f93f4602c412",
+  "passed": 32,
+  "failed": 0,
+  "performance": {
+    "p0Frames2400Ms": 24895.1,
+    "fuelPerMinute": {
+      "loadKW": 6,
+      "units": 0.6
+    },
+    "loads": {
+      "base": 5.09,
+      "furnaces1": 11.09,
+      "furnaces2": 17.09,
+      "furnaces3": 23.09,
+      "byRoom": {
+        "corridor": 0.23,
+        "workshop": 6.18,
+        "room5": 0.18,
+        "storage": 0.18,
+        "reserve_l1": 12.12,
+        "empty_l1": 0.12,
+        "l2_corridor": 0.12,
+        "room6": 0.18,
+        "room4": 0.18,
+        "room7": 0.18,
+        "bathroom": 0.12,
+        "pantry": 0.18,
+        "water_room": 1.18,
+        "chicken_farm": 0.18,
+        "cow_farm": 0.58,
+        "side_corridor": 0.18,
+        "farm": 0.3,
+        "yard": 0.7
+      },
+      "stations": {
+        "furnace": 6,
+        "craft_bench": 2,
+        "feed_craft": 1,
+        "robot_drone_charge": 1,
+        "water_system": 1,
+        "upgrade0161": 2,
+        "build:furnace:1": 6,
+        "build:furnace:2": 6
+      }
+    },
+    "drainSeconds": 1748,
+    "recoverySeconds": 360,
+    "heavyTurretShots": 3,
+    "vfxDrawFullPoolMs": 0.764,
+    "cowSizes": {
+      "0": {
+        "w": 17,
+        "h": 28
+      },
+      "1": {
+        "w": 26,
+        "h": 45
+      },
+      "2": {
+        "w": 42,
+        "h": 78
+      }
+    }
+  },
+  "checks": [
+    {
+      "name": "p0_single_instance_overload_day8_to_day9_autosaves_and_continue_restores_latest",
+      "ok": true
+    },
+    {
+      "name": "p0_stale_second_instance_cannot_overwrite_newer_progress",
+      "ok": true
+    },
+    {
+      "name": "p0_storage_event_locks_stale_window_immediately",
+      "ok": true
+    },
+    {
+      "name": "p0_continue_picks_newest_valid_save_and_backup_only_for_corrupt_primary",
+      "ok": true
+    },
+    {
+      "name": "p2_generator_20kW_everywhere_fuel_per_kW_unchanged",
+      "ok": true
+    },
+    {
+      "name": "p2_measured_loads_1_2_3_furnaces_and_full_base",
+      "ok": true
+    },
+    {
+      "name": "p1_overload_battery_full_drains_without_flicker_then_stable_recovery",
+      "ok": true
+    },
+    {
+      "name": "p1_recovery_after_load_drops_is_immediate",
+      "ok": true
+    },
+    {
+      "name": "p1_generator_stopped_reserve_drains_normally_no_latch",
+      "ok": true
+    },
+    {
+      "name": "p1_battery_insufficient_is_a_stable_off_state",
+      "ok": true
+    },
+    {
+      "name": "p1_save_load_each_power_state",
+      "ok": true
+    },
+    {
+      "name": "p3_root_cause_042_saves_left_L2_door_switches_off_now_normalised",
+      "ok": true
+    },
+    {
+      "name": "p3_all_L1_L2_doors_auto_open_from_both_sides_normal_power",
+      "ok": true
+    },
+    {
+      "name": "p3_auto_off_blocks_auto_open_manual_still_opens",
+      "ok": true
+    },
+    {
+      "name": "p3_overload_doors_unpowered_manual_open_then_recover",
+      "ok": true
+    },
+    {
+      "name": "p3_door_states_survive_save_load",
+      "ok": true
+    },
+    {
+      "name": "p3_base_control_labels_feed_mill_and_open_passage_hint",
+      "ok": true
+    },
+    {
+      "name": "p4_six_slots_same_owner_hud_and_inventory",
+      "ok": true
+    },
+    {
+      "name": "p4_instant_use_water_meds_buff_one_each_no_inventory_no_channel",
+      "ok": true
+    },
+    {
+      "name": "p4_full_or_missing_consumable_is_not_spent",
+      "ok": true
+    },
+    {
+      "name": "p4_keyboard_1_to_6_while_running_movement_not_stopped",
+      "ok": true
+    },
+    {
+      "name": "p4_mobile_hotbar_tap_uses_slot6",
+      "ok": true
+    },
+    {
+      "name": "p4_save_load_and_legacy_5_slot_saves",
+      "ok": true
+    },
+    {
+      "name": "p5_old_two_lines_and_circle_indicator_removed",
+      "ok": true
+    },
+    {
+      "name": "p5_player_shot_muzzle_flash_60ms_tracer_and_zero_ammo_nothing",
+      "ok": true
+    },
+    {
+      "name": "p5_drone_and_turrets_real_shots_only_pooled",
+      "ok": true
+    },
+    {
+      "name": "p5_vfx_pool_is_fixed_size",
+      "ok": true
+    },
+    {
+      "name": "p6_cows_face_far_wall_troughs_rumps_to_entrance_service_from_aisle",
+      "ok": true
+    },
+    {
+      "name": "p6_cow_stage_sizes_calf_juvenile_adult",
+      "ok": true
+    },
+    {
+      "name": "p6_cow_lamp_moved_to_free_left_aisle_and_reachable",
+      "ok": true
+    },
+    {
+      "name": "p7_nest_shows_incubating_eggs_count_max6_and_brooding_hen_moves_a_little",
+      "ok": true
+    },
+    {
+      "name": "p8_pump_and_purifier_compact_on_bottom_wall_clear_of_lamp_door_and_passage",
+      "ok": true
+    }
+  ]
+}

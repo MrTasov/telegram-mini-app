@@ -2,6 +2,7 @@
 // Historical source fixtures and their hashes remain unchanged.
 const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 exports.assertSource=(file,expected)=>{
+ const post043=require('./post-pass-b-043-source-reference.json');if(post043.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),post043.files[file].after,file+' declared 0.43 Post-Pass-B corrective');return;}
  const passB043=require('./pass-b-043-source-reference.json');if(passB043.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),passB043.files[file].after,file+' declared 0.43 Pass B');return;}
  const phase043=require('./phase0-043-source-reference.json');if(phase043.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),phase043.files[file].after,file+' declared 0.43 Phase 0');return;}
  const corr043=require('./corrective-043-source-reference.json');if(corr043.files[file]){assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),corr043.files[file].after,file+' declared 0.43 Pass A corrective');return;}

@@ -8,7 +8,10 @@ window.GameBaseControlUI=(()=>{
     const root=node('section','baseControl'),stats=node('div','baseControlStats'),warning=node('p','baseControlWarning'),levels=node('div','baseControlLevels'),map=node('div','baseControlMap'),heading=node('h4'),rows=node('div','baseControlObjects'),drone=node('button','menuButton');
     root.append(stats,warning,levels,map,heading,rows,drone);host.append(root);drone.type='button';drone.onclick=()=>V014Robots.openStation();
     let built='',area='bunker:1',zone='workshop',cards=new Map();
-    const set=(level,room)=>{area=level;zone=room;route?.setPage('control|'+area+'|'+zone,{replace:true});built='';refresh();};
+    const set=(level,room)=>{area=level;zone=room;route?.setPage('control|'+area+'|'+zone,{replace:true});built='';refresh();reveal();};
+    // 0.43 corrective: the device list sits below the zone map inside a scrolling panel; after a
+    // zone is chosen, bring its heading and rows into view (minimal scroll, map stays reachable).
+    const reveal=()=>{try{(rows.lastElementChild||heading).scrollIntoView({block:'nearest'});heading.scrollIntoView({block:'nearest'});}catch(_){}};
     function refresh(){
       if(!active())return;
       const saved=route?.page?.split('|');if(saved?.[0]==='control'&&GameBaseControl.levels.some(l=>l.id===saved[1]&&l.zones.includes(saved[2]))){area=saved[1];zone=saved[2];}
@@ -23,7 +26,9 @@ window.GameBaseControlUI=(()=>{
           b.onclick=()=>set(area,id);map.append(b);
         }
         put(heading,zone==='yard'?t('yard'):GamePlacement.roomName(zone));
-        if(!devices.length){const n=node('p','coreHint');n.textContent=t('empty');rows.append(n);}
+        const passage=area.startsWith('bunker:')&&v09Doors.some(d=>d.room===zone&&d.alwaysOpen);
+        if(passage){const n=node('p','coreHint');n.dataset.controlHint='openPassage';n.textContent=t('openPassage');rows.append(n);}
+        if(!devices.length&&!passage){const n=node('p','coreHint');n.textContent=t('empty');rows.append(n);}
         const counts=new Map();for(const d of devices){counts.set(d.name,(counts.get(d.name)||0)+1);const row=node('section','controlObject'),text=node('div','controlObjectText'),name=node('strong'),status=node('small'),actions=node('div','controlObjectActions');row.dataset.controlInstance=d.id;name.textContent=(d.kind==='door'?d.name+' · '+t('autoOpen'):d.name)+(devices.filter(x=>x.name===d.name).length>1?' · '+counts.get(d.name):'');text.append(name,status);row.append(text,actions);rows.append(row);
           const make=(key,fn)=>{const b=node('button','menuButton');b.type='button';b.dataset.controlAction=key;b.onclick=fn;actions.append(b);return b;};
           const main=make(d.action,()=>{const row=GameBaseControl.get(d.id);if(!row)return;GameBaseControl.request(d.id,d.action,{value:!row.on,previous:row.on},Number(main.dataset.revision));refresh();});
@@ -32,7 +37,7 @@ window.GameBaseControlUI=(()=>{
           cards.set(d.id,{row,status,main,auto,light,actions});
         }
       }
-      put(stats,t('supply',{load:num(a.load),demand:num(a.demand),supply:num(a.supply)})+' · '+t('fuel',{value:num(V09Power.fuel)}));put(warning,a.shed.length?t('shortage',{count:a.shed.length}):a.supply<=0?t('noPower'):t('independent'));warning.classList.toggle('warning',a.shed.length>0);
+      put(stats,t('supply',{load:num(a.load),demand:num(a.demand),supply:num(a.supply)})+' · '+t('fuel',{value:num(V09Power.fuel)}));put(warning,a.shed.length?t('shortage',{count:a.shed.length})+(a.recovering?' '+t('reserveRecovering',{percent:Math.round(V010Energy.resumeFraction*100)}):''):a.supply<=0?t('noPower'):t('independent'));warning.classList.toggle('warning',a.shed.length>0);
       for(const d of devices){const c=cards.get(d.id);if(!c)continue;const powered=d.deviceId?a.served.has(d.deviceId):true,key=d.broken?'damaged':!d.on?'off':d.kind==='door'?powered?'automatic':'noPower':d.kind==='gate'?'opened':!powered?'noPower':'on';
         put(c.status,t(key)+(d.watts!==undefined?' · '+num(d.watts)+' '+t('kw'):'')+(d.ammo!==undefined?' · '+t('ammo',{value:d.ammo}):''));
         const label=d.kind==='door'?'autoOpen':d.kind==='generator'?(d.on?'stop':'start'):['door','gate'].includes(d.kind)?(d.on?'close':'open'):d.kind==='turret'?(d.on?'deactivate':'activate'):d.kind==='drone'?(d.on?'combatOff':'combatOn'):(d.on?'turnOff':'turnOn');put(c.main,t(label));c.main.setAttribute('aria-pressed',String(d.on));c.main.setAttribute('aria-checked',String(d.on));c.main.setAttribute('aria-label',d.name+' · '+t(label));c.main.classList.toggle('on',d.on);

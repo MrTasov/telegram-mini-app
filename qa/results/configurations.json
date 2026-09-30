@@ -2459,7 +2459,7 @@
     "turnRate": 3.8
   },
   "power": {
-    "supply": 10,
+    "supply": 20,
     "capacity": 100,
     "rooms": {
       "corridor": "Центральный зал",
@@ -3514,7 +3514,9 @@
       "validate",
       "open",
       "remainingTime",
-      "flow"
+      "flow",
+      "recovering",
+      "resumeFraction"
     ],
     "V010Progression": [
       "TECH",
@@ -3731,7 +3733,10 @@
       "returnItem",
       "cook",
       "fishWeight",
-      "equip"
+      "equip",
+      "bindConsumable",
+      "consumableAllowed",
+      "consumable"
     ],
     "V013Lake": [
       "fish",

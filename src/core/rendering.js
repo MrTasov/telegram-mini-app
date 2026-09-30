@@ -162,17 +162,54 @@ function drawL2Furniture(){
  box(m.x+92,m.y+20,72,30,'#8d9c9b','#d2dbd8',3);for(let i=0;i<4;i++){ctx.fillStyle='#eef2ee';ctx.fillRect(m.x+100+i*16,m.y+26,3,18);}
  for(let i=0;i<3;i++){ctx.fillStyle=['#6b9fb0','#c9a04a','#8fb58a'][i];ctx.beginPath();ctx.arc(m.x+190+i*16,m.y+m.h/2,6,0,Math.PI*2);ctx.fill();}
 }
+/* 0.43 corrective: Water Room machines (visual only; footprints are BunkerPassA.fixtures). */
+function drawBoreholePump(o){
+ const cx=o.x+o.w/2,cy=o.y+o.h/2+3;ctx.save();
+ ctx.fillStyle='#0b141655';ctx.beginPath();ctx.ellipse(cx+2,cy+3,o.w/2,o.h/2-2,0,0,Math.PI*2);ctx.fill();
+ // Concrete well casing with the dark bore, a steel head plate and the vertical pump motor.
+ ctx.fillStyle='#7f8a84';ctx.beginPath();ctx.arc(cx,cy,19,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#4b5552';ctx.lineWidth=2;ctx.stroke();
+ ctx.fillStyle='#1c2426';ctx.beginPath();ctx.arc(cx,cy,13,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#8fa2a6';ctx.fillRect(cx-12,cy-4,24,8);ctx.fillStyle='#4f6f86';ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#b8cbd3';ctx.lineWidth=1.2;ctx.stroke();
+ ctx.fillStyle='#dfe7e3';ctx.beginPath();ctx.arc(cx,cy,2.6,0,Math.PI*2);ctx.fill();
+ for(const a of [0,Math.PI/2,Math.PI,Math.PI*1.5]){ctx.fillStyle='#39413f';ctx.beginPath();ctx.arc(cx+Math.cos(a)*16,cy+Math.sin(a)*16,1.8,0,Math.PI*2);ctx.fill();}
+ // Discharge pipe to the purifier along the wall, with a gauge.
+ ctx.strokeStyle='#8d9b98';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(cx+8,cy);ctx.lineTo(o.x+o.w+4,cy);ctx.stroke();ctx.strokeStyle='#5b6a68';ctx.lineWidth=1;ctx.stroke();
+ ctx.fillStyle='#e8e2c8';ctx.beginPath();ctx.arc(cx+17,cy-7,3.3,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#3a4240';ctx.lineWidth=1;ctx.stroke();ctx.beginPath();ctx.moveTo(cx+17,cy-7);ctx.lineTo(cx+19,cy-9);ctx.stroke();
+ ctx.restore();
+}
+function drawFiltrationUnit(o){
+ ctx.save();ctx.fillStyle='#0b141655';ctx.fillRect(o.x+3,o.y+4,o.w,o.h);
+ // Skid frame, two filter canisters (top view), a control box with status light and the clean-water outlet.
+ ctx.fillStyle='#46595a';ctx.beginPath();ctx.roundRect(o.x,o.y+2,o.w,o.h-4,5);ctx.fill();ctx.strokeStyle='#8fa39d';ctx.lineWidth=2;ctx.stroke();
+ for(const [k,col] of [[0,'#9fb7c2'],[1,'#8fb0a4']]){const x=o.x+13+k*17,y=o.y+16;ctx.fillStyle='#2a3a3e';ctx.beginPath();ctx.arc(x,y,8.5,0,Math.PI*2);ctx.fill();ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#dbe7e6';ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,y,4.2,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#34474b';ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);ctx.fill();}
+ ctx.strokeStyle='#7f8f8b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(o.x+13,o.y+27);ctx.lineTo(o.x+13,o.y+34);ctx.lineTo(o.x+30,o.y+34);ctx.lineTo(o.x+30,o.y+27);ctx.stroke();
+ ctx.fillStyle='#2b3538';ctx.fillRect(o.x+o.w-15,o.y+8,10,16);ctx.fillStyle=BunkerPassA.water.clean<GameplayBalance.farm.cleanCapacity&&devicePowered('water_system')?'#7fe0a2':'#c9b36b';ctx.fillRect(o.x+o.w-12,o.y+11,4,4);
+ ctx.fillStyle='#4b9ba5';ctx.fillRect(o.x+o.w-14,o.y+o.h-13,8,6);ctx.restore();
+}
+/* 0.43 corrective (P9): Feed Mill reads as a grain crusher — hopper, crusher drum, spout and a feed sack. */
+function drawFeedMill(f){
+ ctx.save();ctx.fillStyle='#0a141555';ctx.fillRect(f.x+3,f.y+4,f.w,f.h);
+ ctx.fillStyle='#4f635c';ctx.beginPath();ctx.roundRect(f.x,f.y,f.w,f.h,5);ctx.fill();ctx.strokeStyle='#8fa194';ctx.lineWidth=2;ctx.stroke();
+ const hx=f.x+6,hy=f.y+6,hw=Math.min(34,f.w*.55),hh=Math.min(30,f.h*.4);
+ ctx.fillStyle='#7c8a7d';ctx.beginPath();ctx.moveTo(hx,hy);ctx.lineTo(hx+hw,hy);ctx.lineTo(hx+hw*.72,hy+hh);ctx.lineTo(hx+hw*.28,hy+hh);ctx.closePath();ctx.fill();ctx.strokeStyle='#b7c3b1';ctx.lineWidth=1.2;ctx.stroke();
+ ctx.fillStyle='#c9a85e';ctx.beginPath();ctx.ellipse(hx+hw/2,hy+hh*.35,hw*.36,hh*.2,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e0c983';for(let k=0;k<7;k++){ctx.fillRect(hx+hw*.25+(k*5.3)%(hw*.5),hy+hh*.25+(k*3.7)%(hh*.2),1.6,1.2);}
+ const dx=hx+hw/2,dy=hy+hh+9;ctx.fillStyle='#3a4a48';ctx.beginPath();ctx.arc(dx,dy,9,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#a9b7ae';ctx.lineWidth=1.5;ctx.stroke();
+ ctx.strokeStyle='#c8d2c4';ctx.lineWidth=1.2;for(let k=0;k<4;k++){const a=k*Math.PI/2+.4;ctx.beginPath();ctx.moveTo(dx,dy);ctx.lineTo(dx+Math.cos(a)*7,dy+Math.sin(a)*7);ctx.stroke();}
+ ctx.fillStyle='#7d8b85';ctx.fillRect(dx+8,dy-3,Math.max(8,f.w-(dx-f.x)-22),6);
+ const sx=f.x+f.w-15,sy=Math.min(f.y+f.h-14,dy+2);ctx.fillStyle='#b99c68';ctx.beginPath();ctx.roundRect(sx-8,sy-10,16,20,4);ctx.fill();ctx.strokeStyle='#6f5b37';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#8d7447';ctx.fillRect(sx-5,sy-12,10,3);
+ ctx.restore();
+}
 function drawBunker(){
  const floor=BunkerLayout.floorAt(player.x,player.y),bounds=BunkerLayout.floorBounds[floor];ctx.fillStyle='#101417';ctx.fillRect(bounds.x-150,bounds.y-150,bounds.w+300,bounds.h+300);
- for(const r of BunkerLayout.roomData)if(r.floor===floor){V011Rooms.floor(r.id,bunker[r.id]);ctx.fillStyle='#bdccc7';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(GamePlacement.roomName(r.id),r.x+r.w/2,r.y+(r.id==='corridor'?150:r.id==='storage'?150:r.id==='pantry'?150:r.id==='water_room'?200:r.id==='chicken_farm'?300:r.id==='cow_farm'?300:48));}/* 0.43 Phase 0: Pantry and Water Room names sit below their top-wall furniture */
+ for(const r of BunkerLayout.roomData)if(r.floor===floor){V011Rooms.floor(r.id,bunker[r.id]);window.GameLivestock?.drawFloor?.(r.id);ctx.fillStyle='#bdccc7';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText(GamePlacement.roomName(r.id),r.x+r.w/2,r.y+(r.id==='corridor'?150:r.id==='storage'?150:r.id==='pantry'?150:r.id==='water_room'?200:r.id==='chicken_farm'?300:r.id==='cow_farm'?300:48));}/* 0.43 Phase 0: Pantry and Water Room names sit below their top-wall furniture */
  V09Craft.drawWorkshop();window.GameMovable?.draw();
  // 0.43 Phase 0: the L1 hall keeps no props (its cabinet is now the Medical room's medicine cabinet).
  // The bed lies along the bedroom's bottom wall, pillow toward the bath; kitchen/medical furniture below.
  const props=floor===1?[]:[['bed','bed'],['shower','shower'],['toilet','toilet'],['living_sink','sink'],['cabinet','wardrobe']];
  for(const [id,art]of props){const f=BunkerLayout.fixture(id);V011Rooms.shadow(f.x,f.y,f.w,f.h,12,f.room);ctx.save();if(id==='bed'&&f.w>f.h){ctx.translate(f.x,f.y+f.h);ctx.rotate(-Math.PI/2);V011Art.draw(art,0,0,f.h,f.w);}else if(!V011Art.draw(art,f.x,f.y,f.w,f.h)){ctx.fillStyle='#718780';ctx.fillRect(f.x,f.y,f.w,f.h);}ctx.restore();}
  if(floor===2)drawL2Furniture();
- if(floor===2){V011Farm.drawBeds();const f=GameEquipment.fixture('feed_craft');if(GameEquipment.present('feed_craft')){ctx.fillStyle='#58736a';ctx.fillRect(f.x,f.y,f.w,f.h);ctx.fillStyle='#bbc7af';ctx.beginPath();ctx.arc(f.x+22,f.y+22,16,0,Math.PI*2);ctx.fill();ctx.font='10px Arial';ctx.fillText(I18n.text('Кормодробилка'),f.x+28,f.y+65);}
-  for(const [i,o]of BunkerPassA.fixtures.entries()){ctx.fillStyle='#516863';ctx.fillRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#a0b4a5';ctx.lineWidth=3;ctx.strokeRect(o.x+4,o.y+4,o.w-8,o.h-8);if(!i){V011Art.draw('tank',o.x,o.y,o.w,o.h);ctx.fillStyle='#69bdc0';ctx.fillRect(o.x+o.w-12,o.y+12,5,(o.h-24)*BunkerPassA.water.clean/100);}else{ctx.fillStyle='#25464a';ctx.fillRect(o.x+10,o.y+10,o.w-20,18);}ctx.fillStyle='#d5e0d0';ctx.font='10px Arial';{const text=I18n.t(['farm.cleanTank','farm.pump','farm.purifier'][i]),q=BunkerLayout.rooms.water_room,half=ctx.measureText(text).width/2+30;/* 0.43 Phase 0: keep the caption inside the narrow Water Room */ctx.fillText(text,Math.max(q.left+half,Math.min(q.right-half,o.x+o.w/2)),i?o.y-7:o.y+o.h+15);}}
+ if(floor===2){V011Farm.drawBeds();const f=GameEquipment.fixture('feed_craft');if(GameEquipment.present('feed_craft')){drawFeedMill(f);ctx.fillStyle='#d5e0d0';ctx.font='10px Arial';ctx.fillText(I18n.text('Кормодробилка'),f.x+28,f.y+65);}
+  for(const [i,o]of BunkerPassA.fixtures.entries()){if(!i){ctx.fillStyle='#516863';ctx.fillRect(o.x,o.y,o.w,o.h);ctx.strokeStyle='#a0b4a5';ctx.lineWidth=3;ctx.strokeRect(o.x+4,o.y+4,o.w-8,o.h-8);V011Art.draw('tank',o.x,o.y,o.w,o.h);ctx.fillStyle='#69bdc0';ctx.fillRect(o.x+o.w-12,o.y+12,5,(o.h-24)*BunkerPassA.water.clean/100);}else if(i===1)drawBoreholePump(o);else drawFiltrationUnit(o);ctx.fillStyle='#d5e0d0';ctx.font='10px Arial';{const text=I18n.t(['farm.cleanTank','farm.pump','farm.purifier'][i]),q=BunkerLayout.rooms.water_room,half=ctx.measureText(text).width/2+30;/* 0.43 Phase 0: keep the caption inside the narrow Water Room */ctx.fillText(text,Math.max(q.left+half,Math.min(q.right-half,o.x+o.w/2)),i?o.y-7:o.y+o.h+15);}}
   const bd=V011Living.bathDoor;ctx.fillStyle='#667b78';ctx.fillRect(bd.x,bd.y,bd.w,bd.h*(1-V011Living.state().doorProgress));
   window.GameLivestock?.draw();/* 0.43 Pass B: stalls, nest, feeders/drinkers, Pantry #10–#12 and the animals */
   const up=BunkerPassA.up;ctx.fillStyle='#263a3e';ctx.fillRect(up.x,up.y,up.w,up.h);for(let i=0;i<9;i++){ctx.fillStyle=i%2?'#6f837c':'#53665f';ctx.fillRect(up.x+12,up.y+12+i*17,106,12);}ctx.fillStyle='#d8e6d9';ctx.fillText(I18n.t('bunker.l2.up'),4700,-185);
@@ -237,11 +274,7 @@ function drawPlayer(){
   ctx.fillStyle='#483c30';ctx.beginPath();ctx.arc(-1,0,7,Math.PI*.5,Math.PI*1.5);ctx.fill();
   ctx.restore();
   }
-  if(canFire()&&rightAimActive){
-    const dx=Math.cos(angle),dy=Math.sin(angle);let reach=88;
-    for(let t=18;t<88;t+=3)if(worldCollision(player.x+dx*t,player.y+dy*t,1,scene)){reach=t;break;}
-    ctx.strokeStyle='rgba(255,226,150,.5)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(player.x+dx*reach,player.y+dy*reach,4,0,Math.PI*2);ctx.stroke();
-  }
+  // 0.43 corrective: the early aim reach circle was removed with the spread-cone lines.
 }
 function drawFlashlight(){
   if(heldItem()!=='flashlight'||!flashlightOn||playerDead)return;
@@ -519,5 +552,5 @@ function drawZombie(zombie){
 ===================================================== */
 
 function drawBullets(){
-  window.ActorVisuals?.drawMuzzle();
+  window.ActorVisuals?.drawMuzzle();window.CombatVfx?.draw();
 }

@@ -133,7 +133,7 @@ window.V016Turret=(()=>{
   function shootAt(t,z){
     const s=stateFor(t);if(!t.enabled||!support(t)||t.ammo<=0||!z?.alive||z.health<=0||distance(t.x,t.y,z.x,z.y)>combatFor(t).range||!clear(t,z))return false;
     let first=z,at=1;for(const q of zombies)if(q.alive&&q.health>0){const n=ray(t,z,{x:q.x,y:q.y,r:q.radius||16},1);if(n!==null&&n<at){at=n;first=q;}}
-    GameAudio.play('turretFire',{x:t.x,y:t.y,scene:'surface',radius:660});t.ammo--;s.shot+=combatFor(t).intervalMs/1000;s.flash=.08;s.tracer={x:t.x+(z.x-t.x)*at,y:t.y+(z.y-t.y)*at};
+    GameAudio.play('turretFire',{x:t.x,y:t.y,scene:'surface',radius:660});t.ammo--;s.shot+=combatFor(t).intervalMs/1000;s.flash=.08;s.tracer={x:t.x+(z.x-t.x)*at,y:t.y+(z.y-t.y)*at};{const a=Math.atan2(z.y-t.y,z.x-t.x);window.CombatVfx?.shot({scene:'surface',x0:t.x+Math.cos(a)*80,y0:t.y+Math.sin(a)*80,x1:s.tracer.x,y1:s.tracer.y,kind:'heavy',flash:false});}
     hitZombie(first,damage(t),{fixedDamage:true});createNoise(t.x,t.y,600);queueGameSave();return true;
   }
   function tick(ms){

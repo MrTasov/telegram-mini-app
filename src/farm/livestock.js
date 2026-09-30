@@ -18,12 +18,15 @@ window.GameLivestock=(()=>{
     nest:{id:'l2_nest',x:CH.left+14,y:CH.top+12,w:62,h:46},
     chickenFeeder:{id:'l2_chicken_feeder',x:CH.left+92,y:CH.top+14,w:78,h:22},
     chickenDrinker:{id:'l2_chicken_drinker',x:CH.left+186,y:CH.top+14,w:62,h:22},
-    cowFeeder:{id:'l2_cow_feeder',x:CW.left+18,y:CW.top+130,w:262,h:18},
-    cowDrinker:{id:'l2_cow_drinker',x:CW.left+290,y:CW.top+130,w:142,h:18},
-    stalls:{id:'l2_cow_stalls',x:CW.left+9,y:CW.top+9,w:CW.right-CW.left-18,h:121}
+    // 0.43 corrective: troughs sit on the far (top) wall; cows face them, rumps to the aisle and entrance.
+    cowFeeder:{id:'l2_cow_feeder',x:CW.left+18,y:CW.top+10,w:262,h:18},
+    cowDrinker:{id:'l2_cow_drinker',x:CW.left+290,y:CW.top+10,w:142,h:18},
+    stalls:{id:'l2_cow_stalls',x:CW.left+9,y:CW.top+28,w:CW.right-CW.left-18,h:121}
   };
+  // Troughs are filled from the aisle end of their lane (the stalls stay solid, exactly as before).
+  const cowService=r=>({...r,h:fx.stalls.y+fx.stalls.h+6-r.y});
   const roam={l:CH.left+22,r:CH.right-22,t:CH.top+78,b:CH.bottom-26};
-  const stallCenter=i=>({x:CW.left+50+i*70,y:CW.top+72});
+  const stallCenter=i=>({x:CW.left+50+i*70,y:CW.top+89});
   const nestSeat={x:fx.nest.x+fx.nest.w/2,y:fx.nest.y+fx.nest.h/2+2};
   // ---- Deterministic gameplay RNG (saved), overridable for QA ----------------------------------
   let override=null;
@@ -178,7 +181,7 @@ window.GameLivestock=(()=>{
   let visualSeed=0x9e3779b9;const vr=()=>{visualSeed=(Math.imul(visualSeed,1664525)+1013904223)>>>0;return visualSeed/4294967296;};
   function allowedTop(x){return x<fx.nest.x+fx.nest.w+8?fx.nest.y+fx.nest.h+8:fx.chickenFeeder.y+fx.chickenFeeder.h+8;}
   function spawn(a,i){
-    if(a.kind==='cow'){const c=stallCenter(a.stall);return {x:c.x,y:c.y,angle:Math.PI,mode:'idle',moving:false,speed:0,stride:0,gestureAt:-1e9,gesture:null,nextGesture:performance.now()+5000+vr()*10000,until:0};}
+    if(a.kind==='cow'){const c=stallCenter(a.stall);return {x:c.x,y:c.y,angle:0,mode:'idle',moving:false,speed:0,stride:0,gestureAt:-1e9,gesture:null,nextGesture:performance.now()+5000+vr()*10000,until:0};}
     const cols=5,cell=i%25,x=roam.l+((cell%cols)+.5)*(roam.r-roam.l)/cols,y=roam.t+(Math.floor(cell/cols)+.5)*(roam.b-roam.t)/5;
     return {x,y,angle:vr()*Math.PI*2,mode:'idle',moving:false,speed:0,stride:i,gestureAt:-1e9,gesture:null,nextGesture:performance.now()+3000+vr()*9000,until:0,target:null,cell};
   }
@@ -217,7 +220,7 @@ window.GameLivestock=(()=>{
     for(const a of flock){if(a.brood)continue;const p=poses.get(a.id);p.x=clamp(p.x,roam.l,roam.r);p.y=clamp(p.y,allowedTop(p.x),roam.b);}
     // Cows stay in their stalls: idle / eat (head down) / drink, with head, ear and tail gestures.
     for(const a of list('cow')){
-      const p=pose(a),c=stallCenter(a.stall);p.x=c.x;p.y=c.y;p.angle=Math.PI;p.moving=false;p.speed=0;
+      const p=pose(a),c=stallCenter(a.stall);p.x=c.x;p.y=c.y;p.angle=0;p.moving=false;p.speed=0;
       if(now>=p.until){const r=vr();p.mode=r<.55&&state.cow.feed>0?'eat':r<.7&&state.cow.water>0?'drink':'idle';p.until=now+4000+vr()*6000;}
       if(now>=p.nextGesture){const r=vr();p.gesture=r<.6?'tail':r<.85?'ear':'head';p.gestureAt=now;p.nextGesture=now+B.cowGestureMinMs+vr()*(B.cowGestureMaxMs-B.cowGestureMinMs);}
     }
@@ -248,21 +251,52 @@ window.GameLivestock=(()=>{
     for(const a of state.animals){const i=icon(a.kind);if(!i)continue;const p=pose(a);ctx.fillText(i,p.x,p.y-(a.kind==='cow'?38:16));}
     ctx.restore();
   }
+  // 0.43 corrective: farm floors (straw bedding / litter) are pre-rendered once per room.
+  const floors=new Map();
+  function floorLayer(id,r,kind){
+    if(floors.has(id))return floors.get(id);let c=null;
+    try{c=document.createElement('canvas');c.width=Math.round(r.right-r.left);c.height=Math.round(r.bottom-r.top);const g=c.getContext('2d');if(!g||typeof g.fillRect!=='function')throw 0;
+      let seed=id.length*7919+c.width;const rnd=()=>{seed=(Math.imul(seed,1103515245)+12345)>>>0;return seed/4294967296;};
+      const stall=kind==='cow'?fx.stalls.y+fx.stalls.h-r.top:0;
+      // Base: packed earth in the cow aisle, warm straw in stalls and in the whole hen house.
+      g.fillStyle=kind==='cow'?'#4b4436':'#6a5a3a';g.fillRect(0,0,c.width,c.height);
+      if(kind==='cow'){g.fillStyle='#6f6040';g.fillRect(0,0,c.width,stall);}
+      for(let k=0;k<(kind==='cow'?900:1100);k++){const x=rnd()*c.width,y=rnd()*c.height,inStraw=kind!=='cow'||y<stall,len=inStraw?5+rnd()*9:2+rnd()*3,a=rnd()*Math.PI;
+        g.strokeStyle=inStraw?(rnd()<.5?'#b99a5a66':'#8f764577'):(rnd()<.5?'#5d553f88':'#3c362b88');g.lineWidth=inStraw?1.1:1.6;g.beginPath();g.moveTo(x,y);g.lineTo(x+Math.cos(a)*len,y+Math.sin(a)*len);g.stroke();}
+      if(kind==='cow'){g.fillStyle='#2e2a2233';g.fillRect(0,stall,c.width,5);/* drainage gutter behind the stalls */g.fillStyle='#39434266';g.fillRect(0,stall+5,c.width,9);}
+    }catch(_){c=null;}
+    floors.set(id,c);return c;
+  }
+  function drawFloor(id,r,kind){const c=floorLayer(id,r,kind);if(!c)return;ctx.save();ctx.globalAlpha=.9;ctx.drawImage(c,10,10,c.width-20,c.height-20,r.left+10,r.top+10,c.width-20,c.height-20);ctx.restore();}
+  function egg(x,y,s=1){ctx.fillStyle='#8a7a5a88';ctx.beginPath();ctx.ellipse(x+.8,y+1,3.4*s,4.3*s,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f1e8d2';ctx.beginPath();ctx.ellipse(x,y,3.2*s,4.1*s,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffffffaa';ctx.beginPath();ctx.ellipse(x-1*s,y-1.5*s,1*s,1.3*s,0,0,Math.PI*2);ctx.fill();}
+  // Woven straw nest; incubating eggs sit in a ring so the brooding hen leaves some visible at the rim.
+  function drawNest(){
+    const x=nestSeat.x,y=nestSeat.y;ctx.save();
+    ctx.fillStyle='#3d321f66';ctx.beginPath();ctx.ellipse(x+2,y+3,27,18,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#8c6e3e';ctx.beginPath();ctx.ellipse(x,y,26,17,0,0,Math.PI*2);ctx.fill();
+    ctx.lineWidth=2;for(let k=0;k<22;k++){const a=k/22*Math.PI*2;ctx.strokeStyle=k%2?'#c9a764':'#a98546';ctx.beginPath();ctx.ellipse(x,y,24-(k%3),15.5-(k%3)*.6,0,a,a+.55);ctx.stroke();}
+    ctx.fillStyle='#5a4526';ctx.beginPath();ctx.ellipse(x,y+1,16,10,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#d8bd7a88';ctx.lineWidth=1;for(let k=0;k<8;k++){const a=k*0.8;ctx.beginPath();ctx.moveTo(x+Math.cos(a)*6,y+Math.sin(a)*4);ctx.lineTo(x+Math.cos(a)*14,y+Math.sin(a)*8);ctx.stroke();}
+    const hen=brooding(),n=hen?Math.min(6,hen.brood.eggs):0;
+    for(let k=0;k<n;k++){const a=-Math.PI/2+k/n*Math.PI*2+.35;egg(x+Math.cos(a)*11.5,y+1+Math.sin(a)*6.8,.85);}
+    ctx.restore();
+  }
   function drawFixtures(){
     const bar=(r,frac,color)=>{ctx.fillStyle='#172c2b';ctx.fillRect(r.x+4,r.y+4,r.w-8,r.h-8);ctx.fillStyle=color;ctx.fillRect(r.x+4,r.y+4,(r.w-8)*clamp(frac,0,1),r.h-8);};
     const box=(r,fill,stroke)=>{ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(r.x,r.y,r.w,r.h,4);ctx.fill();ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke();};
     ctx.save();
-    for(let i=0;i<B.cowMax;i++){const x=CW.left+15+i*70;ctx.fillStyle='#8a805324';ctx.fillRect(x,CW.top+10,70,120);ctx.strokeStyle='#8d9b83';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,CW.top+10);ctx.lineTo(x,CW.top+126);ctx.stroke();}
-    ctx.beginPath();ctx.moveTo(CW.left+15+B.cowMax*70,CW.top+10);ctx.lineTo(CW.left+15+B.cowMax*70,CW.top+126);ctx.stroke();
+    const top=fx.stalls.y,bottom=fx.stalls.y+fx.stalls.h;
+    for(let i=0;i<B.cowMax;i++){const x=CW.left+15+i*70;ctx.fillStyle='#8a805318';ctx.fillRect(x,top,70,bottom-top);}
+    ctx.strokeStyle='#8d9b83';ctx.lineWidth=3;for(let i=0;i<=B.cowMax;i++){const x=CW.left+15+i*70;ctx.beginPath();ctx.moveTo(x,top+2);ctx.lineTo(x,bottom-8);ctx.stroke();ctx.fillStyle='#b8c3ad';ctx.fillRect(x-2.5,bottom-11,5,5);}
     for(const [r,kind,cap] of [[fx.cowFeeder,'feed',CAP.cow.feed],[fx.cowDrinker,'water',CAP.cow.water],[fx.chickenFeeder,'feed',CAP.chicken.feed],[fx.chickenDrinker,'water',CAP.chicken.water]]){const s=r===fx.cowFeeder||r===fx.cowDrinker?state.cow:state.chicken;box(r,'#526964','#98a9a5');bar(r,s[kind]/cap,kind==='water'?'#4b9ba5':'#c8ab68');}
-    box(fx.nest,'#6d5a3c','#b09a6c');ctx.fillStyle='#c9b27a';ctx.beginPath();ctx.ellipse(nestSeat.x,nestSeat.y,22,14,0,0,Math.PI*2);ctx.fill();
-    const hen=brooding();if(!hen){const n=Math.min(6,eggsStored());for(let k=0;k<Math.min(3,n);k++){ctx.fillStyle='#efe6cf';ctx.beginPath();ctx.ellipse(nestSeat.x-10+k*10,nestSeat.y,4,5,0,0,Math.PI*2);ctx.fill();}}
+    drawNest();
     ctx.fillStyle='#d5e0d0';ctx.font='10px Arial';ctx.textAlign='center';
     ctx.fillText(I18n.t('animals.nest'),nestSeat.x,fx.nest.y+fx.nest.h+12);
     ctx.fillText(I18n.t('animals.feeder'),fx.chickenFeeder.x+fx.chickenFeeder.w/2,fx.chickenFeeder.y+fx.chickenFeeder.h+12);
     ctx.fillText(I18n.t('animals.drinker'),fx.chickenDrinker.x+fx.chickenDrinker.w/2,fx.chickenDrinker.y+fx.chickenDrinker.h+12);
-    ctx.fillText(I18n.t('animals.feeder')+' '+units(state.cow.feed).toFixed(1)+' / '+B.cowFeederCapacity,fx.cowFeeder.x+fx.cowFeeder.w/2,fx.cowFeeder.y+fx.cowFeeder.h+13);
-    ctx.fillText(I18n.t('animals.drinker')+' '+units(state.cow.water).toFixed(1)+' / '+B.cowDrinkerCapacity,fx.cowDrinker.x+fx.cowDrinker.w/2,fx.cowDrinker.y+fx.cowDrinker.h+13);
+    // Trough captions sit in the aisle, in front of the lane that serves each trough.
+    ctx.fillText(I18n.t('animals.feeder')+' '+units(state.cow.feed).toFixed(1)+' / '+B.cowFeederCapacity,fx.cowFeeder.x+fx.cowFeeder.w/2,bottom+14);
+    ctx.fillText(I18n.t('animals.drinker')+' '+units(state.cow.water).toFixed(1)+' / '+B.cowDrinkerCapacity,fx.cowDrinker.x+fx.cowDrinker.w/2,bottom+14);
     ctx.restore();
     // Pantry storages #10 eggs, #11 milk, #12 animal feed are real, visible crates.
     for(const i of [B.eggStorage,B.milkStorage,B.feedStorage]){const p=getChestPositions()[i];if(window.V011Rooms?.chest)V011Rooms.chest(i,p,storageChests[i]);ctx.save();ctx.fillStyle='#d5e0d0';ctx.font='10px Arial';ctx.textAlign='center';ctx.fillText(I18n.t(i===B.eggStorage?'animals.crate.eggs':i===B.milkStorage?'animals.crate.milk':'animals.crate.feed'),p.x,p.y-31);ctx.restore();}
@@ -318,8 +352,8 @@ window.GameLivestock=(()=>{
     {...fx.nest,kind:'livestock_chickens',name:I18n.t('animals.nest'),range:56},
     {...fx.chickenFeeder,kind:'livestock_chickens',name:I18n.t('animals.feeder'),range:56},
     {...fx.chickenDrinker,kind:'livestock_chickens',name:I18n.t('animals.drinker'),range:56},
-    {...fx.cowFeeder,kind:'livestock_cows',name:I18n.t('animals.feeder'),range:56},
-    {...fx.cowDrinker,kind:'livestock_cows',name:I18n.t('animals.drinker'),range:56}
+    {...cowService(fx.cowFeeder),kind:'livestock_cows',name:I18n.t('animals.feeder'),range:56},
+    {...cowService(fx.cowDrinker),kind:'livestock_cows',name:I18n.t('animals.drinker'),range:56}
   ];
   const oldObjects=interactionObjects;interactionObjects=function(which=scene){const a=oldObjects(which);return which==='bunker'&&available()?a.concat(interactives()):a;};
   const oldSolids=solidObjects;solidObjects=function(which){const a=oldSolids(which);return which==='bunker'?a.concat([fx.nest,fx.chickenFeeder,fx.chickenDrinker,fx.stalls,fx.cowFeeder,fx.cowDrinker].map(r=>({id:r.id,x:r.x,y:r.y,w:r.w,h:r.h}))):a;};
@@ -331,19 +365,23 @@ window.GameLivestock=(()=>{
   startHerd();invalidateGeometry();
   const api={update,settle,draw,view,open,refresh,loadFeed,brood,slaughter,capture,validate,restore,startHerd,active,powered,available,
     setRandom(fn){override=typeof fn==='function'?fn:null;},
-    get state(){return state;},get animals(){return state.animals;},list,adults,fixtures:fx,roam,stallCenter,nestSeat,modes:MODES,broodLimit,freeChickenSlots,
+    get state(){return state;},drawFloor(id){if(!state||!available())return;if(id==='cow_farm')drawFloor(id,CW,'cow');else if(id==='chicken_farm')drawFloor(id,CH,'chicken');},get animals(){return state.animals;},list,adults,fixtures:fx,roam,stallCenter,nestSeat,modes:MODES,broodLimit,freeChickenSlots,
     constants:Object.freeze({DAY,STEP,STEPS,U,CH_TICK,COW_TICK,CAP}),poses,units,
     audioCenter:kind=>kind==='cow'?{x:(CW.left+CW.right)/2,y:CW.top+80}:{x:(CH.left+CH.right)/2,y:(CH.top+CH.bottom)/2}};
   return api;
 })();
 /* Visual hook for the Animals art patch: one global draw function fed only by GameLivestock.view(a). */
 window.drawLivestockAnimal=function(a,i){
-  const v=GameLivestock.view(a),cow=v.kind==='cow',w=(cow?37:19)*v.scale,h=(cow?60:26)*v.scale,now=performance.now();
-  ctx.save();ctx.translate(v.x,v.y);ctx.rotate(v.angle);
+  const v=GameLivestock.view(a),cow=v.kind==='cow',now=performance.now();
+  // 0.43 corrective: clearly different cow sizes (calf small, juvenile medium, adult larger and longer);
+  // a cow stands with its head at the far-wall trough, so its body is drawn forward of the stall centre.
+  const COW=[[17,28],[26,45],[42,78]],w=cow?COW[v.stage][0]:19*v.scale,h=cow?COW[v.stage][1]:26*v.scale;
+  ctx.save();ctx.translate(v.x,v.y);ctx.rotate(v.angle);if(cow)ctx.translate(0,h/2-57);
   ctx.fillStyle='#07110b45';ctx.beginPath();ctx.ellipse(1,3,w*(cow?.31:.38),h*.39,0,0,Math.PI*2);ctx.fill();
   const stride=v.moving?Math.sin(v.stride)*3.6*v.scale:0;ctx.rotate(v.moving?Math.sin(v.stride)*.015:Math.sin(now/1100+i)*.007);
-  if(cow&&v.mode==='eat')ctx.translate(0,Math.sin(now/240+i)*.65+2);
-  if(v.mode==='brood')ctx.scale(1.08,.94);
+  if(cow&&(v.mode==='eat'||v.mode==='drink'))ctx.translate(0,-(Math.sin(now/240+i)*.65+1.5));
+  // Brooding hen: settled low and wide in the nest, slow breathing and an occasional small shift.
+  if(v.mode==='brood'){const breathe=Math.sin(now/650+i)*.025;ctx.rotate(Math.sin(now/2300+i)*.06);ctx.scale(1.12+breathe,.9-breathe*.6);}
   const art=window.V011Art,key=cow?'cow':'chicken',im=art?.image?.(key);
   if(im&&art.ready(key)){ctx.save();ctx.translate(0,stride*.1);ctx.drawImage(im,-w/2,-h/2,w,h);ctx.restore();}
   else if(cow){const e=(x,y,rx,ry,c)=>{ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(x*v.scale,y*v.scale,rx*v.scale,ry*v.scale,0,0,Math.PI*2);ctx.fill();};e(0,0,15,23,'#deded0');e(-5,-7,7,9,'#414b43');e(5,10,7,7,'#39473e');e(0,-25,8,9,'#d6d4c4');}

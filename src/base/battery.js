@@ -2,6 +2,10 @@
 const V010Energy=(()=>{
   const battery={charge:0,capacity:1.5,enabled:true,maxCharge:3,maxDischarge:6};
   let roomPriority={},devicePriority={},warnings={},harvestSeen={},clock=0,lastFlow={charge:0,discharge:0};
+  // 0.43 corrective: stable overload. A battery that ran empty while covering a deficit stays
+  // out of the bus until it has recovered RESUME of its capacity (or the deficit ends), so an
+  // overloaded base no longer flips ON/OFF every frame on trickle charge.
+  const RESUME=.2;let recovering=false;
   const log=text=>{if(typeof V010!=='undefined'&&typeof V010.log==='function')V010.log(text);};
   function edge(key,value,text){if(value&&!warnings[key]){log(text);GameAudio.play('warning');}warnings[key]=!!value;}
   const fmt=n=>I18n.numeric(n,{maximumFractionDigits:2,useGrouping:false});
@@ -17,7 +21,7 @@ const V010Energy=(()=>{
   // explicit dt reuses one result per frame; any change of generator, fuel, battery or a
   // device switch or equipment change (place, pack, damage) invalidates it at once. Ticks that pass dt always compute fresh.
   let memo=null,memoKey='';
-  function memoStamp(){let s=(V09Power.frame||0)+'|'+(window.GameEquipment?GameEquipment.epoch:0)+'|'+V09Power.running+'|'+V09Power.supply+'|'+(V09Power.fuel>0)+'|'+battery.enabled+'|'+(battery.charge>0)+'|';for(const d of Object.values(V09Power.devices))s+=d.enabled?1:0;return s;}
+  function memoStamp(){let s=(V09Power.frame||0)+'|'+(window.GameEquipment?GameEquipment.epoch:0)+'|'+V09Power.running+'|'+V09Power.supply+'|'+(V09Power.fuel>0)+'|'+battery.enabled+'|'+(battery.charge>0)+'|'+recovering+'|';for(const d of Object.values(V09Power.devices))s+=d.enabled?1:0;return s;}
   function allocation(dt){
     if(dt===undefined){const key=memoStamp();if(memo&&key===memoKey)return memo;memo=compute(1/60);memoKey=key;return memo;}
     return compute(dt);
@@ -25,7 +29,7 @@ const V010Energy=(()=>{
   function compute(dt=1/60){
     dt=Math.max(.001,Math.min(.1,Number(dt)||1/60));
     const generator=GameEquipment.present('generator')&&GameEquipment.present('tank')&&V09Power.running&&V09Power.fuel>0?V09Power.supply:0;
-    const batterySupply=GameEquipment.present('battery')&&battery.enabled&&battery.charge>0?Math.min(battery.maxDischarge,battery.charge*3600/dt):0;
+    const batterySupply=GameEquipment.present('battery')&&battery.enabled&&battery.charge>0&&!recovering?Math.min(battery.maxDischarge,battery.charge*3600/dt):0;
     const supply=generator+batterySupply,served=new Set(),shed=[];
     let demand=0,load=0;
     const devices=Object.values(V09Power.devices).filter(d=>(!d.present||d.present())&&BunkerLayout.roomActive(d.room)&&d.enabled).map(d=>({d,active:!!d.active()}));
@@ -40,7 +44,7 @@ const V010Energy=(()=>{
     const batteryOutput=Math.max(0,load-generator);
     const chargeInput=GameEquipment.present('battery')&&battery.enabled&&generator>0&&batteryOutput<.000001?Math.min(battery.maxCharge,Math.max(0,generator-load),Math.max(0,battery.capacity-battery.charge)*3600/dt):0;
     V09Power.load=load;V09Power.demand=demand;
-    return {served,load,demand,supply,generator,batterySupply,batteryOutput,chargeInput,shed};
+    return {served,load,demand,supply,generator,batterySupply,batteryOutput,chargeInput,shed,recovering};
   }
   V09Power.allocation=allocation;
   togglePowerDevice=id=>window.GameBaseControl?.toggleDevice(id)||false;
@@ -115,12 +119,23 @@ const V010Energy=(()=>{
     if(document.hidden||playerDead)return;dt=clamp(Number(dt)||0,0,.1);if(!dt)return;
     const multiplier=typeof V010World!=='undefined'?Number(V010World.settings?.fuelRate)||1:1;
     if(V09Power.running){
-      const fuelAllocation=allocation(dt);const generatedKW=Math.min(V09Power.supply,Math.max(0,fuelAllocation.load+fuelAllocation.chargeInput));V09Power.fuel=Math.max(0,V09Power.fuel-dt/60*multiplier*generatedKW/Math.max(.001,V09Power.supply));
+      const fuelAllocation=allocation(dt);const generatedKW=Math.min(V09Power.supply,Math.max(0,fuelAllocation.load+fuelAllocation.chargeInput));V09Power.fuel=Math.max(0,V09Power.fuel-dt/60*multiplier*generatedKW/Math.max(.001,V09Power.fuelKW||V09Power.supply));
       if(V09Power.fuel<=0){V09Power.running=false;message('Генератор остановился: закончилось топливо');log('Генератор остановился: закончилось топливо.');queueGameSave();}
     }
-    const a=allocation(dt),before=battery.charge;lastFlow={charge:a.chargeInput,discharge:a.batteryOutput};
+    const a=allocation(dt);lastFlow={charge:a.chargeInput,discharge:a.batteryOutput};
     battery.charge=clamp(battery.charge+(a.chargeInput-a.batteryOutput)*dt/3600,0,battery.capacity);
-    if(before>0&&battery.charge<=.000000001&&a.batteryOutput>0){battery.charge=0;log('Резервная батарея разряжена.');queueGameSave();}
+    // The reserve is exhausted when it cannot cover the current deficit for one more second; an
+    // overload that meets a low (<RESUME) idle reserve starts in the same recovering state. Without a
+    // running generator nothing can refill it, so the reserve simply drains (no latch).
+    // Oscillation needs a charger: only a running generator can refill the reserve between frames.
+    const deficit=a.demand-a.generator;
+    if(recovering&&a.generator<=0){recovering=false;memo=null;}
+    if(!recovering&&a.generator>0&&deficit>.000001&&battery.enabled&&GameEquipment.present('battery')){
+      if(a.batteryOutput>0?battery.charge<Math.max(.000000001,deficit/3600):a.shed.length>0&&battery.charge<battery.capacity*RESUME){
+        if(battery.charge<=.000000001)battery.charge=0;recovering=true;memo=null;if(a.batteryOutput>0)log('Резервная батарея разряжена.');queueGameSave();
+      }
+    }
+    else if(recovering&&battery.charge>=battery.capacity*RESUME-.000000001){recovering=false;memo=null;queueGameSave();}
     const occupants=BunkerLayout.occupants('bunker');
     for(const d of v09Doors){
       if(!BunkerLayout.roomActive(d.room))continue;if(d.alwaysOpen){d.open=1;continue;}
@@ -148,17 +163,17 @@ const V010Energy=(()=>{
   };
   v09Style(`
 .v09DeviceRow{padding:5px 0;gap:8px;min-height:35px}.v09DeviceRow>div:first-child{flex:1;min-width:0}.v09DeviceRow strong{font-size:11px}.v09DeviceRow small{font-size:10px;margin-top:2px;line-height:1.3}.v09DeviceToggle{position:relative;box-sizing:border-box;flex:0 0 42px;width:42px!important;min-width:42px!important;max-width:42px!important;height:25px!important;min-height:25px!important;padding:0!important;border-radius:15px!important;border:1px solid #586b70!important;background:#2b3b42!important;box-shadow:none!important;font-size:0!important;overflow:visible!important}.v09DeviceToggle:before{content:'';position:absolute;inset:-9px -1px}.v09DeviceToggle:after{content:'';position:absolute;width:17px;height:17px;left:3px;top:3px;border-radius:50%;background:#a6b3b7;transition:transform .12s,background .12s}.v09DeviceToggle.on{background:#315f50!important;border-color:#8abda1!important}.v09DeviceToggle.on:after{transform:translateX(17px);background:#d8f1df}.v09DeviceToggle:focus-visible{outline:2px solid #e4d5a2;outline-offset:3px}.v09PowerStats{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.v09PowerStat{padding:8px 6px}.v09PowerStat b{font-size:12px}.v09PowerStat small{font-size:9px}.v09PowerStat [data-power="reserve"]{margin-top:5px;letter-spacing:0;text-transform:none}.v09CircuitHeader{flex-wrap:wrap}.v09CircuitHeader>div:first-child{flex:1}.v09CircuitHeader .v09PowerWarning{line-height:1.4}.v09PowerActions button{min-height:34px;font-size:11px;padding:6px 10px}@media(max-width:480px){.v09PowerStats{grid-template-columns:repeat(2,minmax(0,1fr))}.v09DeviceRow{gap:6px}}`);
-  function capture(){return {schema:1,battery:{charge:battery.charge,enabled:battery.enabled},roomPriority:{...roomPriority},devicePriority:{...devicePriority},warnings:{...warnings},harvestSeen:{...harvestSeen}};}
+  function capture(){return {schema:1,battery:{charge:battery.charge,enabled:battery.enabled,...(recovering?{recovering:true}:{})},roomPriority:{...roomPriority},devicePriority:{...devicePriority},warnings:{...warnings},harvestSeen:{...harvestSeen}};}
   function validate(s){
-    if(!s||s.schema!==1||!s.battery||!Number.isFinite(s.battery.charge)||s.battery.charge<0||s.battery.charge>battery.capacity||typeof s.battery.enabled!=='boolean')throw Error('Неверное сохранение резервной батареи');
+    if(!s||s.schema!==1||!s.battery||!Number.isFinite(s.battery.charge)||s.battery.charge<0||s.battery.charge>battery.capacity||typeof s.battery.enabled!=='boolean'||s.battery.recovering!==undefined&&s.battery.recovering!==true)throw Error('Неверное сохранение резервной батареи');
     for(const [key,known] of [['roomPriority',V09Power.rooms],['devicePriority',Object.fromEntries(equipmentPowerKeys().map(id=>[id,true]))]])if(!s[key]||typeof s[key]!=='object'||Array.isArray(s[key])||Object.entries(s[key]).some(([id,n])=>!Object.hasOwn(known,id)||![1,2,3].includes(n)))throw Error('Неверное сохранение приоритетов питания');
     for(const key of ['warnings','harvestSeen'])if(s[key]!==undefined&&(!s[key]||typeof s[key]!=='object'||Array.isArray(s[key])||Object.keys(s[key]).length>32||Object.values(s[key]).some(v=>typeof v!=='boolean')))throw Error('Неверное сохранение уведомлений');
     return true;
   }
   function restore(s){
-    if(s)validate(s);battery.charge=s?.battery.charge??0;battery.enabled=s?.battery.enabled??true;roomPriority={...(s?.roomPriority||{})};devicePriority={...(s?.devicePriority||{})};warnings={...(s?.warnings||{})};harvestSeen={...(s?.harvestSeen||{})};clock=0;lastFlow={charge:0,discharge:0};allocation();v09RefreshPowerUI();
+    if(s)validate(s);battery.charge=s?.battery.charge??0;battery.enabled=s?.battery.enabled??true;recovering=s?.battery.recovering===true;memo=null;roomPriority={...(s?.roomPriority||{})};devicePriority={...(s?.devicePriority||{})};warnings={...(s?.warnings||{})};harvestSeen={...(s?.harvestSeen||{})};clock=0;lastFlow={charge:0,discharge:0};allocation();v09RefreshPowerUI();
   }
-  const api={battery,allocation,capture,snapshot:capture,restore,validate,open:openBattery,remainingTime,get flow(){return {...lastFlow};}};
+  const api={battery,allocation,capture,snapshot:capture,restore,validate,open:openBattery,remainingTime,get flow(){return {...lastFlow};},get recovering(){return recovering;},resumeFraction:RESUME};
   window.V010Energy=api;
   if(typeof V010!=='undefined'&&V010.modules)V010.register('energy',api);
   return api;

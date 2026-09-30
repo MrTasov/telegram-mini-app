@@ -118,6 +118,40 @@ GameSave.extend('decode','save.slots',function(v09OriginalDecode,raw){
 function v09CancelPendingSave(){
   if(GameState.session.timer!==null){clearTimeout(GameState.session.timer);GameState.session.timer=null;}
 }
+/* 0.43 corrective: one writer per slot. The instance that most recently opened a slot
+   (Continue, Load, New game, Import) owns it; an older tab/window/webview that is still
+   alive must never overwrite that newer progress (the playtest Day 9 -> Day 8 rollback).
+   Ownership: a small owner key per slot, plus the exact primary string this instance
+   last loaded or wrote (also catches writers that predate the owner key). */
+const V09SlotOwner=(()=>{
+  // Created on first claim; never touches the gameplay Math.random stream.
+  let me=null,id=null,raw=null,conflict=false;
+  const self=()=>me||(me=(()=>{try{const a=new Uint32Array(2);crypto.getRandomValues(a);return a[0].toString(36)+a[1].toString(36);}catch(_){return Date.now().toString(36)+'-'+Math.floor(performance.now()*1000).toString(36);}})());
+  // Not under the slot key prefix: slot listings and 'no mutation' checks see only save data.
+  const key=slot=>'survival_base_v09_owner_'+slot;
+  function adopt(slot,value,claim=true){
+    id=slot;raw=value;conflict=false;
+    if(claim)try{localStorage.setItem(key(slot),self());}catch(_){/* The primary-string check still guards. */}
+  }
+  function stale(slot){
+    if(id!==slot)return false;
+    const owner=localStorage.getItem(key(slot));
+    if(owner!==null&&owner!==self())return true;
+    const current=localStorage.getItem(v09SlotKey(slot));
+    // A missing slot is not newer progress; an unchanged primary is ours.
+    return current!==null&&current!==raw;
+  }
+  function lock(){
+    if(conflict)return;conflict=true;v09CancelPendingSave();GameState.session.dirty=false;GameState.session.blocked=true;
+    updateSaveStatus(I18n.message('save.conflict.status'));message(I18n.message('save.conflict'));
+  }
+  window.addEventListener('storage',e=>{
+    const slot=GameState.session.activeSlot;
+    if(!slot||!GameState.session.ready||conflict||(e.key!==key(slot)&&e.key!==v09SlotKey(slot)))return;
+    try{if(stale(slot))lock();}catch(_){}
+  });
+  return Object.freeze({adopt,stale,lock,key,get conflict(){return conflict;},get slot(){return id;},get instance(){return self();}});
+})();
 GameSave.extend('restore','save.slots',function(v09OriginalRestore,d){
   const wasTransaction=GameState.session.transaction;
   GameState.session.transaction=true;v09CancelPendingSave();
@@ -172,7 +206,7 @@ loadGameProgress=function(createIfEmpty=true){
       const entry=v09ReadSlot(id);if(!entry||entry.invalid)continue;
       localStorage.setItem(V09_ACTIVE_KEY,String(id));
       restoreGameProgress(entry.data);GameState.session.activeSlot=id;GameState.session.blocked=false;
-      GameState.session.lastVerified=JSON.stringify(entry.data);
+      GameState.session.lastVerified=JSON.stringify(entry.data);V09SlotOwner.adopt(id,localStorage.getItem(v09SlotKey(id)));
       updateSaveStatus(`💾 Слот ${id}: ${entry.recovered?'восстановлен из резервной копии':'прогресс восстановлен'}.`);
       return true;
     }
@@ -183,7 +217,7 @@ loadGameProgress=function(createIfEmpty=true){
       const id=v09FreeSlot();
       if(!id){GameState.session.blocked=true;updateSaveStatus('Все слоты заняты. Откройте «Сохранения».');return false;}
       const migratedRaw=v09WriteNewSlot(id,data);
-      restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=migratedRaw;
+      restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=migratedRaw;V09SlotOwner.adopt(id,migratedRaw);
       updateSaveStatus(`💾 Прогресс перенесён в слот ${id}. Исходное сохранение сохранено отдельно.`);
       return true;
     }
@@ -195,7 +229,7 @@ loadGameProgress=function(createIfEmpty=true){
     if(!createIfEmpty)return false;
     const id=v09FreeSlot();const raw=v09WriteNewSlot(id,captureGameProgress());
     GameState.session.name=JSON.parse(raw).saveName;
-    GameState.session.activeSlot=id;GameState.session.lastVerified=raw;GameState.session.blocked=false;
+    GameState.session.activeSlot=id;GameState.session.lastVerified=raw;GameState.session.blocked=false;V09SlotOwner.adopt(id,raw);
     updateSaveStatus(`💾 Слот ${id} · автосохранение примерно каждые 15 секунд.`);
     return false;
   }catch(error){GameState.session.blocked=true;v09ReportStorageFailure();return false;}
@@ -206,13 +240,14 @@ saveGameProgress=(()=>{let decodedRaw=null;return function(manual=false){
     if(manual)message('Откройте «Сохранения»: выберите игру или создайте свободный слот.');return false;
   }
   try{
+    if(V09SlotOwner.stale(GameState.session.activeSlot)){V09SlotOwner.lock();if(manual)message(I18n.message('save.conflict'));return false;}
     const raw=JSON.stringify(captureGameProgress());decodeGameProgress(raw);
     if(GameState.session.lastVerified){
       // The previous autosave already passed this decoder in this session; only re-check other strings.
       if(GameState.session.lastVerified!==decodedRaw)decodeGameProgress(GameState.session.lastVerified);
       localStorage.setItem(v09BackupKey(GameState.session.activeSlot),GameState.session.lastVerified);
     }
-    localStorage.setItem(v09SlotKey(GameState.session.activeSlot),raw);
+    localStorage.setItem(v09SlotKey(GameState.session.activeSlot),raw);V09SlotOwner.adopt(GameState.session.activeSlot,raw,false);
     GameState.session.lastVerified=raw;decodedRaw=raw;
     v09CancelPendingSave();GameState.session.dirty=false;
     updateSaveStatus(I18n.message('save.status',{name:GameState.session.name||v091DefaultName(GameState.session.activeSlot),time:I18n.dateParam(Date.now(),{hour:'2-digit',minute:'2-digit'})}));
@@ -245,7 +280,7 @@ function v09ChooseSlot(id){
     if(!next||next.invalid)throw new Error('Save not available');
     localStorage.setItem(V09_ACTIVE_KEY,String(id));
     restoreGameProgress(next.data);
-    GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=JSON.stringify(next.data);
+    GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=JSON.stringify(next.data);V09SlotOwner.adopt(id,localStorage.getItem(v09SlotKey(id)));
     updateSaveStatus(`💾 Слот ${id} · игра загружена.`);message(`Продолжаем игру из слота ${id}.`);if(!window.MainMenu?.sessionSelected())window.StoryPlayer?.settleContinue();return true;
   }catch(error){message('Не удалось загрузить игру. Сохранения не удалены.');return false;}
 }
@@ -268,7 +303,7 @@ function v09NewGame(selectedId=null,confirmed=null){
       try{localStorage.setItem(keys[0],raw);localStorage.removeItem(keys[1]);localStorage.setItem(keys[2],String(id));}
       catch(error){for(let i=0;i<keys.length;i++)try{if(before[i]===null)localStorage.removeItem(keys[i]);else localStorage.setItem(keys[i],before[i]);}catch(_){}throw error;}
     }
-    restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=raw;
+    restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=raw;V09SlotOwner.adopt(id,raw);
     updateSaveStatus(`💾 Новая игра · слот ${id}.`);message(`Новая игра в слоте ${id}. Другие сохранения остались на месте.`);if(!window.MainMenu?.sessionSelected({intro:true}))window.StoryPlayer?.startIntro();return true;
   }catch(error){v09ReportStorageFailure(true);return false;}
 }
@@ -279,7 +314,7 @@ function v09ImportSave(raw){
     const id=v09FreeSlot();if(!id){message('Нет свободного слота для импорта. Сохранения не изменены.');return false;}
     if(!v09BeforeSwitch())return false;
     const importedRaw=v09WriteNewSlot(id,data);
-    restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=importedRaw;
+    restoreGameProgress(data);GameState.session.activeSlot=id;GameState.session.blocked=false;GameState.session.lastVerified=importedRaw;V09SlotOwner.adopt(id,importedRaw);
     updateSaveStatus(`💾 Импортировано в слот ${id}.`);message(`Сохранение загружено в отдельный слот ${id}.`);if(!window.MainMenu?.sessionSelected())window.StoryPlayer?.settleContinue();return true;
   }catch(error){v09ReportStorageFailure(true);return false;}
 }

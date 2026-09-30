@@ -1,7 +1,7 @@
 {
   "version": "0.43.0",
-  "passed": 0,
-  "failed": 1,
+  "passed": 1,
+  "failed": 0,
   "scope": "Every historical Stage 0 configuration field compared; only release/envelope metadata and the explicitly listed added definition/API fields normalized.",
   "addedDefinitionFields": {
     "items": [
@@ -51,7 +51,10 @@
       "itemView"
     ],
     "V010World": [],
-    "V010Energy": [],
+    "V010Energy": [
+      "recovering",
+      "resumeFraction"
+    ],
     "V010Progression": [
       "count",
       "isLegacyUnlocked"
@@ -87,7 +90,11 @@
     "V012Effects": [],
     "V012Fishing": [],
     "V014Fish": [],
-    "V013Inventory": [],
+    "V013Inventory": [
+      "bindConsumable",
+      "consumableAllowed",
+      "consumable"
+    ],
     "V013Lake": [],
     "V013City": [],
     "V0141DroneMotion": [],
@@ -150,6 +157,6 @@
       "applyUpgrade"
     ]
   },
-  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    dayXEnemies: {\n      bloater: {\n        art: 'bloater',\n        chaseSpeed: 1.5750000000000002,\n...\n      {\n+       growMs: 1500000,\n-       growMs: 1080000,\n        icon: '🥔',\n        index: 0,\n        itemType: 'potato',\n        name: 'Картофель'\n      },\n      {\n+       growMs: 1200000,\n-       growMs: 780000,\n        icon: '🥕',\n        index: 1,\n        itemType: 'carrot',\n        name: 'Морковь'\n      },\n      {\n+       growMs: 1800000,\n-       growMs: 960000,\n        icon: '🍅',\n        index: 2,\n        itemType: 'tomato',\n        name: 'Помидоры'\n      },\n      {\n+       growMs: 1800000,\n-       growMs: 900000,\n        icon: '🌽',\n        index: 3,\n        itemType: 'corn',\n        name: 'Кукуруза'\n      },\n      {\n+       growMs: 1500000,\n-       growMs: 1140000,\n        icon: '🌾',\n        index: 4,\n        itemType: 'grain',\n        name: 'Зерно'\n      },\n      {\n+       growMs: 1500000,\n-       growMs: 600000,\n        icon: '🫘',\n        index: 5,\n        itemType: 'beans',\n        name: 'Фасоль'\n      },\n      {\n+       growMs: 1200000,\n-       growMs: 1020000,\n        icon: '🧅',\n        index: 6,\n        itemType: 'onion',\n        name: 'Лук'\n      },\n      {\n+       growMs: 2100000,\n-       growMs: 750000,\n        icon: '🍓',\n        index: 7,\n        itemType: 'berries',\n        name: 'Ягоды'\n      },\n      {\n+       growMs: 2400000,\n-       growMs: 570000,\n        icon: '🌿',\n        index: 8,\n        itemType: 'medicinal_herbs',\n        name: 'Лекарственные'\n      },\n      {\n+       growMs: 2400000,\n-       growMs: 1200000,\n        icon: '🌻',\n        index: 9,\n        itemType: 'technical_crop',\n        name: 'Технические'\n      }\n...\n      {\n+       h: 255,\n+       w: 138,\n+       x: 4822,\n+       y: 580\n-       h: 535,\n-       w: 205,\n-       x: 165,\n-       y: -885\n      },\n      {\n+       h: 255,\n+       w: 138,\n+       x: 4996,\n+       y: 580\n-       h: 535,\n-       w: 205,\n-       x: 395,\n-       y: -885\n      },\n      {\n+       h: 255,\n+       w: 138,\n+       x: 5170,\n+       y: 580\n-       h: 535,\n-       w: 205,\n-       x: 625,\n-       y: -885\n      },\n      {\n+       h: 255,\n+       w: 138,\n+       x: 5344,\n+       y: 580\n-       h: 535,\n-       w: 205,\n-       x: 855,\n-       y: -885\n      },\n      {\n+       h: 255,\n+       w: 138,\n+       x: 5518,\n+       y: 580\n-       h: 535,\n-       w: 205,\n-       x: 1085,\n-       y: -885\n      }\n    ],\n    items: {\n      advanced_parts: {\n        icon: '🔧',\n...\n      },\n+     plant_waste: {\n+       discardable: true,\n+       icon: '♻',\n+       name: 'Растительные отходы',\n+       stack: 100\n+     },\n      potato: {\n        icon: '🥔',\n        name: 'Картофель'\n      },\n      remote: {\n...\n          enabled: true,\n+         id: 'light_empty_l1',\n+         room: 'empty_l1',\n+         watts: 0.12\n+       },\n+       {\n+         enabled: true,\n+         id: 'light_l2_corridor',\n+         room: 'l2_corridor',\n+         watts: 0.12\n+       },\n+       {\n+         enabled: true,\n+         id: 'light_bathroom',\n+         room: 'bathroom',\n+         watts: 0.12\n+       },\n+       {\n+         enabled: true,\n+         id: 'light_pantry',\n+         room: 'pantry',\n+         watts: 0.12\n+       },\n+       {\n+         enabled: true,\n+         id: 'light_water_room',\n+         room: 'water_room',\n+         watts: 0.12\n+       },\n+       {\n+         enabled: true,\n+         id: 'light_chicken_farm',\n+         room: 'chicken_farm',\n+         watts: 0.12\n+       },\n+       {\n+         enabled: true,\n+         id: 'light_cow_farm',\n+         room: 'cow_farm',\n+         watts: 0.12\n+       },\n+       {\n+         enabled: true,\n+         id: 'light_side_corridor',\n+         room: 'side_corridor',\n+         watts: 0.12\n+       },\n+       {\n+         enabled: true,\n+         id: 'door_empty_l1',\n+         room: 'empty_l1',\n+         watts: 0.06\n+       },\n+       {\n+         enabled: true,\n+         id: 'door_pantry',\n+         room: 'pantry',\n+         watts: 0.06\n+       },\n+       {\n+         enabled: true,\n+         id: 'door_water_room',\n+         room: 'water_room',\n+         watts: 0.06\n+       },\n+       {\n+         enabled: true,\n+         id: 'door_side_corridor',\n+         room: 'side_corridor',\n+         watts: 0.06\n+       },\n+       {\n+         enabled: true,\n+         id: 'door_chicken_farm',\n+         room: 'chicken_farm',\n+         watts: 0.06\n+       },\n+       {\n+         enabled: true,\n+         id: 'door_cow_farm',\n+         room: 'cow_farm',\n+         watts: 0.06\n+       },\n+       {\n+         enabled: true,\n+         id: 'water_system',\n+         room: 'water_room',\n+         watts: 1\n+       },\n+       {\n+         enabled: true,\n+         id: 'animal_system',\n+         room: 'cow_farm',\n+         watts: 0.4\n+       },\n+       {\n+         enabled: true,\n          id: 'light_workshop',\n          room: 'workshop',\n          watts: 0.12\n        },\n        {\n...\n          id: 'feed_craft',\n+         room: 'pantry',\n-         room: 'farm',\n          watts: 1\n        },\n        {\n          enabled: true,\n          id: 'robot_drone_charge',\n...\n          room: 'farm',\n+         watts: 0.8\n-         watts: 0.5\n        },\n        {\n          enabled: true,\n          id: 'upgrade0161',\n          room: 'workshop',\n...\n      rooms: {\n+       bathroom: 'Душ и туалет',\n+       chicken_farm: 'Птицеферма',\n        corridor: 'Коридор',\n+       cow_farm: 'Коровник',\n+       empty_l1: 'Свободная комната',\n+       farm: 'Огород',\n+       l2_corridor: 'Коридор L2',\n+       pantry: 'Кладовая',\n-       farm: 'Ферма',\n        room4: 'Медблок',\n        room5: 'Энергоблок',\n        room6: 'Кухня',\n        room7: 'Жилая комната',\n+       side_corridor: 'Боковой коридор',\n        storage: 'Склад',\n+       water_room: 'Водоснабжение',\n        workshop: 'Мастерская',\n        yard: 'Двор'\n      },\n      supply: 10\n    },\n...\n        building018: 1,\n+       bunker043: 1,\n        city013: 1,\n        expansion012: 1,\n        farm014: 1,\n        farmV011: 1,\n        gathering: 1,\n...\n        'building018',\n+       'bunker043'\n      ]\n    },\n    turret: {\n      ammoType: 'ammo',\n      capacity: 600,\n",
+  "error": null,
   "consoleErrors": []
 }

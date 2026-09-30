@@ -415,14 +415,7 @@ const V09Craft = (() => {
   }
   const oldAssign=openHandAssignment;
   openHandAssignment=function(type){oldAssign(type);const old=el('v09HeldGunStats');if(old)old.remove();if(!GUNS[type])return;const box=document.createElement('div');box.id='v09HeldGunStats';box.className='v09CraftInfo';I18n.assign(box,"innerHTML",gunStats(type));el('handAssignChoices').before(box);};
-  const oldPlayerDraw=drawPlayer;
-  drawPlayer=function(){
-    oldPlayerDraw();
-    const g=GUNS[heldItem()];if(!g||!rightAimActive)return;
-    const angle=Math.atan2(player.aimY,player.aimX),cone=g.spread+(performance.now()-lastShot<420?g.recoil*Math.max(0,burst-1):0);
-    ctx.save();ctx.strokeStyle='rgba(235,220,162,.28)';ctx.lineWidth=1;ctx.beginPath();
-    for(const a of [angle-cone,angle+cone]){ctx.moveTo(player.x+Math.cos(a)*47,player.y+Math.sin(a)*47);ctx.lineTo(player.x+Math.cos(a)*125,player.y+Math.sin(a)*125);}ctx.stroke();ctx.restore();
-  };
+  // 0.43 corrective: the early "two lines" spread-cone aim indicator is removed (owner request).
   function capture(){
     const f=pendingFeedCraft?deep(pendingFeedCraft):null;if(f)delete f.readyAt;
     return {schema:2,jobs:deep(jobs),magazines:deep(magazines),feed:f};

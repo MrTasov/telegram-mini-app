@@ -48,6 +48,7 @@ window.GameSimulation=(()=>{
         firing=!!data.active&&canFire();if(firing&&data.immediate)shoot();return firing;
       case 'RELOAD':return reloadWeapon();
       case 'SELECT_SLOT':
+        if(data.index===5&&window.GameQuickConsumable)return GameQuickConsumable.press();
         if(!Number.isInteger(data.index)||data.index<0||data.index>=handSlots.length)return false;
         selectHandSlot(data.index);return true;
       case 'SNEAK':window.V010World?.setSneaking(!V010World.sneaking);return true;

@@ -2,7 +2,7 @@
 const V09Power = {
   rooms:Object.fromEntries([...BunkerLayout.roomData.map(r=>[r.id,r.label]),['yard','Двор']]),
   roomEnabled:Object.fromEntries([...BunkerLayout.roomData.map(r=>[r.id,true]),['yard',true]]),
-  devices:{},running:false,fuel:10,capacity:100,supply:10,pathfinding:false,
+  devices:{},running:false,fuel:10,capacity:100,supply:20,fuelKW:10,pathfinding:false,
   selectedRoom:'workshop',tab:'bunker',uiClock:0,load:0,demand:0,
   allocation(){
     let demand=0,load=0;const served=new Set();
@@ -34,6 +34,10 @@ const V09Power = {
     this.validate(data);this.running=data.running&&data.fuel>0;this.fuel=data.fuel;
     for(const r of Object.keys(this.rooms))this.roomEnabled[r]=data.roomEnabled[r]!==false;
     for(const d of Object.values(this.devices))d.enabled=data.deviceEnabled[d.id]!==false;
+    // 0.43 corrective: a door's power switch has had no control since Base Control (doors are
+    // driven by auto-open/manual). Pre-0.43 new games saved door_room6/4/7 and door_farm as
+    // off, which left those L2 doors unpowered forever. Doors still obey overload and blackout.
+    for(const d of v09Doors){const device=this.devices['door_'+d.room];if(device)device.enabled=true;}
     for(const d of v09Doors){const s=(data.doors||[]).find(v=>v.id===d.id);d.open=s?s.open:0;d.away=s?s.away:0;d.manual=s?s.manual:false;}
     this.allocation();
   }
@@ -200,7 +204,7 @@ function v09ToggleGenerator(){
   if(V09Power.running)V09Power.running=false;
   else if(V09Power.fuel<=0){message('Сначала заправьте топливный бак в энергоблоке');return;}
   else V09Power.running=true;
-  message(V09Power.running?'Генератор запущен · доступно 10 кВт':'Генератор остановлен');v09PowerChanged();
+  message(V09Power.running?'Генератор запущен · доступно 20 кВт':'Генератор остановлен');v09PowerChanged();
 }
 function v09OpenGenerator(refuel=false){
   const overlay=v09Overlay('v09GeneratorOverlay',refuel?'Энергоблок · топливный бак':'Энергоблок · генератор'),body=overlay.querySelector('.v09Body');I18n.assign(body,"innerHTML",v09PowerStats());
@@ -210,7 +214,7 @@ function v09OpenGenerator(refuel=false){
     const buttons=document.createElement('div');buttons.className='v09PowerActions';for(const qty of [1,10,100])buttons.appendChild(v09Button(qty===100?'Заправить максимум':'Добавить '+qty,()=>v09Refuel(qty)));body.appendChild(buttons);
   }
   const toggle=v09Button('',v09ToggleGenerator);toggle.dataset.power='generatorToggle';body.appendChild(toggle);
-  const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Мощность: 10 кВт. 1 единица топлива ≈ 1 минута работы. При остановке генератора производство сохраняет прогресс. Резервная батарея будет подключена позже.');body.appendChild(note);
+  const note=document.createElement('p');note.className='v09PowerNote';I18n.assign(note,"textContent",'Мощность: 20 кВт. 1 единица топлива ≈ 1 минута работы при нагрузке 10 кВт. При остановке генератора производство сохраняет прогресс. Резервная батарея будет подключена позже.');body.appendChild(note);
   body.appendChild(renderDeviceSwitch('light_'+GameEquipment.get(refuel?'tank':'generator').transform.room));v09RefreshPowerUI();openOverlay(overlay);
 }
 function v09Refuel(amount){
@@ -289,7 +293,7 @@ V09Power.drawRoom=function(room){v09DrawRoomLight(room);v09DrawRoomSwitch(room);
 function v09DrawEnergyReadouts(){
   ctx.save();ctx.textAlign='center';ctx.fillStyle='#252d29';ctx.fillRect(905,392,85,72);ctx.fillStyle='#b7a361';ctx.fillRect(905,464-72*V09Power.fuel/100,85,72*V09Power.fuel/100);ctx.fillStyle='#ede5b9';ctx.font='12px Arial';ctx.fillText(I18n.text(I18n.numeric(V09Power.fuel,{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})+' / 100'),947,430);ctx.font='9px Arial';ctx.fillText(I18n.text('ТОПЛИВО'),947,448);
   ctx.fillStyle='#232927';ctx.fillRect(1065,350,125,50);ctx.fillStyle=V09Power.running?'#98d8ab':'#63716b';ctx.fillRect(1080,365,16,16);ctx.fillStyle='#d8e7d8';ctx.font='10px Arial';ctx.fillText(I18n.text(V09Power.running?'ВКЛЮЧЁН':'ВЫКЛЮЧЕН'),1140,377);
-  ctx.fillStyle='#46504b';ctx.fillRect(1050,431,154,48);ctx.fillStyle=V09Power.running?'#d8ecd4':'#b6c1b6';ctx.font='13px Arial';ctx.fillText(I18n.text(I18n.numeric(V09Power.load,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' / '+(V09Power.running?'10':'0')+' кВт'),1127,451);ctx.font='9px Arial';ctx.fillText(I18n.text(V09Power.running?'1 топливо / мин':'ОЖИДАЕТ ЗАПУСКА'),1127,469);
+  ctx.fillStyle='#46504b';ctx.fillRect(1050,431,154,48);ctx.fillStyle=V09Power.running?'#d8ecd4':'#b6c1b6';ctx.font='13px Arial';ctx.fillText(I18n.text(I18n.numeric(V09Power.load,{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false})+' / '+(V09Power.running?I18n.numeric(V09Power.supply,{maximumFractionDigits:0,useGrouping:false}):'0')+' кВт'),1127,451);ctx.font='9px Arial';ctx.fillText(I18n.text(V09Power.running?'1 топливо / мин':'ОЖИДАЕТ ЗАПУСКА'),1127,469);
   ctx.fillStyle='#435352';ctx.fillRect(1253,340,69,105);ctx.strokeStyle='#62736b';ctx.lineWidth=2;ctx.strokeRect(1264,361,47,61);ctx.fillStyle='#b0bbb1';ctx.font='18px Arial';ctx.fillText(I18n.text('—'),1287,399);ctx.fillStyle='#39474c';ctx.fillRect(1239,479,97,27);ctx.fillStyle='#9fb1b5';ctx.font='9px Arial';ctx.fillText(I18n.text('НЕ ПОДКЛЮЧЕНА'),1287,493);ctx.restore();
 }
 const v09PowerOldDrawBunker=drawBunker;

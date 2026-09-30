@@ -197,7 +197,7 @@ window.V014Robots=(()=>{
   }
   function shootAt(z){
     if(!combatEnabled()||!z?.alive||z.health<=0||shot>1e-9||state.ammo<=0||distance(state.x,state.y,z.x,z.y)>combat.range||!lineClear(state.x,state.y,z.x,z.y,2,'surface'))return false;
-    GameAudio.play('droneFire',{x:state.x,y:state.y,scene:state.scene,radius:500});state.ammo--;state.battery=Math.max(0,state.battery-definition.battery.shotCost/batteryFactor());shot+=combat.intervalMs/1000;angle=Math.atan2(z.y-state.y,z.x-state.x);flash=.07;tracer={x:z.x,y:z.y};hitZombie(z,combat.damage,{fixedDamage:true});createNoise(state.x,state.y,280);changed();return true;
+    GameAudio.play('droneFire',{x:state.x,y:state.y,scene:state.scene,radius:500});state.ammo--;state.battery=Math.max(0,state.battery-definition.battery.shotCost/batteryFactor());shot+=combat.intervalMs/1000;angle=Math.atan2(z.y-state.y,z.x-state.x);flash=.07;tracer={x:z.x,y:z.y};window.CombatVfx?.shot({scene:state.scene,x0:state.x+Math.cos(angle)*14,y0:state.y+Math.sin(angle)*14,x1:z.x,y1:z.y,kind:'drone',size:.7});hitZombie(z,combat.damage,{fixedDamage:true});createNoise(state.x,state.y,280);changed();return true;
   }
   function collectLoose(){
     if(!['follow','carry'].includes(state.mode)||!state.autoCollect||state.scene!==scene||state.economy&&state.battery<20)return;
@@ -283,7 +283,6 @@ window.V014Robots=(()=>{
     if(!sprite){ctx.strokeStyle='#536d6d';ctx.lineWidth=7;for(const x of [-20,20])for(const y of [-20,20]){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(x,y);ctx.stroke();disk(x,y,11,'#233b3f','#abc0b0');}ctx.fillStyle='#698885';ctx.fillRect(-10,-15,20,30);}
     if(flying){for(const x of [-22,22])for(const y of [-20,20]){ctx.save();ctx.translate(x,y);ctx.rotate(t*45+(x+y));ctx.globalAlpha=.32;ctx.fillStyle='#bad8ca';ctx.fillRect(-9,-1.2,18,2.4);ctx.fillRect(-1.2,-9,2.4,18);ctx.restore();}}
     disk(0,8,1.9,state.hp<=0?'#c45949':state.battery<20?'#ddb663':'#a4e7ce');if(flash>0)disk(0,-34,5,'#ffdfa1');ctx.restore();
-    if(flash>0&&tracer){ctx.save();ctx.strokeStyle='#f8d99199';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(state.x,state.y);ctx.lineTo(tracer.x,tracer.y);ctx.stroke();ctx.restore();}
   }
   const drawPlayerOld=drawPlayer;drawPlayer=function(...a){const r=drawPlayerOld(...a);if(scene!=='surface')drawDrone();return r;};const bunkerOld=drawBunker;drawBunker=function(...a){const r=bunkerOld(...a);drawDock();return r;};
   const updateOld=update;update=function(...a){const r=updateOld(...a);tick(16.667*frameScale);return r;};

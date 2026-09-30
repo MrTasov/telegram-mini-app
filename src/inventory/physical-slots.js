@@ -18,6 +18,8 @@ window.V013Inventory=(()=>{
   const manage=v09Button('Быстрые слоты',()=>{const o=v09Overlay('v013Hands','Быстрые слоты'),body=o.querySelector('.v09Body');body.replaceChildren();items.forEach((s,i)=>{const b=v09Button((i+1)+' · '+(s?ITEM[s.type].name:'Пусто'),()=>window.V0162Quick?V0162Quick.open(i):s&&openHandAssignment(s.type));body.append(b);});openOverlay(o);});tools.append(manage);
   ITEM.cooked_fish={category:'food',name:'Жареная рыба',icon:'🍽️',description:'Порция из 0,5 кг рыбы.'};V092_ICONS.cooked_fish=V011Art.sources.fish;
   let reserve=0;
+  // 0.43 corrective: slot 6 of the same Quick Slot owner binds one consumable type (stock stays in the backpack).
+  let consumable=null;const consumableOk=t=>typeof t==='string'&&!!GameplayBalance.survival.uses[t];
   function fishWeight(){return reserve+bag.reduce((n,s)=>n+(s?.type==='fish'?V014Fish.weight(s):0),0);}
   function cook(count,index=null){
     if(!window.GameSurvival?.kitchenNearby()){message(I18n.t('survival.needKitchen'));return false;}
@@ -46,13 +48,14 @@ window.V013Inventory=(()=>{
       if(scene!=='bunker'){const note=document.createElement('small');I18n.assign(note,"textContent",'Приготовление доступно на базе');panel.append(note);}
     }body.append(panel);
   }};
-  GameSave.extend('capture','inventory.physical-slots',function(cap){const d=cap();d.quick013={schema:1,items:copy(items),fishReserve:reserve};return d;});
-  GameSave.extend('decode','inventory.physical-slots',function(decode,raw){const d=JSON.parse(raw);V014Fish.validateSave(d);if(d.handSlots?.length===4)d.handSlots.push(null);const q=d.quick013;if(q){if(q.schema!==1||!Array.isArray(q.items)||q.items.length!==5||!q.items.every(s=>s===null||s&&HAND_TYPES.includes(s.type)&&s.qty===1&&V010Combat.validateItem(s)!==false)||!Number.isInteger(q.fishReserve)||q.fishReserve<0||q.fishReserve>=500)throw Error('Неверные быстрые слоты');if(new Set(q.items.filter(Boolean).map(s=>s.type)).size!==q.items.filter(Boolean).length)throw Error('Повтор предмета');d.handSlots=q.items.map(s=>s?.type||null);}
+  GameSave.extend('capture','inventory.physical-slots',function(cap){const d=cap();d.quick013={schema:1,items:copy(items),fishReserve:reserve,...(consumable?{consumable}:{})};return d;});
+  GameSave.extend('decode','inventory.physical-slots',function(decode,raw){const d=JSON.parse(raw);V014Fish.validateSave(d);if(d.handSlots?.length===4)d.handSlots.push(null);const q=d.quick013;if(q){if(q.schema!==1||!Array.isArray(q.items)||q.items.length!==5||!q.items.every(s=>s===null||s&&HAND_TYPES.includes(s.type)&&s.qty===1&&V010Combat.validateItem(s)!==false)||!Number.isInteger(q.fishReserve)||q.fishReserve<0||q.fishReserve>=500||q.consumable!==undefined&&!consumableOk(q.consumable))throw Error('Неверные быстрые слоты');if(new Set(q.items.filter(Boolean).map(s=>s.type)).size!==q.items.filter(Boolean).length)throw Error('Повтор предмета');d.handSlots=q.items.map(s=>s?.type||null);}
     return decode(JSON.stringify(d));});
-  GameSave.extend('restore','inventory.physical-slots',function(restore,d){d=V014Fish.migrate(copy(d));items.fill(null);if(d.quick013)items.splice(0,5,...copy(d.quick013.items));restore(d);if(!d.quick013){for(let i=0;i<5;i++){const t=d.handSlots[i],j=bag.findIndex(s=>s?.type===t);if(t&&j>=0){items[i]=bag[j];bag[j]=null;}}}reserve=d.quick013?.fishReserve||0;for(const a of [bag,...storageChests.map(c=>c.items)])for(const s of a)if(s?.type==='fish')V014Fish.normalize(s);activeHandSlot=d.activeHandSlot;sync();});
+  GameSave.extend('restore','inventory.physical-slots',function(restore,d){d=V014Fish.migrate(copy(d));items.fill(null);if(d.quick013)items.splice(0,5,...copy(d.quick013.items));restore(d);if(!d.quick013){for(let i=0;i<5;i++){const t=d.handSlots[i],j=bag.findIndex(s=>s?.type===t);if(t&&j>=0){items[i]=bag[j];bag[j]=null;}}}reserve=d.quick013?.fishReserve||0;consumable=d.quick013?.consumable||null;for(const a of [bag,...storageChests.map(c=>c.items)])for(const s of a)if(s?.type==='fish')V014Fish.normalize(s);activeHandSlot=d.activeHandSlot;sync();});
   // Move the initial starting hands exactly once before the first save is created.
   for(let i=0;i<5;i++){const j=bag.findIndex(s=>s?.type===handSlots[i]);if(j>=0){items[i]=bag[j];bag[j]=null;}}handSlots=items.map(s=>s?.type||null);
   v09Style(`.v014FishCook{padding:8px 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px}.v014FishCook p{width:100%;margin:0;font-size:13px}.v014FishCook label{font-size:12px}.v014FishCook input{width:58px;background:#18282b;color:#dfebe5;border:1px solid #56706b;border-radius:5px;padding:5px;font:inherit}.v014FishCook small{font-size:11px;color:#a5bcb1}.v014FishCook button{width:auto!important;padding:8px 12px!important;font-size:12px!important}@keyframes v013Short{0%,100%{box-shadow:none}30%{background:#78423e;border-color:#ee8b7e;box-shadow:0 0 0 2px #e9857466}}.v013Missing{animation:v013Short .7s ease-out}#quickSlots{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}#hotbar{grid-template-columns:repeat(5,minmax(0,52px));gap:4px;width:min(276px,92vw)}.v011BatchControls button{font-size:11px!important;padding:5px 8px!important}@media(max-width:540px){#quickSlots{max-width:92vw}.slotArt{max-height:40px}}`);
-  return {items,sync,returnItem,cook,fishWeight,equip};
+  function bindConsumable(type){if(type!==null&&!consumableOk(type))return false;consumable=type;renderQuickSlots();queueGameSave();return true;}
+  return {items,sync,returnItem,cook,fishWeight,equip,bindConsumable,consumableAllowed:consumableOk,get consumable(){return consumable;}};
 })();
 

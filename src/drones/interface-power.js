@@ -4,7 +4,7 @@ const V014Energy=(()=>{
   registerPowerDevice('water_system','water_room',GameplayBalance.farm.waterKW,()=>!window.BunkerPassA||BunkerPassA.water.clean<GameplayBalance.farm.cleanCapacity,'Водоснабжение');
   registerPowerDevice('animal_system','cow_farm',GameplayBalance.farm.animalKW,()=>!!window.GameLivestock?.active(),'Система животных');/* 0.43 Pass B: live whenever the herd exists and Animals are available */
   const output=()=>{const a=V010Energy.allocation();return V09Power.running?Math.min(V09Power.supply,a.load+a.chargeInput):0;};
-  const fuelRate=()=>output()/Math.max(.001,V09Power.supply)*(Number(V010World.settings.fuelRate)||1);
+  const fuelRate=()=>output()/Math.max(.001,V09Power.fuelKW||V09Power.supply)*(Number(V010World.settings.fuelRate)||1);
   const oldStats=v09PowerStats;
   v09PowerStats=function(){return oldStats()+'<div class="v014Generation" style="font-size:11px;line-height:1.5;color:#9db8b4;margin:7px 0" data-generation014></div>';};
   const refresh=v09RefreshPowerUI;

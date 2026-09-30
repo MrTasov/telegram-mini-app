@@ -2,7 +2,7 @@
 window.BunkerPassA=(()=>{
  const B=GameplayBalance.farm,copy=x=>JSON.parse(JSON.stringify(x)),tr=(k,p)=>I18n.t('farm.'+k,p),fresh=()=>({readyAt:null,rotten:false,warned:false});
  const water={clean:0,produced:0};let rot=Array.from({length:5},fresh),at=AgricultureTime.now(),seq=0,recovered=[];
- const tank={id:'clean_water_tank',kind:'clean_water',x:4861,y:-88,w:104,h:105,range:58},fixtures=[tank,{id:'water_pump',x:4834,y:172,w:48,h:56},{id:'water_purifier',x:4902,y:172,w:55,h:56}];
+ const tank={id:'clean_water_tank',kind:'clean_water',x:4861,y:-88,w:104,h:105,range:58},fixtures=[tank,{id:'water_pump',x:4814,y:184,w:42,h:44},{id:'water_purifier',x:4912,y:184,w:52,h:44}];
  function readyAt(i,n){if(rot[i].readyAt===null)rot[i].readyAt=n;}
  const rotten=i=>rot[i]?.rotten===true,remaining=i=>rot[i].readyAt===null?null:Math.max(0,rot[i].readyAt+B.spoilDays*WorldClock.dayMs-AgricultureTime.now());
  function tick(){const now=AgricultureTime.now(),dt=Math.max(0,now-at);at=now;if(GameSave.restoring||GameFlow.paused||document.hidden||playerDead)return;

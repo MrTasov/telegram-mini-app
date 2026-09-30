@@ -10,7 +10,7 @@ window.ActorVisuals=(()=>{
   const walk={stamp:null,x:0,y:0,scene:null,phase:0,moving:false};
   let stepPhase=null,workSound=null;
   let flashVisual=null;
-  const tracers=Array.from({length:24},()=>({at:-Infinity}));let tracerIndex=0;
+  // 0.43 corrective: legacy 36 px streaks replaced by the pooled CombatVfx tracers.
   const vfxDefaults=cfg.weaponVfx.defaults;
   const weaponVfx=Object.fromEntries(Object.entries(cfg.weaponVfx.weapons).map(([id,v])=>[id,{...vfxDefaults,...v}]));
   const loop=(value,count)=>((Math.floor(value)%count)+count)%count;
@@ -221,19 +221,16 @@ window.ActorVisuals=(()=>{
   }
   function weaponShot(bullet,angle,now,item){
     const origin=muzzlePoint(),vfx=weaponVfx[item];if(!origin||!vfx)return;
-    flashVisual={origin,angle,at:now,item,vfx,scene};
-    if(item==='rifle_ak74'||item==='rifle_m4'){
-      const t=tracers[tracerIndex];tracerIndex=(tracerIndex+1)%tracers.length;
-      const direction=bullet?Math.atan2(bullet.dy,bullet.dx):angle;
-      t.x=origin.x;t.y=origin.y;t.dx=Math.cos(direction);t.dy=Math.sin(direction);t.at=now;t.scene=scene;
+    // 0.43 corrective: 60 ms flash (was 42 ms) and a pooled tracer to where the shot visibly stops.
+    flashVisual={origin,angle,at:now,item,vfx:{...vfx,flashMs:Math.max(vfx.flashMs,window.CombatVfx?.constants.FLASH_MS||60)},scene};
+    if(window.CombatVfx){
+      const direction=bullet?Math.atan2(bullet.dy,bullet.dx):angle,dx=Math.cos(direction),dy=Math.sin(direction),range=bullet?Math.hypot(bullet.dx,bullet.dy)*bullet.life:360;
+      const end=CombatVfx.reach(origin.x,origin.y,dx,dy,range);CombatVfx.shot({scene,x0:origin.x,y0:origin.y,x1:end.x,y1:end.y,kind:'player',flash:false});
     }
   }
   function drawMuzzle(){
     ctx.save();
     const now=performance.now();
-    ctx.strokeStyle='#fff2a5';ctx.lineWidth=1.7;ctx.lineCap='round';
-    for(const t of tracers){const age=now-t.at;if(t.scene!==scene||age<0||age>=75)continue;
-      ctx.globalAlpha=1-age/75;ctx.beginPath();ctx.moveTo(t.x,t.y);ctx.lineTo(t.x+t.dx*36,t.y+t.dy*36);ctx.stroke();}
     ctx.restore();ctx.save();
     const f=flashVisual,age=f?performance.now()-f.at:Infinity;
     if(f&&f.scene===scene&&age>=0&&age<f.vfx.flashMs){
